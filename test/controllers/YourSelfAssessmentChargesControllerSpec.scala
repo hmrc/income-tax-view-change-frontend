@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals, ReviewAndReconcilePoa}
+import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -183,8 +183,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("charges-due-now-table")).isDefined shouldBe true
               }
-              "the user has PoA reconciliation debits accruing interest and ReviewAndReconcilePoa FS is enabled" in {
-                enable(ReviewAndReconcilePoa)
+              "the user has PoA reconciliation debits accruing interest" in {
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))

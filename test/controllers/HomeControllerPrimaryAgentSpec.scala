@@ -217,7 +217,6 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockAgentWithClientAuth(isSupportingAgent)
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
-            enable(ReviewAndReconcilePoa)
 
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(
@@ -257,7 +256,6 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockAgentWithClientAuth(isSupportingAgent)
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
-            enable(ReviewAndReconcilePoa)
 
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(

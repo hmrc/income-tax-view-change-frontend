@@ -547,8 +547,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "that has the charges table" when {
-                "the user has Review and Reconcile debit charges and ReviewAndReconcilePoa FS is enabled" in {
-                  enable(ReviewAndReconcilePoa)
+                "the user has Review and Reconcile debit charges" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)

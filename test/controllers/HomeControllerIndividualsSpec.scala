@@ -218,7 +218,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
-            enable(ReviewAndReconcilePoa)
 
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(
@@ -260,7 +259,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
-            enable(ReviewAndReconcilePoa)
 
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(

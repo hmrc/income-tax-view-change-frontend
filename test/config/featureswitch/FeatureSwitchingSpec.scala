@@ -53,7 +53,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     OptOutFs,
     AdjustPaymentsOnAccount,
     FilterCodedOutPoas,
-    ReviewAndReconcilePoa,
     ReportingFrequencyPage,
     DisplayBusinessStartDate,
     AccountingMethodJourney,
@@ -69,7 +68,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
       "return a list of all feature switches" in {
 
         enable(ReportingFrequencyPage)
-        disable(ReviewAndReconcilePoa)
 
         val featureSwitchList = FeatureSwitchName.allFeatureSwitches
 
@@ -128,30 +126,5 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
       override val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
     }
 
-    "use MongoDB feature switch status if MongoDB is enabled in config" in {
-
-      val featureSwitchName = ReviewAndReconcilePoa
-
-      when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
-
-      val userFeatureSwitches = List(FeatureSwitch(featureSwitchName, isEnabled = true))
-
-      MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser.copy(featureSwitches = userFeatureSwitches)) shouldBe true
-    }
-
-    "fall back to system properties if MongoDB is disabled in config" in {
-
-      val featureSwitchName = ReviewAndReconcilePoa
-
-      when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(false)
-
-      enable(featureSwitchName)
-
-      MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser) shouldBe true
-
-      disable(featureSwitchName)
-
-      MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser) shouldBe false
-    }
   }
 }

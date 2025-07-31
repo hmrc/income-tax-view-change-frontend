@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals, ReviewAndReconcilePoa}
+import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -243,7 +243,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "that includes poa extra charges in charges table" when {
               "ReviewAndReconcilePoa FS is enabled" in {
-                enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
@@ -262,7 +261,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "that includes a interest charges warning" when {
               "an overdue charge exists" in {
-                enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
@@ -277,7 +275,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
               }
 
               "Review and Reconcile charge with accruing interest exists" in {
-                enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
@@ -294,7 +291,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "that hides the interest charge warning" when {
               "there are no overdue charges or unpaid Review & Reconcile charges" in {
-                enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))

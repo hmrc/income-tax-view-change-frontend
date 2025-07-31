@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import exceptions.MissingFieldException
-import models.admin.{FilterCodedOutPoas, ReviewAndReconcilePoa}
+import models.admin.{FilterCodedOutPoas}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -62,8 +62,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   whatYouOweUrl: String = "/report-quarterly/income-and-expenses/view/what-you-owe",
                   saChargesUrl: String = "/report-quarterly/income-and-expenses/view/your-self-assessment-charges",
                   yourSelfAssessmentChargesFS: Boolean = false) {
-
-    enable(ReviewAndReconcilePoa)
 
     val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
       currentDate = dateService.getCurrentDate,
