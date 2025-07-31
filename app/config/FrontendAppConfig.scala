@@ -20,10 +20,8 @@ import com.google.inject.Inject
 import play.api.Configuration
 import play.api.i18n.Lang
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import utils.Retrying
 
 import javax.inject.Singleton
-import scala.concurrent.duration.{Duration, FiniteDuration}
 
 @Singleton
 class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
