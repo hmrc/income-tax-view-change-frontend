@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
-import models.incomeSourceDetails.{LatencyDetails, TaxYear}
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
                                   dateService: DateService,
                                   implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
-  private def getITSAStatusDetail(taxYear: TaxYear, futureYears: Boolean, history: Boolean)
+  def getITSAStatusDetail(taxYear: TaxYear, futureYears: Boolean, history: Boolean)
                                  (implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[List[ITSAStatusResponseModel]] = {
     itsaStatusConnector.getITSAStatusDetail(
       nino = user.nino,
@@ -60,34 +60,35 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
         statusDetail.exists(_.itsaStatusDetails.exists(_.exists(selector))))
   }
 
-  def hasMandatedOrVoluntaryStatusForLatencyYears(latencyDetails: Option[LatencyDetails])
-                                                 (implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[(Boolean, Boolean)] = {
+  def latencyYearsQuarterlyAndAnnualStatus(latencyDetails: Option[LatencyDetails])
+                                          (implicit hc: HeaderCarrier,
+                                           ec: ExecutionContext,
+                                           user: MtdItUser[_]): Future[LatencyYearsQuarterlyAndAnnualStatus] = {
 
     latencyDetails match {
       case Some(details) =>
         val taxYear1 = TaxYear.forYearEnd(details.taxYear1.toInt)
         val taxYear2 = TaxYear.forYearEnd(details.taxYear2.toInt)
-
-        val taxYear1StatusFuture = getITSAStatusDetail(taxYear1, futureYears = false, history = false)
-        val taxYear2StatusFuture = getITSAStatusDetail(taxYear2, futureYears = false, history = false)
-
         for {
-          taxYear1Status <- taxYear1StatusFuture.map(statusDetail =>
-            statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))))
-
-          taxYear2Status <- taxYear2StatusFuture.map { statusDetail =>
-            if (statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isUnknown)))) {
-              taxYear1Status
-            } else {
-              statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
-            }
-          }
+          taxYear1StatusDetail <- getITSAStatusDetail(taxYear1, futureYears = false, history = false)
+          taxYear2StatusDetail <- getITSAStatusDetail(taxYear2, futureYears = false, history = false)
+          latencyYearOneQuarterlyStatus = taxYear1StatusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
+          isTaxYear1StatusReasonRollover = taxYear1StatusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.statusReasonRollover)))
+          latencyYearTwoQuarterlyStatus =
+            if (taxYear2StatusDetail.exists(_.itsaStatusDetails.exists(sd => sd.exists(_.isUnknown)
+              && isTaxYear1StatusReasonRollover))) latencyYearOneQuarterlyStatus
+          else taxYear2StatusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
+          latencyYearOneAnnualStatus = taxYear1StatusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isAnnual)))
+          latencyYearTwoAnnualStatus = if (taxYear2StatusDetail.exists(_.itsaStatusDetails.exists(sd => sd.exists(_.isUnknown)
+            && isTaxYear1StatusReasonRollover))) latencyYearOneAnnualStatus
+          else taxYear2StatusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isAnnual)))
         } yield {
-          (taxYear1Status, taxYear2Status)
+          LatencyYearsQuarterlyAndAnnualStatus(LatencyYearsQuarterly(Some(latencyYearOneQuarterlyStatus), Some(latencyYearTwoQuarterlyStatus)),
+            LatencyYearsAnnual(Some(latencyYearOneAnnualStatus), Some(latencyYearTwoAnnualStatus)))
         }
 
       case None =>
-        Future.successful((false, false))
+        Future.successful(LatencyYearsQuarterlyAndAnnualStatus(LatencyYearsQuarterly(Some(false), Some(false)), LatencyYearsAnnual(Some(false), Some(false))))
     }
   }
 

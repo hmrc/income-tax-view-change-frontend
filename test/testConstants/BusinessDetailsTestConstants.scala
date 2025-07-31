@@ -35,6 +35,7 @@ object BusinessDetailsTestConstants {
   val year2022: Int = 2022
   val year2023: Int = 2023
   val year2024: Int = 2024
+  val year2025: Int = 2025
 
   val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
   val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
@@ -123,6 +124,27 @@ object BusinessDetailsTestConstants {
 
   val testLatencyDetails5 = LatencyDetails(
     latencyEndDate = LocalDate.of(year2023, 1, 1),
+    taxYear1 = year2023.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2024.toString,
+    latencyIndicator2 = "A")
+
+  val testLatencyDetailsWithOneInLatency = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2024, 12, 31),
+    taxYear1 = year2022.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2023.toString,
+    latencyIndicator2 = "A")
+
+  val testLatencyDetailsWithOneInLatency2023 = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2024, 12, 31),
+    taxYear1 = year2023.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2024.toString,
+    latencyIndicator2 = "A")
+
+  val testLatencyDetailsWithBothYearsInLatency = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2025, 12, 31),
     taxYear1 = year2023.toString,
     latencyIndicator1 = "A",
     taxYear2 = year2024.toString,
@@ -235,6 +257,48 @@ object BusinessDetailsTestConstants {
     contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
+    address = Some(testBizAddress),
+    cashOrAccruals = Some(true)
+  )
+
+  val businessWithOneYearInLatency = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetailsWithOneInLatency),
+    address = Some(testBizAddress),
+    cashOrAccruals = Some(true)
+  )
+
+  val businessWithOneYearInLatency2023 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetailsWithOneInLatency2023),
+    address = Some(testBizAddress),
+    cashOrAccruals = Some(true)
+  )
+
+  val businessWithBothYearsInLatency = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetailsWithBothYearsInLatency),
     address = Some(testBizAddress),
     cashOrAccruals = Some(true)
   )

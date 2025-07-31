@@ -21,6 +21,7 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17}
+import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -28,12 +29,16 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
 
+import java.time.LocalDate
+
 class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncomeSourceDetailsISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed"
   }
+  val dateNow = LocalDate.now()
+  def taxYearEnd: Int = if(dateNow.isAfter(LocalDate.of(dateNow.getYear, 4, 5))) dateNow.getYear + 1 else dateNow.getYear
 
   mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
@@ -109,10 +114,18 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
+              val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
+              val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
+
+              val taxYear1ToString = s"${latencyDetailsCty.taxYear1.toInt - 1} to ${latencyDetailsCty.taxYear1}"
+              val taxYear2ToString = s"${latencyDetailsCty.taxYear2.toInt - 1} to ${latencyDetailsCty.taxYear2}"
+
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
+
+              CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -132,9 +145,9 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Accounting method"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")("Reporting frequency 2022 to 2023"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")(s"Reporting frequency $taxYear1ToString"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")(messagesAnnuallyGracePeriod),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dt")("Reporting frequency 2023 to 2024"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dt")(s"Reporting frequency $taxYear2ToString"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dd")(messagesQuarterlyGracePeriod),
                 elementTextByID("change-link-1")(messagesChangeLinkText),
                 elementTextByID("change-link-2")(messagesChangeLinkText)
@@ -145,11 +158,18 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
+
+              val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
+              val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
+
+              val taxYear1ToString = s"${latencyDetailsCty.taxYear1.toInt - 1} to ${latencyDetailsCty.taxYear1}"
+              val taxYear2ToString = s"${latencyDetailsCty.taxYear2.toInt - 1} to ${latencyDetailsCty.taxYear2}"
+
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", taxYearShortString1)
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -168,9 +188,9 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Accounting method"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")("Reporting frequency 2022 to 2023"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")(s"Reporting frequency $taxYear1ToString"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")(messagesAnnuallyGracePeriod),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dt")("Reporting frequency 2023 to 2024"),
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dt")(s"Reporting frequency $taxYear2ToString"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dd")(messagesQuarterlyGracePeriod),
                 elementTextByID("change-link-1")(""),
                 elementTextByID("change-link-2")(messagesChangeLinkText)
@@ -212,11 +232,18 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, OptInOptOutContentUpdateR17)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
-            ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
-            ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-            CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-            CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+            val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
+
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
+
+            val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
+            val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
+
+            val taxYear1ToString = s"${latencyDetailsCty.taxYear1.toInt - 1} to ${latencyDetailsCty.taxYear1}"
+            val taxYear2ToString = s"${latencyDetailsCty.taxYear2.toInt - 1} to ${latencyDetailsCty.taxYear2}"
+
+            ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
+            ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
 
             await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -233,8 +260,8 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
               elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
               elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
-              elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Using Making Tax Digital for Income Tax for 2022 to 2023"),
-              elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")("Using Making Tax Digital for Income Tax for 2023 to 2024"),
+              elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")(s"Using Making Tax Digital for Income Tax for $taxYear1ToString"),
+              elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")(s"Using Making Tax Digital for Income Tax for $taxYear2ToString"),
 
               elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")("No"),
               elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")("Yes"),

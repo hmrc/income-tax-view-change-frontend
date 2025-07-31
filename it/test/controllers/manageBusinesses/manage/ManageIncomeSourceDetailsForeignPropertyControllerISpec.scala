@@ -20,11 +20,15 @@ import enums.IncomeSourceJourney.ForeignProperty
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, IncomeSourcesNewJourney, NavBarFs}
+import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import services.DateService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
+
+import java.time.LocalDate
 
 class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageIncomeSourceDetailsISpecHelper {
 
@@ -32,6 +36,9 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/manage-your-businesses/manage/your-details-foreign-property"
   }
+
+  val dateNow = LocalDate.now()
+  def taxYearEnd: Int = if(dateNow.isAfter(LocalDate.of(dateNow.getYear, 4, 5))) dateNow.getYear + 1 else dateNow.getYear
 
   mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
@@ -92,12 +99,15 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
+              val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
+              val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
+              val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
 
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
+              CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              CalculationListStub.stubGetCalculationList(testNino, taxYearShortString1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -117,12 +127,15 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails2))
+              val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
 
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
+              val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
+
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", taxYearShortString1)
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
+              CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 

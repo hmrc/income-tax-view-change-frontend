@@ -20,11 +20,14 @@ import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, IncomeSourcesNewJourney, NavBarFs}
+import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
+
+import java.time.LocalDate
 
 class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSourceDetailsISpecHelper {
 
@@ -32,6 +35,9 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/manage-your-businesses/manage/your-details-uk-property"
   }
+
+  val dateNow = LocalDate.now()
+  def taxYearEnd: Int = if(dateNow.isAfter(LocalDate.of(dateNow.getYear, 4, 5))) dateNow.getYear + 1 else dateNow.getYear
 
   mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
@@ -60,41 +66,20 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod)
               )
             }
-            "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
-              //enable(TimeMachineAddYear)
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
-
-              // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
-                elementTextByID("change-link-1")(""),
-                elementTextByID("change-link-2")("")
-              )
-            }
+            //Crystallisation doesn't matter, need to cleanup tests after discussion
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
               enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetailsCty))
+
+              val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
+              val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
+
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -114,12 +99,15 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
               enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails2))
+              val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
 
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
-              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
-              CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetailsCty))
+
+              val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
+              val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
+
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", taxYearShortString1)
+              ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 

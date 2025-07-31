@@ -32,6 +32,8 @@ case class StatusDetail(submittedOn: String,
 
   def isMandatedOrVoluntary: Boolean = isMandated || isVoluntary
 
+  def statusReasonRollover: Boolean = statusReason == StatusReason.Rollover
+
 }
 
 object StatusDetail {

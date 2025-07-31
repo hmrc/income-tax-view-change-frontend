@@ -24,14 +24,14 @@ import helpers.IncomeSourceCheckDetailsConstants.{testBusinessName, testBusiness
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
-import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, LatencyDetails, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessResponse, singleUKForeignPropertyResponseInLatencyPeriod}
 
 import java.time.LocalDate
 
@@ -91,6 +91,9 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
     )
   }
 
+  val dateNow = LocalDate.now()
+  def taxYearEnd: Int = if(dateNow.isAfter(LocalDate.of(dateNow.getYear, 4, 5))) dateNow.getYear + 1 else dateNow.getYear
+
   override def afterEach(): Unit = {
     super.afterEach()
     repository.clearSession(testSessionId).futureValue shouldBe true
@@ -115,9 +118,12 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
                 enable(OptInOptOutContentUpdateR17)
                 enable(IncomeSourcesNewJourney)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
+
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd + 1, ITSAYearStatus(Voluntary, Voluntary, Voluntary))
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(
+                  dateService.getCurrentTaxYearEnd + 1, ITSAYearStatus(Voluntary, Voluntary, Voluntary))
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -154,9 +160,14 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
                 disable(OptInOptOutContentUpdateR17)
                 enable(IncomeSourcesNewJourney)
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+                val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
+
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd + 1, ITSAYearStatus(Voluntary, Voluntary, Voluntary))
+
+                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(
+                  dateService.getCurrentTaxYearEnd + 1, ITSAYearStatus(Voluntary, Voluntary, Voluntary))
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 

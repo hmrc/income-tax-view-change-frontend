@@ -42,13 +42,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSourceDetails,
                                                     val authActions: AuthActions,
                                                     val itsaStatusService: ITSAStatusService,
-                                                    val dateService: DateService,
                                                     val calculationListService: CalculationListService,
                                                     val sessionService: SessionService)
                                                    (implicit val ec: ExecutionContext,
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                     val mcc: MessagesControllerComponents,
+                                                    val dateService: DateService,
                                                     val appConfig: FrontendAppConfig) extends FrontendController(mcc)
     with I18nSupport with JourneyChecker {
 
@@ -203,13 +203,19 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         firstYear = None,
         secondYear = Some(itsaStatus)
       ),
+      //Dummy code to fix compile warnings
+      latencyYearsAnnual = LatencyYearsAnnual(
+        firstYear = None,
+        secondYear = Some(itsaStatus)
+      ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = crystallisationTaxYear1,
         secondYear = crystallisationTaxYear2
       ),
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
 
@@ -229,13 +235,19 @@ class ManageIncomeSourceDetailsController @Inject()(val view: ManageIncomeSource
         firstYear = None,
         secondYear = Some(itsaStatus)
       ),
+      //Dummy code to fix compile warnings
+      latencyYearsAnnual = LatencyYearsAnnual(
+        firstYear = None,
+        secondYear = Some(itsaStatus)
+      ),
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = crystallisationTaxYear1,
         secondYear = crystallisationTaxYear2
       ),
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
 

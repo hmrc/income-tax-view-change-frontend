@@ -18,18 +18,15 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import controllers.BaseController
-import play.api.Logger
-import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.mvc._
-import testOnly.connectors.{DynamicStubConnector, PenaltiesStubConnector}
-import testOnly.forms.StubDataForm
-import testOnly.models.{DataModel, PenaltiesDataModel}
+import testOnly.connectors.PenaltiesStubConnector
+import testOnly.models.PenaltiesDataModel
 import testOnly.views.html.StubDataView
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class StubPenaltiesDataController @Inject()(stubDataView: StubDataView)

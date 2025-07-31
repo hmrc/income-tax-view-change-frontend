@@ -25,22 +25,30 @@ import uk.gov.hmrc.http.HttpResponse
 
 
 object ITSAStatusTestConstants {
-  val statusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, StatusReason.SignupReturnAvailable, Some(8000.25))
-  val statusDetailMTDMandated = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Mandated, StatusReason.SignupReturnAvailable, Some(8000.25))
+  val statusDetailNotRollover = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, StatusReason.SignupReturnAvailable, Some(8000.25))
+  val statusDetailRollover = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, StatusReason.Rollover, Some(8000.25))
+  val statusDetailMTDMandatedAndReasonNotRollover = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Mandated, StatusReason.SignupReturnAvailable, Some(8000.25))
+  val statusDetailMTDMandatedAndReasonRollover = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Mandated, StatusReason.Rollover, Some(8000.25))
+  val statusDetailAnnualAndReasonRollover = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Annual, StatusReason.Rollover, Some(8000.25))
+  val statusDetailAnnualAndReasonNotRollover = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Annual, StatusReason.SignupReturnAvailable, Some(8000.25))
   val statusDetailMinimal = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.NoStatus, StatusReason.SignupReturnAvailable, None)
-  val successITSAStatusResponseModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetail)))
-  val successITSAStatusResponseMTDMandatedModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated)))
+  val successITSAStatusResponseModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetailNotRollover)))
+  val successITSAStatusResponseModelWithRollover = ITSAStatusResponseModel("2019-20", Some(List(statusDetailRollover)))
+  val successITSAStatusResponseMTDMandatedModel = ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandatedAndReasonNotRollover)))
+  val successITSAStatusResponseMTDMandatedModelRollover = ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandatedAndReasonRollover)))
+  val successITSAStatusResponseAnnualModelRollover = ITSAStatusResponseModel("2019-20", Some(List(statusDetailAnnualAndReasonRollover)))
+  val successITSAStatusResponseAnnualModelNotRollover = ITSAStatusResponseModel("2019-20", Some(List(statusDetailAnnualAndReasonNotRollover)))
   val successMultipleYearITSAStatusResponse = {
     List(
-      ITSAStatusResponseModel("2019-20", Some(List(statusDetail))),
-      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandated)))
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailNotRollover))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandatedAndReasonNotRollover)))
     )
   }
   val successMultipleYearITSAStatusWithUnknownResponse = {
     List(
-      ITSAStatusResponseModel("2019-20", Some(List(statusDetail))),
-      ITSAStatusResponseModel("2020-21", Some(List(statusDetail))),
-      ITSAStatusResponseModel("2021-22", Some(List(statusDetail)))
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailNotRollover))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailNotRollover))),
+      ITSAStatusResponseModel("2021-22", Some(List(statusDetailNotRollover)))
     )
   }
   val successITSAStatusResponseModelMinimal = ITSAStatusResponseModel("2019-20", None)
@@ -50,29 +58,29 @@ object ITSAStatusTestConstants {
 
   val successMultipleYearMandatedITSAStatusResponse = {
     List(
-      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated))),
-      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandated)))
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandatedAndReasonNotRollover))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandatedAndReasonNotRollover)))
     )
   }
 
   val currentYearMandatedPreviousYearNoStatusResponse = {
     List(
       ITSAStatusResponseModel("2019-20", Some(List(statusDetailMinimal))),
-      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandated)))
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailMTDMandatedAndReasonNotRollover)))
     )
   }
 
   val previousYearMandatedCurrentYearNoStatusResponse = {
     List(
-      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandated))),
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailMTDMandatedAndReasonNotRollover))),
       ITSAStatusResponseModel("2020-21", Some(List(statusDetailMinimal)))
     )
   }
 
   val bothYearsNoStatusResponse = {
     List(
-      ITSAStatusResponseModel("2019-20", Some(List(statusDetail))),
-      ITSAStatusResponseModel("2020-21", Some(List(statusDetail)))
+      ITSAStatusResponseModel("2019-20", Some(List(statusDetailNotRollover))),
+      ITSAStatusResponseModel("2020-21", Some(List(statusDetailNotRollover)))
     )
   }
 
@@ -128,7 +136,7 @@ object ITSAStatusTestConstants {
   val badJsonHttpResponse = HttpResponse(Status.OK, Json.obj(), Map.empty)
 
 
-  val yearToStatus: Map[TaxYear, StatusDetail] = Map(TaxYear.forYearEnd(2020) -> statusDetail, TaxYear.forYearEnd(2021) -> statusDetailMTDMandated)
-  val yearToUnknownStatus: Map[TaxYear, StatusDetail] = Map(TaxYear.forYearEnd(2020) -> statusDetail, TaxYear.forYearEnd(2021) -> statusDetail, TaxYear.forYearEnd(2022) -> statusDetail)
+  val yearToStatus: Map[TaxYear, StatusDetail] = Map(TaxYear.forYearEnd(2020) -> statusDetailNotRollover, TaxYear.forYearEnd(2021) -> statusDetailMTDMandatedAndReasonNotRollover)
+  val yearToUnknownStatus: Map[TaxYear, StatusDetail] = Map(TaxYear.forYearEnd(2020) -> statusDetailNotRollover, TaxYear.forYearEnd(2021) -> statusDetailNotRollover, TaxYear.forYearEnd(2022) -> statusDetailNotRollover)
 
 }

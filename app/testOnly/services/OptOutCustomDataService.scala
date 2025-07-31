@@ -139,11 +139,17 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
     val hipWriter = implicitly[Writes[List[ITSAStatusResponseModel]]]
 
 
-    val hipPayload: DataModel = DataModel(
+    val hipPayloadFromCyMinusOne: DataModel = DataModel(
       _id = s"/itsd/person-itd/itsa-status/$nino?taxYear=${taxYear.addYears(-1).formatAsShortYearRange}&futureYears=true&history=false",
       schemaId = "getHIPITSAStatusSuccess", method = "GET", status = OK, response = Some(Json.toJson(itsaStatusCombined)(hipWriter))
     )
 
-    dynamicStubService.addData(dataModel = hipPayload)
+    val hipPayloadFromCy: DataModel = DataModel(
+      _id = s"/itsd/person-itd/itsa-status/$nino?taxYear=${taxYear.formatAsShortYearRange}&futureYears=true&history=false",
+      schemaId = "getHIPITSAStatusSuccess", method = "GET", status = OK, response = Some(Json.toJson(itsaStatusCombined)(hipWriter))
+    )
+
+    dynamicStubService.addData(dataModel = hipPayloadFromCyMinusOne)
+    dynamicStubService.addData(dataModel = hipPayloadFromCy)
   }
 }
