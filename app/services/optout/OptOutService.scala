@@ -287,15 +287,13 @@ class OptOutService @Inject()(
           val currentYearStatus = proposition.currentTaxYear.status
 
           (checkOptOutStatus, proposition.optOutPropositionType, currentYearStatus) match {
-            case (Some((true, propositionTaxYear)), Some(propositionType), _) if propositionType.state().contains(MultiYearOptOutDefault) =>
-              Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus))
-            case (Some((true, propositionTaxYear)), Some(propositionType), _) if propositionType.state().contains(OneYearOptOutFollowedByMandated) =>
-              Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus))
-            case (Some((true, propositionTaxYear)), Some(propositionType), _) if propositionType.state().contains(OneYearOptOutFollowedByAnnual) =>
-              Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus))
-            case (Some((true, propositionTaxYear)), Some(propositionType), Annual) if propositionType.state().contains(NextYearOptOut) =>
-              Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus))
-            case (Some((true, propositionTaxYear)), Some(propositionType), Mandated) if propositionType.state().contains(NextYearOptOut) =>
+            case (Some((true, propositionTaxYear)), Some(propositionType), status)
+              if propositionType.state().exists(state =>
+                state == MultiYearOptOutDefault ||
+                state == OneYearOptOutFollowedByMandated ||
+                state == OneYearOptOutFollowedByAnnual ||
+                (state == NextYearOptOut && (status == Annual || status == Mandated))
+              ) =>
               Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus))
             case (Some((true, _)), Some(_), _) =>
               Logger("application").warn("[OptOutService] Unknown scenario for opt out tax year, redirecting to Reporting Obligations Page")
