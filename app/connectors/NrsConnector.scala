@@ -20,13 +20,12 @@ import config.FrontendAppConfig
 import models.nrs.{NrsSubmissionFailure, NrsSuccessResponse}
 import play.api.Logging
 import play.api.libs.json.JsValue
-import play.api.mvc.Results.Status
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.http.Status
 import utils.Retrying
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Success, Try}
 import scala.util.control.NonFatal
