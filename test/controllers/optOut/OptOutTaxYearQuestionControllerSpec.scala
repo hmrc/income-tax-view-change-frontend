@@ -52,7 +52,9 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
   val optOutState = Some(MultiYearOptOutDefault)
   val viewModel = OptOutTaxYearQuestionViewModel(
     taxYear = optOutTaxYear,
-    optOutState = optOutState
+    optOutState = optOutState,
+    numberOfQuarterlyUpdates = 0,
+    currentYearStatus = ITSAStatus.Voluntary
   )
 
   private def reportingObligationsLink(isAgent: Boolean): Option[String] = {
