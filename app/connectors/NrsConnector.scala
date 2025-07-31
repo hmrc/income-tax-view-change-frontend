@@ -41,11 +41,12 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
   private val nrsOrchestratorSubmissionUrl: String = s"${appConfig.nrsBaseUrl}/nrs-orchestrator/submission"
   private val apiKey: String = appConfig.nrsApiKey
   private val numberOfRetries: Int = appConfig.nrsRetries
+  private val CLIENT_CLOSED_REQUEST = 499
 
-  private def shouldRetry(response: HttpResponse): Boolean =
+  private def shouldRetry(response: HttpResponse): Boolean = {
     Status.isServerError(response.status) ||
-      response.status == TOO_MANY_REQUESTS ||
-      response.status == 499
+      Seq(TOO_MANY_REQUESTS, CLIENT_CLOSED_REQUEST).contains(response.status)
+  }
 
   def submit(nrsSubmission: JsValue, remainingAttempts: Int = numberOfRetries): Future[NrsSubmissionResponse] =
     if (appConfig.nrsIsEnabled)
