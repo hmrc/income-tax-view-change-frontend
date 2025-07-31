@@ -21,7 +21,7 @@ import play.api.libs.json.{JsPath, OWrites}
 
 import java.util.Base64
 
-case class NrsSubmission(rawPayload: RawPayload, metadata: NRSMetadata)
+case class NrsSubmission(rawPayload: RawPayload, metadata: NrsMetadata)
 
 object NrsSubmission {
 
@@ -31,6 +31,6 @@ object NrsSubmission {
 
   implicit val writes: OWrites[NrsSubmission] = (
     (JsPath \ "payload").write[String].contramap(encodeBase64) and
-      (JsPath \ "metadata").write[NRSMetadata]
+      (JsPath \ "metadata").write[NrsMetadata]
     )(unlift(NrsSubmission.unapply))
 }

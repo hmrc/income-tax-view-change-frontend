@@ -22,28 +22,29 @@ import play.api.mvc.RequestHeader
 
 import java.time.Instant
 
-case class NRSMetadata(
-  businessId: String,
-  notableEvent: String,
-  payloadContentType: String,
-  payloadSha256Checksum: String,
-  userSubmissionTimestamp: Instant,
-  identityData: IdentityData,
-  userAuthToken: String,
-  headerData: JsValue,
-  searchKeys: SearchKeys)
+case class NrsMetadata(
+  businessId:               String,
+  notableEvent:             String,
+  payloadContentType:       String,
+  payloadSha256Checksum:    String,
+  userSubmissionTimestamp:  Instant,
+  identityData:             IdentityData,
+  userAuthToken:            String,
+  headerData:               JsValue,
+  searchKeys:               SearchKeys
+)
 
-object NRSMetadata extends InstantFormatter {
-  implicit val writes: Writes[NRSMetadata] = Json.writes[NRSMetadata]
+object NrsMetadata extends InstantFormatter {
+  implicit val writes: Writes[NrsMetadata] = Json.writes[NrsMetadata]
 
   def apply(
     userSubmissionTimestamp: Instant,
-    submissionId: String,
-    identityData: IdentityData,
-    request: RequestHeader,
-    checkSum: String
-  ): NRSMetadata =
-    NRSMetadata(
+    submissionId:            String,
+    identityData:            IdentityData,
+    request:                 RequestHeader,
+    checkSum:                String
+  ): NrsMetadata =
+    NrsMetadata(
       businessId              = "itsavc",
       notableEvent            = "your-event-name-here",
       payloadContentType      = MimeTypes.XML,

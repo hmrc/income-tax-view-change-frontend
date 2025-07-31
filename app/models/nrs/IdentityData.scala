@@ -23,39 +23,39 @@ import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole, En
 import java.time.{Instant, LocalDate}
 
 case class IdentityData(
-  internalId: Option[String]               = None,
-  externalId: Option[String]               = None,
-  agentCode: Option[String]                = None,
-  credentials: Option[Credentials]         = None,
-  confidenceLevel: ConfidenceLevel,
-  nino: Option[String]                     = None,
-  saUtr: Option[String]                    = None,
-  name: Option[Name]                       = None,
-  dateOfBirth: Option[LocalDate]           = None,
-  email: Option[String]                    = None,
-  agentInformation: AgentInformation,
-  groupIdentifier: Option[String]          = None,
-  credentialRole: Option[CredentialRole]   = None,
-  mdtpInformation: Option[MdtpInformation] = None,
-  itmpName: Option[ItmpName]               = None,
-  itmpDateOfBirth: Option[LocalDate]       = None,
-  itmpAddress: Option[ItmpAddress]         = None,
-  affinityGroup: Option[AffinityGroup]     = None,
-  credentialStrength: Option[String]       = None,
-  enrolments: Enrolments                   = Enrolments(Set()),
-  loginTimes: LoginTimes
+  internalId:         Option[String]          = None,
+  externalId:         Option[String]          = None,
+  agentCode:          Option[String]          = None,
+  credentials:        Option[Credentials]     = None,
+  confidenceLevel:    ConfidenceLevel,
+  nino:               Option[String]          = None,
+  saUtr:              Option[String]          = None,
+  name:               Option[Name]            = None,
+  dateOfBirth:        Option[LocalDate]       = None,
+  email:              Option[String]          = None,
+  agentInformation:   AgentInformation,
+  groupIdentifier:    Option[String]          = None,
+  credentialRole:     Option[CredentialRole]  = None,
+  mdtpInformation:    Option[MdtpInformation] = None,
+  itmpName:           Option[ItmpName]        = None,
+  itmpDateOfBirth:    Option[LocalDate]       = None,
+  itmpAddress:        Option[ItmpAddress]     = None,
+  affinityGroup:      Option[AffinityGroup]   = None,
+  credentialStrength: Option[String]          = None,
+  enrolments:         Enrolments              = Enrolments(Set()),
+  loginTimes:         LoginTimes
 )
 
 object IdentityData {
-  implicit val localDateTimeWrites: Writes[LocalDate]    = Writes.DefaultLocalDateWrites
-  implicit val instantWrites: Writes[Instant]            = InstantFormatter.instantWrites
-  implicit val credWrites: Writes[Credentials]           = Json.writes[Credentials]
-  implicit val nameWrites: Writes[Name]                  = Json.writes[Name]
-  implicit val agentInfoWrites: Writes[AgentInformation] = Json.writes[AgentInformation]
-  implicit val mdtpInfoWrites: Writes[MdtpInformation]   = Json.writes[MdtpInformation]
-  implicit val itmpNameWrites: Writes[ItmpName]          = Json.writes[ItmpName]
-  implicit val itmpAddressWrites: Writes[ItmpAddress]    = Json.writes[ItmpAddress]
-  implicit val loginTimesWrites: Writes[LoginTimes]      = Json.writes[LoginTimes]
-  implicit val enrolmentWrites: Writes[Enrolments]       = Json.writes[Enrolments]
-  implicit val writes: Writes[IdentityData]              = Json.writes[IdentityData]
+  implicit val localDateTimeWrites: Writes[LocalDate]        = Writes.DefaultLocalDateWrites
+  implicit val instantWrites:       Writes[Instant]          = InstantFormatter.instantWrites
+  implicit val credWrites:          Writes[Credentials]      = Json.writes[Credentials]
+  implicit val nameWrites:          Writes[Name]             = Json.writes[Name]
+  implicit val agentInfoWrites:     Writes[AgentInformation] = Json.writes[AgentInformation]
+  implicit val mdtpInfoWrites:      Writes[MdtpInformation]  = Json.writes[MdtpInformation]
+  implicit val itmpNameWrites:      Writes[ItmpName]         = Json.writes[ItmpName]
+  implicit val itmpAddressWrites:   Writes[ItmpAddress]      = Json.writes[ItmpAddress]
+  implicit val loginTimesWrites:    Writes[LoginTimes]       = Json.writes[LoginTimes]
+  implicit val enrolmentWrites:     Writes[Enrolments]       = Json.writes[Enrolments]
+  implicit val writes:              Writes[IdentityData]     = Json.writes[IdentityData]
 }
