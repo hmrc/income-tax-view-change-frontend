@@ -64,6 +64,22 @@ object BusinessDetailsIntegrationTestConstants {
 
   val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
 
+  val businessWithId = BusinessDetailsModel(
+    incomeSourceId = "ID",
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = b1AccountingStart,
+      end = b1AccountingEnd
+    )),
+    tradingName = Some(b1TradingName),
+    firstAccountingPeriodEndDate = Some(b1AccountingEnd),
+    tradingStartDate = Some(b1TradingStart),
+    contextualTaxYear = None,
+    cessation = None,
+    address = Some(address),
+    cashOrAccruals = Some(false)
+  )
+
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
