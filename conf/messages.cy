@@ -2798,6 +2798,20 @@ optIn.beforeYouStart.voluntaryStatus           = Eich statws gwirfoddol
 optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn yn wirfoddol i adrodd yn chwarterol, byddech yn gallu optio allan ar unrhyw adeg ac felly dychwelyd i adroddiadau blynyddol.
 optIn.beforeYouStart.button.start              = Dechrau
 
+# sign up start
+signUp.start.heading                           = Cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+signUp.start.desc                              = Mae hyn yn galluogi CThEF i roi rhagolwg gwell o swm y dreth sydd arnoch, a hynny er mwyn eich helpu i gyllidebu’n well.
+signUp.start.inset                             = Os ydych yn cofrestru’n wirfoddol, bydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+signUp.start.reportingQuarterly.heading        = Adrodd yn chwarterol
+signUp.start.reportingQuarterly.desc           = Bydd cofrestru’n wirfoddol yn golygu y bydd angen i chi wneud y canlynol:
+signUp.start.reportingQuarterly.bullet1        = cadw cofnodion digidol o’ch incwm a threuliau o fod yn unig fasnachwr ac o eiddo
+signUp.start.reportingQuarterly.bullet2        = cyflwyno diweddariad pob 3 mis ar gyfer pob un ffynhonnell incwm
+signUp.start.reportingQuarterly.bullet3        = parhau i gyflwyno Ffurflenni Treth
+signUp.start.reportingQuarterly.cy.desc        = Os ydych wedi defnyddio meddalwedd i gyflwyno’ch incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon yn barod, bydd angen i chi ailgyflwyno’r wybodaeth hon yn eich diweddariad chwarterol nesaf.
+signUp.start.ifYouChangeYourMind.heading       = Os ydych yn newid eich meddwl
+signUp.start.ifYouChangeYourMind.desc          = Gan eich bod wedi cofrestru’n wirfoddol, gallech benderfynu optio allan ar unrhyw adeg.
+signUp.start.button                            = Cofrestru
+
 # opt-in single taxyear warning
 optIn.singleTaxYearWarning.heading                                      = Optio i mewn yn wirfoddol i adrodd yn chwarterol am flwyddyn dreth unigol
 optIn.singleTaxYearWarning.desc1                                        = Gall optio i mewn ar gyfer y flwyddyn dreth bresennol golygu y bydd gennych ddiweddariadau chwarterol hwyr.
