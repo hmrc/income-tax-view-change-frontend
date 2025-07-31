@@ -77,7 +77,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
           ): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
+        withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { _ =>
           incomeSourceType match {
             case SelfEmployment =>
               id match {
@@ -101,7 +101,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
   def showChange(incomeSourceType: IncomeSourceType,
                  isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
+      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), InitialPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => mkIncomeSourceIdHash(IncomeSourceId(id)))
         val backUrl = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(isAgent, incomeSourceType).url

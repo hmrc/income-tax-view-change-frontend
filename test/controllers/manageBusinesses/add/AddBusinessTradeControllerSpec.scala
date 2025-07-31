@@ -22,7 +22,6 @@ import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.BusinessTradeForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -64,8 +63,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the AddBusinessTrade page" when {
-            "incomeSources feature is enabled" in {
-              enable(IncomeSourcesNewJourney)
+            "using the manage businesses journey" in {
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
@@ -77,27 +75,8 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
             }
           }
 
-          "redirect to the home page" when {
-            "when feature switch is disabled" in {
-              setupMockSuccess(mtdRole)
-
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              setupMockCreateSession(true)
-
-              val result: Future[Result] = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val homeUrl = if (mtdRole == MTDIndividual){
-                controllers.routes.HomeController.show().url
-              } else {
-                controllers.routes.HomeController.showAgent().url
-              }
-              redirectLocation(result) shouldBe Some(homeUrl)
-            }
-          }
-
           s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
             "user has already completed the journey" in {
-              enable(IncomeSourcesNewJourney)
               mockNoIncomeSources()
               setupMockSuccess(mtdRole)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
@@ -113,7 +92,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
             }
 
             "user has already added their income source" in {
-              enable(IncomeSourcesNewJourney)
               mockNoIncomeSources()
               setupMockSuccess(mtdRole)
               setupMockGetMongo(Right(Some(addedIncomeSourceUIJourneySessionData(SelfEmployment))))
@@ -144,7 +122,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
           if(mode == CheckMode) {
             "redirect to the IncomeSourceCheckDetailsController page" when {
               "the business trade entered is valid" in {
-                enable(IncomeSourcesNewJourney)
                 setupMockSuccess(mtdRole)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
@@ -167,7 +144,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
           } else {
             "redirect to the add business address page" when {
               "the individual is authenticated and the business trade entered is valid" in {
-                enable(IncomeSourcesNewJourney)
                 setupMockSuccess(mtdRole)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
@@ -190,7 +166,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
           "return to add business trade page" when {
             "trade name is same as business name" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -208,7 +183,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
             }
 
             "trade name contains invalid characters" in {
-              enable(IncomeSourcesNewJourney)
               val invalidBusinessTradeChar: String = "££"
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -225,7 +199,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
             }
 
             "trade name is empty" in {
-              enable(IncomeSourcesNewJourney)
               val invalidBusinessTradeEmpty: String = ""
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -242,7 +215,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
             }
 
             "trade name is too short" in {
-              enable(IncomeSourcesNewJourney)
               val invalidBusinessTradeShort: String = "A"
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -259,7 +231,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
             }
 
             "trade name is too long" in {
-              enable(IncomeSourcesNewJourney)
               val invalidBusinessTradeLong: String = "This trade name is far too long to be accepted"
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)

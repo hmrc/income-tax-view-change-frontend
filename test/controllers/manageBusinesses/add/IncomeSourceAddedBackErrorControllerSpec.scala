@@ -21,7 +21,6 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api
@@ -65,7 +64,6 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
         val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedBackErrorController.show(incomeSourceType) else testIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           s"render the you cannot go back error page" in {
-            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -78,23 +76,6 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
             document.title shouldBe getTitle(mtdRole != MTDIndividual)
             document.getElementById("warning-message").text() shouldBe warningMessage
           }
-
-          s"redirect to home page" when {
-            "the incomeSources is disabled" in {
-              setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-              val result = action(fakeRequest)
-
-              status(result) shouldBe SEE_OTHER
-              val homeUrl = if (mtdRole == MTDIndividual) {
-                controllers.routes.HomeController.show().url
-              } else {
-                controllers.routes.HomeController.showAgent().url
-              }
-              redirectLocation(result) shouldBe Some(homeUrl)
-            }
-          }
         }
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
@@ -105,7 +86,6 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
         s"the user is authenticated as a $mtdRole" should {
           s"return ${Status.SEE_OTHER} and redirect to $incomeSourceType reporting method page" in {
             disableAllSwitches()
-            enable(IncomeSourcesNewJourney)
 
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)

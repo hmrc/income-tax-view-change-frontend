@@ -55,7 +55,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { sessionData =>
+      withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { sessionData =>
         val (reportingMethodOpt, taxYearOpt, incomeSourceIdStringOpt) = (
           sessionData.manageIncomeSourceData.flatMap(_.reportingMethod),
           sessionData.manageIncomeSourceData.flatMap(_.taxYear),

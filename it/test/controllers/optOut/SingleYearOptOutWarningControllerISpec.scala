@@ -21,7 +21,7 @@ import enums.MTDIndividual
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import helpers.OptOutSessionRepositoryHelper
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
-import models.admin.{IncomeSourcesFs, NavBarFs, OptOutFs}
+import models.admin.{NavBarFs, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -62,7 +62,6 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
     "render single tax year opt out confirmation page" when {
       "User is authorised" in {
         enable(OptOutFs)
-        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -97,7 +96,6 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
     s"return status $BAD_REQUEST and render single tax year opt out confirmation pager with error message - $BAD_REQUEST " when {
       "user answers with invalid data" in {
         enable(OptOutFs)
-        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -126,7 +124,6 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
     s"redirect to ConfirmOptOutPage - $confirmOptOutPageUrl with status $SEE_OTHER" when {
       "user answers Yes" in {
         enable(OptOutFs)
-        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -152,7 +149,6 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
     s"redirect to OptOutCancelledPage - $optOutCancelledUrl with status $SEE_OTHER" when {
       "user answers No" in {
         enable(OptOutFs)
-        enable(IncomeSourcesFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 

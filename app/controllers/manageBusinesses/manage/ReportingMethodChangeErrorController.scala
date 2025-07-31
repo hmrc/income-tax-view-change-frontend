@@ -49,8 +49,7 @@ class ReportingMethodChangeErrorController @Inject()(val authActions: AuthAction
 
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType
-          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    withNewIncomeSourcesFS {
+          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user => {
       if (incomeSourceType == SelfEmployment) {
         sessionService.getMongoKey(ManageIncomeSourceData.incomeSourceIdField, IncomeSourceJourneyType(Manage, incomeSourceType)).flatMap {
           case Right(Some(incomeSourceId)) => handleShowRequest(Some(mkIncomeSourceId(incomeSourceId)), incomeSourceType, isAgent)

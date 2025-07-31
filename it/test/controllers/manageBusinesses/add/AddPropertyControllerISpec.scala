@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.AddProprertyForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.NavBarFs
 import models.core.NormalMode
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
@@ -46,8 +46,7 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the Add Property page" when {
-            "income source feature is enabled" in {
-              enable(IncomeSourcesNewJourney)
+            "using the manage businesses journey" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -70,7 +69,6 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "redirect to the add uk property start date page" when {
             "form response is UK" in {
-              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -86,7 +84,6 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
           }
           "redirect to the add foreign property start date page" when {
             "form response is foreign propery" in {
-              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -102,7 +99,6 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
           }
           "return a BAD_REQUEST" when {
             "form is empty" in {
-              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -115,7 +111,6 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
               )
             }
             "form is invalid" in {
-              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

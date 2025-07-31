@@ -23,7 +23,7 @@ import enums.MTDPrimaryAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs, ReportingFrequencyPage}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -456,10 +456,9 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               }
             }
             "display Income Sources tile" when {
-              "IncomeSources feature switch is enabled" in {
+              "using the manage businesses journey" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                enable(IncomeSourcesFs)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -522,15 +521,14 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "home.agent.heading"),
                   elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
-                  elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
+                  elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
                 )
               }
             }
             "display Your Businesses tile" when {
-              "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
+              "using the manage businesses journey" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
-                enable(IncomeSourcesFs, IncomeSourcesNewJourney)
 
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -735,7 +733,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
           }
           "retrieving the income sources was unsuccessful" in {
             disable(NavBarFs)
-            enable(IncomeSourcesFs)
             stubAuthorised(mtdUserRole)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(

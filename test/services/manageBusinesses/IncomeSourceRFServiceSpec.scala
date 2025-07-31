@@ -21,7 +21,6 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{AfterSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import mocks.services.{MockCalculationListService, MockITSAStatusService, MockSessionService}
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.StatusDetail
@@ -66,8 +65,6 @@ class IncomeSourceRFServiceSpec extends TestSupport
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
 
   class Setup(withLatency: Boolean, CYStatus: ITSAStatus, CYStatusReason: StatusReason, NYStatus: ITSAStatus, NYStatusReason: StatusReason, isCYCrystallised: Boolean = false) {
-    enable(IncomeSourcesNewJourney)
-
     setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
     setupMockSetMongoData(true)
 

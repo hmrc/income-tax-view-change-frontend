@@ -22,7 +22,6 @@ import forms.manageBusinesses.add.AddProprertyForm
 import forms.manageBusinesses.add.AddProprertyForm._
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -66,8 +65,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "display the add property page" when {
-          "IncomeSources FS is enabled" in {
-            enable(IncomeSourcesNewJourney)
+          "using the manage businesses journey" in {
             setupMockSuccess(mtdRole)
             mockNoIncomeSources()
             val result = action(fakeRequest)
@@ -77,21 +75,6 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             val backUrl = if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
             document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
-          }
-        }
-
-        "redirect to the home page" when {
-          "IncomeSources FS is disabled" in {
-            disable(IncomeSourcesNewJourney)
-            setupMockSuccess(mtdRole)
-
-            mockNoIncomeSources()
-
-            val result = action(fakeRequest)
-
-            status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
-            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }
@@ -104,7 +87,6 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
       s"the user is authenticated as a $mtdRole" should {
         s"return ${Status.SEE_OTHER}: redirect to the correct Add Start Date Page" when {
           "foreign property selected" in {
-            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -118,7 +100,6 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
           "uk property selected" in {
-            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -135,7 +116,6 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
 
         s"return ${Status.BAD_REQUEST}" when {
           "an invalid form is submitted" in {
-            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -148,7 +128,6 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             document.title shouldBe getValidationErrorTabTitle()
           }
           "an empty form is submitted" in {
-            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -161,7 +140,6 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             document.title shouldBe getValidationErrorTabTitle()
           }
           "no form is submitted" in {
-            enable(IncomeSourcesNewJourney)
             setupMockSuccess(mtdRole)
 
             mockNoIncomeSources()
@@ -169,21 +147,6 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
             val result = action(fakeRequest)
 
             status(result) shouldBe BAD_REQUEST
-          }
-        }
-
-        "redirect to the home page" when {
-          "IncomeSources FS is disabled" in {
-            disable(IncomeSourcesNewJourney)
-            setupMockSuccess(mtdRole)
-
-            mockNoIncomeSources()
-
-            val result = action(fakeRequest)
-
-            status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
-            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
       }

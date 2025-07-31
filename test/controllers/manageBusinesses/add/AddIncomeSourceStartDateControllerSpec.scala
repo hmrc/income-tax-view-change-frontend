@@ -22,7 +22,6 @@ import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
@@ -127,9 +126,8 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
           s"the user is authenticated as a $mtdRole" should {
             s"return ${Status.OK}: render the Add ${incomeSourceType.key} start date page" when {
-              "incomeSources FS is enabled" in {
+              "using the manage businesses journey" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
                 mockNoIncomeSources()
                 if(mode == CheckMode) {
                   val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
@@ -156,7 +154,6 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               s"return ${Status.OK}: render the Add Business start date Check page with form filled " when {
                 s"session contains key: $dateStartedField (${incomeSourceType.key})" in {
                   setupMockSuccess(mtdRole)
-                  enable(IncomeSourcesNewJourney)
 
                   mockNoIncomeSources()
                   setupMockCreateSession(true)
@@ -181,7 +178,6 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
               s"user has already completed the journey (${incomeSourceType.key})" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockGetMongo(Right(Some(sessionDataCompletedJourney(IncomeSourceJourneyType(Add, incomeSourceType)))))
@@ -194,7 +190,6 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               }
               s"user has already added their income source (${incomeSourceType.key})" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
                 mockNoIncomeSources()
                 setupMockGetMongo(Right(Some(sessionDataISAdded(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
@@ -202,21 +197,6 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
                 status(result) shouldBe SEE_OTHER
                 val redirectUrl = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType).url
                 else controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.show(incomeSourceType).url
-                redirectLocation(result) shouldBe Some(redirectUrl)
-              }
-            }
-            s"return ${Status.SEE_OTHER} and redirect to home page" when {
-              s"incomeSources FS is disabled (${incomeSourceType.key})" in {
-                disable(IncomeSourcesNewJourney)
-                setupMockSuccess(mtdRole)
-
-                mockNoIncomeSources()
-                setupMockGetMongo(Right(getInitialMongo(incomeSourceType)))
-
-                val result = action(fakeRequest)
-
-                status(result) shouldBe SEE_OTHER
-                val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
                 redirectLocation(result) shouldBe Some(redirectUrl)
               }
             }
@@ -231,7 +211,6 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"redirect to the Add Business Start Date Check page" when {
               "a valid form is submitted" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
                 setupMockCreateSession(true)
@@ -251,7 +230,6 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"return ${Status.BAD_REQUEST}" when {
               "an invalid form is submitted" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
 
@@ -264,7 +242,6 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               }
               "an empty form is submitted" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
 
@@ -278,28 +255,12 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               }
               "no form is submitted" in {
                 setupMockSuccess(mtdRole)
-                enable(IncomeSourcesNewJourney)
 
                 mockNoIncomeSources()
 
                 val result = action(fakeRequest)
 
                 status(result) shouldBe BAD_REQUEST
-              }
-            }
-
-            s"return ${Status.SEE_OTHER} and redirect to home page" when {
-              "incomeSources FS is disabled" in {
-                setupMockSuccess(mtdRole)
-                disable(IncomeSourcesNewJourney)
-
-                mockNoIncomeSources()
-
-                val result = action(fakeRequest)
-
-                status(result) shouldBe SEE_OTHER
-                val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
-                redirectLocation(result) shouldBe Some(redirectUrl)
               }
             }
           }

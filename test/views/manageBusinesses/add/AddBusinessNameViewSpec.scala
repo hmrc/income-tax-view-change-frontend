@@ -17,7 +17,7 @@
 package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.SelfEmployment
-import forms.incomeSources.add.BusinessNameForm
+import forms.manageBusinesses.add.BusinessNameForm
 import models.core.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -114,21 +114,23 @@ class AddBusinessNameViewSpec extends ViewSpec {
   }
 
   object AddBusinessNameMessages {
-    val heading1: String = messages("add-business-name.heading1")
-    val heading2: String = messages("add-business-name.heading2")
-    val paragraph: String = messages("add-business-name.p1")
-    val hint: String = messages("add-business-name.p2")
-    val errorBusinessNameEmpty: String = messages("add-business-name.form.error.required")
-    val errorBusinessNameLength: String = messages("add-business-name.form.error.maxLength")
-    val errorBusinessNameChar: String = messages("add-business-name.form.error.invalidNameFormat")
-    val continue: String = messages("base.continue")
-    val errorPrefix: String = messages("base.error-prefix")
+    val heading1: String = "Business name"
+    val heading2: String = "What is your business name?"
+    val paragraph: String = "This is the business name you used to register for Self Assessment. If your sole trader business does not have a separate name, enter your own first and last name."
+    val hint: String = "The business name you enter can only include upper or lower case letters, full stops, commas, digits, &, {0}, \\, /, -."
+    val errorBusinessNameEmpty: String = "Enter your name or the name of your business"
+    val errorBusinessNameLength: String = "Business name must be 105 characters or fewer"
+    val errorBusinessNameChar: String = "Business name cannot include !, \"\", * or ?"
+    val continue: String = "Continue"
+    val errorPrefix: String = "Error:"
+    val soleTrader: String = "Sole trader"
+    val thereIsAProblem: String = "There is a problem"
   }
 
   "AddBusinessNameView - ADD - Individual" when {
     "there is no error on the add page" should {
       "have the correct title heading" in new TestSetup(false, false, false) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
+        document.getElementsByClass("govuk-caption-l").text() shouldBe AddBusinessNameMessages.soleTrader
         document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(false, false, false) {
@@ -136,7 +138,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
       }
       "render the question heading, paragraph text, hint text, and input field" in new TestSetup(false, false, false) {
         val heading2: Element = document.selectFirst("h2.govuk-heading-m")
-        heading2.text shouldBe messages("add-business-name.heading2")
+        heading2.text shouldBe AddBusinessNameMessages.heading2
 
         val paragraph: Element = document.selectFirst("p.govuk-body")
         paragraph.text shouldBe AddBusinessNameMessages.paragraph
@@ -157,12 +159,12 @@ class AddBusinessNameViewSpec extends ViewSpec {
     }
     "there is an error on the page" should {
       "render the error summary" in new TestSetup(false, true, false) {
-        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+        document.getElementById("error-summary-heading").text() shouldBe AddBusinessNameMessages.thereIsAProblem
+        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe AddBusinessNameMessages.errorBusinessNameEmpty
       }
       "render the error message" in new TestSetup(false, true, false) {
         document.getElementById("business-name-error").text() shouldBe
-          s"${messages("base.error-prefix")} ${messages("add-business-name.form.error.required")}"
+          s"Error: ${AddBusinessNameMessages.errorBusinessNameEmpty}"
       }
     }
   }
@@ -170,7 +172,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - CHANGE - Individual" when {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(false, false, true) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
+        document.getElementsByClass("govuk-caption-l").text() shouldBe AddBusinessNameMessages.soleTrader
         document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(false, false, true) {
@@ -192,12 +194,12 @@ class AddBusinessNameViewSpec extends ViewSpec {
     }
     "there is an error on the page" should {
       "render the error summary" in new TestSetup(false, true, true) {
-        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+        document.getElementById("error-summary-heading").text() shouldBe AddBusinessNameMessages.thereIsAProblem
+        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe AddBusinessNameMessages.errorBusinessNameEmpty
       }
       "render the error message" in new TestSetup(false, true, true) {
         document.getElementById("business-name-error").text() shouldBe
-          s"${messages("base.error-prefix")} ${messages("add-business-name.form.error.required")}"
+          s"Error: ${AddBusinessNameMessages.errorBusinessNameEmpty}"
       }
     }
   }
@@ -205,7 +207,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - ADD - Agent" when {
     "there is no error on the add page" should {
       "have the correct heading" in new TestSetup(true, false, false) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
+        document.getElementsByClass("govuk-caption-l").text() shouldBe AddBusinessNameMessages.soleTrader
         document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(true, false, false) {
@@ -228,12 +230,12 @@ class AddBusinessNameViewSpec extends ViewSpec {
     }
     "there is an error on the page" should {
       "render the error summary" in new TestSetup(true, true, false) {
-        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+        document.getElementById("error-summary-heading").text() shouldBe AddBusinessNameMessages.thereIsAProblem
+        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe AddBusinessNameMessages.errorBusinessNameEmpty
       }
       "render the error message" in new TestSetup(true, true, false) {
         document.getElementById("business-name-error").text() shouldBe
-          s"${messages("base.error-prefix")} ${messages("add-business-name.form.error.required")}"
+          s"Error: ${AddBusinessNameMessages.errorBusinessNameEmpty}"
       }
     }
   }
@@ -241,7 +243,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - CHANGE - Agent" when {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(true, false, true) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe messages("incomeSources.add.sole-trader")
+        document.getElementsByClass("govuk-caption-l").text() shouldBe AddBusinessNameMessages.soleTrader
         document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(true, false, true) {
@@ -263,12 +265,12 @@ class AddBusinessNameViewSpec extends ViewSpec {
     }
     "there is an error on the page" should {
       "render the error summary" in new TestSetup(true, true, false) {
-        document.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
-        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe messages("add-business-name.form.error.required")
+        document.getElementById("error-summary-heading").text() shouldBe AddBusinessNameMessages.thereIsAProblem
+        document.getElementsByClass("govuk-error-summary__body").first().text() shouldBe AddBusinessNameMessages.errorBusinessNameEmpty
       }
       "render the error message" in new TestSetup(true, true, false) {
         document.getElementById("business-name-error").text() shouldBe
-          s"${messages("base.error-prefix")} ${messages("add-business-name.form.error.required")}"
+          s"Error: ${AddBusinessNameMessages.errorBusinessNameEmpty}"
       }
     }
   }
