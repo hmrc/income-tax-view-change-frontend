@@ -273,7 +273,6 @@ class OptOutService @Inject()(
   def isOptOutTaxYearValid(taxYear: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutTaxYearQuestionViewModel]] = {
     taxYear match {
       case Some(year) =>
-
         for {
           proposition <- fetchOptOutProposition()
           numberOfQuarterlyUpdates <- getQuarterlyUpdatesCount(proposition.optOutPropositionType)

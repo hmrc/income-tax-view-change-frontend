@@ -66,7 +66,4 @@ object OptOutTaxYearQuestionMessages {
   val nextYearOptOutMandatedDesc1 = "From 6 April 2026, this would mean you would not need to use software compatible with Making Tax Digital for Income Tax."
   val nextYearOptOutMandatedDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
   val nextYearOptOutMandatedQuestion = "Do you want to opt out from the 2026 to 2027 tax year?"
-
-  val taxQuestionErrorTitle = "There is a problem"
-  val taxQuestionErrorBody = "Select yes to opt out for the 2025 to 2026 tax year"
 }
