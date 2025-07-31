@@ -41,7 +41,7 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
     case (Some(OneYearOptOutFollowedByAnnual), false, _)   => "singleYearFollowedByAnnualWithUpdates"
     case (Some(NextYearOptOut), _, Annual)                 => "nextYearOptOutAnnual"
     case (Some(NextYearOptOut), _, Mandated)               => "nextYearOptOutMandated"
-    case (None, _, _)                                      => "noState"
+    case _                                                 => "noState"
   }
 
   def showInset: Boolean = {
