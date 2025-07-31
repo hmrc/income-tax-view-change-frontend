@@ -19,10 +19,10 @@ package connectors
 import config.FrontendAppConfig
 import models.nrs.NrsSubmissionFailure.NrsDisabledFromConfig
 import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
-import models.nrs.{NrsSubmissionFailure, NrsSuccessResponse}
+import models.nrs.{NrsSubmission, NrsSubmissionFailure, NrsSuccessResponse}
 import org.apache.pekko.actor.Scheduler
 import play.api.Logging
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.http.Status
@@ -47,11 +47,11 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
     Status.isServerError(response.status) ||
       Seq(TOO_MANY_REQUESTS, CLIENT_CLOSED_REQUEST).contains(response.status)
 
-  def submit(nrsSubmission: JsValue, remainingAttempts: Int = numberOfRetries): Future[NrsSubmissionResponse] =
+  def submit(nrsSubmission: NrsSubmission, remainingAttempts: Int = numberOfRetries): Future[NrsSubmissionResponse] =
     if (appConfig.nrsIsEnabled)
       http
         .post(url"$nrsOrchestratorSubmissionUrl")
-        .withBody(nrsSubmission)
+        .withBody(Json.toJson(nrsSubmission))
         .setHeader("X-API-Key" -> apiKey)
         .execute[HttpResponse]
         .flatMap {
