@@ -25,51 +25,50 @@ import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.http.Status
-import play.api.http.Status.ACCEPTED
-import utils.{Delayer, Retrying}
+import play.api.http.Status.{ACCEPTED, TOO_MANY_REQUESTS}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Try}
 import scala.util.control.NonFatal
 
 @Singleton
 class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
   implicit val scheduler: Scheduler,
   val hc: HeaderCarrier,
-  val ec: ExecutionContext) extends RawResponseReads with Logging with Delayer with Retrying {
+  val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   private val nrsOrchestratorSubmissionUrl: String = s"${appConfig.nrsBaseUrl}/nrs-orchestrator/submission"
   private val apiKey: String = appConfig.nrsApiKey
+  private val numberOfRetries: Int = appConfig.nrsRetries
 
-  val retryCondition: Try[NrsSubmissionResponse] => Boolean = {
-    case Success(Left(failure)) => failure.retryable
-    case _                      => false
-  }
+  private def shouldRetry(response: HttpResponse): Boolean =
+    Status.isServerError(response.status) ||
+      response.status == TOO_MANY_REQUESTS ||
+      response.status == 499
 
-  def submit(nrsSubmission: JsValue): Future[NrsSubmissionResponse] = {
-    retry(appConfig.nrsRetries, retryCondition) { attemptNumber =>
+  def submit(nrsSubmission: JsValue, remainingAttempts: Int = numberOfRetries): Future[NrsSubmissionResponse] = {
+    http
+      .post(url"$nrsOrchestratorSubmissionUrl")
+      .withBody(nrsSubmission)
+      .setHeader("X-API-Key" -> apiKey)
+      .execute[HttpResponse]
+      .flatMap {
+        case response if response.status == ACCEPTED =>
+          logger.info("NRS submission successful")
+          Future.successful(Right(response.json.as[NrsSuccessResponse]))
 
-      logger.info(s"NRS submission attempt number: $attemptNumber to POST request: $nrsOrchestratorSubmissionUrl")
+        case response if shouldRetry(response) && remainingAttempts > 0 =>
+          logger.warn(s"NRS submission retry due to status: ${response.status}, body: ${response.body}")
+          submit(nrsSubmission, remainingAttempts = numberOfRetries - 1)
 
-      http
-        .post(url"$nrsOrchestratorSubmissionUrl")
-        .withBody(nrsSubmission)
-        .setHeader("X-API-Key" -> apiKey)
-        .execute[HttpResponse]
-        .map {
-          case response if response.status == ACCEPTED =>
-            logger.info("NRS submission successful")
-            Right(response.json.as[NrsSuccessResponse])
-          case response =>
-            logger.info(s"NRS submission failed with status: ${response.status}, details: ${response.body}")
-            Left(NrsSubmissionFailure.ErrorResponse(response.status))
-        }
-        .recover {
-          case NonFatal(e) =>
-            logger.info(s"NRS submission failed with exception: $e")
-            Left(NrsSubmissionFailure.ExceptionThrown)
-        }
-    }
+        case response =>
+          logger.info(s"NRS submission failed with status: ${response.status}, details: ${response.body}")
+          Future.successful(Left(NrsSubmissionFailure.ErrorResponse(response.status)))
+      }
+      .recover {
+        case NonFatal(e) =>
+          logger.info(s"NRS submission failed with exception: $e")
+          Left(NrsSubmissionFailure.ExceptionThrown)
+      }
   }
 }

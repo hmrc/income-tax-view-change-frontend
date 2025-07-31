@@ -98,10 +98,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val selfAssessmentUrl: String = s"$businessTaxAccount/self-assessment"
 
   // NRS
-  private val nrsConfig = config.get[Configuration]("microservice.services.non-repudiation")
   lazy val nrsBaseUrl: String = servicesConfig.baseUrl("non-repudiation")
   lazy val nrsApiKey: String = servicesConfig.getString("microservice.services.non-repudiation.xApiKey")
-  lazy val nrsRetries: List[FiniteDuration] = fibonacciRetryDelays(nrsConfig)
+  lazy val nrsRetries: Int = config.get[Int]("microservice.services.non-repudiation.numberOfRetries")
 
   //Agent Services Account
   lazy val setUpAgentServicesAccountUrl: String = servicesConfig.getString("set-up-agent-services-account.url")
@@ -237,20 +236,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val mtdForIncomeTaxUrl = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
 
   lazy val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
-
   lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")
   lazy val threshold2027 = servicesConfig.getString("thresholds.threshold2027")
   lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")
-
-  private final def getFiniteDuration(config: Configuration, path: String): FiniteDuration = {
-    val string = config.get[String](path)
-
-    Duration.create(string) match {
-      case f: FiniteDuration => f
-      case _ => throw new RuntimeException(s"Not a finite duration '$string' for $path")
-    }
-  }
-
-  private def fibonacciRetryDelays(conf: Configuration): List[FiniteDuration] =
-    Retrying.fibonacciDelays(getFiniteDuration(conf, "initialDelay"), conf.get[Int]("numberOfRetries"))
 }
