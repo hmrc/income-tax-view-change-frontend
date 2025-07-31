@@ -28,7 +28,7 @@ import utils.ErrorRecovery
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery {
+trait JourneyCheckerClaimToAdjust extends ErrorRecovery {
   self =>
 
   val poaSessionService: PaymentOnAccountSessionService
@@ -36,7 +36,6 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery 
 
   def withSessionData(journeyState: JourneyState = BeforeSubmissionPage)(codeBlock: PoaAmendmentData => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    ifAdjustPoaIsEnabled(user.isAgent()) {
       if (journeyState == InitialPage) {
         handleSession(codeBlock)
       } else {
@@ -52,7 +51,6 @@ trait JourneyCheckerClaimToAdjust extends ClaimToAdjustUtils with ErrorRecovery 
               logAndRedirect(s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
         }
       }
-    }
   }
 
   def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {

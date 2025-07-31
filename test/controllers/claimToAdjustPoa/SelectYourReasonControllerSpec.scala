@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa._
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.TaxYear
@@ -65,7 +64,6 @@ class SelectYourReasonControllerSpec extends MockAuthActions
     totalAmountTwo = 1000.0))
 
   def setupTest(sessionResponse: Either[Throwable, Option[PoaAmendmentData]], claimToAdjustResponse: Option[PaymentOnAccountViewModel]): Unit = {
-    enable(AdjustPaymentsOnAccount)
     mockSingleBISWithCurrentYearAsMigrationYear()
     setupMockGetPaymentsOnAccount(claimToAdjustResponse)
     setupMockTaxYearCrystallised()
@@ -145,28 +143,6 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                 redirectLocation(result) shouldBe Some(routes.CheckYourAnswersController.show(isAgent).url)
               }
             }
-
-            s"redirect to the home page" when {
-              "Adjust Payments On Account FS is Disabled" in {
-                setupTest(
-                  sessionResponse = Right(Some(PoaAmendmentData(newPoaAmount = Some(20000.0)))),
-                  claimToAdjustResponse = testPoa1Maybe)
-
-                disable(AdjustPaymentsOnAccount)
-
-                setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
-
-                setupMockSuccess(mtdRole)
-                val result = action(fakeRequest)
-                status(result) shouldBe SEE_OTHER
-                val expectedRedirectUrl = if (isAgent) {
-                  controllers.routes.HomeController.showAgent().url
-                } else {
-                  controllers.routes.HomeController.show().url
-                }
-                redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-              }
-            }
             "redirect to the You cannot go back page" when {
               "Adjust Payments On Account FS is Enabled but journeyCompleted flag is true" in {
                 setupTest(
@@ -214,7 +190,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
             }
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
       }
 
       s"submit(isAgent = $isAgent, mode = $mode)" when {
@@ -286,7 +262,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
             }
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
       }
     }
   }

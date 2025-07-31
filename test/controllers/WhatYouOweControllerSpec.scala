@@ -20,8 +20,8 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals, ReviewAndReconcilePoa}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.admin.{CreditsRefundsRepay, ReviewAndReconcilePoa, PenaltiesAndAppeals}
+import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.jsoup.Jsoup
@@ -55,7 +55,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
       api.inject.bind[SelfServeTimeToPayService].toInstance(selfServeTimeToPayService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[WhatYouOweController]
+  lazy val testController: WhatYouOweController = app.injector.instanceOf[WhatYouOweController]
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
@@ -126,6 +126,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               "the user has a fill list of charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
@@ -139,6 +140,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               "the user has no charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
@@ -158,6 +160,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 enable(CreditsRefundsRepay)
                 mockSingleBISWithCurrentYearAsMigrationYear()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
@@ -181,6 +184,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
@@ -195,8 +199,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
             }
 
             "contains the adjust POA" when {
-              "the AdjustPaymentsOnAccount FS is enabled and there are adjustable POA" in {
-                enable(AdjustPaymentsOnAccount)
+              "there are adjustable POA" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
@@ -210,7 +213,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
               }
               "the AdjustPaymentsOnAccount FS is enabled and there are no adjustable POAs" in {
-                enable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -223,21 +225,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
 
-              }
-            }
-
-            "does not contain the adjust POA" when {
-              "the AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                setupMockSuccess(mtdUserRole)
-                mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
-                  .thenReturn(Future.successful(whatYouOweChargesListFull))
-                when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
-                  .thenReturn(Future.successful(Right("/url")))
-
-                val result = action(fakeRequest)
-                contentAsString(result).contains("Adjust payments on account for the") shouldBe false
               }
             }
 
@@ -265,6 +252,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
@@ -279,6 +267,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               "Review and Reconcile charge with accruing interest exists" in {
                 enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
                 setupMockSuccess(mtdUserRole)
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
@@ -297,6 +286,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
@@ -338,7 +328,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
             }
 
             "fetching POA entry point fails" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))

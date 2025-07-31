@@ -682,7 +682,6 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
               "has a POA section" when {
                 "AdjustPaymentsOnAccount FS is enabled and a user" that {
                   "has valid POAs" in {
-                    enable(AdjustPaymentsOnAccount)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
@@ -702,7 +701,6 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   }
 
                   "has valid POAs that have been paid in full" in {
-                    enable(AdjustPaymentsOnAccount)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
@@ -725,34 +723,12 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
               "not show POA section" when {
                 "AdjustPaymentsOnAccount FS is enabled and a user" that {
                   "does not have valid POAs" in {
-                    enable(AdjustPaymentsOnAccount)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
                       testEmptyFinancialDetailsModelJson)
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
                       testEmptyFinancialDetailsModelJson)
-                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
-
-
-                    val res = buildGETMTDClient(path, additionalCookies).futureValue
-
-                    res should have(
-                      httpStatus(OK),
-                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if(mtdUserRole != MTDIndividual) "-agent" else ""}"),
-                      isElementVisibleById("adjust-poa-link")(expectedValue = false))
-                  }
-                }
-
-                "AdjustPaymentsOnAccount FS is disabled and a user" that {
-                  "has valid POAs" in {
-                    disable(AdjustPaymentsOnAccount)
-                    stubAuthorised(mtdUserRole)
-                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
-                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
-                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
                     IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
 

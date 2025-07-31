@@ -19,14 +19,13 @@ package controllers.claimToAdjustPoa
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.AdjustPaymentsOnAccount
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 
 class ApiFailureSubmittingPoaControllerISpec extends ControllerISpecHelper {
 
-  def getPath(mtdUserRole: MTDUserRole) = {
+  def getPath(mtdUserRole: MTDUserRole): String = {
     val pathStart = if(mtdUserRole == MTDIndividual) "" else "/agents"
     pathStart + "/adjust-poa/error-poa-not-updated"
   }
@@ -42,7 +41,6 @@ class ApiFailureSubmittingPoaControllerISpec extends ControllerISpecHelper {
           } else {
             s"render the Adjusting your payments on account page" when {
               s"AdjustPaymentsOnAccount FS enabled" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, multipleBusinessesResponse
@@ -52,21 +50,6 @@ class ApiFailureSubmittingPoaControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "claimToAdjustPoa.apiFailure.heading")
-                )
-              }
-            }
-            s"redirect to home page" when {
-              s"AdjustPaymentsOnAccount FS disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, multipleBusinessesResponse
-                )
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
                 )
               }
             }

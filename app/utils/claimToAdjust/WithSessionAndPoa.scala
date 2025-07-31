@@ -36,7 +36,6 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
   def withSessionDataAndPoa(journeyState: JourneyState = BeforeSubmissionPage)
                            (codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])
                            (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    ifAdjustPoaIsEnabled(user.isAgent()) {
       {
         if (journeyState == InitialPage) {
           handleSessionAndPoaStartPage(codeBlock)
@@ -47,7 +46,6 @@ trait WithSessionAndPoa extends JourneyCheckerClaimToAdjust {
         logAndRedirect,
         view => view
       )
-    }
   }
 
   private def handleSessionAndPoaStartPage(codeBlock: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result])

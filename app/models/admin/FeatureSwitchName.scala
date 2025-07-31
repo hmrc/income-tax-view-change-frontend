@@ -58,8 +58,6 @@ object FeatureSwitchName {
       JsSuccess(IncomeSourcesFs)
     case JsString(OptOutFs.name) =>
       JsSuccess(OptOutFs)
-    case JsString(AdjustPaymentsOnAccount.name) =>
-      JsSuccess(AdjustPaymentsOnAccount)
     case JsString(ReviewAndReconcilePoa.name) =>
       JsSuccess(ReviewAndReconcilePoa)
     case JsString(FilterCodedOutPoas.name) =>
@@ -113,7 +111,6 @@ object FeatureSwitchName {
       IncomeSourcesNewJourney,
       IncomeSourcesFs,
       OptOutFs,
-      AdjustPaymentsOnAccount,
       ReviewAndReconcilePoa,
       FilterCodedOutPoas,
       ReportingFrequencyPage,
@@ -172,11 +169,6 @@ case object IncomeSourcesFs extends FeatureSwitchName {
 case object OptOutFs extends FeatureSwitchName {
   override val name = "opt-out"
   override val toString = "Opt Out"
-}
-
-case object AdjustPaymentsOnAccount extends FeatureSwitchName {
-  override val name: String = "adjust-payments-on-account"
-  override val toString: String = "Adjust Payments On Account"
 }
 
 case object ReviewAndReconcilePoa extends FeatureSwitchName {

@@ -30,7 +30,7 @@ import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, Recalculat
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
-import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
+import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.CheckYourAnswers
 
 import javax.inject.{Inject, Singleton}
@@ -48,7 +48,7 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
                                            val agentErrorHandler: AgentItvcErrorHandler,
                                            val mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext)
-  extends FrontendController(mcc) with ClaimToAdjustUtils with RecalculatePoaHelper with I18nSupport with WithSessionAndPoa with ErrorRecovery{
+  extends FrontendController(mcc) with RecalculatePoaHelper with I18nSupport with WithSessionAndPoa with ErrorRecovery{
 
   def show(isAgent: Boolean): Action[AnyContent] =
     authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {

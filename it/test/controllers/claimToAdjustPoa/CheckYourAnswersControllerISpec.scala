@@ -23,7 +23,6 @@ import controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, P
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.core.AccountingPeriodModel
@@ -120,7 +119,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
           } else {
             s"render the Adjusting your payments on account page" when {
               "user has successfully entered a new POA amount" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 setupGetFinancialDetails()
                 await(sessionService.setMongoData(Some(validSession)))
@@ -132,22 +130,8 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
               }
             }
 
-            s"redirect to home page" when {
-              "AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
-
             "redirect to You cannot go back page" when {
               "journeyCompleted flag is true and the user tries to access the page" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 setupGetFinancialDetails()
                 await(sessionService.setMongoData(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
@@ -162,7 +146,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
             s"return $INTERNAL_SERVER_ERROR" when {
               "the Payment On Account Adjustment reason is missing from the session" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 setupGetFinancialDetails()
                 await(sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None))))
@@ -173,7 +156,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 )
               }
               "the New Payment On Account Amount is missing from the session" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 setupGetFinancialDetails()
                 await(sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None))))
@@ -184,7 +166,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 )
               }
               "both the New Payment On Account Amount and adjustment reason are missing from the session" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 setupGetFinancialDetails()
                 await(sessionService.setMongoData(Some(validSession.copy(poaAdjustmentReason = None, newPoaAmount = None))))
@@ -195,7 +176,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 )
               }
               "no adjust POA session is found" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 setupGetFinancialDetails()
 
@@ -205,7 +185,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 )
               }
               "no non-crystallised financial details are found" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
                   OK, testEmptyFinancialDetailsModelJson
@@ -235,7 +214,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
           } else {
             "redirect to PoaAdjustedController" when {
               "a success response is returned when submitting POA" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
 
                 stubFinancialDetailsResponse()
@@ -253,12 +231,11 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                   httpStatus(SEE_OTHER),
                   redirectURI(PoaAdjustedController.show(isAgent).url)
                 )
-                verifyAuditContainsDetail(auditAdjustPayementsOnAccount(true, mtdUserRole).detail)
+                verifyAuditContainsDetail(auditAdjustPayementsOnAccount(isSuccessful = true, mtdUserRole).detail)
               }
             }
             "redirect to ApiFailureSubmittingPoaController" when {
               "an error response is returned when submitting POA" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
 
                 stubFinancialDetailsResponse()
@@ -274,24 +251,11 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                   httpStatus(SEE_OTHER),
                   redirectURI(ApiFailureSubmittingPoaController.show(isAgent).url)
                 )
-                verifyAuditContainsDetail(auditAdjustPayementsOnAccount(false, mtdUserRole).detail)
-              }
-            }
-            s"redirect to home page" when {
-              "AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
+                verifyAuditContainsDetail(auditAdjustPayementsOnAccount(isSuccessful = false, mtdUserRole).detail)
               }
             }
             s"return status $INTERNAL_SERVER_ERROR" when {
               "an error response is returned when requesting financial details" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
 
                 stubFinancialDetailsResponse(testFinancialDetailsErrorModelJson)
@@ -303,7 +267,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 )
               }
               "no non-crystallised financial details are found" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 stubFinancialDetailsResponse(testEmptyFinancialDetailsModelJson)
                 await(sessionService.setMongoData(Some(validSession)))
@@ -314,7 +277,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 )
               }
               "some session data is missing" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 stubFinancialDetailsResponse()
                 await(sessionService.setMongoData(Some(

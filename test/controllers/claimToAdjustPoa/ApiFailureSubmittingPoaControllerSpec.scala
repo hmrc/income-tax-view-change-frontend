@@ -18,11 +18,9 @@ package controllers.claimToAdjustPoa
 
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
-import models.admin.AdjustPaymentsOnAccount
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.Application
-import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{HTML, OK, contentAsString, contentType, defaultAwaitTimeout, redirectLocation, status}
 
 class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
@@ -30,7 +28,7 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .build()
 
-  lazy val testController = app.injector.instanceOf[ApiFailureSubmittingPoaController]
+  lazy val testController: ApiFailureSubmittingPoaController = app.injector.instanceOf[ApiFailureSubmittingPoaController]
 
   val firstParagraphView = "Your payments on account could not be updated."
 
@@ -45,7 +43,6 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
         } else {
           s"render the submitting POA API failure page" when {
             "called when the AdjustPaymentsOnAccount FS is on" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
               mockBusinessIncomeSource()
 
@@ -57,26 +54,9 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
               document.getElementById("paragraph-text-1").text() shouldBe firstParagraphView
             }
           }
-          s"redirect to the home page" when {
-            "called when the AdjustPaymentsOnAccount FS is off" in {
-              disable(AdjustPaymentsOnAccount)
-              setupMockSuccess(mtdRole)
-              mockBusinessIncomeSource()
-
-              val result = action(fakeRequest)
-
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

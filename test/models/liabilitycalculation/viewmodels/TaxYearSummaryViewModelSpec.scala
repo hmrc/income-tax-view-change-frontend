@@ -54,7 +54,7 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
     periodTo = Some(LocalDate.of(2021, 1, 1))
   )
 
-  val testCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2024, 2025)))
+  val testCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2024, 2025)))
 
   "TaxYearSummaryViewModel model" when {
     "forecastIncomeTaxAndNics is not defined in CalculationSummaryValue" should {
@@ -84,16 +84,9 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
   }
 
   "TYSClaimToAdjustViewModel claimToAdjustTaxYear val" when {
-    "adjustPaymentsOnAccountFSEnabled is false" should {
-      "return None" in {
-        val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, Some(TaxYear(2023, 2024)))
-
-        testModel.claimToAdjustTaxYear shouldBe None
-      }
-    }
     "adjustPaymentsOnAccountFSEnabled is true" should {
       "return a TaxYear" in {
-        val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, Some(TaxYear(2023, 2024)))
+        val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel( Some(TaxYear(2023, 2024)))
 
         testModel.claimToAdjustTaxYear shouldBe Some(TaxYear(2023, 2024))
       }

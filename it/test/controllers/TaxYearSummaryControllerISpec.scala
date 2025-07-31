@@ -88,10 +88,6 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 val tableText = "Forecast Section Amount Income £12,500.00 Allowances and deductions £4,200.00 Total income on which tax is due £12,500.00 " +
                   "Forecast Self Assessment tax amount £5,000.99"
                 val forecastTabHeader = messagesAPI("tax-year-summary.forecast")
-                val forecastTotal = s"${
-                  messagesAPI("tax-year-summary.forecast_total_title", (getCurrentTaxYearEnd.getYear - 1).toString,
-                    getCurrentTaxYearEnd.getYear.toString)
-                } £5,000.99"
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
@@ -578,7 +574,6 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
               "adjust POA link visible" when {
                 "The user has amendable POAs for the given tax year and the FS is Enabled" in {
-                  enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
@@ -595,24 +590,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 }
               }
               "does not have adjustable POA link visible" when {
-                "The user has amendable POAs for the given tax year but the FS is Disabled" in {
-                  disable(AdjustPaymentsOnAccount)
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
-                  CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
-                    testValidFinancialDetailsModelJson(2000, 2000, testYear2023.toString, testDate.toString))
-
-                  val res = buildGETMTDClient(path, additionalCookies).futureValue
-
-                  res should have(
-                    httpStatus(OK),
-                    pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                    isElementVisibleById("adjust-poa-link")(expectedValue = false))
-                }
                 "The user has no amendable POAs and the FS is Enabled" in {
-                  enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
