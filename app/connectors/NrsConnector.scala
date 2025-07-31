@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.nrs.NrsSubmissionFailure.NrsDisabledFromConfig
 import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
 import models.nrs.{NrsSubmissionFailure, NrsSuccessResponse}
 import org.apache.pekko.actor.Scheduler
@@ -46,29 +47,31 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
       response.status == TOO_MANY_REQUESTS ||
       response.status == 499
 
-  def submit(nrsSubmission: JsValue, remainingAttempts: Int = numberOfRetries): Future[NrsSubmissionResponse] = {
-    http
-      .post(url"$nrsOrchestratorSubmissionUrl")
-      .withBody(nrsSubmission)
-      .setHeader("X-API-Key" -> apiKey)
-      .execute[HttpResponse]
-      .flatMap {
-        case response if response.status == ACCEPTED =>
-          logger.info("NRS submission successful")
-          Future.successful(Right(response.json.as[NrsSuccessResponse]))
+  def submit(nrsSubmission: JsValue, remainingAttempts: Int = numberOfRetries): Future[NrsSubmissionResponse] =
+    if (appConfig.nrsIsEnabled)
+      http
+        .post(url"$nrsOrchestratorSubmissionUrl")
+        .withBody(nrsSubmission)
+        .setHeader("X-API-Key" -> apiKey)
+        .execute[HttpResponse]
+        .flatMap {
+          case response if response.status == ACCEPTED =>
+            logger.info("NRS submission successful")
+            Future.successful(Right(response.json.as[NrsSuccessResponse]))
 
-        case response if shouldRetry(response) && remainingAttempts > 0 =>
-          logger.warn(s"NRS submission retry due to status: ${response.status}, body: ${response.body}")
-          submit(nrsSubmission, remainingAttempts = numberOfRetries - 1)
+          case response if shouldRetry(response) && remainingAttempts > 0 =>
+            logger.warn(s"NRS submission retry due to status: ${response.status}, body: ${response.body}")
+            submit(nrsSubmission, remainingAttempts = numberOfRetries - 1)
 
-        case response =>
-          logger.info(s"NRS submission failed with status: ${response.status}, details: ${response.body}")
-          Future.successful(Left(NrsSubmissionFailure.ErrorResponse(response.status)))
-      }
-      .recover {
-        case NonFatal(e) =>
-          logger.info(s"NRS submission failed with exception: $e")
-          Left(NrsSubmissionFailure.ExceptionThrown)
-      }
-  }
+          case response =>
+            logger.info(s"NRS submission failed with status: ${response.status}, details: ${response.body}")
+            Future.successful(Left(NrsSubmissionFailure.ErrorResponse(response.status)))
+        }
+        .recover {
+          case NonFatal(e) =>
+            logger.info(s"NRS submission failed with exception: $e")
+            Left(NrsSubmissionFailure.ExceptionThrown)
+        }
+    else
+      Future.successful(Left(NrsDisabledFromConfig))
 }

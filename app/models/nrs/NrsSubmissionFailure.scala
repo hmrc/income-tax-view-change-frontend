@@ -18,15 +18,12 @@ package models.nrs
 
 import play.api.http.Status
 
-sealed trait NrsSubmissionFailure {
-  def retryable: Boolean
-}
+sealed trait NrsSubmissionFailure
 
 object NrsSubmissionFailure {
-  case class ErrorResponse(status: Int) extends NrsSubmissionFailure {
-    override def retryable: Boolean = Status.isServerError(status)
-  }
-  case object ExceptionThrown extends NrsSubmissionFailure {
-    override def retryable: Boolean = false
-  }
+  case class ErrorResponse(status: Int) extends NrsSubmissionFailure
+
+  case object ExceptionThrown extends NrsSubmissionFailure
+
+  case object NrsDisabledFromConfig extends NrsSubmissionFailure
 }
