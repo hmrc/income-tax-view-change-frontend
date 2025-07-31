@@ -25,6 +25,7 @@ import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.http.Status
+import play.api.http.Status.ACCEPTED
 import utils.{Delayer, Retrying}
 
 import javax.inject.{Inject, Singleton}
@@ -57,7 +58,7 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
         .setHeader("X-API-Key" -> apiKey)
         .execute[HttpResponse]
         .map {
-          case response if Status.isSuccessful(response.status) =>
+          case response if response.status == ACCEPTED =>
             logger.info("NRS submission successful")
             Right(response.json.as[NrsSuccessResponse])
           case response =>
