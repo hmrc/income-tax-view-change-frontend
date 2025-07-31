@@ -18,12 +18,13 @@ package connectors
 
 import config.FrontendAppConfig
 import models.nrs.{NrsSubmissionFailure, NrsSuccessResponse}
+import org.apache.pekko.actor.Scheduler
 import play.api.Logging
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.http.Status
-import utils.Retrying
+import utils.{Delayer, Retrying}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -31,9 +32,10 @@ import scala.util.{Success, Try}
 import scala.util.control.NonFatal
 
 @Singleton
-class NrsConnector @Inject()(val http: HttpClientV2,
-                             val appConfig: FrontendAppConfig
-                            )(implicit val ec: ExecutionContext, hc: HeaderCarrier) extends RawResponseReads with Logging with Retrying {
+class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
+  implicit val scheduler: Scheduler,
+  val hc: HeaderCarrier,
+  val ec: ExecutionContext) extends RawResponseReads with Logging with Delayer with Retrying {
 
   private val nrsOrchestratorSubmissionUrl: String = s"${appConfig.nrsBaseUrl}/nrs-orchestrator/submission"
   private val apiKey: String = appConfig.nrsApiKey
