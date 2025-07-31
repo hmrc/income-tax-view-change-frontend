@@ -25,7 +25,7 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
                                           numberOfQuarterlyUpdates: Int,
                                           currentYearStatus: ITSAStatus) {
 
-  val hasNoQuarterlyUpdatesSubmitted: Boolean = numberOfQuarterlyUpdates == OneYearOptOutCheckpointViewModel.noQuarterlyUpdates
+  private val hasNoQuarterlyUpdatesSubmitted: Boolean = numberOfQuarterlyUpdates == OneYearOptOutCheckpointViewModel.noQuarterlyUpdates
 
   private val taxYearMessageSuffix = taxYear match {
     case _: PreviousOptOutTaxYear => "previousYear"
@@ -41,7 +41,7 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
     case (Some(OneYearOptOutFollowedByAnnual), false, _)   => "singleYearFollowedByAnnualWithUpdates"
     case (Some(NextYearOptOut), _, Annual)                 => "nextYearOptOutAnnual"
     case (Some(NextYearOptOut), _, Mandated)               => "nextYearOptOutMandated"
-    case (None, _, _)                                      => "noState"
+    case _                                                 => "noState"
   }
 
   def showInset: Boolean = {
@@ -70,7 +70,7 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
 
   def showThirdParagraph: Boolean = optOutState.contains(MultiYearOptOutDefault)
 
-  def isCurrentYear: Boolean = taxYear match {
+  private def isCurrentYear: Boolean = taxYear match {
     case _: CurrentOptOutTaxYear => true
     case _                       => false
   }
