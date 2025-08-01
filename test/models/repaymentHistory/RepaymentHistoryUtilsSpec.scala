@@ -132,17 +132,17 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       PaymentHistoryEntry(LocalDate.parse("2021-08-21"), Repayment, Some(300.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber))),
   )
 
-  private def groupedPayments(cutoverEnabled: Boolean = true, mfaEnabled: Boolean = true, reviewAndReconcileEnabled: Boolean = true, isAgent: Boolean = false) = {
+  private def groupedPayments(cutoverEnabled: Boolean = true, mfaEnabled: Boolean = true, isAgent: Boolean = false) = {
     val bcc = List(PaymentHistoryEntry(LocalDate.parse("2019-12-24"), BalancingChargeCreditType, Some(-12000.0), None,
       s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202203"))
     val cutover = if (cutoverEnabled) List(PaymentHistoryEntry(LocalDate.parse("2019-12-25"), CutOverCreditType, Some(-11000.0), None,
       s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202202")) else Nil
-    val reviewAndReconcileCredits = if (reviewAndReconcileEnabled) List(
+    val reviewAndReconcileCredits = List(
       PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PoaOneReconciliationCredit, Some(-11000.0), None,
       s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202298", "AY777777202298"),
       PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PoaTwoReconciliationCredit, Some(-11000.0), None,
         s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202299", "AY777777202299"),
-    ) else Nil
+    )
     val standardPayments = List(
       PaymentHistoryEntry(LocalDate.parse("2019-12-25"), PaymentType, Some(10000), Some("DOCID02"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID02", "2019-12-25 &pound;10,000.00"),
       PaymentHistoryEntry(LocalDate.parse("2019-12-26"), PaymentType, Some(10000), Some("DOCID01"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID01", "2019-12-26 &pound;10,000.00")
@@ -156,24 +156,20 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
   "RepaymentHistoryUtils" should {
     "getGroupedPaymentHistoryData should combine payments and approved repayments and group by year" when {
       "both payments and repayments are present" in {
-        getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false, reviewAndReconcileEnabled = true, languageUtils
+        getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false, languageUtils
         )(messages, dateService ) shouldBe groupedRepayments() ++ groupedPayments()
       }
 
       "only payments are present" in {
-        getGroupedPaymentHistoryData(payments, List(), isAgent = false, reviewAndReconcileEnabled = true, languageUtils
+        getGroupedPaymentHistoryData(payments, List(), isAgent = false, languageUtils
         )(messages, dateService) shouldBe groupedPayments()
       }
 
       "only approved repayments are present" in {
-        getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false, reviewAndReconcileEnabled = true, languageUtils
+        getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false, languageUtils
         )(messages, dateService) shouldBe groupedRepayments()
       }
 
-      "review and reconcile credits are NOT present when switch is OFF" in {
-        getGroupedPaymentHistoryData(payments, List(), isAgent = false, reviewAndReconcileEnabled = false, languageUtils
-        )(messages, dateService) shouldBe groupedPayments(true, true, false)
-      }
     }
   }
 }

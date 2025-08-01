@@ -134,7 +134,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   dunningLock: Boolean = false,
                   taxYear: Int = fixedDate.getYear,
                   migrationYear: Int = fixedDate.getYear - 1,
-                  reviewAndReconcileEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None,
                   LPP2Url: String = ""
@@ -155,7 +154,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundUrl = CreditAndRefundController.show().url,
       creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
@@ -187,7 +185,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   class AgentTestSetup(charges: WhatYouOweChargesList,
                        currentTaxYear: Int = fixedDate.getYear,
                        migrationYear: Int = fixedDate.getYear - 1,
-                       reviewAndReconcileEnabled: Boolean = false,
                        dunningLock: Boolean = false,
                        taxYear: Int = fixedDate.getYear,
                        hasLpiWithDunningLock: Boolean = false,
@@ -215,7 +212,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       creditAndRefundUrl = CreditAndRefundController.showAgent().url,
       creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
@@ -470,8 +466,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         }
         "have review and reconcile extra payments with Accrues Interest tags in the same table" in new TestSetup(
-          charges = whatYouOweWithReviewReconcileDataNotYetDue,
-          reviewAndReconcileEnabled  = true) {
+          charges = whatYouOweWithReviewReconcileDataNotYetDue) {
           val poaExtra1Table: Element = pageDocument.getElementsByClass("govuk-table__row").get(1)
           poaExtra1Table.select("td").first().text() shouldBe fixedDate.plusYears(100).minusDays(1).toLongDateShort
           poaExtra1Table.select("td").get(1).text() shouldBe "Accrues interest " + poaExtra1Text + " 1"
@@ -486,8 +481,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           poa2ExtraTable.select("td").last().text() shouldBe "£75.00"
         }
-        "have interest charges for paid reconciliation charges in the same table" in new TestSetup(charges = whatYouOweReconciliationInterestData,
-          reviewAndReconcileEnabled = true) {
+        "have interest charges for paid reconciliation charges in the same table" in new TestSetup(charges = whatYouOweReconciliationInterestData) {
           val poaExtra1Table: Element = pageDocument.getElementsByClass("govuk-table__row").get(1)
           poaExtra1Table.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
           poaExtra1Table.select("td").get(1).text() shouldBe poa1ReconcileInterest + " 1"

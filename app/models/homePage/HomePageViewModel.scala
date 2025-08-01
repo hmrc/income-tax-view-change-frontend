@@ -35,7 +35,7 @@ case class HomePageViewModel(utr: Option[String],
                              origin: Option[String] = None)
 
 case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int,
-                                     paymentsAccruingInterestCount: Int, reviewAndReconcileEnabled: Boolean,
+                                     paymentsAccruingInterestCount: Int,
                                      yourSelfAssessmentChargesEnabled: Boolean) {
 
   def verify: Either[Throwable, NextPaymentsTileViewModel] = {
@@ -43,7 +43,7 @@ case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], over
       Left(new Exception("Error, overDuePaymentsCount was non-0 while nextPaymentDueDate was empty"))
     } else {
       Right(NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount,
-        reviewAndReconcileEnabled, yourSelfAssessmentChargesEnabled))
+        yourSelfAssessmentChargesEnabled))
     }
   }
 
