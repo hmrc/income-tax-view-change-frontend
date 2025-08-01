@@ -23,6 +23,4 @@ object YSACSummaryLangHelper {
   def getMessage(key: String, args: String*)(implicit messages: Messages): String =
     messages(s"selfAssessmentCharges.$key", args: _*)
 
-  def getPrefix(key: String)(implicit messages: Messages): String =
-    s"whatYouOwe.$key"
 }

@@ -15,6 +15,7 @@
  *@
 
 @import views.html.components._
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
     p: p,
@@ -30,11 +31,11 @@
 
 @p(id = Some("unallocated-credit-note"))(
     Html(
-        messages("whatYouOwe.credit-overpaid-prefix") +
+        getMessage("credit-overpaid-prefix") +
         link(
             link = creditAndRefundUrl,
-            outerMessage = messages("whatYouOwe.unallocated-credit-note"),
-            messageKey = messages("whatYouOwe.credit-overpaid-amount", amount),
+            outerMessage = getMessage("unallocated-credit-note"),
+            messageKey = getMessage("credit-overpaid-amount", amount),
             id = Some("unallocated-credit-link")
         ).toString()
     )

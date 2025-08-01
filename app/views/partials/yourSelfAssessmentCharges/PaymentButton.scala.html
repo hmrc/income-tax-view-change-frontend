@@ -31,7 +31,7 @@
 <div id="payment-button">
     @link(
         controllers.routes.PaymentController.paymentHandoff(amountForTaxYearInPence, origin).url,
-        messageKey = getPrefix("payNow"),
+        messageKey = getMessage("payNow"),
         classes = "govuk-button",
         role = Some("button"),
         id = Some("payment-button-link")
