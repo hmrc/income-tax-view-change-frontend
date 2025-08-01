@@ -15,6 +15,7 @@
  *@
 
 @import views.html.components._
+@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 @import auth.MtdItUser
 
 @this(
@@ -32,12 +33,12 @@
 )
 
 <div class="govuk-body" id="money-in-your-account">
-    @h2(msg = messages(s"whatYouOwe.moneyOnAccount${if(user.isAgent()) "-agent" else ""}"))
-    @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
-    @messages(s"whatYouOwe.moneyOnAccount${if(user.isAgent()) "-agent" else ""}-2")
+    @h2(msg = getMessage(s"moneyOnAccount${if(user.isAgent()) "-agent" else ""}"))
+    @getMessage("moneyOnAccount-1") @availableCredit
+    @getMessage(s"moneyOnAccount${if(user.isAgent()) "-agent" else ""}-2")
     @link(
         link = creditAndRefundsControllerUrl,
-        messageKey = "whatYouOwe.moneyOnAccount-3",
+        messageKey = "selfAssessmentCharges.moneyOnAccount-3",
         outerMessage = ".",
         rel = Some("noreferrer noopener")
     )
