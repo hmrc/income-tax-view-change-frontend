@@ -18,7 +18,7 @@ package connectors
 
 import _root_.helpers.ComponentSpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.nrs.NrsSubmissionFailure.NrsErrorResponse
+import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
 import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
 import models.nrs.NrsSuccessResponse
 import org.scalatest.wordspec.AnyWordSpec
@@ -65,9 +65,7 @@ class NrsConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
       "4xx response" should {
 
-        "return a failure response when provided invalid body" in {
-
-          val requestBody = Json.obj()
+        "return a failure response when provided no body" in {
 
           val expectedResponse = Left(NrsErrorResponse(BAD_REQUEST))
 
@@ -84,8 +82,27 @@ class NrsConnectorSpec extends AnyWordSpec with ComponentSpecBase {
           val result = connector.submit(NrsUtils.nrsSubmission)
 
           result.futureValue shouldBe expectedResponse
+        }
 
+        "return a failure response when unparsable JSON returned" in {
 
+          val requestBody = """{ "badKey": "badValue" }"""
+
+          val expectedResponse = Left(NrsExceptionThrown)
+
+          stubFor(
+            post(urlPathEqualTo("/nrs-orchestrator/submission"))
+              .withHeader("Content-Type", equalTo(MimeTypes.JSON))
+              .withHeader("X-API-Key", equalTo("dummy-api-key"))
+              .willReturn(aResponse()
+                .withBody(requestBody)
+                .withStatus(ACCEPTED)
+              )
+          )
+
+          val result = connector.submit(NrsUtils.nrsSubmission)
+
+          result.futureValue shouldBe expectedResponse
         }
       }
     }
