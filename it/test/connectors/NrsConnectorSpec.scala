@@ -23,21 +23,12 @@ import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
 import models.nrs.NrsSuccessResponse
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.MimeTypes
-import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR}
+import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.NrsUtils
 import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.Await
-import scala.concurrent.duration.DurationInt
-
 class NrsConnectorSpec extends AnyWordSpec with ComponentSpecBase {
-
-  val request: JsValue = Json.toJson(NrsUtils.nrsSubmission)
-
-  val successResponseBody: NrsSuccessResponse = NrsSuccessResponse("submissionId")
-
-  val failureResponseBody: NrsSubmissionResponse = Left(NrsErrorResponse(status = INTERNAL_SERVER_ERROR))
 
   override implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -51,7 +42,7 @@ class NrsConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "return a successful response when provided valid headers and body" in {
 
-          val requestBody = request
+          val requestBody = Json.toJson(NrsUtils.nrsSubmission)
 
           val expectedResponse = Right(NrsSuccessResponse("submissionId"))
 
@@ -62,11 +53,39 @@ class NrsConnectorSpec extends AnyWordSpec with ComponentSpecBase {
               .withRequestBody(equalToJson(requestBody.toString(), true, false))
               .willReturn(aResponse()
                 .withBody(NrsUtils.successResponseJson)
-                .withStatus(ACCEPTED)))
+                .withStatus(ACCEPTED)
+              )
+          )
 
           val result = connector.submit(NrsUtils.nrsSubmission)
 
           result.futureValue shouldBe expectedResponse
+        }
+      }
+
+      "4xx response" should {
+
+        "return a failure response when provided invalid body" in {
+
+          val requestBody = Json.obj()
+
+          val expectedResponse = Left(NrsErrorResponse(BAD_REQUEST))
+
+          stubFor(
+            post(urlPathEqualTo("/nrs-orchestrator/submission"))
+              .withHeader("Content-Type", equalTo(MimeTypes.JSON))
+              .withHeader("X-API-Key", equalTo("dummy-api-key"))
+              .willReturn(aResponse()
+                .withBody(NrsUtils.successResponseJson)
+                .withStatus(BAD_REQUEST)
+              )
+          )
+
+          val result = connector.submit(NrsUtils.nrsSubmission)
+
+          result.futureValue shouldBe expectedResponse
+
+
         }
       }
     }
