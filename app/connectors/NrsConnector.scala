@@ -20,9 +20,8 @@ import config.FrontendAppConfig
 import models.nrs.NrsSubmissionFailure.NrsDisabledFromConfig
 import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
 import models.nrs.{NrsSubmission, NrsSubmissionFailure, NrsSuccessResponse}
-import org.apache.pekko.actor.Scheduler
 import play.api.Logging
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.http.Status
@@ -34,9 +33,7 @@ import scala.util.control.NonFatal
 
 @Singleton
 class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
-  implicit val scheduler: Scheduler,
-  val hc: HeaderCarrier,
-  val ec: ExecutionContext) extends RawResponseReads with Logging {
+  implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   private val nrsOrchestratorSubmissionUrl: String = s"${appConfig.nrsBaseUrl}/nrs-orchestrator/submission"
   private val apiKey: String = appConfig.nrsApiKey
@@ -47,7 +44,8 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
     Status.isServerError(response.status) ||
       Seq(TOO_MANY_REQUESTS, CLIENT_CLOSED_REQUEST).contains(response.status)
 
-  def submit(nrsSubmission: NrsSubmission, remainingAttempts: Int = numberOfRetries): Future[NrsSubmissionResponse] =
+  def submit(nrsSubmission: NrsSubmission, remainingAttempts: Int = numberOfRetries)
+            (implicit headerCarrier: HeaderCarrier): Future[NrsSubmissionResponse] =
     if (appConfig.nrsIsEnabled)
       http
         .post(url"$nrsOrchestratorSubmissionUrl")
@@ -65,13 +63,15 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
 
           case response =>
             logger.info(s"NRS submission failed with status: ${response.status}, details: ${response.body}")
-            Future.successful(Left(NrsSubmissionFailure.ErrorResponse(response.status)))
+            Future.successful(Left(NrsSubmissionFailure.NrsErrorResponse(response.status)))
         }
         .recover {
           case NonFatal(e) =>
             logger.info(s"NRS submission failed with exception: $e")
-            Left(NrsSubmissionFailure.ExceptionThrown)
+            Left(NrsSubmissionFailure.NrsExceptionThrown)
         }
-    else
+    else {
+      logger.info(s"NRS submission failed: NRS is disabled from config")
       Future.successful(Left(NrsDisabledFromConfig))
+    }
 }

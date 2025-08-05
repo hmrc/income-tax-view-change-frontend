@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package models.nrs
+package testConstants
 
-sealed trait NrsSubmissionFailure
+import java.security.MessageDigest
 
-object NrsSubmissionFailure {
+object ChecksumUtils {
 
-  case class NrsErrorResponse(status: Int) extends NrsSubmissionFailure
+  def calculateSha256(input: Array[Byte]): String =
+    MessageDigest.getInstance("SHA-256").digest(input).map("%02x".format(_)).mkString
 
-  case object NrsExceptionThrown extends NrsSubmissionFailure
-
-  case object NrsDisabledFromConfig extends NrsSubmissionFailure
+  implicit class ByteArrayWithSha256(bytes: Array[Byte]) {
+    def calculateSha256: String = ChecksumUtils.calculateSha256(bytes)
+  }
 }
