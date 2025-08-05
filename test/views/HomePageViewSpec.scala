@@ -96,7 +96,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val paymentTileOverdueDateLongFormat: String = s"Overdue ${paymentTileOverdueDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))}"
   val testFutureTaxYear = TaxYear(2099,2100)
 
-  class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0, reviewAndReconcileEnabled: Boolean = false,
+  class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               incomeSourcesEnabled: Boolean = false, incomeSourcesNewJourneyEnabled: Boolean = false, reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsIsEnabled: Boolean = true,
@@ -104,7 +104,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
-    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount, reviewAndReconcileEnabled, yourSelfAssessmentChargesEnabled)
+    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount, yourSelfAssessmentChargesEnabled)
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
@@ -399,7 +399,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         getTextOfElementById("overdue-warning") shouldBe Some(overdueMessageForDunningLocks)
       }
 
-      "display daily interest warning when payments are accruing interest" in new Setup(paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
+      "display daily interest warning when payments are accruing interest" in new Setup(paymentsAccruingInterestCount = 2) {
         val dailyInterestMessage = "! Warning You have charges with added daily interest. These charges will be accruing interest until they are paid in full."
         getTextOfElementById("accrues-interest-warning") shouldBe Some(dailyInterestMessage)
       }
@@ -416,7 +416,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         document.select("#payments-tile > div > p.govuk-body").text() shouldBe paymentTileOverdueDateLongFormat
       }
 
-      "display daily interest tag when there are payments accruing interest" in new Setup(paymentsAccruingInterestCount = 2, reviewAndReconcileEnabled = true) {
+      "display daily interest tag when there are payments accruing interest" in new Setup(paymentsAccruingInterestCount = 2) {
         getElementById("accrues-interest-tag").map(_.text()) shouldBe Some(s"Daily interest charges")
       }
 

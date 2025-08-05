@@ -136,7 +136,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
                   hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
-                  reviewAndReconcileEnabled: Boolean = false,
                   penaltiesEnabled: Boolean = false,
                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None
@@ -154,7 +153,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       backUrl = "testBackURL",
       dunningLock = dunningLock,
-      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       penaltiesEnabled = penaltiesEnabled,
       LPP2Url = "testUrl",
       creditAndRefundEnabled = true,
@@ -183,7 +181,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   class AgentTestSetup(charges: WhatYouOweChargesList,
                        currentTaxYear: Int = fixedDate.getYear,
                        migrationYear: Int = fixedDate.getYear - 1,
-                       reviewAndReconcileEnabled: Boolean = false,
                        dunningLock: Boolean = false,
                        hasLpiWithDunningLock: Boolean = false,
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
@@ -204,7 +201,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       backUrl = "testBackURL",
       dunningLock = dunningLock,
-      reviewAndReconcileEnabled = reviewAndReconcileEnabled,
       penaltiesEnabled = true,
       LPP2Url = "testUrl",
       creditAndRefundEnabled = true,
@@ -514,7 +510,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           paymentPlan.text() shouldBe paymentPlanText
         }
 
-        "display poa reconciliation charges if accruing interest" in new TestSetup(charges = whatYouOweWithReviewReconcileData, reviewAndReconcileEnabled = true) {
+        "display poa reconciliation charges if accruing interest" in new TestSetup(charges = whatYouOweWithReviewReconcileData) {
           val firstReconcileCharge = pageDocument.getElementsByClass("govuk-table__row").get(1)
           firstReconcileCharge.select("td").get(1).text() shouldBe s"$poaExtra1Text 1"
         }

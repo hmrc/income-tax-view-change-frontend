@@ -97,7 +97,7 @@ viewModel: HomePageViewModel
             }
 
        <div class="warning-wrapper govuk-!-padding-0">
-       @if(viewModel.nextPaymentsTileViewModel.reviewAndReconcileEnabled && viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
+       @if(viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
            <div id="accrues-interest-warning" class="grid-row">
                <div class="column-full">
                @govukWarningText(WarningText(content = Text(messages("home.interest-accruing"))))

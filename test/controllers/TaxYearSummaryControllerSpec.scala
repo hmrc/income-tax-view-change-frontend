@@ -333,7 +333,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
             "Review and Reconcile debit charges in the charges table" when {
               "the user has Review and Reconcile debit charges" in {
-                enable(ReviewAndReconcilePoa)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCalculationSuccessfulNew(testMtditid)
@@ -355,27 +354,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe chargeSummaryUrl("RARDEBIT01")
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe chargeSummaryUrl("RARDEBIT02")
-              }
-            }
-
-            "does not Review and Reconcile debit charges in the charges table" when {
-              "tReviewAndReconcilePoa FS is disabled" in {
-                disable(ReviewAndReconcilePoa)
-                setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
-                mockCalculationSuccessfulNew(testMtditid)
-                mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebitsOverdue)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-                  toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
-                )
-
-                val result = action(fakeRequest)
-                status(result) shouldBe OK
-                Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0")).isDefined shouldBe false
-                Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0")).isDefined shouldBe false
-                Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1")).isDefined shouldBe false
-                Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1")).isDefined shouldBe false
               }
             }
 

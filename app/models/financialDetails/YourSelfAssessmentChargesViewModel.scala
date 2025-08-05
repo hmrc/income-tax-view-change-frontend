@@ -30,7 +30,6 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
                                               hasLpiWithDunningLock: Boolean,
                                               backUrl: String,
                                               dunningLock: Boolean,
-                                              reviewAndReconcileEnabled: Boolean,
                                               penaltiesEnabled: Boolean,
                                               LPP2Url: String,
                                               creditAndRefundEnabled: Boolean,

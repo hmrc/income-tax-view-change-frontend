@@ -125,7 +125,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
     for {
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
-      paymentsDue = getDueDates(unpaidCharges, isEnabled(ReviewAndReconcilePoa), isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+      paymentsDue = getDueDates(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       dunningLockExists = hasDunningLock(unpaidCharges)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
@@ -156,7 +156,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
-      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(ReviewAndReconcilePoa), isEnabled(YourSelfAssessmentCharges)).verify match {
+      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(YourSelfAssessmentCharges)).verify match {
 
         case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
           utr = user.saUtr,
@@ -191,13 +191,12 @@ class HomeController @Inject()(val homeView: views.html.Home,
 }
   }
 
-  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], reviewAndReconcileEnabled: Boolean, isFilterOutCodedPoasEnabled: Boolean,
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean,
                           penaltiesEnabled: Boolean): List[LocalDate] = {
     val chargesList = unpaidCharges collect {
       case fdm: FinancialDetailsModel => fdm
     }
       whatYouOweService.getFilteredChargesList(chargesList,
-          reviewAndReconcileEnabled,
           isFilterOutCodedPoasEnabled,
           penaltiesEnabled,
           mainChargeIsNotPaidFilter).flatMap(_.dueDate)
@@ -209,7 +208,6 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
                                       (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
   whatYouOweService.getWhatYouOweChargesList(
     unpaidCharges,
-    isReviewAndReconciledEnabled = isEnabled(ReviewAndReconcilePoa),
     isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
     isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
     mainChargeIsNotPaidFilter

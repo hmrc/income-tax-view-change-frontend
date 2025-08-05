@@ -2808,6 +2808,20 @@ optIn.beforeYouStart.voluntaryStatus           = Your voluntary status
 optIn.beforeYouStart.voluntaryStatus.text      = As you would be voluntarily opting in to reporting quarterly, you can decide to opt out and return to reporting annually at any time.
 optIn.beforeYouStart.button.start              = Start
 
+# sign up start
+signUp.start.heading                           = Signing up to Making Tax Digital for Income Tax
+signUp.start.desc                              = This allows HMRC to give you a more precise forecast of how much tax you owe to help you budget more accurately.
+signUp.start.inset                             = If you voluntarily sign up, you will need software compatible with Making Tax Digital for Income Tax. There are both paid and free options for you or your agent to choose from.
+signUp.start.reportingQuarterly.heading        = Reporting quarterly
+signUp.start.reportingQuarterly.desc           = Voluntarily signing up will mean you need to:
+signUp.start.reportingQuarterly.bullet1        = keep digital records of your sole trader and property income and expenses
+signUp.start.reportingQuarterly.bullet2        = submit an update every 3 months for each of these income sources
+signUp.start.reportingQuarterly.bullet3        = still file a tax return
+signUp.start.reportingQuarterly.cy.desc        = If for this tax year you have already used software to submit income and expenses to HMRC, you will need to resubmit this information in your next quarterly update.
+signUp.start.ifYouChangeYourMind.heading       = If you change your mind
+signUp.start.ifYouChangeYourMind.desc          = As you would be voluntarily signed up, you could decide at any time to opt out.
+signUp.start.button                            = Sign up
+
 # opt-in single taxyear warning
 optIn.singleTaxYearWarning.heading                                      = Voluntarily opting in to reporting quarterly for a single tax year
 optIn.singleTaxYearWarning.desc1                                        = Opting in to the current tax year could result in you having overdue quarterly updates.
