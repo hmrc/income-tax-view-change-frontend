@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals, ReviewAndReconcilePoa}
+import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -146,7 +146,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
@@ -159,7 +159,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
 
                 val result = action(fakeRequest)
@@ -174,7 +174,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
@@ -183,15 +183,14 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("charges-due-now-table")).isDefined shouldBe true
               }
-              "the user has PoA reconciliation debits accruing interest and ReviewAndReconcilePoa FS is enabled" in {
-                enable(ReviewAndReconcilePoa)
+              "the user has PoA reconciliation debits accruing interest" in {
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListOnlyReconciliation))
 
                 val result = action(fakeRequest)
@@ -209,7 +208,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 disable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFuture))
 
                 val result = action(fakeRequest)
@@ -229,7 +228,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
 
                 val result = action(fakeRequest)
@@ -252,7 +251,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
 
                 val result = action(fakeRequest)
@@ -272,7 +271,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
@@ -286,7 +285,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
 
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
@@ -300,7 +299,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 disable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
 
                 val result = action(fakeRequest)
@@ -314,7 +313,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               setupMockSuccess(mtdUserRole)
               setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
               when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
@@ -330,7 +329,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
 
               val result = action(fakeRequest)
@@ -343,7 +342,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
 
               val result = action(fakeRequest)
@@ -353,7 +352,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
             "SelfServeTimeToPayService returns an exception" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
               when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
@@ -371,7 +370,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
               setupMockSuccess(mtdUserRole)
               setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))
 
               val result = action(fakeRequest)

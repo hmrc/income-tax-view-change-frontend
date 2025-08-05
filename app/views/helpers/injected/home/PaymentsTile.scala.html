@@ -31,7 +31,7 @@
 @import implicitDateFormatter.longDate
 
 @getNextPaymentsTag = {
-    @if(viewModel.nextPaymentsTileViewModel.reviewAndReconcileEnabled && viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
+    @if(viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
         <span class="govuk-tag govuk-tag--red" id="accrues-interest-tag"> @messages("home.payments.daily-interest-charges") </span>
     }else @{ viewModel.nextPaymentsTileViewModel.overDuePaymentsCount match {
         case 0 => p()(paymentsTileContentPaymentsDue0)

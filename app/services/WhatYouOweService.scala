@@ -41,20 +41,18 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
-  def getWhatYouOweChargesList(isReviewAndReconcile: Boolean,
-                               isFilterCodedOutPoasEnabled: Boolean,
+  def getWhatYouOweChargesList(isFilterCodedOutPoasEnabled: Boolean,
                                isPenaltiesEnabled: Boolean,
                                remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem])
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
         unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails()
-      } yield getWhatYouOweChargesList(unpaidChanges, isReviewAndReconcile, isFilterCodedOutPoasEnabled, isPenaltiesEnabled, remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot)
+      } yield getWhatYouOweChargesList(unpaidChanges, isFilterCodedOutPoasEnabled, isPenaltiesEnabled, remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot)
     }.flatten
   }
 
   def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
-                               isReviewAndReconciledEnabled: Boolean,
                                isFilterCodedOutPoasEnabled: Boolean,
                                isPenaltiesEnabled: Boolean,
                                remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem])
@@ -74,7 +72,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         val whatYouOweChargesList = WhatYouOweChargesList(
           balanceDetails = balanceDetails,
           chargesList = getFilteredChargesList(financialDetailsModelList,
-            isReviewAndReconciledEnabled,
             isFilterCodedOutPoasEnabled,
             isPenaltiesEnabled,
             remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot),
@@ -114,7 +111,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def getFilteredChargesList(financialDetailsList: List[FinancialDetailsModel],
-                             isReviewAndReconcileEnabled: Boolean,
                              isFilterCodedOutPoasEnabled: Boolean,
                              isPenaltiesEnabled: Boolean,
                              remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem]): List[ChargeItem] = {
@@ -130,7 +126,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       })
       .filter(isAKnownTypeOfCharge)
       .filterNot(_.codedOutStatus.contains(Accepted))
-      .filterNot(_.isReviewAndReconcileCharge && !isReviewAndReconcileEnabled)
       .filterNot(_.isPenalty && !isPenaltiesEnabled)
       .collect(remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot)
       .filter(_.notCodedOutPoa(isFilterCodedOutPoasEnabled))

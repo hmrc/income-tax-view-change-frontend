@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals, ReviewAndReconcilePoa}
+import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -126,7 +126,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               "the user has a fill list of charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -139,7 +139,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               "the user has no charges" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -158,7 +158,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 enable(CreditsRefundsRepay)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -181,7 +181,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -201,7 +201,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -215,7 +215,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -231,7 +231,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 disable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -243,12 +243,11 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "that includes poa extra charges in charges table" when {
               "ReviewAndReconcilePoa FS is enabled" in {
-                enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -262,10 +261,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "that includes a interest charges warning" when {
               "an overdue charge exists" in {
-                enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -277,10 +275,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
               }
 
               "Review and Reconcile charge with accruing interest exists" in {
-                enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -294,10 +291,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "that hides the interest charge warning" when {
               "there are no overdue charges or unpaid Review & Reconcile charges" in {
-                enable(ReviewAndReconcilePoa)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
@@ -314,7 +310,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               setupMockSuccess(mtdUserRole)
               setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
               when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right("/url")))
@@ -328,7 +324,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
             "PaymentsDueService returns an exception" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
               when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right("/url")))
@@ -343,7 +339,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
               when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right("/url")))
@@ -358,7 +354,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               setupMockSuccess(mtdUserRole)
               setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))
               when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right("/url")))

@@ -200,8 +200,6 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
               .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, financialDetails.findDueDateByDocumentDetails(dd))))
             .filterNot(_.originalAmount < 0)
             .filter(_.notCodedOutPoa(isEnabled(FilterCodedOutPoas)))
-            .filter(ChargeItem.filterAllowedCharges(isEnabled(ReviewAndReconcilePoa),
-              PoaOneReconciliationDebit, PoaTwoReconciliationDebit))
             .filter(ChargeItem.filterAllowedCharges(isEnabled(PenaltiesAndAppeals),
               FirstLatePaymentPenalty, SecondLatePaymentPenalty, LateSubmissionPenalty))
         }

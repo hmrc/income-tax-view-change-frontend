@@ -17,7 +17,7 @@
 package controllers
 
 import enums.{MTDIndividual, MTDSupportingAgent}
-import models.admin.{ChargeHistory, PenaltiesAndAppeals, ReviewAndReconcilePoa, YourSelfAssessmentCharges}
+import models.admin.{ChargeHistory, PenaltiesAndAppeals, YourSelfAssessmentCharges}
 import models.financialDetails.PoaTwoReconciliationCredit
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api
@@ -62,7 +62,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
           "render the charge summary page" when {
             "charge history & your self assessment charges feature switch is enabled and there is a user" that {
               "provided with an id associated to a POA1 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
+                enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -77,7 +77,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First payment on account history"
               }
               "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
+                enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -92,7 +92,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Second payment on account history"
               }
               "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
+                enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -111,7 +111,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First payment on account history"
               }
               "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
+                enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -130,7 +130,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Second payment on account history"
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge) {
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
+                enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -146,7 +146,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Balancing payment history"
               }
               "provided with an id associated to a Balancing payment with accruing interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest) {
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory)
+                enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -183,7 +183,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory, PenaltiesAndAppeals)
+                enable(YourSelfAssessmentCharges, ChargeHistory, PenaltiesAndAppeals)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -204,7 +204,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty){
-                enable(ReviewAndReconcilePoa, YourSelfAssessmentCharges, ChargeHistory, PenaltiesAndAppeals)
+                enable(YourSelfAssessmentCharges, ChargeHistory, PenaltiesAndAppeals)
 
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -224,7 +224,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
             "charge history feature is enabled and there is a user" that {
               "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
                 testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
-                enable(ReviewAndReconcilePoa, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -254,7 +254,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
-                enable(ReviewAndReconcilePoa, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
                 val result: Future[Result] = action(id1040000124)(fakeRequest)
@@ -283,7 +283,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest) {
-                enable(ReviewAndReconcilePoa, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -405,7 +405,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "displays link to poa extra charge on poa page when reconciliation charge exists" in new Setup(financialDetailsModelWithPoaExtraCharge()) {
-                enable(ReviewAndReconcilePoa)
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -421,7 +420,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe chargeSummaryUrl
               }
               "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel()) {
-                enable(ReviewAndReconcilePoa)
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -446,7 +444,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile) {
                 disable(ChargeHistory)
-                enable(ReviewAndReconcilePoa)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -462,7 +459,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
-                enable(ReviewAndReconcilePoa, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -480,7 +477,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
-                enable(ReviewAndReconcilePoa, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 

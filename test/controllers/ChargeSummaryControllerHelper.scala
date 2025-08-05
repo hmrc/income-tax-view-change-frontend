@@ -44,7 +44,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   )
 
   def mockGetReviewAndReconcileCredit(transactionType: TransactionType): Unit =
-    when(mockChargeHistoryService.getReviewAndReconcileCredit(any(), any(), any()))
+    when(mockChargeHistoryService.getReviewAndReconcileCredit(any(), any()))
       .thenReturn(Some(
         ChargeItem(
           transactionId = "transactionId",
