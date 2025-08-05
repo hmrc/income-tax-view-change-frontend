@@ -99,7 +99,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val nrsBaseUrl: String = servicesConfig.baseUrl("non-repudiation")
   lazy val nrsApiKey: String = servicesConfig.getString("microservice.services.non-repudiation.xApiKey")
   lazy val nrsRetries: Int = config.get[Int]("microservice.services.non-repudiation.numberOfRetries")
-  lazy val nrsIsEnabled: Boolean = config.get[Boolean]("microservice.services.non-repudiation.isEnabled")
 
   //Agent Services Account
   lazy val setUpAgentServicesAccountUrl: String = servicesConfig.getString("set-up-agent-services-account.url")

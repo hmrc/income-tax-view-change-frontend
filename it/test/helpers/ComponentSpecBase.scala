@@ -186,7 +186,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "auditing.enabled" -> "true",
     "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
     "encryption.isEnabled" -> "false",
-    "microservice.services.non-repudiation.isEnabled" -> "true",
     "microservice.services.non-repudiation.numberOfRetries" -> "10",
     "microservice.services.non-repudiation.host" -> mockHost,
     "microservice.services.non-repudiation.port" -> mockPort,

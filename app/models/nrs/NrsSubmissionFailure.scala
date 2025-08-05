@@ -24,5 +24,4 @@ object NrsSubmissionFailure {
 
   case object NrsExceptionThrown extends NrsSubmissionFailure
 
-  case object NrsDisabledFromConfig extends NrsSubmissionFailure
 }
