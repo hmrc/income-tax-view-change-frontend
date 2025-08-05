@@ -23,7 +23,7 @@ case class HighIncomeChildBenefitChargeViewModel (adjustedNetIncome: BigDecimal,
                                                   incomeThreshold: BigDecimal,
                                                   childBenefitChargeTaper: BigDecimal,
                                                   rate: Short,
-                                                  highIncomeBenefitCharge: BigDecimal)
+                                                  highIncomeChildBenefitCharge: BigDecimal)
 
 object HighIncomeChildBenefitChargeViewModel {
   implicit val format: OFormat[HighIncomeChildBenefitChargeViewModel] = Json.format[HighIncomeChildBenefitChargeViewModel]
