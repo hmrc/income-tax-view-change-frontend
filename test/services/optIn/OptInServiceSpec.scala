@@ -149,7 +149,7 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax years ending 2023, 2024" in {
 
-        mockRepository(Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Annual))))
+        mockRepository(Some(OptInContextData(currentTaxYear.toString, statusToString(Annual, false), statusToString(Annual, false))))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val result = service.availableOptInTaxYear()
@@ -160,7 +160,7 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax year ending 2023" in {
 
-        mockRepository(Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Voluntary))))
+        mockRepository(Some(OptInContextData(currentTaxYear.toString, statusToString(Annual, false), statusToString(Voluntary, false))))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
         val result = service.availableOptInTaxYear()
@@ -195,7 +195,7 @@ class OptInServiceSpec extends UnitSpec
   "OptInService.makeOptInCall" should {
 
     "success response case" in {
-      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Voluntary)))
+      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual, false), statusToString(Voluntary, false)))
       mockRepository(optInContext, Some(currentTaxYear.toString))
 
       when(optOutConnector.optIn(any(), any())(any()))
@@ -221,7 +221,7 @@ class OptInServiceSpec extends UnitSpec
 
     "fail response case" in {
 
-      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Voluntary)))
+      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual, false), statusToString(Voluntary, false)))
       mockRepository(optInContext, Some(currentTaxYear.toString))
 
       when(optOutConnector.optIn(any(), any())(any()))
@@ -264,7 +264,7 @@ class OptInServiceSpec extends UnitSpec
     "return model when intent is current tax-year" in {
 
       val isAgent = false
-      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Annual)))
+      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual, false), statusToString(Annual, false)))
       mockRepository(optInContextData = optInContext, selectedOptInYear = Some(currentTaxYear.toString))
       when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
@@ -283,7 +283,7 @@ class OptInServiceSpec extends UnitSpec
     "return model when intent is next tax-year" in {
 
       val isAgent = false
-      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual), statusToString(Annual)))
+      val optInContext = Some(OptInContextData(currentTaxYear.toString, statusToString(Annual, false), statusToString(Annual, false)))
       mockRepository(optInContextData = optInContext, selectedOptInYear = Some(currentTaxYear.nextYear.toString))
       when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 

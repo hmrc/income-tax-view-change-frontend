@@ -58,22 +58,7 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
-          s"throw an exception for single-year opt out page when unsupported status is present" in {
-            enable(OptOutFs)
-            disable(NavBarFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-            assertThrows[RuntimeException] {
-              helper.stubOptOutInitialState(currentTaxYear(dateService),
-                previousYearCrystallised = false,
-                previousYearStatus = Voluntary,
-                currentYearStatus = Annual,
-                nextYearStatus = NoStatus)
-            }
-          }
-
-          s"render confirm multi-year opt out page" in {
+          s"render confirm multi-year opt out page with supported ITSAStatus for each year" in {
             enable(OptOutFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
@@ -98,6 +83,69 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
               elementTextByID("optOut-warning")(infoMessage),
             )
           }
+          s"render confirm multi-year opt out page when NoStatus for CY+1 is present" in {
+            enable(OptOutFs)
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+            helper.stubOptOutInitialState(currentTaxYear(dateService),
+              previousYearCrystallised = false,
+              previousYearStatus = Voluntary,
+              currentYearStatus = Annual,
+              nextYearStatus = NoStatus)
+
+            assert(optOutSessionDataRepository.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
+
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+            result should have(
+              httpStatus(OK),
+              elementTextByID("heading")(expectedTitle(dateService)),
+              elementTextByID("summary")(summary),
+              elementTextByID("info-message")(infoMessage),
+            )
+          }
+          s"throw an exception for multi-year opt out page when when NoStatus for CY-1 is present" in {
+            enable(OptOutFs)
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+            assertThrows[RuntimeException] {
+              helper.stubOptOutInitialState(currentTaxYear(dateService),
+                previousYearCrystallised = false,
+                previousYearStatus = NoStatus,
+                currentYearStatus = Voluntary,
+                nextYearStatus = Annual)
+            }          }
+          s"throw an exception for multi-year opt out page when when NoStatus for CY is present" in {
+            enable(OptOutFs)
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+            assertThrows[RuntimeException] {
+              helper.stubOptOutInitialState(currentTaxYear(dateService),
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = NoStatus,
+                nextYearStatus = Annual)
+            }          }
+          s"throw an exception for multi-year opt out page when unsupported statuses are present" in {
+            enable(OptOutFs)
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+            assertThrows[RuntimeException] {
+              helper.stubOptOutInitialState(currentTaxYear(dateService),
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = DigitallyExempt,
+                nextYearStatus = Exempt)
+            }          }
         }
         testAuthFailures(path, mtdUserRole)
       }
@@ -107,7 +155,7 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "redirect to confirmed page" when {
-            "user confirms opt-out for multi-year scenario" in {
+            "user confirms opt-out for multi-year scenario with supported ITSAStatus for each year" in {
               enable(OptOutFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
@@ -159,8 +207,7 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
                 )
               )
             }
-
-            "user confirms opt-out for multi-year scenario and missing header" in {
+            "user confirms opt-out for multi-year scenario with supported ITSAStatus for each year and missing header" in {
               enable(OptOutFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
@@ -184,8 +231,59 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
                 redirectURI(routes.ConfirmedOptOutController.show(isAgent).url)
               )
             }
-          }
+            "user confirms opt-out for multi-year scenario when CY+1 is NoStatus" in {
+              enable(OptOutFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              val taxYear = TaxYear(2022, 2023)
 
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+              helper.stubOptOutInitialState(
+                currentTaxYear(dateService),
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = Annual,
+                nextYearStatus = NoStatus
+              )
+
+              ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(
+                taxableEntityId = propertyOnlyResponse.nino,
+                status = Status.NO_CONTENT,
+                responseBody = emptyBodyString
+              )
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(routes.ConfirmedOptOutController.show(isAgent).url)
+              )
+
+              val mtdUser = testUser(mtdUserRole)
+
+              verifyAuditEvent(
+                OptOutAuditModel(
+                  saUtr = mtdUser.saUtr,
+                  credId = mtdUser.credId,
+                  userType = mtdUser.userType,
+                  agentReferenceNumber = mtdUser.arn,
+                  mtditid = mtdUser.mtditid,
+                  nino = testNino,
+                  outcome = Outcome(isSuccessful = true, None, None),
+                  optOutRequestedFromTaxYear = taxYear.previousYear.formatAsShortYearRange,
+                  currentYear = taxYear.formatAsShortYearRange,
+                  `beforeITSAStatusCurrentYear-1` = Voluntary,
+                  beforeITSAStatusCurrentYear = Annual,
+                  `beforeITSAStatusCurrentYear+1` = NoStatus,
+                  `afterAssumedITSAStatusCurrentYear-1` = Annual,
+                  afterAssumedITSAStatusCurrentYear = Annual,
+                  `afterAssumedITSAStatusCurrentYear+1` = NoStatus,
+                  `currentYear-1Crystallised` = false
+                )
+              )
+            }
+          }
           "Redirect to OptOut Error page" when {
             "user confirms opt-out for multi-year scenario and update fails" in {
               enable(OptOutFs)
@@ -269,6 +367,38 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
               }
 
               verifyAuditEvent(auditModel)
+            }
+            "throw an exception when CY is NoStatus" in {
+              enable(OptOutFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+              assertThrows[RuntimeException] {
+                helper.stubOptOutInitialState(
+                  currentTaxYear(dateService),
+                  previousYearCrystallised = false,
+                  previousYearStatus = Voluntary,
+                  currentYearStatus = NoStatus,
+                  nextYearStatus = Annual
+                )
+              }
+            }
+            "throw an exception when CY-1 is NoStatus" in {
+              enable(OptOutFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+              assertThrows[RuntimeException] {
+                helper.stubOptOutInitialState(
+                  currentTaxYear(dateService),
+                  previousYearCrystallised = false,
+                  previousYearStatus = NoStatus,
+                  currentYearStatus = Voluntary,
+                  nextYearStatus = Annual
+                )
+              }
             }
           }
 

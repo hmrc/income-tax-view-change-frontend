@@ -115,8 +115,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       contextData <- OptionT(Future(optInSessionData.optInContextData))
       currentYearAsTaxYear <- OptionT(Future(contextData.currentYearAsTaxYear()))
 
-      currentYearITSAStatus = stringToStatus(contextData.currentYearITSAStatus)
-      nextYearITSAStatus = stringToStatus(contextData.nextYearITSAStatus)
+      currentYearITSAStatus = stringToStatus(status = contextData.currentYearITSAStatus, isNextYear = false)
+      nextYearITSAStatus = stringToStatus(status = contextData.nextYearITSAStatus, isNextYear = true)
 
       proposition = createOptInProposition(currentYearAsTaxYear,
         currentYearITSAStatus,

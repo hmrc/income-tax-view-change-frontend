@@ -40,9 +40,9 @@ class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) 
               Some(OptOutContextData(
                 currentYear = currentTaxYear.toString,
                 previousYearCrystallised,
-                statusToString(previousYearStatus),
-                statusToString(currentYearStatus),
-                statusToString(nextYearStatus))), None))))
+                statusToString(status = previousYearStatus, isNextYear = false),
+                statusToString(status = currentYearStatus, isNextYear = false),
+                statusToString(status = nextYearStatus, isNextYear = true))), None))))
       .futureValue shouldBe true
   }
 

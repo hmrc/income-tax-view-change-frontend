@@ -56,7 +56,11 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None))))
+              currentTaxYear.toString,
+              statusToString(status = currentYearStatus, isNextYear = false),
+              statusToString(status = nextYearStatus, isNextYear = true))),
+            None)
+          )))
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
