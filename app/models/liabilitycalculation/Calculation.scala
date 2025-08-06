@@ -182,7 +182,7 @@ case class HighIncomeChildBenefitCharge(adjustedNetIncome: BigDecimal,
                                         incomeThreshold: BigDecimal,
                                         childBenefitChargeTaper: BigDecimal,
                                         rate: Short,
-                                        highIncomeBenefitCharge: BigDecimal)
+                                        highIncomeChildBenefitCharge: BigDecimal)
 
 object HighIncomeChildBenefitCharge {
   implicit val format: OFormat[HighIncomeChildBenefitCharge] = Json.format[HighIncomeChildBenefitCharge]

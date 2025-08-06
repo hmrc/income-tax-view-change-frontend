@@ -615,7 +615,7 @@ taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Tax due on
 taxCal_breakdown.table.giftAidTaxReductionWhereBasicRateDiffers     = Basic rate difference tax reduction
 taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers        = Basic rate difference tax charge
 
-taxCal_breakdown.table.highIncomeBenefitCharge                      = High Income Child Benefit tax charge
+taxCal_breakdown.table.highIncomeChildBenefitCharge                      = High Income Child Benefit tax charge
 
 taxCal_breakdown.message.static1                                = This calculation is only based on information HMRC have received about your income and expenses to date. This may change as we receive further information about you during the tax year.
 taxCal_breakdown.message.C22201                                 = Your Basic Rate limit has been increased by {0} to {1} for Gift Aid payments.
