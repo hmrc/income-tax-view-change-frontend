@@ -17,11 +17,10 @@
 package testOnly.connectors
 
 import connectors.RawResponseReads
-import play.api.libs.json.Json
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, PenaltiesDataModel}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import testOnly.models.PenaltiesDataModel
 import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

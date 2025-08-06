@@ -46,7 +46,6 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2024)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
               mockUkPlusForeignPlusSoleTraderNoLatency()
               setupMockCreateSession(true)
               setupMockSetSessionKeyMongo(Right(true))
@@ -64,14 +63,36 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               getManageDetailsSummaryValues(document).get(2).text() shouldBe calendar
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
-            "the user does not have Reporting frequency content/link when FS is disabled" in {
-              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
-              disable(ReportingFrequencyPage)
+            "the user has a valid id parameter and latency information expired" in {
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2024)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+              mockUkPlusForeignPlusSoleTraderWithLatencyExpired()
+              setupMockCreateSession(true)
+              setupMockSetSessionKeyMongo(Right(true))
+
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty)))))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.title shouldBe title()
+              getHeading(document) shouldBe heading
+              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeSecondYearReportingMethodLink(document) shouldBe false
+              hasGracePeriodInfo(document) shouldBe false
+              getManageDetailsSummaryValues(document).get(2).text() shouldBe standard
+              document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+            }
+            "the user does not have Reporting frequency content/link" in {
+              enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
+              setupMockSuccess(mtdUserRole)
+              setupMockCreateSession(true)
+
+              setupMockGetCurrentTaxYearEnd(2024)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
               mockUkPlusForeignPlusSoleTraderNoLatency()
               setupMockCreateSession(true)
               setupMockSetSessionKeyMongo(Right(true))
@@ -98,7 +119,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2024)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
               mockUkPlusForeignPlusSoleTraderNoLatency()
               setupMockCreateSession(true)
               setupMockSetSessionKeyMongo(Right(true))
@@ -120,7 +141,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
               setupMockGetCurrentTaxYearEnd(2023)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
               mockUkPlusForeignPlusSoleTraderWithLatency()
@@ -157,7 +178,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2023)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
               mockUkPlusForeignPlusSoleTraderWithLatency()
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
@@ -183,7 +204,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2023)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, false)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, false)
               mockUkPlusForeignPlusSoleTraderWithLatency()
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
@@ -195,12 +216,12 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               val document: Document = Jsoup.parse(contentAsString(result))
               document.title shouldBe title()
               getHeading(document) shouldBe heading
-              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeFirstYearReportingMethodLink(document) shouldBe true
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.eq(2).size() shouldBe 0
-              manageDetailsSummaryValues.eq(3).size() shouldBe 0
+              manageDetailsSummaryValues.eq(2).size() shouldBe 1
+              manageDetailsSummaryValues.eq(3).size() shouldBe 1
             }
 
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -209,7 +230,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2023)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
               mockUkPlusForeignPlusSoleTraderWithLatency()
               setupMockTaxYearCrystallised(2023)
               setupMockTaxYearCrystallised(2024)
@@ -235,7 +256,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2023)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(false, false)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)
               setupMockTaxYearCrystallised(2023)
               setupMockTaxYearCrystallised(2024)
               mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
@@ -262,7 +283,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2025)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
               mockUkPlusForeignPlusSoleTraderWithLatency()
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
@@ -274,13 +295,11 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               val document: Document = Jsoup.parse(contentAsString(result))
               document.title shouldBe title()
               getHeading(document) shouldBe heading
-              hasChangeFirstYearReportingMethodLink(document) shouldBe true
-              hasChangeSecondYearReportingMethodLink(document) shouldBe true
+              hasChangeFirstYearReportingMethodLink(document) shouldBe false
+              hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
               manageDetailsSummaryValues.get(2).text() shouldBe standard
-              manageDetailsSummaryValues.get(3).text() shouldBe annuallyGracePeriod
-              manageDetailsSummaryValues.get(4).text() shouldBe annuallyGracePeriod
             }
           }
 
@@ -312,7 +331,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               mockBusinessIncomeSource()
 
               setupMockGetCurrentTaxYearEnd(2023)
-              setupMockHasMandatedOrVoluntaryStatusForLatencyYears(false, false)
+              setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)
 
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty)))))
 

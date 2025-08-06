@@ -62,8 +62,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -85,9 +84,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false,
-
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -109,8 +106,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -128,8 +124,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -151,8 +146,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -173,8 +167,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -195,8 +188,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -214,8 +206,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -237,8 +228,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -259,8 +249,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = false
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -281,8 +270,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -300,8 +288,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -318,8 +305,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = startDateEnabled,
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
     }
 
@@ -364,14 +350,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(7).text() shouldBe quarterlyGracePeriod
       document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
       document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(false)
-
-      val expandableInfo = document.getElementById("standard-update-period-dropdown")
-      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
-      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
-      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
-
     }
 
     "not display the accounting method row when showAccountingMethod is false" in {
@@ -382,8 +360,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -393,8 +370,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the whole page with unknowns and no change links or inset text" in new SelfEmploymentUnknownsSetup(false) {
-
-      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April , you could be required to report quarterly."
 
       summaryListRowKeys().eq(0).text() shouldBe businessName
       summaryListRowKeys().eq(1).text() shouldBe businessAddress
@@ -414,14 +389,25 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(7).isDefined shouldBe false
     }
 
-    "render the reporting frequency rows IF there are latency details" in new SelfEmploymentSetup(false) {
+    "display standard update period dropdown when NO latency details" in new SelfEmploymentUnknownsSetup(false) {
+      val expandableInfo = document.getElementById("standard-update-period-dropdown")
+      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
+      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
+      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
+      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
+      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
+
+    }
+
+    "render the reporting frequency rows and content IF there are latency details" in new SelfEmploymentSetup(false) {
+      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2024, you could be required to report quarterly."
       summaryListRowKeys().eq(6).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(7).text() shouldBe reportingMethod2
     }
 
     "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new SelfEmploymentCrystallisedSetup(false) {
-      summaryListRowKeys().eq(6).text() shouldBe reportingMethod2
-      summaryListRowKeys().eq(7).isDefined shouldBe false
+      summaryListRowKeys().eq(6).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(7).text() shouldBe reportingMethod2
     }
 
     "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false) {
@@ -476,7 +462,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -520,7 +505,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -532,7 +516,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       val expectedRow2 = s"Using Making Tax Digital for Income Tax for ${taxYear2.toInt - 1} to $taxYear2"
 
       allRows should contain(expectedRow1)
-      allRows should not contain (expectedRow2)
+      allRows should contain (expectedRow2)
 
       val values = document.getElementsByClass("govuk-summary-list__value").eachText()
       values should contain("Yes")
@@ -584,12 +568,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
       document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(true)
 
-      val expandableInfo = document.getElementById("standard-update-period-dropdown")
-      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
-      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
-      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "do not display start date if DisplayBusinessStartDate is disabled" in new SelfEmploymentSetup(true, startDateEnabled = false) {
@@ -628,13 +606,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(2).text() shouldBe calendar
       summaryListRowValues().eq(3).text() shouldBe annuallyGracePeriod
       summaryListRowValues().eq(4).text() shouldBe quarterlyGracePeriod
-
-      val expandableInfo = document.getElementById("standard-update-period-dropdown")
-      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
-      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
-      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "not display the accounting method row when showAccountingMethod is false" in {
@@ -645,8 +616,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       implicit val document = Jsoup.parse(contentAsString(view))
@@ -663,8 +633,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       val document = Jsoup.parse(contentAsString(view))
@@ -679,6 +648,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
       document.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
       document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+      document.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
 
 
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
@@ -699,8 +669,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new UkCrystallisedSetup(false) {
-      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
-      summaryListRowKeys().eq(4).isDefined shouldBe false
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(4).text() shouldBe reportingMethod2
     }
 
     "render the change links where status is Quarterly" in new UkCrystallisedSetup(false) {
@@ -752,23 +722,22 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(3).text() shouldBe annuallyGracePeriod
       summaryListRowValues().eq(4).text() shouldBe quarterlyGracePeriod
 
-      val expandableInfo = document.getElementById("standard-update-period-dropdown")
-      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
-      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
-      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "render the whole page with unknowns and no change links" in new UkSetupUnknowns(true) {
-
-      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April , you could be required to report quarterly."
 
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
       summaryListRowKeys().eq(1).text() shouldBe ukAccountingMethod
 
       summaryListRowValues().eq(0).text() shouldBe unknown
       summaryListRowValues().eq(1).text() shouldBe "Cash basis accounting"
+
+      document.getElementById("standard-update-period-dropdown").text() shouldBe "What is a standard quarterly period? This business is reporting from 6 April in line with the tax year, also known as using standard update periods. If your software supports it, you can choose to report using calendar update periods which end on the last day of the month. Learn more about standard and calendar quarters (opens in new tab)"
+      document.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
+      document.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
+      document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+      document.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
+
     }
 
     "do not display start date if DisplayBusinessStartDate is disabled" in new UkSetup(false, startDateEnabled = false) {
@@ -807,12 +776,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(3).text() shouldBe annuallyGracePeriod
       summaryListRowValues().eq(4).text() shouldBe quarterlyGracePeriod
 
-      val expandableInfo = document.getElementById("standard-update-period-dropdown")
-      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
-      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
-      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "not display the accounting method row when showAccountingMethod is false" in {
@@ -823,8 +786,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         showStartDate = true,
         showAccountingMethod = false,
         showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true,
-        anyIncomeSourcesInLatency = true
+        showReportingFrequencyLink = true
       )(messages, implicitly)
 
       implicit val document = Jsoup.parse(contentAsString(view))
@@ -835,13 +797,17 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "render the whole page with unknowns and no change links or inset text" in new ForeignSetupUnknowns(false) {
 
-      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April , you could be required to report quarterly."
-
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
       summaryListRowKeys().eq(1).text() shouldBe foreignAccountingMethod
 
       summaryListRowValues().eq(0).text() shouldBe unknown
       summaryListRowValues().eq(1).text() shouldBe "Cash basis accounting"
+
+      document.getElementById("standard-update-period-dropdown").text() shouldBe "What is a standard quarterly period? This business is reporting from 6 April in line with the tax year, also known as using standard update periods. If your software supports it, you can choose to report using calendar update periods which end on the last day of the month. Learn more about standard and calendar quarters (opens in new tab)"
+      document.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
+      document.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
+      document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+      document.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "Do not render the reporting frequency rows when NO latency details" in new ForeignSetupUnknowns(false) {
@@ -855,8 +821,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new ForeignCrystallisedSetup(false) {
-      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
-      summaryListRowKeys().eq(4).isDefined shouldBe false
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(4).text() shouldBe reportingMethod2
     }
 
     "render the change links where status is Quarterly" in new ForeignCrystallisedSetup(false) {
@@ -906,25 +872,21 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(2).text() shouldBe calendar
       summaryListRowValues().eq(3).text() shouldBe annuallyGracePeriod
       summaryListRowValues().eq(4).text() shouldBe quarterlyGracePeriod
-
-      val expandableInfo = document.getElementById("standard-update-period-dropdown")
-
-      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
-      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
-      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "render the whole page with unknowns and no change links or inset text" in new ForeignSetupUnknowns(true) {
-
-      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April , you could be required to report quarterly."
 
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
       summaryListRowKeys().eq(1).text() shouldBe foreignAccountingMethod
 
       summaryListRowValues().eq(0).text() shouldBe unknown
       summaryListRowValues().eq(1).text() shouldBe cashBasisAccounting
+
+      document.getElementById("standard-update-period-dropdown").text() shouldBe "What is a standard quarterly period? This business is reporting from 6 April in line with the tax year, also known as using standard update periods. If your software supports it, you can choose to report using calendar update periods which end on the last day of the month. Learn more about standard and calendar quarters (opens in new tab)"
+      document.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
+      document.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
+      document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+      document.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "do not display start date if DisplayBusinessStartDate is disabled" in new ForeignSetup(true, startDateEnabled = false) {
