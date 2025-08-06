@@ -27,7 +27,7 @@ import play.api.libs.json.Json
 import testConstants.NrsUtils
 import uk.gov.hmrc.http.HeaderCarrier
 
-class NrsConnectorSpec extends AnyWordSpec with ComponentSpecBase {
+class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
   override implicit val hc: HeaderCarrier = HeaderCarrier()
 

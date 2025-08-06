@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.nrs.NrsSubmissionFailure.NrsErrorResponse
 import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
 import models.nrs.{NrsSubmission, NrsSubmissionFailure, NrsSuccessResponse}
 import play.api.Logging
@@ -57,11 +58,11 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
 
         case response if shouldRetry(response) && remainingAttempts > 0 =>
           logger.warn(s"NRS submission retry due to status: ${response.status}, body: ${response.body}")
-          submit(nrsSubmission, remainingAttempts = numberOfRetries - 1)
+          submit(nrsSubmission, remainingAttempts = remainingAttempts - 1)
 
         case response =>
           logger.info(s"NRS submission failed with status: ${response.status}, details: ${response.body}")
-          Future.successful(Left(NrsSubmissionFailure.NrsErrorResponse(response.status)))
+          Future.successful(Left(NrsErrorResponse(response.status)))
       }
       .recover {
         case NonFatal(e) =>
