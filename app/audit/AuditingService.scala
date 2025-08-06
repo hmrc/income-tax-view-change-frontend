@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector)  {
+class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector) {
 
   def audit(auditModel: AuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
@@ -63,8 +63,8 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
     auditConnector.sendExtendedEvent(extendedDataEvent).map {
       case Success =>
         Logger("application").debug("Splunk Audit Successful")
-      case Failure(err, _) =>
-        Logger("application").debug(s"Splunk Audit Error, message: $err")
+      case Failure(errMessages, _) =>
+        Logger("application").debug(s"Splunk Audit Error, message: $errMessages")
       case Disabled =>
         Logger("application").debug("Auditing Disabled")
     }

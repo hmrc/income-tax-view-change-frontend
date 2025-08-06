@@ -42,13 +42,13 @@ class UpliftFailedControllerSpec extends TestSupport with MockAuditingService {
   "the UpliftFailedController.show() action" should {
 
     "audited V-uplift-failure-outcome when ivJourneyId is defined" in {
+
       lazy val result = TestUpliftFailedController.show()(FakeRequest("GET", s"/test-path?journeyId=$expectedJourneyId"))
 
       val expectedIvOutcomeFailureAuditModel = IvOutcomeFailureAuditModel(expectedJourneyId)
 
       whenReady(result) { response =>
         verifyAudit(expectedIvOutcomeFailureAuditModel)
-
         response.header.status shouldBe Status.FORBIDDEN
         Jsoup.parse(response.body.asInstanceOf[HttpEntity.Strict].data.utf8String).getElementsByTag("h1").text() shouldBe upliftFailureTitle
       }
