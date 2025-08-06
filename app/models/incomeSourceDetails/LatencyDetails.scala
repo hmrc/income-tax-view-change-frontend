@@ -26,10 +26,16 @@ case class LatencyDetails(
                            latencyIndicator1: String,
                            taxYear2: String,
                            latencyIndicator2: String
-                         )
+                         ) {
+  def isBusinessOrPropertyInLatency(currentTaxYearEnd: Int): Boolean = !(taxYear2.toInt < currentTaxYearEnd)
+}
 
 
 case class LatencyYearsQuarterly(firstYear: Option[Boolean], secondYear: Option[Boolean])
+
+case class LatencyYearsAnnual(firstYear: Option[Boolean], secondYear: Option[Boolean])
+
+case class LatencyYearsQuarterlyAndAnnualStatus(latencyYearsQuarterly: LatencyYearsQuarterly, latencyYearsAnnual: LatencyYearsAnnual)
 
 case class LatencyYearsCrystallised(firstYear: Option[Boolean], secondYear: Option[Boolean])
 

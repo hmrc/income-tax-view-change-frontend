@@ -325,6 +325,19 @@ object PropertyDetailsTestConstants {
     cashOrAccruals = Some(true)
   )
 
+  val ukPropertyWithLatencyPeriodExpired = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(ukIncomeType),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails),
+    quarterTypeElection = Some(quarterTypeElectionCalendar),
+    cashOrAccruals = Some(true)
+  )
+
   val ukPropertyWithLatencyDetailsAndUnknowns = PropertyDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     accountingPeriod = None,
@@ -382,6 +395,19 @@ object PropertyDetailsTestConstants {
     contextualTaxYear = None,
     cessation = None,
     latencyDetails = Some(testLatencyDetails5),
+    quarterTypeElection = Some(quarterTypeElectionStandard),
+    cashOrAccruals = Some(true)
+  )
+
+  val foreignPropertyWithLatencyPeriodExpired = PropertyDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails),
     quarterTypeElection = Some(quarterTypeElectionStandard),
     cashOrAccruals = Some(true)
   )

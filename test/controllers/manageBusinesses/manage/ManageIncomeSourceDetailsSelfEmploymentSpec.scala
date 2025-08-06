@@ -41,7 +41,6 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2024)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
             mockUkPlusForeignPlusSoleTraderNoLatency()
             setupMockCreateSession(true)
             setupMockSetSessionKeyMongo(Right(true))
@@ -65,15 +64,14 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryRows.eq(7).isEmpty
             document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
           }
-          "the user does not have reporting frequency related content when RF FS is off" in {
-            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney)
-            disable(ReportingFrequencyPage)
+
+          "the user has a valid id parameter and latency information but user is not in latency period" in {
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2024)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
-            mockUkPlusForeignPlusSoleTraderNoLatency()
+            mockUkPlusForeignPlusSoleTraderWithLatencyExpired()
             setupMockCreateSession(true)
             setupMockSetSessionKeyMongo(Right(true))
 
@@ -90,11 +88,11 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             val manageDetailsSummaryRows = getManageDetailsSummaryRows(document)
 
             manageDetailsSummaryRows.get(1).getElementsByTag("dt").text() shouldBe "Address"
-            manageDetailsSummaryRows.get(1).getElementsByTag("dd").text() shouldBe businessWithLatencyAddress
-            getManageDetailsSummaryValues(document).get(5).text() shouldBe calendar
+            manageDetailsSummaryRows.get(1).getElementsByTag("dd").text() shouldBe businessWithLatencyAddress2
+            manageDetailsSummaryRows.eq(5).isEmpty
             manageDetailsSummaryRows.eq(6).isEmpty
             manageDetailsSummaryRows.eq(7).isEmpty
-            hasReportingFrequencyContent(document) shouldBe false
+            document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
           }
 
           "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
@@ -103,7 +101,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
@@ -129,13 +127,13 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryKeys.eq(7).text().contains(reportingMethod)
           }
 
-          "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
+          "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is Q" in {
             enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, false)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, false)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
@@ -148,13 +146,43 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe title()
             getHeading(document) shouldBe heading
-            hasChangeFirstYearReportingMethodLink(document) shouldBe false
-            hasChangeSecondYearReportingMethodLink(document) shouldBe false
+            hasChangeFirstYearReportingMethodLink(document) shouldBe true
+            hasChangeSecondYearReportingMethodLink(document) shouldBe true
             hasInsetText(document) shouldBe true
             val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
             val manageDetailsSummaryKeys = getManageDetailsSummaryKeys(document)
             manageDetailsSummaryKeys.get(1).text() shouldBe "Address"
             manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress
+            manageDetailsSummaryValues.eq(5).isEmpty
+            manageDetailsSummaryValues.eq(6).isEmpty
+          }
+
+          "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is A" in {
+            enable(IncomeSourcesNewJourney, DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            setupMockSuccess(mtdUserRole)
+            setupMockCreateSession(true)
+
+            setupMockGetCurrentTaxYearEnd(2023)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, false)
+            mockUkPlusForeignPlusSoleTraderWithLatencyAnnual()
+            setupMockTaxYearNotCrystallised(2023)
+            setupMockTaxYearNotCrystallised(2024)
+
+            setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment)))))
+            setupMockSetSessionKeyMongo(Right(true))
+
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.OK
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title shouldBe title()
+            getHeading(document) shouldBe heading
+            hasChangeFirstYearReportingMethodLink(document) shouldBe true
+            hasChangeSecondYearReportingMethodLink(document) shouldBe false
+            hasInsetText(document) shouldBe true
+            val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
+            val manageDetailsSummaryKeys = getManageDetailsSummaryKeys(document)
+            manageDetailsSummaryKeys.get(1).text() shouldBe "Address"
+            manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress2
             manageDetailsSummaryValues.eq(5).isEmpty
             manageDetailsSummaryValues.eq(6).isEmpty
           }
@@ -165,7 +193,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearCrystallised(2023)
             setupMockTaxYearCrystallised(2024)
@@ -194,7 +222,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(false, false)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)
             setupMockTaxYearCrystallised(2023)
             setupMockTaxYearCrystallised(2024)
             mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
@@ -230,7 +258,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2025)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
@@ -243,8 +271,8 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title shouldBe title()
             getHeading(document) shouldBe heading
-            hasChangeFirstYearReportingMethodLink(document) shouldBe true
-            hasChangeSecondYearReportingMethodLink(document) shouldBe true
+            hasChangeFirstYearReportingMethodLink(document) shouldBe false
+            hasChangeSecondYearReportingMethodLink(document) shouldBe false
             hasInsetText(document) shouldBe true
             val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
             getManageDetailsSummaryKeys(document).get(1).text() shouldBe "Address"
@@ -261,7 +289,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2024)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             mockUkPlusForeignPlusSoleTraderWithLatency()
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
@@ -285,7 +313,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(true, true)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
             setupMockTaxYearNotCrystallised(2023)
             setupMockTaxYearNotCrystallised(2024)
 
@@ -349,7 +377,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             mockUKPropertyIncomeSource()
 
             setupMockGetCurrentTaxYearEnd(2023)
-            setupMockHasMandatedOrVoluntaryStatusForLatencyYears(false, false)
+            setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)
 
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment)))))
 

@@ -146,12 +146,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         sources = user.incomeSources,
         incomeSourceId = incomeSourceId
       )
-      anyIncomeSourcesInLatency =
-        user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
-          user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty ||
-          user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
-          user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
-
     } yield {
 
       Ok(view(
@@ -161,8 +155,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         showAccountingMethod = isEnabled(AccountingMethodJourney),
         showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
         showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
-        backUrl = backUrl,
-        anyIncomeSourcesInLatency = anyIncomeSourcesInLatency
+        backUrl = backUrl
       ))
     }
 
@@ -182,13 +175,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                      backUrl: String,
                      incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    val anyIncomeSourcesInLatency =
-      user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
-        user.incomeSources.businesses.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty ||
-        user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator1)).nonEmpty ||
-        user.incomeSources.properties.flatMap(_.latencyDetails.map(_.latencyIndicator2)).nonEmpty
-
-
     getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
       .map { viewModel =>
         Ok(view(
@@ -198,8 +184,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
           showAccountingMethod = isEnabled(AccountingMethodJourney),
           showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
           showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
-          backUrl = backUrl,
-          anyIncomeSourcesInLatency = anyIncomeSourcesInLatency
+          backUrl = backUrl
         ))
       }.recover {
         case ex =>
@@ -262,6 +247,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
   private def variableViewModelSEBusiness(
                                            incomeSource: BusinessDetailsModel,
                                            latencyYearsQuarterly: LatencyYearsQuarterly,
+                                           latencyYearsAnnual: LatencyYearsAnnual,
                                            latencyYearsCrystallised: LatencyYearsCrystallised
                                          ): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
@@ -272,15 +258,18 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       address = incomeSource.address,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
       latencyYearsQuarterly = latencyYearsQuarterly,
+      latencyYearsAnnual = latencyYearsAnnual,
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
 
   private def variableViewModelPropertyBusiness(incomeSource: PropertyDetailsModel,
                                                 latencyYearsQuarterly: LatencyYearsQuarterly,
+                                                latencyYearsAnnual: LatencyYearsAnnual,
                                                 latencyYearsCrystallised: LatencyYearsCrystallised,
                                                 incomeSourceType: IncomeSourceType): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
@@ -291,10 +280,12 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       address = None,
       isTraditionalAccountingMethod = incomeSource.cashOrAccruals,
       latencyYearsQuarterly = latencyYearsQuarterly,
+      latencyYearsAnnual = latencyYearsAnnual,
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
 
@@ -310,23 +301,33 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         .filterNot(_.isCeased)
         .find(_.incomeSourceId == incomeSourceId.value)
 
+    def defaultViewModel(desiredIncomeSource: BusinessDetailsModel): Future[ManageIncomeSourceDetailsViewModel] = Future.successful(
+      variableViewModelSEBusiness(
+      incomeSource = desiredIncomeSource,
+      latencyYearsQuarterly = LatencyYearsQuarterly(
+        firstYear = Some(false),
+        secondYear = Some(false)
+      ),
+      latencyYearsAnnual = LatencyYearsAnnual(
+        firstYear = Some(false),
+        secondYear = Some(false)
+      ),
+      latencyYearsCrystallised = LatencyYearsCrystallised(
+        firstYear = None,
+        secondYear = None
+      )
+    ))
+
     desiredIncomeSourceMaybe match {
       case Some(desiredIncomeSource) =>
         desiredIncomeSource.latencyDetails match {
           case Some(latencyDetails) =>
-            handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails)
+            if(latencyDetails.isBusinessOrPropertyInLatency(dateService.getCurrentTaxYearEnd))
+              handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails)
+            else
+              defaultViewModel(desiredIncomeSource)
           case None =>
-            Future.successful(variableViewModelSEBusiness(
-              incomeSource = desiredIncomeSource,
-              latencyYearsQuarterly = LatencyYearsQuarterly(
-                firstYear = Some(false),
-                secondYear = Some(false)
-              ),
-              latencyYearsCrystallised = LatencyYearsCrystallised(
-                firstYear = None,
-                secondYear = None
-              )
-            ))
+            defaultViewModel(desiredIncomeSource)
         }
       case None =>
         Future.failed(new Error("Unable to find income source"))
@@ -339,7 +340,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                     )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
-      (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+      latencyYearsQuarterlyAndAnnualStatus <- itsaStatusService.latencyYearsQuarterlyAndAnnualStatus(Some(latencyDetails))
       crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
     } yield {
 
@@ -347,10 +348,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         case None =>
           variableViewModelSEBusiness(
             incomeSource = desiredIncomeSource,
-            latencyYearsQuarterly = LatencyYearsQuarterly(
-              firstYear = Some(latencyYearOneStatus),
-              secondYear = Some(latencyYearTwoStatus)
-            ),
+            latencyYearsQuarterly = latencyYearsQuarterlyAndAnnualStatus.latencyYearsQuarterly,
+            latencyYearsAnnual = latencyYearsQuarterlyAndAnnualStatus.latencyYearsAnnual,
             latencyYearsCrystallised = LatencyYearsCrystallised(
               firstYear = None,
               secondYear = None
@@ -360,10 +359,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         case Some(crystallisationList: List[Boolean]) =>
           variableViewModelSEBusiness(
             incomeSource = desiredIncomeSource,
-            latencyYearsQuarterly = LatencyYearsQuarterly(
-              firstYear = Some(latencyYearOneStatus),
-              secondYear = Some(latencyYearTwoStatus)
-            ),
+            latencyYearsQuarterly = latencyYearsQuarterlyAndAnnualStatus.latencyYearsQuarterly,
+            latencyYearsAnnual = latencyYearsQuarterlyAndAnnualStatus.latencyYearsAnnual,
             latencyYearsCrystallised = LatencyYearsCrystallised(
               firstYear = crystallisationList.headOption,
               secondYear = crystallisationList.lastOption
@@ -393,18 +390,26 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       }
     }
 
+    def defaultViewModel(desiredIncomeSource: PropertyDetailsModel): Future[ManageIncomeSourceDetailsViewModel] = Future.successful(
+      variableViewModelPropertyBusiness(
+      incomeSource = desiredIncomeSource,
+      latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
+      latencyYearsAnnual = LatencyYearsAnnual(Some(false), Some(false)),
+      latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
+      incomeSourceType = incomeSourceType
+    ))
+
     desiredIncomeSourceMaybe match {
       case Some(desiredIncomeSource) =>
         desiredIncomeSource.latencyDetails match {
           case Some(latencyDetails) =>
-            handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType)
+            if(latencyDetails.isBusinessOrPropertyInLatency(dateService.getCurrentTaxYearEnd))
+              handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType)
+            else
+              defaultViewModel(desiredIncomeSource)
+
           case None =>
-            Future.successful(variableViewModelPropertyBusiness(
-              incomeSource = desiredIncomeSource,
-              latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
-              latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
-              incomeSourceType = incomeSourceType
-            ))
+            defaultViewModel(desiredIncomeSource)
 
         }
       case None =>
@@ -419,15 +424,17 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                                )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
-      (latencyYearOneStatus, latencyYearTwoStatus) <- itsaStatusService.hasMandatedOrVoluntaryStatusForLatencyYears(Some(latencyDetails))
+      latencyYearsQuarterlyAndAnnualStatus <- itsaStatusService.latencyYearsQuarterlyAndAnnualStatus(Some(latencyDetails))
       crystallisationData <- getCrystallisationInformation(Some(latencyDetails))
     } yield {
 
       crystallisationData match {
         case None =>
+
           variableViewModelPropertyBusiness(
             incomeSource = desiredIncomeSource,
-            latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
+            latencyYearsQuarterly = latencyYearsQuarterlyAndAnnualStatus.latencyYearsQuarterly,
+            latencyYearsAnnual = latencyYearsQuarterlyAndAnnualStatus.latencyYearsAnnual,
             latencyYearsCrystallised = LatencyYearsCrystallised(None, None),
             incomeSourceType = incomeSourceType
           )
@@ -435,7 +442,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         case Some(crystallisationList: List[Boolean]) =>
           variableViewModelPropertyBusiness(
             incomeSource = desiredIncomeSource,
-            latencyYearsQuarterly = LatencyYearsQuarterly(Some(latencyYearOneStatus), Some(latencyYearTwoStatus)),
+            latencyYearsQuarterly = latencyYearsQuarterlyAndAnnualStatus.latencyYearsQuarterly,
+            latencyYearsAnnual = latencyYearsQuarterlyAndAnnualStatus.latencyYearsAnnual,
             latencyYearsCrystallised = LatencyYearsCrystallised(crystallisationList.headOption, crystallisationList.lastOption),
             incomeSourceType = incomeSourceType
           )
