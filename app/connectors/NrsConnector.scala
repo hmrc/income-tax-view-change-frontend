@@ -17,9 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.nrs.NrsSubmissionFailure.NrsErrorResponse
+import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
 import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
-import models.nrs.{NrsSubmission, NrsSubmissionFailure, NrsSuccessResponse}
+import models.nrs.{NrsSubmission, NrsSuccessResponse}
 import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -67,6 +67,6 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
       .recover {
         case NonFatal(e) =>
           logger.info(s"NRS submission failed with exception: $e")
-          Left(NrsSubmissionFailure.NrsExceptionThrown)
+          Left(NrsExceptionThrown)
       }
 }

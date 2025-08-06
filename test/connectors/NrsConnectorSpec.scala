@@ -16,7 +16,7 @@
 
 package connectors
 
-import models.nrs.NrsSubmissionFailure.NrsErrorResponse
+import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
 import models.nrs.NrsSuccessResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -71,28 +71,28 @@ class NrsConnectorSpec extends BaseConnectorSpec {
 
         result shouldBe expected
       }
-    }
 
-    s"return a NrsErrorResponse after 3 retries following 3 $INTERNAL_SERVER_ERROR responses" in {
+      s"3 retries follow 3 $INTERNAL_SERVER_ERROR responses" in {
 
-      val numberOfRetries = 3
+        val numberOfRetries = 3
 
-      val expectedAttempts = numberOfRetries + 1
+        val expectedAttempts = numberOfRetries + 1
 
-      val expected = Left(NrsErrorResponse(INTERNAL_SERVER_ERROR))
+        val expected = Left(NrsErrorResponse(INTERNAL_SERVER_ERROR))
 
-      when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-        .thenReturn(
-          Future.successful(internalServerErrorResponse),
-          Future.successful(internalServerErrorResponse),
-          Future.successful(internalServerErrorResponse)
-        )
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(
+            Future.successful(internalServerErrorResponse),
+            Future.successful(internalServerErrorResponse),
+            Future.successful(internalServerErrorResponse)
+          )
 
-      val result = TestNrsConnector.submit(nrsSubmission, numberOfRetries).futureValue
+        val result = TestNrsConnector.submit(nrsSubmission, numberOfRetries).futureValue
 
-      result shouldBe expected
+        result shouldBe expected
 
-      verify(mockRequestBuilder, times(expectedAttempts)).execute(any[HttpReads[HttpResponse]], any())
+        verify(mockRequestBuilder, times(expectedAttempts)).execute(any[HttpReads[HttpResponse]], any())
+      }
     }
 
     s"execute a retry if response received is $TOO_MANY_REQUESTS" in {
@@ -165,6 +165,20 @@ class NrsConnectorSpec extends BaseConnectorSpec {
       result shouldBe expected
 
       verify(mockRequestBuilder, times(expectedAttempts)).execute(any[HttpReads[HttpResponse]], any())
+    }
+
+    "return NrsExceptionThrown" when {
+      s"an exception is thrown by the Http client" in {
+
+        val expected = Left(NrsExceptionThrown)
+
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future.failed(new Exception("error")))
+
+        val result = TestNrsConnector.submit(nrsSubmission, 1).futureValue
+
+        result shouldBe expected
+      }
     }
   }
 }

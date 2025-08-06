@@ -29,6 +29,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
+  val url: String = "/nrs-orchestrator/submission"
+
   override implicit val hc: HeaderCarrier = HeaderCarrier()
 
   lazy val connector: NrsConnector = app.injector.instanceOf[NrsConnector]
@@ -46,7 +48,7 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val expectedResponse = Right(NrsSuccessResponse("submissionId"))
 
           stubFor(
-            post(urlPathEqualTo("/nrs-orchestrator/submission"))
+            post(urlPathEqualTo(url))
               .withHeader("Content-Type", equalTo(MimeTypes.JSON))
               .withHeader("X-API-Key", equalTo("dummy-api-key"))
               .withRequestBody(equalToJson(requestBody.toString(), true, false))
@@ -66,14 +68,16 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
         "return a failure response when provided no body" in {
 
+          val requestBody = NrsUtils.successResponseJson
+
           val expectedResponse = Left(NrsErrorResponse(BAD_REQUEST))
 
           stubFor(
-            post(urlPathEqualTo("/nrs-orchestrator/submission"))
+            post(urlPathEqualTo(url))
               .withHeader("Content-Type", equalTo(MimeTypes.JSON))
               .withHeader("X-API-Key", equalTo("dummy-api-key"))
               .willReturn(aResponse()
-                .withBody(NrsUtils.successResponseJson)
+                .withBody(requestBody)
                 .withStatus(BAD_REQUEST)
               )
           )
@@ -90,7 +94,7 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val expectedResponse = Left(NrsExceptionThrown)
 
           stubFor(
-            post(urlPathEqualTo("/nrs-orchestrator/submission"))
+            post(urlPathEqualTo(url))
               .withHeader("Content-Type", equalTo(MimeTypes.JSON))
               .withHeader("X-API-Key", equalTo("dummy-api-key"))
               .willReturn(aResponse()
