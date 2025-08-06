@@ -17,16 +17,50 @@
 package testConstants
 
 import models.nrs._
+import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Headers
 import play.api.test.FakeRequest
 import testConstants.ChecksumUtils._
 import uk.gov.hmrc.auth.core.retrieve._
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, User}
+import uk.gov.hmrc.http.HttpResponse
 
 import java.time.{Instant, LocalDate}
 
 object NrsUtils {
+
+  val CLIENT_CLOSED_REQUEST = 499
+
+  val successResponse: HttpResponse = HttpResponse(
+    status = ACCEPTED,
+    json = Json.toJson(NrsSuccessResponse("submissionId")),
+    headers = Map.empty
+  )
+
+  val internalServerErrorResponse: HttpResponse = HttpResponse(
+    status = INTERNAL_SERVER_ERROR,
+    body = "",
+    headers = Map.empty
+  )
+
+  val tooManyRequestsErrorResponse: HttpResponse = HttpResponse(
+    status = TOO_MANY_REQUESTS,
+    body = "",
+    headers = Map.empty
+  )
+
+  val clientClosedErrorResponse: HttpResponse = HttpResponse(
+    status = CLIENT_CLOSED_REQUEST,
+    body = "",
+    headers = Map.empty
+  )
+
+  val badRequestErrorResponse: HttpResponse = HttpResponse(
+    status = BAD_REQUEST,
+    body = "",
+    headers = Map.empty
+  )
 
   val nrsMetadataBody: Array[Byte] = "payload".getBytes("UTF-8")
   val nrsMetadataRawPayload: RawPayload = RawPayload(nrsMetadataBody)

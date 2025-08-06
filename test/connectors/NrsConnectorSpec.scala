@@ -21,45 +21,19 @@ import models.nrs.NrsSuccessResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS}
-import play.api.libs.json.Json
-import testConstants.NrsUtils
+import testConstants.NrsUtils._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 import scala.concurrent.Future
 
 class NrsConnectorSpec extends BaseConnectorSpec {
 
-  private val CLIENT_CLOSED_REQUEST = 499
-
-  val successResponse: HttpResponse = HttpResponse(
-    status = ACCEPTED,
-    json = Json.toJson(NrsSuccessResponse("submissionId")),
-    headers = Map.empty
-  )
-
-  val internalServerErrorResponse: HttpResponse = HttpResponse(
-    status = INTERNAL_SERVER_ERROR,
-    body = "",
-    headers = Map.empty
-  )
-
-  val tooManyRequestsErrorResponse: HttpResponse = HttpResponse(
-    status = TOO_MANY_REQUESTS,
-    body = "",
-    headers = Map.empty
-  )
-
-  val clientClosedErrorResponse: HttpResponse = HttpResponse(
-    status = CLIENT_CLOSED_REQUEST,
-    body = "",
-    headers = Map.empty
-  )
-
-  val badRequestErrorResponse: HttpResponse = HttpResponse(
-    status = BAD_REQUEST,
-    body = "",
-    headers = Map.empty
-  )
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
+  }
 
   object TestNrsConnector extends NrsConnector(mockHttpClientV2, appConfig)
 
@@ -73,12 +47,10 @@ class NrsConnectorSpec extends BaseConnectorSpec {
 
         val expected = Right(NrsSuccessResponse("submissionId"))
 
-        when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
-        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
-        when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
-        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any())).thenReturn(Future.successful(successResponse))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future.successful(successResponse))
 
-        val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, nonZeroRemainingAttempts).futureValue
+        val result = TestNrsConnector.submit(nrsSubmission, nonZeroRemainingAttempts).futureValue
 
         result shouldBe expected
       }
@@ -92,12 +64,10 @@ class NrsConnectorSpec extends BaseConnectorSpec {
 
         val expected = Left(NrsErrorResponse(INTERNAL_SERVER_ERROR))
 
-        when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
-        when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
-        when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
-        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any())).thenReturn(Future.successful(internalServerErrorResponse))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+          .thenReturn(Future.successful(internalServerErrorResponse))
 
-        val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, zeroRemainingAttempts).futureValue
+        val result = TestNrsConnector.submit(nrsSubmission, zeroRemainingAttempts).futureValue
 
         result shouldBe expected
       }
@@ -111,9 +81,6 @@ class NrsConnectorSpec extends BaseConnectorSpec {
 
       val expected = Left(NrsErrorResponse(INTERNAL_SERVER_ERROR))
 
-      when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
       when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
         .thenReturn(
           Future.successful(internalServerErrorResponse),
@@ -121,7 +88,7 @@ class NrsConnectorSpec extends BaseConnectorSpec {
           Future.successful(internalServerErrorResponse)
         )
 
-      val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, numberOfRetries).futureValue
+      val result = TestNrsConnector.submit(nrsSubmission, numberOfRetries).futureValue
 
       result shouldBe expected
 
@@ -136,15 +103,10 @@ class NrsConnectorSpec extends BaseConnectorSpec {
 
       val expected = Left(NrsErrorResponse(TOO_MANY_REQUESTS))
 
-      when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
       when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-        .thenReturn(
-          Future.successful(tooManyRequestsErrorResponse)
-        )
+        .thenReturn(Future.successful(tooManyRequestsErrorResponse))
 
-      val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, numberOfRetries).futureValue
+      val result = TestNrsConnector.submit(nrsSubmission, numberOfRetries).futureValue
 
       result shouldBe expected
 
@@ -159,15 +121,10 @@ class NrsConnectorSpec extends BaseConnectorSpec {
 
       val expected = Left(NrsErrorResponse(CLIENT_CLOSED_REQUEST))
 
-      when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
       when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-        .thenReturn(
-          Future.successful(clientClosedErrorResponse)
-        )
+        .thenReturn(Future.successful(clientClosedErrorResponse))
 
-      val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, numberOfRetries).futureValue
+      val result = TestNrsConnector.submit(nrsSubmission, numberOfRetries).futureValue
 
       result shouldBe expected
 
@@ -182,15 +139,10 @@ class NrsConnectorSpec extends BaseConnectorSpec {
 
       val expected = Left(NrsErrorResponse(INTERNAL_SERVER_ERROR))
 
-      when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
       when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-        .thenReturn(
-          Future.successful(internalServerErrorResponse)
-        )
+        .thenReturn(Future.successful(internalServerErrorResponse))
 
-      val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, numberOfRetries).futureValue
+      val result = TestNrsConnector.submit(nrsSubmission, numberOfRetries).futureValue
 
       result shouldBe expected
 
@@ -205,15 +157,10 @@ class NrsConnectorSpec extends BaseConnectorSpec {
 
       val expected = Left(NrsErrorResponse(BAD_REQUEST))
 
-      when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
-      when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
       when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
-        .thenReturn(
-          Future.successful(badRequestErrorResponse)
-        )
+        .thenReturn(Future.successful(badRequestErrorResponse))
 
-      val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, numberOfRetries).futureValue
+      val result = TestNrsConnector.submit(nrsSubmission, numberOfRetries).futureValue
 
       result shouldBe expected
 
