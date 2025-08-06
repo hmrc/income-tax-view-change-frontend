@@ -161,7 +161,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
             document.getElementById(IdSelectors.accountUpdated).text() shouldBe accountUpdatedParagraph
             document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe viewReportingObligationsParagraph
@@ -187,7 +187,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
             document.getElementById(IdSelectors.accountUpdated).text() shouldBe accountUpdatedParagraph
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
@@ -214,7 +214,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -249,7 +249,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -284,7 +284,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -319,7 +319,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -368,7 +368,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               val document: Document = Jsoup.parse(viewHelper.body)
 
               document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-              document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by <b>5 February 2025</b> for the quarterly period 6 October 2024 to 5 January 2025"
+              document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 February 2025 for the quarterly period 6 October 2024 to 5 January 2025"
 
               document.getElementById(IdSelectors.annualInset).text() shouldBe "You have 1 overdue update. You must submit your yearly tax return and pay the tax you owe."
               document.getElementById(IdSelectors.quarterlyInset).text() shouldBe "You have 4 overdue updates. You must submit these updates with all required income and expenses through your compatible software."
@@ -424,7 +424,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               val document: Document = Jsoup.parse(viewHelper.body)
 
               document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-              document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by <b>5 May 2025</b> for the quarterly period 6 January 2025 to 5 April 2025"
+              document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2024 to 2025 tax year is due by 5 May 2025 for the quarterly period 6 January 2025 to 5 April 2025"
 
               document.getElementById(IdSelectors.warningInset).text() shouldBe "You have 3 overdue updates for 9 months of the 2024 to 2025 tax year. You must submit these updates with all required income and expenses through your compatible software."
 
@@ -477,7 +477,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
               document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
 
-              document.getElementById(IdSelectors.finalDeclaration).text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by <b>31 January 2026</b>"
+              document.getElementById(IdSelectors.finalDeclaration).text() shouldBe "Your tax return for the 2024 to 2025 tax year is due by 31 January 2026"
 
               document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -570,7 +570,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -605,7 +605,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -641,7 +641,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             document.getElementById(IdSelectors.mayHaveOverdueUpdates).text() shouldBe mayHaveOverdueUpdates
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -676,7 +676,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -710,7 +710,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 
@@ -744,7 +744,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             val document: Document = Jsoup.parse(view.body)
 
             document.getElementById(IdSelectors.yourRevisedDeadlinesH2).text() shouldBe yourRevisedDeadlinesHeading
-            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by <b>5 February 2024</b> for the quarterly period 6 October 2023 to 5 January 2024"
+            document.getElementById(IdSelectors.quarterlyList).text() shouldBe "Your next quarterly update for the 2023 to 2024 tax year is due by 5 February 2024 for the quarterly period 6 October 2023 to 5 January 2024"
 
             document.getElementById(IdSelectors.fewMinutesWarning).text() shouldBe fewMinutesWarning
 

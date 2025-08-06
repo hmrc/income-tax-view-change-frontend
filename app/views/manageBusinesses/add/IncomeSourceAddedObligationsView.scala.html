@@ -168,11 +168,15 @@
         @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
 
         @if((reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.Quarterly) && getQuarterlyOrHybridList.nonEmpty) {
-            @bulletPoints(getQuarterlyOrHybridList, None, Some("quarterly-list"))
+            <ul class="govuk-list govuk-list--bullet">
+            @getQuarterlyOrHybridList.map { msgKey =>
+                <li id="quarterly-list">@HtmlContent(msgKey).asHtml</li>
+            }
+            </ul>
         } else {
             @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
                 @p(id=Some("final-declaration")) {
-                    @messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)
+                    @HtmlContent(messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).asHtml
                 }
             }
         }
@@ -209,11 +213,15 @@
         @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
 
         @if((reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.Quarterly) && getQuarterlyOrHybridList.nonEmpty) {
-            @bulletPoints(getQuarterlyOrHybridList, None, Some("quarterly-list"))
+            <ul class="govuk-list govuk-list--bullet">
+            @getQuarterlyOrHybridList.map { msgKey =>
+                <li id="quarterly-list">@HtmlContent(msgKey).asHtml</li>
+            }
+            </ul>
         } else {
             @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
                 @p(id=Some("final-declaration")) {
-                    @messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)
+                    @HtmlContent(messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).asHtml
                 }
             }
         }
@@ -255,11 +263,15 @@
         @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
 
         @if((reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.Quarterly) && getQuarterlyOrHybridList.nonEmpty) {
-            @bulletPoints(getQuarterlyOrHybridList, None, Some("quarterly-list"))
+            <ul class="govuk-list govuk-list--bullet">
+            @getQuarterlyOrHybridList.map { msgKey =>
+                <li id="quarterly-list">@HtmlContent(msgKey).asHtml</li>
+            }
+            </ul>
         } else {
             @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
                 @p(id=Some("final-declaration")) {
-                    @messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)
+                    @HtmlContent(messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).asHtml
                 }
             }
         }
@@ -295,11 +307,15 @@
         @h2(messages("income.source.added.your.revised.deadlines.h2"), classes = "govuk-heading-m govuk-!-margin-top-7", optId=Some("your-revised-deadlines"))
 
         @if((reportingMethod == ChosenReportingMethod.QuarterlyAnnual || reportingMethod == ChosenReportingMethod.Quarterly) && getQuarterlyOrHybridList.nonEmpty) {
-                @bulletPoints(getQuarterlyOrHybridList, None, Some("quarterly-list"))
+            <ul class="govuk-list govuk-list--bullet">
+            @getQuarterlyOrHybridList.map { msgKey =>
+                <li id="quarterly-list">@HtmlContent(msgKey).asHtml</li>
+            }
+            </ul>
         } else {
             @viewModel.getFinalDeclarationDate(currentDate).map { finalDecDate =>
                 @p(id=Some("final-declaration")) {
-                    @messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)
+                    @HtmlContent(messages("income.source.added.obligation.list.text", finalDecDate.inboundCorrespondenceFrom.getYear.toString, finalDecDate.inboundCorrespondenceTo.getYear.toString, finalDecDate.inboundCorrespondenceDue.toLongDate)).asHtml
                 }
             }
         }
