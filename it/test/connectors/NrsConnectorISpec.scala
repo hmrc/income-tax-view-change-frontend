@@ -36,16 +36,13 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
   lazy val connector: NrsConnector = app.injector.instanceOf[NrsConnector]
 
   "NrsConnectorSpec" when {
-
     ".submit()" when {
-
       "ACCEPTED - 202" should {
-
         "return a successful response when provided valid headers and body" in {
 
-          val requestBody = Json.toJson(NrsUtils.nrsSubmission)
-
+          val requestBody      = Json.toJson(NrsUtils.nrsSubmission)
           val expectedResponse = Right(NrsSuccessResponse("submissionId"))
+          lazy val result      = connector.submit(NrsUtils.nrsSubmission)
 
           stubFor(
             post(urlPathEqualTo(url))
@@ -58,40 +55,14 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               )
           )
 
-          val result = connector.submit(NrsUtils.nrsSubmission)
-
-          result.futureValue shouldBe expectedResponse
-        }
-      }
-
-      "4xx response" should {
-
-        "return a failure response when provided no body" in {
-
-          val requestBody = NrsUtils.successResponseJson
-
-          val expectedResponse = Left(NrsErrorResponse(BAD_REQUEST))
-
-          stubFor(
-            post(urlPathEqualTo(url))
-              .withHeader("Content-Type", equalTo(MimeTypes.JSON))
-              .withHeader("X-API-Key", equalTo("dummy-api-key"))
-              .willReturn(aResponse()
-                .withBody(requestBody)
-                .withStatus(BAD_REQUEST)
-              )
-          )
-
-          val result = connector.submit(NrsUtils.nrsSubmission)
-
           result.futureValue shouldBe expectedResponse
         }
 
-        "return a failure response when unparsable JSON returned" in {
+        "return NrsExceptionThrown when unparsable JSON returned" in {
 
-          val requestBody = """{ "badKey": "badValue" }"""
-
+          val requestBody      = """{ "badKey": "badValue" }"""
           val expectedResponse = Left(NrsExceptionThrown)
+          lazy val result      = connector.submit(NrsUtils.nrsSubmission)
 
           stubFor(
             post(urlPathEqualTo(url))
@@ -103,7 +74,43 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               )
           )
 
-          val result = connector.submit(NrsUtils.nrsSubmission)
+          result.futureValue shouldBe expectedResponse
+        }
+
+        "return NrsExceptionThrown when provided no body" in {
+
+          val expectedResponse = Left(NrsExceptionThrown)
+          lazy val result      = connector.submit(NrsUtils.nrsSubmission)
+
+          stubFor(
+            post(urlPathEqualTo(url))
+              .withHeader("Content-Type", equalTo(MimeTypes.JSON))
+              .withHeader("X-API-Key", equalTo("dummy-api-key"))
+              .willReturn(aResponse()
+                .withStatus(ACCEPTED)
+              )
+          )
+
+          result.futureValue shouldBe expectedResponse
+        }
+      }
+
+      "4xx response" should {
+        "return a NrsErrorResponse" in {
+
+          val requestBody      = NrsUtils.successResponseJson
+          val expectedResponse = Left(NrsErrorResponse(BAD_REQUEST))
+          lazy val result      = connector.submit(NrsUtils.nrsSubmission)
+
+          stubFor(
+            post(urlPathEqualTo(url))
+              .withHeader("Content-Type", equalTo(MimeTypes.JSON))
+              .withHeader("X-API-Key", equalTo("dummy-api-key"))
+              .willReturn(aResponse()
+                .withBody(requestBody)
+                .withStatus(BAD_REQUEST)
+              )
+          )
 
           result.futureValue shouldBe expectedResponse
         }
