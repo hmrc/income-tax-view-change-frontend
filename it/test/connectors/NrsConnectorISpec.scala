@@ -22,7 +22,7 @@ import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
 import models.nrs.NrsSuccessResponse
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.MimeTypes
-import play.api.http.Status.{ACCEPTED, BAD_REQUEST}
+import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import testConstants.NrsUtils
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,9 +40,9 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
       "ACCEPTED - 202" should {
         "return a successful response when provided valid headers and body" in {
 
-          val requestBody      = Json.toJson(NrsUtils.nrsSubmission)
+          val requestBody = Json.toJson(NrsUtils.nrsSubmission)
           val expectedResponse = Right(NrsSuccessResponse("submissionId"))
-          lazy val result      = connector.submit(NrsUtils.nrsSubmission)
+          lazy val result = connector.submit(NrsUtils.nrsSubmission)
 
           stubFor(
             post(urlPathEqualTo(url))
@@ -60,9 +60,9 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
         "return NrsExceptionThrown when unparsable JSON returned" in {
 
-          val requestBody      = """{ "badKey": "badValue" }"""
+          val requestBody = """{ "badKey": "badValue" }"""
           val expectedResponse = Left(NrsExceptionThrown)
-          lazy val result      = connector.submit(NrsUtils.nrsSubmission)
+          lazy val result = connector.submit(NrsUtils.nrsSubmission)
 
           stubFor(
             post(urlPathEqualTo(url))
@@ -80,7 +80,7 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
         "return NrsExceptionThrown when provided no body" in {
 
           val expectedResponse = Left(NrsExceptionThrown)
-          lazy val result      = connector.submit(NrsUtils.nrsSubmission)
+          lazy val result = connector.submit(NrsUtils.nrsSubmission)
 
           stubFor(
             post(urlPathEqualTo(url))
@@ -98,9 +98,9 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
       "4xx response" should {
         "return a NrsErrorResponse" in {
 
-          val requestBody      = NrsUtils.successResponseJson
+          val requestBody = NrsUtils.successResponseJson
           val expectedResponse = Left(NrsErrorResponse(BAD_REQUEST))
-          lazy val result      = connector.submit(NrsUtils.nrsSubmission)
+          lazy val result = connector.submit(NrsUtils.nrsSubmission)
 
           stubFor(
             post(urlPathEqualTo(url))
