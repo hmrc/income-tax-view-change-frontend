@@ -31,9 +31,9 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import repositories.OptOutSessionDataRepository
-import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import services.QuarterlyUpdatesCountForTaxYear
 import services.optout.{CurrentOptOutTaxYear, OptOutProposition, OptOutService, OptOutTestSupport}
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingFrequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
@@ -47,12 +47,12 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
       api.inject.bind[OptOutSessionDataRepository].toInstance(mockOptOutSessionDataRepository)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[OptOutChooseTaxYearController]
+  lazy val testController: OptOutChooseTaxYearController = app.injector.instanceOf[OptOutChooseTaxYearController]
 
 
   val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
 
-  val yearEnd = optOutProposition.availableTaxYearsForOptOut(1).endYear
+  val yearEnd: Int = optOutProposition.availableTaxYearsForOptOut(1).endYear
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
   val nextTaxYear: TaxYear = currentTaxYear.nextYear
   val previousTaxYear: TaxYear = currentTaxYear.previousYear

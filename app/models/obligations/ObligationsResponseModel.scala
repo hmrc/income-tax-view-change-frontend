@@ -26,6 +26,7 @@ import java.time.LocalDate
 sealed trait ObligationsResponseModel
 
 case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends ObligationsResponseModel {
+
   def allDeadlinesWithSource(previous: Boolean = false, r17ContentEnabled: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] = {
     val deadlines = obligations.flatMap { groupedObligationsModel =>
       (mtdItUser.incomeSources.properties.find(_.incomeSourceId == groupedObligationsModel.identification), r17ContentEnabled) match {
@@ -75,7 +76,7 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
   def obligationsByDate(isR17ContentEnabled: Boolean)(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[ObligationWithIncomeType])] =
     allDeadlinesWithSource(r17ContentEnabled = isR17ContentEnabled).groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 
-  def quarterlyUpdatesCounts(implicit mtdItUser: MtdItUser[_]): Int =
+  def quarterlyFulfilledUpdatesCounts(implicit mtdItUser: MtdItUser[_]): Int =
     allDeadlinesWithSource()(mtdItUser)
       .filter(_.obligation.obligationType == "Quarterly")
       .count(_.obligation.status == StatusFulfilled)

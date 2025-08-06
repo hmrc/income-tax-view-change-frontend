@@ -23,7 +23,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import services.optout.{OptOutProposition, OptOutService}
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingFrequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -48,7 +48,7 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockGetSubmissionCountForTaxYear(out: Future[QuarterlyUpdatesCountForTaxYearModel]): Unit = {
-    when(mockOptOutService.getQuarterlyUpdatesCountForOfferedYears(any[OptOutProposition])(any(), any(), any())).thenReturn(out)
+    when(mockOptOutService.getQuarterlyFulfilledUpdatesCount(any[OptOutProposition])(any(), any(), any())).thenReturn(out)
   }
 
   def mockOptOutCheckPointPageViewModel(out: Future[Option[OptOutCheckpointViewModel]]): Unit = {

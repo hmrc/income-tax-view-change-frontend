@@ -50,7 +50,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions
   val taxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
   val optOutTaxYear: CurrentOptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
   val oneYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
-    Future.successful(Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual))))
+    Future.successful(Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(OneYearOptOutFollowedByAnnual), None)))
   val multiYearViewModelResponse: Future[Some[OptOutCheckpointViewModel]] =
     Future.successful(Some(MultiYearOptOutCheckpointViewModel(optOutTaxYear.taxYear)))
   val noEligibleTaxYearResponse: Future[None.type] = Future.successful(None)

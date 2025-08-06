@@ -2619,7 +2619,7 @@ claimToAdjustPoa.youCannotGoBack.bullet3Link             = homepage
 # opt out confirm
 optout.confirmOptOut.heading            = Confirm and opt out for the {0} to {1} tax year
 optout.confirmOptOut.desc               = If you opt out, you can submit your tax return through your HMRC online account or compatible software.
-optout.confirmOptOut.quarterly-updates  = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You’ll need to include any income from these updates in your tax return.
+optout.confirmOptOut.quarterly-updates  = You have {0} quarterly updates submitted for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 optout.confirmOptOut.info-message       = In future, you could be required to report quarterly again if, for example, your income increases or the threshold for reporting quarterly changes. If this happens, we’ll write to you to let you know.
 optout.confirmOptOut.confirm            = Confirm and save
 optout.confirmOptOut.cancel             = Cancel
@@ -2685,7 +2685,9 @@ optOut.confirmSingleYearOptOut.form.no-select.error         = Select yes to opt 
 optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Select the tax year you want to report annually from
 
 # opt out choose tax year
-optout.chooseOptOutTaxYear.submissions.deleted       = Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return.
+
+optout.chooseOptOutTaxYear.submissions.deleted       = You have {0} quarterly updates submitted for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+
 optout.chooseOptOutTaxYear.heading                   = Opting out of quarterly reporting
 optout.chooseOptOutTaxYear.desc                      = You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future.
 optout.chooseOptOutTaxYear.whichTaxYear              = Which tax year do you want to opt out from?

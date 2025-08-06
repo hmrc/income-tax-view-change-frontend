@@ -23,24 +23,21 @@ import models.incomeSourceDetails.viewmodels._
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import models.obligations._
 import play.api.Logger
-import services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-object NextUpdatesService {
 
-  case class QuarterlyUpdatesCountForTaxYear(taxYear: TaxYear, count: Int)
-
-  private val noQuarterlyUpdates = 0
-}
+case class QuarterlyUpdatesCountForTaxYear(taxYear: TaxYear, count: Int)
 
 @Singleton
 class NextUpdatesService @Inject()(
                                     val obligationsConnector: ObligationsConnector
                                   )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
+
+  private val noQuarterlyUpdates = 0
 
   def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
     getOpenObligations().map {
@@ -101,12 +98,13 @@ class NextUpdatesService @Inject()(
     }
   }
 
-  def getQuarterlyUpdatesCounts(queryTaxYear: TaxYear)
-                               (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear] = {
+  def getQuarterlyFulfilledUpdatesCounts(queryTaxYear: TaxYear)
+                                        (implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[QuarterlyUpdatesCountForTaxYear] = {
     getAllObligationsWithinDateRange(queryTaxYear.toFinancialYearStart, queryTaxYear.toFinancialYearEnd).map {
       case obligationsModel: ObligationsModel =>
-        QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyUpdatesCounts)
-      case _ => QuarterlyUpdatesCountForTaxYear(queryTaxYear, noQuarterlyUpdates)
+        QuarterlyUpdatesCountForTaxYear(queryTaxYear, obligationsModel.quarterlyFulfilledUpdatesCounts)
+      case _ =>
+        QuarterlyUpdatesCountForTaxYear(queryTaxYear, noQuarterlyUpdates)
     }
   }
 

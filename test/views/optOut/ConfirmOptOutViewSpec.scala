@@ -47,7 +47,7 @@ class ConfirmOptOutViewSpec extends TestSupport {
               OneYearOptOutCheckpointViewModel(
                 intent = TaxYear.forYearEnd(2022),
                 state = Some(OneYearOptOutFollowedByAnnual),
-                quarterlyUpdates = Some(quarterlyUpdates)
+                quarterlyUpdatesCount = Some(quarterlyUpdates)
               ),
             isAgent = isAgent,
             cancelURL = cancelLinkUrl

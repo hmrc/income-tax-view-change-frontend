@@ -20,14 +20,18 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 
-case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
-                             currentTaxYear: CurrentOptOutTaxYear,
-                             nextTaxYear: NextOptOutTaxYear) {
+case class OptOutProposition(
+                              previousTaxYear: PreviousOptOutTaxYear,
+                              currentTaxYear: CurrentOptOutTaxYear,
+                              nextTaxYear: NextOptOutTaxYear
+                            ) {
 
-  private val optOutYears: Seq[OptOutTaxYear] = Seq[OptOutTaxYear](
-    previousTaxYear,
-    currentTaxYear,
-    nextTaxYear)
+  private val optOutYears: Seq[OptOutTaxYear] =
+    Seq(
+      previousTaxYear,
+      currentTaxYear,
+      nextTaxYear
+    )
 
   val availableTaxYearsForOptOut: Seq[TaxYear] = availableOptOutYears.map(_.taxYear)
 
@@ -38,6 +42,7 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
   def isCurrentYearQuarterly: Boolean = currentTaxYear.status == ITSAStatus.Voluntary || currentTaxYear.status == ITSAStatus.Mandated
+
   def isNextYearQuarterly: Boolean = nextTaxYear.status == ITSAStatus.Voluntary || nextTaxYear.status == ITSAStatus.Mandated
 
   def optOutYearsToUpdate(intent: TaxYear): Seq[TaxYear] = {

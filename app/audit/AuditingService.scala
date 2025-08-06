@@ -28,10 +28,10 @@ import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Suc
 import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector)  {
+class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector) {
 
   def audit(auditModel: AuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Unit = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path.fold(request.path)(x => x))
@@ -57,14 +57,14 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
 
   def extendedAudit(auditModel: ExtendedAuditModel, path: Option[String] = None)(implicit hc: HeaderCarrier,
                                                                                  request: Request[_],
-                                                                                 ec: ExecutionContext): Unit = {
+                                                                                 ec: ExecutionContext): Future[Unit] = {
     val extendedDataEvent = toExtendedDataEvent(appConfig.appName, auditModel, path.fold(request.path)(identity))
     Logger("application").debug(s"Splunk Audit Event:\n\n$extendedDataEvent")
     auditConnector.sendExtendedEvent(extendedDataEvent).map {
       case Success =>
         Logger("application").debug("Splunk Audit Successful")
-      case Failure(err, _) =>
-        Logger("application").debug(s"Splunk Audit Error, message: $err")
+      case Failure(errMessages, _) =>
+        Logger("application").debug(s"Splunk Audit Error, message: $errMessages")
       case Disabled =>
         Logger("application").debug("Auditing Disabled")
     }

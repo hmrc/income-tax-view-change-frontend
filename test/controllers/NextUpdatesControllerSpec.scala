@@ -49,17 +49,23 @@ class NextUpdatesControllerSpec extends MockAuthActions
 
   lazy val testNextUpdatesController: NextUpdatesController = app.injector.instanceOf[NextUpdatesController]
 
-  val obligationsModel: ObligationsModel = ObligationsModel(Seq(
-    GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
-    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
-  ))
+  val obligationsModel: ObligationsModel =
+    ObligationsModel(
+      Seq(
+        GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
+        GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
+      )
+    )
 
-  val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
-    GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
-    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
-  )).obligationsByDate(isR17ContentEnabled = true).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-    DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
-  })
+  val nextUpdatesViewModel: NextUpdatesViewModel =
+    NextUpdatesViewModel(ObligationsModel(
+      Seq(
+        GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
+        GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
+      )
+    ).obligationsByDate(isR17ContentEnabled = true).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+      DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
+    })
 
   private def getQuarterType(string: String) = {
     if (string == "Quarterly") QuarterlyObligation else EopsObligation
@@ -298,7 +304,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           mockNoIncomeSourcesWithDeadlines()
 
           val result: Future[Result] = testNextUpdatesController.showAgent()(
-            fakeRequestConfirmedClient(isSupportingAgent= isSupportingAgent)
+            fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
           )
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }

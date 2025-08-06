@@ -28,10 +28,9 @@ import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
 import repositories.OptOutSessionDataRepository
-import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.{OptOutService, OptOutTestSupport}
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
-import services.{DateService, NextUpdatesService}
+import services.reportingFrequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.{DateService, NextUpdatesService, QuarterlyUpdatesCountForTaxYear}
 import testConstants.BaseTestConstants.testNino
 import testConstants.NextUpdatesTestConstants.obligationsDataFromJson
 import testUtils.UnitSpec
@@ -84,7 +83,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
 
         setupMockHttpV2Get(requestUrl)(successResponse)
 
-        val result = service.getQuarterlyUpdatesCountForOfferedYears(proposition)
+        val result = service.getQuarterlyFulfilledUpdatesCount(proposition)
 
         val expected = QuarterlyUpdatesCountForTaxYearModel(List(QuarterlyUpdatesCountForTaxYear(optOutTaxYear, 2)))
 

@@ -26,6 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.OptOutSessionDataRepository
 import services.optout.OptOutService
+import services.reportingFrequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ReportingObligationsUtils
 import views.html.optOut.OptOutChooseTaxYear
@@ -45,57 +46,6 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
                                              )
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils {
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      withOptOutFS {
-        for {
-          (optOutProposition, intentTaxYear) <- optOutService.recallOptOutPropositionWithIntent()
-          submissionCountForTaxYear <- optOutService.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
-        } yield {
-          val taxYearsList = optOutProposition.availableTaxYearsForOptOut.map(_.toString).toList
-          val cancelUrl =
-            if (isAgent) controllers.optOut.routes.OptOutCancelledController.showAgent().url
-            else controllers.optOut.routes.OptOutCancelledController.show().url
-          val form = intentTaxYear match {
-            case Some(savedIntent) =>
-              ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList).fill(ConfirmOptOutMultiTaxYearChoiceForm(Some(savedIntent.toString)))
-            case None =>
-              ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList)
-          }
-          Ok(optOutChooseTaxYear(form, optOutProposition.availableTaxYearsForOptOut, submissionCountForTaxYear, isAgent, cancelUrl))
-        }
-      }
-  }
-
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      withOptOutFS {
-        for {
-          (optOutProposition, _) <- optOutService.recallOptOutPropositionWithIntent()
-          quarterlyUpdatesCountModel <- optOutService.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
-          cancelUrl =
-            if (isAgent) controllers.optOut.routes.OptOutCancelledController.showAgent().url
-            else controllers.optOut.routes.OptOutCancelledController.show().url
-          formResult <- ConfirmOptOutMultiTaxYearChoiceForm(optOutProposition.availableTaxYearsForOptOut.map(_.toString).toList).bindFromRequest().fold(
-            formWithError => Future.successful(
-              BadRequest(
-                optOutChooseTaxYear(
-                  formWithError,
-                  optOutProposition.availableTaxYearsForOptOut,
-                  quarterlyUpdatesCountModel,
-                  isAgent,
-                  cancelUrl
-                ))
-            ),
-            form => saveTaxYearChoice(form).map {
-              case true => redirectToCheckpointPage(isAgent)
-              case false => itvcErrorHandler.showInternalServerError()
-            }
-          )
-        } yield formResult
-      }
-  }
-
   private def saveTaxYearChoice(form: ConfirmOptOutMultiTaxYearChoiceForm)(implicit request: RequestHeader): Future[Boolean] = {
     form.choice.flatMap(strFormat => TaxYear.getTaxYearModel(strFormat)).map { intent =>
       repository.saveIntent(intent)
@@ -106,5 +56,73 @@ class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutCho
     val nextPage = controllers.optOut.routes.ConfirmOptOutController.show(isAgent)
     Logger("application").info(s"redirecting to : $nextPage")
     Redirect(nextPage)
+  }
+
+  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      withOptOutFS {
+        for {
+          (optOutProposition, intentTaxYear) <- optOutService.recallOptOutPropositionWithIntent()
+          submissionCountForTaxYear: QuarterlyUpdatesCountForTaxYearModel <- optOutService.getQuarterlyFulfilledUpdatesCount(optOutProposition)
+          quarterlyFulfilledUpdatesCount: Int =  submissionCountForTaxYear.counts.map(_.count).sum
+          taxYearsList = optOutProposition.availableTaxYearsForOptOut.map(_.toString).toList
+          cancelUrl =
+            if (isAgent) controllers.optOut.routes.OptOutCancelledController.showAgent().url
+            else controllers.optOut.routes.OptOutCancelledController.show().url
+          form =
+            intentTaxYear match {
+              case Some(savedIntent) =>
+                ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList).fill(ConfirmOptOutMultiTaxYearChoiceForm(Some(savedIntent.toString)))
+              case None =>
+                ConfirmOptOutMultiTaxYearChoiceForm(taxYearsList)
+            }
+        } yield {
+          Ok(
+            optOutChooseTaxYear(
+              form = form,
+              availableOptOutTaxYear = optOutProposition.availableTaxYearsForOptOut,
+              submissionCounts = submissionCountForTaxYear,
+              quarterlyFulfilledUpdatesCount = quarterlyFulfilledUpdatesCount,
+              isAgent = isAgent,
+              cancelURL = cancelUrl
+            )
+          )
+        }
+      }
+  }
+
+  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      withOptOutFS {
+        for {
+          (optOutProposition, intentTaxYear) <- optOutService.recallOptOutPropositionWithIntent()
+          submissionCountForTaxYear: QuarterlyUpdatesCountForTaxYearModel <- optOutService.getQuarterlyFulfilledUpdatesCount(optOutProposition)
+          quarterlyUpdatesCountModel <- optOutService.getQuarterlyFulfilledUpdatesCount(optOutProposition)
+          quarterlyFulfilledUpdatesCount: Int =  submissionCountForTaxYear.counts.map(_.count).sum
+          cancelUrl =
+            if (isAgent) {
+              controllers.optOut.routes.OptOutCancelledController.showAgent().url
+            } else {
+              controllers.optOut.routes.OptOutCancelledController.show().url
+            }
+          formResult <- ConfirmOptOutMultiTaxYearChoiceForm(optOutProposition.availableTaxYearsForOptOut.map(_.toString).toList).bindFromRequest().fold(
+            formWithError => Future.successful(
+              BadRequest(
+                optOutChooseTaxYear(
+                  form = formWithError,
+                  availableOptOutTaxYear = optOutProposition.availableTaxYearsForOptOut,
+                  submissionCounts = quarterlyUpdatesCountModel,
+                  quarterlyFulfilledUpdatesCount = quarterlyFulfilledUpdatesCount,
+                  isAgent = isAgent,
+                  cancelURL = cancelUrl
+                ))
+            ),
+            form => saveTaxYearChoice(form).map {
+              case true => redirectToCheckpointPage(isAgent)
+              case false => itvcErrorHandler.showInternalServerError()
+            }
+          )
+        } yield formResult
+      }
   }
 }
