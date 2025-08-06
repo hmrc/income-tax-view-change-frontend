@@ -39,7 +39,7 @@ class NrsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
     ".submit()" when {
 
-      "OK - 200" should {
+      "ACCEPTED - 202" should {
 
         "return a successful response when provided valid headers and body" in {
 
