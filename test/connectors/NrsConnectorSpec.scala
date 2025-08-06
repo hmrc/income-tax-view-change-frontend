@@ -37,7 +37,7 @@ class NrsConnectorSpec extends BaseConnectorSpec {
     headers = Map.empty
   )
 
-  val errorResponse: HttpResponse = HttpResponse(
+  val internalServerErrorResponse: HttpResponse = HttpResponse(
     status = INTERNAL_SERVER_ERROR,
     body = "",
     headers = Map.empty
@@ -63,7 +63,7 @@ class NrsConnectorSpec extends BaseConnectorSpec {
 
   object TestNrsConnector extends NrsConnector(mockHttpClientV2, appConfig)
 
-  "Calling .submit() as an individual user" should {
+  "Calling .submit()" should {
 
     "return a NrsSuccessResponse" when {
 
@@ -95,7 +95,7 @@ class NrsConnectorSpec extends BaseConnectorSpec {
         when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
         when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
-        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any())).thenReturn(Future.successful(errorResponse))
+        when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any())).thenReturn(Future.successful(internalServerErrorResponse))
 
         val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, zeroRemainingAttempts).futureValue
 
@@ -103,7 +103,7 @@ class NrsConnectorSpec extends BaseConnectorSpec {
       }
     }
 
-    s"return a NrsErrorResponse after 3 retries following response $INTERNAL_SERVER_ERROR" in {
+    s"return a NrsErrorResponse after 3 retries following 3 $INTERNAL_SERVER_ERROR responses" in {
 
       val numberOfRetries = 3
 
@@ -116,9 +116,9 @@ class NrsConnectorSpec extends BaseConnectorSpec {
       when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
       when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
         .thenReturn(
-          Future.successful(errorResponse),
-          Future.successful(errorResponse),
-          Future.successful(errorResponse)
+          Future.successful(internalServerErrorResponse),
+          Future.successful(internalServerErrorResponse),
+          Future.successful(internalServerErrorResponse)
         )
 
       val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, numberOfRetries).futureValue
@@ -174,7 +174,30 @@ class NrsConnectorSpec extends BaseConnectorSpec {
       verify(mockRequestBuilder, times(expectedAttempts)).execute(any[HttpReads[HttpResponse]], any())
     }
 
-    s"do not execute a retry if response received is $BAD_REQUEST" in {
+    s"execute a retry if response received is 5xx" in {
+
+      val numberOfRetries = 1
+
+      val expectedAttempts = numberOfRetries + 1
+
+      val expected = Left(NrsErrorResponse(INTERNAL_SERVER_ERROR))
+
+      when(mockHttpClientV2.post(any())(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.setHeader(any())).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
+        .thenReturn(
+          Future.successful(internalServerErrorResponse)
+        )
+
+      val result = TestNrsConnector.submit(NrsUtils.nrsSubmission, numberOfRetries).futureValue
+
+      result shouldBe expected
+
+      verify(mockRequestBuilder, times(expectedAttempts)).execute(any[HttpReads[HttpResponse]], any())
+    }
+
+    s"not execute a retry if response received is 4xx" in {
 
       val numberOfRetries = 1
 
