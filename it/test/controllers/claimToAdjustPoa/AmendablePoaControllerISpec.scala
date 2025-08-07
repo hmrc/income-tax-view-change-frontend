@@ -132,11 +132,12 @@ class AmendablePoaControllerISpec extends ControllerISpecHelper {
                   OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
                 )
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
+                whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(homeUrl(mtdUserRole))
+                  )
+                }
               }
             }
             s"return $INTERNAL_SERVER_ERROR" when {
