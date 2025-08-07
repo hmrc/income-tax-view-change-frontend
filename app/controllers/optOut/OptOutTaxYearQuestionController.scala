@@ -22,7 +22,7 @@ import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import forms.optOut.OptOutTaxYearQuestionForm
-import models.admin.{OptOutFs, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -106,8 +106,11 @@ class OptOutTaxYearQuestionController @Inject()(optOutService: OptOutService,
   }
 
   private def withOptOutRFChecks(isAgent: Boolean)(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(OptOutFs), isEnabled(ReportingFrequencyPage)) match {
-      case (true, true) => codeBlock
+    (isEnabled(OptOutFs), isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
+      case (true, true, true) => codeBlock
+      case (true, true, false) =>
+        Logger("application").warn("[OptOutTaxYearQuestionController] OptInOptOutContentUpdateR17 feature switch not enabled, redirecting to Reporting Frequency Page")
+        Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
       case _ =>
         Logger("application").warn("[OptOutTaxYearQuestionController] Feature Switches not enabled, redirecting to Home Page")
         Future.successful(Redirect(homePageRedirectUrl(isAgent)))
