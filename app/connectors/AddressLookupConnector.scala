@@ -19,7 +19,6 @@ package connectors
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.admin.IncomeSourcesNewJourney
 import models.core.Mode
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
@@ -46,11 +45,9 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"$baseUrl/api/v2/confirmed?id=$id"
   }
 
-  def continueUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = (isAgent, isEnabled(IncomeSourcesNewJourney)) match {
-    case (false, false) => controllers.incomeSources.add.routes.AddBusinessAddressController.submit(None, isChange = Mode.isChange(mode)).url
-    case (_, false) => controllers.incomeSources.add.routes.AddBusinessAddressController.agentSubmit(None, isChange = Mode.isChange(mode)).url
-    case (false, _) => controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = mode).url
-    case _ => controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode).url
+  def continueUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = {
+    if(isAgent) controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode).url
+    else controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = mode).url
   }
 
   lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url

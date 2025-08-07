@@ -19,7 +19,6 @@ package controllers.manageBusinesses.add
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import models.admin.IncomeSourcesNewJourney
 import org.jsoup.Jsoup
 import org.mockito.Mockito.mock
 import play.api
@@ -82,7 +81,6 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
         s"the user is authenticated as a $mtdRole" should {
           "return 200 and render Income Source Not Added Error Page" when {
             "user is trying to add SE business" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockIncomeSource(incomeSourceType)
 
@@ -93,19 +91,6 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
               status(result) shouldBe OK
               document.title shouldBe {if (isAgent) titleAgent else titleIndividual}
               document.getElementById("paragraph-1").text() shouldBe paragraphText(incomeSourceType)
-            }
-          }
-
-          "return 303 and show home page" when {
-            "when feature switch is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-              val result: Future[Result] = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val redirectUrl =if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
-              redirectLocation(result) shouldBe Some(redirectUrl)
             }
           }
         }

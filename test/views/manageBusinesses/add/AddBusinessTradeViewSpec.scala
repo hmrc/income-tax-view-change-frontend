@@ -27,17 +27,18 @@ import views.html.manageBusinesses.add.AddBusinessTrade
 class AddBusinessTradeViewSpec extends ViewSpec {
 
   object AddBusinessTradeMessages {
-    val title: String = messages("incomeSources.add.sole-trader")
-    val heading: String = messages("add-trade.heading")
-    val p1: String = messages("add-trade.trade-info-1")
-    val p2: String = messages("add-trade.trade-info-2")
-    val tradeEmptyError: String = messages("add-trade.form.error.empty")
-    val tradeShortError: String = messages("add-trade.form.error.short")
-    val tradeLongError: String = messages("add-trade.form.error.long")
-    val tradeInvalidCharError: String = messages("add-trade.form.error.invalid")
-    val tradeSameNameError: String = messages("add-trade.form.error.same-name")
-    val continue: String = messages("base.continue")
-    val errorPrefix: String = messages("base.error-prefix")
+    val title: String = "Sole trader"
+    val heading: String = "What is the trade of your business?"
+    val p1: String = "The trade of your business is the goods or services that your business provides."
+    val p2: String = "For example: plumbing, electrical work, consulting, hairdressing, personal training, photography work."
+    val tradeEmptyError: String = "Enter the trade of your business"
+    val tradeShortError: String = "Trade must be 2 characters or more"
+    val tradeLongError: String = "Trade must be 35 characters or fewer"
+    val tradeInvalidCharError: String = "Trade cannot include !, \"\", * or ?"
+    val tradeSameNameError: String = "Trade and business name cannot be the same"
+    val continue: String = "Continue"
+    val errorPrefix: String = "Error:"
+    val thereIsAProblem: String = "There is a problem"
   }
 
   val backUrl: String = {
@@ -94,7 +95,7 @@ class AddBusinessTradeViewSpec extends ViewSpec {
         s"for the error '$errorMessage'" should {
 
           "render the error summary" in new Setup(pageWithError(errorKey)) {
-            layoutContent.getElementById("error-summary-heading").text() shouldBe messages("base.error_summary.heading")
+            layoutContent.getElementById("error-summary-heading").text() shouldBe AddBusinessTradeMessages.thereIsAProblem
             layoutContent.getElementsByClass("govuk-error-summary__body").text() shouldBe errorMessage
           }
 

@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.NavBarFs
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -78,7 +78,6 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "render the Business Accounting Method page" in {
-              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -101,7 +100,6 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
           "is authenticated, with a valid enrolment" should {
             s"add 'cash' to session storage and redirect to check business details" when {
               "user selects 'cash basis accounting'" in {
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -135,7 +133,6 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
 
             s"add 'accruals' to session storage and redirect to check business details" when {
               "user selects 'traditional accounting'" in {
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -169,7 +166,6 @@ class IncomeSourcesAccountingMethodControllerISpec extends ControllerISpecHelper
 
             s"return BAD_REQUEST" when {
               "user does not select anything" in {
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)

@@ -17,7 +17,7 @@
 package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.add.IncomeSourceReportingMethodForm
+import forms.manageBusinesses.add.IncomeSourceReportingMethodForm
 import models.incomeSourceDetails.LatencyYear
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
 import org.jsoup.Jsoup

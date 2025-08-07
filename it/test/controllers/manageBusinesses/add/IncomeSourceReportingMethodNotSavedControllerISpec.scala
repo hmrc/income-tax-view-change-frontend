@@ -20,7 +20,7 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.NavBarFs
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
@@ -73,8 +73,7 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ControllerISpec
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "render the reporting method not saved page" when {
-              "Income Sources FS is enabled" in {
-                enable(IncomeSourcesNewJourney)
+              "using the manage businesses journey" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -88,21 +87,6 @@ class IncomeSourceReportingMethodNotSavedControllerISpec extends ControllerISpec
                   httpStatus(OK),
                   pageTitle(mtdUserRole, expectedText),
                   elementTextByID("paragraph-1")(TestConstants.getParagraph(incomeSourceType))
-                )
-              }
-            }
-            "redirect to home page" when {
-              "Income Sources FS is disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(SEE_OTHER)
                 )
               }
             }

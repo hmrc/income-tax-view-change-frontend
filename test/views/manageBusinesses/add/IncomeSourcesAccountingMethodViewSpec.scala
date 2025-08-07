@@ -19,7 +19,7 @@ package views.manageBusinesses.add
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.add.IncomeSourcesAccountingMethodForm
+import forms.manageBusinesses.add.IncomeSourcesAccountingMethodForm
 import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

@@ -21,7 +21,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers._
@@ -101,8 +100,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions 
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting method not saved page" when {
-            s"income sources feature is enabled" in {
-              enable(IncomeSourcesNewJourney)
+            s"using the manage businesses journey" in {
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderNoLatency)
 
@@ -114,19 +112,6 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions 
               document.title shouldBe getPageTitle(isAgent)
               document.getElementById("paragraph-1").text() shouldBe getParagraphText(incomeSourceType)
               document.getElementById("continue-button").attr("href") shouldBe getContinueButtonLink(incomeSourceType, isAgent)
-            }
-          }
-
-          s"redirect to the home page" when {
-            "when feature switch is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-              val result: Future[Result] = action(fakeRequest)
-
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe (if (isAgent) Some(routes.HomeController.showAgent().url) else Some(routes.HomeController.show().url))
             }
           }
         }

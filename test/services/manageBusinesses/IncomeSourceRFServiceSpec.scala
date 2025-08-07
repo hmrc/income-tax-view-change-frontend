@@ -21,7 +21,6 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{AfterSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import mocks.services.{MockCalculationListService, MockITSAStatusService, MockSessionService}
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, NoStatus}
 import models.itsaStatus.{StatusDetail, StatusReason}
@@ -65,7 +64,6 @@ class IncomeSourceRFServiceSpec extends TestSupport
   class Setup(withBothYearsInLatency: Boolean, withOneYearsInLatency: Boolean, CYStatus: ITSAStatus,
               NYStatus: ITSAStatus, itsaStatusReasonRolloverAndNoStatusForCyPlus1: Boolean = false,
               itsaStatusReasonNotRolloverAndNoStatusForCyPlus1: Boolean = false, withoutLatencyDetails: Boolean = false) {
-    enable(IncomeSourcesNewJourney)
 
     setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
     setupMockSetMongoData(true)

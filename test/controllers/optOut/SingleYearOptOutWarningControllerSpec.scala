@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
-import models.admin.{IncomeSourcesFs, OptOutFs}
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.optout.OptOutOneYearViewModel
 import play.api
@@ -73,7 +73,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
         s"return result with $OK status" in {
           enable(OptOutFs)
           setupMockSuccess(mtdUserRole)
-          enable(IncomeSourcesFs)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -85,7 +84,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "there is no tax year eligible for opt out" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
@@ -96,7 +94,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "opt out service fails" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
@@ -109,7 +106,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "the feature switch is disabled" in {
             disable(OptOutFs)
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result: Future[Result] = showAction(requestGET)
@@ -139,7 +135,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "Yes response is submitted" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -158,7 +153,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "No response is submitted" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -176,7 +170,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "invalid response is submitted" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -192,7 +185,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "there is no tax year eligible for opt out" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
@@ -203,7 +195,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "opt out service fails" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
@@ -215,7 +206,6 @@ SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOptOutSer
           "the feature switch is disabled" in {
             disable(OptOutFs)
             setupMockSuccess(mtdUserRole)
-            enable(IncomeSourcesFs)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result: Future[Result] = submitAction(requestPOST)

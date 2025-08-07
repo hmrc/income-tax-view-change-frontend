@@ -17,7 +17,7 @@
 package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.add.AddIncomeSourceStartDateCheckForm
+import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import models.core.{CheckMode, Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -61,32 +61,42 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     s"${if (isAgent) "Agent" else "Individual"}: AddIncomeSourceStartDateCheckView - $incomeSourceType" should {
       "render the heading" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementsByClass("govuk-caption-l").text() shouldBe getCaption(incomeSourceType)
-        document.getElementById("start-date-heading").text() shouldBe messages("radioForm.checkDate.heading.withDate", formattedStartDate)
+        document.getElementById("start-date-heading").text() shouldBe s"Is $formattedStartDate the correct date?"
       }
       "render the radio form" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe messages("radioForm.yes")
-        document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe messages("radioForm.no")
+        document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe "Yes"
+        document.getElementsByClass("govuk-label govuk-radios__label").eq(1).text() shouldBe "No"
         document.getElementsByClass("govuk-radios").size() shouldBe 1
       }
       "render the back link with the correct URL for Normal journey" in new Setup(isAgent, hasError = false, incomeSourceType, mode = NormalMode) {
-        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, mode = NormalMode, incomeSourceType)
       }
       "render the back link with the correct URL for Check journey" in new Setup(isAgent, hasError = false, incomeSourceType, mode = CheckMode) {
-        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe getBackUrl(isAgent, mode = CheckMode, incomeSourceType)
       }
       "render the continue button" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementById("continue-button").text() shouldBe messages("base.continue")
+        document.getElementById("continue-button").text() shouldBe "Continue"
       }
       "render the input error" in new Setup(isAgent, hasError = true, incomeSourceType) {
-        document.getElementById("start-date-check-error").text() shouldBe messages("base.error-prefix") + " " +
-          messages(s"${incomeSourceType.addStartDateCheckMessagesPrefix}.error")
+        val errorMessage = incomeSourceType match {
+          case SelfEmployment => "Select yes if your business start date is correct"
+          case UkProperty => "Select yes if your UK property business start date is correct"
+          case ForeignProperty => "Select yes if your foreign property business start date is correct"
+        }
+
+        document.getElementById("start-date-check-error").text() shouldBe "Error:" + " " + errorMessage
       }
       "render the error summary" in new Setup(isAgent, hasError = true, incomeSourceType) {
-        document.getElementsByClass("govuk-error-summary__title").text() shouldBe messages("base.error_summary.heading")
-        document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe
-          messages(s"${incomeSourceType.addStartDateCheckMessagesPrefix}.error")
+        val errorMessage = incomeSourceType match {
+          case SelfEmployment => "Select yes if your business start date is correct"
+          case UkProperty => "Select yes if your UK property business start date is correct"
+          case ForeignProperty => "Select yes if your foreign property business start date is correct"
+        }
+
+        document.getElementsByClass("govuk-error-summary__title").text() shouldBe "There is a problem"
+        document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe errorMessage
       }
     }
   }
@@ -98,9 +108,9 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
 
   def getCaption(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
-      case SelfEmployment => messages("incomeSources.add.sole-trader")
-      case UkProperty => messages("incomeSources.add.uk-property")
-      case ForeignProperty => messages("incomeSources.add.foreign-property")
+      case SelfEmployment => "Sole trader"
+      case UkProperty => "UK property"
+      case ForeignProperty => "Foreign property"
     }
   }
 

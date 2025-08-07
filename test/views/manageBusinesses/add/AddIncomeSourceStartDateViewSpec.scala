@@ -17,7 +17,7 @@
 package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.add.AddIncomeSourceStartDateFormProvider
+import forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
 import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -138,9 +138,9 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
   def getCaption(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
-      case SelfEmployment => messages("incomeSources.add.sole-trader")
-      case UkProperty => messages("incomeSources.add.uk-property")
-      case ForeignProperty => messages("incomeSources.add.foreign-property")
+      case SelfEmployment => "Sole trader"
+      case UkProperty => "UK property"
+      case ForeignProperty => "Foreign property"
     }
   }
 
