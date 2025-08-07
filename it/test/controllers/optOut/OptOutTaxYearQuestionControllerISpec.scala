@@ -19,7 +19,7 @@ package controllers.optOut
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{OptOutFs, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
@@ -95,8 +95,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - CY Onwards" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptOutFs)
-          enable(ReportingFrequencyPage)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -125,8 +124,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - CY+1 Onwards" in {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptOutFs)
-          enable(ReportingFrequencyPage)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -154,8 +152,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Mandated" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptOutFs)
-          enable(ReportingFrequencyPage)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -182,8 +179,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Mandated with quarterly updates" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptOutFs)
-          enable(ReportingFrequencyPage)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -210,8 +206,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Annual" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptOutFs)
-          enable(ReportingFrequencyPage)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -238,8 +233,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Annual with quarterly updates" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptOutFs)
-          enable(ReportingFrequencyPage)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -267,8 +261,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Next Year Opt Out with CY Annual" in {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptOutFs)
-          enable(ReportingFrequencyPage)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -294,8 +287,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Next Year Opt Out with CY Mandated" in {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptOutFs)
-          enable(ReportingFrequencyPage)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -324,8 +316,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "submit the answer to the opt out tax year question" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-        enable(OptOutFs)
-        enable(ReportingFrequencyPage)
+        enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
         stubAuthorised(mtdUserRole)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -348,8 +339,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "get an error message if the user incorrectly submits to the form" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-        enable(OptOutFs)
-        enable(ReportingFrequencyPage)
+        enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
         stubAuthorised(mtdUserRole)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
