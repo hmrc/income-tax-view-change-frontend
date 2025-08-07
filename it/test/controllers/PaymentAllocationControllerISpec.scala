@@ -64,13 +64,14 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper with Featur
                 IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
                 IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAllocationsModel))
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, "paymentAllocation.heading"),
-                )
+                whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "paymentAllocation.heading"),
+                  )
 
-                verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModel).detail)
+                  verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModel).detail)
+                }
               }
             }
 
@@ -82,15 +83,15 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper with Featur
               IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesHmrcAdjustmentJson)
               IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "MA999991A", "5")(OK, Json.toJson(testValidNoLpiPaymentAllocationHmrcAdjustment))
 
-              val result = buildGETMTDClient(getPath(mtdUserRole, docNumber), additionalCookies).futureValue
+              whenReady(buildGETMTDClient(getPath(mtdUserRole, docNumber), additionalCookies)) { result =>
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "paymentAllocation.heading"),
+                  elementTextBySelector("tbody")("HMRC adjustment Tax year 2021 to 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
+                )
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "paymentAllocation.heading"),
-                elementTextBySelector("tbody")("HMRC adjustment Tax year 2021 to 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
-              )
-
-              verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModelHmrcAdjustment).detail)
+                verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModelHmrcAdjustment).detail)
+              }
             }
 
             s"is for LPI" in {
@@ -106,17 +107,17 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper with Featur
               IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
               IncomeTaxViewChangeStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
+              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "paymentAllocation.heading"),
+                  elementAttributeBySelector("#payment-allocation-0 a", "href")(
+                    "/report-quarterly/income-and-expenses/view" + {if(mtdUserRole != MTDIndividual) "/agents" else ""} +"/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
+                  elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messagesAPI("paymentAllocation.taxYear", "9998", "9999")}")
+                )
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "paymentAllocation.heading"),
-                elementAttributeBySelector("#payment-allocation-0 a", "href")(
-                  "/report-quarterly/income-and-expenses/view" + {if(mtdUserRole != MTDIndividual) "/agents" else ""} +"/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
-                elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messagesAPI("paymentAllocation.taxYear", "9998", "9999")}")
-              )
-
-              verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), lpiPaymentAllocationViewModel).detail)
+                verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), lpiPaymentAllocationViewModel).detail)
+              }
             }
           }
         }

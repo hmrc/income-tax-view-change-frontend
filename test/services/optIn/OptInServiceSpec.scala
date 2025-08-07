@@ -201,22 +201,22 @@ class OptInServiceSpec extends UnitSpec
       when(optOutConnector.optIn(any(), any())(any()))
         .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess(OK)))
 
-      val result = service.makeOptInCall().futureValue
+      whenReady(service.makeOptInCall()) { result =>
 
-      val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
-
-      verifyExtendedAudit(
-        OptInAuditModel(
-          OptInProposition(
-            currentTaxYearOptIn,
-            NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
-          ),
-          currentTaxYear,
-          ITSAStatusUpdateResponseSuccess(OK)
+        val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+        verifyExtendedAudit(
+          OptInAuditModel(
+            OptInProposition(
+              currentTaxYearOptIn,
+              NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+            ),
+            currentTaxYear,
+            ITSAStatusUpdateResponseSuccess(OK)
+          )
         )
-      )
 
-      result.isInstanceOf[ITSAStatusUpdateResponseSuccess] shouldBe true
+        result.isInstanceOf[ITSAStatusUpdateResponseSuccess] shouldBe true
+      }
     }
 
     "fail response case" in {
@@ -227,22 +227,22 @@ class OptInServiceSpec extends UnitSpec
       when(optOutConnector.optIn(any(), any())(any()))
         .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
 
-      val result = service.makeOptInCall().futureValue
+      whenReady(service.makeOptInCall()) { result =>
+        val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
 
-      val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
-
-      verifyExtendedAudit(
-        OptInAuditModel(
-          OptInProposition(
-            currentTaxYearOptIn,
-            NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
-          ),
-          currentTaxYear,
-          ITSAStatusUpdateResponseFailure.defaultFailure()
+        verifyExtendedAudit(
+          OptInAuditModel(
+            OptInProposition(
+              currentTaxYearOptIn,
+              NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+            ),
+            currentTaxYear,
+            ITSAStatusUpdateResponseFailure.defaultFailure()
+          )
         )
-      )
 
-      result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
+        result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
+      }
     }
 
     "fail where missing intent tax-year case" in {
