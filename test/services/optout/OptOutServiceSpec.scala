@@ -35,7 +35,7 @@ import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
 import services.optout.OptOutTestSupport._
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingFrequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
 
@@ -148,11 +148,11 @@ class OptOutServiceSpec
           )
 
           offeredTaxYearsAndCountsTestSetup map { year =>
-            when(mockNextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
+            when(mockNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(same(year.taxYear))(any(), any()))
               .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(year.taxYear, year.submissions)))
           }
 
-          val result = service.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
+          val result = service.getQuarterlyFulfilledUpdatesCount(optOutProposition)
 
           val expectedResult = QuarterlyUpdatesCountForTaxYearModel(Seq(
             QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 2),
@@ -177,11 +177,11 @@ class OptOutServiceSpec
           )
 
           offeredTaxYearsAndCountsTestSetup map { year =>
-            when(mockNextUpdatesService.getQuarterlyUpdatesCounts(same(year.taxYear))(any(), any()))
+            when(mockNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(same(year.taxYear))(any(), any()))
               .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(year.taxYear, year.submissions)))
           }
 
-          val result = service.getQuarterlyUpdatesCountForOfferedYears(optOutProposition)
+          val result = service.getQuarterlyFulfilledUpdatesCount(optOutProposition)
 
           val expectedResult = QuarterlyUpdatesCountForTaxYearModel(Seq(
             QuarterlyUpdatesCountForTaxYear(TaxYear.forYearEnd(2023), 1),
@@ -445,7 +445,7 @@ class OptOutServiceSpec
 
           stubCurrentTaxYear(CY)
 
-          when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
+          when(mockNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
             .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
 
           when(mockRepository.recallOptOutPropositionWithIntent()).thenReturn(

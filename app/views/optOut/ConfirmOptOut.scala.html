@@ -56,32 +56,32 @@
     useFallbackBackLink = true
     ) {
 
-@h1(id = Some("heading"), msg = title, size = "l")
+    @h1(id = Some("heading"), msg = title, size = "l")
 
-@p(id=Some("summary")) {
-    @messages("optout.confirmOptOut.desc")
-}
-
-@if(viewModel.showFutureChangeInfo){
-    @p(id=Some("info-message")) {
-        @messages("optout.confirmOptOut.info-message")
+    @p(id=Some("summary")) {
+        @messages("optout.confirmOptOut.desc")
     }
-}
 
-@viewModel.whereQuarterlyUpdatesAreMade.map { quarterlyUpdatesCount =>
-    @quarterlyUpdatesWarningBlock(quarterlyUpdatesCount)
-}
+    @if(viewModel.showFutureChangeInfo){
+        @p(id=Some("info-message")) {
+            @messages("optout.confirmOptOut.info-message")
+        }
+    }
 
-@formWithCSRF(action = confirmOptOutURL, Symbol("id") -> "confirm-optout-form") {
-    <div class="govuk-button-group">
-        @govukButton(Button(
-            content = Text(messages("optout.confirmOptOut.confirm")),
-            id = Some("confirm-button")
-        ))
-        <a class="govuk-link" id="cancel-button" href=@cancelURL>
-            @messages("optout.confirmOptOut.cancel")
-        </a>
-    </div>
-}
+    @if(viewModel.quarterlyFulfilledUpdatesCount > 0) {
+        @quarterlyUpdatesWarningBlock(viewModel.quarterlyFulfilledUpdatesCount)
+    }
+
+    @formWithCSRF(action = confirmOptOutURL, Symbol("id") -> "confirm-optout-form") {
+        <div class="govuk-button-group">
+            @govukButton(Button(
+                content = Text(messages("optout.confirmOptOut.confirm")),
+                id = Some("confirm-button")
+            ))
+            <a class="govuk-link" id="cancel-button" href=@cancelURL>
+                @messages("optout.confirmOptOut.cancel")
+            </a>
+        </div>
+    }
 
 }

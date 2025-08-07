@@ -268,7 +268,7 @@ class OptInServiceSpec extends UnitSpec
       mockRepository(optInContextData = optInContext, selectedOptInYear = Some(currentTaxYear.toString))
       when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-      when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any())).thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
+      when(nextUpdatesService.getQuarterlyFulfilledUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any())).thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
 
       val result = service.getMultiYearCheckYourAnswersViewModel(isAgent)
 
@@ -287,7 +287,7 @@ class OptInServiceSpec extends UnitSpec
       mockRepository(optInContextData = optInContext, selectedOptInYear = Some(currentTaxYear.nextYear.toString))
       when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-      when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any())).thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
+      when(nextUpdatesService.getQuarterlyFulfilledUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any())).thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
 
       val result = service.getMultiYearCheckYourAnswersViewModel(isAgent)
 
