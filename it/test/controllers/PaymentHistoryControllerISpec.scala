@@ -77,14 +77,15 @@ class PaymentHistoryControllerISpec extends ControllerISpecHelper {
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
 
-                  val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  result should have(
-                    httpStatus(OK),
-                    pageTitle(mtdUserRole, "paymentHistory.heading"),
-                    elementTextBySelector("#refundstatus")(""),
-                  )
+                  whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                    result should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, "paymentHistory.heading"),
+                      elementTextBySelector("#refundstatus")(""),
+                    )
 
-                  verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser(mtdUserRole), payments).detail)
+                    verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser(mtdUserRole), payments).detail)
+                  }
                 }
               }
 
@@ -96,21 +97,21 @@ class PaymentHistoryControllerISpec extends ControllerISpecHelper {
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
 
-                  val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                  result should have(
-                    httpStatus(OK),
-                    pageTitle(mtdUserRole, "paymentHistory.paymentAndRefundHistory.heading"),
-                    elementTextBySelector("h1")(messagesAPI("paymentHistory.paymentAndRefundHistory.heading"))
-                  )
-                  if(mtdUserRole == MTDIndividual) {
+                  whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                     result should have(
-                      elementTextBySelector("#refundstatus")(messagesAPI("paymentHistory.check-refund-1") + " " +
-                        messagesAPI("paymentHistory.check-refund-2") + " " + messagesAPI("paymentHistory.check-refund-3"))
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, "paymentHistory.paymentAndRefundHistory.heading"),
+                      elementTextBySelector("h1")(messagesAPI("paymentHistory.paymentAndRefundHistory.heading"))
                     )
-                  }
+                    if(mtdUserRole == MTDIndividual) {
+                      result should have(
+                        elementTextBySelector("#refundstatus")(messagesAPI("paymentHistory.check-refund-1") + " " +
+                          messagesAPI("paymentHistory.check-refund-2") + " " + messagesAPI("paymentHistory.check-refund-3"))
+                      )
+                    }
 
-                  verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser(mtdUserRole), payments).detail)
+                    verifyAuditContainsDetail(PaymentHistoryResponseAuditModel(testUser(mtdUserRole), payments).detail)
+                  }
                 }
               }
             }

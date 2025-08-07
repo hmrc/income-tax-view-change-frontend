@@ -343,16 +343,17 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 CalculationListStub.stubGetCalculationList(testNino, taxYear1YYtoYY)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
                 IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel("2024-01-31T09:26:17Z")))
 
-                val result = buildPOSTMTDPostClient(path, additionalCookies, validFormData).futureValue
-                AuditStub.verifyAuditContainsDetail(
-                  IncomeSourceReportingMethodAuditModel(isSuccessful = true, incomeSourceType.journeyType, "ADD",
-                    "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail
-                )
+                whenReady(buildPOSTMTDPostClient(path, additionalCookies, validFormData)) { result =>
+                  AuditStub.verifyAuditContainsDetail(
+                    IncomeSourceReportingMethodAuditModel(isSuccessful = true, incomeSourceType.journeyType, "ADD",
+                      "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail
+                  )
 
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(redirectUrl(incomeSourceType, mtdUserRole))
-                )
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(redirectUrl(incomeSourceType, mtdUserRole))
+                  )
+                }
               }
             }
             s"303 SEE_OTHER - redirect to ${errorRedirectUrl(incomeSourceType, mtdUserRole)}" when {
@@ -366,17 +367,17 @@ class IncomeSourceReportingMethodControllerISpec extends ControllerISpecHelper {
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", currentTaxYearRange)
                 IncomeTaxViewChangeStub.stubUpdateIncomeSourceError()
 
-                val result = buildPOSTMTDPostClient(path, additionalCookies, validFormData).futureValue
+                whenReady(buildPOSTMTDPostClient(path, additionalCookies, validFormData)) { result =>
+                  AuditStub.verifyAuditContainsDetail(
+                    IncomeSourceReportingMethodAuditModel(isSuccessful = false, incomeSourceType.journeyType, "ADD",
+                      "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail
+                  )
 
-                AuditStub.verifyAuditContainsDetail(
-                  IncomeSourceReportingMethodAuditModel(isSuccessful = false, incomeSourceType.journeyType, "ADD",
-                    "Annually", taxYearYYYYtoYYYY, businessName(incomeSourceType))(getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail
-                )
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(errorRedirectUrl(incomeSourceType, mtdUserRole))
-                )
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(errorRedirectUrl(incomeSourceType, mtdUserRole))
+                  )
+                }
               }
             }
             "400 BAD_REQUEST" when {

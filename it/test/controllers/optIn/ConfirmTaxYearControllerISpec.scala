@@ -153,13 +153,14 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
                 Status.NO_CONTENT, emptyBodyString
               )
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              whenReady(buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty)) { result =>
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              result should have(
-                httpStatus(Status.SEE_OTHER),
-                redirectURI(controllers.optIn.routes.OptInCompletedController.show(isAgent).url)
-              )
+                result should have(
+                  httpStatus(Status.SEE_OTHER),
+                  redirectURI(controllers.optIn.routes.OptInCompletedController.show(isAgent).url)
+                )
+              }
             }
 
             "the user is opting in for next tax year" in {
@@ -174,13 +175,14 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
                 Status.NO_CONTENT, emptyBodyString
               )
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              whenReady(buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty)) { result =>
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              result should have(
-                httpStatus(Status.SEE_OTHER),
-                redirectURI(controllers.optIn.routes.OptInCompletedController.show(isAgent).url)
-              )
+                result should have(
+                  httpStatus(Status.SEE_OTHER),
+                  redirectURI(controllers.optIn.routes.OptInCompletedController.show(isAgent).url)
+                )
+              }
             }
           }
 
@@ -196,13 +198,15 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
               ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.asInstanceOf[IncomeSourceDetailsModel].nino,
                 BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
               )
-              val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-              result should have(
-                httpStatus(Status.SEE_OTHER),
-                redirectURI(controllers.optIn.routes.OptInErrorController.show(isAgent).url)
-              )
+              whenReady(buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty)) { result =>
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                result should have(
+                  httpStatus(Status.SEE_OTHER),
+                  redirectURI(controllers.optIn.routes.OptInErrorController.show(isAgent).url)
+                )
+              }
             }
           }
           testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))

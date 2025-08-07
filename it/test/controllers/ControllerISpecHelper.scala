@@ -249,12 +249,14 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
                                       optBody: Option[Map[String, Seq[String]]] = None): Unit = {
     "render the supporting agent unauthorised page" in {
       stubAuthorised(MTDSupportingAgent)
-      val result = buildMTDClient(requestPath, additionalCookies, optBody).futureValue
-      result should have(
-        httpStatus(UNAUTHORIZED),
-        pageTitle(MTDSupportingAgent, "agent-unauthorised.heading", isErrorPage = true)
-      )
-      AuditStub.verifyAuditEvent(AccessDeniedForSupportingAgentAuditModel(getAuthorisedAndEnrolledUser(MTDSupportingAgent)))
+
+      whenReady(buildMTDClient(requestPath, additionalCookies, optBody)) { result =>
+        result should have(
+          httpStatus(UNAUTHORIZED),
+          pageTitle(MTDSupportingAgent, "agent-unauthorised.heading", isErrorPage = true)
+        )
+        AuditStub.verifyAuditEvent(AccessDeniedForSupportingAgentAuditModel(getAuthorisedAndEnrolledUser(MTDSupportingAgent)))
+      }
     }
   }
 
