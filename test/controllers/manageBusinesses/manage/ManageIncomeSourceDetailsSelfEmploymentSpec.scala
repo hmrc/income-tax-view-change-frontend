@@ -66,8 +66,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter and latency information but user is not in latency period" in {
-            enable(DisplayBusinessStartDate, AccountingMethodJourney)
-            disable(ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -127,6 +126,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryKeys.eq(6).text().contains(reportingMethod)
             manageDetailsSummaryKeys.eq(7).text().contains(reportingMethod)
           }
+
           "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is Q" in {
             enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
@@ -216,7 +216,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryValues.eq(6).isEmpty
           }
 
-          "the user has a valid id parameter, but non eligable itsa status" in {
+          "the user has a valid id parameter, but non eligible itsa status" in {
             enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)

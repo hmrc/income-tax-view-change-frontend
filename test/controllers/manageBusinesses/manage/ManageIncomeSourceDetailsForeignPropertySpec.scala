@@ -64,8 +64,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
             "the user has a valid id parameter and latency information expired" in {
-              enable(DisplayBusinessStartDate, AccountingMethodJourney)
-              disable(ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
