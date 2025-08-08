@@ -65,8 +65,8 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
           Some(OptInSessionData(
             optInContextData = Some(OptInContextData(
               currentTaxYear = currentTaxYear.toString,
-              currentYearITSAStatus = statusToString(currentYearStatus),
-              nextYearITSAStatus = statusToString(nextYearStatus)
+              currentYearITSAStatus = statusToString(status = currentYearStatus, isNextYear = false),
+              nextYearITSAStatus = statusToString(status = nextYearStatus, isNextYear = true)
             )),
             selectedOptInYear = Some(intent.toString))))
     )

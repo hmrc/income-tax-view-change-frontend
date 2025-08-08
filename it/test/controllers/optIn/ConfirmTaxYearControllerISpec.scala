@@ -219,8 +219,8 @@ class ConfirmTaxYearControllerISpec extends ControllerISpecHelper {
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus),
-              statusToString(nextYearStatus))), Some(intent.toString)))))
+              currentTaxYear.toString, statusToString(status = currentYearStatus, isNextYear = false),
+              statusToString(status = nextYearStatus, isNextYear = true))), Some(intent.toString)))))
   }
 
 }

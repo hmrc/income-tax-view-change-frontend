@@ -21,22 +21,22 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 
 object ITSAStatusRepositorySupport {
 
-  def statusToString(status: ITSAStatus): String =
+  def statusToString(status: ITSAStatus, isNextYear: Boolean): String =
     status match {
-      case ITSAStatus.NoStatus  => "U"
+      case ITSAStatus.NoStatus if isNextYear => "U"
       case ITSAStatus.Voluntary => "V"
       case ITSAStatus.Annual    => "A"
       case ITSAStatus.Mandated  => "M"
       // This will be validated earlier on in a future ticket
-      case _ => throw new RuntimeException("Unexpected status")
+      case _ => throw new RuntimeException(s"Unsupported ITSA status: $status")
     }
 
-  def stringToStatus(status: String): ITSAStatus.Value =
+  def stringToStatus(status: String, isNextYear: Boolean): ITSAStatus.Value =
     status match {
-      case "U" => ITSAStatus.NoStatus
+      case "U" if isNextYear => ITSAStatus.NoStatus
       case "V" => ITSAStatus.Voluntary
       case "A" => ITSAStatus.Annual
       case "M" => ITSAStatus.Mandated
-      case _ => throw new RuntimeException("Unexpected status")
+      case _ => throw new RuntimeException(s"Unsupported ITSA status string: $status")
     }
 }
