@@ -147,7 +147,7 @@ object TaxDueSummaryViewModel {
             hicbc.incomeThreshold,
             hicbc.childBenefitChargeTaper,
             hicbc.rate,
-            hicbc.highIncomeBenefitCharge
+            hicbc.highIncomeChildBenefitCharge
           )}
         )
 

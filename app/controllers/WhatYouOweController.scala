@@ -62,8 +62,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
 
     for {
-      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(ReviewAndReconcilePoa),
-        isEnabled(FilterCodedOutPoas),
+      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
         mainChargeIsNotPaidFilter)
       selfServeTimeToPayUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(isEnabled(YourSelfAssessmentCharges))
@@ -89,7 +88,6 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
             backUrl = backUrl,
             utr = user.saUtr,
             dunningLock = whatYouOweChargesList.hasDunningLock,
-            reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa),
             creditAndRefundUrl = (user.isAgent() match {
               case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
               case true                                                  => NotMigratedUserController.showAgent()

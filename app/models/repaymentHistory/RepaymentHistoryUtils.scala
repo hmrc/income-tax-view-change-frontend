@@ -69,10 +69,10 @@ object RepaymentHistoryUtils {
       .map { case (year, payments) => (year, sortPayments(payments)) }
   }
 
-  def getGroupedPaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], isAgent: Boolean, reviewAndReconcileEnabled: Boolean, languageUtils: LanguageUtils
+  def getGroupedPaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], isAgent: Boolean, languageUtils: LanguageUtils
                                   )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[(Int, List[PaymentHistoryEntry])] = {
 
-    val combinedPayments = combinePaymentHistoryData(payments, repayments, isAgent, reviewAndReconcileEnabled, languageUtils)
+    val combinedPayments = combinePaymentHistoryData(payments, repayments, isAgent, languageUtils)
 
     groupedPayments(combinedPayments)
   }
@@ -80,11 +80,10 @@ object RepaymentHistoryUtils {
   private def combinePaymentHistoryData(payments: List[Payment],
                                         repayments: List[RepaymentHistory],
                                         isAgent: Boolean,
-                                        reviewAndReconcileEnabled: Boolean,
                                         languageUtils: LanguageUtils
                                        )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[PaymentHistoryEntry] = {
 
-    val filteredPayments = payments.flatMap { payment => filterPayment(payment, isAgent, reviewAndReconcileEnabled) match {
+    val filteredPayments = payments.flatMap { payment => filterPayment(payment, isAgent) match {
         case Right(entry) => Some(entry)
         case Left(error) =>
           Logger("application").error(s"Error processing payment: ${error.getMessage}")
@@ -98,22 +97,21 @@ object RepaymentHistoryUtils {
   }
 
   private def filterPayment(payment: Payment,
-                            isAgent: Boolean,
-                            reviewAndReconcileEnabled: Boolean
+                            isAgent: Boolean
                            )(implicit dateservice: DateServiceInterface): Either[Throwable, PaymentHistoryEntry] = {
 
     val hasCredit = payment.credit.isDefined
     val hasLot = payment.lot.isDefined && payment.lotItem.isDefined
 
-    (hasCredit,  reviewAndReconcileEnabled, hasLot, payment.creditType) match {
-      case (true, _, _, Some(MfaCreditType))                                   => Right(mfaCreditEntry(payment, isAgent))
-      case (true, _, _, Some(CutOverCreditType))                               => creditEntry(payment, isAgent)
-      case (true, true, _, Some(PoaOneReconciliationCredit))  => creditEntry(payment, isAgent, true)
-      case (true, true, _, Some(PoaTwoReconciliationCredit))  => creditEntry(payment, isAgent, true)
-      case (true, _, _, Some(BalancingChargeCreditType))                       => creditEntry(payment, isAgent)
-      case (true, _, _, Some(RepaymentInterest))                               => creditEntry(payment, isAgent)
-      case (false, _, true, Some(PaymentType))                                 => Right(paymentToHMRCEntry(payment, isAgent))
-      case (_, _, _, _)                                                        => Left(MissingFieldException("Invalid Payment Data"))
+    (hasCredit,  hasLot, payment.creditType) match {
+      case (true, _, Some(MfaCreditType))                                   => Right(mfaCreditEntry(payment, isAgent))
+      case (true, _, Some(CutOverCreditType))                               => creditEntry(payment, isAgent)
+      case (true, _, Some(PoaOneReconciliationCredit))  => creditEntry(payment, isAgent, true)
+      case (true, _, Some(PoaTwoReconciliationCredit))  => creditEntry(payment, isAgent, true)
+      case (true, _, Some(BalancingChargeCreditType))                       => creditEntry(payment, isAgent)
+      case (true, _, Some(RepaymentInterest))                               => creditEntry(payment, isAgent)
+      case (false, true, Some(PaymentType))                                 => Right(paymentToHMRCEntry(payment, isAgent))
+      case (_, _, _)                                                        => Left(MissingFieldException("Invalid Payment Data"))
     }
   }
 

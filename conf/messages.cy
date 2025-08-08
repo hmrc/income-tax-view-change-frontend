@@ -616,7 +616,7 @@ taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy�
 taxCal_breakdown.table.giftAidTaxReductionWhereBasicRateDiffers     = Gostyngiad treth ar y gwahaniaeth yn y gyfradd sylfaenol
 taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers        = Tâl treth ar y gwahaniaeth yn y gyfradd sylfaenol
 
-taxCal_breakdown.table.highIncomeBenefitCharge                      = Tâl treth Budd-dal Plant Incwm Uchel
+taxCal_breakdown.table.highIncomeChildBenefitCharge                      = Tâl treth Budd-dal Plant Incwm Uchel
 
 taxCal_breakdown.message.static1                                = Mae’r cyfrifiad hwn ond yn seiliedig ar yr wybodaeth y mae CThEF wedi’i chael am eich incwm a’ch treuliau hyd yma. Gallai hyn newid wrth i ni gael rhagor o wybodaeth amdanoch yn ystod y flwyddyn dreth.
 taxCal_breakdown.message.C22201                                 = Cynyddwyd eich terfyn ar gyfer y Gyfradd Sylfaenol gan {0} i {1} ar gyfer taliadau Rhodd Cymorth.
@@ -1489,8 +1489,12 @@ incomeSources.add.error.incomeSourceNotSaved.uk                  = eiddo yn y DU
 incomeSources.add.error.incomeSourceNotSaved.fp                  = eiddo tramor
 incomeSources.add.error.incomeSourceNotSaved.incomeSources       = Eich ffynonellau incwm
 
-incomeSources.add.error.reportingMethodNotSaved.p1                              = Ychwanegwyd eich busnes {0}, ond nid oedd modd i ni gadw’r manylion ynghylch amlder cyflwyno adroddiadau ar gyfer un neu fwy o flynyddoedd treth.
-incomeSources.add.error.reportingMethodNotSaved.p2                              = Ar gyfer y blynyddoedd treth lle nad oedd modd i ni gadw’r dull o gyflwyno adroddiadau, bydd y manylion ynghylch amlder cyflwyno diweddariadau o ran incwm a threuliau yn newid i ’blynyddol’ yn ddiofyn. Gallwch newid hyn yn nes ymlaen yn yr ’adran i weld a rheoli ffynonellau incwm’.
+incomeSources.add.error.reportingMethodNotSaved.heading                         = Mae’n ddrwg gennym, mae problem gyda’r gwasanaeth
+incomeSources.add.error.reportingMethodNotSaved.p1                              = Ychwanegwyd eich busnes newydd, ond nid oedd modd i ni gadw unrhyw rwymedigaethau adrodd ar wahân y gallech fod wedi’u gosod ar ei gyfer.
+incomeSources.add.error.reportingMethodNotSaved.p2                              = Ar gyfer ei ddwy flynedd dreth gyntaf, mae’r busnes hwn yn ddiofyn yn cael ei optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+incomeSources.add.error.reportingMethodNotSaved.p3.firstHalf                    = Gallwch newid hyn ar unrhyw adeg o’r adran
+incomeSources.add.error.reportingMethodNotSaved.p3.linkText                     = eich busnesau.
+incomeSources.add.error.reportingMethodNotSaved.p3.secondHalf                   =
 incomeSources.add.error.reportingMethodNotSaved.se.incomeSource                 = unig fasnachwr
 incomeSources.add.error.reportingMethodNotSaved.uk.incomeSource                 = eiddo yn y DU
 incomeSources.add.error.reportingMethodNotSaved.fp.incomeSource                 = eiddo tramor
@@ -1977,9 +1981,8 @@ income.source.added.scenario.two.account.updated.p.a                            
 income.source.added.scenario.two.account.updated.p.link                                     = diweddariadau a dyddiadau cau,
 income.source.added.scenario.two.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru.
 
-income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Gallwch benderfynu ar unrhyw adeg i optio eich holl fusnes allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar eich tudalen
-income.source.added.scenario.two.view.reporting.obligations.link                            = ymrwymiadau adrodd.
-income.source.added.scenario.two.view.reporting.obligations.p.b                             =
+income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Dysgwch ragor am
+income.source.added.scenario.two.view.reporting.obligations.link                            = eich ymrwymiadau adrodd
 
 income.source.added.scenario.two.view.businesses.link                                       = Bwrw golwg dros eich busnesau
 income.source.added.scenario.two.view.businesses.p                                          = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
@@ -2794,6 +2797,20 @@ optIn.beforeYouStart.reportQuarterly.text.p2   = byddwch yn adrodd am bob un o�
 optIn.beforeYouStart.voluntaryStatus           = Eich statws gwirfoddol
 optIn.beforeYouStart.voluntaryStatus.text      = Gan y byddech yn optio i mewn yn wirfoddol i adrodd yn chwarterol, byddech yn gallu optio allan ar unrhyw adeg ac felly dychwelyd i adroddiadau blynyddol.
 optIn.beforeYouStart.button.start              = Dechrau
+
+# sign up start
+signUp.start.heading                           = Cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+signUp.start.desc                              = Mae hyn yn galluogi CThEF i roi rhagolwg gwell o swm y dreth sydd arnoch, a hynny er mwyn eich helpu i gyllidebu’n well.
+signUp.start.inset                             = Os ydych yn cofrestru’n wirfoddol, bydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+signUp.start.reportingQuarterly.heading        = Adrodd yn chwarterol
+signUp.start.reportingQuarterly.desc           = Bydd cofrestru’n wirfoddol yn golygu y bydd angen i chi wneud y canlynol:
+signUp.start.reportingQuarterly.bullet1        = cadw cofnodion digidol o’ch incwm a threuliau o fod yn unig fasnachwr ac o eiddo
+signUp.start.reportingQuarterly.bullet2        = cyflwyno diweddariad pob 3 mis ar gyfer pob un ffynhonnell incwm
+signUp.start.reportingQuarterly.bullet3        = parhau i gyflwyno Ffurflenni Treth
+signUp.start.reportingQuarterly.cy.desc        = Os ydych wedi defnyddio meddalwedd i gyflwyno’ch incwm a threuliau i CThEF ar gyfer y flwyddyn dreth hon yn barod, bydd angen i chi ailgyflwyno’r wybodaeth hon yn eich diweddariad chwarterol nesaf.
+signUp.start.ifYouChangeYourMind.heading       = Os ydych yn newid eich meddwl
+signUp.start.ifYouChangeYourMind.desc          = Gan eich bod wedi cofrestru’n wirfoddol, gallech benderfynu optio allan ar unrhyw adeg.
+signUp.start.button                            = Cofrestru
 
 # opt-in single taxyear warning
 optIn.singleTaxYearWarning.heading                                      = Optio i mewn yn wirfoddol i adrodd yn chwarterol am flwyddyn dreth unigol

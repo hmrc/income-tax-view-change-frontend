@@ -192,7 +192,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
             document.getElementById(IdSelectors.accountUpdated).text() shouldBe accountUpdatedParagraph
             document.getElementById(IdSelectors.submitUpdatesSoftware).text() shouldBe submitUpdatesInSoftwareH2
             document.getElementById(IdSelectors.submitCompatibleSoftwareQuarterly).text() shouldBe submitCompatibleSoftwareQuarterlyParagraph
-            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. You can decide at any time to opt all your businesses out of Making Tax Digital for Income Tax on your reporting obligations page."
+            document.getElementById(IdSelectors.viewReportingObligations).text() shouldBe "This new business is opted out of Making Tax Digital for Income Tax. Find out more about your reporting obligations."
             document.getElementById(IdSelectors.viewBusinesses).text() shouldBe viewBusinessesParagraph
 
           }

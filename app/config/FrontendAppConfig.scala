@@ -95,6 +95,11 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
   lazy val selfAssessmentUrl: String = s"$businessTaxAccount/self-assessment"
 
+  // NRS
+  lazy val nrsBaseUrl: String = servicesConfig.baseUrl("non-repudiation")
+  lazy val nrsApiKey: String = servicesConfig.getString("microservice.services.non-repudiation.xApiKey")
+  lazy val nrsRetries: Int = config.get[Int]("microservice.services.non-repudiation.numberOfRetries")
+
   //Agent Services Account
   lazy val setUpAgentServicesAccountUrl: String = servicesConfig.getString("set-up-agent-services-account.url")
 
@@ -199,7 +204,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
   val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
-  
+
   lazy val homepageLink = "https://www.gov.uk"
 
   //SA for Agents Online Service

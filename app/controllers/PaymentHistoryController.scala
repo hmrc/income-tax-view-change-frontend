@@ -25,7 +25,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
-import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds, ReviewAndReconcilePoa}
+import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.Logger
@@ -76,8 +76,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           isAgent = isAgent,
           payments = payments,
           repayments = repayments,
-          languageUtils = languageUtils,
-          reviewAndReconcileEnabled = isEnabled(ReviewAndReconcilePoa)
+          languageUtils = languageUtils
         )
 
         val viewModel = PaymentCreditAndRefundHistoryViewModel(isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds))

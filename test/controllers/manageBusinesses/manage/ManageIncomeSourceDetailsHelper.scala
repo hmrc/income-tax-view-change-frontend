@@ -39,6 +39,7 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
   lazy val link: String = "Change"
   lazy val incomeSourceId: String = "XAIS00000000008"
   lazy val businessWithLatencyAddress: String = "8 Test New Court New Town New City NE12 6CI United Kingdom"
+  lazy val businessWithLatencyAddress2: String = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
   lazy val unknown: String = "Unknown"
   lazy val annually: String = "Annually"
   lazy val quarterly: String = "Quarterly"

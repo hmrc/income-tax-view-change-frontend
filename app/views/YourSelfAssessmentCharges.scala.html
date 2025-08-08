@@ -87,7 +87,7 @@
             @if(viewModel.chargesAndCodedOutDetailsAreEmpty) {
 
                 @p(id = Some("no-payments-due")) {
-                    @Html(messages(s"whatYouOwe.no-payments-due${if(user.isAgent()) "-agent" else ""}"))
+                    @Html(getMessage(s"no-payments-due${if(user.isAgent()) "-agent" else ""}"))
                 }
 
                 @claimToAdjustPoaSection(
@@ -145,7 +145,9 @@
                     ))
                 }
 
+              @if(!user.isAgent()){
                 @paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
+              }
 
                 @if(!viewModel.whatYouOweChargesList.isChargesListEmpty && (viewModel.dunningLock || viewModel.hasLpiWithDunningLock) ) {
                     @dunningLockParagraph()

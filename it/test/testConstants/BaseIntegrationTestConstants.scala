@@ -196,13 +196,18 @@ object BaseIntegrationTestConstants {
       firstYear = Some(true),
       secondYear = Some(true)
     ),
+    latencyYearsAnnual = LatencyYearsAnnual(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     latencyYearsCrystallised = LatencyYearsCrystallised(
       firstYear = Some(false),
       secondYear = Some(false)
     ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
-    quarterReportingType = Some(QuarterTypeStandard)
+    quarterReportingType = Some(QuarterTypeStandard),
+    currentTaxYearEnd = getCurrentTaxYearEnd.getYear
   )
 
   val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -216,13 +221,18 @@ object BaseIntegrationTestConstants {
       firstYear = Some(true),
       secondYear = Some(true)
     ),
+    latencyYearsAnnual = LatencyYearsAnnual(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     latencyYearsCrystallised = LatencyYearsCrystallised(
       firstYear = Some(false),
       secondYear = Some(false)
     ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
-    quarterReportingType = Some(QuarterTypeStandard)
+    quarterReportingType = Some(QuarterTypeStandard),
+    currentTaxYearEnd = getCurrentTaxYearEnd.getYear
   )
 
   val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -236,12 +246,17 @@ object BaseIntegrationTestConstants {
       firstYear = Some(true),
       secondYear = Some(true)
     ),
+    latencyYearsAnnual = LatencyYearsAnnual(
+      firstYear = Some(true),
+      secondYear = Some(true)
+    ),
     latencyYearsCrystallised = LatencyYearsCrystallised(
       firstYear = Some(false),
       secondYear = Some(false)
     ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
-    quarterReportingType = None
+    quarterReportingType = None,
+    currentTaxYearEnd = getCurrentTaxYearEnd.getYear
   )
 }

@@ -32,7 +32,6 @@ case class ChargeSummaryViewModel(
                                    payments: FinancialDetailsModel,
                                    chargeHistoryEnabled: Boolean,
                                    latePaymentInterestCharge: Boolean,
-                                   reviewAndReconcileEnabled: Boolean,
                                    penaltiesEnabled: Boolean,
                                    reviewAndReconcileCredit: Option[ChargeItem],
                                    isAgent: Boolean = false,
