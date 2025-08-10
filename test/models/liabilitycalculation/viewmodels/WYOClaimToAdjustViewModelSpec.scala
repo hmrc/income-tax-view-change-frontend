@@ -23,19 +23,9 @@ import testUtils.UnitSpec
 class WYOClaimToAdjustViewModelSpec extends UnitSpec {
 
   "WYOClaimToAdjustViewModel claimToAdjustTaxYear val" when {
-    "adjustPaymentsOnAccountFSEnabled is false" should {
-      "return None" in {
+      "return the tax year" in {
         val testModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))
-
-        testModel.claimToAdjustTaxYear shouldBe None
-      }
-    }
-    "adjustPaymentsOnAccountFSEnabled is true" should {
-      "return None" in {
-        val testModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))
-
         testModel.claimToAdjustTaxYear shouldBe Some(TaxYear(2023, 2024))
       }
     }
-  }
 }

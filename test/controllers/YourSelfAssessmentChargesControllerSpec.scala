@@ -21,6 +21,7 @@ import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
 import models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
+import models.core.Nino
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -148,6 +149,8 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -161,6 +164,8 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -175,6 +180,8 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Important") shouldBe true
@@ -228,6 +235,8 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -251,6 +260,8 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(Right(testSetUpPaymentPlanUrl)))
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK

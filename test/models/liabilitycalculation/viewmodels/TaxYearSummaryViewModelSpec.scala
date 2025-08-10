@@ -83,20 +83,10 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
     }
   }
 
-  "TYSClaimToAdjustViewModel claimToAdjustTaxYear val" when {
-    "adjustPaymentsOnAccountFSEnabled is false" should {
-      "return None" in {
-        val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))
-
-        testModel.claimToAdjustTaxYear shouldBe None
-      }
-    }
-    "adjustPaymentsOnAccountFSEnabled is true" should {
+  "TYSClaimToAdjustViewModel claimToAdjustTaxYear val" should {
       "return a TaxYear" in {
         val testModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))
-
         testModel.claimToAdjustTaxYear shouldBe Some(TaxYear(2023, 2024))
       }
     }
-  }
 }

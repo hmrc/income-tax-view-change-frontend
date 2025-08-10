@@ -169,7 +169,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
               }
               "Retrieving mongo session fails" in {
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                setupMockPaymentOnAccountSessionService(Future.failed(new Error("")))
+                setupMockPaymentOnAccountSessionService(Future(Left(new Error(""))))
                 setupMockGetPaymentOnAccountViewModel()
 
                 setupMockSuccess(mtdRole)
