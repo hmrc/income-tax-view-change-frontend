@@ -663,9 +663,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
               }
 
               "has a POA section" when {
-                "AdjustPaymentsOnAccount FS is enabled and a user" that {
-                  "has valid POAs" in {
-                    enable(AdjustPaymentsOnAccount)
+                  "a user has valid POAs" in {
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
@@ -684,7 +682,6 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                   }
 
                   "has valid POAs that have been paid in full" in {
-                    enable(AdjustPaymentsOnAccount)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
@@ -701,12 +698,9 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                       isElementVisibleById("adjust-poa-link")(expectedValue = true),
                       isElementVisibleById("adjust-paid-poa-content")(expectedValue = true))
                   }
-                }
               }
               "not show POA section" when {
-                "AdjustPaymentsOnAccount FS is enabled and a user" that {
-                  "does not have valid POAs" in {
-                    enable(AdjustPaymentsOnAccount)
+                  "a user does not have valid POAs" in {
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
                     IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
@@ -722,27 +716,6 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                       pageTitle(mtdUserRole, "selfAssessmentCharges.heading"),
                       isElementVisibleById("adjust-poa-link")(expectedValue = false))
                   }
-                }
-
-                "AdjustPaymentsOnAccount FS is disabled and a user" that {
-                  "has valid POAs" in {
-                    disable(AdjustPaymentsOnAccount)
-                    stubAuthorised(mtdUserRole)
-                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
-                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
-                      testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
-                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("some-id", "nextUrl")))
-
-                    val res = buildGETMTDClient(path, additionalCookies).futureValue
-
-                    res should have(
-                      httpStatus(OK),
-                      pageTitle(mtdUserRole, "selfAssessmentCharges.heading"),
-                      isElementVisibleById("adjust-poa-link")(expectedValue = false))
-                  }
-                }
               }
 
               "has a money in your account section" when {

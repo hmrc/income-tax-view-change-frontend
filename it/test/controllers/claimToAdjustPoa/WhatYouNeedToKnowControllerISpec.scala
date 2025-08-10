@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.core.NormalMode
 import org.jsoup.Jsoup
@@ -57,7 +56,6 @@ class WhatYouNeedToKnowControllerISpec extends ControllerISpecHelper {
           } else {
             s"render the What you need to know page" when {
               s"User has originalAmount >= relevantAmount" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -84,7 +82,6 @@ class WhatYouNeedToKnowControllerISpec extends ControllerISpecHelper {
 
               "User has originalAmount < relevantAmount" that {
                 "is not paid or partially paid" in {
-                  enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                     OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -110,7 +107,6 @@ class WhatYouNeedToKnowControllerISpec extends ControllerISpecHelper {
                 }
 
                 "is partially paid should display additional content" in {
-                  enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                     OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -147,7 +143,6 @@ class WhatYouNeedToKnowControllerISpec extends ControllerISpecHelper {
               }
 
               "user has POAs that are fully paid" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -183,30 +178,8 @@ class WhatYouNeedToKnowControllerISpec extends ControllerISpecHelper {
               }
             }
 
-            s"return status $SEE_OTHER and redirect to the home page" when {
-              "AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                )
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
             s"return status $SEE_OTHER and redirect to the You Cannot Go Back page" when {
               "journeyCompleted flag is true and the user tries to access the page" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -229,7 +202,6 @@ class WhatYouNeedToKnowControllerISpec extends ControllerISpecHelper {
 
             s"return $INTERNAL_SERVER_ERROR" when {
               "no non-crystallised financial details are found" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
                   OK, testEmptyFinancialDetailsModelJson
