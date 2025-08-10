@@ -43,7 +43,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val paymentsLpiPaymentOnAccount1: String = messages("tax-year-summary.payments.lpi.paymentOnAccount1.text")
   val paymentsPaymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
   val updateTypeQuarterly: String = "Quarterly Update"
-  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, None)
+  val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
 
   def calculationSummary(forecastIncome: Option[Int] = None,
                          forecastIncomeTaxAndNics: Option[BigDecimal] = None,

@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
-import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
+import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
 
 import javax.inject.{Inject, Singleton}
@@ -45,7 +45,7 @@ class AmendablePoaController @Inject()(val authActions: AuthActions,
                                        val mcc: MessagesControllerComponents,
                                        val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport
-    with ClaimToAdjustUtils with ImplicitCurrencyFormatter
+    with ImplicitCurrencyFormatter
     with WithSessionAndPoa with ErrorRecovery {
 
   def show(isAgent: Boolean): Action[AnyContent] =

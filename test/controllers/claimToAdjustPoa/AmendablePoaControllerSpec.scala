@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
@@ -56,7 +55,6 @@ class AmendablePoaControllerSpec
         } else {
           s"render the Amendable POA page" when {
             "PoA tax year crystallized and no active session" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future(Right(None)))
@@ -69,7 +67,6 @@ class AmendablePoaControllerSpec
             }
 
             "PoA data is all fine, and we have an active session but is journey completed flag is false" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future(Right(getMongoResponseJourneyComplete)))
@@ -82,7 +79,6 @@ class AmendablePoaControllerSpec
             }
 
             "PoA data is all fine, and we have an active session but is journey completed flag is true" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
 
               mockSingleBISWithCurrentYearAsMigrationYear()
@@ -94,27 +90,9 @@ class AmendablePoaControllerSpec
               status(result) shouldBe OK
             }
           }
-          s"redirect to the home page" when {
-            "AdjustPaymentsOnAccount FS is disabled" in {
-              disable(AdjustPaymentsOnAccount)
-              setupMockSuccess(mtdRole)
-
-              mockSingleBISWithCurrentYearAsMigrationYear()
-
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
 
           s"return status: $INTERNAL_SERVER_ERROR" when {
             "an Exception is returned from ClaimToAdjustService" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
 
               mockSingleBISWithCurrentYearAsMigrationYear()
@@ -126,7 +104,6 @@ class AmendablePoaControllerSpec
             }
 
             "Error creating mongo session" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
 
               mockSingleBISWithCurrentYearAsMigrationYear()
@@ -143,7 +120,7 @@ class AmendablePoaControllerSpec
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

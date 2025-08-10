@@ -123,15 +123,11 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
   }
 
   private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
-    if (isEnabled(AdjustPaymentsOnAccount)) {
       claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
-        case Right(value) => Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))
+        case Right(value) => Future.successful(WYOClaimToAdjustViewModel(value))
         case Left(ex: Throwable) => Logger("application").error(s"Unable to create WYOClaimToAdjustViewModel: ${ex.getMessage} - ${ex.getCause}")
           Future.failed(ex)
       }
-    } else {
-      Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
-    }
   }
 
 

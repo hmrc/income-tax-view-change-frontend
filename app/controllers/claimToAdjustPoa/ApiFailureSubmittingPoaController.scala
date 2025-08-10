@@ -22,7 +22,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.claimToAdjust.ClaimToAdjustUtils
 import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
 import javax.inject.{Inject, Singleton}
@@ -36,14 +35,12 @@ class ApiFailureSubmittingPoaController @Inject()(val authActions: AuthActions,
                                                  (implicit val appConfig: FrontendAppConfig,
                                                   val mcc: MessagesControllerComponents,
                                                   val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ClaimToAdjustUtils {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
     authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
       implicit user =>
-        ifAdjustPoaIsEnabled(user.isAgent()) {
           Future.successful(Ok(view(user.isAgent())))
-        }
     }
   }
 }

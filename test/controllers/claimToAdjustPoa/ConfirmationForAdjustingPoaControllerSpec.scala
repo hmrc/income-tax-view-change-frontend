@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services._
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import play.api
 import play.api.Application
@@ -63,7 +62,6 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
         } else {
           s"render the conformation for adjusting POA page" when {
             "PoA tax year crystallized" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
               setupMockGetPaymentsOnAccount()
@@ -73,25 +71,9 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
               status(result) shouldBe OK
             }
           }
-          "redirect to the home page" when {
-            "FS is disabled" in {
-              disable(AdjustPaymentsOnAccount)
-              mockSingleBISWithCurrentYearAsMigrationYear()
 
-              setupMockSuccess(mtdRole)
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
           "redirect to the You Cannot Go Back page" when {
-            "FS is enabled and the journeyCompleted flag is set to true in session" in {
-              enable(AdjustPaymentsOnAccount)
+            "the journeyCompleted flag is set to true in session" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
               setupMockGetPaymentsOnAccount()
@@ -104,7 +86,6 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
           }
           "return an error 500" when {
             "Payment On Account Session is missing" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(None)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
@@ -115,7 +96,6 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
             }
 
             "Payment On Account data is missing from session" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(emptySession))))
@@ -125,7 +105,6 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
             "an Exception is returned from ClaimToAdjustService" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetAmendablePoaViewModelFailure()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
@@ -137,7 +116,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
 
     s"submit(isAgent = $isAgent)" when {
@@ -149,7 +128,6 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
         } else {
           "redirect to PoaAdjustedController page" when {
             "data to API 1773 successfully sent" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount()
               setupMockRecalculateSuccess()
@@ -161,25 +139,8 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
             }
           }
 
-          "redirect to the home page" when {
-            "FS is disabled" in {
-              disable(AdjustPaymentsOnAccount)
-              mockSingleBISWithCurrentYearAsMigrationYear()
-
-              setupMockSuccess(mtdRole)
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
           "redirect to API error page" when {
             "data to API 1773 failed to be sent" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount()
               setupMockRecalculateFailure()
@@ -192,7 +153,6 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
           }
           "redirect an error 500" when {
             "Payment On Account Session data is missing" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(None)
 
@@ -201,7 +161,6 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
             "an Exception is returned from ClaimToAdjustService" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccountBuildFailure()
 
@@ -212,7 +171,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

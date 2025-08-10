@@ -21,7 +21,6 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import generators.PoaGenerator
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.TaxYear
@@ -112,7 +111,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
             s"render the POA amount page" when {
               if (mode == NormalMode) {
                 "PoA tax year crystallized does not exist in session" in {
-                  enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower))))))
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
@@ -123,7 +121,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe ""
                 }
                 "Empty PoA amount input when no existing PoA tax year in session" in {
-                  enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower))))))
                   forAll(poaViewModelGen) { generatedPoaViewModel =>
@@ -137,7 +134,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 }
               }
               "PoA tax year crystallized and newPoaAmount exists in session" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1111.22)))))))
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
@@ -148,25 +144,9 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe "1111.22"
               }
             }
-            "redirect to the home page" when {
-              "FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                mockSingleBISWithCurrentYearAsMigrationYear()
 
-                setupMockSuccess(mtdRole)
-                val result = action(fakeRequest)
-                status(result) shouldBe SEE_OTHER
-                val expectedRedirectUrl = if (isAgent) {
-                  controllers.routes.HomeController.showAgent().url
-                } else {
-                  controllers.routes.HomeController.show().url
-                }
-                redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-              }
-            }
             "redirect to the You Cannot Go Back page" when {
-              "FS is enabled and the journeyCompleted flag is set to true in session" in {
-                enable(AdjustPaymentsOnAccount)
+              "the journeyCompleted flag is set to true in session" in {
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), None, journeyCompleted = true)))))
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
@@ -179,7 +159,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
             }
             "return an error 500" when {
               "Error retrieving mongo session" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockPaymentOnAccountSessionService(Future(Left(new Error(""))))
                 setupMockGetPaymentOnAccountViewModel()
@@ -189,7 +168,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
               "Retrieving mongo session fails" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockPaymentOnAccountSessionService(Future.failed(new Error("")))
                 setupMockGetPaymentOnAccountViewModel()
@@ -199,7 +177,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
               "User does not have an active mongo session" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockPaymentOnAccountSessionService(Future(Right(None)))
                 setupMockGetPaymentOnAccountViewModel()
@@ -209,7 +186,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
               "an Exception is returned from ClaimToAdjustService" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData()))))
                 setupMockGetPoaAmountViewModelFailure()
@@ -221,7 +197,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
             }
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
       }
 
       s"submit(isAgent = $isAgent, mode = $mode)" when {
@@ -233,7 +209,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
           } else {
             "redirect to the check your answers page" when {
               "The user is on the decrease only journey and form returned with no errors" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
@@ -246,7 +221,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
 
               if (mode == NormalMode) {
                 "The user is on the increase/decrease journey and chooses to increase" in {
-                  enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
@@ -263,7 +237,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
 
                 "The user is on the increase/decrease journey and has come from CYA" when {
                   "They had previously decreased, and are now increasing" in {
-                    enable(AdjustPaymentsOnAccount)
                     mockSingleBISWithCurrentYearAsMigrationYear()
                     setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
                     when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))))
@@ -277,7 +250,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   }
 
                   "They had previously decreased, and are still decreasing" in {
-                    enable(AdjustPaymentsOnAccount)
                     mockSingleBISWithCurrentYearAsMigrationYear()
 
                     setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
@@ -294,7 +266,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 }
 
                 "They had previously increased, and are still increasing" in {
-                  enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
@@ -313,7 +284,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
             "redirect to the Select Reason page" when {
               if (mode == NormalMode) {
                 "The user is on the increase/decrease journey and chooses to decrease" in {
-                  enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
                   when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
@@ -325,7 +295,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 }
               } else {
                 "They had previously increased, and are now decreasing" in {
-                  enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
                   when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(Some(Increase), Some(4500))))))
@@ -341,7 +310,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
             }
             "redirect back to the Enter PoA Amount page with a 500 response" when {
               "No PoA Amount is input" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
@@ -352,7 +320,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 redirectLocation(result) shouldBe None
               }
               "Fails when view model is a negative amount" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData(Some(MainIncomeLower))))))
                 forAll(poaViewModelGen) { generatedPoaViewModel =>
@@ -366,7 +333,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 }
               }
               "Fails when input amount exceeds relevant amount from view model" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 forAll(poaViewModelGen) { generatedPoaViewModel =>
                   setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
@@ -379,7 +345,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 }
               }
               "Input PoA Amount is not a valid number" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
@@ -390,7 +355,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 redirectLocation(result) shouldBe None
               }
               "Input PoA Amount is higher than relevant amount" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
@@ -401,7 +365,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 redirectLocation(result) shouldBe None
               }
               "Input PoA Amount is equal to previous PoA amount" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
@@ -413,7 +376,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
               }
 
               "Error setting new poa amount in mongo" in {
-                enable(AdjustPaymentsOnAccount)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaAmountViewModel(Right(poaViewModelDecreaseJourney))
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Left(new Error("Error setting poa amount"))))
@@ -426,7 +388,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
 
               if (mode == NormalMode) {
                 "Error setting adjustment reason in mongo" in {
-                  enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
                   when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
@@ -439,7 +400,6 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 }
               } else {
                 "Error getting adjustment reason from mongo" in {
-                  enable(AdjustPaymentsOnAccount)
                   mockSingleBISWithCurrentYearAsMigrationYear()
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
@@ -456,7 +416,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
             }
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
       }
     }
   }

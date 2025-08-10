@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals}
+import models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -169,7 +169,6 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
             }
             "displays the Charges due now tab and warning banner" when {
               "the user has overdue charges" in {
-                disable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(mockSelfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
@@ -205,7 +204,6 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
             }
             "not display the Charges due now tab or warning banner" when {
               "the user has no charges that are overdue or accruing interest" in {
-                disable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
@@ -263,8 +261,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
             }
 
             "contains the adjust POA" when {
-              "the AdjustPaymentsOnAccount FS is enabled and there are adjustable POA" in {
-                enable(AdjustPaymentsOnAccount)
+              "there are adjustable POA" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
@@ -277,8 +274,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
               }
-              "the AdjustPaymentsOnAccount FS is enabled and there are no adjustable POAs" in {
-                enable(AdjustPaymentsOnAccount)
+              "there are no adjustable POAs" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -291,19 +287,6 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
 
-              }
-            }
-
-            "does not contain the adjust POA" when {
-              "the AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                setupMockSuccess(mtdUserRole)
-                mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-                  .thenReturn(Future.successful(whatYouOweChargesListFull))
-
-                val result = action(fakeRequest)
-                contentAsString(result).contains("Adjust payments on account for the") shouldBe false
               }
             }
 
@@ -337,7 +320,6 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
             }
 
             "fetching POA entry point fails" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))
