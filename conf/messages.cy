@@ -2782,6 +2782,31 @@ optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = A ydych
 
 optout.taxYearQuestion.error                                           = Dewiswch ‘Iawn’ i optio allan ar gyfer blwyddyn dreth {0} i {1}
 
+# sign up tax year question page
+
+signUp.taxYearQuestion.heading.currentYear                             = Cofrestru’n wirfoddol ar gyfer y flwyddyn dreth bresennol
+signUp.taxYearQuestion.title.currentYear                               = Cofrestru’n wirfoddol ar gyfer y flwyddyn dreth bresennol
+signUp.taxYearQuestion.desc1.currentYear                               = Gallai cofrestru ar gyfer y flwyddyn dreth bresennol olygu bod gennych o leiaf un diweddariad chwarterol sy’n hwyr yn barod.
+signUp.taxYearQuestion.desc2.currentYear                               = Y dyddiadau cau ar gyfer diweddariadau chwarterol yw:
+signUp.taxYearQuestion.bullet1.currentYear                             = 7 Awst {0}
+signUp.taxYearQuestion.bullet2.currentYear                             = 7 Tachwedd {0}
+signUp.taxYearQuestion.bullet3.currentYear                             = 7 Chwefror {0}
+signUp.taxYearQuestion.bullet4.currentYear                             = 7 Mai {0}
+signUp.taxYearQuestion.subheading.currentYear                          = Cofrestru’n wirfoddol a diweddariadau chwarterol sy’n hwyr yn barod
+signUp.taxYearQuestion.desc3.currentYear                               = Mae angen gwneud diweddariad bob 3 mis ar gyfer pob un o’ch ffynonellau incwm eiddo a’ch ffynonellau incwm unig fasnachwr. Diweddariad chwarterol yw cyfanswm yr incwm a’r treuliau ar gyfer y flwyddyn dreth hyd yn hyn.
+signUp.taxYearQuestion.desc4.currentYear                               = Os ydych yn cofrestru nawr ar gyfer y flwyddyn dreth bresennol, mae’n fwy tebygol y bydd gennych ddiweddariadau sy’n hwyr yn barod. Yr hwyraf yn y flwyddyn dreth y byddwch yn cofrestru, y mwyaf o wybodaeth y bydd angen i chi ei chyflwyno.
+signUp.taxYearQuestion.inset.currentYear                               = Gan y byddwch yn cofrestru’n wirfoddol, ni chodir unrhyw gosbau am gyflwyno diweddariadau chwarterol yn hwyr.
+signUp.taxYearQuestion.desc5.currentYear                               = Os bydd gofyn i chi ddefnyddio Troi Treth yn y Ddigidol ar gyfer Treth Incwm yn y dyfodol, yna bydd cosbau yn berthnasol. Byddwn yn anfon llythyr atoch pe bai hyn yn digwydd.
+signUp.taxYearQuestion.radioQuestion.currentYear                       = A ydych am gofrestru ar gyfer y flwyddyn dreth bresennol?
+signUp.taxYearQuestion.radioHint.currentYear                           = Gall cofrestru arwain at ddiweddariadau chwarterol sy’n hwyr yn barod.
+signUp.taxYearQuestion.error.currentYear                               = Dewiswch ‘Iawn’ i gofrestru ar gyfer y flwyddyn dreth bresennol
+
+signUp.taxYearQuestion.heading.nextYear                                = Cadarnhau a chofrestru o flwyddyn dreth {0} i {1} ymlaen
+signUp.taxYearQuestion.title.nextYear                                  = Cadarnhau a chofrestru o flwyddyn dreth {0} i {1} ymlaen
+signUp.taxYearQuestion.desc1.nextYear                                  = Os byddwch yn cofrestru ar gyfer y flwyddyn dreth nesaf, o 6 Ebrill {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+signUp.taxYearQuestion.radioQuestion.nextYear                          = A ydych am gofrestru o flwyddyn dreth {0} i {1} ymlaen?
+signUp.taxYearQuestion.error.nextYear                                  = Dewiswch ‘Iawn’ i gofrestru o flwyddyn dreth {0} i {1} ymlaen
+
 #######################################################################################################################
 ## Opt In ##
 #######################################################################################################################

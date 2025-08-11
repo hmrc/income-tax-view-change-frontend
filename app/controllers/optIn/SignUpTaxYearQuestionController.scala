@@ -1,0 +1,106 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.optIn
+
+import auth.MtdItUser
+import auth.authV2.AuthActions
+import com.google.inject.Inject
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import forms.optIn.SignUpTaxYearQuestionForm
+import play.api.Logger
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import services.optIn.OptInService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.ReportingObligationsUtils
+import views.html.optIn.SignUpTaxYearQuestionView
+
+import scala.concurrent.{ExecutionContext, Future}
+
+class SignUpTaxYearQuestionController @Inject()(optInService: OptInService,
+                                                authActions: AuthActions,
+                                                view: SignUpTaxYearQuestionView,
+                                                itvcErrorHandler: ItvcErrorHandler,
+                                                itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                               )(implicit val appConfig: FrontendAppConfig,
+                                                 val mcc: MessagesControllerComponents,
+                                                 val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with ReportingObligationsUtils {
+
+  lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
+    if (isAgent) itvcErrorHandlerAgent
+    else itvcErrorHandler
+
+  private def reportingObligationsRedirectUrl(isAgent: Boolean): String = {
+    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+  }
+
+  def show(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      withSignUpRFChecks {
+        optInService.isSignUpTaxYearValid(taxYear).flatMap {
+          case Some(viewModel) =>
+            Future.successful(Ok(
+              view(
+                isAgent,
+                viewModel,
+                SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY),
+                routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
+              )
+            ))
+          case None =>
+            Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
+        }
+      }
+  }
+
+  def submit(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      withSignUpRFChecks {
+        optInService.isSignUpTaxYearValid(taxYear).flatMap {
+          case Some(viewModel) =>
+            SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY).bindFromRequest().fold(
+              formWithErrors => Future.successful(BadRequest(
+                view(
+                  isAgent,
+                  viewModel,
+                  formWithErrors,
+                  routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
+                )
+              )),
+              form => {
+                handleValidForm(form, isAgent, taxYear)
+              }
+            )
+          case None =>
+            Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
+        }
+      }
+  }
+
+  private def handleValidForm(validForm: SignUpTaxYearQuestionForm, isAgent: Boolean, taxYear: Option[String])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    val formResponse = validForm.toFormMap(SignUpTaxYearQuestionForm.response).headOption
+
+    formResponse match {
+      case Some(SignUpTaxYearQuestionForm.responseYes) => Future.successful(Redirect(routes.SignUpTaxYearQuestionController.show(isAgent, taxYear)))
+      case Some(SignUpTaxYearQuestionForm.responseNo) => Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
+      case _ =>
+        Logger("application").error("[SignUpTaxYearQuestionController.submit] Invalid form response")
+        Future.successful(errorHandler(isAgent).showInternalServerError())
+    }
+  }
+}

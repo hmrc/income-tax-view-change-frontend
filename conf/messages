@@ -2792,6 +2792,31 @@ optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = Do you 
 
 optout.taxYearQuestion.error                                           = Select yes to opt out for the {0} to {1} tax year
 
+# sign up tax year question page
+
+signUp.taxYearQuestion.heading.currentYear                             = Voluntarily signing up for the current tax year
+signUp.taxYearQuestion.title.currentYear                               = Voluntarily signing up for the current tax year
+signUp.taxYearQuestion.desc1.currentYear                               = Signing up to the current tax year could mean you would have at least one quarterly update overdue.
+signUp.taxYearQuestion.desc2.currentYear                               = The quarterly update deadlines are:
+signUp.taxYearQuestion.bullet1.currentYear                             = 7 August {0}
+signUp.taxYearQuestion.bullet2.currentYear                             = 7 November {0}
+signUp.taxYearQuestion.bullet3.currentYear                             = 7 February {0}
+signUp.taxYearQuestion.bullet4.currentYear                             = 7 May {0}
+signUp.taxYearQuestion.subheading.currentYear                          = Voluntarily signing up and overdue quarterly updates
+signUp.taxYearQuestion.desc3.currentYear                               = Every 3 months an update is due for each of your property and sole trader income sources. Each quarterly update is a running total of income and expenses for the tax year so far.
+signUp.taxYearQuestion.desc4.currentYear                               = If you sign up to the current tax year and start now, the more likely you will have overdue updates. The later you sign up in the tax year, the more information you will need to submit.
+signUp.taxYearQuestion.inset.currentYear                               = Because you would be voluntarily signing up, there would be no penalties for overdue quarterly updates.
+signUp.taxYearQuestion.desc5.currentYear                               = If in future you are required to use Making Tax Digital for Income Tax, then penalties would apply. We will send you a letter if this happens.
+signUp.taxYearQuestion.radioQuestion.currentYear                       = Do you want to sign up for the current tax year?
+signUp.taxYearQuestion.radioHint.currentYear                           = Signing up could result in immediate overdue quarterly updates.
+signUp.taxYearQuestion.error.currentYear                               = Select yes to sign up for the current tax year
+
+signUp.taxYearQuestion.heading.nextYear                                = Confirm and sign up from the {0} to {1} tax year onwards
+signUp.taxYearQuestion.title.nextYear                                  = Confirm and sign up from the {0} to {1} tax year onwards
+signUp.taxYearQuestion.desc1.nextYear                                  = If you sign up for the next tax year onwards, from 6 April {0} you will need to submit your quarterly updates through software compatible with Making Tax Digital for Income Tax.
+signUp.taxYearQuestion.radioQuestion.nextYear                          = Do you want to sign up from the {0} to {1} tax year?
+signUp.taxYearQuestion.error.nextYear                                  = Select yes to sign up for the {0} to {1} tax year
+
 #######################################################################################################################
 ## Opt In ##
 #######################################################################################################################
