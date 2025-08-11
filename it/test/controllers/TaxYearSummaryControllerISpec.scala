@@ -75,6 +75,14 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   toDate = getCurrentTaxYearEnd,
                   deadlines = allObligations
                 )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString
+                )(
+                  status = OK,
+                  response = Json.toJson(financialDetailsSuccess)
+                )
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -82,7 +90,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
+                  to = getCurrentTaxYearEnd.toString,
+                  noOffcalls = 2
                 )
 
                 val tableText = "Forecast Section Amount Income £12,500.00 Allowances and deductions £4,200.00 Total income on which tax is due £12,500.00 " +
@@ -121,6 +130,14 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   toDate = getCurrentTaxYearEnd,
                   deadlines = allObligations
                 )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString
+                )(
+                  status = OK,
+                  response = Json.toJson(financialDetailsSuccess)
+                )
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -128,7 +145,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
+                  to = getCurrentTaxYearEnd.toString,
+                  noOffcalls = 2
                 )
 
                 allObligations.obligations.foreach {
@@ -178,6 +196,14 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   toDate = getCurrentTaxYearEnd,
                   deadlines = allObligations
                 )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString
+                )(
+                  status = OK,
+                  response = Json.toJson(financialDetailsDunningLockSuccess)
+                )
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -185,7 +211,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
+                  to = getCurrentTaxYearEnd.toString,
+                  noOffcalls = 2
                 )
 
                 allObligations.obligations.foreach {
@@ -246,6 +273,14 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   toDate = getCurrentTaxYearEnd,
                   deadlines = allObligations
                 )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString
+                )(
+                  status = OK,
+                  response = Json.toJson(immediatelyRejectedByNps)
+                )
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -253,7 +288,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
+                  to = getCurrentTaxYearEnd.toString,
+                  noOffcalls = 2
                 )
 
                 res should have(
@@ -286,6 +322,14 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   toDate = getCurrentTaxYearEnd,
                   deadlines = allObligations
                 )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString
+                )(
+                  status = OK,
+                  response = Json.toJson(rejectedByNpsPartWay)
+                )
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -294,7 +338,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
+                  to = getCurrentTaxYearEnd.toString,
+                  noOffcalls = 2
                 )
 
                 res should have(
@@ -328,6 +373,14 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     toDate = getCurrentTaxYearEnd,
                     deadlines = allObligations
                   )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    nino = testNino,
+                    from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                    to = getCurrentTaxYearEnd.toString
+                  )(
+                    status = OK,
+                    response = Json.toJson(codingOutPartiallyCollected)
+                  )
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -335,10 +388,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                     from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                    to = getCurrentTaxYearEnd.toString
+                    to = getCurrentTaxYearEnd.toString,
+                    noOffcalls = 2
                   )
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                    getCurrentTaxYearEnd.toString)
 
                   res should have(
                     httpStatus(OK),
@@ -370,6 +422,14 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     toDate = getCurrentTaxYearEnd,
                     deadlines = allObligations
                   )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    nino = testNino,
+                    from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                    to = getCurrentTaxYearEnd.toString
+                  )(
+                    status = NOT_FOUND,
+                    response = Json.obj()
+                  )
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -378,7 +438,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(
                     nino = testNino,
                     from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                    to = getCurrentTaxYearEnd.toString)
+                    to = getCurrentTaxYearEnd.toString,
+                    noOffcalls = 2)
 
                   allObligations.obligations.foreach {
                     obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
@@ -457,6 +518,14 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     toDate = getCurrentTaxYearEnd,
                     deadlines = allObligations
                   )
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                    nino = testNino,
+                    from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                    to = getCurrentTaxYearEnd.toString
+                  )(
+                    status = OK,
+                    response = Json.toJson(financialDetailsMFADebits)
+                  )
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -464,7 +533,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                     from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                    to = getCurrentTaxYearEnd.toString
+                    to = getCurrentTaxYearEnd.toString, noOffcalls = 2
                   )
 
                   allObligations.obligations.foreach {
@@ -512,6 +581,14 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   toDate = getCurrentTaxYearEnd,
                   deadlines = allObligations
                 )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString
+                )(
+                  status = OK,
+                  response = Json.toJson(financialDetailsMFADebits)
+                )
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -520,7 +597,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
-                  to = getCurrentTaxYearEnd.toString
+                  to = getCurrentTaxYearEnd.toString, noOffcalls = 2
                 )
                 verifyAuditEvent(TaxYearSummaryResponseAuditModel(
                   testUser(mtdUserRole, singleBusinessResponse),
