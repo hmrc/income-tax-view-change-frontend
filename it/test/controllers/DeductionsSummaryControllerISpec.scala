@@ -46,16 +46,16 @@ class DeductionsSummaryControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessful
               )
-              val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-              IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
 
-              res should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "deduction_breakdown.heading"),
-              )
-
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "deduction_breakdown.heading"),
+                )
+              }
             }
           }
         }

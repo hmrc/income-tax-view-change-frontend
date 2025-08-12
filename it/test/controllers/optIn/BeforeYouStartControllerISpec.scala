@@ -64,21 +64,21 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
               setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Annual)
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
+                  elementTextByID("heading")(headingText),
+                  elementTextByID("desc1")(desc1),
+                  elementTextByID("desc2")(desc2),
+                  elementTextByID("reportQuarterly")(reportQuarterlyText),
+                  elementTextByID("voluntaryStatus")(voluntaryStatus),
+                  elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
+                  elementAttributeBySelector("#start-button", "href")(routes.ChooseYearController.show(isAgent).url)
+                )
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
-                elementTextByID("heading")(headingText),
-                elementTextByID("desc1")(desc1),
-                elementTextByID("desc2")(desc2),
-                elementTextByID("reportQuarterly")(reportQuarterlyText),
-                elementTextByID("voluntaryStatus")(voluntaryStatus),
-                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-                elementAttributeBySelector("#start-button", "href")(routes.ChooseYearController.show(isAgent).url)
-
-              )
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              }
             }
 
             "Redirects to confirm tax year page" in {
@@ -89,20 +89,21 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
               setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Voluntary)
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
+                  elementTextByID("heading")(headingText),
+                  elementTextByID("desc1")(desc1),
+                  elementTextByID("desc2")(desc2),
+                  elementTextByID("reportQuarterly")(reportQuarterlyText),
+                  elementTextByID("voluntaryStatus")(voluntaryStatus),
+                  elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
+                  elementAttributeBySelector("#start-button", "href")(routes.SingleTaxYearOptInWarningController.show(isAgent).url)
+                )
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
-                elementTextByID("heading")(headingText),
-                elementTextByID("desc1")(desc1),
-                elementTextByID("desc2")(desc2),
-                elementTextByID("reportQuarterly")(reportQuarterlyText),
-                elementTextByID("voluntaryStatus")(voluntaryStatus),
-                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-                elementAttributeBySelector("#start-button", "href")(routes.SingleTaxYearOptInWarningController.show(isAgent).url)
-              )
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              }
             }
           }
         }
