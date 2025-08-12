@@ -28,7 +28,8 @@ import enums.JourneyType.{Opt, OptInJourney}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData}
+import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData, SignUpTaxYearQuestionViewModel}
+import play.api.Logger
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.optIn.core.OptInProposition._
@@ -198,6 +199,31 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     } yield ConfirmTaxYearViewModel(intentTaxYear, cancelURL, intentIsNextYear, isAgent)
 
     result.value
+  }
+
+  def isSignUpTaxYearValid(taxYear: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpTaxYearQuestionViewModel]] = {
+    taxYear match {
+      case Some(year) =>
+        fetchOptInProposition().flatMap { proposition =>
+
+          val isSignUpForCY = year match {
+            case ty if ty == proposition.currentTaxYear.taxYear.startYear.toString => Some(true)
+            case ty if ty == proposition.nextTaxYear.taxYear.startYear.toString    => Some(false)
+            case _ => None
+          }
+
+          (isSignUpForCY, proposition.currentTaxYear.canOptIn, proposition.nextTaxYear.canOptIn) match {
+            case (Some(true), true, _) => Future.successful(Some(SignUpTaxYearQuestionViewModel(proposition.currentTaxYear)))
+            case (Some(false), _, true) => Future.successful(Some(SignUpTaxYearQuestionViewModel(proposition.nextTaxYear)))
+            case _ =>
+              Logger("application").warn(s"[OptInService] invalid tax year provided, redirecting to Reporting Obligations Page")
+              Future.successful(None)
+          }
+        }
+      case _ =>
+        Logger("application").warn("[OptInService] No tax year provided, redirecting to Reporting Obligations Page")
+        Future.successful(None)
+    }
   }
 
 }

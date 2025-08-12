@@ -26,7 +26,7 @@ import mocks.services.{MockCalculationListService, MockDateService, MockITSAStat
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
 import models.itsaStatus.{StatusDetail, StatusReason}
-import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
+import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData, SignUpTaxYearQuestionViewModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -299,6 +299,101 @@ class OptInServiceSpec extends UnitSpec
       )
     }
 
+  }
+
+  "isSignUpTaxYearValid" should {
+    "return a SignUpTaxQuestionViewModel" when {
+      "the current tax year is submitted" in {
+        val queryTaxYear = "2022"
+
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
+          .thenReturn(Future.successful(
+            Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
+          ))
+
+        mockRepository(Some(OptInContextData(queryTaxYear, statusToString(Annual), statusToString(Annual))), Some(queryTaxYear))
+
+        val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(SignUpTaxYearQuestionViewModel(CurrentOptInTaxYear(Annual, TaxYear(2022, 2023))))
+      }
+      "the next tax year is submitted" in {
+        val queryTaxYear = "2023"
+
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
+          .thenReturn(Future.successful(
+            Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
+          ))
+
+        mockRepository(Some(OptInContextData(queryTaxYear, statusToString(Annual), statusToString(Annual))), Some(queryTaxYear))
+
+        val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(SignUpTaxYearQuestionViewModel(NextOptInTaxYear(Annual, TaxYear(2023, 2024), CurrentOptInTaxYear(Annual, TaxYear(2022, 2023)))))
+      }
+    }
+
+    "return None" when {
+      "no tax year is submitted" in {
+        val result = service.isSignUpTaxYearValid(None)
+
+        result.futureValue shouldBe None
+      }
+
+      "the previous tax year is submitted" in {
+        val queryTaxYear = "2021"
+
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
+          .thenReturn(Future.successful(
+            Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
+          ))
+
+        mockRepository(Some(OptInContextData(queryTaxYear, statusToString(Annual), statusToString(Annual))), Some(queryTaxYear))
+
+        val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe None
+      }
+      "the current tax year is submitted but the status is not Annual" in {
+        val queryTaxYear = "2022"
+
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
+          .thenReturn(Future.successful(
+            Map(currentTaxYear -> statusDetailWith(Voluntary), nextTaxYear -> statusDetailWith(Annual))
+          ))
+
+        mockRepository(Some(OptInContextData(queryTaxYear, statusToString(Voluntary), statusToString(Annual))), Some(queryTaxYear))
+
+        val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe None
+      }
+
+      "the next tax year is submitted but the status is not Annual" in {
+        val queryTaxYear = "2023"
+
+        when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+        when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
+          .thenReturn(Future.successful(
+            Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Voluntary))
+          ))
+
+        mockRepository(Some(OptInContextData(queryTaxYear, statusToString(Annual), statusToString(Voluntary))), Some(queryTaxYear))
+
+        val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe None
+      }
+    }
   }
 
   def executionContext()(implicit executionContext: ExecutionContext): ExecutionContext = executionContext
