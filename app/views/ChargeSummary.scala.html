@@ -29,6 +29,7 @@
 @import _root_.implicits.HtmlFormatter.NbspString
 
 @import java.time.LocalDate
+@import viewUtils.ExternalUrlHelper
 
 
 @this(
@@ -62,7 +63,7 @@
         }
         <ul class="govuk-list govuk-list--bullet">
             <li>@messages("chargeSummary.paymentsOnAccount.bullet1")</li>
-            <li><a href="@{appConfig.seNationalInsuranceRatesUrl}" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
+            <li><a href="@{ExternalUrlHelper.seNationalInsuranceRatesUrl}" class="govuk-link" rel="noreferrer noopener" target="_blank">@messages("chargeSummary.paymentsOnAccount.bullet2")</a></li>
         </ul>
         @p(){
             @messages("chargeSummary.paymentsOnAccount.p2")
@@ -285,7 +286,7 @@
         @messages("chargeSummary.codingOutInset-1")
         @link(
             id = Some("coding-out-notice-link"),
-            link=appConfig.saThroughYourTaxCodeUrl,
+            link = ExternalUrlHelper.saThroughYourTaxCodeUrl,
             target = Some("_blank"),
             rel= Some("noreferrer noopener"),
             messageKey = "chargeSummary.codingOutInset-2"
@@ -299,7 +300,7 @@
         @messages("chargeSummary.cancelledPayeInset-1")
         @link(
             id = Some("coding-out-notice-link"),
-            link=appConfig.saThroughYourTaxCodeUrl,
+            link = ExternalUrlHelper.saThroughYourTaxCodeUrl,
             target = Some("_blank"),
             rel= Some("noreferrer noopener"),
             messageKey = "chargeSummary.cancelledPayeInset-2",
