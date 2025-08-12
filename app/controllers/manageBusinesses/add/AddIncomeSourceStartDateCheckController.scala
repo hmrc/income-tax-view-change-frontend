@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.incomeSources.add.{AddIncomeSourceStartDateCheckForm => form}
+import forms.manageBusinesses.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
 import models.core.{Mode, NormalMode}
 import models.admin.AccountingMethodJourney
@@ -85,7 +85,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
                                 mode: Mode)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
       dateStartedOpt match {
         case Some(startDate: LocalDate) =>
@@ -118,7 +118,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
                                   isAgent: Boolean,
                                   mode: Mode)
                                  (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
       dateStartedOpt match {
         case Some(startDate) =>

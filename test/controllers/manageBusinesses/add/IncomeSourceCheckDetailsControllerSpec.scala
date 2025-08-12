@@ -21,7 +21,6 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.createIncomeSource.CreateIncomeSourceResponse
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -85,7 +84,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
         s"the user is authenticated as a $mtdRole" should {
           "render the check details page" when {
             "the session contains full business details and FS enabled" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 
               mockNoIncomeSources()
@@ -104,27 +102,8 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
             }
           }
 
-          "return 303 and redirect an individual back to the home page" when {
-            "the IncomeSources FS is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockSingleBusinessIncomeSource()
-              setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
-
-              val result: Future[Result] = action(fakeRequest)
-
-              val redirectUrl = if (mtdRole != MTDIndividual) controllers.routes.HomeController.showAgent().url
-              else controllers.routes.HomeController.show().url
-
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(redirectUrl)
-            }
-          }
-
           s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
             s"user has already completed the journey" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 
               mockNoIncomeSources()
@@ -139,7 +118,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           }
           s"return ${Status.SEE_OTHER}: redirect to IncomeSourceAddedBackErrorController" when {
             s"user has already added their income source" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 
               mockNoIncomeSources()
@@ -155,7 +133,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
 
           "return 500 INTERNAL_SERVER_ERROR" when {
             "there is session data missing" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 
               mockNoIncomeSources()
@@ -175,7 +152,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
         s"the user is authenticated as a $mtdRole" should {
           "redirect to IncomeSourceReportingFrequencyController" when {
             "data is correct and redirect next page" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockNoIncomeSources()
               when(mockBusinessDetailsService.createRequest(any())(any(), any(), any()))
@@ -198,7 +174,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           }
           "redirect to custom error page" when {
             "unable to create business" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
 
               mockNoIncomeSources()

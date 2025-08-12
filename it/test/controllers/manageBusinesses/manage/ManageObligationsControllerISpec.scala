@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.Manage
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs, OptInOptOutContentUpdateR17}
+import models.admin.{NavBarFs, OptInOptOutContentUpdateR17}
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -108,7 +108,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the Manage Obligations Page" when {
               "valid url parameters provided and change to is annual" in {
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -131,7 +130,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               }
 
               "valid url parameters provided and change to is quarterly" in {
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -152,7 +150,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               }
 
               "valid url parameters provided and change to is annual when OptInOptOutContentUpdateR17 is enabled" in {
-                enable(IncomeSourcesNewJourney,OptInOptOutContentUpdateR17)
+                enable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -175,7 +173,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               }
 
               "valid url parameters provided and change to is quarterly when OptInOptOutContentUpdateR17 is enabled" in {
-                enable(IncomeSourcesNewJourney,OptInOptOutContentUpdateR17)
+                enable(OptInOptOutContentUpdateR17)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -197,24 +195,8 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
             }
 
-            "redirect to the home page" when {
-              "the income sources feature switch is disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
-
             "render the error page" when {
               "there is no incomeSourceId in the session" in {
-                enable(IncomeSourcesNewJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -240,7 +222,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "redirect to ManageIncomeSources" in {
-              enable(IncomeSourcesNewJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))

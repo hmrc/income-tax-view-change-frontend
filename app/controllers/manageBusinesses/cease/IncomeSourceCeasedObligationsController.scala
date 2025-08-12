@@ -85,7 +85,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
   }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
       updateMongoCeased(incomeSourceType)
 
       val businessEndDate: Option[LocalDate] = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)

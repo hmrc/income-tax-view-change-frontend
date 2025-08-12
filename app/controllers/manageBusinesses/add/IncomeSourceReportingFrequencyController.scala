@@ -119,7 +119,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
 
   private def handleSubmit(isAgent: Boolean, isChange: Boolean,
                            incomeSourceType: IncomeSourceType, isR17ContentEnabled: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData: UIJourneySessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData: UIJourneySessionData =>
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(_) => IncomeSourceReportingFrequencyForm(isR17ContentEnabled).bindFromRequest().fold(
           _ => handleInvalidForm(isAgent, isChange, incomeSourceType, isR17ContentEnabled),

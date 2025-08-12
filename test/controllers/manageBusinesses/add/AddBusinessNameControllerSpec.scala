@@ -19,10 +19,9 @@ package controllers.manageBusinesses.add
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import forms.incomeSources.add.BusinessNameForm
+import forms.manageBusinesses.add.BusinessNameForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
@@ -73,7 +72,6 @@ class AddBusinessNameControllerSpec extends MockAuthActions
           "return 200 OK" when {
             "feature switch is enabled" in {
               setupMockSuccess(mtdRole)
-              enable(IncomeSourcesNewJourney)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               if (mode == CheckMode) {
                 setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
@@ -91,26 +89,8 @@ class AddBusinessNameControllerSpec extends MockAuthActions
             }
           }
 
-          "redirect to the home page" when {
-            "when feature switch is disabled" in {
-              setupMockSuccess(mtdRole)
-
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              setupMockCreateSession(true)
-
-              val result: Future[Result] = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val homeUrl = if (mtdRole == MTDIndividual){
-                controllers.routes.HomeController.show().url
-              } else {
-                controllers.routes.HomeController.showAgent().url
-              }
-              redirectLocation(result) shouldBe Some(homeUrl)
-            }
-          }
           s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
             "user has already completed the journey" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockNoIncomeSources()
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
@@ -126,7 +106,6 @@ class AddBusinessNameControllerSpec extends MockAuthActions
             }
 
             "user has already added their income source" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               mockNoIncomeSources()
               setupMockGetMongo(Right(Some(addedIncomeSourceUIJourneySessionData(SelfEmployment))))
@@ -155,7 +134,6 @@ class AddBusinessNameControllerSpec extends MockAuthActions
           if(mode == CheckMode) {
             "return 303 and redirect to check details page" when {
               "the business name entered is valid" in {
-                enable(IncomeSourcesNewJourney)
                 setupMockSuccess(mtdRole)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
@@ -178,7 +156,6 @@ class AddBusinessNameControllerSpec extends MockAuthActions
           } else {
             "return 303 and redirect to add business start date" when {
               "the business name entered is valid" in {
-                enable(IncomeSourcesNewJourney)
                 setupMockSuccess(mtdRole)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
@@ -198,7 +175,6 @@ class AddBusinessNameControllerSpec extends MockAuthActions
 
           "show AddBusinessName with error" when {
             "Business name is empty" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               val invalidBusinessNameEmpty: String = ""
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -215,7 +191,6 @@ class AddBusinessNameControllerSpec extends MockAuthActions
             }
 
             "Business name is too long" in {
-              enable(IncomeSourcesNewJourney)
               val invalidBusinessNameLength: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -230,7 +205,6 @@ class AddBusinessNameControllerSpec extends MockAuthActions
             }
 
             "Business name has invalid characters" in {
-              enable(IncomeSourcesNewJourney)
               val invalidBusinessNameEmpty: String = "££"
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -246,7 +220,6 @@ class AddBusinessNameControllerSpec extends MockAuthActions
 
             if (mode == CheckMode) {
               "show invalid error when business name is same as business trade name" in {
-                enable(IncomeSourcesNewJourney)
                 setupMockSuccess(mtdRole)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
