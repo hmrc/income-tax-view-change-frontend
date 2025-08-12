@@ -24,7 +24,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import config.FrontendAppConfig
+@import viewUtils.ExternalUrlHelper
 
 @this(
         mainTemplate: unifiedLayout,
@@ -39,8 +39,7 @@
         hr: hr,
         govukTable: GovukTable,
         govukButton: GovukButton,
-        formWithCSRF: FormWithCSRF,
-        appConfig: FrontendAppConfig
+        formWithCSRF: FormWithCSRF
 )
 
 @(
@@ -307,7 +306,7 @@
     val p1 = p(id = Some("expandable-standard-update-period"))(Html(messages(s"incomeSources.manage.new.quarterly.period.content.p1")))
     val p2 = p(id = Some("software-support"))(Html(messages(s"incomeSources.manage.new.quarterly.period.content.p2")))
 
-    val anchor = link( id = Some("learn-about-quarters-link"), target = Some("_blank"), link = appConfig.quarterlyUpdatesGuidanceUrl, messageKey = s"incomeSources.manage.new.quarterly.period.content.p3.link" )
+    val anchor = link( id = Some("learn-about-quarters-link"), target = Some("_blank"), link = ExternalUrlHelper.quarterlyUpdatesGuidanceUrl, messageKey = s"incomeSources.manage.new.quarterly.period.content.p3.link" )
     val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
 
     govukDetails(Details(
