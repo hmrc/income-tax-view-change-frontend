@@ -26,8 +26,8 @@ import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
 import services.DateServiceInterface
-import testConstants.BaseTestConstants.appConfig.saForAgents
 import testUtils.ViewSpec
+import viewUtils.ExternalUrlHelper.saForAgents
 import views.html.PaymentHistory
 
 import java.time.LocalDate
