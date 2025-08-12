@@ -36,7 +36,8 @@
     govukWarningText : GovukWarningText,
     updatesTile: UpdatesTile,
     incomeSourcesTile: IncomeSourcesTile,
-    yourReportingObligationsTile: YourReportingObligationsTile
+    yourReportingObligationsTile: YourReportingObligationsTile,
+    externalUrlHelper: viewUtils.ExternalUrlHelper.type
 )
 
 @(
@@ -46,8 +47,7 @@
 )(
   	implicit request: Request[_],
 	messages: Messages,
-  	user: auth.MtdItUser[_],
-	appConfig: config.FrontendAppConfig)
+  	user: auth.MtdItUser[_])
 
 @pageHeading = @{
     user.optClientNameAsString.fold(messages("home.agent.heading")){
@@ -105,7 +105,7 @@
             )
     )
     @p(id = Some("read-more-about-differences-link")) {
-     <a class="govuk-link" target="_blank" href="@appConfig.chooseAgentGuidanceUrl">@messages("home.agent.supporting.readMore")</a>
+     <a class="govuk-link" target="_blank" href="@externalUrlHelper.chooseAgentGuidanceUrl">@messages("home.agent.supporting.readMore")</a>
 }
 }
 
