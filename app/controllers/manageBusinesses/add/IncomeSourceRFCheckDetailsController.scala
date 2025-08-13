@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, ReportingFrequencyPages}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.admin.OptInOptOutContentUpdateR17

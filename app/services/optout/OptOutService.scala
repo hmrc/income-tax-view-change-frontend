@@ -25,7 +25,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import enums._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout._
 import play.api.Logger
 import repositories.OptOutSessionDataRepository
@@ -189,19 +189,19 @@ class OptOutService @Inject()(
       case _: MultiYearOptOutProposition => intent.map(i => MultiYearOptOutCheckpointViewModel(intent = i))
     }
 
-    def getQuarterlyUpdatesCount(propositionType: Option[OptOutPropositionTypes]): Future[Int] = {
-      propositionType match {
-        case Some(p: OneYearOptOutProposition) =>
-          getQuarterlyUpdatesCountForOfferedYears(p.proposition).map(_.getCountFor(p.intent.taxYear))
-        case _ => Future.successful(noQuarterlyUpdates)
-      }
-    }
-
     for {
       (proposition, intent) <- recallOptOutPropositionWithIntent()
       propositionType = proposition.optOutPropositionType
       quarterlyUpdatesCount <- getQuarterlyUpdatesCount(propositionType)
     } yield processPropositionType(propositionType.get, intent, quarterlyUpdatesCount)
+  }
+
+  private def getQuarterlyUpdatesCount(propositionType: Option[OptOutPropositionTypes])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Int] = {
+    propositionType match {
+      case Some(p: OneYearOptOutProposition) =>
+        getQuarterlyUpdatesCountForOfferedYears(p.proposition).map(_.getCountFor(p.intent.taxYear))
+      case _ => Future.successful(noQuarterlyUpdates)
+    }
   }
 
   def optOutConfirmedPageViewModel()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[ConfirmedOptOutViewModel]] = {
@@ -273,7 +273,10 @@ class OptOutService @Inject()(
   def isOptOutTaxYearValid(taxYear: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutTaxYearQuestionViewModel]] = {
     taxYear match {
       case Some(year) =>
-        fetchOptOutProposition().flatMap { proposition =>
+        for {
+          proposition <- fetchOptOutProposition()
+          numberOfQuarterlyUpdates <- getQuarterlyUpdatesCount(proposition.optOutPropositionType)
+        } yield {
           val checkOptOutStatus = year match {
             //case ty if ty == proposition.previousTaxYear.taxYear.startYear.toString => Some((proposition.previousTaxYear.canOptOut, proposition.previousTaxYear)) //TODO: Enable once CY-1 is added
             case ty if ty == proposition.currentTaxYear.taxYear.startYear.toString  => Some((proposition.currentTaxYear.canOptOut, proposition.currentTaxYear))
@@ -281,15 +284,23 @@ class OptOutService @Inject()(
             case _ => None
           }
 
-          (checkOptOutStatus, proposition.optOutPropositionType) match {
-            case (Some((true, propositionTaxYear)), Some(propositionType)) if propositionType.state().contains(MultiYearOptOutDefault) =>
-              Future.successful(Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state())))
-            case (Some((true, _)), Some(_)) =>
-              Logger("application").warn("[OptOutService] Single year pages not available, redirecting to Reporting Obligations Page")
-              Future.successful(None) //TODO: Build single year pages
+          val currentYearStatus = proposition.currentTaxYear.status
+
+          (checkOptOutStatus, proposition.optOutPropositionType, currentYearStatus) match {
+            case (Some((true, propositionTaxYear)), Some(propositionType), status)
+              if propositionType.state().exists(state =>
+                state == MultiYearOptOutDefault ||
+                state == OneYearOptOutFollowedByMandated ||
+                state == OneYearOptOutFollowedByAnnual ||
+                (state == NextYearOptOut && (status == Annual || status == Mandated))
+              ) =>
+              Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus))
+            case (Some((true, _)), Some(_), _) =>
+              Logger("application").warn("[OptOutService] Unknown scenario for opt out tax year, redirecting to Reporting Obligations Page")
+              None
             case _ =>
               Logger("application").warn("[OptOutService] Invalid tax year provided, redirecting to Reporting Obligations Page")
-              Future.successful(None)
+              None
           }
         }
       case _ =>
