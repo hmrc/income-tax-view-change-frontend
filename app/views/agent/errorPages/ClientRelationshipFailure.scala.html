@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import viewUtils.ExternalUrlHelper
 
 
 
@@ -38,7 +39,7 @@
     @p(){
         <span id="relationship_failure_bullet">
             @Html(messages("agent.client_relationship_failure.info",
-                   <a href={viewUtils.ExternalUrlHelper.clientAuthorisationGuidance} rel="noreferrer noopener" target="_blank">{messages("agent.client_relationship_failure.info.link")} {messages("pagehelp.opensInNewTabText")}</a>
+                   <a href={ExternalUrlHelper.clientAuthorisationGuidance} rel="noreferrer noopener" target="_blank">{messages("agent.client_relationship_failure.info.link")} {messages("pagehelp.opensInNewTabText")}</a>
             ))
         </span>
     }
