@@ -70,7 +70,7 @@
 ) {
     @h1(msg = getHeading, id = Some("page-heading"))
 
-    @if(viewModel.whatYouOweChargesList.isChargesListEmpty && viewModel.whatYouOweChargesList.codedOutDetails.isEmpty) {
+    @if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
 
         @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
 
@@ -92,7 +92,7 @@
             ))
         }
 
-        @if(viewModel.whatYouOweChargesList.chargesList.nonEmpty || viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero) {
+        @if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero) {
 
             @govukTable(Table(
                 head = Some(Seq(
@@ -202,7 +202,7 @@
             ))
         }
 
-        @if(!viewModel.whatYouOweChargesList.isChargesListEmpty && (viewModel.dunningLock || viewModel.hasLpiWithDunningLock) ) {
+        @if(viewModel.chargesListIsNotEmptyAndDunningLock) {
             @dunningLockParagraph()
         }
 

@@ -18,6 +18,7 @@ package models.financialDetails
 
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import services.DateServiceInterface
+import auth.MtdItUser
 
 import java.time.LocalDate
 
@@ -39,5 +40,11 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
                                paymentHandOffUrl: Long => String,
                                selfServeTimeToPayEnabled: Boolean,
                                selfServeTimeToPayStartUrl: String)(implicit val dateServiceInterface: DateServiceInterface) {
+
+  val chargesListAndCodedOutDetailsAreEmpty: Boolean = whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDetails.isEmpty
+
+  val chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero: Boolean = whatYouOweChargesList.chargesList.nonEmpty || whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero
+
+  val chargesListIsNotEmptyAndDunningLock: Boolean = !whatYouOweChargesList.isChargesListEmpty && (dunningLock || hasLpiWithDunningLock)
 
 }
