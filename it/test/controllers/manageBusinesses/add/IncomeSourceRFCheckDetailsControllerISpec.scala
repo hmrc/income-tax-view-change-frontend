@@ -21,7 +21,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -53,8 +52,7 @@ class IncomeSourceRFCheckDetailsControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             s"render the ${incomeSourceType.journeyType} Reporting Frequency Check Details Page" when {
-              "income source new journey is enabled" in {
-                enable(IncomeSourcesNewJourney)
+              "using the manage businesses journey" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
                 await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
@@ -70,20 +68,6 @@ class IncomeSourceRFCheckDetailsControllerISpec extends ControllerISpecHelper {
               }
             }
           }
-
-          "income source new journey is enabled" in {
-            disable(IncomeSourcesNewJourney)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-            await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
-
-            val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-            result should have(
-              httpStatus(SEE_OTHER),
-              if (mtdUserRole == MTDIndividual) redirectURI("/report-quarterly/income-and-expenses/view") else redirectURI("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
-            )
-          }
         }
       }
       s"POST $path" when {
@@ -92,7 +76,6 @@ class IncomeSourceRFCheckDetailsControllerISpec extends ControllerISpecHelper {
             s"submit the data after the user has checked their details" in {
               val isAgent = !(mtdUserRole == MTDIndividual)
 
-              enable(IncomeSourcesNewJourney)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
               await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))

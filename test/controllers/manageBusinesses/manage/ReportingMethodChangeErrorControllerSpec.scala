@@ -20,7 +20,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -55,8 +54,7 @@ class ReportingMethodChangeErrorControllerSpec
         val action = testController.show(isAgent, incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting method change error page" when {
-            "IncomeSources FS is enabled" in {
-              enable(IncomeSourcesNewJourney)
+            "using the manage businesses journey" in {
               setupMockSuccess(mtdRole)
               mockBothPropertyBothBusiness()
               if (incomeSourceType == SelfEmployment)
@@ -75,22 +73,6 @@ class ReportingMethodChangeErrorControllerSpec
               document.getElementById("reportingMethodError.p2-link").attr("href") shouldBe
                 controllers.manageBusinesses.manage.routes
                   .ManageIncomeSourceDetailsController.show(isAgent, incomeSourceType, optSelfEmploymentId).url
-            }
-          }
-          "redirect to homePage" when {
-            "the IncomeSources FS is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              mockBothPropertyBothBusiness()
-
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.SEE_OTHER
-              val homeUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(homeUrl)
             }
           }
         }

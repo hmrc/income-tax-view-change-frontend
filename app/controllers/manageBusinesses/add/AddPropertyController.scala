@@ -49,45 +49,36 @@ class AddPropertyController @Inject()(authActions: AuthActions,
   }
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      withNewIncomeSourcesFS {
-        handleRequest(isAgent)
-      }
+    implicit user => handleRequest(isAgent)
   }
 
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] =
-    withNewIncomeSourcesFS {
-      val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
-      Future.successful(Ok(addProperty(form.apply, isAgent, Some(getBackUrl(isAgent)), postAction)))
-    }
+  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
+    Future.successful(Ok(addProperty(form.apply, isAgent, Some(getBackUrl(isAgent)), postAction)))
+  }
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    withNewIncomeSourcesFS {
-      handleSubmitRequest(
-        isAgent = isAgent
-      )
-    }
+    handleSubmitRequest(isAgent = isAgent)
   }
 
-  private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] =
-    withNewIncomeSourcesFS {
-      val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
-      form.apply.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful {
-            BadRequest(
-              addProperty(
-                isAgent = isAgent,
-                form = formWithErrors,
-                backUrl = Some(getBackUrl(isAgent)),
-                postAction = postAction
-              )
+  private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
+    form.apply.bindFromRequest().fold(
+      formWithErrors =>
+        Future.successful {
+          BadRequest(
+            addProperty(
+              isAgent = isAgent,
+              form = formWithErrors,
+              backUrl = Some(getBackUrl(isAgent)),
+              postAction = postAction
             )
-          },
-        formData =>
-          handleValidForm(formData, isAgent)
-      )
-    }
+          )
+        },
+      formData =>
+        handleValidForm(formData, isAgent)
+    )
+  }
 
   private def handleValidForm(validForm: form,
                               isAgent: Boolean)

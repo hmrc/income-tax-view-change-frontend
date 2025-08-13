@@ -21,7 +21,6 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockIncomeSourceRFService, MockSessionService}
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers
@@ -167,7 +166,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   }
 
   def setupMockCalls(isAgent: Boolean, incomeSourceType: IncomeSourceType, mtdRole: MTDUserRole, scenario: Scenario): Unit = {
-    enable(IncomeSourcesNewJourney)
     setupMockSuccess(mtdRole)
     setupMockIncomeSourceDetailsCall(scenario, incomeSourceType)
     setupMockDateServiceCall(scenario)
@@ -197,7 +195,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting frequency page" when {
-            s"with New Incomesource FS enabled" in {
+            s"using the manage businesses journey" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
 
               val result = action(fakeRequest)

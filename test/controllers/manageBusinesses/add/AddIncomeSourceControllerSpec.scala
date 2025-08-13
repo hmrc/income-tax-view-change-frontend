@@ -16,12 +16,10 @@
 
 package controllers.manageBusinesses.add
 
-import controllers.manageBusinesses.add.AddIncomeSourceController
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesFs
 import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -57,7 +55,6 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         s"render the add income source page" when {
           "the user has a Sole Trader Business, a UK property and a Foreign Property" in {
-            enable(IncomeSourcesFs)
             ukPlusForeignPropertyWithSoleTraderIncomeSource()
             setupMockSuccess(mtdRole)
             setupMockDeleteSession(true)
@@ -77,7 +74,6 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
         "render the add income source page with no tables or table paragraph text" when {
           "user has no businesses or properties" in {
             disableAllSwitches()
-            enable(IncomeSourcesFs)
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
             setupMockDeleteSession(true)
@@ -102,7 +98,6 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
         }
         "render the add income source page with all tables showing" when {
           "user has a ceased business, sole trader business and uk/foreign property" in {
-            enable(IncomeSourcesFs)
             mockBothPropertyBothBusiness()
             setupMockSuccess(mtdRole)
 
@@ -132,25 +127,8 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
           }
         }
 
-        "redirect to the homepage" when {
-          "incomeSource feature is disabled" in {
-            setupMockSuccess(mtdRole)
-            mockSingleBISWithCurrentYearAsMigrationYear()
-
-            val result: Future[Result] = action(fakeRequest)
-            status(result) shouldBe SEE_OTHER
-            val homeUrl = if (mtdRole == MTDIndividual) {
-              controllers.routes.HomeController.show().url
-            } else {
-              controllers.routes.HomeController.showAgent().url
-            }
-            redirectLocation(result) shouldBe Some(homeUrl)
-          }
-        }
-
         "show error page" when {
           s"failed to return incomeSourceViewModel" in {
-            enable(IncomeSourcesFs)
             mockUkPropertyWithSoleTraderBusiness()
             setupMockSuccess(mtdRole)
 

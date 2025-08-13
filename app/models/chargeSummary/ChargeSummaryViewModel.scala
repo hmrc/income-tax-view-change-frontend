@@ -68,8 +68,13 @@ case class ChargeSummaryViewModel(
   val taxYearFromBCD = chargeItem.taxYear.previousYear.startYear
   val taxYearToBCD = chargeItem.taxYear.previousYear.endYear
 
-  val taxYearFromCodingOut = s"${chargeItem.taxYear.nextYear.startYear}"
-  val taxYearToCodingOut = s"${chargeItem.taxYear.nextYear.endYear}"
+  val taxYearFromCheckCode = chargeItem.taxYear.nextYear.startYear
+  val taxYearToCheckCode = chargeItem.taxYear.nextYear.endYear
+
+  val taxYearEndToCheckCode = currentTaxYearEnd + 1
+
+  val taxYearFromCodingOut = s"${chargeItem.taxYear.addYears(2).startYear}"
+  val taxYearToCodingOut = s"${chargeItem.taxYear.addYears(2).endYear}"
 
   val messagePrefix = if(latePaymentInterestCharge)"lpi."
   else ""

@@ -43,7 +43,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
         val requestBody = Json.parse("""{
                                        |  "version": 2,
                                        |  "options": {
-                                       |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/income-sources/add/business-address/id/",
+                                       |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/manage-your-businesses/add/business-address/id/",
                                        |    "timeoutConfig": {
                                        |      "timeoutAmount": 3600,
                                        |      "timeoutUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/session-timeout",
@@ -129,7 +129,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
             |{
             |  "version": 2,
             |  "options": {
-            |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/income-sources/add/business-address/id/",
+            |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add/business-address/id/",
             |    "timeoutConfig": {
             |      "timeoutAmount": 3600,
             |      "timeoutUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/session-timeout",

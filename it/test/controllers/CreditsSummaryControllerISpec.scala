@@ -73,37 +73,37 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                     fixedDate.plusYears(1).toString)
                 )
 
-                val res = buildGETMTDClient(path, additionalCookies).futureValue
+                whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
+                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  AuditStub.verifyAuditContainsDetail(
+                    IncomeSourceDetailsResponseAuditModel(
+                      mtdItUser = testUser(mtdUserRole),
+                      nino = testNino,
+                      selfEmploymentIds = List.empty,
+                      propertyIncomeIds = List("1234"),
+                      yearOfMigration = Some(testTaxYear.toString)
+                    ).detail
+                  )
 
-                AuditStub.verifyAuditContainsDetail(
-                  IncomeSourceDetailsResponseAuditModel(
-                    mtdItUser = testUser(mtdUserRole),
-                    nino = testNino,
-                    selfEmploymentIds = List.empty,
-                    propertyIncomeIds = List("1234"),
-                    yearOfMigration = Some(testTaxYear.toString)
-                  ).detail
-                )
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, messages("credits.heading", s"$calendarYear"))
+                  )
 
-                res should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, messages("credits.heading", s"$calendarYear"))
-                )
-
-                AuditStub.verifyAuditContainsDetail(
-                  CreditsSummaryModel(
-                    saUTR = testSaUtr,
-                    nino = testNino,
-                    userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
-                    credId = credId,
-                    mtdRef = testMtditid,
-                    creditOnAccount = "5",
-                    creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
-                  ).detail
-                )
+                  AuditStub.verifyAuditContainsDetail(
+                    CreditsSummaryModel(
+                      saUTR = testSaUtr,
+                      nino = testNino,
+                      userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
+                      credId = credId,
+                      mtdRef = testMtditid,
+                      creditOnAccount = "5",
+                      creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
+                    ).detail
+                  )
+                }
               }
             }
 
@@ -125,37 +125,37 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                     fixedDate.plusYears(1).toString)
                 )
 
-                val res = buildGETMTDClient(path, additionalCookies).futureValue
+                whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
+                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  AuditStub.verifyAuditContainsDetail(
+                    IncomeSourceDetailsResponseAuditModel(
+                      mtdItUser = testUser(mtdUserRole),
+                      nino = testNino,
+                      selfEmploymentIds = List.empty,
+                      propertyIncomeIds = Nil,
+                      yearOfMigration = None
+                    ).detail
+                  )
 
-                AuditStub.verifyAuditContainsDetail(
-                  IncomeSourceDetailsResponseAuditModel(
-                    mtdItUser = testUser(mtdUserRole),
-                    nino = testNino,
-                    selfEmploymentIds = List.empty,
-                    propertyIncomeIds = Nil,
-                    yearOfMigration = None
-                  ).detail
-                )
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, messages("credits.heading", s"$calendarYear"))
+                  )
 
-                res should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, messages("credits.heading", s"$calendarYear"))
-                )
-
-                AuditStub.verifyAuditContainsDetail(
-                  CreditsSummaryModel(
-                    saUTR = testSaUtr,
-                    nino = testNino,
-                    userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
-                    credId = credId,
-                    mtdRef = testMtditid,
-                    creditOnAccount = "5",
-                    creditDetails = toCreditSummaryDetailsSeq(chargesListV2)(msgs)
-                  ).detail
-                )
+                  AuditStub.verifyAuditContainsDetail(
+                    CreditsSummaryModel(
+                      saUTR = testSaUtr,
+                      nino = testNino,
+                      userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
+                      credId = credId,
+                      mtdRef = testMtditid,
+                      creditOnAccount = "5",
+                      creditDetails = toCreditSummaryDetailsSeq(chargesListV2)(msgs)
+                    ).detail
+                  )
+                }
               }
             }
           }

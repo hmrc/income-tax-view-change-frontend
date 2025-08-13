@@ -51,6 +51,11 @@ GET         /agents/optout                                                contro
 POST        /optout                                                       controllers.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
 POST        /agents/optout                                                controllers.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
 
+GET         /sign-up                                                      controllers.optIn.SignUpTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+GET         /agents/sign-up                                               controllers.optIn.SignUpTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+POST        /sign-up                                                      controllers.optIn.SignUpTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+POST        /agents/sign-up                                               controllers.optIn.SignUpTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+
 GET         /optout/cancelled                                             controllers.optOut.OptOutCancelledController.show()
 GET         /agents/optout/cancelled                                      controllers.optOut.OptOutCancelledController.showAgent()
 
@@ -224,6 +229,5 @@ GET          /agents/how-to-claim-refund                                  contro
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
-->          /                                                             incomeSources.Routes
 ->          /                                                             manageBusinesses.Routes
 ->          /                                                             claimToAdjustPoa.Routes

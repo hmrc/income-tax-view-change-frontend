@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.Add
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.NavBarFs
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -57,8 +57,7 @@ class IncomeSourceAddedBackErrorControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "render the self employment business not added error page" when {
-              "Income Sources FS is enabled" in {
-                enable(IncomeSourcesNewJourney)
+              "using the manage businesses journey" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -73,22 +72,6 @@ class IncomeSourceAddedBackErrorControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, s"$title")
-                )
-              }
-            }
-            "redirect to home page" when {
-              "Income Sources FS is disabled" in {
-                disable(IncomeSourcesNewJourney)
-                disable(NavBarFs)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(SEE_OTHER)
                 )
               }
             }
