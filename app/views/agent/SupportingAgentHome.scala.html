@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
+@import viewUtils.ExternalUrlHelper
 
 @this(
     layout: unifiedLayout,
@@ -36,8 +37,7 @@
     govukWarningText : GovukWarningText,
     updatesTile: UpdatesTile,
     incomeSourcesTile: IncomeSourcesTile,
-    yourReportingObligationsTile: YourReportingObligationsTile,
-    externalUrlHelper: viewUtils.ExternalUrlHelper.type
+    yourReportingObligationsTile: YourReportingObligationsTile
 )
 
 @(
@@ -47,7 +47,8 @@
 )(
   	implicit request: Request[_],
 	messages: Messages,
-  	user: auth.MtdItUser[_])
+  	user: auth.MtdItUser[_],
+    appConfig: config.FrontendAppConfig)
 
 @pageHeading = @{
     user.optClientNameAsString.fold(messages("home.agent.heading")){
@@ -105,7 +106,7 @@
             )
     )
     @p(id = Some("read-more-about-differences-link")) {
-     <a class="govuk-link" target="_blank" href="@externalUrlHelper.chooseAgentGuidanceUrl">@messages("home.agent.supporting.readMore")</a>
+     <a class="govuk-link" target="_blank" href="@ExternalUrlHelper.chooseAgentGuidanceUrl">@messages("home.agent.supporting.readMore")</a>
 }
 }
 

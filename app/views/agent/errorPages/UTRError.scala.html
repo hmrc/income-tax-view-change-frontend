@@ -18,17 +18,17 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import viewUtils.ExternalUrlHelper
 
 @this(
     mainTemplate: unifiedLayout,
     continueButton: ContinueButton,
     form: FormWithCSRF,
     h1: h1,
-    p:  p,
-    externalUrlHelper: viewUtils.ExternalUrlHelper.type
+    p:  p
 )
 
-@(postAction: Call)(implicit request: Request[_], messages: Messages)
+@(postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
 @mainTemplate(pageTitle = messages("agent.utr_error.heading"), isAgent = true, isErrorPage = true, showServiceName = false) {
     @h1(msg = messages("agent.utr_error.heading"))
@@ -37,7 +37,7 @@
     <ul class="govuk-list govuk-list--bullet">
         <li id = "list-bullet1">@messages("agent.utr_error.reason.bullet1")</li>
         <li>@Html(messages("agent.utr_error.reason.bullet2",
-            s"""<a href="${externalUrlHelper.mtdForIncomeTaxUrl}"  class="govuk-link" rel="noreferrer noopener" target="_blank">${messages("agent.utr_error.reason.bullet2_link")} ${messages("pagehelp.opensInNewTabText")}</a>"""
+            s"""<a href="@ExternalUrlHelper.mtdForIncomeTaxUrl"  class="govuk-link" rel="noreferrer noopener" target="_blank">${messages("agent.utr_error.reason.bullet2_link")} ${messages("pagehelp.opensInNewTabText")}</a>"""
             ))
         </li>
     </ul>
