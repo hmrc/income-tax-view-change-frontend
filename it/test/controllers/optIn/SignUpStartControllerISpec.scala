@@ -24,6 +24,7 @@ import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.optin.OptInSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
@@ -138,11 +139,11 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
   }
 
   private def setupOptInSessionData(currentTaxYear: TaxYear): Unit = {
-    repository.set(
+    await(repository.set(
       UIJourneySessionData(testSessionId,
         Opt(OptInJourney).toString,
         optInSessionData =
-          Some(OptInSessionData(None, Some(currentTaxYear.toString)))))
+          Some(OptInSessionData(None, Some(currentTaxYear.toString))))))
   }
 }
 
