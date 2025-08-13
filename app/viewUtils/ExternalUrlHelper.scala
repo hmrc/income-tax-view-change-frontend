@@ -46,4 +46,6 @@ object ExternalUrlHelper {
 
   val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
 
+  val checkPayeTaxCodeUrl = "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
+
 }
