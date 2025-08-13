@@ -18,32 +18,32 @@ package viewUtils
 
 object ExternalUrlHelper {
 
-  lazy val homepageLink = "https://www.gov.uk"
+  val homepageLink = "https://www.gov.uk"
 
   //SA for Agents Online Service
-  lazy val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+  val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
 
   //Accounting software guidance
-  lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
+  val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
 
-  lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
+  val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
 
-  lazy val seNationalInsuranceRatesUrl = "https://www.gov.uk/self-employed-national-insurance-rates"
+  val seNationalInsuranceRatesUrl = "https://www.gov.uk/self-employed-national-insurance-rates"
 
-  lazy val chooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
+  val chooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
 
-  lazy val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
+  val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
 
-  lazy val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+  val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
-  lazy val interestRateBankRateUrl = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
+  val interestRateBankRateUrl = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
 
-  lazy val currentLPAndRepaymentInterestRatesUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
+  val currentLPAndRepaymentInterestRatesUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
-  lazy val saThroughYourTaxCodeUrl = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
+  val saThroughYourTaxCodeUrl = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
 
-  lazy val mtdForIncomeTaxUrl = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
+  val mtdForIncomeTaxUrl = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
 
-  lazy val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
+  val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
 
 }
