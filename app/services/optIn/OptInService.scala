@@ -82,14 +82,18 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
                       ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
 
     fetchSavedChosenTaxYear() flatMap {
-      case Some(intentTaxYear) => itsaStatusUpdateConnector.optIn(taxYear = intentTaxYear, user.nino)
+      case Some(intentTaxYear) =>
+        println(Console.YELLOW + s"Opting in for tax year: $intentTaxYear" + Console.RESET)
+        itsaStatusUpdateConnector.optIn(taxYear = intentTaxYear, user.nino)
         .map { res =>
           fetchOptInProposition().map { proposition =>
             auditingService.extendedAudit(OptInAuditModel(proposition, intentTaxYear, res))
           }
           res
         }
-      case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+      case None =>
+        println(Console.YELLOW + s"OptIn failed: No tax year selected" + Console.RESET)
+        Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
   }
 
