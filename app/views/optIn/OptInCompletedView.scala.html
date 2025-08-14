@@ -18,7 +18,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import viewUtils.ExternalUrlHelper
 
 @this(
     mainTemplate: unifiedLayout,
@@ -48,7 +47,7 @@
 }
 
 @incomeThresholdUrl = {
-    @ExternalUrlHelper.saWhoNeedsToSignUpUrl
+    @appConfig.signUpUrl
 }
 
 @submitUpdatesInSoftware = {

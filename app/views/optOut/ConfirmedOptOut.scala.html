@@ -19,7 +19,6 @@
 @import views.html.layouts.unifiedLayout
 @import models.optout.ConfirmedOptOutViewModel
 @import services.optout.OneYearOptOutFollowedByMandated
-@import viewUtils.ExternalUrlHelper
 
 @this(
     mainTemplate: unifiedLayout,
@@ -149,7 +148,7 @@
         }
         @p(){
             @{
-                val externalRefLink = ExternalUrlHelper.saWhoNeedsToSignUpUrl
+                val externalRefLink = appConfig.signUpUrl
                 val anchor = link(
                     id = Some("sign-up-criteria-ext"),
                     target = Some("_blank"),
