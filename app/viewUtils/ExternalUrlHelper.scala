@@ -23,9 +23,6 @@ object ExternalUrlHelper {
   //SA for Agents Online Service
   val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
 
-  //Accounting software guidance
-  val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
-
   val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
 
   val seNationalInsuranceRatesUrl = "https://www.gov.uk/self-employed-national-insurance-rates"
