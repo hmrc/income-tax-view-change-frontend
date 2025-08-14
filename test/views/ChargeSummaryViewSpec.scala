@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import exceptions.MissingFieldException
-import models.admin.{FilterCodedOutPoas}
+import models.admin.FilterCodedOutPoas
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
@@ -34,6 +34,7 @@ import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.ViewSpec
+import viewUtils.ExternalUrlHelper.seNationalInsuranceRatesUrl
 import views.html.ChargeSummary
 
 import java.time.LocalDate
@@ -541,7 +542,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.getElementById("charge-explanation").child(0).text() shouldBe "Payments on account are 2 advance payments made towards your next tax bill. They pay for:"
               document.getElementById("charge-explanation").child(1).child(0).text() shouldBe "Income Tax"
               document.getElementById("charge-explanation").child(1).child(1).text() shouldBe "Class 4 National Insurance contributions (opens in new tab)"
-              document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe "https://www.gov.uk/self-employed-national-insurance-rates"
+              document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe seNationalInsuranceRatesUrl
               document.getElementById("charge-explanation").child(2).text() shouldBe "HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount."
               document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
               document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
@@ -676,7 +677,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.getElementById("charge-explanation").child(0).text() shouldBe "Payments on account are 2 advance payments made towards your next tax bill. They pay for:"
               document.getElementById("charge-explanation").child(1).child(0).text() shouldBe "Income Tax"
               document.getElementById("charge-explanation").child(1).child(1).text() shouldBe "Class 4 National Insurance contributions (opens in new tab)"
-              document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe "https://www.gov.uk/self-employed-national-insurance-rates"
+              document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe seNationalInsuranceRatesUrl
               document.getElementById("charge-explanation").child(2).text() shouldBe "HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount."
               document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
               document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
