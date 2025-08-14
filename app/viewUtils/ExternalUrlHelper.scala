@@ -34,8 +34,6 @@ object ExternalUrlHelper {
 
   val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
 
-  val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
-
   val interestRateBankRateUrl = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
 
   val currentLPAndRepaymentInterestRatesUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
