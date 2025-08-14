@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
@@ -53,7 +52,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
         } else {
           s"render the Amendable POA page" when {
             "PaymentOnAccount model is returned successfully with PoA tax year crystallized and relevantAmount = totalAmount" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
@@ -64,7 +62,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
               status(result) shouldBe OK
             }
             "PaymentOnAccount model is returned successfully with PoA tax year crystallized and relevantAmount > totalAmount" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(Some(previouslyReducedPaymentOnAccountModel))
               setupMockTaxYearNotCrystallised()
@@ -76,25 +73,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
             }
           }
 
-          "redirect to the home page" when {
-            "FS is disabled" in {
-              disable(AdjustPaymentsOnAccount)
-              mockSingleBISWithCurrentYearAsMigrationYear()
-
-              setupMockSuccess(mtdRole)
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
-          "redirect to the You Cannot Go Back page" when {
-            "FS is enabled" in {
-              enable(AdjustPaymentsOnAccount)
+          "redirect to the You Cannot Go Back page" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
@@ -104,11 +83,9 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
-            }
           }
           "return an error 500" when {
             "PaymentOnAccount model is not built successfully" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
               setupMockGetPaymentsOnAccountBuildFailure()
@@ -119,7 +96,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
             }
 
             "an Exception is returned from ClaimToAdjustService" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
               setupMockGetAmendablePoaViewModelFailure()
@@ -131,7 +107,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

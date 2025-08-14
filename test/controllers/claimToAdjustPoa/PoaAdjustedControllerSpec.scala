@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockDateService, MockPaymentOnAccountSessionService}
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -61,7 +60,6 @@ class PoaAdjustedControllerSpec extends MockAuthActions
         } else {
           s"render the POA Adjusted page" when {
             "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               when(mockDateService.getCurrentDate).thenReturn(startOfTaxYear)
@@ -75,8 +73,7 @@ class PoaAdjustedControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe OK
             }
-            "FS is enabled and journeyCompleted flag is set to true" in {
-              enable(AdjustPaymentsOnAccount)
+            "journeyCompleted flag is set to true" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               when(mockDateService.getCurrentDate).thenReturn(endOfTaxYear)
@@ -91,31 +88,9 @@ class PoaAdjustedControllerSpec extends MockAuthActions
               status(result) shouldBe OK
             }
           }
-          "redirect to the home page" when {
-            "FS is disabled" in {
-              disable(AdjustPaymentsOnAccount)
-              mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
-              when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
-
-              setupMockGetPaymentsOnAccount()
-              setupMockTaxYearNotCrystallised()
-
-              setupMockSuccess(mtdRole)
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
           "return an error 500" when {
             "Error setting journey completed flag in mongo session" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
               when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any())).thenReturn(Future(Left(new Error(""))))
@@ -129,7 +104,6 @@ class PoaAdjustedControllerSpec extends MockAuthActions
             }
 
             "PaymentOnAccount model is not built successfully" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
               setupMockGetPaymentsOnAccountBuildFailure()
@@ -140,7 +114,6 @@ class PoaAdjustedControllerSpec extends MockAuthActions
             }
 
             "an Exception is returned from ClaimToAdjustService" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
               setupMockGetAmendablePoaViewModelFailure()
@@ -152,7 +125,7 @@ class PoaAdjustedControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

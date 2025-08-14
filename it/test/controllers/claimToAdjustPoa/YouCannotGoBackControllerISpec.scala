@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.AdjustPaymentsOnAccount
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.libs.json.JsValue
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -60,8 +59,7 @@ class YouCannotGoBackControllerISpec extends ControllerISpecHelper {
             testSupportingAgentAccessDenied(path, additionalCookies)
           } else {
             s"render the You cannot go back page" when {
-              s"the AdjustPaymentsOnAccount FS enabled and journeyCompleted flag is set to false" in {
-                enable(AdjustPaymentsOnAccount)
+              s"the journeyCompleted flag is set to false" in {
                 stubAuthorised(mtdUserRole)
                 stubFinancialDetailsResponse()
                 await(sessionService.setMongoData(Some(validSession)))
@@ -73,8 +71,7 @@ class YouCannotGoBackControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              s"the AdjustPaymentsOnAccount FS enabled and journeyCompleted flag is set to true" in {
-                enable(AdjustPaymentsOnAccount)
+              s"the journeyCompleted flag is set to true" in {
                 stubAuthorised(mtdUserRole)
                 stubFinancialDetailsResponse()
                 await(sessionService.setMongoData(Some(validSession.copy(journeyCompleted = true))))
@@ -86,23 +83,9 @@ class YouCannotGoBackControllerISpec extends ControllerISpecHelper {
                 )
               }
             }
-            s"return status $SEE_OTHER" when {
-              "the AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                stubFinancialDetailsResponse()
-                await(sessionService.setMongoData(Some(validSession)))
 
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
             s"return status $INTERNAL_SERVER_ERROR" when {
               "session is missing" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 stubFinancialDetailsResponse()
 
@@ -112,7 +95,6 @@ class YouCannotGoBackControllerISpec extends ControllerISpecHelper {
                 )
               }
               "poa data is missing" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 await(sessionService.setMongoData(Some(validSession.copy(journeyCompleted = true))))
 

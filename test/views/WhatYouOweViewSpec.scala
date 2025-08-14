@@ -105,21 +105,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
 
-  def ctaViewModel(isFSEnabled: Boolean): WYOClaimToAdjustViewModel = {
-    if (isFSEnabled) {
+  def ctaViewModel: WYOClaimToAdjustViewModel = {
       WYOClaimToAdjustViewModel(
-        adjustPaymentsOnAccountFSEnabled = true,
         poaTaxYear = Some(TaxYear(
           startYear = 2024,
           endYear = 2025)
         )
       )
-    } else {
-      WYOClaimToAdjustViewModel(
-        adjustPaymentsOnAccountFSEnabled = false,
-        poaTaxYear = None)
     }
-  }
 
   def interestFromToDate(from: String, to: String, rate: String) =
     s"${messages("whatYouOwe.over-due.interest.line1")} ${messages("whatYouOwe.over-due.interest.line2", from, to, rate)}"
@@ -143,7 +136,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       IncomeSourceDetailsModel(testNino, "testMtditid", Some(migrationYear.toString), List(), List())
     )
 
-    val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
+    val defaultClaimToAdjustViewModel = ctaViewModel
 
     val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = dateService.getCurrentDate,
@@ -191,7 +184,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
                        claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None) {
 
-    val defaultClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
+    val defaultClaimToAdjustViewModel = ctaViewModel
 
     val agentUser: MtdItUser[_] =
       defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel("AA111111A", "testMtditid", Some(migrationYear.toString), List(), List()))
@@ -1165,7 +1158,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "user has a POA that can be adjusted" when {
 
-        val poaModel = ctaViewModel(true)
+        val poaModel = ctaViewModel
 
         "POA is paid off fully should display link with additional content" in new TestSetup(
           charges = whatYouOweDataWithPaidPOAs(),
@@ -1189,7 +1182,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "user has no POA that can be adjusted should not display link" in new TestSetup(
         charges = whatYouOweDataNoCharges,
         adjustPaymentsOnAccountFSEnabled = true,
-        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None)) ) {
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(None)) ) {
         Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
         Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
@@ -1315,11 +1308,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "AdjustPaymentsOnAccount is enabled" when {
-
       "user has a POA that can be adjusted" when {
 
-        val poaModel = ctaViewModel(true)
+        val poaModel = ctaViewModel
 
         "POA is paid off fully should display link with additional content" in new AgentTestSetup(
           charges = whatYouOweDataWithPaidPOAs(),
@@ -1343,11 +1334,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "user has no POA that can be adjusted should not display link" in new AgentTestSetup(
         charges = whatYouOweDataNoCharges,
         adjustPaymentsOnAccountFSEnabled = true,
-        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None)) ) {
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(None)) ) {
         Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
         Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
-    }
   }
 
   "what you owe view" should {

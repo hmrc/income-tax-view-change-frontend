@@ -21,7 +21,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
-import models.admin.{AdjustPaymentsOnAccount, FeatureSwitch}
+import models.admin.FeatureSwitch
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
@@ -45,7 +45,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val TestJourneyCheckerClaimToAdjust: JourneyCheckerClaimToAdjust = new JourneyCheckerClaimToAdjust {
-    override val appConfig: FrontendAppConfig = mockAppConfig
+    val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
     override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
     override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
@@ -53,7 +53,7 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   }
 
   val TestJourneyCheckerClaimToAdjustSpy: JourneyCheckerClaimToAdjust = spy(new JourneyCheckerClaimToAdjust {
-    override val appConfig: FrontendAppConfig = mockAppConfig
+    val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
     override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
     override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
@@ -62,11 +62,9 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
 
   override lazy val tsTestUser: MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeIndividual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
-      .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
 
   override lazy val tsTestUserAgent: MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
-      .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
 
   val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
 
@@ -79,7 +77,6 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(AdjustPaymentsOnAccount)
   }
 
   "JourneyCheckerClaimToAdjust.redirectToYouCannotGoBackPage" should {

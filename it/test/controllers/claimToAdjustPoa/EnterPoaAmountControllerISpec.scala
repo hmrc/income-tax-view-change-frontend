@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.core.{CheckMode, NormalMode}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -70,7 +69,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
           } else {
             s"render the Enter PoA Amount page" when {
               "the user has not previously adjusted their PoA" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -90,7 +88,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 )
               }
               "User is authorised and has not previously adjusted their PoA but PoA amount is populated in session data" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -110,7 +107,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 )
               }
               "User has previously adjusted their PoA" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -131,30 +127,9 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                   elementTextByClass("govuk-table__head")(expectedMsg)
                 )
               }
-              s"redirect to the home page" when {
-                "AdjustPaymentsOnAccount FS is disabled" in {
-                  disable(AdjustPaymentsOnAccount)
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                    OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                  )
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                  )
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                    OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                  )
 
-                  val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  result should have(
-                    httpStatus(SEE_OTHER),
-                    redirectURI(homeUrl(mtdUserRole))
-                  )
-                }
-              }
               s"redirect to the You Cannot Go Back page" when {
                 "journeyCompleted flag is true and the user tries to access the page" in {
-                  enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                     OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -176,7 +151,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
               }
               s"return $INTERNAL_SERVER_ERROR" when {
                 "no non-crystallised financial details are found" in {
-                  enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
                     OK, testEmptyFinancialDetailsModelJson
@@ -193,7 +167,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 }
 
                 "no adjust POA session is found" in {
-                  enable(AdjustPaymentsOnAccount)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
                     OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
@@ -223,7 +196,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
           } else {
             "redirect to Select your reason page" when {
               "user has decreased poa" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -248,7 +220,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
             }
             s"return status $SEE_OTHER and redirect to check details page" when {
               "user has increased poa" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -271,7 +242,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2500.00))))
               }
               "user was on decrease only journey" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -298,7 +268,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
             }
             s"return $INTERNAL_SERVER_ERROR" when {
               "no non-crystallised financial details are found" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
@@ -317,7 +286,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
               }
 
               "no adjust POA session is found" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
                   OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
@@ -346,7 +314,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
           } else {
             s"render the Enter PoA Amount page" that {
               "has the amount pre-populated" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -382,7 +349,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
           } else {
             "redirect to check your answers page, and overwrite amount in session" when {
               "user is on decrease only journey, and has entered new amount" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -404,7 +370,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(MainIncomeLower), Some(100))))
               }
               "user is on increase/decrease journey, had previously increased, is still increasing" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -426,7 +391,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2800))))
               }
               "user is on increase/decrease journey, had previously decreased, is now increasing" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -449,7 +413,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
                 sessionService.getMongo.futureValue shouldBe Right(Some(PoaAmendmentData(Some(Increase), Some(2800))))
               }
               "user is on increase/decrease journey, had previously decreased, is still decreasing" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -473,7 +436,6 @@ class EnterPoaAmountControllerISpec extends ControllerISpecHelper {
             }
             s"return status $SEE_OTHER and redirect to select your reason page" when {
               "user is on increase/decrease journey, had previously increased, is now decreasing" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
