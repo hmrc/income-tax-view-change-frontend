@@ -30,6 +30,7 @@ import services.helpers.CreditHistoryDataHelper
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
+import viewUtils.ExternalUrlHelper.saForAgents
 import views.html.CreditsSummary
 
 import java.net.URL
@@ -66,7 +67,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
   val saNoteMigratedAgent: String = s"${messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")} ${messages("credits.drop-down-list.sa-link-agent")} ${messages("pagehelp.opensInNewTabText")}."
   val saNoteMigratedOnlineAccountLink: String = s"/self-assessment/ind/$testMtditid/account"
   val saNoteMigratedOnlineAccountLinkText: String = s"${messages("credits.drop-down-list.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
-  val saNoteMigratedOnlineAccountAgentLink: String = s"https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
   val saNoteMigratedOnlineAccountAgentLinkText: String = s"${messages("credits.drop-down-list.sa-link-agent")} ${messages("pagehelp.opensInNewTabText")}"
   val moneyInYourAccountHeading: String = messages("credits.money-in-your-account-section.name")
   val moneyInYourAccountAgentHeading: String = messages("credits.money-in-your-account-section.agent.name")
@@ -228,7 +228,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
         document.selectById("h2-credit-from-an-earlier-tax-year").text() shouldBe creditsDropDownListCreditFromAnEarlierTaxYear
         document.selectById("sa-note-migrated-agent").text() shouldBe saNoteMigratedAgent
         document.selectById("sa-note-migrated-agent-online-account-link").text() shouldBe saNoteMigratedOnlineAccountAgentLinkText
-        document.selectById("sa-note-migrated-agent-online-account-link").attr("href") shouldBe saNoteMigratedOnlineAccountAgentLink
+        document.selectById("sa-note-migrated-agent-online-account-link").attr("href") shouldBe saForAgents
 
         document.selectById("h2-money-in-your-account").text() shouldBe moneyInYourAccountAgentHeading
         document.selectById("p-money-in-your-account").text() shouldBe moneyInYourAccountAgentContent
