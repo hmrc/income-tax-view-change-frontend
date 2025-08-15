@@ -20,6 +20,7 @@ import org.jsoup.select.Elements
 import play.api.mvc.Call
 import play.twirl.api.Html
 import testUtils.ViewSpec
+import viewUtils.ExternalUrlHelper.mtdForIncomeTaxUrl
 import views.html.agent.errorPages.UTRError
 
 class UTRErrorViewSpec extends ViewSpec {
@@ -68,7 +69,7 @@ class UTRErrorViewSpec extends ViewSpec {
     s"have a link in the second bullet point: ${utrErrorMessages.reasonBullet2Link}" in new Setup(utrErrorView) {
       val link: Elements = layoutContent.select("ul li:nth-child(2) a")
       link.text shouldBe utrErrorMessages.reasonBullet2Link
-      link.attr("href") shouldBe "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
+      link.attr("href") shouldBe mtdForIncomeTaxUrl
     }
 
     s"have a button stating: ${utrErrorMessages.goBackButton}" in new Setup(utrErrorView) {
