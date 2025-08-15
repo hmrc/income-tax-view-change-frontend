@@ -131,11 +131,7 @@
                             ),
                         )
                     ),
-                    Option.when(
-                        viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero &&
-                        viewModel.whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined &&
-                        viewModel.whatYouOweChargesList.getRelevantDueDate.isBefore(viewModel.currentDate)
-                    )(
+                    Option.when(viewModel.chargeIsNotDueAndChargesDefinedAndGreaterThanZero)(
                         Seq(
                             TableRow(
                                 content = Empty

@@ -47,4 +47,7 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
 
   val chargesListIsNotEmptyAndDunningLock: Boolean = !whatYouOweChargesList.isChargesListEmpty && (dunningLock || hasLpiWithDunningLock)
 
+  val chargeIsNotDueAndChargesDefinedAndGreaterThanZero: Boolean = whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero &&
+    whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined &&
+    whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)
 }
