@@ -19,6 +19,13 @@ package views.messages
 object OptOutTaxYearQuestionMessages {
 
   // Multi
+  val previousYearHeadingMulti = "Opt out of Making Tax Digital for Income Tax from the 2024 to 2025 tax year"
+  val previousYearDesc1Multi = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
+  val previousYearInsetMulti = "Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return."
+  val previousYearDesc2Multi = "You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
+  val previousYearDesc3Multi = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+  val previousYearQuestionMulti = "Do you want to opt out from the 2024 to 2025 tax year?"
+
   val currentYearHeadingMulti = "Opt out of Making Tax Digital for Income Tax from the current tax year"
   val currentYearTitleMulti = "Opt out of Making Tax Digital for Income Tax from the current tax year - Manage your Self Assessment - GOV.UK"
   val currentYearDesc1Multi = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
@@ -35,6 +42,13 @@ object OptOutTaxYearQuestionMessages {
   val nextYearQuestionMulti = "Do you want to opt out from the next tax year?"
 
   // Single Year followed by Mandated
+  val previousSingleYearHeading = "Opt out of Making Tax Digital for Income Tax from the 2024 to 2025 tax year"
+  val previousSingleYearTitle = "Opt out of Making Tax Digital for Income Tax from the 2024 to 2025 tax year - Manage your Self Assessment - GOV.UK"
+  val previousSingleYearDesc1 = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
+  val previousSingleYearInset = "You have 2 quarterly updates submitted for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return."
+  val previousSingleYearDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+  val previousSingleYearQuestion = "Do you still want to opt out for the 2024 to 2025 tax year?"
+
   val singleYearFollowedByMandatedHeading = "Opt out of Making Tax Digital for Income Tax for a single tax year"
   val singleYearFollowedByMandatedDesc1 = "You can only opt out for the 2025 to 2026 tax year. This would mean you no longer need software compatible with Making Tax Digital for Income Tax for this tax year."
   val singleYearFollowedByMandatedInset = "Even if you continue, from 6 April 2026, you will be required to go back to using Making Tax Digital for Income Tax."
