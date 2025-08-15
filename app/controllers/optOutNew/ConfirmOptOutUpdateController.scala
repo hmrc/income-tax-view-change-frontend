@@ -59,13 +59,12 @@ class ConfirmOptOutUpdateController @Inject()(view: CheckOptOutUpdateAnswers,
       }
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] =
+  def submit(isAgent: Boolean, taxYear: String): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
         withOptOutFS {
-          optOutService.makeOptOutUpdateRequest().map {
-            case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.ConfirmedOptOutController.show(isAgent))
-            case _ => Redirect(routes.OptOutErrorController.show(isAgent))
+          withReportingObligationsFS {
+            Future.successful(Redirect(controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent, taxYear)))
           }
         }
     }

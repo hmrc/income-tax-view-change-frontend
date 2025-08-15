@@ -35,7 +35,7 @@ formWithCSRF: FormWithCSRF
 @(viewModel: CheckOptOutUpdateAnswersViewModel, isAgent: Boolean, cancelURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getPostAction = @{
-    controllers.optOut.routes.ConfirmOptOutController.submit(isAgent)
+    controllers.optOutNew.routes.ConfirmOptOutUpdateController.submit(isAgent, viewModel.startYear)
 }
 
 @mainTemplate(
@@ -63,6 +63,7 @@ formWithCSRF: FormWithCSRF
 
         <div class="govuk-button-group">
             @govukButton(Button(
+                id = Some("confirm-button"),
                 content = Text(messages("base.confirm-and-save")),
                 attributes = Map("id" -> "confirm-button")
             ))
