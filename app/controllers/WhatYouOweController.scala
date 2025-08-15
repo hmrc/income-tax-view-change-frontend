@@ -35,8 +35,6 @@ import services.{ClaimToAdjustService, DateServiceInterface, SelfServeTimeToPayS
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
-import controllers.routes._
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -71,44 +69,21 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
 
-      val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
-      val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
       (selfServeTimeToPayUrl, getLPP2Link(whatYouOweChargesList.chargesList, isAgent)) match {
         case (Left(ex), _) =>
           Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
           itvcErrorHandler.showInternalServerError()
         case (Right(startUrl), Some(lpp2Url)) =>
 
-          val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
+          val wyoViewModel: WhatYouOweViewModel = whatYouOweService.createWhatYouOweViewModel(
             currentDate = dateService.getCurrentDate,
-            hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
             whatYouOweChargesList = whatYouOweChargesList,
-            hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-            currentTaxYear = dateService.getCurrentTaxYearEnd,
             backUrl = backUrl,
-            utr = user.saUtr,
-            dunningLock = whatYouOweChargesList.hasDunningLock,
-            creditAndRefundUrl = (user.isAgent() match {
-              case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
-              case true                                                  => NotMigratedUserController.showAgent()
-              case false if user.incomeSources.yearOfMigration.isDefined => CreditAndRefundController.show()
-              case false                                                 => NotMigratedUserController.show()
-            }).url,
-            creditAndRefundEnabled = isEnabled(CreditsRefundsRepay),
-            taxYearSummaryUrl = {
-              if (user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
-              else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
-            },
-            claimToAdjustViewModel = ctaViewModel,
+            user = user,
+            origin = origin,
+            ctaViewModel = ctaViewModel,
             lpp2Url = lpp2Url,
-            adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-            chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
-              if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
-              else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
-            },
-            paymentHandOffUrl = PaymentController.paymentHandoff(_, origin).url,
-            selfServeTimeToPayEnabled  = isEnabled(SelfServeTimeToPayR17),
-            selfServeTimeToPayStartUrl = startUrl
+            startUrl = startUrl
           )
           Ok(whatYouOwe(
             viewModel = wyoViewModel,
