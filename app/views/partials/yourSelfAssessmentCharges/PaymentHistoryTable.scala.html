@@ -124,7 +124,7 @@
             case charge if viewModel.chargeHistoryEnabled =>
                 Seq(
                     TableRow(
-                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}"))
+                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
                     ),
                     TableRow(
                         content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)

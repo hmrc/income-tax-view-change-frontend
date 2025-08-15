@@ -1207,6 +1207,7 @@ chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text      = Gwnaet
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Yr ail daliad ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Taliad Mantoli wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
+chargeSummary.chargeHistory.amend.codingOut.text                        = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year. (WELSH)
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = Gwnaethoch ddiweddaru eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = Gwnaethoch ddiweddaru eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = Addasiad CThEF wedi’i greu

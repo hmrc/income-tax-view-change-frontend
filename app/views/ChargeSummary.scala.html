@@ -551,7 +551,7 @@
                 @for(charge <- viewModel.adjustmentHistory.adjustments) {
                     <tr>
                         <td class="govuk-table__cell">@{charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}")</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@{charge.amount.toCurrency}</td>
                     </tr>
                 }

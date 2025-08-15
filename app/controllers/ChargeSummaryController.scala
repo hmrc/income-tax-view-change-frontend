@@ -150,8 +150,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
 
 
-      chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
-        chargeReference, isEnabled(ChargeHistory)).map {
+      chargeHistoryService.chargeHistoryResponse(isInterestCharge, chargeReference, isEnabled(ChargeHistory)).map {
         case Right(chargeHistory) =>
           auditChargeSummary(chargeItem, paymentBreakdown,
             chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
