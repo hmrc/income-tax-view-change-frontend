@@ -2630,7 +2630,7 @@ optout.checkAnswers.cancel              = Canslo
 #opt out with submitted updates check answers
 optout.updates.checkAnswers.heading     = Cadarnhau ac optio allan ar gyfer blwyddyn dreth {0} i {1}
 optout.updates.checkAnswers.p1          = Os byddwch yn optio allan, ni fydd angen meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.updates.checkAnswers.inset       = Mae gennych 2 ddiweddariad chwarterol wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.updates.checkAnswers.inset       = Mae gennych <b>2 ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Optio allan wedi’i gwblhau

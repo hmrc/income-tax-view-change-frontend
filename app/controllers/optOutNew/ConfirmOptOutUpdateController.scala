@@ -49,10 +49,12 @@ class ConfirmOptOutUpdateController @Inject()(view: CheckOptOutUpdateAnswers,
   def show(isAgent: Boolean = false, taxYear: String): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withOptOutFS {
-        withRecover(isAgent) {
-          val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
-          val cancelURL = controllers.optOut.routes.OptOutCancelledController.show().url
-          Future.successful(Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear), isAgent, cancelURL)))
+        withReportingObligationsFS {
+          withRecover(isAgent) {
+            val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
+            val cancelURL = controllers.optOut.routes.OptOutCancelledController.show().url
+            Future.successful(Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear), isAgent, cancelURL)))
+          }
         }
       }
   }

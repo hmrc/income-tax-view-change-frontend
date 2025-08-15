@@ -46,11 +46,10 @@ formWithCSRF: FormWithCSRF
     useFallbackBackLink = true
 ) {
 
-    @h1(id = Some("heading"), msg = messages("optout.checkAnswers.heading"), size = "l")
 
     @formWithCSRF(action = getPostAction) {
 
-        @h1(id = Some("check-opt-out-update-heading"), msg = messages("optout.updates.checkAnswers.heading", viewModel.startYear, viewModel.endYear))
+        @h1(id = Some("check-opt-out-update-heading"), msg = messages("optout.updates.checkAnswers.heading", viewModel.startYear, viewModel.endYear), size = "l")
 
         @p(id = Some("check-opt-out-update-p1")){
             @messages("optout.updates.checkAnswers.p1")
@@ -58,7 +57,7 @@ formWithCSRF: FormWithCSRF
 
         @inset(InsetText(
                 id = Some("check-opt-out-update-inset"),
-                content = Text(messages("optout.updates.checkAnswers.inset"))
+                content = HtmlContent(messages("optout.updates.checkAnswers.inset"))
             )
         )
 
