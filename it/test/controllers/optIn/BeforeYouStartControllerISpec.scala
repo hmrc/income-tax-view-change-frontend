@@ -26,6 +26,7 @@ import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
@@ -115,13 +116,13 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
 
   private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
-    repository.set(
+    await(repository.set(
       UIJourneySessionData(testSessionId,
         Opt(OptInJourney).toString,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None))))
+              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None)))))
   }
 }
 
