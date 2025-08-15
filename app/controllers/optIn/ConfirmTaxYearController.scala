@@ -77,9 +77,7 @@ class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
       withReportingObligationsFS {
         optInService.makeOptInCall() map {
           case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
-          case err =>
-            println(Console.MAGENTA + s"OptIn failed: $err" + Console.RESET)
-            Redirect(OptInErrorController.show(isAgent))
+          case _ => Redirect(OptInErrorController.show(isAgent))
         }
       }
   }
