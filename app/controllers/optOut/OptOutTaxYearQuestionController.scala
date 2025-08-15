@@ -97,7 +97,7 @@ class OptOutTaxYearQuestionController @Inject()(optOutService: OptOutService,
     val formResponse = validForm.toFormMap(OptOutTaxYearQuestionForm.response).headOption
 
     formResponse match {
-      case Some(OptOutTaxYearQuestionForm.responseYes) => Future.successful(Redirect(routes.OptOutTaxYearQuestionController.show(isAgent, taxYear)))
+      case Some(OptOutTaxYearQuestionForm.responseYes) => Future.successful(Redirect(controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent, taxYear.getOrElse(""))))
       case Some(OptOutTaxYearQuestionForm.responseNo) => Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
       case _ =>
         Logger("application").error("[OptOutTaxYearQuestionController.submit] Invalid form response")

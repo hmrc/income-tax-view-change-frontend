@@ -169,7 +169,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe taxYearQuestionLink(isAgent)
+          redirectLocation(result) shouldBe Some(controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent, currentYear.getOrElse("")).url)
         }
 
         "redirect to the reporting obligations page when the user selects 'No'" in {

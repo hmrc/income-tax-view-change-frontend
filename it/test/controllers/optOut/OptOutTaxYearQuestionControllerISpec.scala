@@ -330,9 +330,15 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
         val result = buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("opt-out-tax-year-question" -> Seq("Yes"))).futureValue
 
+        val expectedURI = if (mtdUserRole == MTDIndividual) {
+          controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent = false, currentYear).url
+        } else {
+          controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent = true, currentYear).url
+        }
+
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view$path?taxYear=$currentYear")
+          redirectURI(expectedURI)
         )
       }
 
