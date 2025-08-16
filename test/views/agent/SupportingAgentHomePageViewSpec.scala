@@ -34,6 +34,7 @@ import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import viewUtils.ExternalUrlHelper.chooseAgentGuidanceUrl
 import views.html.agent.SupportingAgentHome
 
 import java.time.{LocalDate, Month}
@@ -280,7 +281,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
       s"have a read more about differences between agents and supporting agents link" in new TestSetup {
 
         val link: Option[Elements] = getElementById("read-more-about-differences-link").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some("https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax")
+        link.map(_.attr("href")) shouldBe Some(chooseAgentGuidanceUrl)
         link.map(_.text) shouldBe Some("Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).")
       }
     }

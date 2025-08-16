@@ -21,6 +21,7 @@
 @import views.html.layouts.unifiedLayout
 @import services.optout.OptOutProposition
 @import config.FrontendAppConfig
+@import viewUtils.ExternalUrlHelper
 
 @this(
 	mainTemplate: unifiedLayout,
@@ -104,7 +105,7 @@
 		@p(id = Some("quarterly-dropdown-line1"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text")))
 		@p(id = Some("quarterly-dropdown-line2"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin2")))
 		@p(id = Some("quarterly-dropdown-line3"))(Html(messages("nextUpdates.dropdown.quarterlyReturn.text.lin3")))
-		@link(link = appConfig.quarterlyUpdatesGuidanceUrl , target = Some("_blank"), messageKey = "nextUpdates.dropdown.quarterlyReturn.link.text")
+		@link(link = ExternalUrlHelper.quarterlyUpdatesGuidanceUrl , target = Some("_blank"), messageKey = "nextUpdates.dropdown.quarterlyReturn.link.text")
 	</div>
 	<div id="details-content-2">
 		@h2(msg = "obligations.finalDeclarationUpdate", optId = Some("finalDeclaration-heading"))

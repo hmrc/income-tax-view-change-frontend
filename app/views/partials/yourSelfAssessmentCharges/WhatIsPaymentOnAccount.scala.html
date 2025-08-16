@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
+@import viewUtils.ExternalUrlHelper
 
 
 @this(
@@ -51,7 +52,7 @@
         <ul class="govuk-list govuk-list--bullet">
             <li>@getMessage("whatIsPaymentOnAccount.p2")</li>
             <li>@link(
-                link = appConfig.seNationalInsuranceRatesUrl,
+                link = ExternalUrlHelper.seNationalInsuranceRatesUrl,
                 messageKey = getMessage("whatIsPaymentOnAccount.p3"),
                 rel = Some("noreferrer noopener"),
                 target = Some("_blank")

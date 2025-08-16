@@ -22,6 +22,7 @@
 @import views.html.components._
 @import views.html.helpers.injected.InputHelper
 @import views.html.layouts.unifiedLayout
+@import viewUtils.ExternalUrlHelper
 
 
 @this(
@@ -149,7 +150,7 @@
         }
         <ul class="govuk-list govuk-list--bullet">
             <li>@getMessage("bullet1")</li>
-            <li><a href="https://www.gov.uk/self-employed-national-insurance-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@getMessage("bullet2")</a></li>
+            <li><a href="@{ExternalUrlHelper.seNationalInsuranceRatesUrl}" class="govuk-link" rel="noreferrer noopener" target="_blank">@getMessage("bullet2")</a></li>
         </ul>
     </div>
 

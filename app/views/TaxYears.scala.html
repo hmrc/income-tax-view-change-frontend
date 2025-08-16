@@ -104,7 +104,7 @@
     @if(isAgent) {
         @p(id = Some("oldSa-para-agent")) {
             @messages("taxYears.oldSa.agent.content.1")
-            @link(link = appConfig.saForAgents,
+            @link(link = viewUtils.ExternalUrlHelper.saForAgents,
 
                 messageKey = "taxYears.oldSa.agent.content.2",
                 id = Some("self-assessment-for-agents-link"),

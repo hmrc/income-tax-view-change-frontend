@@ -28,6 +28,7 @@
 @import views.html.components._
 @import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 @import _root_.implicits.HtmlFormatter.NbspString
+@import viewUtils.ExternalUrlHelper
 
 @this(
     mainTemplate: unifiedLayout,
@@ -140,7 +141,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
             @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get), "taxYears.oldSa.content.link")
         }
     } else {
-        @paymentHistoryInfo("paymentHistory.info", appConfig.saForAgents, "taxYears.oldSa.agent.content.2")
+        @paymentHistoryInfo("paymentHistory.info", ExternalUrlHelper.saForAgents, "taxYears.oldSa.agent.content.2")
     }
 
 }

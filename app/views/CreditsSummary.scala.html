@@ -21,6 +21,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
 @import models.creditDetailModel.CreditDetailModel
+@import viewUtils.ExternalUrlHelper
 
 @this(
         mainTemplate: unifiedLayout,
@@ -95,7 +96,7 @@
     @if(isAgent) {
             @p(id = Some("sa-note-migrated-agent")) {
                 @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")
-                @link(link = appConfig.saForAgents, messageKey = messages("credits.drop-down-list.sa-link-agent"),
+                @link(link = ExternalUrlHelper.saForAgents, messageKey = messages("credits.drop-down-list.sa-link-agent"),
                     id = Some("sa-note-migrated-agent-online-account-link"),
                     outerMessage = ".", rel=Some("noreferrer noopener"), target = Some("_blank"))
             }
