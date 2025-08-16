@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitching
 import enums.ChargeType._
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import exceptions.MissingFieldException
-import models.admin.FilterCodedOutPoas
+import models.admin.{FilterCodedOutPoas}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails._
