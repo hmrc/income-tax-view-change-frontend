@@ -60,8 +60,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
     val nextYearQuestion = "Do you want to opt out from the next tax year?"
 
     // Single Year followed by Mandated
-    val previousSingleYearHeading = "Opt out of Making Tax Digital for Income Tax from the 2021 to 2022 tax year"
-    val previousSingleYearTitle = "Opt out of Making Tax Digital for Income Tax from the 2024 to 2025 tax year - Manage your Self Assessment - GOV.UK"
+    val previousSingleYearHeading = "Opt out of Making Tax Digital for Income Tax for the 2021 to 2022 tax year"
+    val previousSingleYearTitle = "Opt out of Making Tax Digital for Income Tax for the 2024 to 2025 tax year - Manage your Self Assessment - GOV.UK"
     val previousSingleYearDesc1 = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
     val previousSingleYearInset = "You have 0 quarterly updates submitted for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return."
     val previousSingleYearDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."

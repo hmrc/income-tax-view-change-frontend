@@ -2737,8 +2737,8 @@ optout.taxYearQuestion.desc3.nextYear.multiYear                        = In futu
 optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = Do you want to opt out from the next tax year?
 
 ## opt out single year - followed by mandated
-optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
-optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
+optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
+optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
 optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = You have
 optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByMandated     = {0} quarterly updates submitted
@@ -2760,8 +2760,8 @@ optout.taxYearQuestion.inset.currentYear.singleYearFollowedByMandatedWithUpdates
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByMandatedWithUpdates = Do you still want to opt out for the {0} to {1} tax year?
 
 ## opt out single year - followed by annual
-optout.taxYearQuestion.heading.previousYear.singleYearFollowedByAnnual       = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
-optout.taxYearQuestion.title.previousYear.singleYearFollowedByAnnual         = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
+optout.taxYearQuestion.heading.previousYear.singleYearFollowedByAnnual       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
+optout.taxYearQuestion.title.previousYear.singleYearFollowedByAnnual         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByAnnual         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
 optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = You have
 optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByAnnual     = {0} quarterly updates submitted

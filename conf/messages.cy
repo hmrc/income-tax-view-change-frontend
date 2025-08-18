@@ -2728,8 +2728,8 @@ optout.taxYearQuestion.desc3.nextYear.multiYear                        = Yn y dy
 optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = A ydych am optio allan o’r flwyddyn dreth nesaf ymlaen?
 
 ## opt out single year - followed by mandated
-optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth {0} i {1}
-optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated         = Byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
 optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = Mae gennych
 optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByMandated     = {0} ddiweddariad chwarterol wedi’u cyflwyno
@@ -2751,8 +2751,8 @@ optout.taxYearQuestion.inset.currentYear.singleYearFollowedByMandatedWithUpdates
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByMandatedWithUpdates = A ydych yn dal i fod am optio allan o flwyddyn dreth {0} i {1}?
 
 ## opt out single year - followed by annual
-optout.taxYearQuestion.heading.previousYear.singleYearFollowedByAnnual       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth {0} i {1}
-optout.taxYearQuestion.title.previousYear.singleYearFollowedByAnnual         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.heading.previousYear.singleYearFollowedByAnnual       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.title.previousYear.singleYearFollowedByAnnual         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByAnnual         = Byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
 optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = Mae gennych
 optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByAnnual     = {0} ddiweddariad chwarterol wedi’u cyflwyno
