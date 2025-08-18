@@ -34,7 +34,6 @@ import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.ViewSpec
-import viewUtils.ExternalUrlHelper.{saThroughYourTaxCodeUrl, seNationalInsuranceRatesUrl}
 import views.html.ChargeSummary
 
 import java.time.LocalDate
@@ -288,6 +287,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear + 1}"
     val cancelledPayeTaxCodeInsetText = s"${messages("chargeSummary.cancelledPayeInset-1")} ${messages("chargeSummary.cancelledPayeInset-2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("chargeSummary.cancelledPayeInset-3")}"
+    val cancelledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
 
     def remainingTaxYouOwe(year: Int) = messages("chargeSummary.codingOutBCDMessage", year - 1, year)
 
@@ -523,7 +523,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
               document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#coding-out-notice").text() shouldBe insetPara
-              document.select("#coding-out-notice-link").attr("href") shouldBe saThroughYourTaxCodeUrl
+              document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
               document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
@@ -541,12 +541,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.getElementById("charge-explanation").child(0).text() shouldBe "Payments on account are 2 advance payments made towards your next tax bill. They pay for:"
               document.getElementById("charge-explanation").child(1).child(0).text() shouldBe "Income Tax"
               document.getElementById("charge-explanation").child(1).child(1).text() shouldBe "Class 4 National Insurance contributions (opens in new tab)"
-              document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe seNationalInsuranceRatesUrl
+              document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe "https://www.gov.uk/self-employed-national-insurance-rates"
               document.getElementById("charge-explanation").child(2).text() shouldBe "HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount."
               document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
               document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#coding-out-notice").text() shouldBe insetPara
-              document.select("#coding-out-notice-link").attr("href") shouldBe saThroughYourTaxCodeUrl
+              document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
               document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
@@ -658,7 +658,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
               document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#coding-out-notice").text() shouldBe insetPara
-              document.select("#coding-out-notice-link").attr("href") shouldBe saThroughYourTaxCodeUrl
+              document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
               document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
@@ -676,12 +676,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.getElementById("charge-explanation").child(0).text() shouldBe "Payments on account are 2 advance payments made towards your next tax bill. They pay for:"
               document.getElementById("charge-explanation").child(1).child(0).text() shouldBe "Income Tax"
               document.getElementById("charge-explanation").child(1).child(1).text() shouldBe "Class 4 National Insurance contributions (opens in new tab)"
-              document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe seNationalInsuranceRatesUrl
+              document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe "https://www.gov.uk/self-employed-national-insurance-rates"
               document.getElementById("charge-explanation").child(2).text() shouldBe "HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount."
               document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
               document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#coding-out-notice").text() shouldBe insetPara
-              document.select("#coding-out-notice-link").attr("href") shouldBe saThroughYourTaxCodeUrl
+              document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
               document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
@@ -856,7 +856,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
             document.select("#coding-out-notice").text() shouldBe insetPara
             document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
-            document.select("#coding-out-notice-link").attr("href") shouldBe saThroughYourTaxCodeUrl
+            document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
             document.select(".govuk-table").size() shouldBe 1
             document.select(".govuk-table tbody tr").size() shouldBe 1
             document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
@@ -872,7 +872,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
             document.select("#coding-out-notice").text() shouldBe insetPara
             document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
-            document.select("#coding-out-notice-link").attr("href") shouldBe saThroughYourTaxCodeUrl
+            document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
             document.selectById("paymentAmount").text() shouldBe "Payment amount £2,500.00"
             document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2019", "2020")
             document.select(".govuk-table tbody tr").size() shouldBe 1
@@ -913,7 +913,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
           document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
           document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
-          document.select("#cancelled-coding-out-notice a").attr("href") shouldBe saThroughYourTaxCodeUrl
+          document.select("#cancelled-coding-out-notice a").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
         }
 
         "not display the Payment breakdown list for cancelled PAYE self assessment" in new TestSetup(
