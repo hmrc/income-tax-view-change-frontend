@@ -35,7 +35,6 @@ import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTyp
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
-import viewUtils.ExternalUrlHelper.saPayTaxBillUrl
 import views.html.WhatYouOwe
 
 import java.time.LocalDate
@@ -545,7 +544,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
         }
 
@@ -561,7 +560,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
         "display bullets and not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
@@ -573,7 +572,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
         "money in your account section with available credits" in new TestSetup(charges = whatYouOweDataWithAvailableCredits()) {
@@ -664,7 +663,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
@@ -679,7 +678,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
@@ -700,7 +699,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
@@ -721,7 +720,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
@@ -765,7 +764,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
         "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
@@ -794,7 +793,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
@@ -825,7 +824,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
             paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
             paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-            pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+            pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
@@ -853,7 +852,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
             paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
             paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-            pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+            pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
 
           }
 
@@ -882,7 +881,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
         "have overdue payments header, bullet points and data with POA1 charge type" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
@@ -912,7 +911,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
         "have overdue payments with POA2 charge type with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
@@ -939,7 +938,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
@@ -1015,7 +1014,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
           pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
         }
@@ -1055,7 +1054,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
           paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
       }
@@ -1122,7 +1121,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
         paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       }
 
       s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
@@ -1215,7 +1214,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
         paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
         paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
 
       }
@@ -1301,7 +1300,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
       paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBulletAgent1
       paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBulletAgent2
-      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe saPayTaxBillUrl
+      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
       pageDocument.getElementById("sa-note-migrated").text shouldBe saNoteAgent
 
     }
