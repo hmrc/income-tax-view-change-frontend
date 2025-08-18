@@ -20,6 +20,7 @@
 @import views.html.helpers.injected.InputHelper
 @import views.html.layouts.unifiedLayout
 @import models.claimToAdjustPoa.WhatYouNeedToKnowViewModel
+@import viewUtils.ExternalUrlHelper
 
 
 @this(
@@ -50,7 +51,7 @@
 
 @newTabLinkHTML(link: String, linkText: String) = {
     @p(){
-        @linkText <a href="https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates" class="govuk-link" rel="noreferrer noopener" target="_blank">@link</a>.
+        @linkText <a href = "@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}" class="govuk-link" rel="noreferrer noopener" target="_blank">@link</a>.
     }
 }
 
