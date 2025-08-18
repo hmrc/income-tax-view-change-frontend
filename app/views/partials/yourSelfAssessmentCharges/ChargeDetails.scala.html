@@ -15,12 +15,14 @@
  *@
 
 @import views.html.components._
+@import models.financialDetails.Accepted
 @import models.financialDetails.BalancingCharge
 @import models.financialDetails.PoaOneDebit
 @import models.financialDetails.PoaTwoDebit
 @import models.financialDetails.LateSubmissionPenalty
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 @import models.financialDetails.FirstLatePaymentPenalty
+@import views.html.partials.yourSelfAssessmentCharges.CodedOutExplanationContent
 @import views.html.partials.yourSelfAssessmentCharges.FirstLatePaymentPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
@@ -37,6 +39,7 @@
     whatIsABalancingPayment: WhatIsABalancingPayment,
     lateSubmissionPenaltyContent: LateSubmissionPenaltyContent,
     firstLatePaymentPenaltyContent: FirstLatePaymentPenaltyContent,
+    codedOutExplanationContent: CodedOutExplanationContent,
     classTwoNICSContent: ClassTwoNICSContent,
     govukDetails: GovukDetails
 )
@@ -55,6 +58,7 @@
 
 @{(chargeItem.transactionType, chargeItem.codedOutStatus) match {
     case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent)
+    case (BalancingCharge, Some(Accepted)) => codedOutExplanationContent(chargeItem)
     case (BalancingCharge, None)        => whatIsABalancingPayment()
     case (PoaOneDebit | PoaTwoDebit, _) => whatIsPaymentOnAccount()
     case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(LSPUrl)

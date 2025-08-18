@@ -68,13 +68,10 @@ case class ChargeSummaryViewModel(
   val taxYearFromBCD = chargeItem.taxYear.previousYear.startYear
   val taxYearToBCD = chargeItem.taxYear.previousYear.endYear
 
-  val taxYearFromCheckCode = chargeItem.taxYear.nextYear.startYear
-  val taxYearToCheckCode = chargeItem.taxYear.nextYear.endYear
+  val taxYearFromCodingOut = s"${chargeItem.taxYear.nextYear.startYear}"
+  val taxYearToCodingOut = s"${chargeItem.taxYear.nextYear.endYear}"
 
   val taxYearEndToCheckCode = currentTaxYearEnd + 1
-
-  val taxYearFromCodingOut = s"${chargeItem.taxYear.addYears(2).startYear}"
-  val taxYearToCodingOut = s"${chargeItem.taxYear.addYears(2).endYear}"
 
   val messagePrefix = if(latePaymentInterestCharge)"lpi."
   else ""
@@ -93,7 +90,9 @@ case class ChargeSummaryViewModel(
   val chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit: Boolean =
     (chargeHistoryEnabled || paymentAllocations.nonEmpty) && !isBalancingChargeZero && !isCredit
 
-  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
+  val isCodedOut: Boolean = chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
+
+  val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !isCodedOut
 
 }
 

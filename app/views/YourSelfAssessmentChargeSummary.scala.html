@@ -57,7 +57,8 @@
 
 @(
     viewModel: ChargeSummaryViewModel,
-    whatYouOweUrl: String
+    whatYouOweUrl: String,
+    saChargesUrl: String,
 )(
     implicit request: Request[_],
     messages: Messages,
@@ -95,24 +96,39 @@
       <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
+                  if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
                   if(viewModel.chargeItem.isOverdue()) "overDueCharge"
                   else "charge"
               )
           }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp
       }</h1>
 
-      @p(id = Some("due-date-text")) {
-          @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
+      @if(!viewModel.chargeItem.isCodingOut) {
+          @p(id = Some("due-date-text")) {
+              @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
+          }
       }
 
-    @chargeDetails(
-        viewModel.chargeItem,
-        viewModel.taxYearFrom.toString,
-        viewModel.taxYearTo.toString,
-        viewModel.isAgent,
-        viewModel.LSPUrl,
-        viewModel.LPPUrl
-    )
+      @chargeDetails(
+          viewModel.chargeItem,
+          viewModel.taxYearFrom.toString,
+          viewModel.taxYearTo.toString,
+          viewModel.isAgent,
+          viewModel.LSPUrl,
+          viewModel.LPPUrl
+      )
+
+      @p() {
+          @if(viewModel.isAgent) {
+              @messages("chargeSummary.selfAssessmentCharges.textOne-agent"),
+              @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+              @messages("chargeSummary.selfAssessmentCharges.textTwo-agent")
+          } else {
+              @messages("chargeSummary.selfAssessmentCharges.textOne")
+              @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+              @messages("chargeSummary.selfAssessmentCharges.textTwo")
+          }
+      }
   }
 
     @if(viewModel.poaExtraChargeLink.isDefined){
