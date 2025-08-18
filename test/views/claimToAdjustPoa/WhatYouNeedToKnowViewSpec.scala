@@ -23,7 +23,6 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
-import viewUtils.ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
 class WhatYouNeedToKnowViewSpec extends TestSupport {
@@ -33,6 +32,8 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
   implicit val lang: Lang = Lang("GB")
 
   val testCancelUrl: String = "/report-quarterly/income-and-expenses/view"
+  val testOpenUrlInNewTab: String =
+    "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
   class Setup(isAgent: Boolean = false, showIncreaseAfterPaymentContent: Boolean = false) {
     val view: Html = whatYouNeedToKnowView(isAgent, whatYouNeedToKnowViewModel(isAgent, showIncreaseAfterPaymentContent))
@@ -88,7 +89,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
 
       "render the newTabLinkHTML with href" in new Setup {
         document.select("a.govuk-link").get(4).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.link")
-        document.select("a.govuk-link").get(4).attr("href") shouldBe currentLPAndRepaymentInterestRatesUrl
+        document.select("a.govuk-link").get(4).attr("href") shouldBe testOpenUrlInNewTab
       }
 
       "have a 'Continue' button" in new Setup {
