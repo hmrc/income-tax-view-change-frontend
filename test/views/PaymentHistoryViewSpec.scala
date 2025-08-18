@@ -27,7 +27,6 @@ import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
 import services.DateServiceInterface
 import testUtils.ViewSpec
-import viewUtils.ExternalUrlHelper.saForAgents
 import views.html.PaymentHistory
 
 import java.time.LocalDate
@@ -296,7 +295,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       s"have the information ${messages("paymentHistory.info")}" in new PaymentHistorySetup(paymentEntriesMFA, isAgent = true) {
         layoutContent.select(Selectors.p).text shouldBe paymentHistoryMessageInfo
-        layoutContent.selectFirst(Selectors.p).hasCorrectLink(s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}", saForAgents)
+        layoutContent.selectFirst(Selectors.p).hasCorrectLink(s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}", "https://www.gov.uk/guidance/self-assessment-for-agents-online-service")
       }
 
       s"not have the information  ${PaymentHistoryMessages.info} when no utr is provided" in new PaymentHistorySetup(paymentEntriesMFA, saUtr = None, isAgent = true) {
