@@ -24,7 +24,6 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testUtils.ViewSpec
-import viewUtils.ExternalUrlHelper.saForAgents
 import views.html.TaxYears
 
 class TaxYearsViewSpec extends ViewSpec {
@@ -160,7 +159,7 @@ class TaxYearsViewSpec extends ViewSpec {
     }
     "the paragraph explaining about previous Self Assessments" in new TestSetup(List(testYearPlusOne), isAgent = true) {
       layoutContent.select("#oldSa-para-agent").text shouldBe s"${messages("taxYears.oldSa.agent.content.1")} $saLinkAgent. ${messages("taxYears.oldSa.agent.content.3")}"
-      layoutContent.selectFirst("#oldSa-para-agent").hasCorrectLinkWithNewTab(saLinkAgent, saForAgents)
+      layoutContent.selectFirst("#oldSa-para-agent").hasCorrectLinkWithNewTab(saLinkAgent, "https://www.gov.uk/guidance/self-assessment-for-agents-online-service")
     }
   }
 }
