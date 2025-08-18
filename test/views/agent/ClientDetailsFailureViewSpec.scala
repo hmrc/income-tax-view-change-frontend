@@ -61,7 +61,7 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
     }
 
     "have a link to the govuk client authorisation overview" in new ClientRelationshipFailureSetup {
-      val link: Element = layoutContent.selectHead(s"a[href=${viewUtils.ExternalUrlHelper.clientAuthorisationGuidance}]")
+      val link: Element = layoutContent.selectHead(s"a[href='https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step']")
       link.text shouldBe ClientRelationshipMessages.clientAuthorisationLink
       link.attr("target") shouldBe "_blank"
     }
