@@ -56,10 +56,10 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     val summary: String = messages("optout.chooseOptOutTaxYear.desc")
     val whichTaxYear: String = messages("optout.chooseOptOutTaxYear.whichTaxYear")
     val confirmOptOutURL: String =
-      if(isEnabledAll(OptOutFs, ReportingFrequencyPage)) controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent = false, taxYear.toString).url
+      if(areAllEnabled(OptOutFs, ReportingFrequencyPage)) controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent = false, taxYear.toString).url
       else controllers.optOut.routes.ConfirmOptOutController.show(isAgent = false).url
     val confirmOptOutURLAgent: String =
-      if(isEnabledAll(OptOutFs, ReportingFrequencyPage)) controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent = true, taxYear = taxYear.toString).url
+      if(areAllEnabled(OptOutFs, ReportingFrequencyPage)) controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent = true, taxYear = taxYear.toString).url
       else controllers.optOut.routes.ConfirmOptOutController.show(isAgent = true).url
     val cancelButton: String = messages("optout.chooseOptOutTaxYear.cancel")
     val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url

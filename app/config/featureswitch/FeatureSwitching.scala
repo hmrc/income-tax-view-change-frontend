@@ -44,7 +44,7 @@ trait FeatureSwitching {
       isEnabledFromConfig(featureSwitch)
     }
   }
-  def isEnabledAll(featureSwitches: FeatureSwitchName*): Boolean = {
+  def areAllEnabled(featureSwitches: FeatureSwitchName*): Boolean = {
     featureSwitches.foldLeft(false) {
       (_, switch) =>
         isEnabledFromConfig(switch)
