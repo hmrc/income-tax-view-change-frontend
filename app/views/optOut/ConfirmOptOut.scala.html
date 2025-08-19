@@ -18,6 +18,8 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.optout._
+@import play.twirl.api.HtmlFormat
+
 
 @this(
         mainTemplate: unifiedLayout,
@@ -39,7 +41,20 @@
 }
 
 @quarterlyUpdatesWarningBlock(count: Int) = {
-    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.confirmOptOut.quarterly-updates", count))))
+    @govukInsetText(InsetText(
+        id = Some("warning-inset"),
+        content = HtmlContent(
+            HtmlFormat.fill(
+                Seq(
+                    Html(messages("optout.confirmOptOut.quarterly-updates.a")),
+                    Html(" <strong>"),
+                    Html(messages("optout.confirmOptOut.quarterly-updates.b", count)),
+                    Html("</strong> "),
+                    Html(messages("optout.confirmOptOut.quarterly-updates.c"))
+                )
+            )
+        )
+    ))
 }
 
 @title = @{

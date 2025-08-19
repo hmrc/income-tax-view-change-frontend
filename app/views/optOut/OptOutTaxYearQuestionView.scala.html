@@ -38,7 +38,6 @@
     messages(s"optout.taxYearQuestion.$key.${viewModel.messageSuffix}", args: _*)
 }
 
-
 @startTaxYear = @{ viewModel.taxYear.taxYear.startYear.toString }
 @endTaxYear = @{ viewModel.taxYear.taxYear.endYear.toString }
 
@@ -46,7 +45,8 @@
     pageTitle = getMessage("title"),
     backUrl = Some("#"),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial
+) {
 
     @formWithCSRF(action = postAction) {
 
@@ -59,6 +59,8 @@
         @p(id = Some("opt-out-question-desc-1")) {
             @getMessage("desc1", startTaxYear, endTaxYear)
         }
+
+        @quarterlyUpdatesWarningBlock()
 
         @if(viewModel.showInset) {
             @govukInsetText(InsetText(

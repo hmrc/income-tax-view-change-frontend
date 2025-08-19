@@ -21,6 +21,8 @@
 @import services.reportingFrequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 @import views.html.helpers.injected.ErrorSummary
 @import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
+@import play.twirl.api.HtmlFormat
+
 
 @this(
         mainTemplate: unifiedLayout,
@@ -52,7 +54,20 @@
 }
 
 @warningBlock(count: Int) = {
-    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted", count))))
+    @govukInsetText(InsetText(
+        id = Some("warning-inset"),
+        content = HtmlContent(
+            HtmlFormat.fill(
+                Seq(
+                    Html(messages("optout.chooseOptOutTaxYear.quarterly-updates.a")),
+                    Html(" <strong>"),
+                    Html(messages("optout.chooseOptOutTaxYear.quarterly-updates.b", count)),
+                    Html("</strong> "),
+                    Html(messages("optout.chooseOptOutTaxYear.quarterly-updates.c"))
+                )
+            )
+        )
+    ))
 }
 
 @formBlock = {

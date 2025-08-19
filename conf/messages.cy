@@ -2611,7 +2611,11 @@ claimToAdjustPoa.youCannotGoBack.bullet3Link             = hafan
 # opt out confirm
 optout.confirmOptOut.heading            = Cadarnhewch ac optiwch allan ar gyfer blwyddyn dreth {0} i {1}
 optout.confirmOptOut.desc               = Os byddwch yn optio allan, gallwch gyflwyno’ch Ffurflen Dreth drwy’ch meddalwedd sy’n cydweddu neu’ch cyfrif ar-lein CThEF.
-optout.confirmOptOut.quarterly-updates  = Mae gennych {0} ddiweddariad chwarterol wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+
+optout.confirmOptOut.quarterly-updates.a  = Mae gennych
+optout.confirmOptOut.quarterly-updates.b  = {0} ddiweddariad chwarterol
+optout.confirmOptOut.quarterly-updates.c  = wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+
 optout.confirmOptOut.info-message       = Yn y dyfodol, efallai y bydd gofyn i chi cyflwyno adroddiadau bob chwarter eto os, er enghraifft, y bydd eich incwm yn cynyddu neu’r bod y trothwy ar gyfer cyflwyno adroddiadau chwarterol yn newid. Os yw hyn yn digwydd, ysgrifennwn atoch i roi gwybod i chi.
 optout.confirmOptOut.confirm            = Cadarnhau a chadw
 optout.confirmOptOut.cancel             = Canslo
@@ -2678,7 +2682,11 @@ optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Dewiswch y flwyddy
 
 # opt out choose tax year
 optout.chooseOptOutTaxYear.heading                   = Optio allan o adrodd yn chwarterol
-optout.chooseOptOutTaxYear.submissions.deleted       = Mae gennych {0} ddiweddariad chwarterol wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+
+optout.confirmOptOut.quarterly-updates.a             = Mae gennych
+optout.chooseOptOutTaxYear.quarterly-updates.b       = {0} ddiweddariad chwarterol
+optout.confirmOptOut.quarterly-updates.c             = wedi’u cyflwyno ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+
 optout.chooseOptOutTaxYear.desc                      = Gallwch optio allan o unrhyw un o’r blynyddoedd treth sydd ar gael a chyflwyno adroddiadau yn flynyddol o’r flwyddyn honno ymlaen. Mae hyn yn golygu y byddwch yn adrodd yn flynyddol ar gyfer pob un o’ch busnesau cyfredol ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
 optout.chooseOptOutTaxYear.whichTaxYear              = eich cyfrif ar-lein CThEF meddalwedd cadw cofnodion sy’n cydweddu?
 optout.chooseOptOutTaxYear.taxYearOnwards            = {0} i {1} ymlaen
