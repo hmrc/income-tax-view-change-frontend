@@ -15,6 +15,8 @@ POST        /confirm-client-details                                         cont
 # Client Relationship Failure
 GET         /not-authorised-to-view-client                                controllers.agent.ClientRelationshipFailureController.show()
 
+GET         /no-assignment                                               controllers.agent.NoAssignmentController.show()
+
 # UTR Error
 GET         /cannot-view-client                                            controllers.agent.UTRErrorController.show()
 POST        /cannot-view-client                                            controllers.agent.UTRErrorController.submit()
