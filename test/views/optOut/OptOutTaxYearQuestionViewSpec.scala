@@ -121,6 +121,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
     "opting out for a previous single year followed by Mandated - No updates" should {
+      "have the correct title" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
+      }
       "have the correct heading" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearHeading
       }
@@ -138,6 +141,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
     "opting out for a single year followed by Mandated - No updates" should {
+      "have the correct title" in new Setup("current", OneYearOptOutFollowedByMandated, 0, ITSAStatus.NoStatus, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedTitle
+      }
       "have the correct heading" in new Setup("current", OneYearOptOutFollowedByMandated, 0, ITSAStatus.NoStatus, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedHeading
       }
@@ -154,6 +160,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
     "opting out for a single year followed by Mandated - With updates" should {
+      "have the correct title" in new Setup("current", OneYearOptOutFollowedByMandated, 1, ITSAStatus.NoStatus, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesTitle
+      }
       "have the correct heading" in new Setup("current", OneYearOptOutFollowedByMandated, 1, ITSAStatus.NoStatus, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesHeading
       }
@@ -170,6 +179,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
     "opting out for a previous single year followed by Annual - No updates" should {
+      "have the correct title" in new Setup("previous", OneYearOptOutFollowedByAnnual, 2, ITSAStatus.Voluntary, ITSAStatus.Annual, ITSAStatus.Annual) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
+      }
       "have the correct heading" in new Setup("previous", OneYearOptOutFollowedByAnnual, 2, ITSAStatus.Voluntary, ITSAStatus.Annual, ITSAStatus.Annual) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearHeading
       }
@@ -187,6 +199,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
     "opting out of a single year followed by Annual - No updates" should {
+      "have the correct title" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, ITSAStatus.NoStatus, ITSAStatus.Voluntary, ITSAStatus.Annual) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualTitle
+      }
       "have the correct heading" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, ITSAStatus.NoStatus, ITSAStatus.Voluntary, ITSAStatus.Annual) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualHeading
       }
@@ -203,6 +218,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
     "opting out of a single year followed by Annual - With updates" should {
+      "have the correct title" in new Setup("current", OneYearOptOutFollowedByAnnual, 1, ITSAStatus.NoStatus, ITSAStatus.Voluntary, ITSAStatus.Annual) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualUpdatesTitle
+      }
       "have the correct heading" in new Setup("current", OneYearOptOutFollowedByAnnual, 1, ITSAStatus.NoStatus, ITSAStatus.Voluntary, ITSAStatus.Annual) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualUpdatesHeading
       }
@@ -220,6 +238,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
     "opting out of the next year - Annual CY" should {
+      "have the correct title" in new Setup("next", NextYearOptOut, 0, ITSAStatus.NoStatus, ITSAStatus.Annual, ITSAStatus.Voluntary) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.nextYearOptOutAnnualTitle
+      }
       "have the correct heading" in new Setup("next", NextYearOptOut, 0, ITSAStatus.NoStatus, ITSAStatus.Annual, ITSAStatus.Voluntary) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.nextYearOptOutAnnualHeading
       }
@@ -236,6 +257,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
     }
 
     "opting out of the next year - Mandated CY" should {
+      "have the correct title" in new Setup("next", NextYearOptOut, 0, ITSAStatus.NoStatus, ITSAStatus.Mandated, ITSAStatus.Voluntary) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.nextYearOptOutMandatedTitle
+      }
       "have the correct heading" in new Setup("next", NextYearOptOut, 0, ITSAStatus.NoStatus, ITSAStatus.Mandated, ITSAStatus.Voluntary) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.nextYearOptOutMandatedHeading
       }
