@@ -60,8 +60,6 @@
             @getMessage("desc1", startTaxYear, endTaxYear)
         }
 
-        @quarterlyUpdatesWarningBlock()
-
         @if(viewModel.showInset) {
             @govukInsetText(InsetText(
                 id = Some("opt-out-question-inset"),
