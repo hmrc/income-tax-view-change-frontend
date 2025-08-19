@@ -59,6 +59,12 @@ POST        /agents/sign-up                                               contro
 GET         /optout/cancelled                                             controllers.optOut.OptOutCancelledController.show()
 GET         /agents/optout/cancelled                                      controllers.optOut.OptOutCancelledController.showAgent()
 
+#OptOut new
+GET         /opt-out/check-your-answers/:taxYear                          controllers.optOutNew.ConfirmOptOutUpdateController.show(isAgent: Boolean = false, taxYear: String)
+GET         /agents/opt-out/check-your-answers/:taxYear                   controllers.optOutNew.ConfirmOptOutUpdateController.show(isAgent: Boolean = true, taxYear: String)
+POST        /opt-out/check-your-answers/:taxYear                          controllers.optOutNew.ConfirmOptOutUpdateController.submit(isAgent: Boolean = false, taxYear: String)
+POST        /agents/opt-out/check-your-answers/:taxYear                   controllers.optOutNew.ConfirmOptOutUpdateController.submit(isAgent: Boolean = true, taxYear: String)
+
 # Opt In
 GET         /opt-in/start                                                 controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/start                                          controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = true)
