@@ -140,6 +140,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         clearingId = clearingId)),
       chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
+  def codedOutEmptyAdjustmentHistory(originalAmount: BigDecimal, creationDate: LocalDate = LocalDate.of(2018,3,29)): AdjustmentHistoryModel =
+    AdjustmentHistoryModel(AdjustmentModel(originalAmount, Some(creationDate), AdjustmentReversalReason), List())
+
   object Messages {
     val typePOA1 = "SA Payment on Account 1"
     val typePOA2 = "SA Payment on Account 2"
@@ -517,7 +520,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
             disable(FilterCodedOutPoas)
-            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem) {
+            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa1CodedOutHeading
               document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
@@ -526,7 +529,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
-              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
+              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.poa1CodedOut.text", "2018", "2019")} £2,500.00"
             }
           }
         }
@@ -535,7 +538,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(FullyCollected), originalAmount = 2500.00)
             disable(FilterCodedOutPoas)
-            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem) {
+            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa1CodedOutHeading
               document.getElementById("charge-explanation").child(0).text() shouldBe "Payments on account are 2 advance payments made towards your next tax bill. They pay for:"
@@ -549,7 +552,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
-              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
+              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.poa1CodedOut.text", "2018", "2019")} £2,500.00"
             }
           }
         }
@@ -652,7 +655,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
             disable(FilterCodedOutPoas)
-            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem) {
+            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa2CodedOutHeading
               document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
@@ -661,7 +664,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
-              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
+              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.poa2CodedOut.text", "2018", "2019")} £2,500.00"
             }
           }
         }
@@ -670,7 +673,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(FullyCollected), originalAmount = 2500.00)
             disable(FilterCodedOutPoas)
-            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem) {
+            "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa2CodedOutHeading
               document.getElementById("charge-explanation").child(0).text() shouldBe "Payments on account are 2 advance payments made towards your next tax bill. They pay for:"
@@ -684,7 +687,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
-              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
+              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.poa2CodedOut.text", "2018", "2019")} £2,500.00"
             }
           }
         }
@@ -849,7 +852,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
         "display the coded out details" when {
 
-          "Coding Out is Enabled" in new TestSetup(creditItemCodingOut) {
+          "Coding Out is Enabled" in new TestSetup(creditItemCodingOut, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
             document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
             document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
@@ -859,7 +862,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
             document.select(".govuk-table").size() shouldBe 1
             document.select(".govuk-table tbody tr").size() shouldBe 1
-            document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.codingOutPayHistoryAmount", "2019", "2020")} £2,500.00"
+            document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.poa1CodedOut.text", "2018", "2019")} £2,500.00"
           }
         }
 
@@ -874,7 +877,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
             document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
             document.selectById("paymentAmount").text() shouldBe "Payment amount £2,500.00"
-            document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2019", "2020")
+            document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2018", "2019")
             document.select(".govuk-table tbody tr").size() shouldBe 1
           }
 

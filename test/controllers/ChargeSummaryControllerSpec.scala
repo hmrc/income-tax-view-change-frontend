@@ -177,8 +177,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Class 2 National Insurance")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £12.34"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 25 August 2021"
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount due to be collected: £12.34"
+                Option(document.getElementById("due-date-text")) shouldBe None
                 document.getElementsByClass("govuk-table__caption govuk-table__caption--m").text() shouldBe "History of this charge"
               }
 

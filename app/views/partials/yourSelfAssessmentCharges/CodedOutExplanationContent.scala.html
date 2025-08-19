@@ -19,13 +19,14 @@
 @import models.financialDetails.BalancingCharge
 @import models.financialDetails.PoaOneDebit
 @import models.financialDetails.PoaTwoDebit
-@import models.incomeSourceDetails.TaxYear
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import uk.gov.hmrc.govukfrontend.views.Aliases.InsetText
 @import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+@import viewUtils.ExternalUrlHelper.checkPayeTaxCodeUrl
+@import viewUtils.ExternalUrlHelper.saThroughYourTaxCodeUrl
 
 
 @this(
@@ -58,7 +59,7 @@
 
 @p(id = Some("check-paye-para")){
     @messages("chargeSummary.check-paye-tax-code-1")
-    <a class="govuk-link" id="paye-tax-code-link" href="@{appConfig.checkPayeTaxCodeUrl}/@{collectionTaxYear.endYear}">
+    <a class="govuk-link" id="paye-tax-code-link" href="@{checkPayeTaxCodeUrl}/@{collectionTaxYear.endYear}">
     @messages("chargeSummary.check-paye-tax-code-2")</a>
     @messages("chargeSummary.check-paye-tax-code-3", collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
 }
@@ -78,7 +79,7 @@
         @messages("chargeSummary.codingOutInset-1")
         @link(
             id = Some("coding-out-notice-link"),
-            link=appConfig.saThroughYourTaxCodeUrl,
+            link=saThroughYourTaxCodeUrl,
             target = Some("_blank"),
             rel= Some("noreferrer noopener"),
             messageKey = "chargeSummary.codingOutInset-2"
