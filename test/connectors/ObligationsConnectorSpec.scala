@@ -139,9 +139,11 @@ class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAudi
       setupMockHttpV2Get(s"${connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino)}")(successResponse)
 
       val result: Future[ObligationsResponseModel] = connector.getAllObligationsDateRange(fromDate, toDate)
-      result.futureValue shouldBe obligationsDataSelfEmploymentOnlySuccessModel
 
-      verifyExtendedAudit(NextUpdatesResponseAuditModel(individualUser, testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations))
+      whenReady(result) { response =>
+        verifyExtendedAudit(NextUpdatesResponseAuditModel(individualUser, testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations))
+        response shouldBe obligationsDataSelfEmploymentOnlySuccessModel
+      }
     }
 
     "return an error model in case of failure" in new Setup {

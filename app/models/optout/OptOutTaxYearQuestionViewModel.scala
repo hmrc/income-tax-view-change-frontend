@@ -25,7 +25,7 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
                                           numberOfQuarterlyUpdates: Int,
                                           currentYearStatus: ITSAStatus) {
 
-  private val hasNoQuarterlyUpdatesSubmitted: Boolean = numberOfQuarterlyUpdates == OneYearOptOutCheckpointViewModel.noQuarterlyUpdates
+  private val hasNoQuarterlyUpdatesSubmitted: Boolean = numberOfQuarterlyUpdates == 0
 
   private val taxYearMessageSuffix = taxYear match {
     case _: PreviousOptOutTaxYear => "previousYear"

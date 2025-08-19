@@ -25,8 +25,9 @@ import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Request
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
 
@@ -37,7 +38,7 @@ trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
 
   lazy val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
-  def verifyAudit(model: AuditModel, path: Option[String] = None): Unit = {
+  def verifyAudit(model: AuditModel, path: Option[String] = None) = {
     verify(mockAuditingService).audit(
       ArgumentMatchers.eq(model),
       AdditionalMatchers.or(ArgumentMatchers.eq(path), ArgumentMatchers.isNull)
@@ -48,7 +49,7 @@ trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
     )
   }
 
-  def verifyExtendedAudit(model: ExtendedAuditModel, path: Option[String] = None): Unit =
+  def verifyExtendedAudit(model: ExtendedAuditModel, path: Option[String] = None): Future[Unit] =
     verify(mockAuditingService).extendedAudit(
       ArgumentMatchers.eq(model),
       AdditionalMatchers.or(ArgumentMatchers.eq(path), ArgumentMatchers.isNull)

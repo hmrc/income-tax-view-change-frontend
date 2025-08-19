@@ -18,9 +18,11 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.incomeSourceDetails.TaxYear
-@import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+@import services.reportingFrequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 @import views.html.helpers.injected.ErrorSummary
 @import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
+@import play.twirl.api.HtmlFormat
+
 
 @this(
         mainTemplate: unifiedLayout,
@@ -38,14 +40,34 @@
 )
 
 
-@(form: Form[ConfirmOptOutMultiTaxYearChoiceForm], availableOptOutTaxYear: Seq[TaxYear], submissionCounts: QuarterlyUpdatesCountForTaxYearModel, isAgent: Boolean = false, cancelURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(
+    form: Form[ConfirmOptOutMultiTaxYearChoiceForm],
+    availableOptOutTaxYear: Seq[TaxYear],
+    submissionCounts: QuarterlyUpdatesCountForTaxYearModel,
+    quarterlyFulfilledUpdatesCount: Int,
+    isAgent: Boolean = false,
+    cancelURL: String
+)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @confirmOptOutPostUrl = @{
     controllers.optOut.routes.OptOutChooseTaxYearController.submit(isAgent)
 }
 
-@warningBlock = {
-    @govukInsetText(InsetText(id=Some("warning-inset"), content = HtmlContent(messages("optout.chooseOptOutTaxYear.submissions.deleted"))))
+@warningBlock(count: Int) = {
+    @govukInsetText(InsetText(
+        id = Some("warning-inset"),
+        content = HtmlContent(
+            HtmlFormat.fill(
+                Seq(
+                    Html(messages("optout.chooseOptOutTaxYear.quarterly-updates.a")),
+                    Html(" <strong>"),
+                    Html(messages("optout.chooseOptOutTaxYear.quarterly-updates.b", count)),
+                    Html("</strong> "),
+                    Html(messages("optout.chooseOptOutTaxYear.quarterly-updates.c"))
+                )
+            )
+        )
+    ))
 }
 
 @formBlock = {
@@ -99,8 +121,8 @@
         @messages("optout.chooseOptOutTaxYear.desc")
     }
 
-    @if(submissionCounts.isQuarterlyUpdatesMade) {
-        @warningBlock
+    @if(quarterlyFulfilledUpdatesCount > 0) {
+        @warningBlock(quarterlyFulfilledUpdatesCount)
     }
 
     @formBlock

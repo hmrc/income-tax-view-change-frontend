@@ -23,7 +23,6 @@ import models.obligations._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutTestSupport
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import testConstants.NextUpdatesTestConstants._
@@ -67,7 +66,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(queriedTaxYear.toFinancialYearStart, queriedTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result = TestNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -94,7 +93,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(queriedTaxYear.toFinancialYearStart, queriedTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result = TestNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -124,7 +123,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(nextYear.toFinancialYearStart, nextYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result = TestNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 2)
         }
@@ -151,7 +150,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(queriedTaxYear.toFinancialYearStart, queriedTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(nextYear.toFinancialYearStart, nextYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result = TestNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -179,7 +178,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(nextYear.toFinancialYearStart, nextYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result = TestNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -207,7 +206,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result = TestNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -235,7 +234,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result = TestNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 3)
         }
@@ -255,7 +254,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(response)
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(response)
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result = TestNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 0)
         }
@@ -274,7 +273,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           setupMockAllObligationsWithDates(previousTaxYear.toFinancialYearStart, previousTaxYear.toFinancialYearEnd)(ObligationsErrorModel(400, "some error"))
           setupMockAllObligationsWithDates(currentYear.toFinancialYearStart, currentYear.toFinancialYearEnd)(ObligationsErrorModel(400, "some error"))
 
-          val result = TestNextUpdatesService.getQuarterlyUpdatesCounts(queriedTaxYear)
+          val result = TestNextUpdatesService.getQuarterlyFulfilledUpdatesCounts(queriedTaxYear)
 
           result.futureValue shouldBe QuarterlyUpdatesCountForTaxYear(queriedTaxYear, 0)
         }

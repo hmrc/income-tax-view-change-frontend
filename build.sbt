@@ -96,11 +96,9 @@ lazy val microservice = Project(appName, file("."))
     retrieveManaged := true
   )
   .settings(
-    Test / Keys.fork := true,
     scalaVersion := currentScalaVersion,
     Test / javaOptions += "-Dlogger.resource=logback-test.xml")
   .settings(
-    Keys.fork := false,
     TwirlKeys.templateImports ++= Seq(
       "uk.gov.hmrc.govukfrontend.views.html.components.implicits._",
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
@@ -124,3 +122,5 @@ lazy val it = project
   .settings(
     libraryDependencies ++= appDependenciesIt
   )
+
+
