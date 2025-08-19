@@ -84,6 +84,10 @@ POST        /agents/opt-in/check-your-answers                                  c
 GET         /opt-in/completed                                             controllers.optIn.OptInCompletedController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/completed                                      controllers.optIn.OptInCompletedController.show(isAgent: Boolean = true)
 
+GET         /sign-up/completed                                            controllers.optIn.SignUpCompletedController.show(isAgent: Boolean = false)
+GET         /agents/sign-up/completed                                     controllers.optIn.SignUpCompletedController.show(isAgent: Boolean = true)
+
+
 GET         /opt-in/error                                                 controllers.optIn.OptInErrorController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/error                                          controllers.optIn.OptInErrorController.show(isAgent: Boolean = true)
 
