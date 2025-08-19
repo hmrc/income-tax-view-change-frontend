@@ -140,8 +140,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         clearingId = clearingId)),
       chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
-  def codedOutEmptyAdjustmentHistory(originalAmount: BigDecimal, creationDate: LocalDate = LocalDate.of(2018,3,29)): AdjustmentHistoryModel =
-    AdjustmentHistoryModel(AdjustmentModel(originalAmount, Some(creationDate), AdjustmentReversalReason), List())
+  def codedOutEmptyAdjustmentHistory(originalAmount: BigDecimal): AdjustmentHistoryModel =
+    AdjustmentHistoryModel(AdjustmentModel(originalAmount, Some(LocalDate.of(2018, 3, 29)), AdjustmentReversalReason), List())
+
+  def codedOutAdjustmentHistory: AdjustmentHistoryModel =
+    AdjustmentHistoryModel(AdjustmentModel(2500.00, Some(LocalDate.of(2018,3,29)), AdjustmentReversalReason), List(AdjustmentModel(2000.00, Some(LocalDate.of(2019,3,30)), AmendedReturnReversalReason)))
 
   object Messages {
     val typePOA1 = "SA Payment on Account 1"
@@ -519,6 +522,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           "display the accepted coded out details" when {
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
+            val codedOutBCDItem = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
             disable(FilterCodedOutPoas)
             "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
@@ -530,6 +534,18 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
               document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.poa1CodedOut.text", "2018", "2019")} £2,500.00"
+            }
+            "Coding Out is Enabled for BCD" in new TestSetup(codedOutBCDItem, adjustmentHistory = codedOutAdjustmentHistory) {
+              document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
+              document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
+              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
+              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
+              document.select("#coding-out-notice").text() shouldBe insetPara
+              document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
+              document.select(".govuk-table").size() shouldBe 1
+              document.select(".govuk-table tbody tr").size() shouldBe 2
+              document.select(".govuk-table tbody tr").get(0).text() shouldBe s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.poa1CodedOut.text", "2018", "2019")} £2,500.00"
+              document.select(".govuk-table tbody tr").get(1).text() shouldBe s"30 Mar 2019 ${messages("chargeSummary.chargeHistory.amend.codingOut.text", "2018", "2019")} £2,000.00"
             }
           }
         }

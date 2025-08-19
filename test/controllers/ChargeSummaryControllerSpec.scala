@@ -16,8 +16,9 @@
 
 package controllers
 
-import enums.{MTDIndividual, MTDSupportingAgent}
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals, YourSelfAssessmentCharges}
+import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.financialDetails.PoaTwoReconciliationCredit
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api
@@ -29,6 +30,7 @@ import services.{ChargeHistoryService, FinancialDetailsService}
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.FinancialDetailsTestConstants._
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
@@ -43,6 +45,10 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
   val endYear: Int = 2018
   val startYear: Int = endYear - 1
+
+  def codedOutAdjustmentHistory: AdjustmentHistoryModel =
+    AdjustmentHistoryModel(AdjustmentModel(2500.00, Some(LocalDate.of(2018,3,29)), AdjustmentReversalReason), List(AdjustmentModel(2000.00, Some(LocalDate.of(2019,3,30)), AmendedReturnReversalReason)))
+
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
@@ -177,9 +183,31 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Class 2 National Insurance")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £12.34"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 25 August 2021"
+                document.getElementsByClass("govuk-table__caption govuk-table__caption--m").text() shouldBe "History of this charge"
+
+              }
+
+              "provided with an id associated to a coded out Balancing Payment" in new Setup(testFinancialDetailsModelWithPayeSACodingOut(), adjustmentHistoryModel = codedOutAdjustmentHistory){
+                enable(YourSelfAssessmentCharges, ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment collected through PAYE tax code")
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount due to be collected: £12.34"
                 Option(document.getElementById("due-date-text")) shouldBe None
-                document.getElementsByClass("govuk-table__caption govuk-table__caption--m").text() shouldBe "History of this charge"
+                document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2019 to 2020 tax year. It will be collected in the 2021 to 2022 tax year through your PAYE tax code."
+                document.getElementById("check-paye-para").text() shouldBe "Check if your PAYE tax code has changed for the 2021 to 2022 tax year."
+                document.getElementById("paye-tax-code-link").attr("href") shouldBe "https://www.tax.service.gov.uk/check-income-tax/tax-codes/2022"
+                document.getElementsByClass("govuk-table__caption govuk-table__caption--m").text() shouldBe "Balancing payment history"
+                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. 29 March 2018 £2,500.00"
+                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. 30 March 2019 £2,000.00"
               }
 
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {

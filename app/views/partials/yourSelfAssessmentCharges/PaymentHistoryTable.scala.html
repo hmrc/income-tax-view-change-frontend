@@ -57,7 +57,7 @@
             )
         )
     ),
-    rows = Seq(
+    rows = (Seq(
         if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
@@ -168,7 +168,7 @@
                     format = Some("numeric")
                 )
             )
-    }),
+    })).filter(_ != Nil),
     caption = Some(ChargeNameLangHelper.chargeHistoryHeading(viewModel.chargeItem)),
     attributes = Map("id" -> "payment-history-table"),
     captionClasses = "govuk-table__caption--m"
