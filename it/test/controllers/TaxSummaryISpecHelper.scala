@@ -39,7 +39,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
 
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
-  val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, poaTaxYear = None)
+  val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = None)
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),

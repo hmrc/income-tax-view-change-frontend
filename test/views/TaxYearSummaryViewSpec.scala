@@ -235,9 +235,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
-  val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, poaTaxYear = None)
+  val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = None)
 
-  val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = true, poaTaxYear = Some(TaxYear(2023, 2024)))
+  val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2023, 2024)))
 
   def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), chargeItems, obligations, ctaViewModel = emptyCTAModel, LPP2Url = ""), "testBackURL", isAgent, ctaLink = ctaLink)

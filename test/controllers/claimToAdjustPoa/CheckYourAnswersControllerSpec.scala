@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoaAmendmentData}
 import models.incomeSourceDetails.TaxYear
 import play.api
@@ -74,7 +73,6 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
         } else {
           s"render the check your answers page" when {
             "PoA tax year crystallized and the session contains the new POA Amount and reason" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
@@ -86,7 +84,6 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
             }
 
             "PoA tax year crystallized and the session contains the new POA Amount and reason, but the reason is INCREASE" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSessionIncrease))))
@@ -97,27 +94,9 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               contentAsString(result).contains("Confirm and save") shouldBe true
             }
           }
-          s"return status $SEE_OTHER and redirect to the home page" when {
-            "AdjustPaymentsOnAccount FS is disabled" in {
-              disable(AdjustPaymentsOnAccount)
-              mockSingleBISWithCurrentYearAsMigrationYear()
-              setupMockGetPaymentsOnAccount(poa)
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
 
-              setupMockSuccess(mtdRole)
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
           s"return status $SEE_OTHER and redirect to the You Cannot Go Back page" when {
-            "FS is enabled and the journeyCompleted flag is set to true in session" in {
-              enable(AdjustPaymentsOnAccount)
+            "the journeyCompleted flag is set to true in session" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
@@ -130,7 +109,6 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
 
           s"return status: $INTERNAL_SERVER_ERROR" when {
             "Payment On Account Session is missing" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
@@ -140,7 +118,6 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
             }
 
             "Payment On Account data is missing from session" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(emptySession))))
@@ -148,8 +125,8 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
+
             "POA data is missing" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(None)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
@@ -157,8 +134,8 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
+
             "POA adjustment reason is missing from the session" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(None)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession.copy(poaAdjustmentReason = None)))))
@@ -166,8 +143,8 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
+
             "the new POA amount is missing from the session" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(None)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession.copy(newPoaAmount = None)))))
@@ -175,8 +152,8 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
+
             "Something goes wrong in payment on account session Service" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Left(new Exception("Something went wrong"))))
@@ -185,8 +162,8 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
+
             "Failed future returned when retrieving mongo data" in {
-              enable(AdjustPaymentsOnAccount)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.failed(new Error("Error getting mongo session")))
@@ -198,7 +175,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
 
     s"submit(isAgent = $isAgent)" when {
@@ -210,7 +187,6 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
         } else {
           s"redirect to POA adjusted page" when {
             "data to API 1773 successfully sent" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -224,7 +200,6 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           }
           "redirect to API error page" when {
             "data to API 1773 failed to be sent" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -236,25 +211,9 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent).url)
             }
           }
-          "redirect to the home page" when {
-            "FS is disabled" in {
-              disable(AdjustPaymentsOnAccount)
-              setupMockSuccess(mtdRole)
-              mockSingleBISWithCurrentYearAsMigrationYear()
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
-          }
 
           "redirect an error 500" when {
             "Payment On Account Session data is missing" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -263,8 +222,8 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
+
             "an Exception is returned from ClaimToAdjustService" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -276,7 +235,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

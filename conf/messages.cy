@@ -2703,6 +2703,7 @@ optout.cancelled.p3                                 = i newid pa mor aml rydych 
 
 # opt out tax year question page
 
+## opt out multi year
 optout.taxYearQuestion.heading.currentYear.multiYear                   = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r  flwyddyn dreth bresennol ymlaen
 optout.taxYearQuestion.title.currentYear.multiYear                     = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r  flwyddyn dreth bresennol ymlaen
 optout.taxYearQuestion.desc1.currentYear.multiYear                     = Byddai hyn yn golygu na fydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
@@ -2718,7 +2719,76 @@ optout.taxYearQuestion.desc2.nextYear.multiYear                        = Yn ogys
 optout.taxYearQuestion.desc3.nextYear.multiYear                        = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = A ydych am optio allan o’r flwyddyn dreth nesaf ymlaen?
 
+## opt out single year - followed by mandated
+optout.taxYearQuestion.heading.currentYear.singleYearFollowedByMandated       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth unigol
+optout.taxYearQuestion.title.currentYear.singleYearFollowedByMandated         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth unigol
+optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByMandated         = Dim ond blwyddyn dreth {0} i {1} y gallwch optio allan ohoni. Byddai hyn yn golygu na fyddai angen meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am y flwyddyn dreth hon mwyach.
+optout.taxYearQuestion.inset.currentYear.singleYearFollowedByMandated         = Hyd yn oed os byddwch yn parhau, o 6 Ebrill {0} ymlaen, fydd gofyn i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByMandated = A ydych yn dal i fod am optio allan o flwyddyn dreth {0} i {1}?
+
+## opt out single year - followed by mandated with quarterly updates
+optout.taxYearQuestion.heading.currentYear.singleYearFollowedByMandatedWithUpdates       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth unigol
+optout.taxYearQuestion.title.currentYear.singleYearFollowedByMandatedWithUpdates         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth unigol
+optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByMandatedWithUpdates         = Dim ond blwyddyn dreth {0} i {1} y gallwch optio allan ohoni.
+optout.taxYearQuestion.inset.currentYear.singleYearFollowedByMandatedWithUpdates         = Os byddwch yn parhau, o 6 Ebrill {0} ymlaen, fydd gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByMandatedWithUpdates = A ydych yn dal i fod am optio allan o flwyddyn dreth {0} i {1}?
+
+## opt out single year - followed by annual
+optout.taxYearQuestion.heading.currentYear.singleYearFollowedByAnnual       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.title.currentYear.singleYearFollowedByAnnual         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnual         = Byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
+optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnual         = Yn y dyfodol, gallai fod gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnual = A ydych am optio allan o flwyddyn dreth {0} i {1}?
+
+## opt out single year - followed by annual with quarterly updates
+optout.taxYearQuestion.heading.currentYear.singleYearFollowedByAnnualWithUpdates       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.title.currentYear.singleYearFollowedByAnnualWithUpdates         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnualWithUpdates         = Byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
+optout.taxYearQuestion.inset.currentYear.singleYearFollowedByAnnualWithUpdates         = Mae gennych
+optout.taxYearQuestion.insetBold.currentYear.singleYearFollowedByAnnualWithUpdates     = {0} ddiweddariad chwarterol wedi’u cyflwyno
+optout.taxYearQuestion.inset2.currentYear.singleYearFollowedByAnnualWithUpdates        = ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates         = Yn y dyfodol, gallai fod gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = A ydych am optio allan o flwyddyn dreth {0} i {1}?
+
+## opt out of CY+1 - CY Annual
+optout.taxYearQuestion.heading.nextYear.nextYearOptOutAnnual           = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
+optout.taxYearQuestion.title.nextYear.nextYearOptOutAnnual             = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutAnnual             = Yn y dyfodol, gallai fod gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutAnnual     = A ydych am optio allan o flwyddyn dreth {0} i {1}?
+
+## opt out of CY+1 - CY Mandated
+optout.taxYearQuestion.heading.nextYear.nextYearOptOutMandated           = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
+optout.taxYearQuestion.title.nextYear.nextYearOptOutMandated             = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutMandated             = O 6 Ebrill {0} ymlaen, byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+optout.taxYearQuestion.desc2.nextYear.nextYearOptOutMandated             = Yn y dyfodol, gallai fod gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutMandated     = A ydych am optio allan o flwyddyn dreth {0} i {1}?
+
 optout.taxYearQuestion.error                                           = Dewiswch ‘Iawn’ i optio allan ar gyfer blwyddyn dreth {0} i {1}
+
+# sign up tax year question page
+
+signUp.taxYearQuestion.heading.currentYear                             = Cofrestru’n wirfoddol ar gyfer y flwyddyn dreth bresennol
+signUp.taxYearQuestion.title.currentYear                               = Cofrestru’n wirfoddol ar gyfer y flwyddyn dreth bresennol
+signUp.taxYearQuestion.desc1.currentYear                               = Gallai cofrestru ar gyfer y flwyddyn dreth bresennol olygu bod gennych o leiaf un diweddariad chwarterol sy’n hwyr yn barod.
+signUp.taxYearQuestion.desc2.currentYear                               = Y dyddiadau cau ar gyfer diweddariadau chwarterol yw:
+signUp.taxYearQuestion.bullet1.currentYear                             = 7 Awst {0}
+signUp.taxYearQuestion.bullet2.currentYear                             = 7 Tachwedd {0}
+signUp.taxYearQuestion.bullet3.currentYear                             = 7 Chwefror {0}
+signUp.taxYearQuestion.bullet4.currentYear                             = 7 Mai {0}
+signUp.taxYearQuestion.subheading.currentYear                          = Cofrestru’n wirfoddol a diweddariadau chwarterol sy’n hwyr yn barod
+signUp.taxYearQuestion.desc3.currentYear                               = Mae angen gwneud diweddariad bob 3 mis ar gyfer pob un o’ch ffynonellau incwm eiddo a’ch ffynonellau incwm unig fasnachwr. Diweddariad chwarterol yw cyfanswm yr incwm a’r treuliau ar gyfer y flwyddyn dreth hyd yn hyn.
+signUp.taxYearQuestion.desc4.currentYear                               = Os ydych yn cofrestru nawr ar gyfer y flwyddyn dreth bresennol, mae’n fwy tebygol y bydd gennych ddiweddariadau sy’n hwyr yn barod. Yr hwyraf yn y flwyddyn dreth y byddwch yn cofrestru, y mwyaf o wybodaeth y bydd angen i chi ei chyflwyno.
+signUp.taxYearQuestion.inset.currentYear                               = Gan y byddwch yn cofrestru’n wirfoddol, ni chodir unrhyw gosbau am gyflwyno diweddariadau chwarterol yn hwyr.
+signUp.taxYearQuestion.desc5.currentYear                               = Os bydd gofyn i chi ddefnyddio Troi Treth yn y Ddigidol ar gyfer Treth Incwm yn y dyfodol, yna bydd cosbau yn berthnasol. Byddwn yn anfon llythyr atoch pe bai hyn yn digwydd.
+signUp.taxYearQuestion.radioQuestion.currentYear                       = A ydych am gofrestru ar gyfer y flwyddyn dreth bresennol?
+signUp.taxYearQuestion.radioHint.currentYear                           = Gall cofrestru arwain at ddiweddariadau chwarterol sy’n hwyr yn barod.
+signUp.taxYearQuestion.error.currentYear                               = Dewiswch ‘Iawn’ i gofrestru ar gyfer y flwyddyn dreth bresennol
+
+signUp.taxYearQuestion.heading.nextYear                                = Cadarnhau a chofrestru o flwyddyn dreth {0} i {1} ymlaen
+signUp.taxYearQuestion.title.nextYear                                  = Cadarnhau a chofrestru o flwyddyn dreth {0} i {1} ymlaen
+signUp.taxYearQuestion.desc1.nextYear                                  = Os byddwch yn cofrestru ar gyfer y flwyddyn dreth nesaf, o 6 Ebrill {0} ymlaen, bydd angen i chi gyflwyno’ch adroddiadau chwarterol drwy ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+signUp.taxYearQuestion.radioQuestion.nextYear                          = A ydych am gofrestru o flwyddyn dreth {0} i {1} ymlaen?
+signUp.taxYearQuestion.error.nextYear                                  = Dewiswch ‘Iawn’ i gofrestru o flwyddyn dreth {0} i {1} ymlaen
 
 #######################################################################################################################
 ## Opt In ##
