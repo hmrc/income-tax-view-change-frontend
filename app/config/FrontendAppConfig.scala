@@ -172,6 +172,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   // enrolment-store-proxy url
   lazy val enrolmentStoreProxyUrl: String = servicesConfig.baseUrl("enrolment-store-proxy")
 
+  lazy val agentServicesAccountFrontend: String = servicesConfig.baseUrl("agent-services-account-frontend")
+
   //Translation
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),

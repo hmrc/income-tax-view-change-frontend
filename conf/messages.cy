@@ -51,6 +51,12 @@ agent.client_relationship_failure.info                          = Mae angen i’
 agent.client_relationship_failure.info.link                     = eich awdurdodi fel ei asiant
 agent.client_relationship_failure.enter_different_details       = Gwirio cleient arall
 
+# Agent - No Assignment
+agent.no_assignment.heading                                     = Nid yw’ch sefydliad wedi rhoi’r caniatâd i chi gael mynediad at y cleient hwn
+agent.no_assignment.p1                                          = Mae’r cleient hwn wedi awdurdodi’ch sefydliad. Nid yw’ch tîm wedi rhoi’r caniatâd i chi gael mynediad at y cleient hwn.
+agent.no_assignment.p2                                          = Gofynnwch i’ch tîm pwy sy’n rheoli grwpiau mynediad. Fe fydd yn rhywun sydd â mynediad gweinyddol i’ch cyfrif gwasanaethau asiant.
+agent.no_assignment.button                                      = Ewch i gyfrif gwasanaethau asiant
+
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
 agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:

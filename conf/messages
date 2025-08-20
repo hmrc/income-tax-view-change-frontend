@@ -50,6 +50,12 @@ agent.client_relationship_failure.info                          = Your client ne
 agent.client_relationship_failure.info.link                     = authorise you as their agent
 agent.client_relationship_failure.enter_different_details       = Check another client
 
+# Agent - No Assignment
+agent.no_assignment.heading                                     = Your organisation has not given you access to this client
+agent.no_assignment.p1                                          = This client has authorised your organisation. Your team has not given you access to the client’s tax.
+agent.no_assignment.p2                                          = Ask your team who manages access groups. It will be someone with administrative access to your agent services account.
+agent.no_assignment.button                                      = Go to agent services account
+
 ## Agent - UTR Error
 agent.utr_error.heading                                         = You cannot view this client
 agent.utr_error.utr_wrong                                       = This may be because:
