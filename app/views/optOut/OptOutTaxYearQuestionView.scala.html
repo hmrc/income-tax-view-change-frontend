@@ -42,7 +42,7 @@
 @endTaxYear = @{ viewModel.taxYear.taxYear.endYear.toString }
 
 @mainTemplate(
-    pageTitle = getMessage("title"),
+    pageTitle = getMessage("title", startTaxYear, endTaxYear),
     backUrl = Some("#"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial) {
