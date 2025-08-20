@@ -27,7 +27,7 @@
         h1: h1,
         p: p)
 
-@(postAction: Call)(implicit request: Request[_], messages: Messages)
+@(redirectUrl: String)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(pageTitle = messages("agent.no_assignment.heading"), isAgent = true, isErrorPage = true) {
 
@@ -40,5 +40,5 @@
         @Html(messages("agent.no_assignment.p2"))
     }
 
-    @continueButton(Some(messages("agent.no_assignment.button")))
+    @continueButton(Some(messages("agent.no_assignment.button")), href = Some(redirectUrl))
 }

@@ -17,8 +17,10 @@
 package controllers.agent
 
 import auth.authV2.AuthActions
+import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.errorPages.NoAssignmentView
 
@@ -27,11 +29,12 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NoAssignmentController @Inject()(val authActions: AuthActions,
-                                       view: NoAssignmentView)
+                                       view: NoAssignmentView,
+                                       config: FrontendAppConfig)
                                       (implicit mcc: MessagesControllerComponents)
   extends FrontendController(mcc) with I18nSupport {
-
+  val redirectUrl = s"${config.agentServicesAccountFrontend}/agent-services-account/no-assignment"
   def show: Action[AnyContent] = authActions.asAgent(){ implicit user =>
-    Ok(view(routes.EnterClientsUTRController.show()))
+    Ok(view(redirectUrl))
   }
 }
