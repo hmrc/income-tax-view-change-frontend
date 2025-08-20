@@ -42,7 +42,7 @@
     h3: h3,
     link: link,
     govukWarningText : GovukWarningText,
-    chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
+    chargeSummaryAccruingInterestCharge: ChargeSummaryAccruingInterestCharge,
     chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
     chargeSummaryCodingOut: ChargeSummaryCodingOut,
@@ -395,7 +395,7 @@
             viewModel.chargeItem,
             viewModel.paymentBreakdown,
             viewModel.latePaymentInterestCharge,
-            chargeSummaryLpiCharge,
+            chargeSummaryAccruingInterestCharge,
             viewModel.isAgent
         )
     }
@@ -517,7 +517,7 @@
                     <tr>
                         <td class="govuk-table__cell">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort.toNonBreaking}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}")</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency}</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.accruingInterestAmount.get.toCurrency}</td>
                     </tr>
                 }
 

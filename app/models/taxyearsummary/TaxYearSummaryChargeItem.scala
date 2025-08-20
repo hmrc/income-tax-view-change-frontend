@@ -35,13 +35,13 @@ object TaxYearSummaryChargeItem {
       originalAmount = chargeItem.originalAmount,
       outstandingAmount = chargeItem.outstandingAmount,
       interestOutstandingAmount = chargeItem.interestOutstandingAmount,
-      latePaymentInterestAmount = chargeItem.latePaymentInterestAmount,
+      latePaymentInterestAmount = chargeItem.accruingInterestAmount,
       interestFromDate = chargeItem.interestFromDate,
       interestEndDate = chargeItem.interestEndDate,
       interestRate = chargeItem.interestRate,
       lpiWithDunningLock = chargeItem.lpiWithDunningLock,
       amountCodedOut = chargeItem.amountCodedOut,
-      isLatePaymentInterest = chargeItem.isLatePaymentInterest,
+      isAccruingInterest = chargeItem.isAccruingInterest,
       dunningLock = chargeItem.dunningLock,
       chargeReference = chargeItem.chargeReference
     )
@@ -58,13 +58,13 @@ object TaxYearSummaryChargeItem {
       originalAmount = chargeItem.originalAmount,
       outstandingAmount = chargeItem.outstandingAmount,
       interestOutstandingAmount = chargeItem.interestOutstandingAmount,
-      latePaymentInterestAmount = chargeItem.latePaymentInterestAmount,
+      latePaymentInterestAmount = chargeItem.accruingInterestAmount,
       interestFromDate = chargeItem.interestFromDate,
       interestEndDate = chargeItem.interestEndDate,
       interestRate = chargeItem.interestRate,
       lpiWithDunningLock = chargeItem.lpiWithDunningLock,
       amountCodedOut = chargeItem.amountCodedOut,
-      isLatePaymentInterest = isLatePaymentInterest,
+      isAccruingInterest = isLatePaymentInterest,
       dunningLock = chargeItem.dunningLock,
       chargeReference = chargeItem.chargeReference
     )
@@ -88,7 +88,7 @@ case class TaxYearSummaryChargeItem(
                                      interestRate: Option[BigDecimal],
                                      lpiWithDunningLock: Option[BigDecimal],
                                      amountCodedOut: Option[BigDecimal],
-                                     isLatePaymentInterest: Boolean = false,
+                                     isAccruingInterest: Boolean = false,
                                      dunningLock: Boolean,
                                      chargeReference: Option[String]) extends TransactionItem {
 

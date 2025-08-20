@@ -26,7 +26,7 @@
     <dt class="govuk-summary-list__key">@messages("chargeSummary.paymentBreakdown.lpiWithDunning.text")</dt>
     <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
     @p(){
-        @chargeItem.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+        @chargeItem.accruingInterestAmount.getOrElse(throw MissingFieldException("Accruing Interest Amount")).toCurrency
         <span class="govuk-body-s half-light govuk-!-margin-bottom-0" style="display:block">
         @messages("chargeSummary.paymentBreakdown.dunningLocks.underReview")
         </span>

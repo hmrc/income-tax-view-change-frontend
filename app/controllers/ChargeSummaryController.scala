@@ -258,7 +258,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
     val values = List(
       (viewSection1, true, "Original Amount"),
       (viewSection2, documentDetailWithDueDate.documentDetail.interestEndDate.isDefined, "Interest EndDate"),
-      (viewSection2, documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined ||
+      (viewSection2, documentDetailWithDueDate.documentDetail.accruingInterestAmount.isDefined ||
         documentDetailWithDueDate.documentDetail.interestOutstandingAmount.isDefined, "Interest Amount"),
       (viewSection3, true, "Original Amount")
     )

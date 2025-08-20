@@ -163,7 +163,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       dueDate = Some(LocalDate.of(2019, 8, 15)), isLatePaymentInterest = true)
   )
 
-  val testChargesWithoutLpiList: List[TaxYearSummaryChargeItem] = testChargesList.map(_.copy(isLatePaymentInterest = false))
+  val testChargesWithoutLpiList: List[TaxYearSummaryChargeItem] = testChargesList.map(_.copy(isAccruingInterest = false))
 
   val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType = PoaOneDebit, dueDate = Some(LocalDate.of(2021, 7, 31)), latePaymentInterestAmount = None),
