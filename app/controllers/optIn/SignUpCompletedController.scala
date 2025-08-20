@@ -58,7 +58,7 @@ extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Repo
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       withSignUpRFChecks {
         withRecover(isAgent) {
-          optInService.saveIntent(TaxYear(2026, 2027))
+          //optInService.saveIntent(TaxYear(2025, 2026)) //TODO: Remove this line when the journey is linked up, uncomment for testing purposes
           for {
             proposition <- optInService.fetchOptInProposition()
             intent <- optInService.fetchSavedChosenTaxYear()
@@ -66,13 +66,10 @@ extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Repo
             intent.map { optInTaxYear =>
               val model = SignUpCompletedViewModel(
                 isAgent = isAgent,
-                optInTaxYear = optInTaxYear,
+                signUpTaxYear = optInTaxYear,
                 isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
                 isCurrentYearAnnual = proposition.currentTaxYear.status == ITSAStatus.Annual,
-                isNextYearMandated = proposition.nextTaxYear.status == ITSAStatus.Mandated,
-                compatibleSoftwareLink = appConfig.compatibleSoftwareLink,
-                criteriaForMtdLink = appConfig.saWhoNeedsToSignUpUrl,
-                fileYourReturnLink = appConfig.selfAssessmentTaxReturn
+                isNextYearMandated = proposition.nextTaxYear.status == ITSAStatus.Mandated
               )
 
               Ok(view(model))

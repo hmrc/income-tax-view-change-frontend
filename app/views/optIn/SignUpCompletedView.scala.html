@@ -39,7 +39,6 @@
     messages(s"signUp.completedSignUp.${viewModel.messageKey}.$key", args: _*)
 }
 
-
 @mainTemplate(
     pageTitle = getMessage("title"),
     isAgent = viewModel.isAgent,
@@ -53,7 +52,7 @@
     )
 
     @if(viewModel.isCurrentYear) {
-        @govukInsetText(InsetText(content = Text(getMessage("inset", viewModel.startYear, viewModel.endYear))))
+        @govukInsetText(InsetText(id = Some("overdue-updates-inset"), content = Text(getMessage("inset", viewModel.startYear, viewModel.endYear))))
     }
 
     @yourRevisedDeadlines()
@@ -67,24 +66,24 @@
 }
 
 @yourRevisedDeadlines() = {
-    @h2(msg = getMessage("yourRevisedDeadlines"))
+    @h2(msg = getMessage("yourRevisedDeadlines"), optId = Some("your-revised-deadlines-heading"))
     @if(!viewModel.isCurrentYear) {
         @govukInsetText(
-            InsetText(content = Text(getMessage("yourRevisedDeadlines.inset")))
+            InsetText(content = Text(getMessage("yourRevisedDeadlines.inset")), id = Some("your-revised-deadlines-inset"))
         )
     } else {
-        @p() {
+        @p(id = Some("your-revised-deadlines-desc")) {
             @getMessage("yourRevisedDeadlines.text")
         }
     }
 
-    @p() {
+    @p(id = Some("your-revised-deadlines-desc-2")) {
         @getMessage("yourRevisedDeadlines.desc1.text1")
         @link(viewModel.updatesAndDeadlinesLink, messageKey = getMessage("yourRevisedDeadlines.desc1.link"), outerMessage = getMessage("yourRevisedDeadlines.desc1.comma"))
         @getMessage("yourRevisedDeadlines.desc1.text2")
     }
 
-    @p() {
+    @p(id = Some("your-revised-deadlines-desc-3")) {
         @getMessage("yourRevisedDeadlines.desc2.text1")
         @link(viewModel.reportingObligationsLink, messageKey = getMessage("yourRevisedDeadlines.desc2.link"))
         @getMessage("yourRevisedDeadlines.desc2.text2")
@@ -92,28 +91,28 @@
 }
 
 @submitUpdates() = {
-    @h2(msg = getMessage("submitUpdates"))
-    @p(id = Some("optin-completed-view-p3")) {
+    @h2(msg = getMessage("submitUpdates"), optId = Some("submit-updates-heading"))
+    @p(id = Some("submit-updates-desc")) {
         @getMessage("submitUpdates.desc1.text1")
-        @link(viewModel.compatibleSoftwareLink, messageKey = getMessage("submitUpdates.desc1.link"), target=Some("_blank"), outerMessage = getMessage("submitUpdates.desc1.text3"))
+        @link(appConfig.compatibleSoftwareLink, messageKey = getMessage("submitUpdates.desc1.link"), target=Some("_blank"), outerMessage = getMessage("submitUpdates.desc1.text3"))
         @getMessage("submitUpdates.desc1.text2")
     }
 
     @if(!viewModel.isCurrentYear && viewModel.isCurrentYearAnnual) {
-        @p() {
+        @p(id = Some("submit-updates-desc-2")) {
             @getMessage("submitUpdates.desc2.text1")
-            @link(viewModel.fileYourReturnLink, messageKey = getMessage("submitUpdates.desc2.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
+            @link(appConfig.selfAssessmentTaxReturn, messageKey = getMessage("submitUpdates.desc2.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
         }
     }
 }
 
 @yourReportingObligationsNyMandated() = {
-    @h2(msg = messages("signUp.completedSignUp.nyMandated.yourReportingObligations"))
-    @p() { @messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc1", viewModel.startYear, viewModel.endYear) }
+    @h2(msg = messages("signUp.completedSignUp.nyMandated.yourReportingObligations"), optId = Some("your-reporting-obligations-ny-mandated-heading"))
+    @p(id = Some("your-reporting-obligations-ny-mandated-desc")) { @messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc1", viewModel.startYear, viewModel.endYear) }
     @govukInsetText(
-        InsetText(content = Text(messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc2", viewModel.endYear)))
+        InsetText(content = Text(messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc2", viewModel.endYear)), id = Some("your-reporting-obligations-ny-mandated-inset"))
     )
-    @p() { @messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc3") }
+    @p(id = Some("your-reporting-obligations-ny-mandated-desc-2")) { @messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc3") }
     @bulletList(
         itemMsgKeys =
             Seq(
@@ -121,15 +120,15 @@
                 "signUp.completedSignUp.nyMandated.yourReportingObligations.bullet2"
             )
     )
-    @p() {
+    @p(id = Some("your-reporting-obligations-ny-mandated-desc-3")) {
         @messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.text1")
-        @link(viewModel.criteriaForMtdLink, messageKey = messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
+        @link(appConfig.saWhoNeedsToSignUpUrl, messageKey = messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
     }
 }
 
 @yourReportingObligations() = {
-    @h2(msg = getMessage("yourReportingObligations"))
-    @p() { @getMessage("yourReportingObligations.desc1", viewModel.startYear, viewModel.endYear) }
+    @h2(msg = getMessage("yourReportingObligations"), optId = Some("your-reporting-obligations-heading"))
+    @p(id = Some("your-reporting-obligations-desc")) { @getMessage("yourReportingObligations.desc1", viewModel.startYear, viewModel.endYear) }
     @bulletList(
         itemMsgKeys =
             Seq(
@@ -138,11 +137,11 @@
             )
     )
     @govukInsetText(
-        InsetText(content = Text(getMessage("yourReportingObligations.desc2", viewModel.startYear, viewModel.endYear, viewModel.nextYear, appConfig.preThreshold2027)))
+        InsetText(content = Text(getMessage("yourReportingObligations.desc2", viewModel.startYear, viewModel.endYear, viewModel.nextYear, appConfig.preThreshold2027)), id = Some("your-reporting-obligations-inset"))
     )
-    @p() { @getMessage("yourReportingObligations.desc3") }
-    @p() {
+    @p(id = Some("your-reporting-obligations-desc-2")) { @getMessage("yourReportingObligations.desc3") }
+    @p(id = Some("your-reporting-obligations-desc-3")) {
         @getMessage("yourReportingObligations.desc4.text1")
-        @link(viewModel.criteriaForMtdLink, messageKey = getMessage("yourReportingObligations.desc4.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
+        @link(appConfig.saWhoNeedsToSignUpUrl, messageKey = getMessage("yourReportingObligations.desc4.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
     }
 }

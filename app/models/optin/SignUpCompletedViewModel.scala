@@ -19,19 +19,16 @@ package models.optin
 import models.incomeSourceDetails.TaxYear
 
 case class SignUpCompletedViewModel(isAgent: Boolean,
-                                    optInTaxYear: TaxYear,
+                                    signUpTaxYear: TaxYear,
                                     isCurrentYear: Boolean,
                                     isCurrentYearAnnual: Boolean,
-                                    isNextYearMandated: Boolean,
-                                    compatibleSoftwareLink: String,
-                                    criteriaForMtdLink: String,
-                                    fileYourReturnLink: String) {
+                                    isNextYearMandated: Boolean) {
 
   val messageKey = if (isCurrentYear) "cy" else "ny"
 
-  val startYear: String = optInTaxYear.startYear.toString
-  val endYear: String = optInTaxYear.endYear.toString
-  val nextYear: String = optInTaxYear.nextYear.endYear.toString
+  val startYear: String = signUpTaxYear.startYear.toString
+  val endYear: String = signUpTaxYear.endYear.toString
+  val nextYear: String = signUpTaxYear.nextYear.endYear.toString
 
   val updatesAndDeadlinesLink: String = {
     if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
