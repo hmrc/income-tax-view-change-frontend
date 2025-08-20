@@ -2690,10 +2690,9 @@ optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error = Select the tax yea
 
 # opt out choose tax year
 
-
-optout.chooseOptOutTaxYear.quarterly-updates.a  = You have
-optout.chooseOptOutTaxYear.quarterly-updates.b  = {0} quarterly updates submitted
-optout.chooseOptOutTaxYear.quarterly-updates.c  = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.chooseOptOutTaxYear.quarterly-updates.a       = You have
+optout.chooseOptOutTaxYear.quarterly-updates.b       = {0} quarterly updates submitted
+optout.chooseOptOutTaxYear.quarterly-updates.c       = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 
 optout.chooseOptOutTaxYear.heading                   = Opting out of quarterly reporting
 optout.chooseOptOutTaxYear.desc                      = You can opt out from any of the tax years available and report annually from that year onwards. This means you’ll then report annually for all of your current businesses and any that you add in future.
