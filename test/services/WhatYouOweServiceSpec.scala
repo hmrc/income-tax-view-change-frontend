@@ -47,6 +47,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
   }
 
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+  val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
+  val mockClaimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
   val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
   val mockOutstandingChargesConnector: OutstandingChargesConnector = mock(classOf[OutstandingChargesConnector])
   val currentYearAsInt: Int = 2022
@@ -58,7 +60,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     override def getCurrentTaxYearEnd: Int = currentYearAsInt
   }
 
-  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockFinancialDetailsConnector, mockOutstandingChargesConnector, mockDateService)
+  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockWhatYouOweService,
+  mockClaimToAdjustService, mockFinancialDetailsConnector, mockOutstandingChargesConnector, mockDateService)
 
   "The WhatYouOweService.getWhatYouOweChargesList method" when {
     "when both financial details and outstanding charges return success response and valid data of due more than 30 days" should {
