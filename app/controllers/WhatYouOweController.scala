@@ -60,58 +60,19 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
-    for {
-      whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
-        isEnabled(PenaltiesAndAppeals),
-        mainChargeIsNotPaidFilter)
-      ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
-      whatYouOweViewModel <- whatYouOweService.createWhatYouOweViewModel(
-        whatYouOweChargesList = whatYouOweChargesList,
-        backUrl = backUrl,
-        origin = origin,
-        ctaViewModel = ctaViewModel,
-        lpp2Url = getLPP2Link(whatYouOweChargesList.chargesList, isAgent),
-        creditAndRefundUrl = getCreditAndRefundUrl
-      )
-    } yield whatYouOweViewModel match {
-      case None =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" + "Failed to create View Model")
-        itvcErrorHandler.showInternalServerError()
-      case Some(model) =>
-        Ok(whatYouOwe(
-          viewModel = model,
-          origin = origin
-        ))
+    whatYouOweService.createWhatYouOweViewModel(backUrl, origin, getCreditAndRefundUrl) map {
+      case Some(viewModel) =>
+        Ok(whatYouOwe(viewModel, origin))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
+      case None =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" + "Failed to create WhatYouOweViewModel")
+        itvcErrorHandler.showInternalServerError()
     }
   } recover {
     case ex: Exception =>
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error received while getting WhatYouOwe page details: ${ex.getMessage} - ${ex.getCause}")
       itvcErrorHandler.showInternalServerError()
-  }
-
-  private def getLPP2Link(chargeItems: List[ChargeItem], isAgent: Boolean): Option[String] = {
-    val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
-    LPP2 match {
-      case Some(charge) => charge.chargeReference match {
-        case Some(value) if isAgent => Some(appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent(value))
-        case Some(value) => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
-        case None => None
-      }
-      case None => Some("")
-    }
-  }
-
-  private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
-    if (isEnabled(AdjustPaymentsOnAccount)) {
-      claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
-        case Right(value) => Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))
-        case Left(ex: Throwable) => Future.failed(ex)
-      }
-    } else {
-      Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
-    }
   }
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
@@ -131,10 +92,6 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         itvcErrorHandler = itvcErrorHandlerAgent,
         isAgent = true
       )
-  }
-
-  private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
-    case x if x.remainingToPayByChargeOrInterest > 0 => x
   }
 
   private def getCreditAndRefundUrl(implicit user: MtdItUser[_]) = (user.isAgent() match {

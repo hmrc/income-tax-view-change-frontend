@@ -29,6 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import models.admin._
 import models.financialDetails.{ChargeItem, WhatYouOweViewModel}
 import controllers.routes._
+import models.core.Nino
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 
@@ -38,6 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
+                                  val whatYouOweService: WhatYouOweService,
+                                  val claimToAdjustService: ClaimToAdjustService,
                                   val selfServeTimeToPayService: SelfServeTimeToPayService,
                                   val financialDetailsConnector: FinancialDetailsConnector,
                                   val outstandingChargesConnector: OutstandingChargesConnector,
@@ -138,21 +141,17 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .sortBy(_.dueDate.get)
   }
 
-
-
-  def createWhatYouOweViewModel(
-                                whatYouOweChargesList: WhatYouOweChargesList,
-                                backUrl: String,
+  def createWhatYouOweViewModel(backUrl: String,
                                 origin: Option[String],
-                                ctaViewModel: WYOClaimToAdjustViewModel,
-                                lpp2Url: Option[String],
-                                creditAndRefundUrl: String
-                               )(implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
-
-    val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
-    val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
+                                creditAndRefundUrl: String)
+                               (implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
     for {
-      startUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(isEnabled(YourSelfAssessmentCharges))
+      whatYouOweChargesList        <- whatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
+      ctaViewModel                 <- getClaimToAdjustViewModel(Nino(user.nino))
+      lpp2Url                       = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent())
+      hasOverdueCharges             = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
+      hasAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
+      startUrl                     <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(isEnabled(YourSelfAssessmentCharges))
     } yield (startUrl, lpp2Url) match {
       case (Left(ex), _) =>
         Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
@@ -163,7 +162,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case (Right(startUrl), Some(lpp2Url)) =>
         Some(WhatYouOweViewModel(
           currentDate = dateService.getCurrentDate,
-          hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
+          hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestRARCharges,
           whatYouOweChargesList = whatYouOweChargesList,
           hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
           currentTaxYear = dateService.getCurrentTaxYearEnd,
@@ -187,6 +186,35 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           selfServeTimeToPayEnabled  = isEnabled(SelfServeTimeToPayR17)(user),
           selfServeTimeToPayStartUrl = startUrl
         ))
+    }
+  }
+
+  private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
+    case x if x.remainingToPayByChargeOrInterest > 0 => x
+  }
+
+  private def getSecondLatePaymentPenaltyLink(chargeItems: List[ChargeItem], isAgent: Boolean): Option[String] = {
+
+    val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
+
+    LPP2 match {
+      case Some(charge) => charge.chargeReference match {
+        case Some(value) if isAgent => Some(appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent(value))
+        case Some(value)            => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
+        case None                   => None
+      }
+      case None => Some("")
+    }
+  }
+
+  private def getClaimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
+    if (isEnabled(AdjustPaymentsOnAccount)) {
+      claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
+        case Right(value) => Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))
+        case Left(ex: Throwable) => Future.failed(ex)
+      }
+    } else {
+      Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
     }
   }
 }
