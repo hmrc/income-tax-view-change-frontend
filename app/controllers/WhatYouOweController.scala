@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config._
 import config.featureswitch._
+import controllers.routes.{CreditAndRefundController, NotMigratedUserController}
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
@@ -63,37 +64,30 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
         mainChargeIsNotPaidFilter)
-      selfServeTimeToPayUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(isEnabled(YourSelfAssessmentCharges))
-      ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
-    } yield {
+      ctaViewModel <- claimToAdjustViewModel(Nino(user.nino)),
+      whatYouOweViewModel <- whatYouOweService.createWhatYouOweViewModel(
+        whatYouOweChargesList = whatYouOweChargesList,
+        backUrl = backUrl,
+        origin = origin,
+        ctaViewModel = ctaViewModel,
+        lpp2Url = getLPP2Link(whatYouOweChargesList.chargesList, isAgent),
+        creditAndRefundUrl = getCreditAndRefundUrl
+      )
+    } yield (whatYouOweViewModel)
+
+      /*{
 
       auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
-
-      (selfServeTimeToPayUrl, getLPP2Link(whatYouOweChargesList.chargesList, isAgent)) match {
-        case (Left(ex), _) =>
-          Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
+      whatYouOweViewModel match {
+        case None =>
           itvcErrorHandler.showInternalServerError()
-        case (Right(startUrl), Some(lpp2Url)) =>
-
-          val wyoViewModel: WhatYouOweViewModel = whatYouOweService.createWhatYouOweViewModel(
-            currentDate = dateService.getCurrentDate,
-            whatYouOweChargesList = whatYouOweChargesList,
-            backUrl = backUrl,
-            user = user,
-            origin = origin,
-            ctaViewModel = ctaViewModel,
-            lpp2Url = lpp2Url,
-            startUrl = startUrl
-          )
+        case Some(model) =>
           Ok(whatYouOwe(
-            viewModel = wyoViewModel,
+            viewModel = model,
             origin = origin)(user, user, messages, dateService))
             .addingToSession(gatewayPage -> WhatYouOwePage.name)
-        case (_, None) =>
-          Logger("application").error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-          itvcErrorHandler.showInternalServerError()
-      }
-    }
+      }*/
+
   } recover {
     case ex: Exception =>
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
@@ -146,4 +140,11 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
     case x if x.remainingToPayByChargeOrInterest > 0 => x
   }
+
+  private def getCreditAndRefundUrl(implicit user: MtdItUser[_]) = (user.isAgent() match {
+    case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
+    case true                                                  => NotMigratedUserController.showAgent()
+    case false if user.incomeSources.yearOfMigration.isDefined => CreditAndRefundController.show()
+    case false                                                 => NotMigratedUserController.show()
+  }).url
 }

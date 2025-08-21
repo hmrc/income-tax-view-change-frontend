@@ -30,6 +30,7 @@ import models.admin._
 import models.financialDetails.{ChargeItem, WhatYouOweViewModel}
 import controllers.routes._
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+import play.api.Logger
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -37,6 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
+                                  val selfServeTimeToPayService: SelfServeTimeToPayService,
                                   val financialDetailsConnector: FinancialDetailsConnector,
                                   val outstandingChargesConnector: OutstandingChargesConnector,
                                   implicit val dateService: DateServiceInterface)
@@ -138,49 +140,53 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
 
 
-  def createWhatYouOweViewModel(currentDate: LocalDate,
+  def createWhatYouOweViewModel(
                                 whatYouOweChargesList: WhatYouOweChargesList,
                                 backUrl: String,
-                                user: MtdItUser[_],
                                 origin: Option[String],
                                 ctaViewModel: WYOClaimToAdjustViewModel,
-                                lpp2Url: String,
-                                startUrl: String
-                               ): WhatYouOweViewModel = {
+                                lpp2Url: Option[String],
+                                creditAndRefundUrl: String
+                               )(implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[WhatYouOweViewModel] = {
 
     val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
     val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-
-    WhatYouOweViewModel(
-      currentDate = currentDate,
-      hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
-      whatYouOweChargesList = whatYouOweChargesList,
-      hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
-      currentTaxYear = dateService.getCurrentTaxYearEnd,
-      backUrl = backUrl,
-      utr = user.saUtr,
-      dunningLock = whatYouOweChargesList.hasDunningLock,
-      creditAndRefundUrl = (user.isAgent() match {
-        case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
-        case true                                                  => NotMigratedUserController.showAgent()
-        case false if user.incomeSources.yearOfMigration.isDefined => CreditAndRefundController.show()
-        case false                                                 => NotMigratedUserController.show()
-      }).url,
-      creditAndRefundEnabled = isEnabled(CreditsRefundsRepay)(user),
-      taxYearSummaryUrl = {
-        if (user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
-        else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
-      },
-      claimToAdjustViewModel = ctaViewModel,
-      lpp2Url = lpp2Url,
-      adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-      chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
-        if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
-        else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
-      },
-      paymentHandOffUrl = PaymentController.paymentHandoff(_, origin).url,
-      selfServeTimeToPayEnabled  = isEnabled(SelfServeTimeToPayR17)(user),
-      selfServeTimeToPayStartUrl = startUrl
-    )
+    for {
+      startUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(isEnabled(YourSelfAssessmentCharges))
+    } yield (startUrl, lpp2Url) match {
+      case (Left(ex), _) =>
+        Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
+        None
+      case (_, None) =>
+        Logger("application").error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+        None
+      case (Right(startUrl), Some(lpp2Url)) =>
+        Some(WhatYouOweViewModel(
+          currentDate = dateService.getCurrentDate,
+          hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestReviewAndReconcileCharges,
+          whatYouOweChargesList = whatYouOweChargesList,
+          hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
+          currentTaxYear = dateService.getCurrentTaxYearEnd,
+          backUrl = backUrl,
+          utr = user.saUtr,
+          dunningLock = whatYouOweChargesList.hasDunningLock,
+          creditAndRefundUrl = creditAndRefundUrl,
+          creditAndRefundEnabled = isEnabled(CreditsRefundsRepay)(user),
+          taxYearSummaryUrl = {
+            if (user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
+            else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
+          },
+          claimToAdjustViewModel = ctaViewModel,
+          lpp2Url = lpp2Url,
+          adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
+          chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
+            if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
+            else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
+          },
+          paymentHandOffUrl = PaymentController.paymentHandoff(_, origin).url,
+          selfServeTimeToPayEnabled  = isEnabled(SelfServeTimeToPayR17)(user),
+          selfServeTimeToPayStartUrl = startUrl
+        ))
+    }
   }
 }
