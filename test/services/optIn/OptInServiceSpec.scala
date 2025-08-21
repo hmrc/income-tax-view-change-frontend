@@ -74,6 +74,8 @@ class OptInServiceSpec extends UnitSpec
 
     reset(hc)
     reset(repository)
+    reset(optOutConnector)
+    reset(mockAuditingService)
 
     when(hc.sessionId).thenReturn(Some(SessionId("123")))
     when(repository.set(any())).thenReturn(Future.successful(true))
