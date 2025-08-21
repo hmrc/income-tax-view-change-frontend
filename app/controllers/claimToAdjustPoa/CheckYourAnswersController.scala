@@ -24,10 +24,11 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
 import models.core.CheckMode
+import models.nrs.RawPayload
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa
@@ -41,6 +42,7 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
                                            val claimToAdjustService: ClaimToAdjustService,
                                            val poaSessionService: PaymentOnAccountSessionService,
                                            val ctaCalculationService: ClaimToAdjustPoaCalculationService,
+                                           val nrsService: NrsService,
                                            val checkYourAnswers: CheckYourAnswers,
                                            val auditingService: AuditingService)
                                           (implicit val appConfig: FrontendAppConfig,
@@ -96,5 +98,27 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
         EitherT.rightT(logAndRedirect(s"New Payment on Account missing from session"))
     }
   }
+  private def withNrsSubmission(session: PoaAmendmentData)
+                               (block: (SelectYourReason, BigDecimal) => EitherT[Future, Throwable, Result])
+                               (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
 
+    val rawPayload: RawPayload = RawPayload(parse.byteString(user.body), user.charset)
+
+
+//    val rawPayload = NrsSubmission(
+//      rawPayload = ???,
+//      metadata = ???
+//    )
+//
+//    nrsService.submit(NrsSubmission(
+//      nrsSubmission,
+//      NrsMetadata(
+//        userSubmissionTimestamp = ???,
+//        submissionId = ???,
+//        identityData = ???,
+//        request = ???,
+//        checkSum = ???
+//      )
+//    ))
+  }
 }

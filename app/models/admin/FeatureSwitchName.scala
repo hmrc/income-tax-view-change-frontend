@@ -111,7 +111,8 @@ object FeatureSwitchName {
       PenaltiesBackendEnabled,
       YourSelfAssessmentCharges,
       OptInOptOutContentUpdateR17,
-      SelfServeTimeToPayR17
+      SelfServeTimeToPayR17,
+      SubmitClaimToAdjustToNrs
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -200,4 +201,9 @@ case object OptInOptOutContentUpdateR17 extends FeatureSwitchName {
 case object SelfServeTimeToPayR17 extends FeatureSwitchName {
   override val name: String = "self-serve-time-to-pay-r17"
   override val toString: String = "Self Serve Time To Pay R17"
+}
+
+case object SubmitClaimToAdjustToNrs extends FeatureSwitchName {
+  override val name: String = "submit-claim-to-adjust-to-nrs"
+  override val toString: String = "Submit Claim to Adjust to NRS"
 }

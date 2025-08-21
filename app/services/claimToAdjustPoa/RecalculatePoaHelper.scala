@@ -21,17 +21,21 @@ import audit.models.AdjustPaymentsOnAccountAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import controllers.routes.HomeController
+import models.admin.SubmitClaimToAdjustToNrs
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.Nino
+import models.nrs.SearchKeys
 import play.api.Logger
 import play.api.i18n.{Lang, LangImplicits, Messages}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ErrorRecovery
 
+import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Right
 
 trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with ErrorRecovery {
   private def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
@@ -45,7 +49,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
   }
 
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
-                                    otherData: PoaAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService)
+                                    otherData: PoaAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService, nrsService: NrsService)
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     implicit val lang: Lang = Lang("en")
     otherData match {
@@ -79,15 +83,26 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
   }
 
   protected def handleSubmitPoaData(claimToAdjustService: ClaimToAdjustService, ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                    poaSessionService: PaymentOnAccountSessionService, auditingService: AuditingService)
+                                    poaSessionService: PaymentOnAccountSessionService, nrsService: NrsService, auditingService: AuditingService)
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
       {
         for {
           poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino))
         } yield poaMaybe match {
+          case Right(Some(poa)) if isEnabled(SubmitClaimToAdjustToNrs) =>
+
+            val now = Instant.now()
+
+            val searchKeys = SearchKeys(
+              credId = user.credId,
+              saUtr = user.saUtr,
+              nino = Some(user.nino)
+            )
+
+
           case Right(Some(poa)) =>
             dataFromSession(poaSessionService).flatMap(otherData =>
-              handlePoaAndOtherData(poa, otherData, Nino(user.nino), ctaCalculationService, auditingService)
+              handlePoaAndOtherData(poa, otherData, Nino(user.nino), ctaCalculationService, auditingService, nrsService)
             )
           case Right(None) =>
             Future.successful(logAndRedirect("Failed to create PaymentOnAccount model"))
