@@ -223,7 +223,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
 
-  def financialDetailsOverdueWithLpiDunningLock(latePaymentInterest: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
+  def financialDetailsOverdueWithLpiDunningLock(accruingInterestAmount: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     mainTransaction = List(Some("4920"), Some("4930")),
@@ -231,11 +231,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
-    latePaymentInterestAmount = latePaymentInterest,
+    accruingInterestAmount = accruingInterestAmount,
     lpiWithDunningLock = lpiWithDunningLock
   )
 
-  def financialDetailsOverdueWithLpiDunningLockZero(latePaymentInterest: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
+  def financialDetailsOverdueWithLpiDunningLockZero(accruingInterestAmount: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     mainTransaction = List(Some("4920"), Some("4930")),
@@ -243,50 +243,50 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
-    latePaymentInterestAmount = latePaymentInterest,
+    accruingInterestAmount = accruingInterestAmount,
     lpiWithDunningLock = lpiWithDunningLock
   )
 
-  def whatYouOweDataWithOverdueInterestData(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithOverdueInterestData(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueInterestDataCi(latePaymentInterest),
+    chargesList = financialDetailsOverdueInterestDataCi(accruingInterestAmount),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
-  def whatYouOweDataWithOverdueLPI(latePaymentInterest: List[Option[BigDecimal]],
-                                   dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithOverdueAccruedInterest(accruingInterestAmount: List[Option[BigDecimal]],
+                                               dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock ),
+    chargesList = financialDetailsOverdueWithLpi(accruingInterestAmount, dunningLock),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
-  def whatYouOweDataWithOverdueLPIDunningLock(latePaymentInterest: Option[BigDecimal],
+  def whatYouOweDataWithOverdueLpiDunningLock(accruingInterestAmount: Option[BigDecimal],
                                               lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpi(
-      List(latePaymentInterest, latePaymentInterest),
+      List(accruingInterestAmount, accruingInterestAmount),
       List(None, None),
       List(lpiWithDunningLock, lpiWithDunningLock)),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
-  def whatYouOweDataWithOverdueLPIDunningLockZero(latePaymentInterest: Option[BigDecimal],
+  def whatYouOweDataWithOverdueLpiDunningLockZero(accruingInterestAmount: Option[BigDecimal],
                                                   lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpiDunningLockZeroCi(TaxYear.forYearEnd(fixedDate.getYear), latePaymentInterest, false, lpiWithDunningLock),
+    chargesList = financialDetailsOverdueWithLpiDunningLockZeroCi(TaxYear.forYearEnd(fixedDate.getYear), accruingInterestAmount, false, lpiWithDunningLock),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
-  def whatYouOweDataWithOverdueMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithOverdueMixedData2(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks)(1))
+    chargesList = List(financialDetailsOverdueWithLpi(accruingInterestAmount, noDunningLocks)(1))
       ++ List(financialDetailsWithMixedData3Ci.head),
 
   )
 
-  def whatYouOweDataTestActiveWithMixedData2(latePaymentInterest: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataTestActiveWithMixedData2(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = List(financialDetailsOverdueWithLpi(latePaymentInterest, noDunningLocks)(1))
+    chargesList = List(financialDetailsOverdueWithLpi(accruingInterestAmount, noDunningLocks)(1))
       ++ List(financialDetailsWithMixedData3Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
@@ -300,14 +300,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None)
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None)
 
   val codedOutDocumentDetail: DocumentDetail = DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
     documentText = Some(CODING_OUT_CLASS2_NICS), outstandingAmount = 12.34,
     originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
     amountCodedOut = Some(43.21))
 
   val codedOutDocumentDetailFullyCollected: DocumentDetail = DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
@@ -315,7 +315,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
     amountCodedOut = Some(0))
 
   val codedOutDocumentDetailPayeSA: DocumentDetail = DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT02", documentDescription = Some("TRM New Charge"),
@@ -323,7 +323,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
     interestOutstandingAmount = None, interestRate = None,
     latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-    interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+    interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
     amountCodedOut = Some(43.21))
 
   val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusDays(15).toString, 0.00)
@@ -761,7 +761,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(Some(34.56), None))) {
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
             overdueTableHeader.select("th").get(1).text() shouldBe chargeType
@@ -780,7 +780,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               fixedDate.getYear).url
           }
 
-        "should have payment processing bullets when there is POA1 charge and lpi on poa 1 of 2" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(Some(34.56), None))) {
+        "should have payment processing bullets when there is POA1 charge and lpi on poa 1 of 2" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(Some(34.56), None))) {
 
           pageDocument.getElementById("payments-made").text shouldBe paymentsMade
           val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
@@ -792,7 +792,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLock(Some(34.56), Some(100.0))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLpiDunningLock(Some(34.56), Some(100.0))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -821,7 +821,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           }
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLockZero(Some(34.56), Some(0))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLpiDunningLockZero(Some(34.56), Some(0))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -849,7 +849,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           }
 
-        "have overdue payments header, bullet points and data with POA1 charge type and No Late payment interest" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
+        "have overdue payments header, bullet points and data with POA1 charge type and No Late payment interest" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None))) {
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(0)
           overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -877,7 +877,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
-        "have overdue payments header, bullet points and data with POA1 charge type" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
+        "have overdue payments header, bullet points and data with POA1 charge type" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None))) {
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(0)
           overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -906,7 +906,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
-        "have overdue payments with POA2 charge type with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueLPI(List(None, None))) {
+        "have overdue payments with POA2 charge type with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None))) {
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
           overduePaymentsTableRow2.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
           overduePaymentsTableRow2.select("td").get(1).text() shouldBe overdueTag + " " + poa2Text + s" 2"
@@ -975,7 +975,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         s"display $paymentUnderReview when there is a dunningLock against a single charge" in new TestSetup(
-          charges = whatYouOweDataWithOverdueLPI(List(None, None), oneDunningLock)) {
+          charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None), oneDunningLock)) {
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
 
@@ -984,7 +984,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new TestSetup(
-          charges = whatYouOweDataWithOverdueLPI(List(None, None), twoDunningLocks)) {
+          charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None), twoDunningLocks)) {
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
 
@@ -1232,7 +1232,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "At crystallization, the user has the coding out requested amount fully collected" should {
+    "At crystallisation, the user has the coding out requested amount fully collected" should {
       "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected, taxYear = whatYouOweDataWithCodingOutFullyCollected.codedOutDetails.get.codingTaxYear.endYear) {
         pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNoticeFullyCollected
         pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe

@@ -67,7 +67,7 @@ object FinancialDetailsTestConstants {
         "latePaymentInterestId" -> "latePaymentInterestId1",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -85,7 +85,7 @@ object FinancialDetailsTestConstants {
         "latePaymentInterestId" -> "latePaymentInterestId2",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -178,7 +178,7 @@ object FinancialDetailsTestConstants {
         "latePaymentInterestId" -> "latePaymentInterestId1",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -196,7 +196,7 @@ object FinancialDetailsTestConstants {
         "latePaymentInterestId" -> "latePaymentInterestId2",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -282,7 +282,7 @@ object FinancialDetailsTestConstants {
         "interestRate" -> 100,
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -298,7 +298,7 @@ object FinancialDetailsTestConstants {
         "interestRate" -> 100,
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -1620,7 +1620,7 @@ object FinancialDetailsTestConstants {
 //        taxYear = fixedDate.getYear.toString,
 //        interestOutstandingAmount = List(Some(42.50), Some(24.05)),
 //        interestRate = List(Some(2.6), Some(6.2)),
-//        latePaymentInterestAmount = List(Some(34.56), None)
+//        accruingInterestAmount = List(Some(34.56), None)
 //      ).getAllDocumentDetailsWithDueDates() ++
 //        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
 //          mainType = Some("SA Payment on Account 2"),

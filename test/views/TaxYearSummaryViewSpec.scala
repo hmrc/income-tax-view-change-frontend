@@ -153,10 +153,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   val testChargesList: List[TaxYearSummaryChargeItem] = List(
     TaxYearSummaryChargeItem.fromChargeItem(
-      chargeItemModel(transactionType = PoaOneDebit, dueDate = Some(LocalDate.of(2019, 6, 15)), latePaymentInterestAmount = Some(100.0)),
+      chargeItemModel(transactionType = PoaOneDebit, dueDate = Some(LocalDate.of(2019, 6, 15)), accruingInterestAmount = Some(100.0)),
       dueDate = Some(LocalDate.of(2019, 6, 15)), isLatePaymentInterest = true),
     TaxYearSummaryChargeItem.fromChargeItem(
-      chargeItemModel(transactionType = PoaTwoDebit, dueDate = Some(LocalDate.of(2019, 7, 15)), latePaymentInterestAmount = Some(80.0)),
+      chargeItemModel(transactionType = PoaTwoDebit, dueDate = Some(LocalDate.of(2019, 7, 15)), accruingInterestAmount = Some(80.0)),
       dueDate = Some(LocalDate.of(2019, 7, 15)), isLatePaymentInterest = true),
     TaxYearSummaryChargeItem.fromChargeItem(
       chargeItemModel(transactionType = BalancingCharge, dueDate = Some(LocalDate.of(2019, 8, 15)), interestOutstandingAmount = Some(0.0)),
@@ -166,54 +166,54 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   val testChargesWithoutLpiList: List[TaxYearSummaryChargeItem] = testChargesList.map(_.copy(isAccruingInterest = false))
 
   val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = PoaOneDebit, dueDate = Some(LocalDate.of(2021, 7, 31)), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), dueDate = Some(LocalDate.of(2021, 7, 30)), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = PoaOneDebit, dueDate = Some(LocalDate.of(2021, 7, 31)), accruingInterestAmount = None),
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), dueDate = Some(LocalDate.of(2021, 7, 30)), accruingInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem(_))
 
 
   val payeChargeList: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = BalancingCharge, dueDate = Some(LocalDate.of(2021, 7, 30)), codedOutStatus = Some(Accepted), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = BalancingCharge, dueDate = Some(LocalDate.of(2021, 7, 30)), codedOutStatus = Some(Accepted), accruingInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val testBalancingPaymentChargeWithZeroValue: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = BalancingCharge, originalAmount = 0.0, latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
+    chargeItemModel(transactionType = BalancingCharge, originalAmount = 0.0, accruingInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   def testPaymentsOnAccountCodedOut(codedOutStatus: CodedOutStatusType): List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(codedOutStatus), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(codedOutStatus), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(codedOutStatus), accruingInterestAmount = None),
+    chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(codedOutStatus), accruingInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val testPaymentsOnAccountCodedOut: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Accepted), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Accepted), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Accepted), accruingInterestAmount = None),
+    chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Accepted), accruingInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val testPaymentsOnAccountCodedOutCancelled: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Cancelled), latePaymentInterestAmount = None, dueDate = Some(LocalDate.of(2040, 3, 31)), lpiWithDunningLock = None),
-    chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Cancelled), latePaymentInterestAmount = None, dueDate = Some(LocalDate.of(2040, 3, 31)), lpiWithDunningLock = None)
+    chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Cancelled), accruingInterestAmount = None, dueDate = Some(LocalDate.of(2040, 3, 31)), lpiWithDunningLock = None),
+    chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Cancelled), accruingInterestAmount = None, dueDate = Some(LocalDate.of(2040, 3, 31)), lpiWithDunningLock = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
 
   val immediatelyRejectedByNps: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = BalancingCharge, interestOutstandingAmount = Some(0.0), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), accruingInterestAmount = None),
+    chargeItemModel(transactionType = BalancingCharge, interestOutstandingAmount = Some(0.0), accruingInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val rejectedByNpsPartWay: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), accruingInterestAmount = None),
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled), accruingInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val codingOutPartiallyCollected: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = BalancingCharge, interestOutstandingAmount = Some(0.0), latePaymentInterestAmount = None),
-    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled), latePaymentInterestAmount = None)
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), accruingInterestAmount = None),
+    chargeItemModel(transactionType = BalancingCharge, interestOutstandingAmount = Some(0.0), accruingInterestAmount = None),
+    chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Cancelled), accruingInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val mfaCharges: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
-    chargeItemModel(transactionId = "MFADEBIT02", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
-    chargeItemModel(transactionId = "MFADEBIT03", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None)
+    chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None),
+    chargeItemModel(transactionId = "MFADEBIT02", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None),
+    chargeItemModel(transactionId = "MFADEBIT03", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val documentDetailWithDueDateMissingDueDate: List[ChargeItem] = List(

@@ -63,13 +63,13 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
   val testCharge = chargeItemModel()
 
   val testChargesList: List[TaxYearSummaryChargeItem] = List(
-    TaxYearSummaryChargeItem.fromChargeItem(testCharge.copy(latePaymentInterestAmount = None)),
+    TaxYearSummaryChargeItem.fromChargeItem(testCharge.copy(accruingInterestAmount = None)),
     TaxYearSummaryChargeItem.fromChargeItem(testCharge, dueDate = testCharge.interestEndDate, isLatePaymentInterest = true)
   )
 
   val testEmptyChargesList: List[TaxYearSummaryChargeItem] = List.empty
-  val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
-  val payeChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted), latePaymentInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
+  val class2NicsChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Nics2), accruingInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
+  val payeChargesList: List[TaxYearSummaryChargeItem] = List(chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted), accruingInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
   val taxYearsRefererBackLink: String = "http://www.somedomain.org/report-quarterly/income-and-expenses/view/tax-years"
   val taxYearsBackLink: Boolean => String = isAgent => {
     if (isAgent) {
@@ -506,9 +506,9 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 val mfaCharges: List[TaxYearSummaryChargeItem] = List(
-                  chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
-                  chargeItemModel(transactionId = "MFADEBIT02", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None),
-                  chargeItemModel(transactionId = "MFADEBIT03", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, latePaymentInterestAmount = None)
+                  chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None),
+                  chargeItemModel(transactionId = "MFADEBIT02", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None),
+                  chargeItemModel(transactionId = "MFADEBIT03", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None)
                 ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)

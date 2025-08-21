@@ -35,7 +35,7 @@ object TaxYearSummaryChargeItem {
       originalAmount = chargeItem.originalAmount,
       outstandingAmount = chargeItem.outstandingAmount,
       interestOutstandingAmount = chargeItem.interestOutstandingAmount,
-      latePaymentInterestAmount = chargeItem.accruingInterestAmount,
+      accruingInterestAmount = chargeItem.accruingInterestAmount,
       interestFromDate = chargeItem.interestFromDate,
       interestEndDate = chargeItem.interestEndDate,
       interestRate = chargeItem.interestRate,
@@ -58,7 +58,7 @@ object TaxYearSummaryChargeItem {
       originalAmount = chargeItem.originalAmount,
       outstandingAmount = chargeItem.outstandingAmount,
       interestOutstandingAmount = chargeItem.interestOutstandingAmount,
-      latePaymentInterestAmount = chargeItem.accruingInterestAmount,
+      accruingInterestAmount = chargeItem.accruingInterestAmount,
       interestFromDate = chargeItem.interestFromDate,
       interestEndDate = chargeItem.interestEndDate,
       interestRate = chargeItem.interestRate,
@@ -82,7 +82,7 @@ case class TaxYearSummaryChargeItem(
                                      originalAmount: BigDecimal,
                                      outstandingAmount: BigDecimal,
                                      interestOutstandingAmount: Option[BigDecimal],
-                                     latePaymentInterestAmount: Option[BigDecimal],
+                                     accruingInterestAmount: Option[BigDecimal],
                                      interestFromDate: Option[LocalDate],
                                      interestEndDate: Option[LocalDate],
                                      interestRate: Option[BigDecimal],
@@ -98,7 +98,7 @@ case class TaxYearSummaryChargeItem(
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
+    interestOutstandingAmount.isDefined && accruingInterestAmount.getOrElse[BigDecimal](0) <= 0
 
   def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
@@ -134,7 +134,7 @@ case class TaxYearSummaryChargeItem(
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
-  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
+  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != accruingInterestAmount.getOrElse[BigDecimal](0)
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
@@ -155,7 +155,7 @@ case class TaxYearSummaryChargeItem(
 
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
-    else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
+    else interestOutstandingAmount.getOrElse(accruingInterestAmount.get)
   }
 
 

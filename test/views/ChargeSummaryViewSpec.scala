@@ -120,7 +120,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       originalAmount = 1000,
       outstandingAmount = 0,
       interestOutstandingAmount = None,
-      latePaymentInterestAmount = None,
+      accruingInterestAmount = None,
       interestFromDate = None,
       interestEndDate = None,
       interestRate = None,
@@ -1111,7 +1111,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "when a late interest charge display late payment interest amount " in new TestSetup(
         chargeItem = chargeItemModel(
           originalAmount = 1500,
-          latePaymentInterestAmount = Some(100.0)),
+          accruingInterestAmount = Some(100.0)),
         latePaymentInterestCharge = true
       ) {
         verifySummaryListRowNumeric(3, fullPaymentAmount, "£100.00")
