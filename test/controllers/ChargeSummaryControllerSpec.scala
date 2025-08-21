@@ -80,7 +80,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First payment on account history"
+                document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
               }
               "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -95,7 +95,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Second payment on account history"
+                document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
               }
               "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -114,7 +114,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
-                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First payment on account history"
+                document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
               }
               "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -133,7 +133,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
-                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Second payment on account history"
+                document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -149,7 +149,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £10.33"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
-                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Balancing payment history"
+                document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
               }
               "provided with an id associated to a Balancing payment with accruing interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -169,7 +169,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
-                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Balancing payment history"
+                document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
               }
 
               "provided with an id associated to a charge for Class 2 National Insurance" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
@@ -185,7 +185,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £12.34"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 25 August 2021"
-                document.getElementsByClass("govuk-table__caption govuk-table__caption--m").text() shouldBe "History of this charge"
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
 
               }
 
@@ -205,7 +205,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2019 to 2020 tax year. It will be collected in the 2021 to 2022 tax year through your PAYE tax code."
                 document.getElementById("check-paye-para").text() shouldBe "Check if your PAYE tax code has changed for the 2021 to 2022 tax year."
                 document.getElementById("paye-tax-code-link").attr("href") shouldBe "https://www.tax.service.gov.uk/check-income-tax/tax-codes/2022"
-                document.getElementsByClass("govuk-table__caption govuk-table__caption--m").text() shouldBe "Balancing payment history"
+                document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
+                document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
                 document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. 29 March 2018 £2,500.00"
                 document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. 30 March 2019 £2,000.00"
               }
@@ -228,7 +229,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("LSP-content-3").text() shouldBe "To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time."
                 document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal."
                 document.getElementsByClass("govuk-heading-l").first().text() shouldBe "Interest on your late submission penalty"
-                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "Late submission penalty history"
+                document.getElementById("charge-history-heading").text() shouldBe "Late submission penalty history"
               }
 
               "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty){
@@ -246,7 +247,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-amount-heading").text() shouldBe "Overdue charge: £200.33"
                 document.getElementById("due-date-text").text() shouldBe "Due 29 March 2020"
                 document.getElementById("first-payment-penalty-p1").text() shouldBe "You have received this penalty because you are late paying your Income Tax."
-                document.getElementById("payment-history-table").getElementsByTag("caption").text() shouldBe "First late payment penalty history"
+                document.getElementById("charge-history-heading").text() shouldBe "First late payment penalty history"
               }
             }
             "charge history feature is enabled and there is a user" that {
