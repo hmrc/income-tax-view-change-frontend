@@ -147,7 +147,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                 ctaViewModel: WYOClaimToAdjustViewModel,
                                 lpp2Url: Option[String],
                                 creditAndRefundUrl: String
-                               )(implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[WhatYouOweViewModel] = {
+                               )(implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
 
     val hasOverdueCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
     val hasAccruingInterestReviewAndReconcileCharges: Boolean = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))

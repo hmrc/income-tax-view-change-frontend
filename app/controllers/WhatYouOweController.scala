@@ -58,13 +58,13 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     itvcErrorHandler: ShowInternalServerError,
                     isAgent: Boolean,
                     origin: Option[String] = None)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
+                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
     for {
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
         mainChargeIsNotPaidFilter)
-      ctaViewModel <- claimToAdjustViewModel(Nino(user.nino)),
+      ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
       whatYouOweViewModel <- whatYouOweService.createWhatYouOweViewModel(
         whatYouOweChargesList = whatYouOweChargesList,
         backUrl = backUrl,
@@ -73,21 +73,17 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         lpp2Url = getLPP2Link(whatYouOweChargesList.chargesList, isAgent),
         creditAndRefundUrl = getCreditAndRefundUrl
       )
-    } yield (whatYouOweViewModel)
-
-      /*{
-
-      auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
-      whatYouOweViewModel match {
-        case None =>
-          itvcErrorHandler.showInternalServerError()
-        case Some(model) =>
-          Ok(whatYouOwe(
-            viewModel = model,
-            origin = origin)(user, user, messages, dateService))
-            .addingToSession(gatewayPage -> WhatYouOwePage.name)
-      }*/
-
+    } yield whatYouOweViewModel match {
+      case None =>
+        Logger("application").error(s"${if (isAgent) "[Agent]"}" + "Failed to create View Model")
+        itvcErrorHandler.showInternalServerError()
+      case Some(model) =>
+        Ok(whatYouOwe(
+          viewModel = model,
+          origin = origin
+        ))
+          .addingToSession(gatewayPage -> WhatYouOwePage.name)
+    }
   } recover {
     case ex: Exception =>
       Logger("application").error(s"${if (isAgent) "[Agent]"}" +
