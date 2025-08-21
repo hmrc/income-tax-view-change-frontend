@@ -3047,7 +3047,7 @@ reporting.frequency.table.voluntary.r17                             = Wedi cofre
 reporting.frequency.table.annual.r17                                = Wedi optio allan
 
 reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
-reporting.frequency.ceasedBusiness.warning.link                     = bob busnes.
+reporting.frequency.ceasedBusiness.warning.link                     = Eich busnes.
 reporting.frequency.ceasedBusiness.warning.text.2                   =
 
 reporting.frequency.latency.details.section.header                            = Gall amlder eich adroddiadau ar gyfer eich busnes newydd fod ar sail amlder gwahanol

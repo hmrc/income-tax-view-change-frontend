@@ -3057,7 +3057,7 @@ reporting.frequency.table.voluntary.r17                             = Voluntaril
 reporting.frequency.table.annual.r17                                = Opted out
 
 reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
-reporting.frequency.ceasedBusiness.warning.link                     = all businesses
+reporting.frequency.ceasedBusiness.warning.link                     = your businesses
 reporting.frequency.ceasedBusiness.warning.text.2                   = page.
 
 reporting.frequency.latency.details.section.header                  = Your new businesses can have a different reporting frequency
