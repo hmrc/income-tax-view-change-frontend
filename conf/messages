@@ -3068,7 +3068,8 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a 
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more than what you paid during the year (for example, through payments on account or PAYE)
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = have changed your tax return and it resulted in you owing more
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
 yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of interest you have to pay will increase every day until you pay the overdue charge.
