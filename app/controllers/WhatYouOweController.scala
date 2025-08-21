@@ -22,15 +22,11 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config._
 import config.featureswitch._
-import controllers.routes.{CreditAndRefundController, NotMigratedUserController}
+import controllers.routes.{ChargeSummaryController, CreditAndRefundController, NotMigratedUserController, PaymentController, TaxYearSummaryController}
 import enums.GatewayPage.WhatYouOwePage
-import forms.utils.SessionKeys.gatewayPage
-import models.admin._
-import models.core.Nino
-import models.financialDetails.{ChargeItem, SecondLatePaymentPenalty, WhatYouOweViewModel}
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+import forms.utils.SessionKeys.{gatewayPage, origin}
 import play.api.Logger
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{ClaimToAdjustService, DateServiceInterface, SelfServeTimeToPayService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -60,7 +56,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
-    whatYouOweService.createWhatYouOweViewModel(backUrl, origin, getCreditAndRefundUrl) map {
+    whatYouOweService.createWhatYouOweViewModel(backUrl, origin, getCreditAndRefundUrl, getTaxYearSummaryUrl(origin), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
       case Some(viewModel) =>
         Ok(whatYouOwe(viewModel, origin))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
@@ -94,10 +90,24 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
 
-  private def getCreditAndRefundUrl(implicit user: MtdItUser[_]) = (user.isAgent() match {
+  private def getCreditAndRefundUrl(implicit user: MtdItUser[_]): String = (user.isAgent() match {
     case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
     case true                                                  => NotMigratedUserController.showAgent()
     case false if user.incomeSources.yearOfMigration.isDefined => CreditAndRefundController.show()
     case false                                                 => NotMigratedUserController.show()
   }).url
+
+  private def getTaxYearSummaryUrl(origin: Option[String])(implicit user: MtdItUser[_]): Int => String = {
+    if (user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
+    else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
+  }
+
+  private def getAdjustPoaUrl(implicit user: MtdItUser[_]): String = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url
+
+  private def getChargeSummaryUrl(implicit user: MtdItUser[_]): (Int, String, Boolean, Option[String]) => String = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
+    if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
+    else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
+  }
+
+  private def getPaymentHandOffUrl(origin: Option[String]): Long => String = PaymentController.paymentHandoff(_, origin).url
 }

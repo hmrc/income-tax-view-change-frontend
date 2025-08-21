@@ -44,7 +44,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                   val selfServeTimeToPayService: SelfServeTimeToPayService,
                                   val financialDetailsConnector: FinancialDetailsConnector,
                                   val outstandingChargesConnector: OutstandingChargesConnector,
-                                  implicit val dateService: DateServiceInterface)
+                                  implicit val dateService: DateService)
                                  (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig)
   extends TransactionUtils with FeatureSwitching {
 
@@ -143,7 +143,11 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   def createWhatYouOweViewModel(backUrl: String,
                                 origin: Option[String],
-                                creditAndRefundUrl: String)
+                                creditAndRefundUrl: String,
+                                taxYearSummaryUrl: Int => String,
+                                adjustPoaUrl: String,
+                                chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
+                                paymentHandOffUrl: Long => String)
                                (implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
     for {
       whatYouOweChargesList        <- whatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
@@ -171,18 +175,12 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           dunningLock = whatYouOweChargesList.hasDunningLock,
           creditAndRefundUrl = creditAndRefundUrl,
           creditAndRefundEnabled = isEnabled(CreditsRefundsRepay)(user),
-          taxYearSummaryUrl = {
-            if (user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
-            else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
-          },
+          taxYearSummaryUrl = taxYearSummaryUrl,
           claimToAdjustViewModel = ctaViewModel,
           lpp2Url = lpp2Url,
-          adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url,
-          chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
-            if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
-            else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
-          },
-          paymentHandOffUrl = PaymentController.paymentHandoff(_, origin).url,
+          adjustPoaUrl = adjustPoaUrl,
+          chargeSummaryUrl = chargeSummaryUrl,
+          paymentHandOffUrl = paymentHandOffUrl,
           selfServeTimeToPayEnabled  = isEnabled(SelfServeTimeToPayR17)(user),
           selfServeTimeToPayStartUrl = startUrl
         ))
