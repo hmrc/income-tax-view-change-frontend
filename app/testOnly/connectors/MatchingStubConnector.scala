@@ -51,7 +51,7 @@ class MatchingStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           "value" -> "01011980"
         )
       ),
-      "testId" -> "ITVC",
+      "testId" -> s"ITVC-${clientDetails.utr}",
       "name" -> "CID",
       "service" -> "find",
       "resultCode" -> clientDetails.status,
