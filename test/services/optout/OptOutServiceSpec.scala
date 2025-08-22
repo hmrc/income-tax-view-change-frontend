@@ -635,9 +635,12 @@ class OptOutServiceSpec
           nino = testNino
         )
 
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 0)))
+
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(MultiYearOptOutDefault)))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(MultiYearOptOutDefault), 0, Voluntary))
       }
       "the next tax year is submitted that has a state of MultiYearOptOutDefault" in {
         val currentTaxYear = TaxYear(2025, 2026)
@@ -654,7 +657,193 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026))), Some(MultiYearOptOutDefault)))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026))), Some(MultiYearOptOutDefault), 0, Voluntary))
+      }
+      "the current tax year is submitted that has a state of OneYearOptOutFollowedByMandated" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear = "2025"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = NoStatus,
+          currentYearStatus = Voluntary,
+          nextYearStatus = Mandated,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 0)))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByMandated), 0, Voluntary))
+      }
+
+      "the current tax year is submitted that has a state of OneYearOptOutFollowedByMandated with submitted quarterly updates" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear = "2025"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = NoStatus,
+          currentYearStatus = Voluntary,
+          nextYearStatus = Mandated,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByMandated), 1, Voluntary))
+      }
+
+      "the current tax year is submitted that has a state of OneYearOptOutFollowedByAnnual" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear = "2025"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = NoStatus,
+          currentYearStatus = Voluntary,
+          nextYearStatus = Annual,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 0)))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByAnnual), 0, Voluntary))
+      }
+
+      "the current tax year is submitted that has a state of OneYearOptOutFollowedByAnnual with submitted quarterly updates" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear = "2025"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = NoStatus,
+          currentYearStatus = Voluntary,
+          nextYearStatus = Annual,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByAnnual), 1, Voluntary))
+      }
+
+      "the next tax year is submitted that has a state of NextYearOptOut and CY is Annual" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear = "2026"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = NoStatus,
+          currentYearStatus = Annual,
+          nextYearStatus = Voluntary,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear.nextYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear.nextYear, 0)))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Annual, TaxYear(2025, 2026))), Some(NextYearOptOut), 0, Annual))
+      }
+      "the next tax year is submitted that has a state of NextYearOptOut and CY is Mandated" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear = "2026"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = NoStatus,
+          currentYearStatus = Mandated,
+          nextYearStatus = Voluntary,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear.nextYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear.nextYear, 0)))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Mandated, TaxYear(2025, 2026))), Some(NextYearOptOut), 0, Mandated))
+      }
+
+      "the previous tax year is submitted that has a state of MultiYearDefault" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear = "2024"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = Voluntary,
+          currentYearStatus = Voluntary,
+          nextYearStatus = Voluntary,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear.previousYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear.previousYear, 0)))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(MultiYearOptOutDefault), 0, Voluntary))
+      }
+
+      "the previous tax year is submitted that has a state of OneYearOptOutFollowedByAnnual" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear = "2024"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = Voluntary,
+          currentYearStatus = Annual,
+          nextYearStatus = Annual,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear.previousYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear.previousYear, 0)))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(OneYearOptOutFollowedByAnnual), 0, Annual))
+      }
+      "the previous tax year is submitted that has a state of OneYearOptOutFollowedByMandated" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear = "2024"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = Voluntary,
+          currentYearStatus = Mandated,
+          nextYearStatus = Mandated,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear.previousYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear.previousYear, 0)))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(OneYearOptOutFollowedByMandated), 0, Mandated))
       }
     }
     "return None" when {
@@ -674,23 +863,7 @@ class OptOutServiceSpec
 
         result.futureValue shouldBe None
       }
-      "the previous tax year is submitted" in {
-        val currentTaxYear = TaxYear(2025, 2026)
-        val queryTaxYear = "2024"
 
-        stubOptOut(
-          currentTaxYear = currentTaxYear,
-          previousYearCrystallisedStatus = false,
-          previousYearStatus = Voluntary,
-          currentYearStatus = Voluntary,
-          nextYearStatus = Voluntary,
-          nino = testNino
-        )
-
-        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
-
-        result.futureValue shouldBe None
-      }
       "an invalid tax year is submitted" in {
         val currentTaxYear = TaxYear(2025, 2026)
         val queryTaxYear = "Invalid"
@@ -708,16 +881,16 @@ class OptOutServiceSpec
 
         result.futureValue shouldBe None
       }
-      "the current tax year is submitted that has a state that isn't MultiYearOptOutDefault"  in {
+      "the previous tax year is submitted and it is crystallised" in {
         val currentTaxYear = TaxYear(2025, 2026)
-        val queryTaxYear = "2025"
+        val queryTaxYear = "2024"
 
         stubOptOut(
           currentTaxYear = currentTaxYear,
-          previousYearCrystallisedStatus = false,
-          previousYearStatus = Annual,
+          previousYearCrystallisedStatus = true,
+          previousYearStatus = Voluntary,
           currentYearStatus = Voluntary,
-          nextYearStatus = Mandated,
+          nextYearStatus = Voluntary,
           nino = testNino
         )
 
@@ -725,15 +898,15 @@ class OptOutServiceSpec
 
         result.futureValue shouldBe None
       }
-      "the next tax year is submitted that has a state that isn't MultiYearOptOutDefault"  in {
+      "the previous tax year is submitted and it is mandated" in {
         val currentTaxYear = TaxYear(2025, 2026)
-        val queryTaxYear = "2026"
+        val queryTaxYear = "2024"
 
         stubOptOut(
           currentTaxYear = currentTaxYear,
           previousYearCrystallisedStatus = false,
-          previousYearStatus = Annual,
-          currentYearStatus = Annual,
+          previousYearStatus = Mandated,
+          currentYearStatus = Voluntary,
           nextYearStatus = Voluntary,
           nino = testNino
         )

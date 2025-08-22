@@ -21,7 +21,7 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClientDetailsService, MockDateService, MockNextUpdatesService, MockSessionService}
-import models.admin.{IncomeSourcesNewJourney, OptInOptOutContentUpdateR17}
+import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, ManageIncomeSourceData, PropertyDetailsModel, TaxYear}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -152,7 +152,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
 
         s"the user is authenticated as a $mtdRole" should {
           "render the page with OptInOptOutContentUpdateR17 enabled and current tax year" in {
-            enable(IncomeSourcesNewJourney, OptInOptOutContentUpdateR17)
+            enable(OptInOptOutContentUpdateR17)
 
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
@@ -181,7 +181,6 @@ class ManageObligationsControllerSpec extends MockAuthActions
           }
           "render the reporting method change error page" when {
             "IncomeSources FS is enabled" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
@@ -204,8 +203,7 @@ class ManageObligationsControllerSpec extends MockAuthActions
             }
 
             if(incomeSourceType == SelfEmployment) {
-              "incomeSourceFs enabled and business has no name" in {
-                enable(IncomeSourcesNewJourney)
+              "business has no name" in {
                 setupMockSuccess(mtdRole)
                 val source = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(
                   BusinessDetailsModel(
@@ -237,27 +235,8 @@ class ManageObligationsControllerSpec extends MockAuthActions
             }
           }
 
-          "redirect to the home page" when {
-            "feature switch is disabled" in {
-              disable(IncomeSourcesNewJourney)
-              setupMockSuccess(mtdRole)
-              setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
-              setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
-
-              val result = action()(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val homeUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(homeUrl)
-            }
-          }
-
           "render the error page" when {
             "invalid taxYear in session" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               incomeSourceType match {
@@ -275,7 +254,6 @@ class ManageObligationsControllerSpec extends MockAuthActions
             }
 
             "invalid changeTo in session" in {
-              enable(IncomeSourcesNewJourney)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               incomeSourceType match {
@@ -295,7 +273,6 @@ class ManageObligationsControllerSpec extends MockAuthActions
             if (incomeSourceType == SelfEmployment) {
 
               "there is no incomeSourceId in session" in {
-                enable(IncomeSourcesNewJourney)
                 setupMockSuccess(mtdRole)
                 setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
                 incomeSourceType match {
@@ -314,7 +291,6 @@ class ManageObligationsControllerSpec extends MockAuthActions
               }
             } else {
               s"user has no active ${incomeSourceType.messagesCamel}" in {
-                enable(IncomeSourcesNewJourney)
                 setupMockSuccess(mtdRole)
                 mockNoIncomeSources()
                 when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
@@ -329,7 +305,6 @@ class ManageObligationsControllerSpec extends MockAuthActions
               }
 
               s"user has more than one active ${incomeSourceType.messagesCamel}" in {
-                enable(IncomeSourcesNewJourney)
                 setupMockSuccess(mtdRole)
                 if (incomeSourceType == UkProperty) {
                   mockTwoActiveUkPropertyIncomeSourcesErrorScenario()
@@ -359,7 +334,6 @@ class ManageObligationsControllerSpec extends MockAuthActions
         "redirect to ManageIncomeSources controller" in {
 
           setupMockSuccess(mtdRole)
-          enable(IncomeSourcesNewJourney)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)

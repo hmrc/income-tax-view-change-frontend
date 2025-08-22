@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.NavBarFs
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -72,7 +72,6 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ControllerISpecHelper {
             "render the back error page" in {
               stubAuthorised(mtdUserRole)
               disable(NavBarFs)
-              enable(IncomeSourcesNewJourney)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType))))
@@ -81,20 +80,6 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ControllerISpecHelper {
                 httpStatus(OK),
                 pageTitle(mtdUserRole, expectedTitle(incomeSourceType))
               )
-            }
-
-            "redirect to home page" when {
-              "FS disabled" in {
-                stubAuthorised(mtdUserRole)
-                disable(NavBarFs)
-                disable(IncomeSourcesNewJourney)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
             }
           }
           testAuthFailures(path, mtdUserRole)

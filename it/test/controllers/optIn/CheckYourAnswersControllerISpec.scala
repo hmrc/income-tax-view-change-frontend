@@ -32,6 +32,7 @@ import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
 import play.mvc.Http.Status.BAD_REQUEST
 import repositories.ITSAStatusRepositorySupport._
@@ -87,7 +88,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             val intent = currentTaxYear
-            setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
+            await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent))
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -112,7 +113,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             val intent = currentTaxYear.nextYear
-            setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent).futureValue shouldBe true
+            await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent))
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -145,7 +146,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear)
+            await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear))
 
             ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.nino,
               Status.NO_CONTENT, emptyBodyString
@@ -168,7 +169,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-              setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear)
+              await(setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear))
 
               ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.nino,
                 BAD_REQUEST, Json.toJson(ITSAStatusUpdateResponseFailure.defaultFailure()).toString()
@@ -199,8 +200,8 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
           Some(OptInSessionData(
             Some(OptInContextData(
               currentTaxYear.toString,
-              statusToString(status = currentYearStatus, isNextYear = false),
-              statusToString(status = nextYearStatus, isNextYear = true))),
+              statusToString(status = currentYearStatus),
+              statusToString(status = nextYearStatus))),
             Some(intent.toString)
           ))))
   }

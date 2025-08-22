@@ -172,6 +172,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   // enrolment-store-proxy url
   lazy val enrolmentStoreProxyUrl: String = servicesConfig.baseUrl("enrolment-store-proxy")
 
+  lazy val agentServicesAccountFrontend: String = servicesConfig.baseUrl("agent-services-account-frontend")
+
   //Translation
   def languageMap: Map[String, Lang] = Map(
     "english" -> Lang("en"),
@@ -201,39 +203,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val isSessionDataStorageEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
 
   //External-Urls
-
   val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
   val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
 
-  lazy val homepageLink = "https://www.gov.uk"
 
-  //SA for Agents Online Service
-  lazy val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
-
-  //Accounting software guidance
-  lazy val accountingSoftwareLinkUrl: String = "https://www.gov.uk/guidance/use-software-to-send-income-tax-updates"
-
-  lazy val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
-
-  lazy val seNationalInsuranceRatesUrl = "https://www.gov.uk/self-employed-national-insurance-rates"
-
-  lazy val chooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
-
-  lazy val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
-
-  lazy val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
-
-  lazy val interestRateBankRateUrl = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
-
-  lazy val currentLPAndRepaymentInterestRatesUrl = "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
-
-  lazy val saThroughYourTaxCodeUrl = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
-
-  lazy val checkPayeTaxCodeUrl = "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
-
-  lazy val mtdForIncomeTaxUrl = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
-
-  lazy val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
 
   lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")
   lazy val threshold2027 = servicesConfig.getString("thresholds.threshold2027")

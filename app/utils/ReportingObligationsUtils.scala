@@ -18,7 +18,8 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import models.admin.{OptOutFs, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -46,6 +47,19 @@ trait ReportingObligationsUtils extends FeatureSwitching {
       }
     } else {
       comeBlock
+    }
+  }
+
+  def withSignUpRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+    (isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
+      case (true, true) => codeBlock
+      case _ =>
+        Logger("application").warn("[OptOutTaxYearQuestionController] Feature Switches not enabled, redirecting to Home Page")
+
+        user.userType match {
+          case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
+          case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
+        }
     }
   }
 }

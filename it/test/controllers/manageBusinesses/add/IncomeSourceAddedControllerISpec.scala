@@ -21,7 +21,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{IncomeSourcesNewJourney, NavBarFs}
+import models.admin.NavBarFs
 import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -92,8 +92,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
           s"a user is a $mtdUserRole" that {
             "is authenticated, with a valid enrolment" should {
               "render the Business Added page" when {
-                "income sources is enabled" in {
-                  enable(IncomeSourcesNewJourney)
+                "using the manage businesses journey" in {
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
 
@@ -124,31 +123,10 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
                   )
                 }
               }
-              s"redirect to home controller" when {
-                "Income Sources Feature Switch is disabled" in {
-                  disable(IncomeSourcesNewJourney)
-                  disable(NavBarFs)
-                  stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-
-                  val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                  val expectedUrl = if (mtdUserRole == MTDIndividual) {
-                    controllers.routes.HomeController.show().url
-                  } else {
-                    controllers.routes.HomeController.showAgent().url
-                  }
-                  result should have(
-                    httpStatus(SEE_OTHER),
-                    redirectURI(expectedUrl)
-                  )
-                }
-              }
 
               if (incomeSourceType == UkProperty) {
                 "render error page" when {
                   "UK property income source is missing trading start date" in {
-                    enable(IncomeSourcesNewJourney)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))

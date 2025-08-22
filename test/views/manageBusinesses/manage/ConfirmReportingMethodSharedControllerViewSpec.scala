@@ -22,11 +22,9 @@ import enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPref
 import enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
 import enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.incomeSources.manage.ConfirmReportingMethodForm
+import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
-import org.scalatest.Assertion
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -106,7 +104,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     val oldPageConfirm = "Confirm and save"
 
 
-    def form(changeTo: String): Form[ConfirmReportingMethodForm] = ConfirmReportingMethodForm(changeTo)
+    def form(changeTo: String): Form[ChangeReportingMethodForm] = ChangeReportingMethodForm(changeTo)
 
     lazy val view: HtmlFormat.Appendable =
       confirmReportingMethodView(

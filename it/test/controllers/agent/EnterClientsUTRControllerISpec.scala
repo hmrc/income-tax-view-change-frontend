@@ -162,14 +162,14 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
           response = Json.toJson(singleBusinessResponse)
         )
 
-        val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
-        
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
+        whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR)))) { result  =>
+          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
-        )
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
+          )
+        }
       }
 
       "the utr submitted by a secondary agent is valid" in {
@@ -189,15 +189,16 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
           response = Json.toJson(singleBusinessResponse)
         )
 
-        val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
+        whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR)))) { result =>
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
+          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
 
-        Then("The enter clients utr page is returned with an error")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
-        )
+          Then("The enter clients utr page is returned with an error")
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
+          )
+        }
       }
 
       "the utr submitted by a primary agent contains spaces and is valid" in {
@@ -219,15 +220,15 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
           response = Json.toJson(singleBusinessResponse)
         )
 
-        val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces))).futureValue
+        whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces)))) { result =>
+          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
-
-        Then("The enter clients utr page is returned with an error")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
-        )
+          Then("The enter clients utr page is returned with an error")
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
+          )
+        }
       }
 
       "the utr submitted by a secondary agent contains spaces and is valid" in {
@@ -249,14 +250,14 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
           response = Json.toJson(singleBusinessResponse)
         )
 
-        val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces))).futureValue
+        whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces)))) { result =>
+          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
 
-        AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
-        )
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.ConfirmClientUTRController.show().url)
+          )
+        }
       }
     }
 
@@ -270,13 +271,13 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
           response = Json.obj()
         )
 
-        val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
-
-        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
-        )
+        whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR)))) { result =>
+          Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.UTRErrorController.show().url)
+          )
+        }
       }
 
       "the business details could not be found" in {
@@ -296,13 +297,13 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
           response = Json.obj()
         )
 
-        val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
-
-        Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
-        )
+        whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR)))) { result =>
+          Then(s"Technical difficulties are shown with status $INTERNAL_SERVER_ERROR")
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.UTRErrorController.show().url)
+          )
+        }
       }
 
       "the primary or secondary agent enrolment is not present" in {
@@ -323,12 +324,12 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
           response = Json.toJson(singleBusinessResponse)
         )
 
-        val result = buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR))).futureValue
-
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.UTRErrorController.show().url)
-        )
+        whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR)))) { result =>
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(controllers.agent.routes.UTRErrorController.show().url)
+          )
+        }
       }
     }
   }

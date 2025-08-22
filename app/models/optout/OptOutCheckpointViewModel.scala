@@ -26,7 +26,7 @@ sealed trait OptOutCheckpointViewModel {
 }
 
 object OneYearOptOutCheckpointViewModel {
-  private val noQuarterlyUpdates = 0
+  val noQuarterlyUpdates = 0
 }
 
 case class OneYearOptOutCheckpointViewModel(intent: TaxYear, state: Option[OptOutState],

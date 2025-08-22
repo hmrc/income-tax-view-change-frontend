@@ -27,25 +27,19 @@ class ITSAStatusRepositorySupportSpec extends UnitSpec with Matchers {
 
   "ITSAStatusRepositorySupport.statusToString" should {
     "convert to String" in {
-      statusToString(status = Voluntary, isNextYear = false) shouldBe expectedToString(Voluntary)
-      statusToString(status = Annual, isNextYear = false) shouldBe expectedToString(Annual)
-      statusToString(status = Mandated, isNextYear = false) shouldBe expectedToString(Mandated)
+      statusToString(status = Voluntary) shouldBe expectedToString(Voluntary)
+      statusToString(status = Annual) shouldBe expectedToString(Annual)
+      statusToString(status = Mandated) shouldBe expectedToString(Mandated)
     }
 
     "allow NoStatus only for CY+1" in {
-      statusToString(status = NoStatus, isNextYear = true) shouldBe "U"
-    }
-
-    "throw error for NoStatus in CY-1 or CY" in {
-      assertThrows[RuntimeException] {
-        statusToString(status = NoStatus, isNextYear = false)
-      }
+      statusToString(status = NoStatus) shouldBe "U"
     }
 
     "throw error for other unsupported statuses" in {
       Seq(Exempt, DigitallyExempt, Dormant).foreach { unsupportedStatus =>
         assertThrows[RuntimeException] {
-          statusToString(status = unsupportedStatus, isNextYear = false)
+          statusToString(status = unsupportedStatus)
         }
       }
     }
@@ -55,25 +49,19 @@ class ITSAStatusRepositorySupportSpec extends UnitSpec with Matchers {
 
   "ITSAStatusRepositorySupport.stringToStatus" should {
     "convert to Status" in {
-      stringToStatus(status = "V", isNextYear = false) shouldBe expectedToStatus("V")
-      stringToStatus(status = "A", isNextYear = false) shouldBe expectedToStatus("A")
-      stringToStatus(status = "M", isNextYear = false) shouldBe expectedToStatus("M")
+      stringToStatus(status = "V") shouldBe expectedToStatus("V")
+      stringToStatus(status = "A") shouldBe expectedToStatus("A")
+      stringToStatus(status = "M") shouldBe expectedToStatus("M")
     }
 
     "convert 'U' to NoStatus only for CY+1" in {
-      stringToStatus(status = "U", isNextYear = true) shouldBe NoStatus
-    }
-
-    "throw error for 'U' in CY-1 or CY" in {
-      assertThrows[RuntimeException] {
-        stringToStatus(status = "U", isNextYear = false)
-      }
+      stringToStatus(status = "U") shouldBe NoStatus
     }
 
     "throw error for other unsupported strings" in {
       Seq("E", "DE", "D").foreach { unsupportedString =>
         assertThrows[RuntimeException] {
-          stringToStatus(status = unsupportedString, isNextYear = false)
+          stringToStatus(status = unsupportedString)
         }
       }
     }

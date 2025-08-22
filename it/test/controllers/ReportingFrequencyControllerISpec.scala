@@ -414,23 +414,6 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses")
                 )
               }
-              "throw an exception when unsupported ITSA status is present" in {
-                enable(ReportingFrequencyPage, OptOutFs, OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-                  dateService.getCurrentTaxYear,
-                  NoStatus,
-                  Mandated,
-                  NoStatus
-                )
-                stubCalculationListResponseBody("2022")
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
-                )
-              }
             }
             "has a ceased business warning" when {
               "all businesses have ceased" in {

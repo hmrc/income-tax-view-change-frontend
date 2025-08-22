@@ -18,6 +18,7 @@ package authV2
 
 import audit.AuditingService
 import auth.FrontendAuthorisedFunctions
+import auth.authV2.AuthExceptions.NoAssignment
 import auth.authV2.actions._
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import authV2.AuthActionsTestData._
@@ -126,6 +127,21 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/not-authorised-to-view-client")
+      }
+    }
+
+    "redirect to NoAssignmentController" when {
+      "the user is Agent, but Agent is not in an access group associated with the Client" in {
+        when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(NoAssignment())
+        )
+        when(mockAuthConnector.authorise(ArgumentMatchers.eq(secondaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
+          Future.failed(NoAssignment())
+        )
+
+        val result = authAction.invokeBlock(defaultAuthorisedWithClientDetailsRequest, defaultAsync)
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/no-assignment")
       }
     }
 

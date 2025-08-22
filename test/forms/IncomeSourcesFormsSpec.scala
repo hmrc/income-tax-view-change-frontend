@@ -17,9 +17,7 @@
 package forms
 
 import _root_.models.incomeSourceDetails.TaxYear
-import forms.incomeSources.add.{BusinessNameForm, BusinessTradeForm}
-import forms.incomeSources.cease.UKPropertyEndDateForm
-import generators.IncomeSourceGens.Day
+import forms.manageBusinesses.add.{BusinessNameForm, BusinessTradeForm}
 import org.scalacheck.Properties
 import services.DateServiceInterface
 import testUtils.TestSupport
@@ -61,9 +59,6 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
     override def isWithin30Days(date: LocalDate): Boolean = false
   }
 
-  val ukPropertyFormFactory = new UKPropertyEndDateForm(testDateService)
-  val ukPropertyForm = ukPropertyFormFactory(individualUser)
-
   val businessNameForm = (optValue: Option[String]) => BusinessNameForm.form.bind(
     optValue.fold[Map[String, String]](Map.empty)(value => Map("business-name" -> value))
   )
@@ -72,27 +67,4 @@ object IncomeSourcesFormsSpec extends Properties("incomeSourcesForms.validation"
     optValue.fold[Map[String, String]](Map.empty)(value => Map("business-trade" -> value))
   )
 
-  val ukPropertyFormUnderTest = (date: Day) => ukPropertyForm.bind(
-    Map("uk-property-end-date.day" -> date.day,
-      "uk-property-end-date.month" -> date.month,
-      "uk-property-end-date.year" -> date.year)
-  )
-
-//  property("businessName") = forAll(businessNameGenerator) { (charsList: List[Char]) =>
-//    (charsList.length > 0 && charsList.length <= BusinessNameForm.MAX_LENGTH) ==> {
-//      val businessName = charsList.mkString("")
-//      businessNameForm(Some(businessName)).errors.isEmpty
-//    }
-//  }
-//
-//  property("businessTrade") = forAll(businessTradeGenerator) { (charsList: List[Char]) =>
-//    val businessTrade = charsList.mkString("").trim
-//    (businessTrade.length > 2) ==> {
-//      businessTradeForm(Some(businessTrade)).errors.isEmpty
-//    }
-//  }
-//
-//  property("ukPropertyEndDate") = forAll(dateGenerator(currentDate)) { date =>
-//    ukPropertyFormUnderTest(date).errors.isEmpty
-//  }
 }

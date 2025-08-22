@@ -21,12 +21,13 @@
 @this(
         govukButton: GovukButton
 )
-@(alternativeText: Option[String] = None, id: Option[String] = None)(implicit messages: Messages)
+@(alternativeText: Option[String] = None, id: Option[String] = None, href: Option[String] = None)(implicit messages: Messages)
 
 @govukButton(Button(
     content = Text(alternativeText.getOrElse(messages("base.continue"))),
     id = Some(id.getOrElse("continue-button")),
-    classes = "govuk-button"
+    classes = "govuk-button",
+    href = href
 ))
 
 

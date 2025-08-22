@@ -21,9 +21,9 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 
 object ITSAStatusRepositorySupport {
 
-  def statusToString(status: ITSAStatus, isNextYear: Boolean): String =
+  def statusToString(status: ITSAStatus): String =
     status match {
-      case ITSAStatus.NoStatus if isNextYear => "U"
+      case ITSAStatus.NoStatus  => "U"
       case ITSAStatus.Voluntary => "V"
       case ITSAStatus.Annual    => "A"
       case ITSAStatus.Mandated  => "M"
@@ -31,9 +31,9 @@ object ITSAStatusRepositorySupport {
       case _ => throw new RuntimeException(s"Unsupported ITSA status: $status")
     }
 
-  def stringToStatus(status: String, isNextYear: Boolean): ITSAStatus.Value =
+  def stringToStatus(status: String): ITSAStatus.Value =
     status match {
-      case "U" if isNextYear => ITSAStatus.NoStatus
+      case "U" => ITSAStatus.NoStatus
       case "V" => ITSAStatus.Voluntary
       case "A" => ITSAStatus.Annual
       case "M" => ITSAStatus.Mandated

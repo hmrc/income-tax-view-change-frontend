@@ -107,32 +107,6 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
               elementTextByID("info-message")(infoMessage),
             )
           }
-          s"throw an exception for multi-year opt out page when when NoStatus for CY-1 is present" in {
-            enable(OptOutFs)
-            disable(NavBarFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-            assertThrows[RuntimeException] {
-              helper.stubOptOutInitialState(currentTaxYear(dateService),
-                previousYearCrystallised = false,
-                previousYearStatus = NoStatus,
-                currentYearStatus = Voluntary,
-                nextYearStatus = Annual)
-            }          }
-          s"throw an exception for multi-year opt out page when when NoStatus for CY is present" in {
-            enable(OptOutFs)
-            disable(NavBarFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-            assertThrows[RuntimeException] {
-              helper.stubOptOutInitialState(currentTaxYear(dateService),
-                previousYearCrystallised = false,
-                previousYearStatus = Voluntary,
-                currentYearStatus = NoStatus,
-                nextYearStatus = Annual)
-            }          }
           s"throw an exception for multi-year opt out page when unsupported statuses are present" in {
             enable(OptOutFs)
             disable(NavBarFs)
@@ -367,38 +341,6 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
               }
 
               verifyAuditEvent(auditModel)
-            }
-            "throw an exception when CY is NoStatus" in {
-              enable(OptOutFs)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-              assertThrows[RuntimeException] {
-                helper.stubOptOutInitialState(
-                  currentTaxYear(dateService),
-                  previousYearCrystallised = false,
-                  previousYearStatus = Voluntary,
-                  currentYearStatus = NoStatus,
-                  nextYearStatus = Annual
-                )
-              }
-            }
-            "throw an exception when CY-1 is NoStatus" in {
-              enable(OptOutFs)
-              disable(NavBarFs)
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-              assertThrows[RuntimeException] {
-                helper.stubOptOutInitialState(
-                  currentTaxYear(dateService),
-                  previousYearCrystallised = false,
-                  previousYearStatus = NoStatus,
-                  currentYearStatus = Voluntary,
-                  nextYearStatus = Annual
-                )
-              }
             }
           }
 

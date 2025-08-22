@@ -116,8 +116,8 @@ class OptInCompletedControllerISpec extends ControllerISpecHelper {
           Some(OptInSessionData(
             Some(OptInContextData(
               currentTaxYear.toString,
-              statusToString(status = currentYearStatus, isNextYear = false),
-              statusToString(status = nextYearStatus, isNextYear = true)
+              statusToString(status = currentYearStatus),
+              statusToString(status = nextYearStatus)
             )),Some(intent.toString))
           )))
   }

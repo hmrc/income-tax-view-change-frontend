@@ -18,7 +18,6 @@ package controllers.claimToAdjustPoa
 
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
-import models.admin.AdjustPaymentsOnAccount
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.Application
@@ -43,9 +42,7 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
         if (mtdRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
         } else {
-          s"render the submitting POA API failure page" when {
-            "called when the AdjustPaymentsOnAccount FS is on" in {
-              enable(AdjustPaymentsOnAccount)
+          s"render the submitting POA API failure page" in {
               setupMockSuccess(mtdRole)
               mockBusinessIncomeSource()
 
@@ -55,24 +52,6 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
               status(result) shouldBe OK
               contentType(result) shouldBe Some(HTML)
               document.getElementById("paragraph-text-1").text() shouldBe firstParagraphView
-            }
-          }
-          s"redirect to the home page" when {
-            "called when the AdjustPaymentsOnAccount FS is off" in {
-              disable(AdjustPaymentsOnAccount)
-              setupMockSuccess(mtdRole)
-              mockBusinessIncomeSource()
-
-              val result = action(fakeRequest)
-
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-            }
           }
         }
       }

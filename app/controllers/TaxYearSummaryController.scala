@@ -344,19 +344,15 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
   }
 
   private def claimToAdjustViewModel(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[TYSClaimToAdjustViewModel] = {
-    if (isEnabled(AdjustPaymentsOnAccount)) {
       claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
         case Right(value) => value match {
-          case Some(value) if value.endYear == taxYear => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), Option(value)))
-          case _ => Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
+          case Some(value) if value.endYear == taxYear => Future.successful(TYSClaimToAdjustViewModel(Option(value)))
+          case _ => Future.successful(TYSClaimToAdjustViewModel(None))
         }
         case Left(ex: Throwable) =>
           Logger("application").error(s"There was an error when getting the POA Entry point" +
             s" < cause: ${ex.getCause} message: ${ex.getMessage} >")
           Future.failed(ex)
       }
-    } else {
-      Future.successful(TYSClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
-    }
   }
 }

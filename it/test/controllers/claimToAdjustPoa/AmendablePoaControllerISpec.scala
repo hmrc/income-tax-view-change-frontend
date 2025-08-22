@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{OtherIncomeLower, PoaAmendmentData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -48,7 +47,6 @@ class AmendablePoaControllerISpec extends ControllerISpecHelper {
           } else {
             s"render the Adjusting your payments on account page" when {
               "there is no active session" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
@@ -65,7 +63,6 @@ class AmendablePoaControllerISpec extends ControllerISpecHelper {
                 )
               }
               "there is an active session and journeyCompleted = false" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -91,7 +88,6 @@ class AmendablePoaControllerISpec extends ControllerISpecHelper {
               }
 
               "there is an active session and journeyCompleted = true" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -117,31 +113,9 @@ class AmendablePoaControllerISpec extends ControllerISpecHelper {
                 await(sessionService.getMongo) shouldBe Right(Some(PoaAmendmentData(None, None)))
               }
             }
-            s"return status $SEE_OTHER and redirect to the home page" when {
-              "AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
 
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
-                  OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString)
-                )
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
-            }
             s"return $INTERNAL_SERVER_ERROR" when {
               "no non-crystallised financial details are found" in {
-                enable(AdjustPaymentsOnAccount)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(

@@ -27,6 +27,7 @@ import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
@@ -50,17 +51,16 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
   val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
-    repository.set(
+    await(repository.set(
       UIJourneySessionData(testSessionId,
         Opt(OptInJourney).toString,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
               currentTaxYear.toString,
-              statusToString(status = currentYearStatus, isNextYear = false),
-              statusToString(status = nextYearStatus, isNextYear = true))),
-            None)
-          )))
+              statusToString(currentYearStatus),
+              statusToString(nextYearStatus))), None))))
+          )
   }
 
   mtdAllRoles.foreach { mtdUserRole =>

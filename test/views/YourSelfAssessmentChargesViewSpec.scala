@@ -114,20 +114,13 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   def preMtdPayments(from: String, to: String): String = s"${messages("selfAssessmentCharges.pre-mtd-year", from, to)}"
 
 
-  def ctaViewModel(isFSEnabled: Boolean): WYOClaimToAdjustViewModel = {
-    if (isFSEnabled) {
+  def ctaViewModel: WYOClaimToAdjustViewModel = {
       WYOClaimToAdjustViewModel(
-        adjustPaymentsOnAccountFSEnabled = true,
         poaTaxYear = Some(TaxYear(
           startYear = 2024,
           endYear = 2025)
         )
       )
-    } else {
-      WYOClaimToAdjustViewModel(
-        adjustPaymentsOnAccountFSEnabled = false,
-        poaTaxYear = None)
-    }
   }
 
 
@@ -145,7 +138,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       IncomeSourceDetailsModel(testNino, "testMtditid", Some(migrationYear.toString), List(), List())
     )
 
-    val defaultClaimToAdjustViewModel: WYOClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
+    val defaultClaimToAdjustViewModel: WYOClaimToAdjustViewModel = ctaViewModel
 
     val viewModel = YourSelfAssessmentChargesViewModel(
       hasOverdueOrAccruingInterestCharges = false,
@@ -186,7 +179,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
                        claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None) {
 
-    val defaultClaimToAdjustViewModel: WYOClaimToAdjustViewModel = ctaViewModel(adjustPaymentsOnAccountFSEnabled)
+    val defaultClaimToAdjustViewModel: WYOClaimToAdjustViewModel = ctaViewModel
 
     val agentUser: MtdItUser[_] =
       defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel("AA111111A", "testMtditid", Some(migrationYear.toString), List(), List()))
@@ -878,11 +871,9 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
     //    }
 
 
-    "AdjustPaymentsOnAccount is enabled" when {
-
       "user has a POA that can be adjusted" when {
 
-        val poaModel = ctaViewModel(true)
+        val poaModel = ctaViewModel
 
         "POA is paid off fully should display link with additional content" in new TestSetup(
           charges = whatYouOweDataWithPaidPOAs(),
@@ -906,11 +897,10 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "user has no POA that can be adjusted should not display link" in new TestSetup(
         charges = whatYouOweDataNoCharges,
         adjustPaymentsOnAccountFSEnabled = true,
-        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None))) {
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(None))) {
         Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
         Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
-    }
 
     "codingOut is enabled" should {
       "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
@@ -997,11 +987,9 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       }
     }
 
-    "AdjustPaymentsOnAccount is enabled" when {
-
       "user has a POA that can be adjusted" when {
 
-        val poaModel = ctaViewModel(true)
+        val poaModel = ctaViewModel
 
         "POA is paid off fully should display link with additional content" in new AgentTestSetup(
           charges = whatYouOweDataWithPaidPOAs(),
@@ -1025,11 +1013,10 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
       "user has no POA that can be adjusted should not display link" in new AgentTestSetup(
         charges = whatYouOweDataNoCharges,
         adjustPaymentsOnAccountFSEnabled = true,
-        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(true, None))) {
+        claimToAdjustViewModel = Some(WYOClaimToAdjustViewModel(None))) {
         Option(pageDocument.getElementById("adjust-poa-link")) shouldBe None
         Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
-    }
   }
 
   "what you owe view" should {
@@ -1094,7 +1081,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         "the FS is enabled and viewModel has a tax year" in new TestSetup(
           charges = whatYouOweDataWithDataDueIn30Days(),
           adjustPaymentsOnAccountFSEnabled = true,
-          claimToAdjustViewModel = Some(ctaViewModel(true))
+          claimToAdjustViewModel = Some(ctaViewModel)
         ) {
           val adjustLink = pageDocument.getElementById("adjust-poa-link")
           adjustLink.text shouldBe "Adjust payments on account for the 2024 to 2025 tax year"

@@ -18,6 +18,7 @@ package views.optOut
 
 import config.FrontendAppConfig
 import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
+import models.admin.{OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -54,8 +55,12 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     val title: String = messages("htmlTitle", heading)
     val summary: String = messages("optout.chooseOptOutTaxYear.desc")
     val whichTaxYear: String = messages("optout.chooseOptOutTaxYear.whichTaxYear")
-    val confirmOptOutURL: String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = false).url
-    val confirmOptOutURLAgent: String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent = true).url
+    val confirmOptOutURL: String =
+      if(areAllEnabled(OptOutFs, ReportingFrequencyPage)) controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent = false, taxYear.toString).url
+      else controllers.optOut.routes.ConfirmOptOutController.show(isAgent = false).url
+    val confirmOptOutURLAgent: String =
+      if(areAllEnabled(OptOutFs, ReportingFrequencyPage)) controllers.optOutNew.routes.ConfirmOptOutUpdateController.show(isAgent = true, taxYear = taxYear.toString).url
+      else controllers.optOut.routes.ConfirmOptOutController.show(isAgent = true).url
     val cancelButton: String = messages("optout.chooseOptOutTaxYear.cancel")
     val cancelButtonHref: String = controllers.routes.NextUpdatesController.show().url
     val cancelButtonAgentHref: String = controllers.routes.NextUpdatesController.showAgent().url

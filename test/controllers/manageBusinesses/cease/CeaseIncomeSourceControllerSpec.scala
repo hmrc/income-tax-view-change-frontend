@@ -22,7 +22,6 @@ import enums.MTDIndividual
 import exceptions.MissingFieldException
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.IncomeSourcesNewJourney
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -52,28 +51,9 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
     s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
       val action = if (mtdRole == MTDIndividual) testCeaseIncomeSourceController.show() else testCeaseIncomeSourceController.showAgent()
       s"the user is authenticated as a $mtdRole" should {
-        "redirect user back to the home page" when {
-          "income source is disabled" in {
-            setupMockSuccess(mtdRole)
-            disable(IncomeSourcesNewJourney)
-            mockSingleBISWithCurrentYearAsMigrationYear()
-
-            val result = action(fakeRequest)
-
-            val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
-              controllers.routes.HomeController.show().url
-            } else {
-              controllers.routes.HomeController.showAgent().url
-            }
-
-            status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(expectedRedirectUrl)
-          }
-        }
         "Render the cease an income source page" when {
           "income source is enabled" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSourcesNewJourney)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
@@ -93,9 +73,8 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
           }
         }
         "show error page" when {
-          "income source is enabled" in {
+          "using the manage businesses journey" in {
             setupMockSuccess(mtdRole)
-            enable(IncomeSourcesNewJourney)
             mockBothIncomeSources()
 
             when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any(), any()))

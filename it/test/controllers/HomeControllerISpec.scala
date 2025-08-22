@@ -22,7 +22,7 @@ import enums.MTDIndividual
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{IncomeSourcesFs, IncomeSourcesNewJourney, NavBarFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs, ReportingFrequencyPage}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -462,12 +462,12 @@ class HomeControllerISpec extends ControllerISpecHelper {
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }
+
         "display Income Sources tile" when {
-          "IncomeSources feature switch is enabled" in {
+          "using the manage businesses journey" in {
             disable(NavBarFs)
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
-            enable(IncomeSourcesFs)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -532,16 +532,15 @@ class HomeControllerISpec extends ControllerISpecHelper {
               pageTitleInd("home.heading"),
               elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
-              elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Income Sources")
+              elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
             )
           }
         }
         "display Your Businesses tile" when {
-          "IncomeSources and IncomeSourcesNewJourney feature switches are enabled" in {
+          "using the manage businesses journey" in {
             disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-            enable(IncomeSourcesFs, IncomeSourcesNewJourney)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -751,7 +750,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
       }
       "retrieving the income sources was unsuccessful" in {
         disable(NavBarFs)
-        enable(IncomeSourcesFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(

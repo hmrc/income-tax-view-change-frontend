@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.AdjustPaymentsOnAccount
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
@@ -40,9 +39,7 @@ class ApiFailureSubmittingPoaControllerISpec extends ControllerISpecHelper {
           if (mtdUserRole == MTDSupportingAgent) {
             testSupportingAgentAccessDenied(path, additionalCookies)
           } else {
-            s"render the Adjusting your payments on account page" when {
-              s"AdjustPaymentsOnAccount FS enabled" in {
-                enable(AdjustPaymentsOnAccount)
+            s"render the Adjusting your payments on account page" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, multipleBusinessesResponse
@@ -53,22 +50,6 @@ class ApiFailureSubmittingPoaControllerISpec extends ControllerISpecHelper {
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "claimToAdjustPoa.apiFailure.heading")
                 )
-              }
-            }
-            s"redirect to home page" when {
-              s"AdjustPaymentsOnAccount FS disabled" in {
-                disable(AdjustPaymentsOnAccount)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
-                  OK, multipleBusinessesResponse
-                )
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(homeUrl(mtdUserRole))
-                )
-              }
             }
           }
         }
