@@ -60,11 +60,15 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
         "render the Confirmed page" in {
+
           enable(OptOutFs)
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockOptOutConfirmedPageViewModel(eligibleTaxYearResponse)
+
+          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+            .thenReturn(Future.successful(3))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
             Future(

@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import models.optout.ConfirmedOptOutViewModel
+@import models.optout._
 @import services.optout.OneYearOptOutFollowedByMandated
 @import viewUtils.ExternalUrlHelper
 
@@ -37,7 +37,7 @@
     viewModel: ConfirmedOptOutViewModel,
     isAgent: Boolean = false,
     showReportingFrequencyContent: Boolean,
-    submitYourTaxReturnContent: Option[Html]
+    confirmedOptOutViewScenarios: ConfirmedOptOutViewScenarios
 )(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
 
 
@@ -119,16 +119,6 @@
     </div>
 }
 
-@submitYourTaxReturnBlock = {
-
-        @submitYourTaxReturnContent.map{ content =>
-            <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-                @content
-            </div>
-        }
-
-}
-
 @reportingUpdatesBlock = {
     <div id="reporting-updates" class="govuk-!-margin-bottom-9  govuk-!-margin-top-8">
         @if(viewModel.isOneYearOptOutFollowedByMandated) {
@@ -170,6 +160,5 @@
 ) {
     @panel
     @revisedDeadlinesBlock
-    @submitYourTaxReturnBlock
     @reportingUpdatesBlock
 }
