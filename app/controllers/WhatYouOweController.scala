@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config._
 import config.featureswitch._
+import controllers.routes._
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import models.admin._
@@ -35,8 +36,6 @@ import services.{ClaimToAdjustService, DateServiceInterface, SelfServeTimeToPayS
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
-import controllers.routes._
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

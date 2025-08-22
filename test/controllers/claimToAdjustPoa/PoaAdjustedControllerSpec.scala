@@ -24,8 +24,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.{ClaimToAdjustService, DateService, PaymentOnAccountSessionService}
 
 import java.time.LocalDate

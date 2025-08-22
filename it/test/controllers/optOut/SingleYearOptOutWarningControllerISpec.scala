@@ -59,7 +59,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
   }
 
   s"calling GET $path" should {
-    "render single tax year opt out confirmation page" when {
+    "render multi tax year opt out confirmation page" when {
       "User is authorised" in {
         enable(OptOutFs)
         disable(NavBarFs)
@@ -71,8 +71,8 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
           currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus
+          currentYearStatus = Annual,
+          nextYearStatus = Annual
         )
 
         val result = buildGETMTDClient(path).futureValue
@@ -93,7 +93,7 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
   }
 
   s"calling POST $path" should {
-    s"return status $BAD_REQUEST and render single tax year opt out confirmation pager with error message - $BAD_REQUEST " when {
+    s"return status $BAD_REQUEST and render multi tax year opt out confirmation page with error message - $BAD_REQUEST " when {
       "user answers with invalid data" in {
         enable(OptOutFs)
         disable(NavBarFs)
@@ -104,8 +104,8 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
         helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+          currentYearStatus = Annual,
+          nextYearStatus = Annual)
 
         val result = buildPOSTMTDPostClient(path, body = inValidForm).futureValue
         IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -132,8 +132,8 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
         helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+          currentYearStatus = Annual,
+          nextYearStatus = Annual)
 
         val result = buildPOSTMTDPostClient(path, body = validYesForm).futureValue
         IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -157,8 +157,8 @@ class SingleYearOptOutWarningControllerISpec extends ControllerISpecHelper {
         helper.stubOptOutInitialState(currentTaxYear,
           previousYearCrystallised = false,
           previousYearStatus = Voluntary,
-          currentYearStatus = NoStatus,
-          nextYearStatus = NoStatus)
+          currentYearStatus = Annual,
+          nextYearStatus = Annual)
 
         val result = buildPOSTMTDPostClient(path, body = validNoForm).futureValue
 

@@ -23,13 +23,13 @@ import mocks.auth.MockAuthActions
 import mocks.services.{MockClientDetailsService, MockDateService, MockNextUpdatesService, MockSessionService}
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, ManageIncomeSourceData, PropertyDetailsModel, TaxYear}
+import models.incomeSourceDetails._
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, NextUpdatesService, SessionService}
 import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId}

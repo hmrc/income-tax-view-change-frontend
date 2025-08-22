@@ -26,7 +26,7 @@ import models.itsaStatus.StatusDetail
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.{CalculationListService, DateService, ITSAStatusService, SessionService}
+import services.{DateService, ITSAStatusService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.JourneyCheckerManageBusinesses
 

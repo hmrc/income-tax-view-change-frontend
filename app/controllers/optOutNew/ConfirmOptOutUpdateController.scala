@@ -20,8 +20,6 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
-import controllers.optOut.routes
 import models.incomeSourceDetails.TaxYear
 import models.optoutnew.CheckOptOutUpdateAnswersViewModel
 import play.api.Logger
