@@ -38,7 +38,12 @@ case class OptOutProposition(previousTaxYear: PreviousOptOutTaxYear,
   val isNoOptOutAvailable: Boolean = availableOptOutYears.isEmpty
 
   def isCurrentYearQuarterly: Boolean = currentTaxYear.status == ITSAStatus.Voluntary || currentTaxYear.status == ITSAStatus.Mandated
+
   def isNextYearQuarterly: Boolean = nextTaxYear.status == ITSAStatus.Voluntary || nextTaxYear.status == ITSAStatus.Mandated
+
+  def isCurrentYearAnnual: Boolean = currentTaxYear.status == ITSAStatus.Annual
+
+  def isNextYearAnnual: Boolean = nextTaxYear.status == ITSAStatus.Annual
 
   def optOutYearsToUpdate(intent: TaxYear): Seq[TaxYear] = {
     availableOptOutYears.filter(_.shouldBeUpdated(intent)).map(_.taxYear)

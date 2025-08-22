@@ -20,13 +20,15 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-case class SingleObligationModel(start: LocalDate,
-                                 end: LocalDate,
-                                 due: LocalDate,
-                                 obligationType: String,
-                                 dateReceived: Option[LocalDate],
-                                 periodKey: String,
-                                 status: ObligationStatus)
+case class SingleObligationModel(
+                                  start: LocalDate,
+                                  end: LocalDate,
+                                  due: LocalDate,
+                                  obligationType: String,
+                                  dateReceived: Option[LocalDate],
+                                  periodKey: String,
+                                  status: ObligationStatus
+                                )
 
 object SingleObligationModel {
   implicit val formatNextUpdateModel: Format[SingleObligationModel] = Json.format[SingleObligationModel]

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package models.obligations
+package models.optout
 
-import play.api.libs.json.{Format, Json}
+sealed trait ConfirmedOptOutViewScenarios
 
-case class GroupedObligationsModel(identification: String, obligations: List[SingleObligationModel]) {
+case object Scenario1Content extends ConfirmedOptOutViewScenarios
 
-  val currentCrystDeadlines: List[SingleObligationModel] = obligations.filter(_.obligationType == "Crystallisation")
-    .sortBy(_.start.toEpochDay)
-}
+case object Scenario2Content extends ConfirmedOptOutViewScenarios
 
-object GroupedObligationsModel {
-  implicit val format: Format[GroupedObligationsModel] = Json.format[GroupedObligationsModel]
-}
+case object Scenario3Content extends ConfirmedOptOutViewScenarios
+
+case object Scenario4Content extends ConfirmedOptOutViewScenarios
+
+sealed trait ConfirmedOptOutViewScenariosError
+
+case object UnableToDetermineContent extends ConfirmedOptOutViewScenariosError
