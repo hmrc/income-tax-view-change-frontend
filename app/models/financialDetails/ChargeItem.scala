@@ -114,7 +114,7 @@ case class ChargeItem (
     else getDueDate
 
   def isCodingOut: Boolean = {
-    val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
+    val codingOutSubTypes = Seq(Accepted, Cancelled, FullyCollected)
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
@@ -141,6 +141,7 @@ case class ChargeItem (
 
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
+      case (BalancingCharge, Some(Accepted)) => true
       case (BalancingCharge, None       ) => true
       case (PoaOneDebit, None           ) => true
       case (PoaTwoDebit, None           ) => true

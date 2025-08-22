@@ -271,7 +271,7 @@
         @messages("chargeSummary.check-paye-tax-code-1")
 <a class="govuk-link" id="paye-tax-code-link" href="@{ExternalUrlHelper.checkPayeTaxCodeUrl}/@{viewModel.taxYearEndToCheckCode}">
 @messages("chargeSummary.check-paye-tax-code-2")</a>
-        @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFromCheckCode.toString, viewModel.taxYearToCheckCode.toString)
+        @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
     }
 }
 
@@ -513,27 +513,26 @@
                     </tr>
                 }
 
+                @if(viewModel.isCodedOut) {
+                    <tr>
+                        <td class="govuk-table__cell">@{
+                            getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
+                        }</td>
+                        <td class="govuk-table__cell">@{
+                            messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
+                        }
+                        </td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                            viewModel.adjustmentHistory.creationEvent.amount.toCurrency
+                        }</td>
+                    </tr>
+                }
+
                 @if(viewModel.latePaymentInterestCharge){
                     <tr>
                         <td class="govuk-table__cell">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort.toNonBreaking}</td>
                         <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}")</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency}</td>
-                    </tr>
-                }
-
-                @if(viewModel.chargeItem.codedOutStatus == Some(Accepted)) {
-                    <tr>
-                        <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
-                    </tr>
-                }
-
-                @if(viewModel.chargeItem.codedOutStatus == Some(FullyCollected)) {
-                    <tr>
-                        <td class="govuk-table__cell">@{viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.originalAmount.toCurrency}</td>
                     </tr>
                 }
 
@@ -552,7 +551,7 @@
                 @for(charge <- viewModel.adjustmentHistory.adjustments) {
                     <tr>
                         <td class="govuk-table__cell">@{charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}")</td>
+                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@{charge.amount.toCurrency}</td>
                     </tr>
                 }

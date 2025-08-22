@@ -150,8 +150,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
 
 
-      chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
-        chargeReference, isEnabled(ChargeHistory)).map {
+      chargeHistoryService.chargeHistoryResponse(isInterestCharge, chargeReference, isEnabled(ChargeHistory)).map {
         case Right(chargeHistory) =>
           auditChargeSummary(chargeItem, paymentBreakdown,
             chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
@@ -214,7 +213,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
               mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
                 case Right(_) => Ok {
                   if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isIncludedInSACSummary) {
-                    yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl)
+                    yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl, saChargesUrl)
                   } else
                     chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
                 }
