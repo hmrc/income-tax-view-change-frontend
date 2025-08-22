@@ -81,21 +81,25 @@ class ReportingFrequencyViewSpec extends TestSupport {
     val govGuidance = "#compatible-software-link"
   }
 
-  def testContentByIds(pageDocument: Document, R17ContentEnabled: Boolean, additionalIdsAndContent: Seq[(String, String)] = Seq()): Unit = {
+  def testContentByIds(pageDocument: Document, R17ContentEnabled: Boolean, additionalIdsAndContent: Seq[(String, String)] = Seq(), ceasedBusinesses: Boolean = false): Unit = {
     val expectedContent: Seq[(String, String)] = {
-      if(R17ContentEnabled){
+      if(R17ContentEnabled) {
+
+        val differentObligationsContent = if(ceasedBusinesses) Seq.empty else
+          Seq(
+            Selectors.differentObligationsH2 -> differentObligationsHeading,
+            Selectors.differentObligationsP1 -> differentObligationsText,
+            Selectors.differentObligationsLi1 -> differentObligationsLiOne,
+            Selectors.differentObligationsLi2 -> differentObligationsLiTwo,
+            Selectors.differentObligationsP2 -> differentObligationsTextTwo,
+            Selectors.differentObligationsP3 -> differentObligationsTextThree
+          )
 
         Seq(
           Selectors.h1 -> pageHeadingContentNew,
           Selectors.h2 -> manageRFHeadingContent,
           Selectors.p1 -> p1Content,
           Selectors.p2 -> p2Content,
-          Selectors.differentObligationsH2 -> differentObligationsHeading,
-          Selectors.differentObligationsP1 -> differentObligationsText,
-          Selectors.differentObligationsLi1 -> differentObligationsLiOne,
-          Selectors.differentObligationsLi2 -> differentObligationsLiTwo,
-          Selectors.differentObligationsP2 -> differentObligationsTextTwo,
-          Selectors.differentObligationsP3 -> differentObligationsTextThree,
           Selectors.mandatoryReportingH2 -> mandatoryReportingHeadingR17,
           Selectors.mandatoryReportingInset -> mandatoryReportingInsetR17,
           Selectors.mandatoryReportingText -> mandatoryReportingTextR17,
@@ -103,7 +107,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           Selectors.compatibleSoftwareH2 -> compatibleSoftwareHeadingR17,
           Selectors.compatibleSoftwareText -> compatibleSoftwareTextR17,
           Selectors.compatibleSoftwareText2 -> compatibleSoftwareTextThreeR17,
-        ) ++ additionalIdsAndContent
+        ) ++ additionalIdsAndContent ++ differentObligationsContent
 
 
       }else{
@@ -503,11 +507,12 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
           pageDocument.title() shouldBe titleNew
 
-          testContentByIds(pageDocument, R17ContentEnabled = true)
+          testContentByIds(pageDocument, R17ContentEnabled = true, ceasedBusinesses = true)
 
-          pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+          pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page."
 
           pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+          Option(pageDocument.getElementById("different-obligations-heading")) shouldBe None
         }
 
       }
@@ -796,9 +801,10 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
           testContentByIds(pageDocument, R17ContentEnabled = false)
 
-          pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+          pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page."
 
           pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+          Option(pageDocument.getElementById("different-obligations-heading")) shouldBe None
         }
 
         "return the correct content when opt in and opt out has multiple tax years" in {
@@ -910,9 +916,10 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
             testContentByIds(pageDocument, R17ContentEnabled = false)
 
-            pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page."
+            pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page."
 
             pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+            Option(pageDocument.getElementById("different-obligations-heading")) shouldBe None
 
           }
         }
