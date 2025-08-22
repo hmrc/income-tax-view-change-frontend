@@ -36,8 +36,8 @@ class CitizenDetailsConnector @Inject()(val http: HttpClientV2,
 
   private[connectors] lazy val getCitizenDetailsBySaUtrUrl: String => String = saUtr => s"${config.citizenDetailsUrl}/citizen-details/sautr/$saUtr"
 
-  private def updateHeaderCarrier(request: RequestBuilder): RequestBuilder = if (config.hasEnabledTestOnlyRoutes) {
-    request.setHeader(HeaderNames.trueClientIp -> "ITVC")
+  private def updateHeaderCarrier(request: RequestBuilder, utr: String): RequestBuilder = if (config.hasEnabledTestOnlyRoutes) {
+    request.setHeader(HeaderNames.trueClientIp -> s"ITVC-$utr")
   } else {
     request
   }
@@ -48,7 +48,7 @@ class CitizenDetailsConnector @Inject()(val http: HttpClientV2,
 
     Logger("application").debug(s"GET $url")
 
-    updateHeaderCarrier(http.get(url"$url")).execute[HttpResponse] map { response =>
+    updateHeaderCarrier(http.get(url"$url"), saUtr).execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
