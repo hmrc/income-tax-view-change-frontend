@@ -54,7 +54,7 @@ trait ReportingObligationsUtils extends FeatureSwitching {
     (isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
       case (true, true) => codeBlock
       case _ =>
-        Logger("application").warn("[OptOutTaxYearQuestionController] Feature Switches not enabled, redirecting to Home Page")
+        Logger("application").warn("Feature Switches not enabled, redirecting to Home Page")
 
         user.userType match {
           case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
