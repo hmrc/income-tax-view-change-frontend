@@ -2647,8 +2647,16 @@ optout.updates.checkAnswers.inset       = You have <b>2 quarterly updates submit
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed
+
+#### maybe get rid of these
 optout.confirmedOptOut.taxYear                                   = You are reporting annually from the {0} to {1} tax year onwards
 optout.confirmedOptOut.one-year                                  = You are reporting annually for the {0} to {1} tax year
+####
+
+optout.confirmedOptOut.green.panel.scenario1And4                 = You no longer need to use Making Tax Digital for Income Tax
+optout.confirmedOptOut.green.panel.scenario2                     = You do not need to use Making Tax Digital for Income Tax for the {0} to {1} tax year
+optout.confirmedOptOut.green.panel.scenario3                     = From the {0} to {1} tax year onwards you do not need to use Making Tax Digital for Income Tax
+
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Your revised deadlines
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Your tax return for the {0} to {1} tax year is due by <b>31 January {2}</b>.
 optout.confirmedOptOut.viewUpcomingDeadlines.text                = View your upcoming deadlines
@@ -2666,6 +2674,7 @@ optout.confirmedOptOut.submitTax.confirmed.p2.link               = software comp
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
 optout.confirmedOptOut.next-updates                              = next updates
+
 optout.confirmedOptOut.reportQuarterly                           = Reporting quarterly again in the future
 optout.confirmedOptOut.reportQuarterly.desc1                     = You could be required to report quarterly again in the future if:
 optout.confirmedOptOut.reportQuarterly.p1                        = HMRC lowers the income threshold for Making Tax Digital
