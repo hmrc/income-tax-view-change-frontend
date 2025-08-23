@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import models.optout.ConfirmedOptOutViewModel
+@import models.optout._
 @import services.optout.OneYearOptOutFollowedByMandated
 @import viewUtils.ExternalUrlHelper
 
@@ -37,15 +37,32 @@
     viewModel: ConfirmedOptOutViewModel,
     isAgent: Boolean = false,
     showReportingFrequencyContent: Boolean,
-    submitYourTaxReturnContent: Option[Html]
+    confirmedOptOutViewScenarios: ConfirmedOptOutViewScenarios
 )(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
 
-
-@getPanel(bodyMsgKey: String) = @{
+@greenPanelScenario1And4() = @{
     govukPanel(
         Panel(
             title = Text(messages("optout.confirmedOptOut.heading")),
-            content = Text(messages(bodyMsgKey, viewModel.startYear, viewModel.endYear))
+            content = Text(messages("optout.confirmedOptOut.green.panel.scenario1And4"))
+        )
+    )
+}
+
+@greenPanelScenario2() = @{
+    govukPanel(
+        Panel(
+            title = Text(messages("optout.confirmedOptOut.heading")),
+            content = Text(messages("optout.confirmedOptOut.green.panel.scenario2", viewModel.startYear, viewModel.endYear))
+        )
+    )
+}
+
+@greenPanelScenario3() = @{
+    govukPanel(
+        Panel(
+            title = Text(messages("optout.confirmedOptOut.heading")),
+            content = Text(messages("optout.confirmedOptOut.green.panel.scenario3", viewModel.startYear, viewModel.endYear))
         )
     )
 }
@@ -58,6 +75,7 @@
 }
 
 @optOutYearFollowedByMandatedContent = {
+
     @h2(msg = "optout.confirmedOptOut.report-quarterly-next-year-onwards")
 
     @{
@@ -119,16 +137,6 @@
     </div>
 }
 
-@submitYourTaxReturnBlock = {
-
-        @submitYourTaxReturnContent.map{ content =>
-            <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
-                @content
-            </div>
-        }
-
-}
-
 @reportingUpdatesBlock = {
     <div id="reporting-updates" class="govuk-!-margin-bottom-9  govuk-!-margin-top-8">
         @if(viewModel.isOneYearOptOutFollowedByMandated) {
@@ -163,13 +171,64 @@
     </div>
 }
 
+@submitTaxReturnParagraph1 = {
+    @p(id = Some("now-you-have-opted-out")) {
+        HtmlFormat.fill(
+            Seq(
+                Html(messages("optout.confirmedOptOut.submitTax.confirmed.p1")),
+                link(link = selfAssessmentTaxReturnLink, id = Some("fill-your-tax-return-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p1.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+            )
+    }
+}
+
+@submitTaxReturnParagraph2 = {
+    p(id = Some("tax-year-reporting-quarterly")) {
+        HtmlFormat.fill(
+            Seq(
+                Html(messages("optout.confirmedOptOut.submitTax.confirmed.p2")),
+                link(link = compatibleSoftwareLink, id = Some("compatible-software-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p2.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+            )
+    }
+}
+
 @mainTemplate(
     pageTitle = messages("optout.confirmedOptOut.heading"),
     isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
 ) {
-    @panel
-    @revisedDeadlinesBlock
-    @submitYourTaxReturnBlock
-    @reportingUpdatesBlock
+
+    @if(confirmedOptOutViewScenarios == Scenario1Content) {
+        @greenPanelScenario1And4
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @submitTaxReturnParagraph1
+        </div>
+        @revisedDeadlinesBlock
+        @reportingUpdatesBlock
+    }
+
+    @if(confirmedOptOutViewScenarios == Scenario2Content) {
+        @greenPanelScenario2
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @submitTaxReturnParagraph1
+            @submitTaxReturnParagraph2
+        </div>
+    }
+
+    @if(confirmedOptOutViewScenarios == Scenario3Content) {
+        @greenPanelScenario3
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @submitTaxReturnParagraph1
+            @submitTaxReturnParagraph2
+        </div>
+    }
+
+    @if(confirmedOptOutViewScenarios == Scenario4Content) {
+        @greenPanelScenario1And4
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @submitTaxReturnParagraph1
+        </div>
+    }
+
+
+
 }
