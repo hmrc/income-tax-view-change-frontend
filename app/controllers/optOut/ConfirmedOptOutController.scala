@@ -101,16 +101,6 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
             proposition: OptOutProposition <- optOutService.fetchOptOutProposition()
             chosenTaxYear: ChosenTaxYear <- optOutService.determineOptOutIntentYear()
             viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
-            //            submitYourTaxReturnContent: Option[Html] =
-            //              confirmedOptOutViewUtils
-            //                .submitYourTaxReturnContent(
-            //                  `itsaStatusCY-1` = proposition.previousTaxYear.status,
-            //                  `itsaStatusCY` = proposition.currentTaxYear.status,
-            //                  `itsaStatusCY+1` = proposition.nextTaxYear.status,
-            //                  chosenTaxYear = chosenTaxYear,
-            //                  isMultiYear = proposition.isMultiYearOptOut,
-            //                  isPreviousYearCrystallised = proposition.previousTaxYear.crystallised
-            //                )
             viewScenarioContent: Either[ConfirmedOptOutViewScenariosError, ConfirmedOptOutViewScenarios] <- viewScenarioHandler()
           } yield {
             (viewScenarioContent, viewModel) match {
