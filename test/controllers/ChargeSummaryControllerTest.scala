@@ -79,7 +79,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
-        when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
+        when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
         val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
@@ -105,7 +105,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
-        when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
+        when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
         val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
@@ -128,7 +128,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(None)
-        when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
+        when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
         val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
@@ -138,7 +138,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
         }
       }
 
-      "return true when latePaymentInterestAmount is present" in {
+      "return true when accruingInterestAmount is present" in {
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
@@ -150,7 +150,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
-        when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
+        when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
         val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
@@ -161,7 +161,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
       }
 
-      "error when latePaymentInterestAmount is missing" in {
+      "error when accruingInterestAmount is missing" in {
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
@@ -173,13 +173,13 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(None)
-        when(documentDetail.latePaymentInterestAmount).thenReturn(None)
+        when(documentDetail.accruingInterestAmount).thenReturn(None)
         when(documentDetail.interestOutstandingAmount).thenReturn(None)
 
         val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 
         outcome match {
-          case Right(_) => fail(s"should have failed due to missing latePaymentInterestAmount")
+          case Right(_) => fail(s"should have failed due to missing accruingInterestAmount")
           case Left(_) =>
         }
       }
@@ -201,7 +201,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         when(documentDetail.originalAmount).thenReturn(10)
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
-        when(documentDetail.latePaymentInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
+        when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
         val outcome = testController.mandatoryViewDataPresent(isLatePaymentCharge, documentDetailWithDueDate)(tsTestUser)
 

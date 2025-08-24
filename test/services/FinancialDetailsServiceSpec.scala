@@ -317,32 +317,32 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         val expectedResult: List[FinancialDetailsResponseModel] = List(
           getFinancialDetailSuccess(documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(50.0)),
             fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00))
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00))
           ), financialDetails = List(
             fullFinancialDetailModel
           )),
           getFinancialDetailSuccess(documentDetails = List(
             fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(25.0))
           ), financialDetails = List(
             fullFinancialDetailModel
           ))
         )
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(documentDetails = List(
-          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(50.0)),
           fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
-          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
-          fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, latePaymentInterestAmount = None, interestOutstandingAmount = None)
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, accruingInterestAmount = None, interestOutstandingAmount = None)
         ), financialDetails = List(
           fullFinancialDetailModel
         )))
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(documentDetails = List(
           fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
-          fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, latePaymentInterestAmount = None, interestOutstandingAmount = None),
-          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, accruingInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(25.0))
         ), financialDetails = List(
           fullFinancialDetailModel
         )))
@@ -354,15 +354,15 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       "no unpaid transactions exist" in {
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(documentDetails = List(
-          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
-          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None)
         ), financialDetails = List(
           fullFinancialDetailModel,
           fullFinancialDetailModel
         )))
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(documentDetails = List(
-          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
-          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None)
         ), financialDetails = List(
           fullFinancialDetailModel,
           fullFinancialDetailModel
@@ -386,7 +386,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(documentDetails = List(
           fullDocumentDetailModel.copy(outstandingAmount = 100.00),
-          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(0.00))
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(0.00), interestOutstandingAmount = Some(0.00))
         ), financialDetails = List(
           fullFinancialDetailModel
         )))
@@ -475,11 +475,11 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(
           getFinancialDetailSuccess(documentDetails = List(
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(50.0)),
             fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
             fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
-            fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
+            fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(25.0))
           ), financialDetails = List(
             fullFinancialDetailModel,
             fullFinancialDetailModel
@@ -487,13 +487,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         )
 
         setupMockGetFinancialDetailsByTaxYearRange(multiYearRange, testNino)(getFinancialDetailSuccess(documentDetails = List(
-          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(50.0)),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(50.0)),
           fullDocumentDetailModel.copy(outstandingAmount = 100.00, originalAmount = 100.00),
-          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
-          fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, latePaymentInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(0.00), interestOutstandingAmount = Some(100.00)),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, originalAmount = -200.00, accruingInterestAmount = None, interestOutstandingAmount = None),
           fullDocumentDetailModel.copy(outstandingAmount = 300.00, originalAmount = 300.00),
-          fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, latePaymentInterestAmount = None, interestOutstandingAmount = None),
-          fullDocumentDetailModel.copy(outstandingAmount = 0.00, latePaymentInterestAmount = Some(25.0))
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, originalAmount = -400.00, accruingInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0.00, accruingInterestAmount = Some(25.0))
         ), financialDetails = List(
           fullFinancialDetailModel,
           fullFinancialDetailModel
@@ -506,10 +506,10 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
       "no unpaid transactions exist" in {
 
         setupMockGetFinancialDetailsByTaxYearRange(multiYearRange, testNino)(getFinancialDetailSuccess(documentDetails = List(
-          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
-          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
-          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None),
-          fullDocumentDetailModel.copy(outstandingAmount = 0, latePaymentInterestAmount = None, interestOutstandingAmount = None)
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None)
         ), financialDetails = List(
           fullFinancialDetailModel,
           fullFinancialDetailModel,

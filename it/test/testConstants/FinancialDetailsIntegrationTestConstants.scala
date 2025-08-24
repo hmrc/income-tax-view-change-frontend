@@ -47,7 +47,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
       interestRate = Some(100),
       interestFromDate = Some(LocalDate.of(2018, 3, 29)),
       interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-      latePaymentInterestAmount = Some(100),
+      accruingInterestAmount = Some(100),
       paymentLotItem = Some("paymentLotItem"),
       paymentLot = Some("paymentLot")
     )
@@ -179,15 +179,15 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
                                 paymentId: Option[String],
                                 outstandingAmount: List[BigDecimal],
                                 taxYear: String,
-                                latePaymentInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100))
+                                accruingInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100))
                                ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear.toInt, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
-          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), latePaymentInterestAmount(0), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head),
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), accruingInterestAmount(0), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head),
         DocumentDetail(taxYear.toInt, transactionIds(1).get, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId2"),
-          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), latePaymentInterestAmount(1), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1))
+          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), accruingInterestAmount(1), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, transactionIds(0), Some(LocalDate.parse("2020-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = Some(dunningLock.head), interestLock = Some(interestLock.head))))),
@@ -304,7 +304,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
     paymentId = Some("paymentId"),
     outstandingAmount = List(2000, 2000),
     taxYear = currentDate.getYear.toString,
-    latePaymentInterestAmount = List(None, None)
+    accruingInterestAmount = List(None, None)
   )
 
   def financialDetailsOverdueData(dunningLock: List[String] = noDunningLock, interestLock: List[String] = noInterestLock): FinancialDetailsModel = testFinancialDetailsModel(

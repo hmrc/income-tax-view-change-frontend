@@ -114,12 +114,12 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     Json.obj("paymentType" -> getChargeType(docDateDetail, latePaymentCharge = true),
       "underReview" -> docDateDetail.dunningLock,
       "status" -> docDateDetail.getInterestPaidStatus) ++
-      ("amount", docDateDetail.latePaymentInterestAmount) ++
+      ("amount", docDateDetail.accruingInterestAmount) ++
       ("dueDate", docDateDetail.dueDate)
   }
 
   private val paymentsDetails: Seq[JsObject] = taxYearSummaryViewModel.charges.map(paymentsJson) ++
-    taxYearSummaryViewModel.charges.filter(_.latePaymentInterestAmount.isDefined).map(paymentsJsonLPI)
+    taxYearSummaryViewModel.charges.filter(_.accruingInterestAmount.isDefined).map(paymentsJsonLPI)
 
   private def getObligationsType(obligationType: String) = {
     obligationType match {

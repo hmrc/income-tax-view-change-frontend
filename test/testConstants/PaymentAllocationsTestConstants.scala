@@ -405,7 +405,7 @@ object PaymentAllocationsTestConstants {
     interestRate = Some(100),
     interestFromDate = Some(LocalDate.of(2018, 3, 29)),
     interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-    latePaymentInterestAmount = Some(100),
+    accruingInterestAmount = Some(100),
     latePaymentInterestId = Some("latePaymentInterestId")
   )
 

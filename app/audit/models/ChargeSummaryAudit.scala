@@ -136,7 +136,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
     "interestLock" -> paymentBreakdown.interestLockExists)
 
   private val fullPaymentAmount = if (isLatePaymentCharge)
-    chargeItem.latePaymentInterestAmount else Option(chargeItem.originalAmount)
+    chargeItem.accruingInterestAmount else Option(chargeItem.originalAmount)
 
   private val remainingToPay = if (isLatePaymentCharge)
     chargeItem.interestRemainingToPay else chargeItem.remainingToPay
@@ -144,7 +144,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
   private val dueDate = if (isLatePaymentCharge) chargeItem.interestEndDate else chargeItem.dueDate
 
   private val chargeDetails: JsObject = Json.obj(
-    "chargeType" -> getChargeType(chargeItem, chargeItem.isOverdue() && chargeItem.isLatePaymentInterest)) ++
+    "chargeType" -> getChargeType(chargeItem, chargeItem.isOverdue() && chargeItem.isAccruingInterest)) ++
     ("interestPeriod", interestPeriod) ++
     ("dueDate", dueDate) ++
     ("fullPaymentAmount", fullPaymentAmount) ++

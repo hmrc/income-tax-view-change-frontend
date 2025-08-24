@@ -31,32 +31,32 @@ class DocumentDetailSpec extends UnitSpec {
     "calling predicate hasAccruingInterest" should {
 
       "return true" when {
-        "interestOutstandingAmount exists and latePaymentInterestAmount is a non-negative amount or does not exist" in {
-          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(1), latePaymentInterestAmount = Some(0))
+        "interestOutstandingAmount exists and accruingInterestAmount is a non-negative amount or does not exist" in {
+          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(1), accruingInterestAmount = Some(0))
             .hasAccruingInterest shouldBe true
 
-          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(1), latePaymentInterestAmount = Some(-1))
+          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(1), accruingInterestAmount = Some(-1))
             .hasAccruingInterest shouldBe true
 
-          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(1), latePaymentInterestAmount = None)
+          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(1), accruingInterestAmount = None)
             .hasAccruingInterest shouldBe true
         }
       }
 
       "return false" when {
-        "interestOutstandingAmount exists and latePaymentInterestAmount is a positive amount" in {
-          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(1), latePaymentInterestAmount = Some(2))
+        "interestOutstandingAmount exists and accruingInterestAmount is a positive amount" in {
+          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(1), accruingInterestAmount = Some(2))
             .hasAccruingInterest shouldBe false
         }
 
-        "interestOutstandingAmount does not exist and latePaymentInterestAmount is a non-negative amount or does not exist" in {
-          fullDocumentDetailModel.copy(interestOutstandingAmount = None, latePaymentInterestAmount = Some(0))
+        "interestOutstandingAmount does not exist and accruingInterestAmount is a non-negative amount or does not exist" in {
+          fullDocumentDetailModel.copy(interestOutstandingAmount = None, accruingInterestAmount = Some(0))
             .hasAccruingInterest shouldBe false
 
-          fullDocumentDetailModel.copy(interestOutstandingAmount = None, latePaymentInterestAmount = Some(-1))
+          fullDocumentDetailModel.copy(interestOutstandingAmount = None, accruingInterestAmount = Some(-1))
             .hasAccruingInterest shouldBe false
 
-          fullDocumentDetailModel.copy(interestOutstandingAmount = None, latePaymentInterestAmount = None)
+          fullDocumentDetailModel.copy(interestOutstandingAmount = None, accruingInterestAmount = None)
             .hasAccruingInterest shouldBe false
         }
       }
@@ -83,13 +83,13 @@ class DocumentDetailSpec extends UnitSpec {
         documentDate = LocalDate.parse("2018-03-21"),
         effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")),
         documentDueDate = Some(LocalDate.parse("2021-12-01")),
-        latePaymentInterestAmount = Some(100),
+        accruingInterestAmount = Some(100),
         interestEndDate = Some(LocalDate.parse("2022-01-02")))
 
       "return the right due date" in {
         dd1.getDueDate().get shouldBe LocalDate.parse("2021-12-01")
       }
-      "return the right due date if its has positive latePaymentInterestAmount" in {
+      "return the right due date if its has positive accruingInterestAmount" in {
         dd2.getDueDate().get shouldBe LocalDate.parse("2022-01-02")
       }
     }

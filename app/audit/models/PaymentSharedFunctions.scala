@@ -22,7 +22,7 @@ import services.DateServiceInterface
 trait PaymentSharedFunctions {
 
   def isLatePaymentCharge(chargeItem: TransactionItem)(implicit dateService: DateServiceInterface): Boolean = {
-    chargeItem.isOverdue() && chargeItem.isLatePaymentInterest
+    chargeItem.isOverdue() && chargeItem.isAccruingInterest
   }
 
   def getChargeType(docDetail: TransactionItem, latePaymentCharge: Boolean): Option[String] =

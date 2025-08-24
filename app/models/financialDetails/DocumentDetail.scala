@@ -37,7 +37,7 @@ case class DocumentDetail(taxYear: Int,
                           latePaymentInterestId: Option[String] = None,
                           interestFromDate: Option[LocalDate] = None,
                           interestEndDate: Option[LocalDate] = None,
-                          latePaymentInterestAmount: Option[BigDecimal] = None,
+                          accruingInterestAmount: Option[BigDecimal] = None,
                           lpiWithDunningLock: Option[BigDecimal] = None,
                           paymentLotItem: Option[String] = None,
                           paymentLot: Option[String] = None,
@@ -57,9 +57,9 @@ case class DocumentDetail(taxYear: Int,
     outstandingAmount == 0
 
   def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
+    interestOutstandingAmount.isDefined && accruingInterestAmount.getOrElse[BigDecimal](0) <= 0 && !isPaid
 
-  def isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
+  def isAccruingInterest: Boolean = accruingInterestAmount match {
     case Some(amount) if amount <= 0 => false
     case Some(_) => true
     case _ => false
@@ -84,12 +84,12 @@ case class DocumentDetail(taxYear: Int,
 
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
-    else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.get)
+    else interestOutstandingAmount.getOrElse(accruingInterestAmount.get)
   }
 
   @deprecated("Use checkIfEitherChargeOrLpiHasRemainingToPay in ChargeItem model instead","")
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (isLatePaymentInterest) interestRemainingToPay > 0
+    if (isAccruingInterest) interestRemainingToPay > 0
     else remainingToPay > 0
   }
 
@@ -171,7 +171,7 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def getDueDate(): Option[LocalDate] = {
-    if (isLatePaymentInterest) {
+    if (isAccruingInterest) {
       interestEndDate
     } else {
       documentDueDate
@@ -225,7 +225,7 @@ object DocumentDetail {
       (__ \ "latePaymentInterestId").readNullable[String] and
       (__ \ "interestFromDate").readNullable[LocalDate] and
       (__ \ "interestEndDate").readNullable[LocalDate] and
-      (__ \ "latePaymentInterestAmount").readNullable[BigDecimal] and
+      (__ \ "accruingInterestAmount").readNullable[BigDecimal] and
       (__ \ "lpiWithDunningLock").readNullable[BigDecimal] and
       (__ \ "paymentLotItem").readNullable[String] and
       (__ \ "paymentLot").readNullable[String] and

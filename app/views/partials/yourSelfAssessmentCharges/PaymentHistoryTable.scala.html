@@ -110,7 +110,7 @@
                     content = HtmlContent(viewModel.chargeItem.interestEndDate.get.toLongDate.toNonBreaking)
                 ),
                 TableRow(
-                    content = HtmlContent(viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency),
+                    content = HtmlContent(viewModel.chargeItem.accruingInterestAmount.get.toCurrency),
                     format = Some("numeric")
                 )
             ) else Nil,

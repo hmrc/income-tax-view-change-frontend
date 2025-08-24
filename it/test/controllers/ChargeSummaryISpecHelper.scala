@@ -187,7 +187,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     originalAmount = 1200,
     outstandingAmount = 1200,
     interestOutstandingAmount = None,
-    latePaymentInterestAmount = None,
+    accruingInterestAmount = None,
     interestFromDate = None,
     interestEndDate = None,
     interestRate = None,

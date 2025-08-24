@@ -60,13 +60,13 @@
 }
 
 @{
-    val isInterest = chargeItem.isLatePaymentInterest
+    val isInterest = chargeItem.isAccruingInterest
 
     def getLinkSuffix(): String = {
         if(!isOverduePayment) {
             "link"
         } else {
-            if(chargeItem.codedOutStatus.contains(Nics2) || chargeItem.isLatePaymentInterest) {
+            if(chargeItem.codedOutStatus.contains(Nics2) || chargeItem.isAccruingInterest) {
                 "late-link"
             } else {
                 "late-link2"

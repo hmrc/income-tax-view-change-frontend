@@ -69,7 +69,7 @@ object ClaimToAdjustPoaTestConstants {
     interestRate = None,
     interestFromDate = None,
     interestEndDate = None,
-    latePaymentInterestAmount = Some(150),
+    accruingInterestAmount = Some(150),
     latePaymentInterestId = None
   )
 
@@ -87,7 +87,7 @@ object ClaimToAdjustPoaTestConstants {
     interestRate = None,
     interestFromDate = None,
     interestEndDate = None,
-    latePaymentInterestAmount = Some(250),
+    accruingInterestAmount = Some(250),
     latePaymentInterestId = None
   )
 

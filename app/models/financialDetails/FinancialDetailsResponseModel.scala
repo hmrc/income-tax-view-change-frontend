@@ -90,7 +90,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def getAllDocumentDetailsWithDueDates()(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
       DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
-        documentDetail.isLatePaymentInterest, dunningLockExists(documentDetail.transactionId),
+        documentDetail.isAccruingInterest, dunningLockExists(documentDetail.transactionId),
         isMFADebit = isMFADebit(documentDetail.transactionId),
         isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit(documentDetail.transactionId),
         isReviewAndReconcilePoaTwoDebit = isReviewAndReconcilePoaTwoDebit(documentDetail.transactionId)))
@@ -163,7 +163,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   def unpaidDocumentDetails(): List[DocumentDetail] = {
     this.documentDetails.collect {
       case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.latePaymentInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
+      case documentDetail: DocumentDetail if documentDetail.accruingInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
       case documentDetail: DocumentDetail if documentDetail.interestOutstandingAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
       case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
     }

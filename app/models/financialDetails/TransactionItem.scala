@@ -32,7 +32,7 @@ trait TransactionItem {
 
   val outstandingAmount: BigDecimal
 
-  val isLatePaymentInterest: Boolean
+  val isAccruingInterest: Boolean
 
   val amountCodedOut: Option[BigDecimal]
 

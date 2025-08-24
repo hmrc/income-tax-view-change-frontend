@@ -67,7 +67,7 @@ object FinancialDetailsTestConstants {
         "latePaymentInterestId" -> "latePaymentInterestId1",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -85,7 +85,7 @@ object FinancialDetailsTestConstants {
         "latePaymentInterestId" -> "latePaymentInterestId2",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -178,7 +178,7 @@ object FinancialDetailsTestConstants {
         "latePaymentInterestId" -> "latePaymentInterestId1",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -196,7 +196,7 @@ object FinancialDetailsTestConstants {
         "latePaymentInterestId" -> "latePaymentInterestId2",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -282,7 +282,7 @@ object FinancialDetailsTestConstants {
         "interestRate" -> 100,
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -298,7 +298,7 @@ object FinancialDetailsTestConstants {
         "interestRate" -> 100,
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
-        "latePaymentInterestAmount" -> 100,
+        "accruingInterestAmount" -> 100,
         "lpiWithDunningLock" -> 100,
         "paymentLotItem" -> "paymentLotItem",
         "paymentLot" -> "paymentLot"
@@ -461,7 +461,7 @@ object FinancialDetailsTestConstants {
                           documentDueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                           paymentLotItem: Option[String] = Some("paymentLotItem"),
                           paymentLot: Option[String] = Some("paymentLot"),
-                          latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                          accruingInterestAmount: Option[BigDecimal] = Some(100),
                           interestOutstandingAmount: Option[BigDecimal] = Some(80),
                           transactionId: String = id1040000123,
                           lpiWithDunningLock: Option[BigDecimal] = Some(100),
@@ -480,7 +480,7 @@ object FinancialDetailsTestConstants {
       interestRate = Some(100),
       interestFromDate = Some(LocalDate.of(2018, 3, 29)),
       interestEndDate = Some(LocalDate.of(2018, 6, 15)),
-      latePaymentInterestAmount = latePaymentInterestAmount,
+      accruingInterestAmount = accruingInterestAmount,
       lpiWithDunningLock = lpiWithDunningLock,
       paymentLotItem = paymentLotItem,
       paymentLot = paymentLot,
@@ -534,14 +534,14 @@ object FinancialDetailsTestConstants {
                                      outstandingAmount: BigDecimal = 1400.00,
                                      originalAmount: BigDecimal = 1400.00,
                                      transactionId: String = id1040000123,
-                                     latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                                     accruingInterestAmount: Option[BigDecimal] = Some(100),
                                      paymentLot: Option[String] = Some("paymentLot"),
                                      paymentLotItem: Option[String] = None,
                                      dueDate: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
                                      isMFADebit: Boolean = false): DocumentDetailWithDueDate =
     DocumentDetailWithDueDate(documentDetailModel(taxYear = taxYear, documentDescription = documentDescription, outstandingAmount = outstandingAmount,
       originalAmount = originalAmount, documentText = documentText, transactionId = transactionId, paymentLot = paymentLot, paymentLotItem = paymentLotItem,
-      latePaymentInterestAmount = latePaymentInterestAmount, documentDueDate = dueDate), dueDate = dueDate, isMFADebit = isMFADebit)
+      accruingInterestAmount = accruingInterestAmount, documentDueDate = dueDate), dueDate = dueDate, isMFADebit = isMFADebit)
 
   val balanceDetails: BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
@@ -558,8 +558,8 @@ object FinancialDetailsTestConstants {
   val documentDetailPOA2: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA - POA 2"))
   val documentDetailBalancingCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"))
   val documentDetailAmendedBalCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM Amend Charge"))
-  val documentDetailClass2Nic: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS), paymentLot = None, latePaymentInterestAmount = None)
-  val documentDetailPaye: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED), paymentLot = None, latePaymentInterestAmount = None)
+  val documentDetailClass2Nic: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS), paymentLot = None, accruingInterestAmount = None)
+  val documentDetailPaye: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED), paymentLot = None, accruingInterestAmount = None)
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
   val fullFinancialDetailModel: FinancialDetail = financialDetail()
   val fullDocumentDetailWithDueDateModel: DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
@@ -581,13 +581,13 @@ object FinancialDetailsTestConstants {
                              dunningLock: Option[String] = None,
                              lpiWithDunningLock: Option[BigDecimal] = Some(100),
                              dueDateValue: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
-                             latePaymentInterestAmount: Option[BigDecimal] = Some(100),
+                             accruingInterestAmount: Option[BigDecimal] = Some(100),
                              amountCodedOut: Option[BigDecimal] = None
                            ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount, documentDueDate = dueDateValue, paymentLot = None,
-        paymentLotItem = None, lpiWithDunningLock = lpiWithDunningLock, latePaymentInterestAmount = latePaymentInterestAmount, amountCodedOut = amountCodedOut)),
+        paymentLotItem = None, lpiWithDunningLock = lpiWithDunningLock, accruingInterestAmount = accruingInterestAmount, amountCodedOut = amountCodedOut)),
       financialDetails = List(financialDetail(taxYear, dunningLock = dunningLock, dueDateValue = dueDateValue, mainTransaction = mainTransaction)
       )
     )
@@ -596,10 +596,10 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
-        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000124, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000123, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
+        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000124, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000123, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
       ),
       financialDetails = List(
         financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
@@ -613,8 +613,8 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
-        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
+        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
       ),
       financialDetails = List(
         financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
@@ -626,7 +626,7 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
-        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
       ),
       financialDetails = List(
         financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920", chargeRef = None),
@@ -637,8 +637,8 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
-        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, latePaymentInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1)))
+        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1)))
       ),
       financialDetails = List(
         financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
@@ -651,7 +651,7 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(testTaxYear, paymentLot = None,
-        paymentLotItem = None, latePaymentInterestAmount = None)),
+        paymentLotItem = None, accruingInterestAmount = None)),
       financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Calc Error Correction", mainTransaction = "4001")
       )
     )
@@ -763,7 +763,7 @@ object FinancialDetailsTestConstants {
         latePaymentInterestId = Some("latePaymentInterestId1"),
         interestFromDate = Some(LocalDate.of(2018, 3, 29)),
         interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-        latePaymentInterestAmount = Some(100),
+        accruingInterestAmount = Some(100),
         lpiWithDunningLock = Some(100),
         paymentLotItem = Some("paymentLotItem"),
         paymentLot = Some("paymentLot")),
@@ -779,7 +779,7 @@ object FinancialDetailsTestConstants {
         latePaymentInterestId = Some("latePaymentInterestId2"),
         interestFromDate = Some(LocalDate.of(2018, 3, 29)),
         interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-        latePaymentInterestAmount = Some(100),
+        accruingInterestAmount = Some(100),
         lpiWithDunningLock = Some(100),
         paymentLotItem = Some("paymentLotItem"),
         paymentLot = Some("paymentLot"))
@@ -863,7 +863,7 @@ object FinancialDetailsTestConstants {
         latePaymentInterestId = Some("latePaymentInterestId1"),
         interestFromDate = Some(LocalDate.of(2018, 3, 29)),
         interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-        latePaymentInterestAmount = None,
+        accruingInterestAmount = None,
         lpiWithDunningLock = None,
         paymentLotItem = Some("paymentLotItem"),
         paymentLot = Some("paymentLot"))
@@ -918,7 +918,7 @@ object FinancialDetailsTestConstants {
         latePaymentInterestId = Some("latePaymentInterestId1"),
         interestFromDate = Some(LocalDate.of(2018, 3, 29)),
         interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-        latePaymentInterestAmount = None,
+        accruingInterestAmount = None,
         lpiWithDunningLock = None,
         paymentLotItem = Some("paymentLotItem"),
         paymentLot = Some("paymentLot"))
@@ -973,7 +973,7 @@ object FinancialDetailsTestConstants {
         latePaymentInterestId = Some("latePaymentInterestId1"),
         interestFromDate = Some(LocalDate.of(2020, 3, 29)),
         interestEndDate = Some(LocalDate.of(2020, 3, 29)),
-        latePaymentInterestAmount = None,
+        accruingInterestAmount = None,
         lpiWithDunningLock = None,
         paymentLotItem = Some("paymentLotItem"),
         paymentLot = Some("paymentLot"))
@@ -1028,7 +1028,7 @@ object FinancialDetailsTestConstants {
         latePaymentInterestId = Some("latePaymentInterestId1"),
         interestFromDate = Some(LocalDate.of(2018, 3, 29)),
         interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-        latePaymentInterestAmount = Some(-100),
+        accruingInterestAmount = Some(-100),
         lpiWithDunningLock = None,
         paymentLotItem = Some("paymentLotItem"),
         paymentLot = Some("paymentLot"))
@@ -1130,12 +1130,12 @@ object FinancialDetailsTestConstants {
                                             taxYear: String = fixedDate.getYear.toString,
                                             interestOutstandingAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                             interestRate: List[Option[BigDecimal]] = List(Some(100), Some(100)),
-                                            latePaymentInterestAmount: List[Option[BigDecimal]] = List(None, None)): FinancialDetailsModel =
+                                            accruingInterestAmount: List[Option[BigDecimal]] = List(None, None)): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = dueDate.head, dunningLock = dunningLock.head)))),
@@ -1152,7 +1152,7 @@ object FinancialDetailsTestConstants {
           originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-          interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+          interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
           effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
           documentDueDate = Some(LocalDate.parse("2021-08-25"))
         )
@@ -1172,7 +1172,7 @@ object FinancialDetailsTestConstants {
           originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-          interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+          interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
           effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
           documentDueDate = Some(LocalDate.parse("2021-08-25"))
         )),
@@ -1191,7 +1191,7 @@ object FinancialDetailsTestConstants {
           originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = None,
-          interestEndDate = None, latePaymentInterestAmount = None, amountCodedOut = Some(0),
+          interestEndDate = None, accruingInterestAmount = None, amountCodedOut = Some(0),
           effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
           documentDueDate = Some(LocalDate.parse("2021-08-25"))
         )),
@@ -1205,7 +1205,7 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(testTaxYear, paymentLot = None,
-        paymentLotItem = None, latePaymentInterestAmount = None, documentDescription = Some("ITSA - POA 2"))),
+        paymentLotItem = None, accruingInterestAmount = None, documentDescription = Some("ITSA - POA 2"))),
       financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Poa 2", mainTransaction = "4930"),
         financialDetail(testTaxYear, transactionId = Some("123456"), mainType = "ITSA Poa 2 extra charge", mainTransaction = "4913")
       )
@@ -1217,7 +1217,7 @@ object FinancialDetailsTestConstants {
       documentDetails = List(
         DocumentDetail(taxYear = 2018, transactionId = "id1040000123", documentDescription = Some("TRM New Charge"),
           documentText = Some("documentText"), outstandingAmount = 1400.00, originalAmount = 1400.00,
-          documentDate = LocalDate.of(2018, 3, 29), latePaymentInterestAmount = Some(100),
+          documentDate = LocalDate.of(2018, 3, 29), accruingInterestAmount = Some(100),
           interestOutstandingAmount = Some(80), lpiWithDunningLock = Some(100),
           effectiveDateOfPayment = Some(LocalDate.parse("2019-05-15")),
           documentDueDate = Some(LocalDate.parse("2019-05-15"))
@@ -1228,20 +1228,20 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  def testFinancialDetailsModelWithLPI(documentDescription: List[Option[String]],
-                                       mainType: List[Option[String]],
-                                       mainTransaction: List[Option[String]],
-                                       dueDate: List[Option[LocalDate]],
-                                       dunningLock: List[Option[String]],
-                                       outstandingAmount: List[BigDecimal],
-                                       taxYear: String,
-                                       interestRate: List[Option[BigDecimal]],
-                                       latePaymentInterestAmount: List[Option[BigDecimal]]): FinancialDetailsModel =
+  def testFinancialDetailsModelWithAccruingInterest(documentDescription: List[Option[String]],
+                                                    mainType: List[Option[String]],
+                                                    mainTransaction: List[Option[String]],
+                                                    dueDate: List[Option[LocalDate]],
+                                                    dunningLock: List[Option[String]],
+                                                    outstandingAmount: List[BigDecimal],
+                                                    taxYear: String,
+                                                    interestRate: List[Option[BigDecimal]],
+                                                    accruingInterestAmount: List[Option[BigDecimal]]): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = dunningLock.head)))),
@@ -1256,14 +1256,14 @@ object FinancialDetailsTestConstants {
                                                   outstandingAmount: List[BigDecimal],
                                                   taxYear: String,
                                                   interestRate: List[Option[BigDecimal]],
-                                                  latePaymentInterestAmount: Option[BigDecimal],
+                                                  accruingInterestAmount: Option[BigDecimal],
                                                   lpiWithDunningLock: Option[BigDecimal]
                                                  ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
@@ -1278,14 +1278,14 @@ object FinancialDetailsTestConstants {
                                                       outstandingAmount: List[BigDecimal],
                                                       taxYear: String,
                                                       interestRate: List[Option[BigDecimal]],
-                                                      latePaymentInterestAmount: Option[BigDecimal],
+                                                      accruingInterestAmount: Option[BigDecimal],
                                                       lpiWithDunningLock: Option[BigDecimal]
                                                      ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
@@ -1320,7 +1320,7 @@ object FinancialDetailsTestConstants {
                                                      outstandingAmount: List[BigDecimal],
                                                      taxYear: String,
                                                      interestOutstandingAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
-                                                     latePaymentInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
+                                                     accruingInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                                      interestEndDate: List[Option[LocalDate]] = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
                                                      lpiWithDunningLock: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                                      amountCodedOut: List[Option[BigDecimal]] = List(None, None),
@@ -1341,7 +1341,7 @@ object FinancialDetailsTestConstants {
           latePaymentInterestId = Some("latePaymentInterestId"),
           interestFromDate = Some(LocalDate.of(2018, 3, 29)),
           interestEndDate = interestEndDate(0),
-          latePaymentInterestAmount = latePaymentInterestAmount(0),
+          accruingInterestAmount = accruingInterestAmount(0),
           lpiWithDunningLock = lpiWithDunningLock(0),
           paymentLotItem = Some("paymentLotItem"),
           paymentLot = Some("paymentLot"),
@@ -1360,7 +1360,7 @@ object FinancialDetailsTestConstants {
           latePaymentInterestId = Some("latePaymentInterestId"),
           interestFromDate = Some(LocalDate.of(2018, 3, 29)),
           interestEndDate = interestEndDate(1),
-          latePaymentInterestAmount = latePaymentInterestAmount(1),
+          accruingInterestAmount = accruingInterestAmount(1),
           lpiWithDunningLock = lpiWithDunningLock(0),
           paymentLotItem = Some("paymentLotItem"),
           paymentLot = Some("paymentLot"),
@@ -1499,7 +1499,7 @@ object FinancialDetailsTestConstants {
     outstandingAmount = List(100, 50),
     taxYear = fixedDate.getYear.toString,
     interestOutstandingAmount = List(None, None),
-    latePaymentInterestAmount = List(None, None)
+    accruingInterestAmount = List(None, None)
   )
 //
 
@@ -1510,7 +1510,7 @@ object FinancialDetailsTestConstants {
     dueDate = List(Some(fixedDate.minusDays(1)), Some(fixedDate.plusDays(30))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
-    latePaymentInterestAmount = List(None, None)
+    accruingInterestAmount = List(None, None)
   )
   val financialDetailsReviewAndReconcileNotYetDue: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
@@ -1519,7 +1519,7 @@ object FinancialDetailsTestConstants {
     dueDate = List(Some(fixedDate.plusYears(100).minusDays(1)), Some(fixedDate.plusYears(100).plusDays(30))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
-    latePaymentInterestAmount = List(None, None)
+    accruingInterestAmount = List(None, None)
   )
   val financialDetailsReviewAndReconcileInterest: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
@@ -1528,7 +1528,7 @@ object FinancialDetailsTestConstants {
     dueDate = List(Some(fixedDate.minusDays(1)), Some(fixedDate.plusDays(30))),
     outstandingAmount = List(0, 0),
     taxYear = fixedDate.getYear.toString,
-    latePaymentInterestAmount = List(None, None),
+    accruingInterestAmount = List(None, None),
     interestOutstandingAmount = List(Some(100.00), Some(40.00)),
     interestEndDate = List(Some(LocalDate.of(2100, 1, 1)), Some(LocalDate.of(2100, 1, 1))),
     lpiWithDunningLock = List(None, None)
@@ -1559,7 +1559,7 @@ object FinancialDetailsTestConstants {
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
-    latePaymentInterestAmount = List(None, None)
+    accruingInterestAmount = List(None, None)
   )
 
   val financialDetailsWithMixedData4: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
@@ -1569,7 +1569,7 @@ object FinancialDetailsTestConstants {
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
-    latePaymentInterestAmount = List(None, None)
+    accruingInterestAmount = List(None, None)
   )
 
   val financialDetailsWithMixedData4Penalties: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
@@ -1579,11 +1579,11 @@ object FinancialDetailsTestConstants {
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
-    latePaymentInterestAmount = List(None, None)
+    accruingInterestAmount = List(None, None)
   )
 
   def financialDetailsWithOutstandingChargesAndLpi(outstandingAmount: List[BigDecimal] = List(0, 0),
-                                                   latePaymentInterestAmount: List[Option[BigDecimal]] = List(None, None),
+                                                   accruingInterestAmount: List[Option[BigDecimal]] = List(None, None),
                                                    interestOutstandingAmount: List[Option[BigDecimal]] = List(None, None),
                                                    amountCodedOut: List[Option[BigDecimal]] = List(None, None)
                                                   ): FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
@@ -1593,7 +1593,7 @@ object FinancialDetailsTestConstants {
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = outstandingAmount,
     taxYear = fixedDate.getYear.toString,
-    latePaymentInterestAmount = latePaymentInterestAmount,
+    accruingInterestAmount = accruingInterestAmount,
     interestOutstandingAmount = interestOutstandingAmount,
     amountCodedOut = amountCodedOut
   )
@@ -1620,7 +1620,7 @@ object FinancialDetailsTestConstants {
 //        taxYear = fixedDate.getYear.toString,
 //        interestOutstandingAmount = List(Some(42.50), Some(24.05)),
 //        interestRate = List(Some(2.6), Some(6.2)),
-//        latePaymentInterestAmount = List(Some(34.56), None)
+//        accruingInterestAmount = List(Some(34.56), None)
 //      ).getAllDocumentDetailsWithDueDates() ++
 //        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
 //          mainType = Some("SA Payment on Account 2"),
@@ -1700,14 +1700,14 @@ object FinancialDetailsTestConstants {
     documentDetailModel(transactionId = id1040000124, outstandingAmount = BigDecimal(-100.00), paymentLotItem = Some("1"), paymentLot = Some("01")),
     documentDetailModel(transactionId = id1040000125, outstandingAmount = BigDecimal(-500.00), paymentLotItem = Some("2"), paymentLot = Some("02")),
     documentDetailModel(transactionId = id1040000126, outstandingAmount = BigDecimal(-300.00), paymentLotItem = Some("2"), paymentLot = Some("02")),
-    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "BCC01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -250.00, outstandingAmount = BigDecimal(-250.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None),
-    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "BCC02", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -125.00, outstandingAmount = BigDecimal(-125.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None),
-    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFACREDIT01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -100.00, outstandingAmount = BigDecimal(-100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None),
-    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFACREDIT02", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -1000.00, outstandingAmount = BigDecimal(-1000.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None),
-    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFACREDIT03", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -800.00, outstandingAmount = BigDecimal(-800.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None),
-    documentDetailModel(documentDescription = Some("ITSA PAYE Charge"), transactionId = "CUTOVERCREDIT01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -200.00, outstandingAmount = BigDecimal(-200.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None),
-    documentDetailModel(documentDescription = Some("ITSA PAYE Charge"), transactionId = "CUTOVERCREDIT02", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -2000.00, outstandingAmount = BigDecimal(-2000.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None),
-    documentDetailModel(documentDescription = Some("ITSA PAYE Charge"), transactionId = "CUTOVERCREDIT01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -700.00, outstandingAmount = BigDecimal(-700.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None)
+    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "BCC01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -250.00, outstandingAmount = BigDecimal(-250.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None),
+    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "BCC02", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -125.00, outstandingAmount = BigDecimal(-125.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None),
+    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFACREDIT01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -100.00, outstandingAmount = BigDecimal(-100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None),
+    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFACREDIT02", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -1000.00, outstandingAmount = BigDecimal(-1000.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None),
+    documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFACREDIT03", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -800.00, outstandingAmount = BigDecimal(-800.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None),
+    documentDetailModel(documentDescription = Some("ITSA PAYE Charge"), transactionId = "CUTOVERCREDIT01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -200.00, outstandingAmount = BigDecimal(-200.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None),
+    documentDetailModel(documentDescription = Some("ITSA PAYE Charge"), transactionId = "CUTOVERCREDIT02", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -2000.00, outstandingAmount = BigDecimal(-2000.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None),
+    documentDetailModel(documentDescription = Some("ITSA PAYE Charge"), transactionId = "CUTOVERCREDIT01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -700.00, outstandingAmount = BigDecimal(-700.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None)
   )
 
   val financialDetailCreditAndRefundChargeAllCreditTypes = FinancialDetailsModel(
@@ -1744,7 +1744,7 @@ object FinancialDetailsTestConstants {
       interestRate = None,
       interestFromDate = Some(LocalDate.parse("2018-03-29")),
       interestEndDate = Some(LocalDate.parse("2023-11-15")),
-      latePaymentInterestAmount = Some(100),
+      accruingInterestAmount = Some(100),
       lpiWithDunningLock = None,
       amountCodedOut = None,
       dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
@@ -1774,7 +1774,7 @@ object FinancialDetailsTestConstants {
       interestRate = None,
       interestFromDate = Some(LocalDate.parse("2018-03-29")),
       interestEndDate = Some(LocalDate.parse("2023-11-15")),
-      latePaymentInterestAmount = Some(100),
+      accruingInterestAmount = Some(100),
       lpiWithDunningLock = None,
       amountCodedOut = None,
       dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
@@ -1964,17 +1964,17 @@ object FinancialDetailsTestConstants {
   val MFADebitsDocumentDetails: List[DocumentDetail] = List(
     documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFADEBIT01",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2019, 5, 15))),
     documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFADEBIT02",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2019, 5, 15))),
     documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFADEBIT03",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2019, 5, 15)))
   )
@@ -1982,12 +1982,12 @@ object FinancialDetailsTestConstants {
   val ReviewAndReconcileDocumentDetails: List[DocumentDetail] = List(
     documentDetailModel(documentDescription = Some("SA POA 1 Reconciliation Debit"), transactionId = "RARDEBIT01",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2019, 5, 15))),
     documentDetailModel(documentDescription = Some("SA POA 2 Reconciliation Debit"), transactionId = "RARDEBIT02",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2019, 5, 15)))
   )
@@ -1995,12 +1995,12 @@ object FinancialDetailsTestConstants {
   val ReviewAndReconcileDocumentDetailsNotDue: List[DocumentDetail] = List(
     documentDetailModel(documentDescription = Some("SA POA 1 Reconciliation Debit"), transactionId = "RARDEBIT01",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2100, 5, 15))),
     documentDetailModel(documentDescription = Some("SA POA 2 Reconciliation Debit"), transactionId = "RARDEBIT02",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2100, 5, 15)))
   )
@@ -2008,17 +2008,17 @@ object FinancialDetailsTestConstants {
   val penaltiesDocumentDetails: List[DocumentDetail] = List(
     documentDetailModel( transactionId = "LSP",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2100, 5, 15))),
     documentDetailModel(transactionId = "LPP1",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2100, 5, 15))),
     documentDetailModel(transactionId = "LPP2",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
-      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, latePaymentInterestAmount = None,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
       effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
       documentDueDate = Some(LocalDate.of(2100, 5, 15)))
   )

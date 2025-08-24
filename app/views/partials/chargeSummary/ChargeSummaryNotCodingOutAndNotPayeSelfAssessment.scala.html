@@ -81,7 +81,7 @@
         <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
             <span>
             @{
-                if (interestCharge) chargeItem.latePaymentInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+                if (interestCharge) chargeItem.accruingInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
                 else chargeItem.originalAmount.abs.toCurrency
             }
             </span>

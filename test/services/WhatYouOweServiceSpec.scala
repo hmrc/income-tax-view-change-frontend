@@ -197,12 +197,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None)
           )
         }
-        "return a success empty response with outstanding amount zero and late payment interest amount zero" in {
+        "return a success empty response with outstanding amount zero and accruing interest amount zero" in {
           when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0),
-              latePaymentInterestAmount = List(Some(0), Some(0)), interestOutstandingAmount = List(Some(0), Some(0))))))
+              accruingInterestAmount = List(Some(0), Some(0)), interestOutstandingAmount = List(Some(0), Some(0))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
@@ -210,12 +210,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None)
           )
         }
-        "return a success POA2 only response with outstanding amount zero and late payment interest amount non-zero" in {
+        "return a success POA2 only response with outstanding amount zero and accruing interest amount non-zero" in {
           when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0),
-              latePaymentInterestAmount = List(Some(0), Some(10)), interestOutstandingAmount = List(Some(0), Some(10))))))
+              accruingInterestAmount = List(Some(0), Some(10)), interestOutstandingAmount = List(Some(0), Some(10))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList(
             isEnabled(FilterCodedOutPoas),
@@ -233,7 +233,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
             effectiveDateOfPayment = Some(LocalDate.parse("2021-08-24")),
             documentDueDate = Some(LocalDate.parse("2021-08-24")))
           val dd2 = DocumentDetail(taxYear = 2021, transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
@@ -241,7 +241,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
             effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
             documentDueDate = Some(LocalDate.parse("2021-08-25")))
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED), amountCodedOut = Some(2500.00))

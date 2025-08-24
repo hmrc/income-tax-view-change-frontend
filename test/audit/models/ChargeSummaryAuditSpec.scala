@@ -85,7 +85,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     originalAmount = 10.34,
     outstandingAmount = 0,
     documentDate = LocalDate.of(2018, 3, 29),
-    latePaymentInterestAmount = Some(54.32),
+    accruingInterestAmount = Some(54.32),
     interestOutstandingAmount = Some(2),
     interestFromDate = Some(LocalDate.of(2021, 10, 6)),
     interestEndDate = Some(LocalDate.of(2022, 1, 6))
@@ -120,7 +120,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     originalAmount = 10.34,
     outstandingAmount = 0.0,
     interestOutstandingAmount = None,
-    latePaymentInterestAmount = None,
+    accruingInterestAmount = None,
     interestFromDate = None,
     interestEndDate = None,
     interestRate = None,
@@ -139,7 +139,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     codedOutStatus = Some(Cancelled)
   )
   val chargeItemWithInterest: ChargeItem = chargeItemWithNoInterest.copy(
-    latePaymentInterestAmount = Some(54.32),
+    accruingInterestAmount = Some(54.32),
     interestOutstandingAmount = Some(2),
     interestFromDate = Some(LocalDate.of(2021, 10, 6)),
     interestEndDate = Some(LocalDate.of(2022, 1, 6))
@@ -209,7 +209,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
           chargeSummaryAuditFull(
             userType = Some(Agent),
             chargeItemWithInterest
-            .copy(latePaymentInterestAmount = None),
+            .copy(accruingInterestAmount = None),
             paymentBreakdown = paymentBreakdowns,
             chargeHistories = chargeHistory,
             paymentAllocations = paymentAllocation,
@@ -427,7 +427,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
           ).detail mustBe commonAuditDetails(Agent) ++ Json.obj(
             "charge" -> Json.obj(
               "remainingToPay" -> docDetailWithInterest.interestRemainingToPay,
-              "fullPaymentAmount" -> docDetailWithInterest.latePaymentInterestAmount,
+              "fullPaymentAmount" -> docDetailWithInterest.accruingInterestAmount,
               "dueDate" -> docDetailWithInterest.interestEndDate,
               "chargeType" -> getChargeType(chargeItemWithInterest, latePaymentCharge = true),
               "interestPeriod" -> "2021-10-06 to 2022-01-06",
