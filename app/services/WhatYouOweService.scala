@@ -44,7 +44,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                   val selfServeTimeToPayService: SelfServeTimeToPayService,
                                   val financialDetailsConnector: FinancialDetailsConnector,
                                   val outstandingChargesConnector: OutstandingChargesConnector,
-                                  implicit val dateService: DateService)
+                                  implicit val dateService: DateServiceInterface)
                                  (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig)
   extends TransactionUtils with FeatureSwitching {
 
