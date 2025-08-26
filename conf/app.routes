@@ -143,6 +143,10 @@ GET         /agents/your-self-assessment-charges                          contro
 GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, isInterestCharge: Boolean ?= false, origin: Option[String] ?= None)
 GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, isInterestCharge: Boolean ?= false)
 
+#Triggered Migration
+GET         /check-your-active-businesses/hmrc-record                     controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = false)
+GET         /agents/check-your-active-businesses/hmrc-record              controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = true)
+
 #Feedback Routes
 GET         /feedback                                                     controllers.feedback.FeedbackController.show()
 GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()
