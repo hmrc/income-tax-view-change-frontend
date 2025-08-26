@@ -19,6 +19,6 @@
 @(chargeItem: TaxYearSummaryChargeItem)(implicit messages: Messages)
 @{
     val chargeTypeKey = chargeItem.getChargeTypeKey
-    val lpi = if(chargeItem.isLatePaymentInterest) "lpi." else ""
+    val lpi = if(chargeItem.isAccruingInterest) "lpi." else ""
     messages(s"tax-year-summary.payments.${lpi}${chargeTypeKey}")
 }
