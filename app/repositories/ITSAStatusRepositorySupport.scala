@@ -23,7 +23,8 @@ object ITSAStatusRepositorySupport {
 
   def statusToString(status: ITSAStatus): String =
     status match {
-      case ITSAStatus.NoStatus  => "U"
+      //Making all the valid status as Unknown until we get clarity on what to do with these status
+      case ITSAStatus.NoStatus | ITSAStatus.Exempt | ITSAStatus.DigitallyExempt | ITSAStatus.Dormant  => "U"
       case ITSAStatus.Voluntary => "V"
       case ITSAStatus.Annual    => "A"
       case ITSAStatus.Mandated  => "M"
