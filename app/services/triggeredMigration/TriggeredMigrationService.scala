@@ -19,6 +19,9 @@ package services.triggeredMigration
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 
+import javax.inject.Singleton
+
+@Singleton
 class TriggeredMigrationService {
 
   def getCheckHmrcRecordsViewModel(incomeSources: IncomeSourceDetailsModel): CheckHmrcRecordsViewModel = {
