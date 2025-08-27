@@ -88,7 +88,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testAuditFinancialDetailsModelJson(123.45, 1.2,
-                    dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None,
+                    dunningLock = oneDunningLock, interestLocks = twoInterestLocks, accruingInterestAmount = None,
                     dueDate = dateService.getCurrentDate.plusDays(20).toString))
                   IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
@@ -119,7 +119,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   val json = testAuditFinancialDetailsModelJson(123.45, 1.2,
-                    dunningLock = oneDunningLock, interestLocks = twoInterestLocks, latePaymentInterestAmount = None, dueDate =
+                    dunningLock = oneDunningLock, interestLocks = twoInterestLocks, accruingInterestAmount = None, dueDate =
                       dateService.getCurrentDate.plusDays(20).toString)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, json)
                   IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
@@ -155,7 +155,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
-                    123.45, 1.2, latePaymentInterestAmount = Some(54.32)))
+                    123.45, 1.2, accruingInterestAmount = Some(54.32)))
 
                   val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
@@ -214,7 +214,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                         "documentDate" -> "2018-03-29",
                         "interestFromDate" -> "2018-03-29",
                         "interestEndDate" -> "2018-03-29",
-                        "latePaymentInterestAmount" -> 100.0,
+                        "accruingInterestAmount" -> 100.0,
                         "interestOutstandingAmount" -> 80.0
                       )),
                     "financialDetails" -> Json.arr(

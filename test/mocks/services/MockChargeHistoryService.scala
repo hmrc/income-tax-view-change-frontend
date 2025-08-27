@@ -35,12 +35,12 @@ trait MockChargeHistoryService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockChargeHistorySuccessResp(chargeHistoryResponse: List[ChargeHistoryModel]) = {
-    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any(), any())(any(), any(), any()))
+    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any())(any(), any(), any()))
       .thenReturn(Future.successful(Right(chargeHistoryResponse)))
   }
 
   def setupMockChargeHistoryFailureResp(chargeHistoryResponse: ChargesHistoryErrorModel) = {
-    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any(), any())(any(), any(), any()))
+    when(mockChargeHistoryService.chargeHistoryResponse(any(), any(), any())(any(), any(), any()))
       .thenReturn(Future.successful(Left(chargeHistoryResponse)))
   }
 

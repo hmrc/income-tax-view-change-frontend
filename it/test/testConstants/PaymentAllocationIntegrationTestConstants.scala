@@ -333,7 +333,7 @@ object PaymentAllocationIntegrationTestConstants {
     interestRate = Some(3),
     interestFromDate = Some(LocalDate.of(2018, 2, 14)),
     interestEndDate = Some(LocalDate.of(2019, 1, 1)),
-    latePaymentInterestAmount = Some(0)
+    accruingInterestAmount = Some(0)
   )
 
   val lpiPaymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,

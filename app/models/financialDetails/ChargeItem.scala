@@ -35,7 +35,7 @@ case class ChargeItem (
                         originalAmount: BigDecimal,
                         outstandingAmount: BigDecimal,
                         interestOutstandingAmount: Option[BigDecimal],
-                        latePaymentInterestAmount: Option[BigDecimal],
+                        accruingInterestAmount: Option[BigDecimal],
                         interestFromDate: Option[LocalDate],
                         interestEndDate: Option[LocalDate],
                         interestRate: Option[BigDecimal],
@@ -66,7 +66,7 @@ case class ChargeItem (
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && latePaymentInterestAmount.getOrElse[BigDecimal](0) <= 0
+    interestOutstandingAmount.isDefined && accruingInterestAmount.getOrElse[BigDecimal](0) <= 0
 
   def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
@@ -97,24 +97,24 @@ case class ChargeItem (
     case _ => false
   }
 
-  val isLatePaymentInterest: Boolean = latePaymentInterestAmount match {
+  val isAccruingInterest: Boolean = accruingInterestAmount match {
     case Some(amount) if amount <= 0 => false
     case Some(_) => true
     case _ => false
   }
 
-  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isLatePaymentInterest) || (interestRemainingToPay > 0 && isPaid)}
+  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isAccruingInterest) || (interestRemainingToPay > 0 && isPaid)}
 
   def remainingToPayOnCharge(implicit dateServiceInterface: DateServiceInterface): BigDecimal =
     if (isOnlyInterest) interestRemainingToPay
     else remainingToPay
 
   def getChargeDueDate: LocalDate =
-    if (isLatePaymentInterest && isPaid) getInterestEndDate
+    if (isAccruingInterest && isPaid) getInterestEndDate
     else getDueDate
 
   def isCodingOut: Boolean = {
-    val codingOutSubTypes = Seq(Nics2, Accepted, Cancelled)
+    val codingOutSubTypes = Seq(Accepted, Cancelled, FullyCollected)
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
@@ -126,12 +126,12 @@ case class ChargeItem (
   }
 
   def remainingToPayByChargeOrInterest: BigDecimal = {
-    if (isLatePaymentInterest) interestRemainingToPay
+    if (isAccruingInterest) interestRemainingToPay
     else remainingToPay
   }
 
   def remainingToPayByChargeOrInterestWhenChargeIsPaid: Boolean = {
-    if (isLatePaymentInterest || !interestIsPaid) true
+    if (isAccruingInterest || !interestIsPaid) true
     else false
   }
 
@@ -141,6 +141,7 @@ case class ChargeItem (
 
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
+      case (BalancingCharge, Some(Accepted)) => true
       case (BalancingCharge, None       ) => true
       case (PoaOneDebit, None           ) => true
       case (PoaTwoDebit, None           ) => true
@@ -149,13 +150,13 @@ case class ChargeItem (
       case _                              => false
     }
 
-    validCharge && !isLatePaymentInterest
+    validCharge && !isAccruingInterest
   }
 
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
-  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
+  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != accruingInterestAmount.getOrElse[BigDecimal](0)
 
   val isPoaReconciliationCredit: Boolean = transactionType == PoaOneReconciliationCredit ||
     transactionType == PoaTwoReconciliationCredit
@@ -187,11 +188,11 @@ case class ChargeItem (
   }
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
-    else interestOutstandingAmount.getOrElse(latePaymentInterestAmount.getOrElse(0))
+    else interestOutstandingAmount.getOrElse(accruingInterestAmount.getOrElse(0))
   }
 
   def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (isLatePaymentInterest) interestRemainingToPay > 0
+    if (isAccruingInterest) interestRemainingToPay > 0
     else remainingToPay > 0
   }
 
@@ -268,7 +269,7 @@ object ChargeItem {
       originalAmount = documentDetail.originalAmount,
       outstandingAmount = documentDetail.outstandingAmount,
       interestOutstandingAmount = documentDetail.interestOutstandingAmount,
-      latePaymentInterestAmount = documentDetail.latePaymentInterestAmount,
+      accruingInterestAmount = documentDetail.accruingInterestAmount,
       interestFromDate = documentDetail.interestFromDate,
       interestEndDate = documentDetail.interestEndDate,
       interestRate = documentDetail.interestRate,

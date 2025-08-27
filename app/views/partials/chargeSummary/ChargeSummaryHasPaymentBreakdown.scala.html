@@ -30,7 +30,7 @@
 @(  chargeItem: models.financialDetails.ChargeItem,
     paymentBreakdown: List[FinancialDetail],
     latePaymentInterestCharge: Boolean,
-    chargeSummaryLpiCharge: ChargeSummaryLpiCharge,
+    chargeSummaryAccruingInterestCharge: ChargeSummaryAccruingInterestCharge,
     isAgent: Boolean = false,
     origin: Option[String] = None)(implicit messages: Messages)
 
@@ -71,6 +71,6 @@
         </div>
     }
     @if(latePaymentInterestCharge) {
-        @chargeSummaryLpiCharge(chargeItem)
+        @chargeSummaryAccruingInterestCharge(chargeItem)
     }
 </dl>

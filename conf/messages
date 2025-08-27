@@ -1201,21 +1201,24 @@ chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = HMRC creat
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = HMRC created your second payment on account
 chargeSummary.chargeHistory.created.balancingCharge.text		        = Balancing payment created
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
-chargeSummary.chargeHistory.created.codingOut.text                      = Self Assessment payment (through your PAYE tax code) created
+chargeSummary.chargeHistory.created.codingOut.text                      = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
+chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
+chargeSummary.chargeHistory.created.poa2CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment (through your PAYE tax code) created
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC created this extra amount for your first payment on account based on your tax return
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
+chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = First payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Second payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = First payment on account reduced due to amended return
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Second payment on account reduced due to amended return
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balancing payment reduced due to amended return
+chargeSummary.chargeHistory.amend.codingOut.text                        = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
-chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.chargeHistory.POA1RR-credit                               = First payment on account: credit from your tax return
 chargeSummary.chargeHistory.POA2RR-credit                               = Second payment on account: credit from your tax return
 
@@ -3057,7 +3060,7 @@ reporting.frequency.table.voluntary.r17                             = Voluntaril
 reporting.frequency.table.annual.r17                                = Opted out
 
 reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
-reporting.frequency.ceasedBusiness.warning.link                     = all businesses
+reporting.frequency.ceasedBusiness.warning.link                     = your businesses
 reporting.frequency.ceasedBusiness.warning.text.2                   = page.
 
 reporting.frequency.latency.details.section.header                  = Your new businesses can have a different reporting frequency
@@ -3090,6 +3093,7 @@ reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
+yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
 
@@ -3097,7 +3101,8 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a 
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more than what you paid during the year (for example, through payments on account or PAYE)
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = have changed your tax return and it resulted in you owing more
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
 yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of interest you have to pay will increase every day until you pay the overdue charge.
@@ -3130,6 +3135,8 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You ca
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
 
+yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = This is the remaining tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code.
+
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
 yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Balancing payment
@@ -3137,6 +3144,7 @@ yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                  
 yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                      = Second payment on account
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading                  = Late submission penalty
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Class 2 National Insurance
+yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Balancing payment history
@@ -3145,7 +3153,11 @@ yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading    
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading        = Second payment on account history
 yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading    = Late submission penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = First late payment penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
+
+yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill.
+
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.

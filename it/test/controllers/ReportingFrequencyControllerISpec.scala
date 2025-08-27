@@ -95,7 +95,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 }
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("Your new businesses can have a different reporting frequency"),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
               }
             }
@@ -126,7 +126,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 }
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
               }
             }
@@ -158,7 +158,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 }
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
               }
             }
@@ -191,7 +191,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 }
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
               }
             }
@@ -222,7 +222,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 }
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
               }
 
@@ -251,7 +251,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 }
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
               }
             }
@@ -283,7 +283,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 }
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
               }
             }
@@ -316,7 +316,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 }
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
               }
             }
@@ -349,7 +349,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 }
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
                 )
               }
             }
@@ -432,7 +432,11 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the all businesses page.")
+                  elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page.")
+                )
+
+                result shouldNot have(
+                  elementTextByID("different-obligations-heading")("What the different reporting obligations are")
                 )
                 if(isEnabled(OptInOptOutContentUpdateR17)){
                   pageTitle(mtdUserRole, "reporting.frequency.title.new")
