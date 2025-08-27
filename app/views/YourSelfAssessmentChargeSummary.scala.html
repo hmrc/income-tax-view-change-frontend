@@ -93,19 +93,19 @@
     ))
 
   @if(!viewModel.chargeItem.isPaid) {
-      <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
+      <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
                   if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
                   if(viewModel.chargeItem.isOverdue()) "overDueCharge"
                   else "charge"
               )
-          }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp
-      }</h1>
+          }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}"
+      }</h2>
 
       @if(!viewModel.chargeItem.isCodingOut) {
           @p(id = Some("due-date-text")) {
-              @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
+              <b>@getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)</b>
           }
       }
 
@@ -120,13 +120,11 @@
 
       @p() {
           @if(viewModel.isAgent) {
-              @messages("chargeSummary.selfAssessmentCharges.textOne-agent")
               @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
-              @messages("chargeSummary.selfAssessmentCharges.textTwo-agent")
+              @messages("chargeSummary.selfAssessmentCharges.text-agent")
           } else {
-              @messages("chargeSummary.selfAssessmentCharges.textOne")
               @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
-              @messages("chargeSummary.selfAssessmentCharges.textTwo")
+              @messages("chargeSummary.selfAssessmentCharges.text")
           }
       }
   }
