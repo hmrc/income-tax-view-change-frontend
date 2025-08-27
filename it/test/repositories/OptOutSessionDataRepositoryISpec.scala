@@ -47,7 +47,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
           previousYearCrystallised = true,
           previousYearItsaStatus = Voluntary,
           currentYearItsaStatus = Mandated,
-          nextYearItsaStatus = NoStatus
+          nextYearItsaStatus = Annual
         )
 
       await(repository.initialiseOptOutJourney(optOutProposition))
@@ -82,7 +82,7 @@ class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutur
           previousYearCrystallised = true,
           previousYearItsaStatus = Voluntary,
           currentYearItsaStatus = Mandated,
-          nextYearItsaStatus = NoStatus
+          nextYearItsaStatus = Annual
         )
 
       await(repository.initialiseOptOutJourney(optOutProposition))

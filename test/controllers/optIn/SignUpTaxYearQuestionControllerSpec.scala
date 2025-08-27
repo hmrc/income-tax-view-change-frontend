@@ -18,12 +18,11 @@ package controllers.optIn
 
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockOptInService, MockOptOutService}
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import mocks.services.MockOptInService
+import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optin.SignUpTaxYearQuestionViewModel
-import models.optout.OptOutTaxYearQuestionViewModel
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

@@ -21,7 +21,6 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
-import models.admin.FeatureSwitch
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup

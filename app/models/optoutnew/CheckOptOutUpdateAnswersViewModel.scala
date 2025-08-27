@@ -17,7 +17,6 @@
 package models.optoutnew
 
 import models.incomeSourceDetails.TaxYear
-import services.optout.{OneYearOptOutFollowedByMandated, OptOutState}
 
 case class CheckOptOutUpdateAnswersViewModel(optOutTaxYear: TaxYear) {
   val startYear: String = optOutTaxYear.startYear.toString

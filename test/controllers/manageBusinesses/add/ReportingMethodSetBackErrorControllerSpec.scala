@@ -25,8 +25,8 @@ import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application
-import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.http.Status.OK
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.SessionService
 import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome

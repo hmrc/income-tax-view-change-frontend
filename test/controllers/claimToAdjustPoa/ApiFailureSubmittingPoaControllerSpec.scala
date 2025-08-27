@@ -21,8 +21,7 @@ import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.Application
-import play.api.http.Status.SEE_OTHER
-import play.api.test.Helpers.{HTML, OK, contentAsString, contentType, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{HTML, OK, contentAsString, contentType, defaultAwaitTimeout, status}
 
 class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
 

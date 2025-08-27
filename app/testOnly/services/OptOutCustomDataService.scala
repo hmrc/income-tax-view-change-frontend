@@ -107,7 +107,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
             case ITSAStatus.Mandated => "01"
             case ITSAStatus.Voluntary => "02"
             case ITSAStatus.Annual => "03"
-            case ITSAStatus.NonDigital => "04"
+            case ITSAStatus.DigitallyExempt => "04"
             case ITSAStatus.Dormant => "05"
             case ITSAStatus.Exempt => "99"
             case _ => ""

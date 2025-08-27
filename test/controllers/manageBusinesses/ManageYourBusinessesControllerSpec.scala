@@ -28,7 +28,7 @@ import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.SessionService
 import testConstants.BusinessDetailsTestConstants.viewBusinessDetailsViewModel
 import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel

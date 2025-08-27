@@ -16,8 +16,6 @@
 
 package views.messages
 
-import models.incomeSourceDetails.TaxYear
-
 object ReportingFrequencyViewMessages {
   val titleNew = "Your reporting obligations - Manage your Self Assessment - GOV.UK"
   val title = "Your reporting frequency - Manage your Self Assessment - GOV.UK"

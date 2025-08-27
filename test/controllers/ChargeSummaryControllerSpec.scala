@@ -18,7 +18,7 @@ package controllers
 
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals, YourSelfAssessmentCharges}
-import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
+import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails.PoaTwoReconciliationCredit
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api
