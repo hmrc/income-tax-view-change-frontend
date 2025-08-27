@@ -27,7 +27,7 @@ import play.api.mvc._
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
-import utils.claimToAdjust.{ClaimToAdjustUtils, WithSessionAndPoa}
+import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.WhatYouNeedToKnow
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +43,7 @@ class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
                                             val agentErrorHandler: AgentItvcErrorHandler,
                                             val mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with ClaimToAdjustUtils with WithSessionAndPoa with ErrorRecovery {
+  extends FrontendController(mcc) with I18nSupport with WithSessionAndPoa with ErrorRecovery {
 
   def getRedirect(poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): String = {
     (if (poa.totalAmountLessThanPoa) {

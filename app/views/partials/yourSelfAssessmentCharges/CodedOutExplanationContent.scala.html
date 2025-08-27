@@ -1,0 +1,89 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.financialDetails.ChargeItem
+@import models.financialDetails.BalancingCharge
+@import models.financialDetails.PoaOneDebit
+@import models.financialDetails.PoaTwoDebit
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.InsetText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+@import viewUtils.ExternalUrlHelper.checkPayeTaxCodeUrl
+@import viewUtils.ExternalUrlHelper.saThroughYourTaxCodeUrl
+
+
+@this(
+        p: p,
+        link: link,
+        govukInsetText : GovukInsetText,
+        appConfig: config.FrontendAppConfig,
+        bulletPointList: bulletPointList,
+        whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
+        whatIsABalancingPayment: WhatIsABalancingPayment,
+        govukDetails: GovukDetails
+)
+
+@(chargeItem: ChargeItem)(
+        implicit request: Request[_],
+        messages: Messages
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
+}
+
+@collectionTaxYear = @{chargeItem.taxYear.nextYear}
+@unpaidTaxYear = @{chargeItem.taxYear.previousYear}
+
+@p(id=Some("codedOutBCDExplanation")) {
+    @getMessage("codingOutBCDMessage", unpaidTaxYear.startYear.toString, unpaidTaxYear.endYear.toString,
+        collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
+}
+
+@p(id = Some("check-paye-para")){
+    @messages("chargeSummary.check-paye-tax-code-1")
+    <a class="govuk-link" id="paye-tax-code-link" href="@{checkPayeTaxCodeUrl}/@{collectionTaxYear.endYear}">
+    @messages("chargeSummary.check-paye-tax-code-2")</a>
+    @messages("chargeSummary.check-paye-tax-code-3", collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
+}
+
+@{chargeItem.transactionType match {
+    case BalancingCharge             => whatIsABalancingPayment()
+    case PoaOneDebit | PoaTwoDebit   => whatIsPaymentOnAccount()
+    case _                           =>
+}}
+
+<div id="coding-out-wrapper">
+    @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
+</div>
+
+@codingOutMessageInset = {
+    @p(id = Some("coding-out-notice")) {
+        @messages("chargeSummary.codingOutInset-1")
+        @link(
+            id = Some("coding-out-notice-link"),
+            link=saThroughYourTaxCodeUrl,
+            target = Some("_blank"),
+            rel= Some("noreferrer noopener"),
+            messageKey = "chargeSummary.codingOutInset-2"
+        )
+        @messages("chargeSummary.codingOutInset-3")
+    }
+}

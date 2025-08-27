@@ -48,10 +48,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     NavBarFs,
     CreditsRefundsRepay,
     PaymentHistoryRefunds,
-    IncomeSourcesNewJourney,
-    IncomeSourcesFs,
     OptOutFs,
-    AdjustPaymentsOnAccount,
     FilterCodedOutPoas,
     ReportingFrequencyPage,
     DisplayBusinessStartDate,
@@ -60,7 +57,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     PenaltiesBackendEnabled,
     YourSelfAssessmentCharges,
     OptInOptOutContentUpdateR17,
-    SelfServeTimeToPayR17
+    SelfServeTimeToPayR17,
+    TriggeredMigration
   )
 
   "FeatureSwitchName" when {

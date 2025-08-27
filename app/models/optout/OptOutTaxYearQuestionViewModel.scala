@@ -16,27 +16,76 @@
 
 package models.optout
 
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import services.optout._
 
-case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear, optOutState: Option[OptOutState]) {
+case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
+                                          optOutState: Option[OptOutState],
+                                          numberOfQuarterlyUpdates: Int,
+                                          currentYearStatus: ITSAStatus) {
+
+  private val hasNoQuarterlyUpdatesSubmitted: Boolean = numberOfQuarterlyUpdates == OneYearOptOutCheckpointViewModel.noQuarterlyUpdates
+
   private val taxYearMessageSuffix = taxYear match {
     case _: PreviousOptOutTaxYear => "previousYear"
     case _: CurrentOptOutTaxYear  => "currentYear"
     case _: NextOptOutTaxYear     => "nextYear"
   }
 
-  private val optOutStateMessageSuffix = optOutState match {
-    case Some(MultiYearOptOutDefault)          => "multiYear"
-    case Some(OneYearOptOutFollowedByMandated) => "singleYearFollowedByMandated"
-    case Some(OneYearOptOutFollowedByAnnual)   => "singleYearFollowedByAnnual"
-    case Some(NextYearOptOut)                  => "nextYearOptOut"
-    case None                                  => "noState"
+  private val optOutStateMessageSuffix = (optOutState, hasNoQuarterlyUpdatesSubmitted, currentYearStatus) match {
+    case (Some(MultiYearOptOutDefault), _, _)                            => "multiYear"
+    case (Some(OneYearOptOutFollowedByMandated), _, _) if isPreviousYear => "singleYearFollowedByMandated"
+    case (Some(OneYearOptOutFollowedByMandated), true, _)                => "singleYearFollowedByMandated"
+    case (Some(OneYearOptOutFollowedByMandated), false, _)               => "singleYearFollowedByMandatedWithUpdates"
+    case (Some(OneYearOptOutFollowedByAnnual), _, _) if isPreviousYear   => "singleYearFollowedByAnnual"
+    case (Some(OneYearOptOutFollowedByAnnual), true, _)                  => "singleYearFollowedByAnnual"
+    case (Some(OneYearOptOutFollowedByAnnual), false, _)                 => "singleYearFollowedByAnnualWithUpdates"
+    case (Some(NextYearOptOut), _, Annual)                               => "nextYearOptOutAnnual"
+    case (Some(NextYearOptOut), _, Mandated)                             => "nextYearOptOutMandated"
+    case _                                                               => "noState"
   }
-
-  def isCurrentYear: Boolean = taxYear match {
+  
+  private def isCurrentYear: Boolean = taxYear match {
     case _: CurrentOptOutTaxYear => true
     case _                       => false
   }
+
+  private def isPreviousYear: Boolean = taxYear match {
+    case _: PreviousOptOutTaxYear => true
+    case _                        => false
+  }
+
+  def showInset: Boolean = {
+    (optOutState, isCurrentYear, isPreviousYear) match {
+      case (Some(MultiYearOptOutDefault), true, _) => true
+      case (Some(MultiYearOptOutDefault), _, true) => true
+      case (Some(OneYearOptOutFollowedByMandated), _, false) => true
+      case _ => false
+    }
+  }
+
+  def showQuarterlyUpdatesInset: Boolean = {
+    (optOutState, hasNoQuarterlyUpdatesSubmitted, isPreviousYear) match {
+      case (Some(OneYearOptOutFollowedByAnnual), _, true) => true
+      case (Some(OneYearOptOutFollowedByMandated), _, true) => true
+      case (Some(OneYearOptOutFollowedByAnnual), false, false) => true
+      case _ => false
+    }
+  }
+
+  def showSecondParagraph: Boolean = {
+    optOutState match {
+      case Some(MultiYearOptOutDefault) => true
+      case Some(OneYearOptOutFollowedByAnnual) => true
+      case Some(NextYearOptOut) if currentYearStatus == ITSAStatus.Mandated => true
+      case Some(OneYearOptOutFollowedByMandated) if isPreviousYear => true
+      case _ => false
+    }
+  }
+
+  def showThirdParagraph: Boolean = optOutState.contains(MultiYearOptOutDefault)
+
 
   val messageSuffix = s"$taxYearMessageSuffix.$optOutStateMessageSuffix"
 }

@@ -99,16 +99,10 @@ class NextUpdatesControllerSpec extends MockAuthActions
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           lazy val document = Jsoup.parse(contentAsString(result))
 
-          "return Status OK (200)" in {
+          "return Status OK (200) with right html content" in {
             status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
-          }
-
-          "render the NextUpdates page" in {
             document.title shouldBe nextTitle
           }
         }
@@ -122,16 +116,10 @@ class NextUpdatesControllerSpec extends MockAuthActions
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
-          "return Status OK (200)" in {
+          "return Status OK (200)return Status OK (200) with right html content" in {
             status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
-          }
-
-          "render the NextUpdates page" in {
             document.title shouldBe nextTitle
           }
         }
@@ -145,16 +133,10 @@ class NextUpdatesControllerSpec extends MockAuthActions
           val result = testNextUpdatesController.show(origin = Some("PTA"))(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
-          "return Status OK (200)" in {
+          "return Status OK (200) with right html content" in {
             status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
-          }
-
-          "render the NextUpdates page" in {
             document.title shouldBe nextTitle
           }
         }
@@ -167,16 +149,10 @@ class NextUpdatesControllerSpec extends MockAuthActions
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
-          "return Status OK (200)" in {
+          "return Status OK (200) with right html content" in {
             status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
-          }
-
-          "render the NextUpdates page" in {
             document.title shouldBe nextTitle
           }
         }
@@ -189,16 +165,10 @@ class NextUpdatesControllerSpec extends MockAuthActions
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
-          "return Status OK (200)" in {
+          "return Status OK (200) with right html content" in {
             status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
-          }
-
-          "render the NextUpdates page" in {
             document.title shouldBe nextTitle
           }
         }
@@ -212,32 +182,23 @@ class NextUpdatesControllerSpec extends MockAuthActions
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
-          "return Status OK (200)" in {
+          "return Status OK (200) with right html content" in {
             status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
-          }
-
-          "render the NextUpdates page" in {
             document.title shouldBe nextTitle
           }
         }
 
         "receives an Error from the NextUpdates Service" should {
 
-          setupMockUserAuth
-          mockSingleBusinessIncomeSource()
-          mockErrorIncomeSourceWithDeadlines()
-          val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
+          "return Status ISE (500) with error page" in {
+            setupMockUserAuth
+            mockSingleBusinessIncomeSource()
+            mockErrorIncomeSourceWithDeadlines()
+            val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
 
-          "return Status ISE (500)" in {
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-          }
-
-          "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
           }
@@ -251,24 +212,12 @@ class NextUpdatesControllerSpec extends MockAuthActions
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
           val document = Jsoup.parse(contentAsString(result))
 
-          "return Status OK (200)" in {
+          "return Status OK (200) with right html content" in {
             status(result) shouldBe Status.OK
-          }
-
-          "return HTML" in {
             contentType(result) shouldBe Some("text/html")
             charset(result) shouldBe Some("utf-8")
-          }
-
-          "render the NoNextUpdates page" in {
             document.title shouldBe NextUpdatesTestConstants.noNextUpdatesTitle
-          }
-
-          s"have the heading ${NextUpdatesTestConstants.noNextUpdatesHeading}" in {
             document.select("h1").text() shouldBe NextUpdatesTestConstants.noNextUpdatesHeading
-          }
-
-          s"have the correct no next updates message ${NextUpdatesTestConstants.noNextUpdatesText}" in {
             document.select("p.govuk-body").text shouldBe NextUpdatesTestConstants.noNextUpdatesText
           }
         }
@@ -287,15 +236,14 @@ class NextUpdatesControllerSpec extends MockAuthActions
 
     "the Next Updates feature switch disabled: other cases" should {
 
-      setupMockUserAuth
-      mockSingleBusinessIncomeSourceError()
-      mockSingleBusinessIncomeSourceWithDeadlines()
-      mockObligations
-      val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
-
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
         "failed to retrieve a set of Business NextUpdates" should {
+          setupMockUserAuth
+          mockSingleBusinessIncomeSourceError()
+          mockSingleBusinessIncomeSourceWithDeadlines()
+          mockObligations
+          val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
 
           "return Status ERROR (500)" in {
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR

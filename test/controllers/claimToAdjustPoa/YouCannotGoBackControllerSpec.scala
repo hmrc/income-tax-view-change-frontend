@@ -19,7 +19,6 @@ package controllers.claimToAdjustPoa
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
@@ -43,7 +42,6 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
   lazy val testController = app.injector.instanceOf[YouCannotGoBackController]
 
   def setupTest(): Unit = {
-    enable(AdjustPaymentsOnAccount)
     mockSingleBISWithCurrentYearAsMigrationYear()
   }
 
@@ -78,26 +76,6 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe OK
 
-            }
-          }
-
-          s"redirect to home page" when {
-
-            "AdjustPaymentsOnAccount FS is disabled" in {
-              setupTest()
-              disable(AdjustPaymentsOnAccount)
-              setupMockGetPaymentsOnAccount(testPoa1Maybe)
-              setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
-
-              setupMockSuccess(mtdRole)
-              val result = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              val expectedRedirectUrl = if (isAgent) {
-                controllers.routes.HomeController.showAgent().url
-              } else {
-                controllers.routes.HomeController.show().url
-              }
-              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
 
@@ -141,7 +119,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

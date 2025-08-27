@@ -85,7 +85,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage
@@ -131,22 +131,20 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
-    withNewIncomeSourcesFS {
-      form(messagesPrefix).bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(
-            addIncomeSourceStartDate(
-              isAgent = isAgent,
-              form = formWithErrors,
-              backUrl = getBackUrl(incomeSourceType, isAgent, mode),
-              postAction = getPostAction(incomeSourceType, isAgent, mode),
-              messagesPrefix = messagesPrefix,
-              incomeSourceType = incomeSourceType
-            )
-          )),
-        formData => handleValidFormData(formData, incomeSourceType, isAgent, mode)
-      )
-    }
+    form(messagesPrefix).bindFromRequest().fold(
+      formWithErrors =>
+        Future.successful(BadRequest(
+          addIncomeSourceStartDate(
+            isAgent = isAgent,
+            form = formWithErrors,
+            backUrl = getBackUrl(incomeSourceType, isAgent, mode),
+            postAction = getPostAction(incomeSourceType, isAgent, mode),
+            messagesPrefix = messagesPrefix,
+            incomeSourceType = incomeSourceType
+          )
+        )),
+      formData => handleValidFormData(formData, incomeSourceType, isAgent, mode)
+    )
   }.recover {
     case ex =>
       Logger("application")
@@ -157,7 +155,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
   def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode)
                          (implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage

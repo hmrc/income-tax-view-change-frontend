@@ -44,6 +44,12 @@ trait FeatureSwitching {
       isEnabledFromConfig(featureSwitch)
     }
   }
+  def areAllEnabled(featureSwitches: FeatureSwitchName*): Boolean = {
+    featureSwitches.foldLeft(false) {
+      (_, switch) =>
+        isEnabledFromConfig(switch)
+    }
+  }
 
   def enable(featureSwitch: FeatureSwitchName): Unit =
     sys.props += featureSwitch.name -> FEATURE_SWITCH_ON

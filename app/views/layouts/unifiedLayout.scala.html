@@ -25,6 +25,7 @@
 @import config.FrontendAppConfig
 @import views.html.helpers.injected.BackLinkWithFallback
 @import enums.GatewayPage._
+@import viewUtils.ExternalUrlHelper
 
 @this(
     appConfig: FrontendAppConfig,
@@ -85,7 +86,7 @@
         else controllers.routes.HomeController.show().url
 
     hmrcHeader(Header(
-        homepageUrl = appConfig.homepageLink,
+        homepageUrl = ExternalUrlHelper.homepageLink,
         serviceName = if(showServiceName) serviceName else None,
         serviceUrl = serviceUrl,
         language = CurrentLanguage(),

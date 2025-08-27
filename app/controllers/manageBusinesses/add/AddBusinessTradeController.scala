@@ -81,7 +81,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
   }
 
   def handleRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
 
       val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
       val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
@@ -111,7 +111,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
   }
 
   def handleSubmitRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    withSessionDataAndNewIncomeSourcesFS(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
 
       BusinessTradeForm

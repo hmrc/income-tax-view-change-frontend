@@ -26,6 +26,7 @@ import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
@@ -64,21 +65,21 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
               setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Annual)
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
+                  elementTextByID("heading")(headingText),
+                  elementTextByID("desc1")(desc1),
+                  elementTextByID("desc2")(desc2),
+                  elementTextByID("reportQuarterly")(reportQuarterlyText),
+                  elementTextByID("voluntaryStatus")(voluntaryStatus),
+                  elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
+                  elementAttributeBySelector("#start-button", "href")(routes.ChooseYearController.show(isAgent).url)
+                )
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
-                elementTextByID("heading")(headingText),
-                elementTextByID("desc1")(desc1),
-                elementTextByID("desc2")(desc2),
-                elementTextByID("reportQuarterly")(reportQuarterlyText),
-                elementTextByID("voluntaryStatus")(voluntaryStatus),
-                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-                elementAttributeBySelector("#start-button", "href")(routes.ChooseYearController.show(isAgent).url)
-
-              )
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              }
             }
 
             "Redirects to confirm tax year page" in {
@@ -89,20 +90,21 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
               setupOptInSessionData(currentTaxYear, ITSAStatus.Annual, ITSAStatus.Voluntary)
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
+                  elementTextByID("heading")(headingText),
+                  elementTextByID("desc1")(desc1),
+                  elementTextByID("desc2")(desc2),
+                  elementTextByID("reportQuarterly")(reportQuarterlyText),
+                  elementTextByID("voluntaryStatus")(voluntaryStatus),
+                  elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
+                  elementAttributeBySelector("#start-button", "href")(routes.SingleTaxYearOptInWarningController.show(isAgent).url)
+                )
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "optIn.beforeYouStart.heading"),
-                elementTextByID("heading")(headingText),
-                elementTextByID("desc1")(desc1),
-                elementTextByID("desc2")(desc2),
-                elementTextByID("reportQuarterly")(reportQuarterlyText),
-                elementTextByID("voluntaryStatus")(voluntaryStatus),
-                elementTextByID("voluntaryStatus-text")(voluntaryStatusText),
-                elementAttributeBySelector("#start-button", "href")(routes.SingleTaxYearOptInWarningController.show(isAgent).url)
-              )
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              }
             }
           }
         }
@@ -114,13 +116,13 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
 
 
   private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value, nextYearStatus: ITSAStatus.Value): Unit = {
-    repository.set(
+    await(repository.set(
       UIJourneySessionData(testSessionId,
         Opt(OptInJourney).toString,
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None))))
+              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None)))))
   }
 }
 

@@ -22,7 +22,7 @@ import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.admin.{AdjustPaymentsOnAccount, FeatureSwitch}
+import models.admin.FeatureSwitch
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
@@ -48,7 +48,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val TestWithSessionAndPoa: WithSessionAndPoa = new WithSessionAndPoa {
-    override val appConfig: FrontendAppConfig = mockAppConfig
+    val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
     override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
     override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
@@ -57,7 +57,7 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   }
 
   lazy val TestWithSessionAndPoaSpy: WithSessionAndPoa = spy(new WithSessionAndPoa {
-    override val appConfig: FrontendAppConfig = mockAppConfig
+    val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
     override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
     override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
@@ -77,15 +77,12 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
 
   override implicit val individualUser: MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeIndividual), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
-      .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
 
   val agentUser: MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAligned, FakeRequest())
-      .addFeatureSwitches(List(FeatureSwitch(AdjustPaymentsOnAccount, true)))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    enable(AdjustPaymentsOnAccount)
     reset(TestWithSessionAndPoaSpy)
   }
 

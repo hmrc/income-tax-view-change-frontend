@@ -94,29 +94,27 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
     }
   }
 
-  def withSessionDataAndNewIncomeSourcesFS(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState)
+  def withSessionData(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState)
                                           (codeBlock: UIJourneySessionData => Future[Result])
                                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
-    withNewIncomeSourcesFS {
-      sessionService.getMongo(incomeSources).flatMap {
-        case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, incomeSources, journeyState) =>
-          redirectUrl(incomeSources, useDefaultRedirect(data, incomeSources, journeyState))(user)
-        case Right(Some(data: UIJourneySessionData)) => codeBlock(data)
-        case Right(None) =>
-          if (journeyState == InitialPage) {
-            sessionService.createSession(incomeSources).flatMap { _ =>
-              val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
-              codeBlock(data)
-            }
+    sessionService.getMongo(incomeSources).flatMap {
+      case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, incomeSources, journeyState) =>
+        redirectUrl(incomeSources, useDefaultRedirect(data, incomeSources, journeyState))(user)
+      case Right(Some(data: UIJourneySessionData)) => codeBlock(data)
+      case Right(None) =>
+        if (journeyState == InitialPage) {
+          sessionService.createSession(incomeSources).flatMap { _ =>
+            val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
+            codeBlock(data)
           }
-          else journeyRestartUrl(user)
-        case Left(ex) =>
-          val agentPrefix = if (isAgent(user)) "[Agent]" else ""
-          Logger("application").error(s"$agentPrefix" +
-            s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}", ex)
-          journeyRestartUrl(user)
-      }
+        }
+        else journeyRestartUrl(user)
+      case Left(ex) =>
+        val agentPrefix = if (isAgent(user)) "[Agent]" else ""
+        Logger("application").error(s"$agentPrefix" +
+          s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}", ex)
+        journeyRestartUrl(user)
     }
   }
 

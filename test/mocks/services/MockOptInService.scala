@@ -17,6 +17,7 @@
 package mocks.services
 
 import models.incomeSourceDetails.TaxYear
+import models.optin.SignUpTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -54,5 +55,9 @@ trait MockOptInService extends UnitSpec with BeforeAndAfterEach {
     } getOrElse {
       when(mockOptInService.fetchOptInProposition()(any(), any(), any())).thenReturn(Future.failed(new RuntimeException("Some error")))
     }
+  }
+
+  def mockIsSignUpTaxYearValid(out: Future[Option[SignUpTaxYearQuestionViewModel]]): Unit = {
+    when(mockOptInService.isSignUpTaxYearValid(any())(any(), any(), any())).thenReturn(out)
   }
 }

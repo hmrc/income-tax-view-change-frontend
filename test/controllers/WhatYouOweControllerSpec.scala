@@ -21,8 +21,10 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
-import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
+import models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
+import models.core.Nino
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.WhatYouOweViewModel
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -111,14 +113,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
   def ctaViewModel(isFSEnabled: Boolean, poaTaxYear: Option[TaxYear]): WYOClaimToAdjustViewModel = {
     if (isFSEnabled) {
-      WYOClaimToAdjustViewModel(
-        adjustPaymentsOnAccountFSEnabled = true,
-        poaTaxYear = poaTaxYear
-      )
+      WYOClaimToAdjustViewModel(poaTaxYear = poaTaxYear)
     } else {
-      WYOClaimToAdjustViewModel(
-        adjustPaymentsOnAccountFSEnabled = false,
-        poaTaxYear = poaTaxYear)
+      WYOClaimToAdjustViewModel(poaTaxYear = poaTaxYear)
     }
   }
 
@@ -209,6 +206,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent() else wyoViewModel())))
 
@@ -224,6 +223,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -243,6 +244,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(whatYouOweWithAvailableCredits) else wyoViewModel(whatYouOweWithAvailableCredits))))
 
@@ -269,6 +272,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(whatYouOweWithZeroAvailableCredits) else wyoViewModel(whatYouOweWithZeroAvailableCredits))))
 
@@ -282,8 +287,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
             }
 
             "contains the adjust POA" when {
-              "the AdjustPaymentsOnAccount FS is enabled and there are adjustable POA" in {
-                enable(AdjustPaymentsOnAccount)
+              "there are adjustable POA" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
@@ -301,8 +305,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
               }
-              "the AdjustPaymentsOnAccount FS is enabled and there are no adjustable POAs" in {
-                enable(AdjustPaymentsOnAccount)
+              "there are no adjustable POAs" in {
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -323,7 +326,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "does not contain the adjust POA" when {
               "the AdjustPaymentsOnAccount FS is disabled" in {
-                disable(AdjustPaymentsOnAccount)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
@@ -366,6 +368,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true) else wyoViewModel(charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true))))
 
@@ -382,6 +386,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true) else wyoViewModel(charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true))))
 
@@ -400,6 +406,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(mockClaimToAdjustService.getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+                  .thenReturn(Future.successful(Right(Some(TaxYear(2017, 2018)))))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(charges = whatYouOweChargesListWithBalancingChargeNotOverdue) else wyoViewModel(charges = whatYouOweChargesListWithBalancingChargeNotOverdue))))
 
@@ -444,7 +452,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
             }
 
             "fetching POA entry point fails" in {
-              enable(AdjustPaymentsOnAccount)
               setupMockSuccess(mtdUserRole)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("")))

@@ -52,14 +52,8 @@ object FeatureSwitchName {
       JsSuccess(CreditsRefundsRepay)
     case JsString(PaymentHistoryRefunds.name) =>
       JsSuccess(PaymentHistoryRefunds)
-    case JsString(IncomeSourcesNewJourney.name) =>
-      JsSuccess(IncomeSourcesNewJourney)
-    case JsString(IncomeSourcesFs.name) =>
-      JsSuccess(IncomeSourcesFs)
     case JsString(OptOutFs.name) =>
       JsSuccess(OptOutFs)
-    case JsString(AdjustPaymentsOnAccount.name) =>
-      JsSuccess(AdjustPaymentsOnAccount)
     case JsString(FilterCodedOutPoas.name) =>
       JsSuccess(FilterCodedOutPoas)
     case JsString(ReportingFrequencyPage.name) =>
@@ -78,6 +72,8 @@ object FeatureSwitchName {
       JsSuccess(OptInOptOutContentUpdateR17)
     case JsString(SelfServeTimeToPayR17.name) =>
       JsSuccess(SelfServeTimeToPayR17)
+    case JsString(TriggeredMigration.name) =>
+      JsSuccess(TriggeredMigration)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -108,10 +104,7 @@ object FeatureSwitchName {
       NavBarFs,
       CreditsRefundsRepay,
       PaymentHistoryRefunds,
-      IncomeSourcesNewJourney,
-      IncomeSourcesFs,
       OptOutFs,
-      AdjustPaymentsOnAccount,
       FilterCodedOutPoas,
       ReportingFrequencyPage,
       DisplayBusinessStartDate,
@@ -120,7 +113,8 @@ object FeatureSwitchName {
       PenaltiesBackendEnabled,
       YourSelfAssessmentCharges,
       OptInOptOutContentUpdateR17,
-      SelfServeTimeToPayR17
+      SelfServeTimeToPayR17,
+      TriggeredMigration
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -156,24 +150,9 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
   override def toString: String = "Payment History Refunds"
 }
 
-case object IncomeSourcesNewJourney extends FeatureSwitchName {
-  override val name = "income-sources-new-journey"
-  override val toString = "Income Sources New Journey"
-}
-
-case object IncomeSourcesFs extends FeatureSwitchName {
-  override val name = "income-sources"
-  override val toString = "Income Sources"
-}
-
 case object OptOutFs extends FeatureSwitchName {
   override val name = "opt-out"
   override val toString = "Opt Out"
-}
-
-case object AdjustPaymentsOnAccount extends FeatureSwitchName {
-  override val name: String = "adjust-payments-on-account"
-  override val toString: String = "Adjust Payments On Account"
 }
 
 case object FilterCodedOutPoas extends FeatureSwitchName {
@@ -224,4 +203,9 @@ case object OptInOptOutContentUpdateR17 extends FeatureSwitchName {
 case object SelfServeTimeToPayR17 extends FeatureSwitchName {
   override val name: String = "self-serve-time-to-pay-r17"
   override val toString: String = "Self Serve Time To Pay R17"
+}
+
+case object TriggeredMigration extends FeatureSwitchName {
+  override val name: String = "triggered-migration"
+  override val toString: String = "Triggered Migration"
 }

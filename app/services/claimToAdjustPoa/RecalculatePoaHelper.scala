@@ -21,7 +21,6 @@ import audit.models.AdjustPaymentsOnAccountAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import controllers.routes.HomeController
-import models.admin.AdjustPaymentsOnAccount
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.Nino
 import play.api.Logger
@@ -82,7 +81,6 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
   protected def handleSubmitPoaData(claimToAdjustService: ClaimToAdjustService, ctaCalculationService: ClaimToAdjustPoaCalculationService,
                                     poaSessionService: PaymentOnAccountSessionService, auditingService: AuditingService)
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    if (isEnabled(AdjustPaymentsOnAccount)) {
       {
         for {
           poaMaybe <- claimToAdjustService.getPoaForNonCrystallisedTaxYear(Nino(user.nino))
@@ -97,10 +95,5 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
             Future.successful(logAndRedirect(s"Exception: ${ex.getMessage} - ${ex.getCause}."))
         }
       }.flatten
-    } else {
-      Future.successful(
-        Redirect(if (user.isAgent()) HomeController.showAgent() else HomeController.show())
-      )
-    }
   }
 }

@@ -56,7 +56,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
           originalAmount = 1000,
           outstandingAmount = 0,
           interestOutstandingAmount = None,
-          latePaymentInterestAmount = None,
+          accruingInterestAmount = None,
           interestFromDate = None,
           interestEndDate = None,
           interestRate = None,
@@ -99,7 +99,8 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   val descriptionTextRAR1Interest: String = messages("chargeSummary.poa1ExtraAmountInterest.p1")
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
-              chargeHistoryHasError: Boolean = false
+              chargeHistoryHasError: Boolean = false,
+              adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,
               ) {
     mockGetAllFinancialDetails(List((2018, financialDetails)))
 
@@ -109,7 +110,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
       setupMockChargeHistorySuccessResp(List())
     }
 
-    setupMockGetAdjustmentHistory(emptyAdjustmentHistoryModel)
+    setupMockGetAdjustmentHistory(adjustmentHistoryModel)
     mockGetReviewAndReconcileCredit(PoaOneReconciliationCredit)
     mockBothIncomeSources()
 

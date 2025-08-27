@@ -28,7 +28,6 @@ import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 import models.admin._
 import models.financialDetails.{ChargeItem, WhatYouOweViewModel}
-import controllers.routes._
 import models.core.Nino
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
@@ -150,7 +149,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                (implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
     for {
       whatYouOweChargesList        <- getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
-      ctaViewModel                 <- getClaimToAdjustViewModel(Nino(user.nino))
+      ctaViewModel                 <- claimToAdjustViewModel(Nino(user.nino))
       lpp2Url                       = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent())
       hasOverdueCharges             = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       hasAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
@@ -204,14 +203,11 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     }
   }
 
-  private def getClaimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
-    if (isEnabled(AdjustPaymentsOnAccount)) {
-      claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
-        case Right(value) => Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), value))
-        case Left(ex: Throwable) => Future.failed(ex)
-      }
-    } else {
-      Future.successful(WYOClaimToAdjustViewModel(isEnabled(AdjustPaymentsOnAccount), None))
+  private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
+    claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
+      case Right(value) => Future.successful(WYOClaimToAdjustViewModel(value))
+      case Left(ex: Throwable) => Future.failed(ex)
     }
   }
+
 }

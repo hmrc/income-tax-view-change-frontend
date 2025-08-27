@@ -39,7 +39,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
 
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"
 
-  val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled = false, poaTaxYear = None)
+  val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = None)
 
   val financialDetailsSuccess: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
@@ -54,7 +54,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         outstandingAmount = 500.00,
         interestOutstandingAmount = Some(0.00),
         interestEndDate = Some(LocalDate.of(2021, 6, 24)),
-        latePaymentInterestAmount = Some(100.00),
+        accruingInterestAmount = Some(100.00),
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
         documentDueDate = Some(LocalDate.of(2021, 4, 23))
       )),
@@ -82,7 +82,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         outstandingAmount = 500.00,
         interestOutstandingAmount = Some(0.00),
         interestEndDate = Some(LocalDate.of(2021, 6, 24)),
-        latePaymentInterestAmount = Some(0),
+        accruingInterestAmount = Some(0),
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
         documentDueDate = Some(LocalDate.of(2021, 4, 23))
       ),
@@ -128,7 +128,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         outstandingAmount = 500.00,
         interestOutstandingAmount = Some(0.00),
         interestEndDate = Some(LocalDate.of(2021, 6, 24)),
-        latePaymentInterestAmount = Some(0),
+        accruingInterestAmount = Some(0),
         effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
         documentDueDate = Some(LocalDate.of(2021, 4, 23))
       ),
@@ -175,7 +175,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         originalAmount = 1000.00,
         outstandingAmount = 0,
         interestOutstandingAmount = Some(0.00),
-        latePaymentInterestAmount = Some(0),
+        accruingInterestAmount = Some(0),
         effectiveDateOfPayment = Some(LocalDate.of(2021, 8, 23)),
         documentDueDate = Some(LocalDate.of(2021, 8, 23))
       ),
@@ -240,7 +240,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
       outstandingAmount = 500.00,
       interestOutstandingAmount = Some(0.00),
       interestEndDate = Some(LocalDate.of(2021, 6, 24)),
-      latePaymentInterestAmount = Some(100.00),
+      accruingInterestAmount = Some(100.00),
       effectiveDateOfPayment = Some(LocalDate.of(2021, 4, 23)),
       documentDueDate = Some(LocalDate.of(2021, 4, 23))
     ),

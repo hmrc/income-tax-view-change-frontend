@@ -159,7 +159,7 @@ class TaxYearsViewSpec extends ViewSpec {
     }
     "the paragraph explaining about previous Self Assessments" in new TestSetup(List(testYearPlusOne), isAgent = true) {
       layoutContent.select("#oldSa-para-agent").text shouldBe s"${messages("taxYears.oldSa.agent.content.1")} $saLinkAgent. ${messages("taxYears.oldSa.agent.content.3")}"
-      layoutContent.selectFirst("#oldSa-para-agent").hasCorrectLinkWithNewTab(saLinkAgent, appConfig.saForAgents)
+      layoutContent.selectFirst("#oldSa-para-agent").hasCorrectLinkWithNewTab(saLinkAgent, "https://www.gov.uk/guidance/self-assessment-for-agents-online-service")
     }
   }
 }

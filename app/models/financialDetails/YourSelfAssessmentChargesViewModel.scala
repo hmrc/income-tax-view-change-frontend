@@ -94,7 +94,7 @@ case class YourSelfAssessmentChargesViewModel(hasOverdueOrAccruingInterestCharge
 }
 
 object YourSelfAssessmentChargesViewModel {
-  def getDisplayDueDate(chargeItem: ChargeItem): LocalDate = if (chargeItem.isLatePaymentInterest && chargeItem.isPaid) {
+  def getDisplayDueDate(chargeItem: ChargeItem): LocalDate = if (chargeItem.isAccruingInterest && chargeItem.isPaid) {
     chargeItem.getInterestEndDate
   } else {
     chargeItem.getDueDate

@@ -18,15 +18,8 @@ package models.nextPayments.viewmodels
 
 import models.incomeSourceDetails.TaxYear
 
-case class WYOClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
-                                     poaTaxYear: Option[TaxYear]) {
+case class WYOClaimToAdjustViewModel(poaTaxYear: Option[TaxYear]) {
 
-  val claimToAdjustTaxYear: Option[TaxYear] = {
-    if (adjustPaymentsOnAccountFSEnabled) {
-      poaTaxYear
-    } else {
-      None
-    }
-  }
+  val claimToAdjustTaxYear: Option[TaxYear] = poaTaxYear
 
 }

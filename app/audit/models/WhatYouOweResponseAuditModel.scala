@@ -73,7 +73,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
       "chargeUnderReview" -> chargeItem.dunningLock,
       "outstandingAmount" -> chargeItem.remainingToPayByChargeOrInterest
     ) ++
-      ("chargeType", getChargeType(chargeItem, chargeItem.isLatePaymentInterest)) ++
+      ("chargeType", getChargeType(chargeItem, chargeItem.isAccruingInterest)) ++
       ("dueDate", chargeItem.dueDate) ++
       accruingInterestJson(chargeItem) ++
       Json.obj("endTaxYear" -> chargeItem.taxYear.endYear) ++

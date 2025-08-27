@@ -62,23 +62,15 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
       LPP2Url
     } else {
       if(isAgent) {
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest).url
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest).url
       } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isLatePaymentInterest, origin).url
+        controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin).url
       }
     }
   }
 }
 
-case class TYSClaimToAdjustViewModel(adjustPaymentsOnAccountFSEnabled: Boolean,
-                                     poaTaxYear: Option[TaxYear]) {
+case class TYSClaimToAdjustViewModel(poaTaxYear: Option[TaxYear]) {
 
-  val claimToAdjustTaxYear: Option[TaxYear] = {
-    if (adjustPaymentsOnAccountFSEnabled) {
-      poaTaxYear
-    } else {
-      None
-    }
-  }
-
+  val claimToAdjustTaxYear: Option[TaxYear] = poaTaxYear
 }
