@@ -24,7 +24,7 @@ import org.scalatest.Assertion
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.{allCeasedBusinesses, businessOnlyResponseWithUnknownAddressName, businessWithLatency, foreignPropertyAndCeasedBusiness, multipleBusinessesAndUkProperty, multipleBusinessesWithBothPropertiesAndCeasedBusiness, propertyOnlyBusiness, singleBusinessResponse, singleUKPropertyResponseInLatencyPeriod, ukPropertyOnlyResponse}
+import testConstants.IncomeSourceIntegrationTestConstants._
 
 class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
@@ -82,6 +82,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 checkCommonContent(result, mtdUserRole)
 
                 checkActiveSoleTrader(result)
+                checkActiveForeignProperty(result)
+                checkActiveUkProperty(result)
               }
             }
             "has an active sole trader business and uk property only" in {
@@ -93,6 +95,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 checkCommonContent(result, mtdUserRole)
 
                 checkActiveSoleTrader(result)
+                checkActiveUkProperty(result)
               }
             }
             "has an active sole trader business and foreign property only" in {
@@ -104,6 +107,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 checkCommonContent(result, mtdUserRole)
 
                 checkActiveSoleTrader(result)
+                checkActiveForeignProperty(result)
+                checkNoUkProperty(result)
               }
             }
             "has an active uk property and foreign property only" in {
@@ -113,6 +118,9 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
+                checkNoSoleTrader(result)
+                checkActiveForeignProperty(result)
+                checkActiveUkProperty(result)
               }
             }
             "has an active sole trader business only" in {
@@ -124,6 +132,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 checkCommonContent(result, mtdUserRole)
 
                 checkActiveSoleTrader(result)
+                checkNoUkProperty(result)
+                checkNoProperty(result)
               }
             }
             "has an active uk property only" in {
@@ -133,6 +143,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
+                checkNoSoleTrader(result)
+                checkActiveUkProperty(result)
               }
             }
             "has an active foreign property only" in {
@@ -142,6 +154,9 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
+                checkNoSoleTrader(result)
+                checkActiveForeignProperty(result)
+                checkNoUkProperty(result)
               }
             }
             "has no active businesses" in {
@@ -151,6 +166,9 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
+                checkNoSoleTrader(result)
+                checkNoUkProperty(result)
+                checkNoProperty(result)
               }
             }
 
@@ -161,6 +179,15 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
+
+                result should have(
+                  elementTextByID("sole-trader-business-0")(CheckHmrcRecordsMessages.unknownText),
+                  elementTextByID("sole-trader-business-name-0")(CheckHmrcRecordsMessages.businessNameText),
+                  elementTextByID("sole-trader-business-name-value-0")(CheckHmrcRecordsMessages.unknownText),
+                  elementTextByID("sole-trader-business-state-0")(CheckHmrcRecordsMessages.businessStateText),
+                  elementTextByID("sole-trader-business-state-value-0")(CheckHmrcRecordsMessages.activeText),
+                  elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseText)
+                )
               }
             }
           }
@@ -177,6 +204,42 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
       elementTextByID("sole-trader-business-state-0")(CheckHmrcRecordsMessages.businessStateText),
       elementTextByID("sole-trader-business-state-value-0")(CheckHmrcRecordsMessages.activeText),
       elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseText)
+    )
+  }
+
+  def checkNoSoleTrader(res: WSResponse) = {
+    res should have(
+      elementTextByID("sole-trader-no-active-business-desc")(CheckHmrcRecordsMessages.noActiveBusinessesText),
+    )
+  }
+
+  def checkActiveForeignProperty(res: WSResponse) = {
+    res should have(
+      elementTextByID("foreign-property-heading")(CheckHmrcRecordsMessages.foreignPropertyHeading),
+      elementTextByID("foreign-property-business-state")(CheckHmrcRecordsMessages.businessStateText),
+      elementTextByID("foreign-property-business-state-value")(CheckHmrcRecordsMessages.activeText),
+      elementTextByID("foreign-property-cease-link")(CheckHmrcRecordsMessages.ceaseText)
+    )
+  }
+
+  def checkNoProperty(res: WSResponse) = {
+    res should have(
+      elementTextByID("property-no-active-business-desc")(CheckHmrcRecordsMessages.noActivePropertyText),
+    )
+  }
+
+  def checkActiveUkProperty(res: WSResponse) = {
+    res should have(
+      elementTextByID("uk-property-heading")(CheckHmrcRecordsMessages.ukPropertyHeading),
+      elementTextByID("uk-property-business-state")(CheckHmrcRecordsMessages.businessStateText),
+      elementTextByID("uk-property-business-state-value")(CheckHmrcRecordsMessages.activeText),
+      elementTextByID("uk-property-cease-link")(CheckHmrcRecordsMessages.ceaseText)
+    )
+  }
+
+  def checkNoUkProperty(res: WSResponse) = {
+    res should have(
+      elementTextByID("uk-property-add-link")(CheckHmrcRecordsMessages.addAPropertyBusinessText),
     )
   }
 
