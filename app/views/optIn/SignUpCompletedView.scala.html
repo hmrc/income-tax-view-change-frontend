@@ -18,6 +18,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.optin.SignUpCompletedViewModel
+@import viewUtils.ExternalUrlHelper
 
 @this(
         mainTemplate: unifiedLayout,
@@ -122,7 +123,7 @@
     )
     @p(id = Some("your-reporting-obligations-ny-mandated-desc-3")) {
         @messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.text1")
-        @link(appConfig.saWhoNeedsToSignUpUrl, messageKey = messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
+        @link(ExternalUrlHelper.saWhoNeedsToSignUpUrl, messageKey = messages("signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
     }
 }
 
@@ -142,6 +143,6 @@
     @p(id = Some("your-reporting-obligations-desc-2")) { @getMessage("yourReportingObligations.desc3") }
     @p(id = Some("your-reporting-obligations-desc-3")) {
         @getMessage("yourReportingObligations.desc4.text1")
-        @link(appConfig.saWhoNeedsToSignUpUrl, messageKey = getMessage("yourReportingObligations.desc4.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
+        @link(ExternalUrlHelper.saWhoNeedsToSignUpUrl, messageKey = getMessage("yourReportingObligations.desc4.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
     }
 }
