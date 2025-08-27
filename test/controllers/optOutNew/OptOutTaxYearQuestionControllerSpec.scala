@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optOut
+package controllers.optOutNew
 
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.optOut
+package controllers.optOutNew
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import controllers.optOut.routes
 import forms.optOut.OptOutTaxYearQuestionForm
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import play.api.Logger
@@ -28,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.optOut.OptOutTaxYearQuestionView
+import views.html.optOutNew.OptOutTaxYearQuestionView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -56,7 +57,7 @@ class OptOutTaxYearQuestionController @Inject()(optOutService: OptOutService,
                 isAgent,
                 viewModel,
                 OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear),
-                routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
+                controllers.optOutNew.routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
               )
             ))
           case None =>
@@ -78,7 +79,7 @@ class OptOutTaxYearQuestionController @Inject()(optOutService: OptOutService,
                       isAgent,
                       viewModel,
                       formWithErrors,
-                      routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
+                      controllers.optOutNew.routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
                     )
                   )
                 }

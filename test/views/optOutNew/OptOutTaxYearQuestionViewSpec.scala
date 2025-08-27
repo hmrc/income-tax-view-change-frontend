@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.optOut
+package views.optOutNew
 
 import forms.optOut.OptOutTaxYearQuestionForm
 import models.incomeSourceDetails.TaxYear
@@ -23,9 +23,9 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optout.OptOutTaxYearQuestionViewModel
 import org.jsoup.Jsoup
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import services.optout.{CurrentOptOutTaxYear, MultiYearOptOutDefault, NextOptOutTaxYear, NextYearOptOut, OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, OptOutState, PreviousOptOutTaxYear}
+import services.optout._
 import testUtils.TestSupport
-import views.html.optOut.OptOutTaxYearQuestionView
+import views.html.optOutNew.OptOutTaxYearQuestionView
 import views.messages.OptOutTaxYearQuestionMessages
 
 class OptOutTaxYearQuestionViewSpec extends TestSupport {
@@ -57,7 +57,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear)
     }
 
-    val pageDocument = Jsoup.parse(contentAsString(optOutTaxYearQuestionView(isAgent = true, viewModel, form, controllers.optOut.routes.OptOutTaxYearQuestionController.submit(isAgent = true))))
+    val pageDocument = Jsoup.parse(contentAsString(optOutTaxYearQuestionView(isAgent = true, viewModel, form, controllers.optOutNew.routes.OptOutTaxYearQuestionController.submit(isAgent = true))))
   }
 
   "Opt out tax year question page" when {
