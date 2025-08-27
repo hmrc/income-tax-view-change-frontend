@@ -1180,12 +1180,10 @@ chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw dalia
 chargeSummary.whatYouOwe.linkText                               = yr hyn sydd arnoch
 chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 
-chargeSummary.selfAssessmentCharges.textOne                     = Bwriwch olwg dros
-chargeSummary.selfAssessmentCharges.textTwo                     = sydd arnoch i wirio a oes gennych unrhyw daliadau eraill sy’n ddyledus.
-chargeSummary.selfAssessmentCharges.textOne-agent               = Bwriwch olwg dros
-chargeSummary.selfAssessmentCharges.textTwo-agent				= sydd ar eich cleient i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
-chargeSummary.selfAssessmentCharges.linkText                    = y taliadau Hunanasesiad
-chargeSummary.selfAssessmentCharges.linkText-agent				= y taliadau Hunanasesiad
+chargeSummary.selfAssessmentCharges.text                        = sydd arnoch i wirio a oes gennych unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.selfAssessmentCharges.text-agent				    = sydd ar eich cleient i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.selfAssessmentCharges.linkText                    = View your Self Assessment charges
+chargeSummary.selfAssessmentCharges.linkText-agent				= View your client’s Self Assessment charges
 
 chargeSummary.chargeHistory.heading								        = Hanes y tâl hwn
 chargeSummary.chargeHistory.lateInterestPayment					        = Hanes llog am dalu’n hwyr
@@ -1222,6 +1220,7 @@ chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = Gwnaet
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = Gwnaethoch ddiweddaru eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.POA1RR-credit                               = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 chargeSummary.chargeHistory.POA2RR-credit                               = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
+chargeSummary.chargeHistory.paymentOnAccount.text                       = This payment on account goes towards your {0} to {1} tax bill.
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
 chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
@@ -3212,7 +3211,7 @@ reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = 
 reporting.frequency.latency.details.section.text.para3.text.2.updateR17       =
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} Blwyddyn dreth
-yourSelfAssessmentChargeSummary.overDueCharge                       = Tâl gorddyledus:
+yourSelfAssessmentChargeSummary.overDueCharge                       = You owe:
 yourSelfAssessmentChargeSummary.charge                              = Tâl:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected: (WELSH)
 yourSelfAssessmentChargeSummary.due                                 = Yn ddyledus {0}
@@ -3244,10 +3243,10 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = £250,000 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = £684.93 x 0.115 = £78.77
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = Beth yw ‘taliad ar gyfrif’?
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae taliadau ar gyfrif yn ddau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am y canlynol:
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Treth Incwm
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae pob taliad yn hanner y swm hwnnw.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae taliadau ar gyfrif yn ddau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae pob taliad yn hanner y swm hwnnw.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = If you make an amendment to the tax return and tax bill changes, then each payment on account will be updated to half the new total.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help with understanding your Self Assessment tax bill
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = Byddwch yn cael pwynt cosb am gyflwyno’n hwyr pob tro y byddwch yn hwyr wrth gyflwyno. Gall cyflwyniad fod yn ddiweddariad chwarterol neu’n ddatganiad treth blynyddol.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = Os byddwch yn cyrraedd 4 o bwyntiau, bydd angen i chi dalu cosb o £200.
