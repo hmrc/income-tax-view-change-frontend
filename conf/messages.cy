@@ -2969,6 +2969,77 @@ optin.completedOptIn.futureReporting.desc2                  = Os bydd hyn yn dig
 optin.completedOptIn.incomeThreshold.desc.a                 = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
 optin.completedOptIn.incomeThreshold.desc.b                 = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm (yn agor tab newydd).
 
+# sign up completed
+signUp.completedSignUp.cy.heading                             = Rydych wedi gorffen cofrestru
+signUp.completedSignUp.cy.title                               = Rydych wedi gorffen cofrestru
+signUp.completedSignUp.cy.heading.desc                        = Bydd angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o hyn allan
+signUp.completedSignUp.cy.inset                               = Mae’n bosibl bod gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
+
+signUp.completedSignUp.cy.yourRevisedDeadlines                = Eich dyddiadau cau sydd wedi’u haddasu
+signUp.completedSignUp.cy.yourRevisedDeadlines.text           = Bydd eich dyddiadau cau diwygiedig ar gael yn y munudau nesaf.
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text1    = Hyd yn oed os nad ydynt yn cael eu dangos ar unwaith ar y dudalen
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.link     = diweddariadau a dyddiadau cau
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.comma    = ,
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text2    = mae’ch cyfrif wedi’i ddiweddaru.
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text1    = Gallwch, ar unrhyw adeg, optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.link     = eich ymrwymiadau o ran adrodd.
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text2    =
+
+signUp.completedSignUp.cy.submitUpdates                       = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
+signUp.completedSignUp.cy.submitUpdates.desc1.text1           = Ar gyfer unrhyw flwyddyn dreth rydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen
+signUp.completedSignUp.cy.submitUpdates.desc1.link            = meddalwedd sy’n cydweddu
+signUp.completedSignUp.cy.submitUpdates.desc1.text2           = arnoch.
+signUp.completedSignUp.cy.submitUpdates.desc1.text3           =
+
+signUp.completedSignUp.cy.yourReportingObligations             = Eich ymrwymiadau o ran adrodd yn y dyfodol
+signUp.completedSignUp.cy.yourReportingObligations.desc1       = Rydych wedi’ch cofrestru’n wirfoddol o flwyddyn dreth {0} i {1} ymlaen ond, yn y dyfodol, gallai fod gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm os bydd un o’r canlynol yn wir:
+signUp.completedSignUp.cy.yourReportingObligations.bullet1     = mae CThEF yn gostwng y trothwy incwm ar gyfer y cynllun
+signUp.completedSignUp.cy.yourReportingObligations.bullet2     = rydych yn adrodd am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+signUp.completedSignUp.cy.yourReportingObligations.desc2       = Er enghraifft, pe byddai cyfanswm eich incwm gros o hunangyflogaeth neu eiddo – neu o’r ddau – yn uwch na’r trothwy o {3} ym mlwyddyn dreth {0} i {1}, byddai’n rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill {2} ymlaen.
+signUp.completedSignUp.cy.yourReportingObligations.desc3       = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+signUp.completedSignUp.cy.yourReportingObligations.desc4.text1 = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+signUp.completedSignUp.cy.yourReportingObligations.desc4.link  = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+signUp.completedSignUp.nyMandated.yourReportingObligations             = Eich ymrwymiadau o ran adrodd o’r flwyddyn dreth nesaf ymlaen
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc1       = Rydych newydd gofrestru’n wirfoddol o flwyddyn dreth {0} i {1} ymlaen.
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc2       = O 6 Ebrill {0} ymlaen, bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc3       = Gallai hyn fod oherwydd y canlynol:
+signUp.completedSignUp.nyMandated.yourReportingObligations.bullet1     = mae CThEF wedi gostwng y trothwy incwm ar ei gyfer
+signUp.completedSignUp.nyMandated.yourReportingObligations.bullet2     = gwnaethoch adrodd am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.text1 = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.link  = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+signUp.completedSignUp.ny.heading                          = Rydych wedi gorffen cofrestru
+signUp.completedSignUp.ny.title                            = Rydych wedi gorffen cofrestru
+signUp.completedSignUp.ny.heading.desc                     = Mae’n rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
+
+signUp.completedSignUp.ny.yourRevisedDeadlines             = Eich dyddiadau cau sydd wedi’u haddasu
+signUp.completedSignUp.ny.yourRevisedDeadlines.inset       = Bydd eich dyddiadau cau ar gyfer y busnes hwn ar gael yn y munudau nesaf.
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text1 = Hyd yn oed os nad ydynt yn cael eu dangos ar unwaith ar y dudalen
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.link  = diweddariadau a dyddiadau cau
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.comma = ,
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text2 = mae’ch cyfrif wedi’i ddiweddaru.
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text1 = Gallwch, ar unrhyw adeg, optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.link  = eich ymrwymiadau o ran adrodd.
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text2 =
+
+signUp.completedSignUp.ny.submitUpdates             = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
+signUp.completedSignUp.ny.submitUpdates.desc1.text1 = Ar gyfer unrhyw flwyddyn dreth rydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen
+signUp.completedSignUp.ny.submitUpdates.desc1.link  = meddalwedd sy’n cydweddu
+signUp.completedSignUp.ny.submitUpdates.desc1.text2 = arnoch.
+signUp.completedSignUp.ny.submitUpdates.desc1.text3 =
+signUp.completedSignUp.ny.submitUpdates.desc2.text1 = Ar ôl i chi optio allan, gallwch ddysgu yma sut i
+signUp.completedSignUp.ny.submitUpdates.desc2.link  = gyflwyno’ch Ffurflen Dreth Hunanasesiad
+
+signUp.completedSignUp.ny.yourReportingObligations             = Eich ymrwymiadau o ran adrodd yn y dyfodol
+signUp.completedSignUp.ny.yourReportingObligations.desc1       = Rydych newydd ddewis cofrestru o’r flwyddyn dreth nesaf ymlaen ond, yn y dyfodol, gallai fod gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm os bydd un o’r canlynol yn wir:
+signUp.completedSignUp.ny.yourReportingObligations.bullet1     = mae CThEF yn gostwng y trothwy incwm ar gyfer y cynllun
+signUp.completedSignUp.ny.yourReportingObligations.bullet2     = rydych yn adrodd am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+signUp.completedSignUp.ny.yourReportingObligations.desc2       = Er enghraifft, pe byddai’ch incwm o hunangyflogaeth neu eiddo – neu o’r ddau – yn uwch na’r trothwy ym mlwyddyn dreth {0} i {1}, byddai’n rhaid i chi gyflwyno adroddiadau’n chwarterol o 6 Ebrill {2} ymlaen.
+signUp.completedSignUp.ny.yourReportingObligations.desc3       = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+signUp.completedSignUp.ny.yourReportingObligations.desc4.text1 = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+signUp.completedSignUp.ny.yourReportingObligations.desc4.link  = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
 # opt in confirm tax year
 optIn.confirmTaxYear.heading                        = Cadarnhau ac optio i mewn ar gyfer blwyddyn dreth {0} i {1}
 optIn.confirmTaxYear.desc                           = Os byddwch yn optio i mewn, bydd angen i chi gyflwyno’ch diweddariadau chwarterol drwy feddalwedd sy’n cydweddu.
