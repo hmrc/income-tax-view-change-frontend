@@ -16,13 +16,15 @@
 
 package controllers
 
+import controllers.routes.{ChargeSummaryController, CreditAndRefundController, PaymentController}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockClaimToAdjustService
 import models.admin.{AdjustPaymentsOnAccount, CreditsRefundsRepay, PenaltiesAndAppeals}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
 import models.incomeSourceDetails.TaxYear
+import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -107,6 +109,83 @@ class WhatYouOweControllerSpec extends MockAuthActions
     Some(OutstandingChargesModel(List()))
   )
 
+  def ctaViewModel(isFSEnabled: Boolean, poaTaxYear: Option[TaxYear]): WYOClaimToAdjustViewModel = {
+    if (isFSEnabled) {
+      WYOClaimToAdjustViewModel(
+        adjustPaymentsOnAccountFSEnabled = true,
+        poaTaxYear = poaTaxYear
+      )
+    } else {
+      WYOClaimToAdjustViewModel(
+        adjustPaymentsOnAccountFSEnabled = false,
+        poaTaxYear = poaTaxYear)
+    }
+  }
+
+  def wyoViewModel(charges: WhatYouOweChargesList = whatYouOweChargesListFull,
+                   currentTaxYear: Int = fixedDate.getYear,
+                   hasLpiWithDunningLock: Boolean = false,
+                   dunningLock: Boolean = false,
+                   taxYear: Int = fixedDate.getYear,
+                   adjustPaymentsOnAccountFSEnabled: Boolean = false,
+                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None,
+                   LPP2Url: String = "",
+                   hasOverdueOrAccruingInterestCharges: Boolean = false,
+                   poaTaxYear: Option[TaxYear] = None
+                  ): WhatYouOweViewModel = WhatYouOweViewModel(
+    currentDate = dateService.getCurrentDate,
+    hasOverdueOrAccruingInterestCharges = hasOverdueOrAccruingInterestCharges,
+    whatYouOweChargesList = charges,
+    hasLpiWithDunningLock = hasLpiWithDunningLock,
+    currentTaxYear = currentTaxYear,
+    backUrl = "testBackURL",
+    utr = Some("1234567890"),
+    dunningLock = dunningLock,
+    creditAndRefundUrl = CreditAndRefundController.show().url,
+    creditAndRefundEnabled = true,
+    taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
+    claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(ctaViewModel(adjustPaymentsOnAccountFSEnabled, poaTaxYear)),
+    lpp2Url = LPP2Url,
+    adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url,
+    chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
+      ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
+    paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
+    selfServeTimeToPayEnabled = true,
+    selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
+  )
+
+  def wyoViewModelAgent(charges: WhatYouOweChargesList = whatYouOweChargesListFull,
+                        currentTaxYear: Int = fixedDate.getYear,
+                        dunningLock: Boolean = false,
+                        taxYear: Int = fixedDate.getYear,
+                        hasLpiWithDunningLock: Boolean = false,
+                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
+                        claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None,
+                        hasOverdueOrAccruingInterestCharges: Boolean = false,
+                        poaTaxYear: Option[TaxYear] = None
+                       ): WhatYouOweViewModel = WhatYouOweViewModel(
+    currentDate = dateService.getCurrentDate,
+    hasOverdueOrAccruingInterestCharges = hasOverdueOrAccruingInterestCharges,
+    whatYouOweChargesList = charges,
+    hasLpiWithDunningLock = hasLpiWithDunningLock,
+    currentTaxYear = currentTaxYear,
+    backUrl = "testBackURL",
+    utr = Some("1234567890"),
+    dunningLock = dunningLock,
+    creditAndRefundUrl = CreditAndRefundController.showAgent().url,
+    creditAndRefundEnabled = true,
+    taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
+    claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(ctaViewModel(adjustPaymentsOnAccountFSEnabled, poaTaxYear)),
+    lpp2Url = "",
+    adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url,
+    chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
+      ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
+    paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
+    selfServeTimeToPayEnabled = true,
+    selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
+  )
+
+
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
   val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
@@ -130,6 +209,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent() else wyoViewModel())))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -162,6 +243,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(whatYouOweWithAvailableCredits) else wyoViewModel(whatYouOweWithAvailableCredits))))
+
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -185,6 +269,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(whatYouOweWithZeroAvailableCredits) else wyoViewModel(whatYouOweWithZeroAvailableCredits))))
+
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -201,10 +288,15 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
+                val poaModel: WYOClaimToAdjustViewModel = ctaViewModel(true, Some(TaxYear(2017, 2018)))
+
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(claimToAdjustViewModel = Some(poaModel)) else wyoViewModel(claimToAdjustViewModel = Some(poaModel)))))
+
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
@@ -219,6 +311,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent() else wyoViewModel())))
+
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
@@ -235,6 +330,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent() else wyoViewModel())))
 
                 val result = action(fakeRequest)
                 contentAsString(result).contains("Adjust payments on account for the") shouldBe false
@@ -251,6 +348,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(charges = whatYouOweChargesListWithReviewReconcile) else wyoViewModel(charges = whatYouOweChargesListWithReviewReconcile))))
 
                 val result = action(fakeRequest)
 
@@ -267,6 +366,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true) else wyoViewModel(charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true))))
 
                 val result = action(fakeRequest)
 
@@ -281,6 +382,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true) else wyoViewModel(charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true))))
 
                 val result = action(fakeRequest)
 
@@ -297,6 +400,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
                 when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                   .thenReturn(Future.successful(Right("/url")))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(charges = whatYouOweChargesListWithBalancingChargeNotOverdue) else wyoViewModel(charges = whatYouOweChargesListWithBalancingChargeNotOverdue))))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -314,6 +419,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
               when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right("/url")))
+              when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                .thenReturn(Future(Some(if (isAgent) wyoViewModelAgent(charges = whatYouOweChargesListWithLpp2) else wyoViewModel(charges = whatYouOweChargesListWithLpp2))))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -328,6 +435,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
               when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right("/url")))
+              when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                .thenReturn(Future(None))
+
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -343,6 +453,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
               when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right("/url")))
+              when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                .thenReturn(Future(None))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -358,6 +470,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))
               when(selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any()))
                 .thenReturn(Future.successful(Right("/url")))
+              when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
+                .thenReturn(Future(None))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR

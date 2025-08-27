@@ -47,7 +47,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
   }
 
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
-  val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
   val mockClaimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
   val mockSelfServeTimeToPayService: SelfServeTimeToPayService = mock(classOf[SelfServeTimeToPayService])
   val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
@@ -55,7 +54,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
   val currentYearAsInt: Int = 2022
   implicit val headCarrier: HeaderCarrier = headerCarrier
 
-  object mockDateService extends DateService() {
+  object mockDateService extends DateService {
     override def getCurrentDate: LocalDate = LocalDate.parse(s"${currentYearAsInt.toString}-04-01")
 
     override def getCurrentTaxYearEnd: Int = currentYearAsInt
@@ -63,7 +62,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
   object TestWhatYouOweService extends WhatYouOweService(
     financialDetailsService = mockFinancialDetailsService,
-    whatYouOweService = mockWhatYouOweService,
     claimToAdjustService = mockClaimToAdjustService,
     selfServeTimeToPayService = mockSelfServeTimeToPayService,
     financialDetailsConnector = mockFinancialDetailsConnector,

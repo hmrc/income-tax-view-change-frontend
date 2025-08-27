@@ -39,7 +39,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
-                                  val whatYouOweService: WhatYouOweService,
                                   val claimToAdjustService: ClaimToAdjustService,
                                   val selfServeTimeToPayService: SelfServeTimeToPayService,
                                   val financialDetailsConnector: FinancialDetailsConnector,
@@ -150,7 +149,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                 paymentHandOffUrl: Long => String)
                                (implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
     for {
-      whatYouOweChargesList        <- whatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
+      whatYouOweChargesList        <- getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
       ctaViewModel                 <- getClaimToAdjustViewModel(Nino(user.nino))
       lpp2Url                       = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent())
       hasOverdueCharges             = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))

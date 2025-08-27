@@ -17,7 +17,6 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config._
