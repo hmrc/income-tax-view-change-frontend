@@ -18,10 +18,12 @@ package controllers.triggeredMigration
 
 import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
+import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.triggeredMigration.TriggeredMigrationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.TriggeredMigrationUtils
 import views.html.triggeredMigration.CheckHmrcRecordsView
 
 import scala.concurrent.Future
@@ -30,12 +32,15 @@ import scala.concurrent.Future
 class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
                                            val auth: AuthActions,
                                            triggeredMigrationService: TriggeredMigrationService)
-                                          (mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport {
+                                          (mcc: MessagesControllerComponents,
+                                           implicit val appConfig: FrontendAppConfig)
+  extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources)
+    withTriggeredMigrationFS {
+      val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources)
 
-    Future.successful(Ok(view(viewModel)))
+      Future.successful(Ok(view(viewModel)))
+    }
   }
 }

@@ -36,43 +36,43 @@
 @(viewModel: CheckHmrcRecordsViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @soleTraderSection = {
-    @h3(messages("triggered-migration.check-hmrc-records.soleTrader.heading"), classes = "govuk-heading-m")
+    @h3(messages("triggered-migration.check-hmrc-records.soleTrader.heading"), classes = "govuk-heading-m", optId = Some("sole-trader-heading"))
     @if(viewModel.hasSoleTraderBusinesses) {
         @soleTraderContent
     } else {
-        @p(){@messages("triggered-migration.check-hmrc-records.soleTrader.noActiveBusinesses")}
+        @p(id = Some("sole-trader-no-active-business-desc")){@messages("triggered-migration.check-hmrc-records.soleTrader.noActiveBusinesses")}
     }
-    @link(link = "", messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link")
+    @link(link = "", messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link", id = Some("sole-trader-add-link"))
 }
 
 @soleTraderContent = {
     @for((business, index) <- viewModel.soleTraderBusinesses.zipWithIndex) {
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">
+                <h2 class="govuk-summary-card__title" id="sole-trader-business-@index">
                     @business.incomeSource.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
                 </h2>
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
-                        <a class="govuk-link" href="#">@messages("triggered-migration.check-hmrc-records.soleTrader.cease.link")</a>
+                        <a class="govuk-link" id="sole-trader-cease-link-@index" href="#">@messages("triggered-migration.check-hmrc-records.soleTrader.cease.link")</a>
                     </li>
                 </ul>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
+                        <dt class="govuk-summary-list__key" id="sole-trader-business-name-@index">
                         @messages("triggered-migration.check-hmrc-records.soleTrader.businessName")
                         </dt>
-                        <dd class="govuk-summary-list__value">
+                        <dd class="govuk-summary-list__value" id="sole-trader-business-name-value-@index">
                             @business.businessName.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
+                        <dt class="govuk-summary-list__key" id="sole-trader-business-state-@index">
                         @messages("triggered-migration.check-hmrc-records.soleTrader.businessState")
                         </dt>
-                        <dd class="govuk-summary-list__value">
+                        <dd class="govuk-summary-list__value" id="sole-trader-business-state-value-@index">
                             <strong class="govuk-tag govuk-tag--turquoise">@messages("triggered-migration.check-hmrc-records.soleTrader.active")</strong>
                         </dd>
                     </div>
@@ -91,18 +91,18 @@
     }
 }
 
-@noActivePropertiesContent = { @p(){@messages("triggered-migration.check-hmrc-records.noActiveProperties")} }
+@noActivePropertiesContent = { @p(id = Some("property-no-active-business-desc")){@messages("triggered-migration.check-hmrc-records.noActiveProperties")} }
 
-@addUkPropertyLink() = { @p(){@link(link = "", messageKey = "triggered-migration.check-hmrc-records.ukProperty.add.link")}}
+@addUkPropertyLink() = { @p(id = Some("uk-property-add-link")){@link(link = "", messageKey = "triggered-migration.check-hmrc-records.ukProperty.add.link")}}
 
 @ukPropertyContent = {
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">
-            <h2 class="govuk-summary-card__title">
+            <h2 class="govuk-summary-card__title" id="uk-property-heading">
                 @messages("triggered-migration.check-hmrc-records.ukProperty.heading")
             </h2>
             <ul class="govuk-summary-card__actions">
-                <li class="govuk-summary-card__action">
+                <li class="govuk-summary-card__action" id="uk-property-cease-link">
                     <a class="govuk-link" href="#">@messages("triggered-migration.check-hmrc-records.ukProperty.cease.link")</a>
                 </li>
             </ul>
@@ -110,10 +110,10 @@
         <div class="govuk-summary-card__content">
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
+                    <dt class="govuk-summary-list__key" id="uk-property-business-state">
                         @messages("triggered-migration.check-hmrc-records.ukProperty.businessState")
                     </dt>
-                    <dd class="govuk-summary-list__value">
+                    <dd class="govuk-summary-list__value" id="uk-property-business-state-value">
                         <strong class="govuk-tag govuk-tag--turquoise">@messages("triggered-migration.check-hmrc-records.ukProperty.active")</strong>
                     </dd>
                 </div>
@@ -122,16 +122,16 @@
     </div>
 }
 
-@addForeignPropertyLink() = { @p(){@link(link = "", messageKey = "triggered-migration.check-hmrc-records.foreignProperty.add.link")}}
+@addForeignPropertyLink() = { @p(id = Some("foreign-property-add-link")){@link(link = "", messageKey = "triggered-migration.check-hmrc-records.foreignProperty.add.link")}}
 
 @foreignPropertyContent = {
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">
-            <h2 class="govuk-summary-card__title">
+            <h2 class="govuk-summary-card__title" id="foreign-property-heading">
             @messages("triggered-migration.check-hmrc-records.foreignProperty.heading")
             </h2>
             <ul class="govuk-summary-card__actions">
-                <li class="govuk-summary-card__action">
+                <li class="govuk-summary-card__action" id="foreign-property-cease-link">
                     <a class="govuk-link" href="#">@messages("triggered-migration.check-hmrc-records.foreignProperty.cease.link")</a>
                 </li>
             </ul>
@@ -139,10 +139,10 @@
         <div class="govuk-summary-card__content">
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
+                    <dt class="govuk-summary-list__key" id="foreign-property-business-state">
                     @messages("triggered-migration.check-hmrc-records.foreignProperty.businessState")
                     </dt>
-                    <dd class="govuk-summary-list__value">
+                    <dd class="govuk-summary-list__value" id="foreign-property-business-state-value">
                         <strong class="govuk-tag govuk-tag--turquoise">@messages("triggered-migration.check-hmrc-records.foreignProperty.active")</strong>
                     </dd>
                 </div>
@@ -157,17 +157,19 @@
     isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial
 ) {
-    @h1(messages("triggered-migration.check-hmrc-records.heading"))
+    @h1(messages("triggered-migration.check-hmrc-records.heading"), id = Some("check-hmrc-records-heading"))
 
-    @p(){@messages("triggered-migration.check-hmrc-records.desc")}
+    @p(id = Some("check-hmrc-records-desc")){@messages("triggered-migration.check-hmrc-records.desc")}
 
     @govukInsetText(InsetText(
+        id = Some("check-hmrc-records-inset"),
         content = Text(messages("triggered-migration.check-hmrc-records.inset"))
     ))
 
-    @p(){@messages("triggered-migration.check-hmrc-records.bulletStart")}
+    @p(id = Some("check-hmrc-records-bullet-start")){@messages("triggered-migration.check-hmrc-records.bulletStart")}
 
     @bulletList(
+        id = Some("check-hmrc-records-bullets"),
         itemMsgKeys =
             Seq(
                 "triggered-migration.check-hmrc-records.bullet1",
@@ -176,15 +178,15 @@
     )
     @hr()
 
-    @h2(messages("triggered-migration.check-hmrc-records.yourActiveBusinesses.heading"), classes = "govuk-heading-l")
+    @h2(messages("triggered-migration.check-hmrc-records.yourActiveBusinesses.heading"), classes = "govuk-heading-l", optId = Some("your-active-businesses-heading"))
 
     @soleTraderSection
-    @h3(messages("triggered-migration.check-hmrc-records.property.heading"), classes = "govuk-heading-m govuk-!-margin-top-5")
+    @h3(messages("triggered-migration.check-hmrc-records.property.heading"), classes = "govuk-heading-m govuk-!-margin-top-5", optId = Some("property-heading"))
     @propertyBusinessSection
 
     @hr()
 
-    @h2(messages("triggered-migration.check-hmrc-records.confirmRecords.heading"), classes = "govuk-heading-l")
-    @p(){@messages("triggered-migration.check-hmrc-records.confirmRecords.text")}
+    @h2(messages("triggered-migration.check-hmrc-records.confirmRecords.heading"), classes = "govuk-heading-l", optId = Some("confirm-records-heading"))
+    @p(id = Some("confirm-records-desc")){@messages("triggered-migration.check-hmrc-records.confirmRecords.text")}
     @continueButton(alternativeText = Some(messages("triggered-migration.check-hmrc-records.confirmRecords.button")))
 }

@@ -46,10 +46,10 @@ GET         /agents/optout/choose-taxyear                                 contro
 POST        /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = false)
 POST        /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
 
-GET         /optout                                                       controllers.optOut.OptOutTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-GET         /agents/optout                                                controllers.optOut.OptOutTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-POST        /optout                                                       controllers.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-POST        /agents/optout                                                controllers.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+GET         /optout                                                       controllers.optOutNew.OptOutTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+GET         /agents/optout                                                controllers.optOutNew.OptOutTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+POST        /optout                                                       controllers.optOutNew.OptOutTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+POST        /agents/optout                                                controllers.optOutNew.OptOutTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
 
 GET         /sign-up                                                      controllers.optIn.SignUpTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
 GET         /agents/sign-up                                               controllers.optIn.SignUpTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
