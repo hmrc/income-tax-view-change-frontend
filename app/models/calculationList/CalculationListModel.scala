@@ -24,10 +24,12 @@ object CalculationListResponseModel {
   implicit val format: Format[CalculationListResponseModel] = Json.format[CalculationListResponseModel]
 }
 
-case class CalculationListModel(calculationId: String,
-                                calculationTimestamp: String,
-                                calculationType: String,
-                                crystallised: Option[Boolean]) extends CalculationListResponseModel
+case class CalculationListModel(
+                                 calculationId: String,
+                                 calculationTimestamp: String,
+                                 calculationType: String,
+                                 crystallised: Option[Boolean]
+                               ) extends CalculationListResponseModel
 
 object CalculationListModel {
   implicit val format: Format[CalculationListModel] = Json.format[CalculationListModel]
