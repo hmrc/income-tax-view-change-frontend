@@ -16,6 +16,7 @@
 
 package services
 
+import audit.AuditingService
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
@@ -51,6 +52,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
   val mockSelfServeTimeToPayService: SelfServeTimeToPayService = mock(classOf[SelfServeTimeToPayService])
   val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
   val mockOutstandingChargesConnector: OutstandingChargesConnector = mock(classOf[OutstandingChargesConnector])
+  val mockAuditingService: AuditingService = mock(classOf[AuditingService])
   val currentYearAsInt: Int = 2022
   implicit val headCarrier: HeaderCarrier = headerCarrier
 
@@ -61,6 +63,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
   }
 
   object TestWhatYouOweService extends WhatYouOweService(
+    auditingService = mockAuditingService,
     financialDetailsService = mockFinancialDetailsService,
     claimToAdjustService = mockClaimToAdjustService,
     selfServeTimeToPayService = mockSelfServeTimeToPayService,

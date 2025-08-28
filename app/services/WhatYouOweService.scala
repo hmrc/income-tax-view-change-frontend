@@ -16,6 +16,8 @@
 
 package services
 
+import audit.AuditingService
+import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -39,6 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsService,
                                   val claimToAdjustService: ClaimToAdjustService,
+                                  val auditingService: AuditingService,
                                   val selfServeTimeToPayService: SelfServeTimeToPayService,
                                   val financialDetailsConnector: FinancialDetailsConnector,
                                   val outstandingChargesConnector: OutstandingChargesConnector,
@@ -162,6 +165,9 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         Logger("application").error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
         None
       case (Right(startUrl), Some(lpp2Url)) =>
+
+        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
+
         Some(WhatYouOweViewModel(
           currentDate = dateService.getCurrentDate,
           hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestRARCharges,

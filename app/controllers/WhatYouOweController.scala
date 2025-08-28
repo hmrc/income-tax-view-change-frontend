@@ -73,25 +73,6 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       itvcErrorHandler.showInternalServerError()
   }
 
-  private def getLPP2Link(chargeItems: List[ChargeItem], isAgent: Boolean): Option[String] = {
-    val LPP2 = chargeItems.find(_.transactionType == SecondLatePaymentPenalty)
-    LPP2 match {
-      case Some(charge) => charge.chargeReference match {
-        case Some(value) if isAgent => Some(appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent(value))
-        case Some(value) => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
-        case None => None
-      }
-      case None => Some("")
-    }
-  }
-
-  private def claimToAdjustViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[WYOClaimToAdjustViewModel] = {
-      claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
-        case Right(value) => Future.successful(WYOClaimToAdjustViewModel(value))
-        case Left(ex: Throwable) => Future.failed(ex)
-      }
-  }
-
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
