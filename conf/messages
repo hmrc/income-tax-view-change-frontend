@@ -2819,6 +2819,13 @@ optout.taxYearQuestion.desc2.nextYear.multiYear                        = You wil
 optout.taxYearQuestion.desc3.nextYear.multiYear                        = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = Do you want to opt out from the next tax year?
 
+optout.taxYearQuestion.heading.currentYear.multiYearCYFollowedByAnnual                   = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
+optout.taxYearQuestion.title.currentYear.multiYearCYFollowedByAnnual                     = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
+optout.taxYearQuestion.desc1.currentYear.multiYearCYFollowedByAnnual                     = From 6 April {0}, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.desc2.currentYear.multiYearCYFollowedByAnnual                     = You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
+optout.taxYearQuestion.desc3.currentYear.multiYearCYFollowedByAnnual                     = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual             = Do you want to opt out from the current tax year?
+
 ## opt out single year - followed by mandated
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year

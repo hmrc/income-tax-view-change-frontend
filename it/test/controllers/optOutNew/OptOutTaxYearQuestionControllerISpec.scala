@@ -44,11 +44,10 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
     val previousYearDesc3Multi = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val previousYearQuestionMulti = "Do you want to opt out from the 2021 to 2022 tax year?"
 
-    val currentYearHeading = "Opt out of Making Tax Digital for Income Tax from the current tax year"
-    val currentYearTitle = "Opt out of Making Tax Digital for Income Tax from the current tax year - Manage your Self Assessment - GOV.UK"
-    val currentYearDesc1 = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
-    val currentYearInset = "Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return."
-    val currentYearDesc2 = "You would need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
+    val currentYearHeading = "Opt out of Making Tax Digital for Income Tax from the 2022 to 2023 tax year"
+    val currentYearTitle = "Opt out of Making Tax Digital for Income Tax from the 2022 to 2023 tax year - Manage your Self Assessment - GOV.UK"
+    val currentYearDesc1 = "From 6 April 2022, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax."
+    val currentYearDesc2 = "You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
     val currentYearDesc3 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val currentYearQuestion = "Do you want to opt out from the current tax year?"
 
@@ -215,7 +214,6 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.currentYearHeading),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.currentYearDesc1),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.currentYearInset),
             elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.currentYearDesc2),
             elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.currentYearDesc3),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.currentYearQuestion),
