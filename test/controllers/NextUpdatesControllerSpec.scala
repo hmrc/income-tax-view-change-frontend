@@ -18,7 +18,6 @@ package controllers
 
 import mocks.auth.MockAuthActions
 import mocks.services.{MockNextUpdatesService, MockOptOutService}
-import mocks.views.agent.MockNextUpdates
 import models.admin.OptOutFs
 import models.obligations._
 import org.jsoup.Jsoup
@@ -38,7 +37,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class NextUpdatesControllerSpec extends MockAuthActions
-  with MockNextUpdatesService with MockNextUpdates with MockOptOutService {
+  with MockNextUpdatesService with MockOptOutService {
 
   val nextTitle: String = NextUpdatesTestConstants.title
 
@@ -281,7 +280,6 @@ class NextUpdatesControllerSpec extends MockAuthActions
           mockSingleBusinessIncomeSource()
           mockViewModel
           mockObligations
-          mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent().url, isAgent = true, isSupportingAgent)(HtmlFormat.empty)
 
           val result: Future[Result] = testNextUpdatesController.showAgent()(
             fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)

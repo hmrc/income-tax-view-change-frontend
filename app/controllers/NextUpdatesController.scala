@@ -32,7 +32,7 @@ import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewUtils.NextUpdatesViewUtils
-import views.html.nextUpdates.{NextUpdates, NextUpdatesOptOut, NoNextUpdates}
+import views.html.nextUpdates.{NextUpdatesOptOut, NoNextUpdates}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class NextUpdatesController @Inject()(
                                        noNextUpdatesView: NoNextUpdates,
-                                       nextUpdatesView: NextUpdates,
                                        nextUpdatesOptOutView: NextUpdatesOptOut,
                                        auditingService: AuditingService,
                                        nextUpdatesService: NextUpdatesService,
@@ -107,10 +106,8 @@ class NextUpdatesController @Inject()(
               }
             }.recoverWith {
               case ex =>
-                val viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, false)
-
                 Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
-                Future.successful(Ok(nextUpdatesView(viewModel, backUrl.url, isAgent, user.isSupportingAgent, origin))) // Render view even on failure
+                Future.successful(errorHandler.showInternalServerError())
             }
             optOutSetup
         }
