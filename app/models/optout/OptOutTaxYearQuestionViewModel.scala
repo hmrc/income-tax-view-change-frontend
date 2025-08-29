@@ -34,6 +34,7 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
   }
 
   private val optOutStateMessageSuffix = (optOutState, hasNoQuarterlyUpdatesSubmitted, currentYearStatus) match {
+    case (Some(MultiYearOptOutDefault), _, Voluntary) if isCurrentYear   => "multiYearCYFollowedByAnnual"
     case (Some(MultiYearOptOutDefault), _, _)                            => "multiYear"
     case (Some(OneYearOptOutFollowedByMandated), _, _) if isPreviousYear => "singleYearFollowedByMandated"
     case (Some(OneYearOptOutFollowedByMandated), true, _)                => "singleYearFollowedByMandated"
@@ -58,7 +59,7 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
 
   def showInset: Boolean = {
     (optOutState, isCurrentYear, isPreviousYear) match {
-      case (Some(MultiYearOptOutDefault), true, _) => true
+      case (Some(MultiYearOptOutDefault), true, _) => false
       case (Some(MultiYearOptOutDefault), _, true) => true
       case (Some(OneYearOptOutFollowedByMandated), _, false) => true
       case _ => false
