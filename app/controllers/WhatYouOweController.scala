@@ -16,7 +16,6 @@
 
 package controllers
 
-import audit.AuditingService
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config._
@@ -27,7 +26,7 @@ import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{ClaimToAdjustService, DateServiceInterface, SelfServeTimeToPayService, WhatYouOweService}
+import services.{DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOwe
@@ -37,11 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouOweController @Inject()(val authActions: AuthActions,
                                      val whatYouOweService: WhatYouOweService,
-                                     val selfServeTimeToPayService: SelfServeTimeToPayService,
-                                     val claimToAdjustService: ClaimToAdjustService,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                     val auditingService: AuditingService,
                                      implicit val dateService: DateServiceInterface,
                                      whatYouOwe: WhatYouOwe
                                     )(implicit val appConfig: FrontendAppConfig,
