@@ -273,20 +273,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
               }
             }
 
-            "does not contain the adjust POA" when {
-              "the AdjustPaymentsOnAccount FS is disabled" in {
-                setupMockSuccess(mtdUserRole)
-                mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
-                  .thenReturn(Future.successful(whatYouOweChargesListFull))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any(), any())(any(), any()))
-                  .thenReturn(Future(Some(wyoViewModel(isAgent))))
-
-                val result = action(fakeRequest)
-                contentAsString(result).contains("Adjust payments on account for the") shouldBe false
-              }
-            }
-
             "that includes poa extra charges in charges table" when {
               "ReviewAndReconcilePoa FS is enabled" in {
                 mockSingleBISWithCurrentYearAsMigrationYear()
