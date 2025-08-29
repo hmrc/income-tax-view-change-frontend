@@ -23,10 +23,7 @@ import config._
 import config.featureswitch._
 import controllers.routes.{ChargeSummaryController, CreditAndRefundController, NotMigratedUserController, PaymentController, TaxYearSummaryController}
 import enums.GatewayPage.WhatYouOwePage
-import forms.utils.SessionKeys.{gatewayPage, origin}
-import models.core.Nino
-import models.financialDetails.{ChargeItem, SecondLatePaymentPenalty}
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
