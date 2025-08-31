@@ -99,4 +99,5 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
         EitherT.rightT(logAndRedirect(s"New Payment on Account missing from session"))
     }
   }
+
 }
