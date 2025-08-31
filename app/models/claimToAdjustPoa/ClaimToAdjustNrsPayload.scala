@@ -25,11 +25,11 @@ case class ClaimToAdjustNrsPayload(
 
   // Required data items (audit mapping)
   clientIP:                        Option[String],
-  deviceCookie:                    Option[String],  // if available
-  sessionId:                       Option[String],  // X-Session-ID
-  userType:                        Option[String],  // Individual / Agent
-  generatedAt:                     String,          // ISO8601 instant
-  sessionCookie:                   Option[String],  // if available
+  deviceCookie:                    Option[String],
+  sessionId:                       Option[String],
+  userType:                        Option[String],
+  generatedAt:                     String,
+  sessionCookie:                   Option[String],
   isDecreased:                     Boolean,
   previousPaymentOnAccountAmount:  BigDecimal,
   requestedPaymentOnAccountAmount: BigDecimal,
