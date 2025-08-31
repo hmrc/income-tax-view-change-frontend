@@ -85,7 +85,8 @@ object AuthActionsTestData {
    enrolments,
     affinityGroup,
     if(hasCredentials) Some(testCredentials) else None,
-    if(hasUserName) Some(testRetrievedUserName) else None
+    if(hasUserName) Some(testRetrievedUserName) else None,
+    ConfidenceLevel.L250
   )
 
   def getAgentClientDetails(isConfirmed: Boolean, hasName: Boolean = true): AgentClientDetails = AgentClientDetails(
@@ -174,7 +175,8 @@ object AuthActionsTestData {
       enrolments,
       Some(AffinityGroup.Agent),
       Some(testCredentials),
-      None
+      None,
+      ConfidenceLevel.L250
     )
   )(request)
 

@@ -92,7 +92,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
 
   private def constructAuthorisedAndEnrolledUser[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
-    case enrolments ~ userName ~ credentials ~ affinityGroup ~ _ =>
+    case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel =>
       lazy val optMtdId: Option[String] =
         enrolments.getEnrolment(Constants.mtdEnrolmentName)
           .flatMap(_.getIdentifier(Constants.mtdEnrolmentIdentifierKey))
@@ -104,7 +104,8 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
             enrolments,
             affinityGroup,
             credentials,
-            userName
+            userName,
+            confidenceLevel
           )
           Future.successful(
             Right(

@@ -115,7 +115,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
               externalId = None,
               agentCode = None,
               credentials = user.credId.map(id => Credentials(id, "GovernmentGateway")),
-              confidenceLevel = ConfidenceLevel.L200,
+              confidenceLevel = user.authUserDetails.confidenceLevel,
               nino = Some(user.nino),
               saUtr = user.saUtr,
               name = user.userName,

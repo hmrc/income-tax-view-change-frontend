@@ -81,7 +81,8 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
         enrolments = enrolments,
         affinityGroup = affinityGroup,
         credentials = credentials,
-        name = name
+        name = name,
+        confidenceLevel = confidenceLevel
       )
       Future.successful(
         Right(AuthorisedUserRequest(authUserDetails))
