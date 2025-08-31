@@ -21,23 +21,21 @@ import play.api.libs.json.{Json, OWrites}
 case class ClaimToAdjustNrsPayload(
   credId: Option[String],
   saUtr:  Option[String],
-  nino:   Option[String],
+  nino:   String,
 
   // Required data items (audit mapping)
   clientIP:                        Option[String],
   deviceCookie:                    Option[String],  // if available
   sessionId:                       Option[String],  // X-Session-ID
-  userAgent:                       Option[String],
   userType:                        Option[String],  // Individual / Agent
-  dateOfChange:                    String,          // ISO8601 instant
-  timeOfChange:                    String,          // ISO8601 instant (same as above for clarity)
+  generatedAt:                     String,          // ISO8601 instant
   sessionCookie:                   Option[String],  // if available
+  isDecreased:                     Boolean,
   previousPaymentOnAccountAmount:  BigDecimal,
   requestedPaymentOnAccountAmount: BigDecimal,
   adjustmentReasonCode:            String,
   adjustmentReasonDescription:     String,
-  acknowledgement:                 Option[String],  // N/A in example; keep for parity
-  mtditId:                         Option[String]
+  mtditId:                         String
 )
 
 object ClaimToAdjustNrsPayload {

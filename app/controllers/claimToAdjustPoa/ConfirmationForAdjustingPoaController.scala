@@ -25,7 +25,7 @@ import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoa
@@ -37,6 +37,7 @@ import scala.concurrent.ExecutionContext
 class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActions,
                                                       val claimToAdjustService: ClaimToAdjustService,
                                                       val poaSessionService: PaymentOnAccountSessionService,
+                                                      val nrsService: NrsService,
                                                       val ctaCalculationService: ClaimToAdjustPoaCalculationService,
                                                       val view: ConfirmationForAdjustingPoa,
                                                       val auditingService: AuditingService)
@@ -68,7 +69,8 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
-        auditingService = auditingService
+        nrsService = nrsService,
+        auditingService = auditingService,
       ) recover logAndRedirect
   }
 

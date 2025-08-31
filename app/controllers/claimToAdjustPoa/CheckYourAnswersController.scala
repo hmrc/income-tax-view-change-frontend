@@ -81,7 +81,8 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
-        auditingService = auditingService
+        auditingService = auditingService,
+        nrsService = nrsService
       ) recover logAndRedirect
   }
 
@@ -97,28 +98,5 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
       case (_, None) =>
         EitherT.rightT(logAndRedirect(s"New Payment on Account missing from session"))
     }
-  }
-  private def withNrsSubmission(session: PoaAmendmentData)
-                               (block: (SelectYourReason, BigDecimal) => EitherT[Future, Throwable, Result])
-                               (implicit user: MtdItUser[_]): EitherT[Future, Throwable, Result] = {
-
-    val rawPayload: RawPayload = RawPayload(parse.byteString(user.body), user.charset)
-
-
-//    val rawPayload = NrsSubmission(
-//      rawPayload = ???,
-//      metadata = ???
-//    )
-//
-//    nrsService.submit(NrsSubmission(
-//      nrsSubmission,
-//      NrsMetadata(
-//        userSubmissionTimestamp = ???,
-//        submissionId = ???,
-//        identityData = ???,
-//        request = ???,
-//        checkSum = ???
-//      )
-//    ))
   }
 }
