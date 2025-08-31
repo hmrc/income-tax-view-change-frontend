@@ -156,7 +156,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
 
             nrsService.submit(submission).map {
               case Some(resp) => logger.info(s"NRS submission accepted: ${resp.nrsSubmissionId}")
-              case None       => logger.warn("NRS submission failed or was not accepted")
+              case None       => logger.error("NRS submission failed or was not accepted")
             }
 
             Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
