@@ -22,8 +22,6 @@ case class ClaimToAdjustNrsPayload(
   credId: Option[String],
   saUtr:  Option[String],
   nino:   String,
-
-  // Required data items (audit mapping)
   clientIP:                        Option[String],
   deviceCookie:                    Option[String],
   sessionId:                       Option[String],

@@ -55,23 +55,4 @@ object NrsMetadata extends InstantFormatter {
       headerData = JsObject(request.headers.toMap.map(x => x._1 -> JsString(x._2 mkString ","))),
       searchKeys = searchKeys
     )
-
-//  def apply(
-//    userSubmissionTimestamp: Instant,
-//    submissionId:            String,
-//    identityData:            IdentityData,
-//    request:                 RequestHeader,
-//    checkSum:                String
-//  ): NrsMetadata =
-//    NrsMetadata(
-//      businessId              = "itsavc",
-//      notableEvent            = "your-event-name-here",
-//      payloadContentType      = MimeTypes.XML,
-//      payloadSha256Checksum   = checkSum,
-//      userSubmissionTimestamp = userSubmissionTimestamp,
-//      identityData            = identityData,
-//      userAuthToken           = request.headers.get("Authorization").getOrElse(""),
-//      headerData              = JsObject(request.headers.toMap.map(x => x._1 -> JsString(x._2 mkString ","))),
-//      searchKeys              = SearchKeys(submissionId)
-//    )
 }
