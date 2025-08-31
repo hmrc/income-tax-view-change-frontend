@@ -111,8 +111,8 @@ object FeatureSwitchName {
       PenaltiesBackendEnabled,
       YourSelfAssessmentCharges,
       OptInOptOutContentUpdateR17,
-      SelfServeTimeToPayR17,
-      SubmitClaimToAdjustToNrs
+      SubmitClaimToAdjustToNrs,
+      SelfServeTimeToPayR17
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
