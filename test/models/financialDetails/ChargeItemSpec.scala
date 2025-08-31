@@ -34,7 +34,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   val originalAmount: BigDecimal = 100.0
   val outstandingAmount: BigDecimal = 50.0
   val interestOutstandingAmount: Option[BigDecimal] = Some(40.0)
-  val latePaymentInterestAmount: Option[BigDecimal] = Some(30.0)
+  val accruingInterestAmount: Option[BigDecimal] = Some(30.0)
   val lpiWithDunningLock: Option[BigDecimal] = Some(20.0)
   val amountCodedOut: Option[BigDecimal] = Some(150.0)
 
@@ -43,7 +43,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     originalAmount = originalAmount,
     outstandingAmount = outstandingAmount,
     interestOutstandingAmount = interestOutstandingAmount,
-    latePaymentInterestAmount = latePaymentInterestAmount,
+    accruingInterestAmount = accruingInterestAmount,
     lpiWithDunningLock = lpiWithDunningLock)
 
   val docDetailsNoOutstandingAmout = defaultDocDetails.copy(outstandingAmount = 0)

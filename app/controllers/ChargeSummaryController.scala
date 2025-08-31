@@ -150,8 +150,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
 
 
-      chargeHistoryService.chargeHistoryResponse(isInterestCharge, documentDetailWithDueDate.documentDetail.isPayeSelfAssessment,
-        chargeReference, isEnabled(ChargeHistory)).map {
+      chargeHistoryService.chargeHistoryResponse(isInterestCharge, chargeReference, isEnabled(ChargeHistory)).map {
         case Right(chargeHistory) =>
           auditChargeSummary(chargeItem, paymentBreakdown,
             chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
@@ -214,7 +213,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
               mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
                 case Right(_) => Ok {
                   if (isEnabled(YourSelfAssessmentCharges) && chargeItem.isIncludedInSACSummary) {
-                    yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl)
+                    yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl, saChargesUrl)
                   } else
                     chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
                 }
@@ -258,7 +257,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
     val values = List(
       (viewSection1, true, "Original Amount"),
       (viewSection2, documentDetailWithDueDate.documentDetail.interestEndDate.isDefined, "Interest EndDate"),
-      (viewSection2, documentDetailWithDueDate.documentDetail.latePaymentInterestAmount.isDefined ||
+      (viewSection2, documentDetailWithDueDate.documentDetail.accruingInterestAmount.isDefined ||
         documentDetailWithDueDate.documentDetail.interestOutstandingAmount.isDefined, "Interest Amount"),
       (viewSection3, true, "Original Amount")
     )

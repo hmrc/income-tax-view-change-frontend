@@ -19,7 +19,10 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.HtmlFormatter.NbspString
 @import views.html.components.h2
+@import views.html.components.h3
+@import views.html.components.p
 @import models.chargeSummary.ChargeSummaryViewModel
+@import models.financialDetails.BalancingCharge
 @import views.html.partials.yourSelfAssessmentCharges.LatePaymentInterestChargeMessage
 @import models.repaymentHistory.RepaymentHistoryUtils
 @import models.financialDetails.ChargeItem
@@ -29,7 +32,9 @@
     govukTable: GovukTable,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     latePaymentInterestChargeMessage: LatePaymentInterestChargeMessage,
-    h2: h2
+    h2: h2,
+    h3: h3,
+    p: p
 )
 
 @(viewModel: ChargeSummaryViewModel)(implicit messages: Messages)
@@ -40,6 +45,14 @@
     <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
         @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
     </a>
+}
+
+@h3(ChargeNameLangHelper.chargeHistoryHeading(viewModel.chargeItem), classes = "govuk-heading-m", optId = Some("charge-history-heading"))
+
+@if(viewModel.chargeItem.isCodingOut && viewModel.chargeItem.transactionType == BalancingCharge) {
+    @p(id = Some("charge-history-caption")) {
+        @ChargeNameLangHelper.chargeHistoryCaption(viewModel.chargeItem)
+    }
 }
 
 @govukTable(Table(
@@ -57,11 +70,26 @@
             )
         )
     ),
-    rows = Seq(
+    rows = (Seq(
         if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
                     content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
+                ),
+                TableRow(
+                    content = HtmlContent(
+                        viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDate.toNonBreaking).getOrElse(Html(messages("incomeSources.generic.unknown")))
+                    )
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.adjustmentHistory.creationEvent.amount.toCurrency), format = Some("numeric")
+                )
+            ) else Nil,
+
+        if(viewModel.isCodedOut)
+            Seq(
+                TableRow(
+                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
                 ),
                 TableRow(
                     content = HtmlContent(
@@ -82,7 +110,7 @@
                     content = HtmlContent(viewModel.chargeItem.interestEndDate.get.toLongDate.toNonBreaking)
                 ),
                 TableRow(
-                    content = HtmlContent(viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency),
+                    content = HtmlContent(viewModel.chargeItem.accruingInterestAmount.get.toCurrency),
                     format = Some("numeric")
                 )
             ) else Nil,
@@ -124,7 +152,7 @@
             case charge if viewModel.chargeHistoryEnabled =>
                 Seq(
                     TableRow(
-                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}"))
+                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
                     ),
                     TableRow(
                         content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
@@ -153,8 +181,6 @@
                     format = Some("numeric")
                 )
             )
-    }),
-    caption = Some(ChargeNameLangHelper.chargeHistoryHeading(viewModel.chargeItem)),
+    })).filter(_ != Nil),
     attributes = Map("id" -> "payment-history-table"),
-    captionClasses = "govuk-table__caption--m"
 ))

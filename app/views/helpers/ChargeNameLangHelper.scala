@@ -31,4 +31,9 @@ object ChargeNameLangHelper {
 
     messages(s"yourSelfAssessmentChargeSummary.chargeHistory.${chargeItem.getChargeTypeKey}.heading")
   }
+
+  def chargeHistoryCaption(chargeItem: ChargeItem)(implicit messages: Messages): String = {
+    messages(s"yourSelfAssessmentChargeSummary.chargeHistory.${chargeItem.getChargeTypeKey}.caption",
+      chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString)
+  }
 }

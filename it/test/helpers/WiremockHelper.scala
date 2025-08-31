@@ -155,6 +155,16 @@ object WiremockHelper extends Eventually with IntegrationPatience {
           withHeaders(toHttpHeaders(responseHeaders))
       )
     )
+  def stubPostWithRequestResponseHeadersAndBody(url: String, requestBody: JsValue, status: Integer, responseHeaders: Map[String, String] = Map()): StubMapping =
+    stubFor(post(urlEqualTo(url))
+      .withRequestBody(equalToJson(requestBody.toString()))
+      .willReturn(
+        aResponse()
+          .withBody("")
+          .withStatus(status)
+          .withHeaders(toHttpHeaders(responseHeaders))
+      )
+    )
 
   def stubPostWithHeader(url: String, status: Integer, key: String, header: String): StubMapping =
     stubFor(post(urlEqualTo(url))

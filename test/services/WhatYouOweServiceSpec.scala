@@ -16,6 +16,7 @@
 
 package services
 
+import audit.AuditingService
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
@@ -47,18 +48,28 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
   }
 
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+  val mockClaimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
+  val mockSelfServeTimeToPayService: SelfServeTimeToPayService = mock(classOf[SelfServeTimeToPayService])
   val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
   val mockOutstandingChargesConnector: OutstandingChargesConnector = mock(classOf[OutstandingChargesConnector])
+  val mockAuditingService: AuditingService = mock(classOf[AuditingService])
   val currentYearAsInt: Int = 2022
   implicit val headCarrier: HeaderCarrier = headerCarrier
 
-  object mockDateService extends DateService() {
+  object mockDateService extends DateService {
     override def getCurrentDate: LocalDate = LocalDate.parse(s"${currentYearAsInt.toString}-04-01")
 
     override def getCurrentTaxYearEnd: Int = currentYearAsInt
   }
 
-  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockFinancialDetailsConnector, mockOutstandingChargesConnector, mockDateService)
+  object TestWhatYouOweService extends WhatYouOweService(
+    auditingService = mockAuditingService,
+    financialDetailsService = mockFinancialDetailsService,
+    claimToAdjustService = mockClaimToAdjustService,
+    selfServeTimeToPayService = mockSelfServeTimeToPayService,
+    financialDetailsConnector = mockFinancialDetailsConnector,
+    outstandingChargesConnector = mockOutstandingChargesConnector,
+    dateService = mockDateService)
 
   "The WhatYouOweService.getWhatYouOweChargesList method" when {
     "when both financial details and outstanding charges return success response and valid data of due more than 30 days" should {
@@ -197,12 +208,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None)
           )
         }
-        "return a success empty response with outstanding amount zero and late payment interest amount zero" in {
+        "return a success empty response with outstanding amount zero and accruing interest amount zero" in {
           when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0),
-              latePaymentInterestAmount = List(Some(0), Some(0)), interestOutstandingAmount = List(Some(0), Some(0))))))
+              accruingInterestAmount = List(Some(0), Some(0)), interestOutstandingAmount = List(Some(0), Some(0))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
@@ -210,12 +221,12 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None)
           )
         }
-        "return a success POA2 only response with outstanding amount zero and late payment interest amount non-zero" in {
+        "return a success POA2 only response with outstanding amount zero and accruing interest amount non-zero" in {
           when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0),
-              latePaymentInterestAmount = List(Some(0), Some(10)), interestOutstandingAmount = List(Some(0), Some(10))))))
+              accruingInterestAmount = List(Some(0), Some(10)), interestOutstandingAmount = List(Some(0), Some(10))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList(
             isEnabled(FilterCodedOutPoas),
@@ -233,7 +244,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
             effectiveDateOfPayment = Some(LocalDate.parse("2021-08-24")),
             documentDueDate = Some(LocalDate.parse("2021-08-24")))
           val dd2 = DocumentDetail(taxYear = 2021, transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
@@ -241,7 +252,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
-            interestEndDate = Some(LocalDate.parse("2019-06-25")), latePaymentInterestAmount = None,
+            interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
             effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
             documentDueDate = Some(LocalDate.parse("2021-08-25")))
           val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED), amountCodedOut = Some(2500.00))
@@ -398,3 +409,4 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     }
   }
 }
+

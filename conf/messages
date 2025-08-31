@@ -50,6 +50,12 @@ agent.client_relationship_failure.info                          = Your client ne
 agent.client_relationship_failure.info.link                     = authorise you as their agent
 agent.client_relationship_failure.enter_different_details       = Check another client
 
+# Agent - No Assignment
+agent.no_assignment.heading                                     = Your organisation has not given you access to this client
+agent.no_assignment.p1                                          = This client has authorised your organisation. Your team has not given you access to the client’s tax.
+agent.no_assignment.p2                                          = Ask your team who manages access groups. It will be someone with administrative access to your agent services account.
+agent.no_assignment.button                                      = Go to agent services account
+
 ## Agent - UTR Error
 agent.utr_error.heading                                         = You cannot view this client
 agent.utr_error.utr_wrong                                       = This may be because:
@@ -1195,21 +1201,24 @@ chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = HMRC creat
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = HMRC created your second payment on account
 chargeSummary.chargeHistory.created.balancingCharge.text		        = Balancing payment created
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
-chargeSummary.chargeHistory.created.codingOut.text                      = Self Assessment payment (through your PAYE tax code) created
+chargeSummary.chargeHistory.created.codingOut.text                      = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
+chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
+chargeSummary.chargeHistory.created.poa2CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment (through your PAYE tax code) created
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC created this extra amount for your first payment on account based on your tax return
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
+chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = First payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Second payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing payment reduced by taxpayer request
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = First payment on account reduced due to amended return
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Second payment on account reduced due to amended return
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balancing payment reduced due to amended return
+chargeSummary.chargeHistory.amend.codingOut.text                        = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
-chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.chargeHistory.POA1RR-credit                               = First payment on account: credit from your tax return
 chargeSummary.chargeHistory.POA2RR-credit                               = Second payment on account: credit from your tax return
 
@@ -2718,6 +2727,15 @@ optout.cancelled.p3                                 = to change how often you wa
 # opt out tax year question page
 
 ## opt out multi year
+
+optout.taxYearQuestion.heading.previousYear.multiYear       = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
+optout.taxYearQuestion.title.previousYear.multiYear         = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
+optout.taxYearQuestion.desc1.previousYear.multiYear         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.inset.previousYear.multiYear         = Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return.
+optout.taxYearQuestion.desc2.previousYear.multiYear         = You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
+optout.taxYearQuestion.desc3.previousYear.multiYear         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.previousYear.multiYear = Do you want to opt out from the {0} to {1} tax year?
+
 optout.taxYearQuestion.heading.currentYear.multiYear                   = Opt out of Making Tax Digital for Income Tax from the current tax year
 optout.taxYearQuestion.title.currentYear.multiYear                     = Opt out of Making Tax Digital for Income Tax from the current tax year
 optout.taxYearQuestion.desc1.currentYear.multiYear                     = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
@@ -2734,6 +2752,15 @@ optout.taxYearQuestion.desc3.nextYear.multiYear                        = In futu
 optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = Do you want to opt out from the next tax year?
 
 ## opt out single year - followed by mandated
+optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
+optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
+optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = You have
+optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByMandated     = {0} quarterly updates submitted
+optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByMandated        = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.taxYearQuestion.desc2.previousYear.singleYearFollowedByMandated         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByMandated = Do you still want to opt out for the {0} to {1} tax year?
+
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax for a single tax year
 optout.taxYearQuestion.title.currentYear.singleYearFollowedByMandated         = Opt out of Making Tax Digital for Income Tax for a single tax year
 optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByMandated         = You can only opt out for the {0} to {1} tax year. This would mean you no longer need software compatible with Making Tax Digital for Income Tax for this tax year.
@@ -2748,6 +2775,15 @@ optout.taxYearQuestion.inset.currentYear.singleYearFollowedByMandatedWithUpdates
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByMandatedWithUpdates = Do you still want to opt out for the {0} to {1} tax year?
 
 ## opt out single year - followed by annual
+optout.taxYearQuestion.heading.previousYear.singleYearFollowedByAnnual       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
+optout.taxYearQuestion.title.previousYear.singleYearFollowedByAnnual         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
+optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByAnnual         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = You have
+optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByAnnual     = {0} quarterly updates submitted
+optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByAnnual        = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.taxYearQuestion.desc2.previousYear.singleYearFollowedByAnnual         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByAnnual = Do you still want to opt out for the {0} to {1} tax year?
+
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByAnnual       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.title.currentYear.singleYearFollowedByAnnual         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnual         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
@@ -2941,6 +2977,77 @@ optin.completedOptIn.futureReporting.desc2                      = If this happen
 optin.completedOptIn.incomeThreshold.desc.a                     = You can check the threshold for qualifying income in the
 optin.completedOptIn.incomeThreshold.desc.b                     = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
 
+# sign up completed
+signUp.completedSignUp.cy.heading                             = Sign up completed
+signUp.completedSignUp.cy.title                               = Sign up completed
+signUp.completedSignUp.cy.heading.desc                        = You need to use Making Tax Digital for Income Tax from now on
+signUp.completedSignUp.cy.inset                               = You may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
+
+signUp.completedSignUp.cy.yourRevisedDeadlines                = Your revised deadlines
+signUp.completedSignUp.cy.yourRevisedDeadlines.text           = Your revised deadlines will be available in the next few minutes.
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text1    = Even if they are not displayed right away on the
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.link     = updates and deadlines
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.comma    =
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text2    = page, your account has been updated.
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text1    = You can decide at any time to opt out of Making Tax Digital for Income Tax for all your businesses on
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.link     = your reporting obligations
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text2    = page.
+
+signUp.completedSignUp.cy.submitUpdates                       = Submit updates in software
+signUp.completedSignUp.cy.submitUpdates.desc1.text1           = For any tax year you are using Making Tax Digital for Income Tax, you need
+signUp.completedSignUp.cy.submitUpdates.desc1.link            = compatible software
+signUp.completedSignUp.cy.submitUpdates.desc1.text2           =
+signUp.completedSignUp.cy.submitUpdates.desc1.text3           = .
+
+signUp.completedSignUp.cy.yourReportingObligations             = Your reporting obligations in the future
+signUp.completedSignUp.cy.yourReportingObligations.desc1       = You are now voluntarily signed up from the {0} to {1} tax year onwards, but in future you could be required to use Making Tax Digital for Income Tax if:
+signUp.completedSignUp.cy.yourReportingObligations.bullet1     = HMRC lowers the income threshold for it
+signUp.completedSignUp.cy.yourReportingObligations.bullet2     = you report an increase in your qualifying income in a tax return
+signUp.completedSignUp.cy.yourReportingObligations.desc2       = For example, if your total gross income from self-employment or property, or both, exceeds the {3} threshold in the {0} to {1} tax year, you would have to use Making Tax Digital for Income Tax from 6 April {2}.
+signUp.completedSignUp.cy.yourReportingObligations.desc3       = If this happens, we will write to you to let you know.
+signUp.completedSignUp.cy.yourReportingObligations.desc4.text1 = You can check the threshold for qualifying income in the
+signUp.completedSignUp.cy.yourReportingObligations.desc4.link  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+
+signUp.completedSignUp.nyMandated.yourReportingObligations             = Your reporting obligations from the next tax year onwards
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc1       = You have just voluntarily signed up from the {0} to {1} tax year.
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc2       = From 6 April {0}, you will be required to use Making Tax Digital for Income Tax.
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc3       = This could be because:
+signUp.completedSignUp.nyMandated.yourReportingObligations.bullet1     = HMRC lowered the income threshold for it
+signUp.completedSignUp.nyMandated.yourReportingObligations.bullet2     = you reported an increase in your qualifying income in a tax return
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.text1 = You can check the threshold for qualifying income in the
+signUp.completedSignUp.nyMandated.yourReportingObligations.desc4.link  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+
+signUp.completedSignUp.ny.heading                          = Sign up completed
+signUp.completedSignUp.ny.title                            = Sign up completed
+signUp.completedSignUp.ny.heading.desc                     = You need to use Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
+
+signUp.completedSignUp.ny.yourRevisedDeadlines             = Your revised deadlines
+signUp.completedSignUp.ny.yourRevisedDeadlines.inset       = Your deadlines for this business will be available in the next few minutes.
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text1 = Even if they are not displayed right away on the
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.link  = updates and deadlines
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.comma =
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text2 = page, your account has been updated.
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text1 = You can decide at any time to opt out of Making Tax Digital for Income Tax for all your businesses on
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.link  = your reporting obligations
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text2 = page.
+
+signUp.completedSignUp.ny.submitUpdates             = Submit updates in software
+signUp.completedSignUp.ny.submitUpdates.desc1.text1 = For any tax year you are using Making Tax Digital for Income Tax, you need
+signUp.completedSignUp.ny.submitUpdates.desc1.link  = compatible software
+signUp.completedSignUp.ny.submitUpdates.desc1.text2 =
+signUp.completedSignUp.ny.submitUpdates.desc1.text3 = .
+signUp.completedSignUp.ny.submitUpdates.desc2.text1 = When you are opted out, you can find out here how to
+signUp.completedSignUp.ny.submitUpdates.desc2.link  = file your Self Assessment tax return
+
+signUp.completedSignUp.ny.yourReportingObligations             = Your reporting obligations in the future
+signUp.completedSignUp.ny.yourReportingObligations.desc1       = You have just chosen to sign up from the next tax year onwards, but in future you could have to use Making Tax Digital for Income Tax if:
+signUp.completedSignUp.ny.yourReportingObligations.bullet1     = HMRC lowers the income threshold for it
+signUp.completedSignUp.ny.yourReportingObligations.bullet2     = you report an increase in your qualifying income in a tax return
+signUp.completedSignUp.ny.yourReportingObligations.desc2       = For example, if your income from self-employment or property, or both, exceeds the threshold in the {0} to {1} tax year, you would have to report quarterly from 6 April {2}.
+signUp.completedSignUp.ny.yourReportingObligations.desc3       = If this happens, we will write to you to let you know.
+signUp.completedSignUp.ny.yourReportingObligations.desc4.text1 = You can check the threshold for qualifying income in the
+signUp.completedSignUp.ny.yourReportingObligations.desc4.link  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+
 # opt in confirm tax year
 optIn.confirmTaxYear.heading                        = Confirm and opt in for {0} to {1} tax year
 optIn.confirmTaxYear.desc                           = Opting in will mean you need to submit your quarterly updates through compatible software.
@@ -3024,7 +3131,7 @@ reporting.frequency.table.voluntary.r17                             = Voluntaril
 reporting.frequency.table.annual.r17                                = Opted out
 
 reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
-reporting.frequency.ceasedBusiness.warning.link                     = all businesses
+reporting.frequency.ceasedBusiness.warning.link                     = your businesses
 reporting.frequency.ceasedBusiness.warning.text.2                   = page.
 
 reporting.frequency.latency.details.section.header                  = Your new businesses can have a different reporting frequency
@@ -3057,6 +3164,7 @@ reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
+yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
 
@@ -3064,7 +3172,8 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a 
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more than what you paid during the year (for example, through payments on account or PAYE)
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = have changed your tax return and it resulted in you owing more
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
 yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of interest you have to pay will increase every day until you pay the overdue charge.
@@ -3097,6 +3206,8 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You ca
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
 
+yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = This is the remaining tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code.
+
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
 yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Balancing payment
@@ -3104,6 +3215,7 @@ yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                  
 yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                      = Second payment on account
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading                  = Late submission penalty
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Class 2 National Insurance
+yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Balancing payment history
@@ -3112,7 +3224,11 @@ yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading    
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading        = Second payment on account history
 yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading    = Late submission penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = First late payment penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
+
+yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill.
+
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.

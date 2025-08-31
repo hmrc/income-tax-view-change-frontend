@@ -16,6 +16,7 @@
 
 package auth.authV2.actions
 
+import auth.authV2.AuthExceptions.NoAssignment
 import auth.authV2.models.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest}
 import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
@@ -105,6 +106,9 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
       case _: InsufficientEnrolments =>
         logger.error(s"missing delegated enrolment. Redirect to agent error page.")
         Future.successful(Left(Redirect(controllers.agent.routes.ClientRelationshipFailureController.show())))
+      case _: NoAssignment =>
+        logger.error(s"Agent User is not in an access group associated with the Client.")
+        Future.successful(Left(Redirect(controllers.agent.routes.NoAssignmentController.show())))
       case authorisationException: AuthorisationException =>
         logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
         Future.successful(Left(Redirect(controllers.routes.SignInController.signIn())))

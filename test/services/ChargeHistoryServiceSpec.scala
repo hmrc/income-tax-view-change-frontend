@@ -67,7 +67,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
   "ChargeHistoryService.chargeHistoryResponse" should {
     "return a Right(Nil)" when {
       "the conditions are not met" in {
-        val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = true, isPayeSelfAssessment = true,
+        val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = true,
           None, isChargeHistoryEnabled = false)
 
         res.futureValue shouldBe Right(Nil)
@@ -75,7 +75,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       "the chargeHistory has no details" in {
         setupGetChargeHistory(testNino, None)(testChargesHistoryModel)
 
-        val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, isPayeSelfAssessment = false,
+        val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false,
           None, isChargeHistoryEnabled = true)
 
         res.futureValue shouldBe Right(Nil)
@@ -85,7 +85,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       "the controller returns an error" in {
         setupGetChargeHistoryError(testNino, None)(testChargeHistoryErrorModel)
 
-        val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, isPayeSelfAssessment = false,
+        val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false,
           None, isChargeHistoryEnabled = true)
 
         res.futureValue shouldBe Left(testChargeHistoryErrorModel)
@@ -95,7 +95,7 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
       "the controller returns a valid charge history" in {
         setupGetChargeHistory(testNino, None)(chargesHistoryWithHistory)
 
-        val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, isPayeSelfAssessment = false,
+        val res = TestChargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false,
           None, isChargeHistoryEnabled = true)
 
         res.futureValue shouldBe Right(testChargeHistory)
