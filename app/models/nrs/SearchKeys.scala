@@ -18,10 +18,7 @@ package models.nrs
 
 import play.api.libs.json.{Json, Writes}
 
-case class SearchKeys(
-                       credId: Option[String],
-                       saUtr: Option[String],
-                       nino: Option[String]                     )
+case class SearchKeys(credId: Option[String], saUtr: Option[String], nino: Option[String])
 
 object SearchKeys {
   implicit val writes: Writes[SearchKeys] = Json.writes[SearchKeys]
