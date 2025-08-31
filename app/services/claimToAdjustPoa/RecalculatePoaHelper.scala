@@ -27,12 +27,14 @@ import models.nrs.{IdentityData, NrsMetadata, NrsSubmission, RawPayload, SearchK
 import play.api.Logger
 import play.api.i18n.{Lang, LangImplicits, Messages}
 import play.api.libs.Files.logger
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, MdtpInformation}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.AuditExtensions
+import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 import utils.ErrorRecovery
 
 import java.security.MessageDigest
@@ -81,25 +83,26 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
 
             val now = Instant.now()
 
+            val auditTags =
+              AuditExtensions.auditHeaderCarrier(hc).toAuditTags("adjust-payments-on-account", user.path)
+
             val payload = ClaimToAdjustNrsPayload(
-              credId = user.credId,
-              saUtr = user.saUtr,
-              nino = user.nino,
-              clientIP = user.headers.get("True-Client-IP"),
-              deviceCookie = user.headers.get("deviceID"),
-              sessionId = user.headers.get("X-Session-ID"),
-              userType = user.userType.map(_.toString),
-              generatedAt = now.toString,
-              sessionCookie = user.headers.get("mdtp"),
-              isDecreased = amount < poa.totalAmountOne,
-              previousPaymentOnAccountAmount = poa.totalAmountOne,
+              credId                          = user.credId,
+              saUtr                           = user.saUtr,
+              nino                            = user.nino,
+              mtditId                         = user.mtditid,
+              userType                        = user.userType.map(_.toString),
+              generatedAt                     = now.toString,
+              isDecreased                     = amount < poa.totalAmountOne,
+              previousPaymentOnAccountAmount  = poa.totalAmountOne,
               requestedPaymentOnAccountAmount = amount,
-              adjustmentReasonCode = poaAdjustmentReason.code,
-              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages),
-              mtditId = user.mtditid
+              adjustmentReasonCode            = poaAdjustmentReason.code,
+              adjustmentReasonDescription     = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages)
             )
 
-            val jsonBytes = Json.toBytes(Json.toJson(payload))
+            val jsonBytes = Json.toBytes(
+              Json.toJson(payload).as[JsObject]
+            )
 
             val checksum = {
               val md = MessageDigest.getInstance("SHA-256")
@@ -107,49 +110,53 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
             }
 
             val identity = IdentityData(
-              internalId = user.authUserDetails.identityData.internalId,
-              externalId = user.authUserDetails.identityData.externalId,
-              agentCode = user.authUserDetails.identityData.agentCode,
-              credentials = user.credId.map(id => Credentials(id, "GovernmentGateway")),
-              confidenceLevel = user.authUserDetails.identityData.confidenceLevel,
-              nino = Some(user.nino),
-              saUtr = user.saUtr,
-              name = user.userName,
-              dateOfBirth = user.authUserDetails.identityData.dateOfBirth,
-              email = user.authUserDetails.identityData.email,
-              agentInformation = AgentInformation(user.arn, None, None),
-              groupIdentifier = user.authUserDetails.identityData.groupIdentifier,
-              credentialRole = user.authUserDetails.identityData.credentialRole,
-              mdtpInformation = Some(MdtpInformation(payload.deviceCookie.getOrElse(""), payload.sessionId.getOrElse(""))),
-              itmpName = user.authUserDetails.identityData.itmpName,
-              itmpDateOfBirth = user.authUserDetails.identityData.itmpDateOfBirth,
-              itmpAddress = user.authUserDetails.identityData.itmpAddress,
-              affinityGroup = user.userType,
-              credentialStrength = user.authUserDetails.identityData.credentialStrength,
-              enrolments = user.authUserDetails.enrolments,
-              loginTimes = user.authUserDetails.identityData.loginTimes
+              internalId          = user.authUserDetails.identityData.internalId,
+              externalId          = user.authUserDetails.identityData.externalId,
+              agentCode           = user.authUserDetails.identityData.agentCode,
+              credentials         = user.credId.map(id => Credentials(id, "GovernmentGateway")),
+              confidenceLevel     = user.authUserDetails.identityData.confidenceLevel,
+              nino                = Some(user.nino),
+              saUtr               = user.saUtr,
+              name                = user.userName,
+              dateOfBirth         = user.authUserDetails.identityData.dateOfBirth,
+              email               = user.authUserDetails.identityData.email,
+              agentInformation    = AgentInformation(user.arn, None, None),
+              groupIdentifier     = user.authUserDetails.identityData.groupIdentifier,
+              credentialRole      = user.authUserDetails.identityData.credentialRole,
+              mdtpInformation     = Some(MdtpInformation(auditTags.getOrElse(hc.names.deviceID, ""), auditTags.getOrElse(hc.names.xSessionId, ""))),
+              itmpName            = user.authUserDetails.identityData.itmpName,
+              itmpDateOfBirth     = user.authUserDetails.identityData.itmpDateOfBirth,
+              itmpAddress         = user.authUserDetails.identityData.itmpAddress,
+              affinityGroup       = user.userType,
+              credentialStrength  = user.authUserDetails.identityData.credentialStrength,
+              enrolments          = user.authUserDetails.enrolments,
+              loginTimes          = user.authUserDetails.identityData.loginTimes
             )
 
-            val metadata = NrsMetadata(
-              request = user,
+            val baseMetadata = NrsMetadata(
+              request                 = user,
               userSubmissionTimestamp = now,
-              identityData = identity,
-              searchKeys = SearchKeys(
-                credId = user.credId,
-                saUtr = user.saUtr,
-                nino = Some(user.nino)
-              ),
-              checkSum = checksum
+              identityData            = identity,
+              searchKeys              = SearchKeys(credId = user.credId, saUtr = user.saUtr, nino = Some(user.nino)),
+              checkSum                = checksum
             )
+
+            val metadata: NrsMetadata = {
+
+              val currentHeaderData: JsObject = baseMetadata.headerData.as[JsObject]
+              val mergedHeaderData: JsObject  = currentHeaderData ++ Json.obj("tags" -> Json.toJson(auditTags))
+
+              baseMetadata.copy(headerData = mergedHeaderData)
+            }
 
             val submission = NrsSubmission(
-              rawPayload = RawPayload(jsonBytes, user.charset),
-              metadata = metadata
+              rawPayload  = RawPayload(jsonBytes, user.charset),
+              metadata    = metadata
             )
 
             nrsService.submit(submission).map {
               case Some(resp) => logger.info(s"NRS submission accepted: ${resp.nrsSubmissionId}")
-              case None => logger.warn("NRS submission failed or was not accepted")
+              case None       => logger.warn("NRS submission failed or was not accepted")
             }
 
             Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
