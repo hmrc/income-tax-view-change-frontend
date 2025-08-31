@@ -70,7 +70,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
         nrsService = nrsService,
-        auditingService = auditingService,
+        auditingService = auditingService
       ) recover logAndRedirect
   }
 
