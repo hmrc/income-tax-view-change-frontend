@@ -30,6 +30,7 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testConstants.BaseTestConstants._
+import testConstants.NrsUtils
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
@@ -85,8 +86,8 @@ object AuthActionsTestData {
    enrolments,
     affinityGroup,
     if(hasCredentials) Some(testCredentials) else None,
-    if(hasUserName) Some(testRetrievedUserName) else None,
-    ConfidenceLevel.L250
+    NrsUtils.identityData,
+    if(hasUserName) Some(testRetrievedUserName) else None
   )
 
   def getAgentClientDetails(isConfirmed: Boolean, hasName: Boolean = true): AgentClientDetails = AgentClientDetails(
@@ -175,8 +176,8 @@ object AuthActionsTestData {
       enrolments,
       Some(AffinityGroup.Agent),
       Some(testCredentials),
-      None,
-      ConfidenceLevel.L250
+      NrsUtils.identityData,
+      None
     )
   )(request)
 

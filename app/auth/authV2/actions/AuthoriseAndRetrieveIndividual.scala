@@ -26,6 +26,7 @@ import config.FrontendAppConfig
 import controllers.agent.AuthUtils.mtdEnrolmentName
 import enums.MTDIndividual
 import forms.utils.SessionKeys
+import models.nrs.IdentityData
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -64,8 +65,14 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
       Enrolment(mtdEnrolmentName) and
         (AffinityGroup.Organisation or AffinityGroup.Individual)
 
+    lazy val retrievals =
+      (allEnrolments and name and credentials and affinityGroup and confidenceLevel
+        and internalId and externalId and agentCode and nino and saUtr and dateOfBirth
+        and email and agentInformation and groupIdentifier and credentialRole
+        and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes)
+
     authorisedFunctions.authorised(AffinityGroup.Agent or predicate)
-      .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
+      .retrieve(retrievals) {
         redirectIfAgent() orElse
         redirectIfInsufficientConfidence() orElse constructAuthorisedAndEnrolledUser()
       }(hc, executionContext) recoverWith logAndRedirect()
@@ -84,15 +91,17 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
     implicit request: Request[A],
     hc: HeaderCarrier): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
 
-    case _ ~ _ ~ _ ~ ag ~ confidenceLevel
-      if confidenceLevel.level < requiredConfidenceLevel =>
-      auditingService.audit(IvUpliftRequiredAuditModel(ag.fold("")(_.toString), confidenceLevel.level, requiredConfidenceLevel), Some(request.path))
-      Future.successful(Left(Redirect(ivUpliftRedirectUrl)))
+    case _ ~ _ ~ _ ~ ag ~ confLevel ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _
+      if confLevel.level < requiredConfidenceLevel =>
+        auditingService.audit(IvUpliftRequiredAuditModel(ag.fold("")(_.toString), confLevel.level, requiredConfidenceLevel), Some(request.path))
+        Future.successful(Left(Redirect(ivUpliftRedirectUrl)))
   }
 
   private def constructAuthorisedAndEnrolledUser[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
-    case enrolments ~ userName ~ credentials ~ affinityGroup ~ confidenceLevel =>
+    case enrolments ~ nme ~ creds ~ affGroup ~ confLevel ~ inId ~ exId ~ agCode
+      ~ ni ~ saRef ~ dob ~ eml ~ agInfo ~ groupId ~ credRole
+      ~ mdtpInfo ~ tmpName ~ itmpDob ~ tmpAddress ~ credStrength ~ logins =>
       lazy val optMtdId: Option[String] =
         enrolments.getEnrolment(Constants.mtdEnrolmentName)
           .flatMap(_.getIdentifier(Constants.mtdEnrolmentIdentifierKey))
@@ -100,12 +109,20 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
 
       optMtdId.fold(throw InsufficientEnrolments("Missing MTDId Individual")) {
         mtdItId =>
+
+          val identityData = IdentityData(
+            inId, exId, agCode, creds, confLevel,
+            ni, saRef, nme, dob, eml, agInfo, groupId,
+            credRole, mdtpInfo, tmpName, itmpDob, tmpAddress,
+            affGroup, credStrength, enrolments, logins
+          )
+
           val authUserDetails = AuthUserDetails(
             enrolments,
-            affinityGroup,
-            credentials,
-            userName,
-            confidenceLevel
+            affGroup,
+            creds,
+            identityData,
+            nme
           )
           Future.successful(
             Right(

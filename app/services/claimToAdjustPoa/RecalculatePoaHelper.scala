@@ -20,7 +20,6 @@ import audit.AuditingService
 import audit.models.AdjustPaymentsOnAccountAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import controllers.routes.HomeController
 import models.admin.SubmitClaimToAdjustToNrs
 import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.Nino
@@ -32,16 +31,13 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.ConfidenceLevel
-import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, LoginTimes, MdtpInformation}
+import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, MdtpInformation}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ErrorRecovery
 
-import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Right
 
 trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with ErrorRecovery {
   private def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
@@ -111,27 +107,27 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
             }
 
             val identity = IdentityData(
-              internalId = None,
-              externalId = None,
-              agentCode = None,
+              internalId = user.authUserDetails.identityData.internalId,
+              externalId = user.authUserDetails.identityData.externalId,
+              agentCode = user.authUserDetails.identityData.agentCode,
               credentials = user.credId.map(id => Credentials(id, "GovernmentGateway")),
-              confidenceLevel = user.authUserDetails.confidenceLevel,
+              confidenceLevel = user.authUserDetails.identityData.confidenceLevel,
               nino = Some(user.nino),
               saUtr = user.saUtr,
               name = user.userName,
-              dateOfBirth = None,
-              email = None,
+              dateOfBirth = user.authUserDetails.identityData.dateOfBirth,
+              email = user.authUserDetails.identityData.email,
               agentInformation = AgentInformation(user.arn, None, None),
-              groupIdentifier = None,
-              credentialRole = None,
+              groupIdentifier = user.authUserDetails.identityData.groupIdentifier,
+              credentialRole = user.authUserDetails.identityData.credentialRole,
               mdtpInformation = Some(MdtpInformation(payload.deviceCookie.getOrElse(""), payload.sessionId.getOrElse(""))),
-              itmpName = None,
-              itmpDateOfBirth = None,
-              itmpAddress = None,
+              itmpName = user.authUserDetails.identityData.itmpName,
+              itmpDateOfBirth = user.authUserDetails.identityData.itmpDateOfBirth,
+              itmpAddress = user.authUserDetails.identityData.itmpAddress,
               affinityGroup = user.userType,
-              credentialStrength = None,
+              credentialStrength = user.authUserDetails.identityData.credentialStrength,
               enrolments = user.authUserDetails.enrolments,
-              loginTimes = LoginTimes(now, None)
+              loginTimes = user.authUserDetails.identityData.loginTimes
             )
 
             val metadata = NrsMetadata(

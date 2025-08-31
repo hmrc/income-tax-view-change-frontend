@@ -21,16 +21,18 @@ import auth.authV2.models.{AuthUserDetails, AuthorisedUserRequest}
 import com.google.inject.Singleton
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import models.nrs.IdentityData
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,8 +52,14 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
     implicit val req: Request[A] = request
 
+    lazy val retrievals =
+      (allEnrolments and name and credentials and affinityGroup and confidenceLevel
+        and internalId and externalId and agentCode and nino and saUtr and dateOfBirth
+        and email and agentInformation and groupIdentifier and credentialRole
+        and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes)
+
     authorisedFunctions.authorised(EmptyPredicate)
-      .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
+      .retrieve(retrievals) {
         constructAuthorisedUser()
       }(hc, executionContext) recoverWith logAndRedirect
   }
@@ -71,18 +79,31 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
   }
 
   type AuthRetrievals =
-    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
+    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel ~ Option[String] ~
+      Option[String] ~ Option[String] ~ Option[String] ~ Option[String] ~ Option[LocalDate] ~ Option[String] ~ AgentInformation ~
+      Option[String] ~ Option[CredentialRole] ~ Option[MdtpInformation] ~ Option[ItmpName] ~ Option[LocalDate] ~
+      Option[ItmpAddress] ~ Option[String] ~ LoginTimes
 
 
   private def constructAuthorisedUser[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
-    case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
+    case enrolments ~ nme ~ creds ~ affGroup ~ confLevel ~ inId ~ exId ~ agCode
+      ~ ni ~ saRef ~ dob ~ eml ~ agInfo ~ groupId ~ credRole
+      ~ mdtpInfo ~ tmpName ~ itmpDob ~ tmpAddress ~ credStrength ~ logins =>
+
+      val identityData = IdentityData(
+        inId, exId, agCode, creds, confLevel,
+        ni, saRef, nme, dob, eml, agInfo, groupId,
+        credRole, mdtpInfo, tmpName, itmpDob, tmpAddress,
+        affGroup, credStrength, enrolments, logins
+      )
+
       val authUserDetails = AuthUserDetails(
         enrolments = enrolments,
-        affinityGroup = affinityGroup,
-        credentials = credentials,
-        name = name,
-        confidenceLevel = confidenceLevel
+        affinityGroup = affGroup,
+        credentials = creds,
+        identityData = identityData,
+        name = nme
       )
       Future.successful(
         Right(AuthorisedUserRequest(authUserDetails))
