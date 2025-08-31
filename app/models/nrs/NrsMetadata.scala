@@ -38,21 +38,21 @@ object NrsMetadata extends InstantFormatter {
   implicit val writes: Writes[NrsMetadata] = Json.writes[NrsMetadata]
 
   def apply(
-      request: Request[_],
+      request:                 Request[_],
       userSubmissionTimestamp: Instant,
-      identityData: IdentityData,
-      searchKeys: SearchKeys,
-      checkSum: String
+      identityData:            IdentityData,
+      searchKeys:              SearchKeys,
+      checkSum:                String
     ): NrsMetadata =
     NrsMetadata(
-      businessId = "income-tax-view-change",
-      notableEvent = "adjust-payment-on-account",
-      payloadContentType = MimeTypes.XML,
-      payloadSha256Checksum = checkSum,
+      businessId              = "income-tax-view-change",
+      notableEvent            = "adjust-payment-on-account",
+      payloadContentType      = MimeTypes.XML,
+      payloadSha256Checksum   = checkSum,
       userSubmissionTimestamp = userSubmissionTimestamp,
-      identityData = identityData,
-      userAuthToken = request.headers.get("Authorization").getOrElse(""),
-      headerData = JsObject(request.headers.toMap.map(x => x._1 -> JsString(x._2 mkString ","))),
-      searchKeys = searchKeys
+      identityData            = identityData,
+      userAuthToken           = request.headers.get("Authorization").getOrElse(""),
+      headerData              = JsObject(request.headers.toMap.map(x => x._1 -> JsString(x._2 mkString ","))),
+      searchKeys              = searchKeys
     )
 }
