@@ -86,7 +86,6 @@ object AuthActionsTestData {
    enrolments,
     affinityGroup,
     if(hasCredentials) Some(testCredentials) else None,
-    NrsUtils.identityData,
     if(hasUserName) Some(testRetrievedUserName) else None
   )
 
@@ -176,7 +175,6 @@ object AuthActionsTestData {
       enrolments,
       Some(AffinityGroup.Agent),
       Some(testCredentials),
-      NrsUtils.identityData,
       None
     )
   )(request)
