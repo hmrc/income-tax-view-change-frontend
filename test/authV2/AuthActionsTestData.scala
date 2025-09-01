@@ -30,7 +30,6 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.Html
 import testConstants.BaseTestConstants._
-import testConstants.NrsUtils
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
