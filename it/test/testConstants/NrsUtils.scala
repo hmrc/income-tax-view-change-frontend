@@ -16,7 +16,8 @@
 
 package testConstants
 
-import models.nrs.{NrsMetadata, NrsSubmission, NrsSuccessResponse, RawPayload}
+import cats.implicits.catsSyntaxOptionId
+import models.nrs.{NrsMetadata, NrsSubmission, NrsSuccessResponse, RawPayload, SearchKeys}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Headers
 import play.api.test.FakeRequest
@@ -47,9 +48,9 @@ object NrsUtils {
         .withBody(nrsMetadataBody)
 
     NrsMetadata(
-      Instant.parse("2018-04-07T12:13:25.000Z"),
-      "3216783621-123873821-12332",
       request,
+      Instant.parse("2018-04-07T12:13:25.000Z"),
+      SearchKeys("credId".some, "saUtr".some, "nino".some),
       request.body.calculateSha256)
   }
 
