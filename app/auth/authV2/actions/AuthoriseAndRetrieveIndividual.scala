@@ -100,7 +100,6 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
 
       optMtdId.fold(throw InsufficientEnrolments("Missing MTDId Individual")) {
         mtdItId =>
-
           val authUserDetails = AuthUserDetails(
             enrolments,
             affinityGroup,
