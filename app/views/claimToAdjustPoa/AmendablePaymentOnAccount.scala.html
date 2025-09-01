@@ -176,7 +176,8 @@
         @govukButton(Button(
             id = Some("adjust-my-payments-button"),
             content = Text(getMessage("button")),
-            href = Some(getWhatYouNeedToKnowUrl)
+            href = Some(getWhatYouNeedToKnowUrl),
+            preventDoubleClick = Some(true)
         ))
         @link(
             id = Some("cancel-link"),

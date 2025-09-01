@@ -27,5 +27,6 @@
     content = Text(alternativeText.getOrElse(messages("base.continue"))),
     id = Some(id.getOrElse("continue-button")),
     classes = "govuk-button",
-    href = href
+    href = href,
+    preventDoubleClick = Some(true)
 ))
