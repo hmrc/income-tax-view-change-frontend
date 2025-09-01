@@ -26,7 +26,6 @@ import config.FrontendAppConfig
 import controllers.agent.AuthUtils.mtdEnrolmentName
 import enums.MTDIndividual
 import forms.utils.SessionKeys
-import models.nrs.IdentityData
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._

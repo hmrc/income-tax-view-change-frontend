@@ -52,14 +52,8 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
     implicit val req: Request[A] = request
 
-    lazy val retrievals =
-      (allEnrolments and name and credentials and affinityGroup and confidenceLevel
-        and internalId and externalId and agentCode and nino and saUtr and dateOfBirth
-        and email and agentInformation and groupIdentifier and credentialRole
-        and mdtpInformation and itmpName and itmpDateOfBirth and itmpAddress and credentialStrength and loginTimes)
-
     authorisedFunctions.authorised(EmptyPredicate)
-      .retrieve(retrievals) {
+      .retrieve(allEnrolments and name and credentials and affinityGroup and confidenceLevel) {
         constructAuthorisedUser()
       }(hc, executionContext) recoverWith logAndRedirect
   }
@@ -79,31 +73,19 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
   }
 
   type AuthRetrievals =
-    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel ~ Option[String] ~
-      Option[String] ~ Option[String] ~ Option[String] ~ Option[String] ~ Option[LocalDate] ~ Option[String] ~ AgentInformation ~
-      Option[String] ~ Option[CredentialRole] ~ Option[MdtpInformation] ~ Option[ItmpName] ~ Option[LocalDate] ~
-      Option[ItmpAddress] ~ Option[String] ~ LoginTimes
+    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
+
 
 
   private def constructAuthorisedUser[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
-    case enrolments ~ nme ~ creds ~ affGroup ~ confLevel ~ inId ~ exId ~ agCode
-      ~ ni ~ saRef ~ dob ~ eml ~ agInfo ~ groupId ~ credRole
-      ~ mdtpInfo ~ tmpName ~ itmpDob ~ tmpAddress ~ credStrength ~ logins =>
-
-      val identityData = IdentityData(
-        inId, exId, agCode, creds, confLevel,
-        ni, saRef, nme, dob, eml, agInfo, groupId,
-        credRole, mdtpInfo, tmpName, itmpDob, tmpAddress,
-        affGroup, credStrength, enrolments, logins
-      )
+    case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
 
       val authUserDetails = AuthUserDetails(
         enrolments = enrolments,
-        affinityGroup = affGroup,
-        credentials = creds,
-        identityData = identityData,
-        name = nme
+        affinityGroup = affinityGroup,
+        credentials = credentials,
+        name = name
       )
       Future.successful(
         Right(AuthorisedUserRequest(authUserDetails))

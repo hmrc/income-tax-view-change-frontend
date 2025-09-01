@@ -28,7 +28,6 @@ case class NrsMetadata(
   payloadContentType:       String,
   payloadSha256Checksum:    String,
   userSubmissionTimestamp:  Instant,
-  identityData:             IdentityData,
   userAuthToken:            String,
   headerData:               JsValue,
   searchKeys:               SearchKeys
@@ -40,7 +39,6 @@ object NrsMetadata extends InstantFormatter {
   def apply(
       request:                 Request[_],
       userSubmissionTimestamp: Instant,
-      identityData:            IdentityData,
       searchKeys:              SearchKeys,
       checkSum:                String
     ): NrsMetadata =
@@ -50,7 +48,6 @@ object NrsMetadata extends InstantFormatter {
       payloadContentType      = MimeTypes.XML,
       payloadSha256Checksum   = checkSum,
       userSubmissionTimestamp = userSubmissionTimestamp,
-      identityData            = identityData,
       userAuthToken           = request.headers.get("Authorization").getOrElse(""),
       headerData              = JsObject(request.headers.toMap.map(x => x._1 -> JsString(x._2 mkString ","))),
       searchKeys              = searchKeys

@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import models.admin.SubmitClaimToAdjustToNrs
 import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.Nino
-import models.nrs.{IdentityData, NrsMetadata, NrsSubmission, RawPayload, SearchKeys}
+import models.nrs.{NrsMetadata, NrsSubmission, RawPayload, SearchKeys}
 import play.api.Logger
 import play.api.i18n.{Lang, LangImplicits, Messages}
 import play.api.libs.Files.logger
@@ -109,34 +109,9 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
               md.digest(jsonBytes).map("%02x".format(_)).mkString
             }
 
-            val identity = IdentityData(
-              internalId          = user.authUserDetails.identityData.internalId,
-              externalId          = user.authUserDetails.identityData.externalId,
-              agentCode           = user.authUserDetails.identityData.agentCode,
-              credentials         = user.credId.map(id => Credentials(id, "GovernmentGateway")),
-              confidenceLevel     = user.authUserDetails.identityData.confidenceLevel,
-              nino                = Some(user.nino),
-              saUtr               = user.saUtr,
-              name                = user.userName,
-              dateOfBirth         = user.authUserDetails.identityData.dateOfBirth,
-              email               = user.authUserDetails.identityData.email,
-              agentInformation    = AgentInformation(user.arn, None, None),
-              groupIdentifier     = user.authUserDetails.identityData.groupIdentifier,
-              credentialRole      = user.authUserDetails.identityData.credentialRole,
-              mdtpInformation     = Some(MdtpInformation(auditTags.getOrElse(hc.names.deviceID, ""), auditTags.getOrElse(hc.names.xSessionId, ""))),
-              itmpName            = user.authUserDetails.identityData.itmpName,
-              itmpDateOfBirth     = user.authUserDetails.identityData.itmpDateOfBirth,
-              itmpAddress         = user.authUserDetails.identityData.itmpAddress,
-              affinityGroup       = user.userType,
-              credentialStrength  = user.authUserDetails.identityData.credentialStrength,
-              enrolments          = user.authUserDetails.enrolments,
-              loginTimes          = user.authUserDetails.identityData.loginTimes
-            )
-
             val baseMetadata = NrsMetadata(
               request                 = user,
               userSubmissionTimestamp = now,
-              identityData            = identity,
               searchKeys              = SearchKeys(credId = user.credId, saUtr = user.saUtr, nino = Some(user.nino)),
               checkSum                = checksum
             )
