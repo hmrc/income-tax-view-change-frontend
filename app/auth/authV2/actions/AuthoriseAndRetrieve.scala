@@ -21,18 +21,16 @@ import auth.authV2.models.{AuthUserDetails, AuthorisedUserRequest}
 import com.google.inject.Singleton
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.nrs.IdentityData
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name, ~}
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -76,11 +74,9 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
 
 
-
   private def constructAuthorisedUser[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
-
       val authUserDetails = AuthUserDetails(
         enrolments = enrolments,
         affinityGroup = affinityGroup,
