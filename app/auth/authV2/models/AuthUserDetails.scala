@@ -17,14 +17,12 @@
 package auth.authV2.models
 
 import auth.authV2.Constants
-import models.nrs.IdentityData
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
 
 case class AuthUserDetails(enrolments: Enrolments,
                            affinityGroup: Option[AffinityGroup],
                            credentials: Option[Credentials],
-                           identityData: IdentityData,
                            name: Option[Name] = None
                           ){
   lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
