@@ -36,11 +36,9 @@ class ITSAStatusRepositorySupportSpec extends UnitSpec with Matchers {
       statusToString(status = NoStatus) shouldBe "U"
     }
 
-    "throw error for other unsupported statuses" in {
+    "Return U for unsupported statuses" in {
       Seq(Exempt, DigitallyExempt, Dormant).foreach { unsupportedStatus =>
-        assertThrows[RuntimeException] {
-          statusToString(status = unsupportedStatus)
-        }
+        statusToString(status = NoStatus) shouldBe "U"
       }
     }
   }

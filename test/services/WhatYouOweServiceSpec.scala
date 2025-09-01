@@ -16,6 +16,7 @@
 
 package services
 
+import audit.AuditingService
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
@@ -47,18 +48,28 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
   }
 
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
+  val mockClaimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
+  val mockSelfServeTimeToPayService: SelfServeTimeToPayService = mock(classOf[SelfServeTimeToPayService])
   val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
   val mockOutstandingChargesConnector: OutstandingChargesConnector = mock(classOf[OutstandingChargesConnector])
+  val mockAuditingService: AuditingService = mock(classOf[AuditingService])
   val currentYearAsInt: Int = 2022
   implicit val headCarrier: HeaderCarrier = headerCarrier
 
-  object mockDateService extends DateService() {
+  object mockDateService extends DateService {
     override def getCurrentDate: LocalDate = LocalDate.parse(s"${currentYearAsInt.toString}-04-01")
 
     override def getCurrentTaxYearEnd: Int = currentYearAsInt
   }
 
-  object TestWhatYouOweService extends WhatYouOweService(mockFinancialDetailsService, mockFinancialDetailsConnector, mockOutstandingChargesConnector, mockDateService)
+  object TestWhatYouOweService extends WhatYouOweService(
+    auditingService = mockAuditingService,
+    financialDetailsService = mockFinancialDetailsService,
+    claimToAdjustService = mockClaimToAdjustService,
+    selfServeTimeToPayService = mockSelfServeTimeToPayService,
+    financialDetailsConnector = mockFinancialDetailsConnector,
+    outstandingChargesConnector = mockOutstandingChargesConnector,
+    dateService = mockDateService)
 
   "The WhatYouOweService.getWhatYouOweChargesList method" when {
     "when both financial details and outstanding charges return success response and valid data of due more than 30 days" should {
@@ -398,3 +409,4 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     }
   }
 }
+
