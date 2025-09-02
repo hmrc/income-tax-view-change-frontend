@@ -931,6 +931,7 @@ whatYouOwe.secondLatePaymentPenalty.text                           = Second late
 whatYouOwe.lpi.firstLatePaymentPenalty.text                        = Late payment interest on first late payment penalty
 whatYouOwe.lpi.secondLatePaymentPenalty.text                       = Late payment interest on second late payment penalty
 whatYouOwe.lpi.lateSubmissionPenalty.text                          = Late payment interest on late submission penalty
+whatYouOwe.itsaReturnAmendment.text                                = Balancing payment: extra amount due to amended return
 whatYouOwe.payments-due                                            = Payments Due
 whatYouOwe.over-due                                                = Overdue
 whatYouOwe.over-due.interest.line1                                 = Interest for late payment

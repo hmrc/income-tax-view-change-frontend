@@ -20,6 +20,7 @@
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
+@import services.DateServiceInterface
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import models.financialDetails.MfaDebitCharge
 
@@ -37,7 +38,8 @@
     chargeSummaryUrl: String
 )(
     implicit messages: Messages,
-    user: MtdItUser[_]
+    user: MtdItUser[_],
+    dateServiceInterface: DateServiceInterface
 )
 
 @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean, linkSuffix: String, isMFADebit: Boolean, index: Int) = @{
@@ -60,7 +62,7 @@
 }
 
 @{
-    val isInterest = chargeItem.isAccruingInterest
+    val isInterest = chargeItem.isOnlyInterest
 
     def getLinkSuffix(): String = {
         if(!isOverduePayment) {
