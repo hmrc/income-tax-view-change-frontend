@@ -57,7 +57,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
     val currentYearDesc1Annual = "From 6 April 2022, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax."
     val currentYearDesc2Annual = "You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
     val currentYearDesc3Annual = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
-    val currentYearQuestionAnnual = "Do you want to opt out from the current tax year?"
+    val currentYearQuestionAnnual = "Do you want to opt out for the 2022 to 2023 tax year?"
 
     val nextYearHeading = "Opt out of Making Tax Digital for Income Tax from the next tax year"
     val nextYearTitle = "Opt out of Making Tax Digital for Income Tax from the next tax year - Manage your Self Assessment - GOV.UK"

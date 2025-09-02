@@ -301,8 +301,6 @@ class OptOutService @Inject()(
                   state == OneYearOptOutFollowedByAnnual ||
                   (state == NextYearOptOut && (status == Annual || status == Mandated))
               ) =>
-              val model = OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus, nextYearStatus)
-              println("+++++++++++++" + propositionType.state(), currentYearStatus, nextYearStatus, model.messageSuffix)
               Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus, nextYearStatus))
             case (Some((true, _)), Some(_), _) =>
               Logger("application").warn("[OptOutService] Unknown scenario for opt out tax year, redirecting to Reporting Obligations Page")
