@@ -25,13 +25,15 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
-import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
+import models.admin.{CreditsRefundsRepay, FilterCodedOutPoas, PaymentHistoryRefunds, PenaltiesAndAppeals}
+import models.financialDetails.{ChargeItem, DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FirstLatePaymentPenalty, LateSubmissionPenalty, PoaOneDebit, PoaTwoDebit, SecondLatePaymentPenalty, TransactionUtils}
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
+import services.{DateServiceInterface, FinancialDetailsService, NextUpdatesService, PaymentHistoryService, RepaymentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -48,6 +50,8 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                                          itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService,
                                          val repaymentService: RepaymentService,
+                                         financialDetailsService: FinancialDetailsService,
+                                         nextUpdatesService: NextUpdatesService,
                                          paymentHistoryView: PaymentHistory,
                                          val customNotFoundErrorView: CustomNotFoundError
                                         )(implicit val appConfig: FrontendAppConfig,
@@ -55,7 +59,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                                           val languageUtils: LanguageUtils,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
+  with I18nSupport with FeatureSwitching with ImplicitDateFormatter with TransactionUtils {
 
   def handleRequest(backUrl: String,
                     origin: Option[String] = None,
@@ -64,6 +68,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     for {
       payments                       <- paymentHistoryService.getPaymentHistory
       repayments                     <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
+      charges                        <- withTaxYearFinancials(???, isAgent)
     } yield (payments, repayments) match {
 
       case (Right(payments), Right(repayments)) =>
@@ -88,7 +93,8 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           viewModel = viewModel,
           btaNavPartial = user.btaNavPartial,
           groupedPayments = paymentHistoryEntries,
-          paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds)
+          paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds),
+          chargeItems= List[TaxYearSummaryChargeItem]
         ))
           .addingToSession(gatewayPage -> PaymentHistoryPage.name)
 
@@ -130,4 +136,47 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     val errorHandler = if(mtdItUser.isAgent()) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
   }
+  private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)
+                                   (implicit user: MtdItUser[_]): Future[List[TaxYearSummaryChargeItem]] = {
+
+    financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
+      case financialDetails@FinancialDetailsModel(_, _, documentDetails, fd) =>
+
+        val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetails = financialDetails.financialDetails)
+
+        val chargeItemsNoPayments = documentDetails
+          .filter(_.paymentLot.isEmpty)
+
+        val chargeItemsCodingOut = chargeItemsNoPayments
+          .filterNot(_.isNotCodingOutDocumentDetail)
+          .flatMap(dd => getChargeItem(dd)
+            .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))
+
+        val chargeItemsCodingOutPaye: List[TaxYearSummaryChargeItem] = {
+          chargeItemsCodingOut
+            .filter(_.codedOutStatus.contains(models.financialDetails.Accepted))
+            .filterNot(_.originalAmount <= 0)
+        }
+
+        val chargeItemsCodingOutFullyCollectedPoa: List[TaxYearSummaryChargeItem] =
+          chargeItemsNoPayments
+            .filter(_.isCodingOutFullyCollectedPoa(fd))
+            .flatMap(dd => getChargeItem(dd)
+              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))
+            .filter(x => x.transactionType == PoaOneDebit || x.transactionType == PoaTwoDebit)
+
+        val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
+          chargeItemsCodingOut
+            .filterNot(_.codedOutStatus.contains(models.financialDetails.Accepted))
+            .filterNot(_.originalAmount <= 0)
+        }
+
+        Future.successful(chargeItemsLpi ++ chargeItemsCodingOutPaye ++ chargeItemsCodingOutNotPaye ++ chargeItemsCodingOutFullyCollectedPoa)
+      case FinancialDetailsErrorModel(NOT_FOUND, _) =>Future.successful (List.empty)
+      case _ =>
+        Logger("application").error(s"Could not retrieve financial details for year: $taxYear")
+        Future.successful (List.empty)
+    }
+  }
+
 }

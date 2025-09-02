@@ -29,6 +29,7 @@
 @import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 @import _root_.implicits.HtmlFormatter.NbspString
 @import viewUtils.ExternalUrlHelper
+@import models.taxyearsummary.TaxYearSummaryChargeItem
 
 @this(
     mainTemplate: unifiedLayout,
@@ -40,7 +41,7 @@
     govukAccordion : GovukAccordion
 )
 
-@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], viewModel: PaymentCreditAndRefundHistoryViewModel, paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
+@(groupedPayments: List[(Int, List[PaymentHistoryEntry])], viewModel: PaymentCreditAndRefundHistoryViewModel, chargeItems: List[TaxYearSummaryChargeItem], paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
 btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
@@ -78,6 +79,24 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         </thead>
         <tbody>
         @for((payment, index) <- yearPayments.sortBy(x => x.date).reverse.zipWithIndex) {
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell">@messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)</td>
+            <td class="govuk-table__cell">
+                <a class="govuk-link" href="@payment.linkUrl" id="payment-@index">
+                    @messages("Balancing payment collected through PAYE tax code")
+                    <div> <span class="govuk-visually-hidden">@payment.visuallyHiddenText @if(yearPayments.size > 1){ Item @(index + 1)}</span></div>
+                </a>
+                @if(payment.isCredit) {
+                <a class="govuk-body-s">
+                    @messages("amount")
+
+                </a>
+
+                }
+            </td>
+            <td class="govuk-table__cell numeric govuk-table__cell--numeric">"amount"</td>
+        </tr>
+
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">@payment.date.toLongDate.toNonBreaking</td>
                 <td class="govuk-table__cell">
