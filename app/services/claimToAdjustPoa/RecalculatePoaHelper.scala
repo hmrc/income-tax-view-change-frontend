@@ -116,7 +116,6 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
                                        poaAdjustmentReason: SelectYourReason)(
                                        implicit user: MtdItUser[_],
                                        lang: Lang, hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-
     val now = Instant.now()
 
     val auditTags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags("adjust-payments-on-account", user.path)
