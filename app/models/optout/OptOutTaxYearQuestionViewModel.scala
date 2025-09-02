@@ -23,7 +23,8 @@ import services.optout._
 case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
                                           optOutState: Option[OptOutState],
                                           numberOfQuarterlyUpdates: Int,
-                                          currentYearStatus: ITSAStatus) {
+                                          currentYearStatus: ITSAStatus,
+                                          nextYearStatus: ITSAStatus) {
 
   private val hasNoQuarterlyUpdatesSubmitted: Boolean = numberOfQuarterlyUpdates == OneYearOptOutCheckpointViewModel.noQuarterlyUpdates
 
@@ -33,18 +34,18 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
     case _: NextOptOutTaxYear     => "nextYear"
   }
 
-  private val optOutStateMessageSuffix = (optOutState, hasNoQuarterlyUpdatesSubmitted, currentYearStatus) match {
-    case (Some(MultiYearOptOutDefault), _, Voluntary) if isCurrentYear   => "multiYearCYFollowedByAnnual"
-    case (Some(MultiYearOptOutDefault), _, _)                            => "multiYear"
-    case (Some(OneYearOptOutFollowedByMandated), _, _) if isPreviousYear => "singleYearFollowedByMandated"
-    case (Some(OneYearOptOutFollowedByMandated), true, _)                => "singleYearFollowedByMandated"
-    case (Some(OneYearOptOutFollowedByMandated), false, _)               => "singleYearFollowedByMandatedWithUpdates"
-    case (Some(OneYearOptOutFollowedByAnnual), _, _) if isPreviousYear   => "singleYearFollowedByAnnual"
-    case (Some(OneYearOptOutFollowedByAnnual), true, _)                  => "singleYearFollowedByAnnual"
-    case (Some(OneYearOptOutFollowedByAnnual), false, _)                 => "singleYearFollowedByAnnualWithUpdates"
-    case (Some(NextYearOptOut), _, Annual)                               => "nextYearOptOutAnnual"
-    case (Some(NextYearOptOut), _, Mandated)                             => "nextYearOptOutMandated"
-    case _                                                               => "noState"
+  private val optOutStateMessageSuffix = (optOutState, hasNoQuarterlyUpdatesSubmitted, currentYearStatus, nextYearStatus) match {
+    case (Some(MultiYearOptOutDefault), _, Voluntary, Annual) if isCurrentYear        => "multiYearCYFollowedByAnnual"
+    case (Some(MultiYearOptOutDefault), _, _, _)                                      => "multiYear"
+    case (Some(OneYearOptOutFollowedByMandated), _, _, _) if isPreviousYear           => "singleYearFollowedByMandated"
+    case (Some(OneYearOptOutFollowedByMandated), true, _, _)                          => "singleYearFollowedByMandated"
+    case (Some(OneYearOptOutFollowedByMandated), false, _, _)                         => "singleYearFollowedByMandatedWithUpdates"
+    case (Some(OneYearOptOutFollowedByAnnual), _, _, _) if isPreviousYear             => "singleYearFollowedByAnnual"
+    case (Some(OneYearOptOutFollowedByAnnual), true, _, _)                            => "singleYearFollowedByAnnual"
+    case (Some(OneYearOptOutFollowedByAnnual), false, _, _)                           => "singleYearFollowedByAnnualWithUpdates"
+    case (Some(NextYearOptOut), _, Annual, _)                                         => "nextYearOptOutAnnual"
+    case (Some(NextYearOptOut), _, Mandated, _)                                       => "nextYearOptOutMandated"
+  case _                                                                              => "noState"
   }
   
   private def isCurrentYear: Boolean = taxYear match {
@@ -58,10 +59,11 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
   }
 
   def showInset: Boolean = {
-    (optOutState, isCurrentYear, isPreviousYear) match {
-      case (Some(MultiYearOptOutDefault), true, _) => false
-      case (Some(MultiYearOptOutDefault), _, true) => true
-      case (Some(OneYearOptOutFollowedByMandated), _, false) => true
+    (optOutState, isCurrentYear, isPreviousYear, nextYearStatus) match {
+      case (Some(MultiYearOptOutDefault), true, _, Annual) => false
+      case (Some(MultiYearOptOutDefault), true, _, _) => true
+      case (Some(MultiYearOptOutDefault), _, true, _) => true
+      case (Some(OneYearOptOutFollowedByMandated), _, false, _) => true
       case _ => false
     }
   }
