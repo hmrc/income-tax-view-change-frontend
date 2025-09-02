@@ -19,6 +19,8 @@ package models.nrs
 import play.api.http.MimeTypes
 import play.api.libs.json._
 import play.api.mvc.{Request, RequestHeader}
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
 
 import java.time.Instant
 
@@ -28,6 +30,7 @@ case class NrsMetadata(
   payloadContentType:       String,
   payloadSha256Checksum:    String,
   userSubmissionTimestamp:  Instant,
+  identityData:             IdentityData,
   userAuthToken:            String,
   headerData:               JsValue,
   searchKeys:               SearchKeys
@@ -50,6 +53,12 @@ object NrsMetadata extends InstantFormatter {
       userSubmissionTimestamp = userSubmissionTimestamp,
       userAuthToken           = request.headers.get("Authorization").getOrElse(""),
       headerData              = JsObject(request.headers.toMap.map(x => x._1 -> JsString(x._2 mkString ","))),
-      searchKeys              = searchKeys
+      searchKeys              = searchKeys,
+      identityData            = IdentityData(
+        confidenceLevel   = ConfidenceLevel.L250,
+        agentInformation  = AgentInformation(None, None, None),
+        enrolments        = Enrolments(Set()),
+        loginTimes        = LoginTimes(userSubmissionTimestamp, None)
+      )
     )
 }
