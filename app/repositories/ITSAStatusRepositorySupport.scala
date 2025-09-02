@@ -23,12 +23,13 @@ object ITSAStatusRepositorySupport {
 
   def statusToString(status: ITSAStatus): String =
     status match {
-      case ITSAStatus.NoStatus  => "U"
+      //Making all the valid status as Unknown until we get clarity on what to do with these status
+      case ITSAStatus.NoStatus | ITSAStatus.Exempt | ITSAStatus.DigitallyExempt | ITSAStatus.Dormant  => "U"
       case ITSAStatus.Voluntary => "V"
       case ITSAStatus.Annual    => "A"
       case ITSAStatus.Mandated  => "M"
       // This will be validated earlier on in a future ticket
-      case _ => throw new RuntimeException("Unexpected status")
+      case _ => throw new RuntimeException(s"Unsupported ITSA status: $status")
     }
 
   def stringToStatus(status: String): ITSAStatus.Value =
@@ -37,6 +38,6 @@ object ITSAStatusRepositorySupport {
       case "V" => ITSAStatus.Voluntary
       case "A" => ITSAStatus.Annual
       case "M" => ITSAStatus.Mandated
-      case _ => throw new RuntimeException("Unexpected status")
+      case _ => throw new RuntimeException(s"Unsupported ITSA status string: $status")
     }
 }

@@ -29,7 +29,6 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.testMtditid

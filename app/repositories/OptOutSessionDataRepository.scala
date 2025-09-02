@@ -50,9 +50,9 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
           val proposition = createOptOutProposition(
             currentYear,
             contextData.crystallisationStatus,
-            stringToStatus(contextData.previousYearITSAStatus),
-            stringToStatus(contextData.currentYearITSAStatus),
-            stringToStatus(contextData.nextYearITSAStatus)
+            stringToStatus(status = contextData.previousYearITSAStatus),
+            stringToStatus(status = contextData.currentYearITSAStatus),
+            stringToStatus(status = contextData.nextYearITSAStatus)
           )
           val selectedTaxYear = selectedOptOutYear match {
             case Some(year) => TaxYear.getTaxYearModel(year)
@@ -94,9 +94,9 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
     OptOutContextData(
       oop.currentTaxYear.taxYear.toString,
       oop.previousTaxYear.crystallised,
-      statusToString(oop.previousTaxYear.status),
-      statusToString(oop.currentTaxYear.status),
-      statusToString(oop.nextTaxYear.status))
+      statusToString(status = oop.previousTaxYear.status),
+      statusToString(status = oop.currentTaxYear.status),
+      statusToString(status = oop.nextTaxYear.status))
   }
 
 }
