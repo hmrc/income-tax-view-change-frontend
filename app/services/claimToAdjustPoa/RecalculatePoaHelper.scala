@@ -21,7 +21,7 @@ import audit.models.AdjustPaymentsOnAccountAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import models.admin.SubmitClaimToAdjustToNrs
-import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PaymentOnAccountViewModel, PoaAmendmentData}
+import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PaymentOnAccountViewModel, PoaAmendmentData, SelectYourReason}
 import models.core.Nino
 import models.nrs.{NrsMetadata, NrsSubmission, RawPayload, SearchKeys}
 import play.api.Logger
@@ -81,58 +81,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
               isDecreased = amount < poa.totalAmountOne
             ))
 
-            val now = Instant.now()
-
-            val auditTags =
-              AuditExtensions.auditHeaderCarrier(hc).toAuditTags("adjust-payments-on-account", user.path)
-
-            val payload = ClaimToAdjustNrsPayload(
-              credId                          = user.credId,
-              saUtr                           = user.saUtr,
-              nino                            = user.nino,
-              mtditId                         = user.mtditid,
-              userType                        = user.userType.map(_.toString),
-              generatedAt                     = now.toString,
-              isDecreased                     = amount < poa.totalAmountOne,
-              previousPaymentOnAccountAmount  = poa.totalAmountOne,
-              requestedPaymentOnAccountAmount = amount,
-              adjustmentReasonCode            = poaAdjustmentReason.code,
-              adjustmentReasonDescription     = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages)
-            )
-
-            val jsonBytes = Json.toBytes(
-              Json.toJson(payload).as[JsObject]
-            )
-
-            val checksum = {
-              val md = MessageDigest.getInstance("SHA-256")
-              md.digest(jsonBytes).map("%02x".format(_)).mkString
-            }
-
-            val baseMetadata = NrsMetadata(
-              request                 = user,
-              userSubmissionTimestamp = now,
-              searchKeys              = SearchKeys(credId = user.credId, saUtr = user.saUtr, nino = Some(user.nino)),
-              checkSum                = checksum
-            )
-
-            val metadata: NrsMetadata = {
-
-              val currentHeaderData: JsObject = baseMetadata.headerData.as[JsObject]
-              val mergedHeaderData: JsObject  = currentHeaderData ++ Json.obj("tags" -> Json.toJson(auditTags))
-
-              baseMetadata.copy(headerData = mergedHeaderData)
-            }
-
-            val submission = NrsSubmission(
-              rawPayload  = RawPayload(jsonBytes, user.charset),
-              metadata    = metadata
-            )
-
-            nrsService.submit(submission).map {
-              case Some(resp) => logger.info(s"NRS submission accepted: ${resp.nrsSubmissionId}")
-              case None       => logger.error("NRS submission failed or was not accepted")
-            }
+            submitClaimToAdjustToNrs(nrsService, amount, poa, poaAdjustmentReason)
 
             Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
 
@@ -169,5 +118,74 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
             Future.successful(logAndRedirect(s"Exception: ${ex.getMessage} - ${ex.getCause}."))
         }
       }.flatten
+  }
+
+  private def executeAudit(auditingService: AuditingService,
+                           amount: BigDecimal,
+                           isSuccessful: Boolean,
+                           poaAdjustmentReason: SelectYourReason,
+                           poa: PaymentOnAccountViewModel
+                          )(implicit lang: Lang, user: MtdItUser[_], headerCarrier: HeaderCarrier, ec: ExecutionContext): Unit = {
+
+    auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
+      isSuccessful = isSuccessful,
+      previousPaymentOnAccountAmount = poa.totalAmountOne,
+      requestedPaymentOnAccountAmount = amount,
+      adjustmentReasonCode = poaAdjustmentReason.code,
+      adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages),
+      isDecreased = amount < poa.totalAmountOne
+    ))
+  }
+
+  private def submitClaimToAdjustToNrs(nrsService: NrsService,
+                                       amount: BigDecimal,
+                                       poa: PaymentOnAccountViewModel,
+                                       poaAdjustmentReason: SelectYourReason)(
+                                       implicit user: MtdItUser[_],
+                                       lang: Lang, hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+
+    val now = Instant.now()
+
+    val auditTags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags("adjust-payments-on-account", user.path)
+
+    val payload = ClaimToAdjustNrsPayload(
+      credId                          = user.credId,
+      saUtr                           = user.saUtr,
+      nino                            = user.nino,
+      mtditId                         = user.mtditid,
+      userType                        = user.userType.map(_.toString),
+      generatedAt                     = now.toString,
+      isDecreased                     = amount < poa.totalAmountOne,
+      previousPaymentOnAccountAmount  = poa.totalAmountOne,
+      requestedPaymentOnAccountAmount = amount,
+      adjustmentReasonCode            = poaAdjustmentReason.code,
+      adjustmentReasonDescription     = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages)
+    )
+
+    val jsonBytes = Json.toBytes(Json.toJson(payload).as[JsObject])
+
+    val checksum = MessageDigest.getInstance("SHA-256").digest(jsonBytes).map("%02x".format(_)).mkString
+
+    val baseMetadata = NrsMetadata(
+      request = user,
+      userSubmissionTimestamp = now,
+      searchKeys = SearchKeys(user.credId, user.saUtr, user.nino),
+      checkSum = checksum
+    )
+
+    val metadata: NrsMetadata = {
+
+      val currentHeaderData: JsObject = baseMetadata.headerData.as[JsObject]
+      val mergedHeaderData: JsObject = currentHeaderData ++ Json.obj("tags" -> Json.toJson(auditTags))
+
+      baseMetadata.copy(headerData = mergedHeaderData)
+    }
+
+    val submission = NrsSubmission(RawPayload(jsonBytes, user.charset), metadata)
+
+    nrsService.submit(submission).map {
+      case Some(resp) => logger.info(s"NRS submission accepted: ${resp.nrsSubmissionId}")
+      case None       => logger.error("NRS submission failed or was not accepted")
+    }
   }
 }

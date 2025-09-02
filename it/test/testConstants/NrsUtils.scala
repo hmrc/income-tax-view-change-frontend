@@ -50,7 +50,7 @@ object NrsUtils {
     NrsMetadata(
       request,
       Instant.parse("2018-04-07T12:13:25.000Z"),
-      SearchKeys("credId".some, "saUtr".some, "nino".some),
+      SearchKeys("credId".some, "saUtr".some, "nino"),
       request.body.calculateSha256)
   }
 
