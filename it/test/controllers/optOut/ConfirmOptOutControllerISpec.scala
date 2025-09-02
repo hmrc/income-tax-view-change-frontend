@@ -107,21 +107,32 @@ class ConfirmOptOutControllerISpec extends ControllerISpecHelper {
               elementTextByID("info-message")(infoMessage),
             )
           }
-          s"throw an exception for multi-year opt out page when unsupported statuses are present" in {
+          s"render confirm multi-year opt out page when unsupported statuses are present" in {
             enable(OptOutFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            assertThrows[RuntimeException] {
-              helper.stubOptOutInitialState(currentTaxYear(dateService),
-                previousYearCrystallised = false,
-                previousYearStatus = Voluntary,
-                currentYearStatus = DigitallyExempt,
-                nextYearStatus = Exempt)
-            }          }
+            helper.stubOptOutInitialState(currentTaxYear(dateService),
+              previousYearCrystallised = false,
+              previousYearStatus = DigitallyExempt,
+              currentYearStatus = Exempt,
+              nextYearStatus = Voluntary)
+
+            assert(optOutSessionDataRepository.saveIntent(TaxYear.getTaxYearModel("2023-2024").get).futureValue)
+
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+            result should have(
+              httpStatus(OK),
+              elementTextByID("heading")(expectedTitleNty(dateService)),
+              elementTextByID("summary")(summary),
+              elementTextByID("info-message")(infoMessage),
+            )
+          }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
     }
 
