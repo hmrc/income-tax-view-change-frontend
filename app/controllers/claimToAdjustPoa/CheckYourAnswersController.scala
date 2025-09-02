@@ -24,7 +24,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
 import models.core.CheckMode
-import models.nrs.RawPayload
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
@@ -81,8 +80,8 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
-        auditingService = auditingService,
-        nrsService = nrsService
+        nrsService = nrsService,
+        auditingService = auditingService
       ) recover logAndRedirect
   }
 
