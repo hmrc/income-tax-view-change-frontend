@@ -26,12 +26,13 @@ import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
 import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
+import models.financialDetails.{BalancingCharge, FinancialDetailsModel, TransactionUtils}
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
+import services.{DateServiceInterface, FinancialDetailsService, PaymentHistoryService, RepaymentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -48,6 +49,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                                          itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService,
                                          val repaymentService: RepaymentService,
+                                         financialDetailsService: FinancialDetailsService,
                                          paymentHistoryView: PaymentHistory,
                                          val customNotFoundErrorView: CustomNotFoundError
                                         )(implicit val appConfig: FrontendAppConfig,
@@ -55,7 +57,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                                           val languageUtils: LanguageUtils,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
+  with I18nSupport with FeatureSwitching with ImplicitDateFormatter with TransactionUtils {
 
   def handleRequest(backUrl: String,
                     origin: Option[String] = None,
@@ -64,6 +66,12 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     for {
       payments                       <- paymentHistoryService.getPaymentHistory
       repayments                     <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
+      financialDetailsModel          <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
+      financialDetails                = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) =>  fd }
+      documentDetailsWithDueDate      = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
+      chargeItems                     = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
+      codedOutBalancingCharges        = chargeItems.filter(x => x.isCodingOut && x.isBalancingCharge)
+      codedOutPoaCharges              = chargeItems.filter(x => x.isCodingOut && x.isPoaDebit)
     } yield (payments, repayments) match {
 
       case (Right(payments), Right(repayments)) =>
@@ -76,6 +84,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           isAgent = isAgent,
           payments = payments,
           repayments = repayments,
+          codedOutCharges = codedOutBalancingCharges ++ codedOutPoaCharges,
           languageUtils = languageUtils
         )
 

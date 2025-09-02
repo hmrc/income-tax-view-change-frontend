@@ -164,7 +164,11 @@ case class ChargeItem (
   val isPoaReconciliationDebit: Boolean = transactionType == PoaOneReconciliationDebit ||
     transactionType == PoaTwoReconciliationDebit
 
+  val isPoaDebit: Boolean = transactionType == PoaOneDebit || transactionType == PoaTwoDebit
+
   val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
+
+  val isBalancingCharge: Boolean = transactionType == BalancingCharge
 
   val isPenalty: Boolean = List(LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty).contains(this.transactionType)
 
