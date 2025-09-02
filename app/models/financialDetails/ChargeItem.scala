@@ -103,7 +103,7 @@ case class ChargeItem (
     case _ => false
   }
 
-  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isAccruingInterest) || (interestRemainingToPay > 0 && isPaid)}
+  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && hasAccruingInterest) || (interestRemainingToPay > 0 && isPaid)}
 
   def remainingToPayOnCharge(implicit dateServiceInterface: DateServiceInterface): BigDecimal =
     if (isOnlyInterest) interestRemainingToPay
