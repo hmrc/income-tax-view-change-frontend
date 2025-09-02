@@ -260,6 +260,7 @@ tax-year-summary.payments.lpi.balancingCharge.text                 = Late paymen
 tax-year-summary.payments.firstLatePaymentPenalty.text             = First late payment penalty
 tax-year-summary.payments.secondLatePaymentPenalty.text            = Second late payment penalty
 tax-year-summary.payments.lateSubmissionPenalty.text               = Late submission penalty
+tax-year-summary.payments.itsaReturnAmendment.text                 = Balancing payment: extra amount due to amended return
 tax-year-summary.payments.cancelledPayeSelfAssessment.text         = Cancelled PAYE Self Assessment (through your PAYE tax code)
 tax-year-summary.payments.hmrcAdjustment.text                      = HMRC adjustment
 tax-year-summary.payments.overdue                                  = Overdue
@@ -1010,6 +1011,7 @@ selfAssessmentCharges.lpi.paymentOnAccount2.text                              = 
 selfAssessmentCharges.lateSubmissionPenalty.text                              = Late submission penalty
 selfAssessmentCharges.firstLatePaymentPenalty.text                            = First late payment penalty
 selfAssessmentCharges.secondLatePaymentPenalty.text                           = Second late payment penalty
+selfAssessmentCharges.itsaReturnAmendment.text                                = Balancing payment: extra amount due to amended return
 selfAssessmentCharges.lpi.lateSubmissionPenalty.text                          = Interest for late submission penalty
 selfAssessmentCharges.lpi.balancingCharge.text                                = Late payment interest on balancing payment
 selfAssessmentCharges.balancingCharge.text  							      = Balancing payment
@@ -1077,6 +1079,7 @@ chargeSummary.poa2CodedOut.text                                    = Second paym
 chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
 chargeSummary.lateSubmissionPenalty.text                           = Late submission penalty
 chargeSummary.firstLatePaymentPenalty.text                         = First late payment penalty
+chargeSummary.itsaReturnAmendment.text                             = Balancing payment: extra amount due to amended return
 chargeSummary.lpi.lateSubmissionPenalty.text                       = Late payment interest on late submission penalty
 chargeSummary.lpi.firstLatePaymentPenalty.text                     = Late payment interest on first late payment penalty
 chargeSummary.hmrcAdjustment.text                                  = HMRC adjustment
@@ -1209,6 +1212,7 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC c
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
+chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = HMRC created your balancing payment
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = First payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Second payment on account reduced by taxpayer request
@@ -3143,6 +3147,7 @@ yourSelfAssessmentChargeSummary.balancingCharge.text.heading                    
 yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = First payment on account
 yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                      = Second payment on account
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading                  = Late submission penalty
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.text.heading                    = Balancing payment: extra amount due to amended return
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Class 2 National Insurance
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
@@ -3153,15 +3158,20 @@ yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading    
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading        = Second payment on account history
 yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading    = Late submission penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = First late payment penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.itsaReturnAmendment.text.heading      = Balancing payment: extra amount due to amended return history
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
 
+yourSelfAssessmentChargeSummary.chargeHistory.itsaReturnAmendment.text.caption      = This balancing payment goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill.
 
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p                           = You have received this penalty because you are late paying your Income Tax.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                        = View how your penalty was calculated.
+
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = You owe this extra tax because of a change you made to your return.
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = This charge will have a daily interest until it is paid. The interest is backdated to the original due date.
 
 income-sources.check-details-reporting-frequency.heading                        = Sole trader
 income-sources.check-details-reporting-frequency-uk.heading                     = UK property

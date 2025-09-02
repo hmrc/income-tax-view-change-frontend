@@ -49,10 +49,8 @@
 
 @h3(ChargeNameLangHelper.chargeHistoryHeading(viewModel.chargeItem), classes = "govuk-heading-m", optId = Some("charge-history-heading"))
 
-@if(viewModel.chargeItem.isCodingOut && viewModel.chargeItem.transactionType == BalancingCharge) {
-    @p(id = Some("charge-history-caption")) {
-        @ChargeNameLangHelper.chargeHistoryCaption(viewModel.chargeItem)
-    }
+@p(id = Some("charge-history-caption")) {
+    @ChargeNameLangHelper.chargeHistoryCaption(viewModel.chargeItem)
 }
 
 @govukTable(Table(

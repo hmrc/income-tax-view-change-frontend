@@ -137,7 +137,7 @@ case class ChargeItem (
 
   // this method is used to filter charges down to those currently allowed for the
   // new Your Self Assessment Charge Summary feature
-  def isIncludedInSACSummary: Boolean = {
+  def isIncludedInSACSummary(implicit dateServiceInterface: DateServiceInterface): Boolean = {
 
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
@@ -147,10 +147,11 @@ case class ChargeItem (
       case (PoaTwoDebit, None           ) => true
       case (LateSubmissionPenalty,     _) => true
       case (FirstLatePaymentPenalty,   _) => true
+      case (ITSAReturnAmendment,       _) => true
       case _                              => false
     }
 
-    validCharge && !isAccruingInterest
+    validCharge && !isOnlyInterest
   }
 
 
@@ -227,7 +228,7 @@ object ChargeItem {
   )
 
   private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
-    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
+    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, ITSAReturnAmendment, MfaDebitCharge)
 
   val isAKnownTypeOfCharge: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.codedOutStatus) match {
