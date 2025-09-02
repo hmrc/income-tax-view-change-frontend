@@ -36,6 +36,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 import utils.ErrorRecovery
+import controllers.claimToAdjustPoa.routes._
 
 import java.security.MessageDigest
 import java.time.Instant
@@ -60,7 +61,9 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
       case PoaAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
+
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
+
             auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
               isSuccessful = false,
               previousPaymentOnAccountAmount = poa.totalAmountOne,
@@ -69,21 +72,8 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
               adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey)(lang2Messages),
               isDecreased = amount < poa.totalAmountOne
             ))
-            Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(user.isAgent()))
 
-          case Right(_) if isEnabled(SubmitClaimToAdjustToNrs) =>
-            auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
-              isSuccessful = true,
-              previousPaymentOnAccountAmount = poa.totalAmountOne,
-              requestedPaymentOnAccountAmount = amount,
-              adjustmentReasonCode = poaAdjustmentReason.code,
-              adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages),
-              isDecreased = amount < poa.totalAmountOne
-            ))
-
-            submitClaimToAdjustToNrs(nrsService, amount, poa, poaAdjustmentReason)
-
-            Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
+            Redirect(ApiFailureSubmittingPoaController.show(user.isAgent()))
 
           case Right(_) =>
             auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
@@ -94,7 +84,11 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
               adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages),
               isDecreased = amount < poa.totalAmountOne
             ))
-            Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
+
+            if (isEnabled(SubmitClaimToAdjustToNrs))
+              submitClaimToAdjustToNrs(nrsService, amount, poa, poaAdjustmentReason)
+
+            Redirect(PoaAdjustedController.show(user.isAgent()))
         }
       case PoaAmendmentData(_, _, _) =>
         Future.successful(logAndRedirect("Missing poaAdjustmentReason and/or amount"))
@@ -118,23 +112,6 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
             Future.successful(logAndRedirect(s"Exception: ${ex.getMessage} - ${ex.getCause}."))
         }
       }.flatten
-  }
-
-  private def executeAudit(auditingService: AuditingService,
-                           amount: BigDecimal,
-                           isSuccessful: Boolean,
-                           poaAdjustmentReason: SelectYourReason,
-                           poa: PaymentOnAccountViewModel
-                          )(implicit lang: Lang, user: MtdItUser[_], headerCarrier: HeaderCarrier, ec: ExecutionContext): Unit = {
-
-    auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
-      isSuccessful = isSuccessful,
-      previousPaymentOnAccountAmount = poa.totalAmountOne,
-      requestedPaymentOnAccountAmount = amount,
-      adjustmentReasonCode = poaAdjustmentReason.code,
-      adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages),
-      isDecreased = amount < poa.totalAmountOne
-    ))
   }
 
   private def submitClaimToAdjustToNrs(nrsService: NrsService,
