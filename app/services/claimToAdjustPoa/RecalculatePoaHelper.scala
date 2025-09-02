@@ -61,9 +61,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
       case PoaAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
-
             Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
-
             auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
               isSuccessful = false,
               previousPaymentOnAccountAmount = poa.totalAmountOne,
@@ -72,9 +70,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
               adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey)(lang2Messages),
               isDecreased = amount < poa.totalAmountOne
             ))
-
             Redirect(ApiFailureSubmittingPoaController.show(user.isAgent()))
-
           case Right(_) =>
             auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
               isSuccessful = true,
