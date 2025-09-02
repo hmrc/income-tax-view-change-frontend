@@ -67,13 +67,15 @@
             govukButton(Button(
                 id = Some("continue"),
                 content = Text(getMessage("confirm-and-save")),
-                attributes = Map("id" -> "confirm-and-save-button")
+                attributes = Map("id" -> "confirm-and-save-button"),
+                preventDoubleClick = Some(true)
             ))
         case _ =>
             govukButton(Button(
                 content = Text(messages("base.confirm-and-continue")),
                 attributes = Map("id" -> "confirm-button"),
-                href = Some(redirectUrl)
+                href = Some(redirectUrl),
+                preventDoubleClick = Some(true)
             ))
     }
 }

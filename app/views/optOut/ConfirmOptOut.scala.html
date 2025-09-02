@@ -76,7 +76,8 @@
     <div class="govuk-button-group">
         @govukButton(Button(
             content = Text(messages("optout.confirmOptOut.confirm")),
-            id = Some("confirm-button")
+            id = Some("confirm-button"),
+            preventDoubleClick = Some(true)
         ))
         <a class="govuk-link" id="cancel-button" href=@cancelURL>
             @messages("optout.confirmOptOut.cancel")
