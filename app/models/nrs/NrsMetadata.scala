@@ -39,9 +39,17 @@ case class NrsMetadata(
 object NrsMetadata extends InstantFormatter {
   implicit val writes: Writes[NrsMetadata] = Json.writes[NrsMetadata]
 
+  val emptyIdentityData = IdentityData(
+    confidenceLevel = ConfidenceLevel.L250,
+    agentInformation = AgentInformation(None, None, None),
+    enrolments = Enrolments(Set()),
+    loginTimes = LoginTimes(Instant.now(), None)
+  )
+
   def apply(
       request:                 Request[_],
       userSubmissionTimestamp: Instant,
+      identityData:            IdentityData = emptyIdentityData,
       searchKeys:              SearchKeys,
       checkSum:                String
     ): NrsMetadata =
@@ -54,11 +62,6 @@ object NrsMetadata extends InstantFormatter {
       userAuthToken           = request.headers.get("Authorization").getOrElse(""),
       headerData              = JsObject(request.headers.toMap.map(x => x._1 -> JsString(x._2 mkString ","))),
       searchKeys              = searchKeys,
-      identityData            = IdentityData(
-        confidenceLevel   = ConfidenceLevel.L250,
-        agentInformation  = AgentInformation(None, None, None),
-        enrolments        = Enrolments(Set()),
-        loginTimes        = LoginTimes(userSubmissionTimestamp, None)
-      )
+      identityData            = identityData
     )
 }
