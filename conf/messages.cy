@@ -2814,7 +2814,7 @@ optout.taxYearQuestion.title.currentYear.multiYearCYFollowedByAnnual            
 optout.taxYearQuestion.desc1.currentYear.multiYearCYFollowedByAnnual                     = O 6 Ebrill {0} ymlaen, byddai hyn yn golygu na fydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
 optout.taxYearQuestion.desc2.currentYear.multiYearCYFollowedByAnnual                     = Yn ogystal â hyn, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech yn cyflwyno’ch Ffurflenni Treth yn y gorffennol ar gyfer pob un o’ch busnesau cyfredol, ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
 optout.taxYearQuestion.desc3.currentYear.multiYearCYFollowedByAnnual                     = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
-optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual             = A ydych am optio allan o’r flwyddyn dreth nesaf ymlaen?
+optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual             = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
 ## opt out single year - followed by mandated
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
