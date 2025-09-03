@@ -52,6 +52,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
     val currentYearDesc3 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val currentYearQuestion = "Do you want to opt out from the current tax year?"
 
+    val currentYearHeadingAnnual = "Opt out of Making Tax Digital for Income Tax from the 2022 to 2023 tax year"
+    val currentYearTitleAnnual = "Opt out of Making Tax Digital for Income Tax from the 2022 to 2023 tax year - Manage your Self Assessment - GOV.UK"
+    val currentYearDesc1Annual = "From 6 April 2022, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax."
+    val currentYearDesc2Annual = "You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
+    val currentYearDesc3Annual = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+    val currentYearQuestionAnnual = "Do you want to opt out for the 2022 to 2023 tax year?"
+
     val nextYearHeading = "Opt out of Making Tax Digital for Income Tax from the next tax year"
     val nextYearTitle = "Opt out of Making Tax Digital for Income Tax from the next tax year - Manage your Self Assessment - GOV.UK"
     val nextYearDesc1 = "From 6 April 2023, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax."
@@ -219,6 +226,34 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.currentYearDesc2),
             elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.currentYearDesc3),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.currentYearQuestion),
+          )
+        }
+
+        "render the opt out tax year question page - CY Onwards - NY Annual" in {
+          val currentYear = "2022"
+          val taxYear = TaxYear(2022, 2023)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
+
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+            taxYear = taxYear,
+            `itsaStatusCY-1` = ITSAStatus.Voluntary,
+            itsaStatusCY = ITSAStatus.Voluntary,
+            `itsaStatusCY+1` = ITSAStatus.Annual
+          )
+          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+
+          val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
+
+          result should have(
+            httpStatus(OK),
+            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.currentYearHeadingAnnual),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.currentYearDesc1Annual),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.currentYearDesc2Annual),
+            elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.currentYearDesc3Annual),
+            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.currentYearQuestionAnnual),
           )
         }
 
