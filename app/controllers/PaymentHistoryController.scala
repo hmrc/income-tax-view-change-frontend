@@ -68,7 +68,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     for {
       payments                                 <- paymentHistoryService.getPaymentHistory
       repayments                               <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
-      codedOutBCCAndPoasWithLatestDocumentDate <- getChargesWithUpdatedDocumentDateIfChargeHistoryExists()
+      codedOutBCCAndPoasWithLatestDocumentDate <- paymentHistoryService.getChargesWithUpdatedDocumentDateIfChargeHistoryExists()
     } yield (payments, repayments) match {
 
       case (Right(payments), Right(repayments)) =>
@@ -135,41 +135,5 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     Logger("application").error(message)
     val errorHandler = if(mtdItUser.isAgent()) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
-  }
-
-  private def getChargesWithUpdatedDocumentDateIfChargeHistoryExists()(implicit mtdItUser: MtdItUser[_]): Future[List[ChargeItem]] = {
-
-    (for {
-      financialDetailsModel     <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
-      financialDetails           = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) => fd }
-      documentDetailsWithDueDate = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
-      chargeItems                = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
-      codedOutBCCAndPoas         = chargeItems.filter(x => x.isCodingOut && (x.isBalancingCharge || x.isPoaDebit))
-    } yield {
-
-      Future.traverse(codedOutBCCAndPoas) { chargeItem =>
-        chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, chargeItem.chargeReference, isEnabled(ChargeHistory)).map {
-          case Left(ChargesHistoryErrorModel(code, message)) =>
-            Logger("application").info(s"Failed to retrieve history for charge with id: ${chargeItem.transactionId}, code: $code, message: $message")
-            chargeItem
-          case Right(chargeHistoryItems) =>
-
-            val maybeLatestDocumentDate = chargeHistoryItems.sortWith { (a, b) =>
-              if  (a.documentDate.isEqual(b.documentDate)) a.documentId < b.documentId
-              else a.documentDate.isAfter(b.documentDate)
-            }
-              .map(_.documentDate)
-              .headOption
-
-            maybeLatestDocumentDate.fold {
-              Logger("application").info(s"Empty charge history for charge with chargeReference: ${chargeItem.chargeReference}")
-              chargeItem
-            } {
-              _ => chargeItem.copy(documentDate = _)
-            }
-        }
-      }
-    })
-      .flatten
   }
 }
