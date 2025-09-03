@@ -31,10 +31,8 @@ import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
-import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, MdtpInformation}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
-import uk.gov.hmrc.play.audit.AuditExtensions.auditHeaderCarrier
 import utils.ErrorRecovery
 import controllers.claimToAdjustPoa.routes._
 
