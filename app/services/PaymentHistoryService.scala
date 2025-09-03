@@ -115,7 +115,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
               .headOption
 
             maybeLatestDocumentDate.fold {
-              Logger("application").info(s"Empty charge history for charge with chargeReference: ${chargeItem.chargeReference}")
+              Logger("application").info(s"Empty charge history found for charge with chargeReference: ${chargeItem.chargeReference}")
               chargeItem
             } {
               docDate => chargeItem.copy(documentDate = docDate)
