@@ -20,8 +20,7 @@ import audit.AuditingService
 import audit.models.AdjustPaymentsOnAccountAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import controllers.routes.HomeController
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
+import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PaymentOnAccountViewModel, PoaAmendmentData, SelectYourReason}
 import models.core.Nino
 import models.nrs.{NrsMetadata, NrsSubmission, RawPayload, SearchKeys}
 import play.api.Logger
@@ -35,6 +34,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import utils.ErrorRecovery
 import controllers.claimToAdjustPoa.routes._
+import models.admin.SubmitClaimToAdjustToNrs
 
 import java.security.MessageDigest
 import java.time.Instant
