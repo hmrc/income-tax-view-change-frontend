@@ -118,7 +118,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
               Logger("application").info(s"Empty charge history for charge with chargeReference: ${chargeItem.chargeReference}")
               chargeItem
             } {
-              _ => chargeItem.copy(documentDate = _)
+              docDate => chargeItem.copy(documentDate = docDate)
             }
         }
       }
