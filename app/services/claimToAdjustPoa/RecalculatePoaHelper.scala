@@ -20,16 +20,24 @@ import audit.AuditingService
 import audit.models.AdjustPaymentsOnAccountAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
+import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PaymentOnAccountViewModel, PoaAmendmentData, SelectYourReason}
 import models.core.Nino
+import models.nrs.{NrsMetadata, NrsSubmission, RawPayload, SearchKeys}
 import play.api.Logger
 import play.api.i18n.{Lang, LangImplicits, Messages}
+import play.api.libs.Files.logger
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.AuditExtensions
 import utils.ErrorRecovery
+import controllers.claimToAdjustPoa.routes._
+import models.admin.SubmitClaimToAdjustToNrs
 
+import java.security.MessageDigest
+import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with ErrorRecovery {
@@ -44,7 +52,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
   }
 
   private def handlePoaAndOtherData(poa: PaymentOnAccountViewModel,
-                                    otherData: PoaAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService)
+                                    otherData: PoaAmendmentData, nino: Nino, ctaCalculationService: ClaimToAdjustPoaCalculationService, auditingService: AuditingService, nrsService: NrsService)
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     implicit val lang: Lang = Lang("en")
     otherData match {
@@ -60,7 +68,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
               adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey)(lang2Messages),
               isDecreased = amount < poa.totalAmountOne
             ))
-            Redirect(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(user.isAgent()))
+            Redirect(ApiFailureSubmittingPoaController.show(user.isAgent()))
           case Right(_) =>
             auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
               isSuccessful = true,
@@ -70,7 +78,11 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
               adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages),
               isDecreased = amount < poa.totalAmountOne
             ))
-            Redirect(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(user.isAgent()))
+
+            if (isEnabled(SubmitClaimToAdjustToNrs))
+              submitClaimToAdjustToNrs(nrsService, amount, poa, poaAdjustmentReason)
+
+            Redirect(PoaAdjustedController.show(user.isAgent()))
         }
       case PoaAmendmentData(_, _, _) =>
         Future.successful(logAndRedirect("Missing poaAdjustmentReason and/or amount"))
@@ -78,7 +90,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
   }
 
   protected def handleSubmitPoaData(claimToAdjustService: ClaimToAdjustService, ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                    poaSessionService: PaymentOnAccountSessionService, auditingService: AuditingService)
+                                    poaSessionService: PaymentOnAccountSessionService, nrsService: NrsService, auditingService: AuditingService)
                                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
       {
         for {
@@ -86,7 +98,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
         } yield poaMaybe match {
           case Right(Some(poa)) =>
             dataFromSession(poaSessionService).flatMap(otherData =>
-              handlePoaAndOtherData(poa, otherData, Nino(user.nino), ctaCalculationService, auditingService)
+              handlePoaAndOtherData(poa, otherData, Nino(user.nino), ctaCalculationService, auditingService, nrsService)
             )
           case Right(None) =>
             Future.successful(logAndRedirect("Failed to create PaymentOnAccount model"))
@@ -94,5 +106,56 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
             Future.successful(logAndRedirect(s"Exception: ${ex.getMessage} - ${ex.getCause}."))
         }
       }.flatten
+  }
+
+  private def submitClaimToAdjustToNrs(nrsService: NrsService,
+                                       amount: BigDecimal,
+                                       poa: PaymentOnAccountViewModel,
+                                       poaAdjustmentReason: SelectYourReason)(
+                                       implicit user: MtdItUser[_],
+                                       lang: Lang, hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    val now = Instant.now()
+
+    val auditTags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags("adjust-payments-on-account", user.path)
+
+    val payload = ClaimToAdjustNrsPayload(
+      credId                          = user.credId,
+      saUtr                           = user.saUtr,
+      nino                            = user.nino,
+      mtditId                         = user.mtditid,
+      userType                        = user.userType.map(_.toString),
+      generatedAt                     = now.toString,
+      isDecreased                     = amount < poa.totalAmountOne,
+      previousPaymentOnAccountAmount  = poa.totalAmountOne,
+      requestedPaymentOnAccountAmount = amount,
+      adjustmentReasonCode            = poaAdjustmentReason.code,
+      adjustmentReasonDescription     = Messages(poaAdjustmentReason.messagesKey, lang)(lang2Messages)
+    )
+
+    val jsonBytes = Json.toBytes(Json.toJson(payload).as[JsObject])
+
+    val checksum = MessageDigest.getInstance("SHA-256").digest(jsonBytes).map("%02x".format(_)).mkString
+
+    val baseMetadata = NrsMetadata(
+      request = user,
+      userSubmissionTimestamp = now,
+      searchKeys = SearchKeys(user.credId, user.saUtr, user.nino),
+      checkSum = checksum
+    )
+
+    val metadata: NrsMetadata = {
+
+      val currentHeaderData: JsObject = baseMetadata.headerData.as[JsObject]
+      val mergedHeaderData: JsObject = currentHeaderData ++ Json.obj("tags" -> Json.toJson(auditTags))
+
+      baseMetadata.copy(headerData = mergedHeaderData)
+    }
+
+    val submission = NrsSubmission(RawPayload(jsonBytes, user.charset), metadata)
+
+    nrsService.submit(submission).map {
+      case Some(resp) => logger.info(s"NRS submission accepted: ${resp.nrsSubmissionId}")
+      case None       => logger.error("NRS submission failed or was not accepted")
+    }
   }
 }
