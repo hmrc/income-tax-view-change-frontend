@@ -1219,7 +1219,6 @@ chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You up
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
 chargeSummary.chargeHistory.POA1RR-credit                               = First payment on account: credit from your tax return
 chargeSummary.chargeHistory.POA2RR-credit                               = Second payment on account: credit from your tax return
-chargeSummary.chargeHistory.paymentOnAccount.text                       = This payment on account goes towards your {0} to {1} tax bill.
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on first payment on account
 chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on second payment on account
@@ -3289,8 +3288,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.headi
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
 
-yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill.
-
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = This balancing payment goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = This payment on account goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
