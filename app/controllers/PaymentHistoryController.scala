@@ -25,14 +25,15 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
-import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
-import models.financialDetails.{BalancingCharge, FinancialDetailsModel, TransactionUtils}
+import models.admin.{ChargeHistory, CreditsRefundsRepay, PaymentHistoryRefunds}
+import models.chargeHistory.ChargesHistoryErrorModel
+import models.financialDetails.{BalancingCharge, ChargeItem, FinancialDetailsModel, TransactionUtils}
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, FinancialDetailsService, PaymentHistoryService, RepaymentService}
+import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, PaymentHistoryService, RepaymentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -50,6 +51,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                                          paymentHistoryService: PaymentHistoryService,
                                          val repaymentService: RepaymentService,
                                          financialDetailsService: FinancialDetailsService,
+                                         chargeHistoryService: ChargeHistoryService,
                                          paymentHistoryView: PaymentHistory,
                                          val customNotFoundErrorView: CustomNotFoundError
                                         )(implicit val appConfig: FrontendAppConfig,
@@ -64,14 +66,9 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                     isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
     for {
-      payments                       <- paymentHistoryService.getPaymentHistory
-      repayments                     <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
-      financialDetailsModel          <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
-      financialDetails                = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) =>  fd }
-      documentDetailsWithDueDate      = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
-      chargeItems                     = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
-      codedOutBalancingCharges        = chargeItems.filter(x => x.isCodingOut && x.isBalancingCharge)
-      codedOutPoaCharges              = chargeItems.filter(x => x.isCodingOut && x.isPoaDebit)
+      payments                                 <- paymentHistoryService.getPaymentHistory
+      repayments                               <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
+      codedOutBCCAndPoasWithLatestDocumentDate <- getChargesWithUpdatedDocumentDateIfChargeHistoryExists()
     } yield (payments, repayments) match {
 
       case (Right(payments), Right(repayments)) =>
@@ -84,7 +81,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           isAgent = isAgent,
           payments = payments,
           repayments = repayments,
-          codedOutCharges = codedOutBalancingCharges ++ codedOutPoaCharges,
+          codedOutCharges = codedOutBCCAndPoasWithLatestDocumentDate,
           languageUtils = languageUtils
         )
 
@@ -138,5 +135,41 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     Logger("application").error(message)
     val errorHandler = if(mtdItUser.isAgent()) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
+  }
+
+  private def getChargesWithUpdatedDocumentDateIfChargeHistoryExists()(implicit mtdItUser: MtdItUser[_]): Future[List[ChargeItem]] = {
+
+    (for {
+      financialDetailsModel     <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
+      financialDetails           = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) => fd }
+      documentDetailsWithDueDate = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
+      chargeItems                = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
+      codedOutBCCAndPoas         = chargeItems.filter(x => x.isCodingOut && (x.isBalancingCharge || x.isPoaDebit))
+    } yield {
+
+      Future.traverse(codedOutBCCAndPoas) { chargeItem =>
+        chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, chargeItem.chargeReference, isEnabled(ChargeHistory)).map {
+          case Left(ChargesHistoryErrorModel(code, message)) =>
+            Logger("application").info(s"Failed to retrieve history for charge with id: ${chargeItem.transactionId}, code: $code, message: $message")
+            chargeItem
+          case Right(chargeHistoryItems) =>
+
+            val maybeLatestDocumentDate = chargeHistoryItems.sortWith { (a, b) =>
+              if  (a.documentDate.isEqual(b.documentDate)) a.documentId < b.documentId
+              else a.documentDate.isAfter(b.documentDate)
+            }
+              .map(_.documentDate)
+              .headOption
+
+            maybeLatestDocumentDate.fold {
+              Logger("application").info(s"Empty charge history for charge with chargeReference: ${chargeItem.chargeReference}")
+              chargeItem
+            } {
+              _ => chargeItem.copy(documentDate = _)
+            }
+        }
+      }
+    })
+      .flatten
   }
 }
