@@ -20,11 +20,12 @@ package models.repaymentHistory
 import models.financialDetails._
 import models.repaymentHistory.RepaymentHistoryUtils._
 import org.scalatest.matchers.should.Matchers
+import testConstants.ChargeConstants
 import testUtils.TestSupport
 
 import java.time.LocalDate
 
-class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
+class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeConstants {
 
   val repaymentRequestNumber: String = "000000003135"
 
@@ -127,6 +128,13 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
       status = RepaymentHistoryStatus("I")
     ))
 
+
+  val codedOutBcdOrPoaCharges: List[ChargeItem] =
+    financialDetailsBalancingChargesCi
+      .map(_.copy(
+        codedOutStatus = Some(Accepted),
+      )) ++ List(poa1WithCodingOutAccepted, poa2WithCodingutAccepted)
+
   private def groupedRepayments(isAgent: Boolean = false) = List(
     (2021, List(PaymentHistoryEntry(LocalDate.parse("2021-08-20"), Repayment, Some(301.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
       PaymentHistoryEntry(LocalDate.parse("2021-08-21"), Repayment, Some(300.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber))),
@@ -156,17 +164,17 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
   "RepaymentHistoryUtils" should {
     "getGroupedPaymentHistoryData should combine payments and approved repayments and group by year" when {
       "both payments and repayments are present" in {
-        getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false, languageUtils
+        getGroupedPaymentHistoryData(payments, repaymentHistory, codedOutBcdOrPoaCharges, isAgent = false, languageUtils
         )(messages, dateService ) shouldBe groupedRepayments() ++ groupedPayments()
       }
 
       "only payments are present" in {
-        getGroupedPaymentHistoryData(payments, List(), isAgent = false, languageUtils
+        getGroupedPaymentHistoryData(payments, List(), codedOutBcdOrPoaCharges, isAgent = false, languageUtils
         )(messages, dateService) shouldBe groupedPayments()
       }
 
       "only approved repayments are present" in {
-        getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false, languageUtils
+        getGroupedPaymentHistoryData(List(), repaymentHistory, codedOutBcdOrPoaCharges, isAgent = false, languageUtils
         )(messages, dateService) shouldBe groupedRepayments()
       }
 
