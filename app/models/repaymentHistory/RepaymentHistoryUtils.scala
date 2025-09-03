@@ -164,7 +164,7 @@ object RepaymentHistoryUtils {
 
   private def codedOutChargeEntry(chargeItem: ChargeItem)(implicit dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
     PaymentHistoryEntry(
-      date = chargeItem.getDueDate,
+      date = chargeItem.documentDate,
       creditType = chargeItem.transactionType,
       amount = Some(chargeItem.originalAmount),
       transactionId = Some(chargeItem.transactionId),
