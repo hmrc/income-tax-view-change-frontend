@@ -81,6 +81,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -96,6 +97,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -115,6 +117,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -134,6 +137,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -150,6 +154,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
+                document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2018 to 2019 tax bill."
+
               }
               "provided with an id associated to a Balancing payment with accruing interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -170,6 +176,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
+                document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2018 to 2019 tax bill."
               }
 
               "provided with an id associated to a charge for Class 2 National Insurance" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
