@@ -25,9 +25,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
-import models.admin.{ChargeHistory, CreditsRefundsRepay, PaymentHistoryRefunds}
-import models.chargeHistory.ChargesHistoryErrorModel
-import models.financialDetails.{BalancingCharge, ChargeItem, FinancialDetailsModel, TransactionUtils}
+import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
+import models.financialDetails.TransactionUtils
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.Logger

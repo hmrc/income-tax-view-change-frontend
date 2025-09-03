@@ -93,11 +93,11 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
   def getChargesWithUpdatedDocumentDateIfChargeHistoryExists()(implicit mtdItUser: MtdItUser[_], hc: HeaderCarrier): Future[List[ChargeItem]] = {
 
     (for {
-      financialDetailsModel <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
-      financialDetails = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) => fd }
-      documentDetailsWithDueDate = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
-      chargeItems = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
-      codedOutBCCAndPoas = chargeItems.filter(x => x.isCodingOut && (x.isBalancingCharge || x.isPoaDebit))
+      financialDetailsModel       <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
+      financialDetails             = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) => fd }
+      documentDetailsWithDueDate   = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
+      chargeItems                  = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
+      codedOutBCCAndPoas           = chargeItems.filter(x => x.isCodingOut && (x.isBalancingCharge || x.isPoaDebit))
     } yield {
 
       Future.traverse(codedOutBCCAndPoas) { chargeItem =>
