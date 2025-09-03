@@ -72,6 +72,17 @@
     )
 }
 
+@greenPanelScenario5() = @{
+    govukPanel(
+        Panel(
+            title = Text(messages("optout.confirmedOptOut.heading")),
+            content = Text(messages("optout.confirmedOptOut.green.panel.scenario5", viewModel.startYear, viewModel.endYear)),
+            attributes = Map("id" -> "out-opt-complete-green-panel")
+        )
+    )
+}
+
+
 @scenario1ReportingObligationsSection = {
 
     @h2(msg = "optout.confirmedOptOut.scenario1.reporting.obligations.heading", optId = Some("your-reporting-obligations-heading"))
@@ -87,7 +98,6 @@
 
     @{
         val content = HtmlContent(messages("optout.confirmedOptOut.scenario1.reporting.obligations.inset", viewModel.endYear))
-
         govukInsetText(InsetText(id = Some("gross-income-threshold-warning"), content = content))
     }
 
@@ -209,7 +219,40 @@
             additionalOpenTabMessage = Some(".")
         )
     }
+}
 
+@scenario5ReportingObligationsSection = {
+
+    @h2(msg = "optout.confirmedOptOut.scenario5.reporting.obligations.heading", optId = Some("your-reporting-obligations-heading"))
+
+    @p(id=Some("use-mtd-in-future")){
+        @messages("optout.confirmedOptOut.scenario5.reporting.obligations.p1")
+    }
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="your-obligations-bullet-1">@messages("optout.confirmedOptOut.scenario5.reporting.obligations.bullet1")</li>
+        <li id="your-obligations-bullet-2">@messages("optout.confirmedOptOut.scenario5.reporting.obligations.bullet2")</li>
+    </ul>
+
+    @{
+        val content = HtmlContent(messages("optout.confirmedOptOut.scenario5.reporting.obligations.inset", viewModel.endYear))
+        govukInsetText(InsetText(id = Some("gross-income-threshold-warning"), content = content))
+    }
+
+    @p(id=Some("we-will-let-you-know")){
+        @messages("optout.confirmedOptOut.scenario5.reporting.obligations.p2")
+    }
+
+    @p(id=Some("you-can-check-thresholds")){
+        @messages("optout.confirmedOptOut.scenario5.reporting.obligations.p3")
+        @link(
+            link = ExternalUrlHelper.saWhoNeedsToSignUpUrl,
+            id = Some("sign-up-criteria-link"),
+            messageKey = "optout.confirmedOptOut.scenario5.reporting.obligations.p3.link",
+            target = Some("_blank"),
+            additionalOpenTabMessage = Some(".")
+        )
+    }
 }
 
 @optOutYearFollowedByMandatedContent = {
@@ -331,6 +374,13 @@
     }
 }
 
+@submitTaxReturnScenario5Paragraph1 = {
+    @p(id = Some("now-you-have-opted-out")) {
+    @messages("optout.confirmedOptOut.scenario5.submitTax.confirmed.p1")
+    @link(link = selfAssessmentTaxReturnLink, id = Some("self-assessment-tax-return-link"), messageKey = "optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+    }
+}
+
 @mainTemplate(
     pageTitle = messages("optout.confirmedOptOut.heading"),
     isAgent = isAgent,
@@ -377,5 +427,15 @@
             @submitTaxReturnScenario4Paragraph1
         </div>
         @scenario4ReportingObligationsSection
+    }
+
+    @if(confirmedOptOutViewScenarios == Scenario5Content) {
+        @greenPanelScenario5
+        @revisedDeadlinesBlock
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
+            @submitTaxReturnScenario5Paragraph1
+        </div>
+        @scenario5ReportingObligationsSection
     }
 }

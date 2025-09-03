@@ -26,6 +26,8 @@ case object Scenario3Content extends ConfirmedOptOutViewScenarios
 
 case object Scenario4Content extends ConfirmedOptOutViewScenarios
 
+case object Scenario5Content extends ConfirmedOptOutViewScenarios
+
 sealed trait ConfirmedOptOutViewScenariosError
 
 case object UnableToDetermineContent extends ConfirmedOptOutViewScenariosError

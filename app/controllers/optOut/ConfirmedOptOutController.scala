@@ -75,6 +75,14 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
           Right(Scenario3Content)
         case (NextTaxYear, _) if optOutProposition.currentTaxYear.status == ITSAStatus.Mandated && optOutProposition.isNextYearQuarterly =>
           Right(Scenario3Content)
+        case (NoChosenTaxYear, _) if optOutProposition.isCurrentYearAnnual && optOutProposition.isNextYearAnnual =>
+          Right(Scenario5Content)
+        case (PreviousTaxYear, _) if optOutProposition.isCurrentYearQuarterly && optOutProposition.isNextYearAnnual =>
+          Right(Scenario5Content)
+        case (PreviousTaxYear, _) if optOutProposition.isCurrentYearAnnual && optOutProposition.isNextYearQuarterly =>
+          Right(Scenario5Content)
+        case (PreviousTaxYear, _) if optOutProposition.isCurrentYearQuarterly && optOutProposition.isNextYearQuarterly =>
+          Right(Scenario5Content)
         case _ =>
           Left(UnableToDetermineContent)
       }
