@@ -20,11 +20,9 @@ import controllers.constants.IncomeSourceAddedControllerConstants.testObligation
 import models.helpers.LiabilityCalculationDataHelper
 import models.liabilitycalculation.taxcalculation.TaxBands
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
-import models.obligations._
 import play.api.http.Status
 import play.api.i18n.Lang
 import play.api.libs.json._
-import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.TestSupport
 

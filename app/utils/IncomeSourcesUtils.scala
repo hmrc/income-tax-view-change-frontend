@@ -21,11 +21,6 @@ import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger
-import play.api.mvc.Result
-import play.api.mvc.Results.Redirect
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-
-import scala.concurrent.Future
 
 trait IncomeSourcesUtils extends FeatureSwitching {
 

@@ -22,13 +22,13 @@ import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import models.obligations._
-import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel, OptOutViewModel}
+import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import services.optout.{OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, OptOutProposition}
+import services.optout.OptOutProposition
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.NextUpdatesTestConstants
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel

@@ -79,7 +79,8 @@
         <div class="govuk-button-group">
             @govukButton(Button(
                 content = Text(messages("optIn.confirmTaxYear.confirmSaveBtn")),
-                attributes = Map("id" -> "confirm-button")
+                attributes = Map("id" -> "confirm-button"),
+                preventDoubleClick = Some(true)
             ))
             <a class="govuk-link" href=@model.cancelURL id="cancel-button">@messages("optIn.confirmTaxYear.cancel")</a>
         </div>

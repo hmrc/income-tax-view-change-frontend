@@ -87,7 +87,8 @@
         <div class="govuk-button-group">
             @govukButton(Button(
                 content = Text(messages("optout.checkAnswers.confirm")),
-                attributes = Map("id" -> "confirm-button")
+                attributes = Map("id" -> "confirm-button"),
+                preventDoubleClick = Some(true)
             ))
             <a class="govuk-link" href=@cancelURL id="cancel-button">@messages("optout.checkAnswers.cancel")</a>
         </div>

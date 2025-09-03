@@ -46,7 +46,7 @@ object ITSAStatus extends Enumeration {
   val Mandated = Value("MTD Mandated")
   val Voluntary = Value("MTD Voluntary")
   val Annual = Value("Annual")
-  val NonDigital = Value("Non Digital")
+  val DigitallyExempt = Value("Digitally Exempt")
   val Dormant = Value("Dormant")
   val Exempt = Value("MTD Exempt")
 

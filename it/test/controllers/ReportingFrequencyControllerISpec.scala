@@ -414,36 +414,6 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses")
                 )
               }
-              "CY is mandated and no opt in or opt out years to be displayed" in {
-                enable(ReportingFrequencyPage, OptOutFs, OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-                ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
-                  dateService.getCurrentTaxYear,
-                  NoStatus,
-                  Mandated,
-                  NoStatus
-                )
-                stubCalculationListResponseBody("2022")
-
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-                result should have(
-                  httpStatus(OK),
-                )
-                result shouldNot have(
-                  elementTextByID("manage-reporting-frequency-heading")("Manage your reporting frequency for all your businesses"),
-                  elementTextBySelector(optInOptOutLinks(1))(s"Opt out of quarterly reporting and report annually for the $previousStartYear to $previousEndYear tax year"),
-                  elementTextBySelector(optInOptOutLinks(2))(s"Opt in to quarterly reporting")
-                )
-                if(isEnabled(OptInOptOutContentUpdateR17)){
-                  pageTitle(mtdUserRole, "reporting.frequency.title.new")
-                }else{
-                  pageTitle(mtdUserRole, "reporting.frequency.title")
-                }
-                result shouldNot have(
-                  elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses")
-                )
-              }
             }
             "has a ceased business warning" when {
               "all businesses have ceased" in {

@@ -131,7 +131,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
             crystallisationStatus = true,
             previousYearITSAStatus = "V",
             currentYearITSAStatus = "V",
-            nextYearITSAStatus = "U")),
+            nextYearITSAStatus = "A")),
           selectedOptOutYear = None))
       )
 
@@ -140,7 +140,14 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
       val initialState = optOutRepository.recallOptOutPropositionWithIntent()
 
       initialState.futureValue.isDefined shouldBe true
-      initialState.futureValue.get shouldBe (createOptOutProposition(taxYear2023_2024, true, Voluntary, Voluntary, NoStatus), None)
+      initialState.futureValue.get shouldBe (
+        createOptOutProposition(
+          currentYear = taxYear2023_2024,
+          previousYearCrystallised = true,
+          previousYearItsaStatus = Voluntary,
+          currentYearItsaStatus = Voluntary,
+          nextYearItsaStatus = Annual
+        ), None)
     }
 
     "retrieve the opt out proposition with an intent if a tax year has been selected" in {
@@ -156,7 +163,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
             crystallisationStatus = true,
             previousYearITSAStatus = "V",
             currentYearITSAStatus = "V",
-            nextYearITSAStatus = "U")),
+            nextYearITSAStatus = "A")),
           selectedOptOutYear = Some("2023-2024")))
       )
 
@@ -165,7 +172,14 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
       val initialState = optOutRepository.recallOptOutPropositionWithIntent()
 
       initialState.futureValue.isDefined shouldBe true
-      initialState.futureValue.get shouldBe (createOptOutProposition(taxYear2023_2024, true, Voluntary, Voluntary, NoStatus), Some(TaxYear(2023, 2024)))
+      initialState.futureValue.get shouldBe (
+        createOptOutProposition(
+          currentYear = taxYear2023_2024,
+          previousYearCrystallised = true,
+          previousYearItsaStatus = Voluntary,
+          currentYearItsaStatus = Voluntary,
+          nextYearItsaStatus = Annual
+        ), Some(TaxYear(2023, 2024)))
     }
   }
 

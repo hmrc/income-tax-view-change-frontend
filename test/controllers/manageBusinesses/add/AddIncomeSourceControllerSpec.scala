@@ -28,13 +28,11 @@ import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.mvc.Result
 import play.api.test.Helpers._
 import services.SessionService
 import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}
 
-import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 class AddIncomeSourceControllerSpec extends MockAuthActions
