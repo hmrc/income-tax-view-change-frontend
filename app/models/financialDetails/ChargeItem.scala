@@ -103,9 +103,9 @@ case class ChargeItem (
     case _ => false
   }
 
-  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && hasAccruingInterest) || (interestRemainingToPay > 0 && isPaid)}
+  def isOnlyInterest: Boolean = interestRemainingToPay > 0 && isPaid
 
-  def remainingToPayOnCharge(implicit dateServiceInterface: DateServiceInterface): BigDecimal =
+  def remainingToPayOnCharge: BigDecimal =
     if (isOnlyInterest) interestRemainingToPay
     else remainingToPay
 
@@ -137,7 +137,7 @@ case class ChargeItem (
 
   // this method is used to filter charges down to those currently allowed for the
   // new Your Self Assessment Charge Summary feature
-  def isIncludedInSACSummary(implicit dateServiceInterface: DateServiceInterface): Boolean = {
+  def isIncludedInSACSummary: Boolean = {
 
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true

@@ -38,8 +38,7 @@
     chargeSummaryUrl: String
 )(
     implicit messages: Messages,
-    user: MtdItUser[_],
-    dateServiceInterface: DateServiceInterface
+    user: MtdItUser[_]
 )
 
 @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean, linkSuffix: String, isMFADebit: Boolean, index: Int) = @{
