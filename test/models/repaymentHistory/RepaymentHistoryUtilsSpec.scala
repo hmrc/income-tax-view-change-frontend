@@ -21,6 +21,7 @@ import models.financialDetails._
 import models.repaymentHistory.RepaymentHistoryUtils._
 import org.scalatest.matchers.should.Matchers
 import testConstants.ChargeConstants
+import testConstants.FinancialDetailsTestConstants.{id1040000123, id1040000124, id1040000125}
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -158,7 +159,20 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeCon
     val mfa = if (mfaEnabled) List((2020, List(PaymentHistoryEntry(LocalDate.parse("2020-04-12"), MfaCreditType, Some(-11000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202210"),
       PaymentHistoryEntry(LocalDate.parse("2020-04-13"), MfaCreditType, Some(-10000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202201")))) else List()
 
-    mfa ++ List((2019, reviewAndReconcileCredits ++ bcc ++ cutover ++ standardPayments))
+    val codedOutBCDCharges = List(
+      PaymentHistoryEntry(LocalDate.parse("2023-12-05"), PaymentType, Some(75), Some(id1040000124), "", "2023-12-05 &pound;75.00"),
+      PaymentHistoryEntry(LocalDate.parse("2023-12-14"), PaymentType, Some(50), Some(id1040000125), "", "2023-12-14 &pound;50.00")
+    )
+
+    val codedOutPoaOneCharge = List(
+      PaymentHistoryEntry(LocalDate.parse("2018-03-29"), PaymentType, Some(1000), Some(id1040000123), "", "2018-03-29 &pound;1,000.00")
+    )
+
+    val codedOutPoaTwoCharge = List(
+      PaymentHistoryEntry(LocalDate.parse("2018-03-29"), PaymentType, Some(400), Some(id1040000124), "", "2018-03-29 &pound;400.00")
+    )
+
+    mfa ++ List((2019, reviewAndReconcileCredits ++ bcc ++ cutover ++ codedOutBCDCharges ++ codedOutPoaOneCharge ++ codedOutPoaTwoCharge ++ standardPayments))
   }
 
   "RepaymentHistoryUtils" should {
