@@ -261,5 +261,53 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         pageDocument.getElementById(Selectors.youCanCheckThresholds).text() shouldBe "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
       }
     }
+
+
+    "Scenario5" when {
+
+      val isAgent = false
+
+      val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(OneYearOptOutFollowedByMandated))
+      val pageDocument = Jsoup.parse(contentAsString(confirmedOptOutView(
+        viewModel = viewModel,
+        isAgent = isAgent,
+        showReportingFrequencyContent = true,
+        confirmedOptOutViewScenarios = Scenario5Content,
+        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
+      )))
+
+      "show the green panel" in {
+
+        pageDocument.getElementById(Selectors.greenPanel).text() shouldBe "Opt out completed You no longer need to use Making Tax Digital for Income Tax"
+      }
+
+      "show the revised details section" in {
+
+        pageDocument.getElementById(Selectors.revisedDeadlinesHeading).text() shouldBe "Your revised deadlines"
+        pageDocument.getElementById(Selectors.revisedDeadlinesP1).text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025."
+        pageDocument.getElementById(Selectors.viewUpcomingUpdatesLink).text() shouldBe "View your upcoming deadlines"
+        pageDocument.getElementById(Selectors.yourReportingFrequencyBlock).text() shouldBe "You can decide at any time to sign back up to Making Tax Digital for Income Tax for all of your businesses on your reporting obligations page."
+      }
+
+      "show the submit your tax return section" in {
+
+        pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
+      }
+
+      "show the 'Your reporting obligations' section" in {
+
+        pageDocument.getElementById(Selectors.yourReportingObligationsHeading).text() shouldBe "Your reporting obligations in the future"
+
+        pageDocument.getElementById(Selectors.useMtdInFuture).text() shouldBe "You could be required to use Making Tax Digital for Income Tax again in the future if:"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowers the income threshold for it"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you report an increase in your qualifying income in a tax return"
+        pageDocument.getElementById(Selectors.grossIncomeThresholdWarning).text() shouldBe "For example, if your income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026."
+        pageDocument.getElementById(Selectors.weWillLetYouKnow).text() shouldBe "If this happens, we will write to you to let you know."
+        pageDocument.getElementById(Selectors.youCanCheckThresholds).text() shouldBe "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
+      }
+    }
   }
 }
