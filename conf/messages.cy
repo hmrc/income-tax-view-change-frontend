@@ -2649,6 +2649,7 @@ optout.confirmedOptOut.one-year                                  = Rydych yn cyf
 optout.confirmedOptOut.green.panel.scenario1And4                 = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
 optout.confirmedOptOut.green.panel.scenario2                     = Nid oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach ar gyfer blwyddyn dreth {0} i {1}
 optout.confirmedOptOut.green.panel.scenario3                     = Nid oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach ar gyfer blwyddyn dreth {0} i {1}
+optout.confirmedOptOut.green.panel.scenario5                     = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
 
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Eich dyddiadau cau sydd wedi’u haddasu
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>31 Ionawr {2}</b>.
