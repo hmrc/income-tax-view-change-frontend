@@ -97,7 +97,8 @@ class NextUpdatesService @Inject()(
     obligationsConnector.getAllObligationsDateRange(fromDate, toDate).map {
       case obligationsResponse: ObligationsModel =>
         ObligationsModel(obligationsResponse.obligations.filter(_.obligations.nonEmpty))
-      case error: ObligationsErrorModel => error
+      case error: ObligationsErrorModel =>
+        error
     }
   }
 
