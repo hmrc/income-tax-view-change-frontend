@@ -62,13 +62,13 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 
 @headingContent(year: Int) = {
     <span id="accordion-with-summary-sections-heading-@year">
-        @year.toString
+       @messages("paymentHistory.activity", year.toString)
     </span>
 }
 
 @bodyContent(year: Int, yearPayments: List[PaymentHistoryEntry]) = {
     <table class="govuk-table govuk-body govuk-!-margin-bottom-8">
-        <caption class="govuk-table__caption govuk-visually-hidden">@messages("paymentHistory.button", year.toString)</caption>
+        <caption class="govuk-table__caption govuk-table__caption--m">@messages("paymentHistory.button", year.toString)</caption>
         <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th class="govuk-table__header" scope="col">@messages("paymentHistory.table.header.date")</th>
@@ -118,6 +118,14 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 
     @h1(msg = messages(viewModel.title()))
 
+    @if(!isAgent) {
+      @if(saUtr.isDefined) {
+         @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get), "taxYears.oldSa.content.link")
+        }
+    } else {
+      @paymentHistoryInfo("paymentHistory.info", ExternalUrlHelper.saForAgents, "taxYears.oldSa.agent.content.2")
+    }
+
     @if(!isAgent && paymentHistoryAndRefundsEnabled) {
         <div id="refundstatus" class="govuk-inset-text">
             @getMessage("check-refund-1")
@@ -136,12 +144,5 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         ))
     }
 
-    @if(!isAgent) {
-        @if(saUtr.isDefined) {
-            @paymentHistoryInfo("PaymentHistory.classicSA", appConfig.saViewLandPService(saUtr.get), "taxYears.oldSa.content.link")
-        }
-    } else {
-        @paymentHistoryInfo("paymentHistory.info", ExternalUrlHelper.saForAgents, "taxYears.oldSa.agent.content.2")
-    }
 
 }
