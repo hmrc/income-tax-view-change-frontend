@@ -16,7 +16,7 @@
 
 package controllers.optOut
 
-import enums.{CurrentTaxYear, MTDIndividual, NextTaxYear}
+import enums.{CurrentTaxYear, MTDIndividual, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
 import models.admin.OptOutFs
@@ -269,7 +269,6 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
       }
     }
 
-
     "Scenario2Content" when {
 
       "CurrentTaxYear && proposition.isCurrentYearQuarterly && proposition.isNextYear == Mandated && quarterlyUpdatesCount == 0" should {
@@ -432,5 +431,129 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
         }
       }
     }
+
+    "Scenario5Content" when {
+
+      "NoChosenTaxYear && proposition.isCurrentYearAnnual && proposition.isNextYearAnnual" should {
+
+        "return the correct enum" in {
+
+          val quarterlyUpdatesCount = 0
+
+          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+            .thenReturn(Future.successful(quarterlyUpdatesCount))
+
+          when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+            Future(
+              OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = ITSAStatus.Annual,
+                currentYearItsaStatus = ITSAStatus.Annual,
+                nextYearItsaStatus = ITSAStatus.Annual
+              )
+            )
+          )
+
+          when(mockOptOutService.determineOptOutIntentYear()(any(), any()))
+            .thenReturn(Future(NoChosenTaxYear))
+
+          whenReady(testController.viewScenarioHandler()) { result =>
+            result shouldBe Right(Scenario5Content)
+          }
+        }
+      }
+
+      "PreviousTaxYear && proposition.isCurrentYearQuarterly && proposition.isNextYearAnnual" should {
+
+        "return the correct enum" in {
+
+          val quarterlyUpdatesCount = 0
+
+          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+            .thenReturn(Future.successful(quarterlyUpdatesCount))
+
+          when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+            Future(
+              OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = ITSAStatus.Annual,
+                currentYearItsaStatus = ITSAStatus.Voluntary,
+                nextYearItsaStatus = ITSAStatus.Annual
+              )
+            )
+          )
+
+          when(mockOptOutService.determineOptOutIntentYear()(any(), any()))
+            .thenReturn(Future(PreviousTaxYear))
+
+          whenReady(testController.viewScenarioHandler()) { result =>
+            result shouldBe Right(Scenario5Content)
+          }
+        }
+      }
+
+      "PreviousTaxYear && proposition.isCurrentYearAnnual && proposition.isNextYearQuarterly" should {
+
+        "return the correct enum" in {
+
+          val quarterlyUpdatesCount = 0
+
+          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+            .thenReturn(Future.successful(quarterlyUpdatesCount))
+
+          when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+            Future(
+              OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = ITSAStatus.Annual,
+                currentYearItsaStatus = ITSAStatus.Annual,
+                nextYearItsaStatus = ITSAStatus.Voluntary
+              )
+            )
+          )
+
+          when(mockOptOutService.determineOptOutIntentYear()(any(), any()))
+            .thenReturn(Future(PreviousTaxYear))
+
+          whenReady(testController.viewScenarioHandler()) { result =>
+            result shouldBe Right(Scenario5Content)
+          }
+        }
+      }
+
+      "PreviousTaxYear && proposition.isCurrentYearQuarterly && proposition.isNextYearQuarterly" should {
+
+        "return the correct enum" in {
+
+          val quarterlyUpdatesCount = 0
+
+          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+            .thenReturn(Future.successful(quarterlyUpdatesCount))
+
+          when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+            Future(
+              OptOutProposition.createOptOutProposition(
+                currentYear = TaxYear(2024, 2025),
+                previousYearCrystallised = false,
+                previousYearItsaStatus = ITSAStatus.Annual,
+                currentYearItsaStatus = ITSAStatus.Voluntary,
+                nextYearItsaStatus = ITSAStatus.Voluntary
+              )
+            )
+          )
+
+          when(mockOptOutService.determineOptOutIntentYear()(any(), any()))
+            .thenReturn(Future(PreviousTaxYear))
+
+          whenReady(testController.viewScenarioHandler()) { result =>
+            result shouldBe Right(Scenario5Content)
+          }
+        }
+      }
+    }
+
   }
 }
