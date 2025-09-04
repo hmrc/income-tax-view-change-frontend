@@ -108,7 +108,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
           case Right(chargeHistoryItems) =>
 
             val maybeLatestDocumentDate = chargeHistoryItems.sortWith { (a, b) =>
-              if (a.documentDate.isEqual(b.documentDate)) a.documentId < b.documentId             // tie-break on documentDate
+              if (a.documentDate.isEqual(b.documentDate)) a.documentId < b.documentId             // tie-break on documentId
               else                                        a.documentDate.isAfter(b.documentDate)
             }
               .map(_.documentDate)
