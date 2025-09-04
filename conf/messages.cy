@@ -2724,14 +2724,14 @@ optout.confirmedOptOut.scenario4.reporting.obligations.p2                     = 
 optout.confirmedOptOut.scenario4.reporting.obligations.p3                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
 optout.confirmedOptOut.scenario4.reporting.obligations.p3.link                = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
-optout.confirmedOptOut.scenario5.reporting.obligations.heading                = Your reporting obligations in the future
-optout.confirmedOptOut.scenario5.reporting.obligations.p1                     = You could be required to use Making Tax Digital for Income Tax again in the future if:
-optout.confirmedOptOut.scenario5.reporting.obligations.bullet1                = HMRC lowers the income threshold for it
-optout.confirmedOptOut.scenario5.reporting.obligations.bullet2                = you report an increase in your qualifying income in a tax return
-optout.confirmedOptOut.scenario5.reporting.obligations.inset                  = For example, if your income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026.
-optout.confirmedOptOut.scenario5.reporting.obligations.p2                     = If this happens, we will write to you to let you know.
-optout.confirmedOptOut.scenario5.reporting.obligations.p3                     = You can check the threshold for qualifying income in the
-optout.confirmedOptOut.scenario5.reporting.obligations.p3.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+optout.confirmedOptOut.scenario5.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
+optout.confirmedOptOut.scenario5.reporting.obligations.p1                     = Mae’n bosibl y bydd gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os daw’r canlynol yn berthnasol:
+optout.confirmedOptOut.scenario5.reporting.obligations.bullet1                = mae CThEF yn gostwng y trothwy incwm ar gyfer defnyddio’r cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario5.reporting.obligations.bullet2                = rydych yn rhoi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario5.reporting.obligations.inset                  = Er enghraifft, os bydd cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn mynd dros y trothwy o £50,000 ym mlwyddyn dreth 2024 i 2025, bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill 2026 ymlaen
+optout.confirmedOptOut.scenario5.reporting.obligations.p2                     = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.confirmedOptOut.scenario5.reporting.obligations.p3                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario5.reporting.obligations.p3.link                = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 optOut.confirmSingleYearOptOut.title                        = Optio allan o gyflwyno adroddiadau am flwyddyn dreth unigol
 optOut.confirmSingleYearOptOut.detail.text                  = Gallwch opio allan ar gyfer blwyddyn dreth {0} i {1} yn unig.
