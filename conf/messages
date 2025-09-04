@@ -3234,9 +3234,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.itsaReturnAmendment.text.heading  
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
 
-yourSelfAssessmentChargeSummary.chargeHistory.itsaReturnAmendment.text.caption      = This balancing payment goes towards your {0} to {1} tax bill.
-yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill.
-
+yourSelfAssessmentChargeSummary.chargeHistory.default.caption                       = This balancing payment goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p                           = You have received this penalty because you are late paying your Income Tax.
