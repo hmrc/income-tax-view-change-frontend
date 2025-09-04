@@ -2650,13 +2650,21 @@ optout.updates.checkAnswers.inset       = You have <b>2 quarterly updates submit
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed
+
+#### maybe get rid of these
 optout.confirmedOptOut.taxYear                                   = You are reporting annually from the {0} to {1} tax year onwards
 optout.confirmedOptOut.one-year                                  = You are reporting annually for the {0} to {1} tax year
+####
+
+optout.confirmedOptOut.green.panel.scenario1And4                 = You no longer need to use Making Tax Digital for Income Tax
+optout.confirmedOptOut.green.panel.scenario2                     = You do not need to use Making Tax Digital for Income Tax for the {0} to {1} tax year
+optout.confirmedOptOut.green.panel.scenario3                     = From the {0} to {1} tax year onwards you do not need to use Making Tax Digital for Income Tax
+
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Your revised deadlines
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Your tax return for the {0} to {1} tax year is due by <b>31 January {2}</b>.
 optout.confirmedOptOut.viewUpcomingDeadlines.text                = View your upcoming deadlines
-optout.confirmedOptOut.yourRevisedDeadlines.desc2                = You can decide at any time to opt back in to reporting quarterly for all of your businesses on {0} page.
-optout.confirmedOptOut.yourReportingFrequency.text               = your reporting frequency
+optout.confirmedOptOut.yourRevisedDeadlines.desc2                = You can decide at any time to sign back up to Making Tax Digital for Income Tax for all of your businesses on {0} page.
+optout.confirmedOptOut.yourReportingFrequency.text               = your reporting obligations
 
 optout.confirmedOptOut.submitTax                                 = Submit your tax return
 
@@ -2666,10 +2674,14 @@ optout.confirmedOptOut.submitTax.confirmed.p1.link               = filed your Se
 optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are reporting quarterly, you will need
 optout.confirmedOptOut.submitTax.confirmed.p2.link               = software compatible with Making Tax Digital for Income Tax
 
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1                    = As you are opted out, you can find out here how to
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link               = file your Self Assessment tax return
+
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
 optout.confirmedOptOut.next-updates                              = next updates
-optout.confirmedOptOut.reportQuarterly                           = Reporting quarterly again in the future
+
+optout.confirmedOptOut.reportQuarterly                           = Your reporting obligations in the future
 optout.confirmedOptOut.reportQuarterly.desc1                     = You could be required to report quarterly again in the future if:
 optout.confirmedOptOut.reportQuarterly.p1                        = HMRC lowers the income threshold for Making Tax Digital
 optout.confirmedOptOut.reportQuarterly.p2                        = you report an increase in your qualifying income in a tax return
@@ -2683,6 +2695,41 @@ optout.confirmedOptOut.software-compatible                       = software comp
 optout.confirmedOptOut.reportQuarterly.reason-list               = This could be because:
 optout.confirmedOptOut.reportQuarterly.reason1                   = HMRC lowered the income threshold for Making Tax Digital
 optout.confirmedOptOut.reportQuarterly.reason2                   = you reported an increase in your qualifying income in last year’s tax return
+
+optout.confirmedOptOut.scenario1.reporting.obligations.heading                = Your reporting obligations in the future
+optout.confirmedOptOut.scenario1.reporting.obligations.p1                     = You could be required to use Making Tax Digital for Income Tax again in the future if:
+optout.confirmedOptOut.scenario1.reporting.obligations.bullet1                = HMRC lowers the income threshold for it
+optout.confirmedOptOut.scenario1.reporting.obligations.bullet2                = you report an increase in your qualifying income in a tax return
+optout.confirmedOptOut.scenario1.reporting.obligations.inset                  = For example, if your income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026.
+optout.confirmedOptOut.scenario1.reporting.obligations.p3                     = If this happens, we will write to you to let you know.
+optout.confirmedOptOut.scenario1.reporting.obligations.p4                     = You can check the threshold for qualifying income in the
+optout.confirmedOptOut.scenario1.reporting.obligations.p4.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+
+optout.confirmedOptOut.scenario2.reporting.obligations.heading                = Your reporting obligations from the next tax year onwards
+optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = From 6 April {0}, you will be required to use Making Tax Digital for Income tax.
+optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = This could be because:
+optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = HMRC lowered the income threshold for it
+optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = you reported an increase in your qualifying income in a tax return
+optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = You can check the threshold for qualifying income in the
+optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
+
+optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Your reporting obligations in the future
+optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = You are opted out from next tax year onwards, but you could be required to use Making Tax Digital for Income Tax again in the future if:
+optout.confirmedOptOut.scenario3.reporting.obligations.bullet1                = HMRC lowers the income threshold for it
+optout.confirmedOptOut.scenario3.reporting.obligations.bullet2                = you report an increase in your qualifying income in a tax return
+optout.confirmedOptOut.scenario3.reporting.obligations.inset                  = For example, if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026.
+optout.confirmedOptOut.scenario3.reporting.obligations.p2                     = If this happens, we will write to you to let you know.
+optout.confirmedOptOut.scenario3.reporting.obligations.p3                     = You can check the threshold for qualifying income in the
+optout.confirmedOptOut.scenario3.reporting.obligations.p3.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+
+optout.confirmedOptOut.scenario4.reporting.obligations.heading                = Your reporting obligations in the future
+optout.confirmedOptOut.scenario4.reporting.obligations.p1                     = You could be required to use Making Tax Digital for Income Tax again in the future if:
+optout.confirmedOptOut.scenario4.reporting.obligations.bullet1                = HMRC lowers the income threshold for it
+optout.confirmedOptOut.scenario4.reporting.obligations.bullet2                = you report an increase in your qualifying income in a tax return
+optout.confirmedOptOut.scenario4.reporting.obligations.inset                  = For example, if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026.
+optout.confirmedOptOut.scenario4.reporting.obligations.p2                     = If this happens, we will write to you to let you know.
+optout.confirmedOptOut.scenario4.reporting.obligations.p3                     = You can check the threshold for qualifying income in the
+optout.confirmedOptOut.scenario4.reporting.obligations.p3.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax
 
 optOut.confirmSingleYearOptOut.title                        = Opt out of quarterly reporting for a single tax year
 optOut.confirmSingleYearOptOut.detail.text                  = You can only opt out for the {0} to {1} tax year.

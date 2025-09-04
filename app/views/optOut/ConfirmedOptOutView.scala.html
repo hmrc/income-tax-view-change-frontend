@@ -1,0 +1,381 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import models.optout._
+@import services.optout.OneYearOptOutFollowedByMandated
+@import viewUtils.ExternalUrlHelper
+
+@this(
+    mainTemplate: unifiedLayout,
+    h1: h1,
+    h2: h2,
+    p: p,
+    link: link,
+    hr: hr,
+    govukTable: GovukTable,
+    govukInsetText : GovukInsetText,
+    govukPanel : GovukPanel
+)
+
+@(
+    viewModel: ConfirmedOptOutViewModel,
+    isAgent: Boolean = false,
+    showReportingFrequencyContent: Boolean,
+    confirmedOptOutViewScenarios: ConfirmedOptOutViewScenarios,
+    selfAssessmentTaxReturnLink: String,
+    compatibleSoftwareLink: String
+)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
+
+@greenPanelScenario1And4() = @{
+    govukPanel(
+        Panel(
+            title = Text(messages("optout.confirmedOptOut.heading")),
+            content = Text(messages("optout.confirmedOptOut.green.panel.scenario1And4")),
+            attributes = Map("id" -> "out-opt-complete-green-panel")
+        )
+    )
+}
+
+@greenPanelScenario2() = @{
+    govukPanel(
+        Panel(
+            title = Text(messages("optout.confirmedOptOut.heading")),
+            content = Text(messages("optout.confirmedOptOut.green.panel.scenario2", viewModel.startYear, viewModel.endYear)),
+            attributes = Map("id" -> "out-opt-complete-green-panel")
+        )
+    )
+}
+
+@greenPanelScenario3() = @{
+    govukPanel(
+        Panel(
+            title = Text(messages("optout.confirmedOptOut.heading")),
+            content = Text(messages("optout.confirmedOptOut.green.panel.scenario3", viewModel.startYear, viewModel.endYear)),
+            attributes = Map("id" -> "out-opt-complete-green-panel")
+        )
+    )
+}
+
+@scenario1ReportingObligationsSection = {
+
+    @h2(msg = "optout.confirmedOptOut.scenario1.reporting.obligations.heading", optId = Some("your-reporting-obligations-heading"))
+
+    @p(id=Some("use-mtd-in-future")){
+        @messages("optout.confirmedOptOut.scenario1.reporting.obligations.p1")
+    }
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="your-obligations-bullet-1">@messages("optout.confirmedOptOut.scenario1.reporting.obligations.bullet1")</li>
+        <li id="your-obligations-bullet-2">@messages("optout.confirmedOptOut.scenario1.reporting.obligations.bullet2")</li>
+    </ul>
+
+    @{
+        val content = HtmlContent(messages("optout.confirmedOptOut.scenario1.reporting.obligations.inset", viewModel.endYear))
+
+        govukInsetText(InsetText(id = Some("gross-income-threshold-warning"), content = content))
+    }
+
+    @p(id=Some("we-will-let-you-know")){
+        @messages("optout.confirmedOptOut.scenario1.reporting.obligations.p3")
+    }
+
+    @p(id=Some("you-can-check-thresholds")){
+        @messages("optout.confirmedOptOut.scenario1.reporting.obligations.p4")
+        @link(
+            link = ExternalUrlHelper.saWhoNeedsToSignUpUrl,
+            id = Some("sign-up-criteria-link"),
+            messageKey = "optout.confirmedOptOut.scenario1.reporting.obligations.p4.link",
+            target = Some("_blank"),
+            outerMessage = "."
+        )
+    }
+
+}
+
+@scenario2ReportingObligationsSection = {
+
+    @h2(msg = "optout.confirmedOptOut.scenario2.reporting.obligations.heading", optId = Some("your-reporting-obligations-heading"))
+
+    @{
+        val content = HtmlContent(messages("optout.confirmedOptOut.scenario2.reporting.obligations.inset", viewModel.endYear))
+        govukInsetText(InsetText(id = Some("required-to-use-mtd-inset"), content = content))
+    }
+
+    @p(id=Some("this-could-be-because")){
+        @messages("optout.confirmedOptOut.scenario2.reporting.obligations.p1")
+    }
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="your-obligations-bullet-1">@messages("optout.confirmedOptOut.scenario1.reporting.obligations.bullet1")</li>
+        <li id="your-obligations-bullet-2">@messages("optout.confirmedOptOut.scenario1.reporting.obligations.bullet2")</li>
+    </ul>
+
+    @p(id=Some("you-can-check-thresholds")){
+        @messages("optout.confirmedOptOut.scenario1.reporting.obligations.p4")
+        @link(
+            link = ExternalUrlHelper.saWhoNeedsToSignUpUrl,
+            id = Some("sign-up-criteria-link"),
+            messageKey = "optout.confirmedOptOut.scenario1.reporting.obligations.p4.link",
+            target = Some("_blank"),
+            additionalOpenTabMessage = Some(".")
+        )
+    }
+
+}
+
+
+@scenario3ReportingObligationsSection = {
+
+    @h2(msg = "optout.confirmedOptOut.scenario3.reporting.obligations.heading", optId = Some("your-reporting-obligations-heading"))
+
+    @p(id=Some("use-mtd-in-future")){
+        @messages("optout.confirmedOptOut.scenario3.reporting.obligations.p1")
+    }
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="your-obligations-bullet-1">@messages("optout.confirmedOptOut.scenario3.reporting.obligations.bullet1")</li>
+        <li id="your-obligations-bullet-2">@messages("optout.confirmedOptOut.scenario3.reporting.obligations.bullet2")</li>
+    </ul>
+
+    @{
+        val content = HtmlContent(messages("optout.confirmedOptOut.scenario3.reporting.obligations.inset", viewModel.endYear))
+
+        govukInsetText(InsetText(id = Some("gross-income-threshold-warning"), content = content))
+    }
+
+    @p(id=Some("we-will-let-you-know")){
+        @messages("optout.confirmedOptOut.scenario3.reporting.obligations.p2")
+    }
+
+    @p(id=Some("you-can-check-thresholds")){
+        @messages("optout.confirmedOptOut.scenario3.reporting.obligations.p3")
+        @link(
+            link = ExternalUrlHelper.saWhoNeedsToSignUpUrl,
+            id = Some("sign-up-criteria-link"),
+            messageKey = "optout.confirmedOptOut.scenario3.reporting.obligations.p3.link",
+            target = Some("_blank"),
+            additionalOpenTabMessage = Some(".")
+        )
+    }
+
+}
+
+
+@scenario4ReportingObligationsSection = {
+
+    @h2(msg = "optout.confirmedOptOut.scenario4.reporting.obligations.heading", optId = Some("your-reporting-obligations-heading"))
+
+    @p(id=Some("use-mtd-in-future")){
+        @messages("optout.confirmedOptOut.scenario4.reporting.obligations.p1")
+    }
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="your-obligations-bullet-1">@messages("optout.confirmedOptOut.scenario4.reporting.obligations.bullet1")</li>
+        <li id="your-obligations-bullet-2">@messages("optout.confirmedOptOut.scenario4.reporting.obligations.bullet2")</li>
+    </ul>
+
+    @{
+        val content = HtmlContent(messages("optout.confirmedOptOut.scenario4.reporting.obligations.inset", viewModel.endYear))
+        govukInsetText(InsetText(id = Some("gross-income-threshold-warning"), content = content))
+    }
+
+        @p(id=Some("we-will-let-you-know")){
+        @messages("optout.confirmedOptOut.scenario4.reporting.obligations.p2")
+    }
+
+    @p(id=Some("you-can-check-thresholds")){
+        @messages("optout.confirmedOptOut.scenario4.reporting.obligations.p3")
+        @link(
+            link = ExternalUrlHelper.saWhoNeedsToSignUpUrl,
+            id = Some("sign-up-criteria-link"),
+            messageKey = "optout.confirmedOptOut.scenario4.reporting.obligations.p3.link",
+            target = Some("_blank"),
+            additionalOpenTabMessage = Some(".")
+        )
+    }
+
+}
+
+@optOutYearFollowedByMandatedContent = {
+
+    @h2(msg = "optout.confirmedOptOut.report-quarterly-next-year-onwards")
+
+    @{
+        val externalRefLink = compatibleSoftwareLink
+        val anchor = link(
+            id = Some("software-compatible-ext"),
+            target = Some("_blank"),
+            link = externalRefLink,
+            messageKey = "optout.confirmedOptOut.software-compatible"  )
+
+        val content = HtmlContent(messages("optout.confirmedOptOut.warning-quarterly-update.text",
+                                            viewModel.endYear) + anchor.toString())
+
+        govukInsetText(InsetText(
+            id = Some("warning-quarterly-update"),
+            content = content ))
+    }
+
+    @p(){
+        @messages("optout.confirmedOptOut.reportQuarterly.reason-list")
+    }
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("optout.confirmedOptOut.reportQuarterly.reason1")</li>
+        <li>@messages("optout.confirmedOptOut.reportQuarterly.reason2")</li>
+    </ul>
+}
+
+
+@yourReportingFrequencyBlock = @{
+    val reportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+    val reportingFrequencyLink = link(
+        id = Some("your-reporting-frequency-link"),
+        link = reportingFrequencyUrl,
+        messageKey = "optout.confirmedOptOut.yourReportingFrequency.text"
+    )
+
+    Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc2", reportingFrequencyLink.toString()))
+}
+
+@revisedDeadlinesBlock = {
+    <div id="revised-deadlines" class="govuk-!-margin-bottom-7 govuk-!-margin-top-8">
+        @h2(msg = "optout.confirmedOptOut.yourRevisedDeadlines.h2", optId = Some("revised-deadlines-heading"))
+        @p(id = Some("revised-deadlines-p1")){
+            @Html(messages("optout.confirmedOptOut.yourRevisedDeadlines.desc1", viewModel.startYear, viewModel.endYear, viewModel.nextYear))
+        }
+        @p(id = Some("view-upcoming-updates")) {
+            @link(
+                id = Some("view-upcoming-updates-link"),
+                link = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url,
+                messageKey = "optout.confirmedOptOut.viewUpcomingDeadlines.text"
+            )
+        }
+        @if(showReportingFrequencyContent) {
+            @p(id = Some("your-reporting-frequency-block")) {
+                @yourReportingFrequencyBlock
+            }
+        }
+    </div>
+}
+
+@reportingUpdatesBlock = {
+
+    <div id="reporting-updates" class="govuk-!-margin-bottom-9  govuk-!-margin-top-8">
+        @if(viewModel.isOneYearOptOutFollowedByMandated) {
+            @optOutYearFollowedByMandatedContent
+        } else {
+            @h2(msg = "optout.confirmedOptOut.reportQuarterly")
+            @p(){
+                @messages("optout.confirmedOptOut.reportQuarterly.desc1")
+            }
+            <ul class="govuk-list govuk-list--bullet">
+                <li>@messages("optout.confirmedOptOut.reportQuarterly.p1")</li>
+                <li>@messages("optout.confirmedOptOut.reportQuarterly.p2")</li>
+            </ul>
+            <div class="govuk-inset-text">@messages("optout.confirmedOptOut.reportQuarterly.example", viewModel.startYear, viewModel.endYear, viewModel.nextYear)</div>
+            @p(){
+                @messages("optout.confirmedOptOut.reportQuarterly.desc2")
+            }
+        }
+        @p(){
+            @{
+                val externalRefLink = ExternalUrlHelper.saWhoNeedsToSignUpUrl
+                val anchor = link(
+                    id = Some("sign-up-criteria-ext"),
+                    target = Some("_blank"),
+                    link = externalRefLink,
+                    messageKey = "optout.confirmedOptOut.reportQuarterly.desc3.anchor-text"
+                )
+
+                Html(messages("optout.confirmedOptOut.reportQuarterly.desc3", anchor.toString()))
+            }
+        }
+    </div>
+}
+
+@submitTaxReturnParagraph1 = {
+    @p(id = Some("now-you-have-opted-out")) {
+        @messages("optout.confirmedOptOut.submitTax.confirmed.p1")
+        @link(link = selfAssessmentTaxReturnLink, id = Some("self-assessment-tax-return-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p1.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+    }
+}
+
+@submitTaxReturnParagraph2 = {
+    @p(id = Some("tax-year-reporting-quarterly")) {
+        @messages("optout.confirmedOptOut.submitTax.confirmed.p2")
+        @link(link = compatibleSoftwareLink, id = Some("compatible-software-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p2.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+    }
+}
+
+@submitTaxReturnScenario4Paragraph1 = {
+    @p(id = Some("now-you-have-opted-out")) {
+        @messages("optout.confirmedOptOut.scenario4.submitTax.confirmed.p1")
+        @link(link = selfAssessmentTaxReturnLink, id = Some("self-assessment-tax-return-link"), messageKey = "optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+    }
+}
+
+@mainTemplate(
+    pageTitle = messages("optout.confirmedOptOut.heading"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+) {
+
+    @if(confirmedOptOutViewScenarios == Scenario1Content) {
+        @greenPanelScenario1And4
+        @revisedDeadlinesBlock
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
+            @submitTaxReturnParagraph1
+        </div>
+        @scenario1ReportingObligationsSection
+    }
+
+    @if(confirmedOptOutViewScenarios == Scenario2Content) {
+        @greenPanelScenario2
+        @revisedDeadlinesBlock
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
+            @submitTaxReturnParagraph1
+            @submitTaxReturnParagraph2
+        </div>
+        @scenario2ReportingObligationsSection
+    }
+
+    @if(confirmedOptOutViewScenarios == Scenario3Content) {
+        @greenPanelScenario3
+        @revisedDeadlinesBlock
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
+            @submitTaxReturnParagraph1
+            @submitTaxReturnParagraph2
+        </div>
+        @scenario3ReportingObligationsSection
+    }
+
+    @if(confirmedOptOutViewScenarios == Scenario4Content) {
+        @greenPanelScenario1And4
+        @revisedDeadlinesBlock
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
+            @submitTaxReturnScenario4Paragraph1
+        </div>
+        @scenario4ReportingObligationsSection
+    }
+}
