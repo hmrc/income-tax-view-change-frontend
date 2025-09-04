@@ -637,8 +637,8 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
-        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1)))
+        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(100), documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(100), documentDueDate = Some(LocalDate.of(2020,1,1)))
       ),
       financialDetails = List(
         financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
@@ -918,7 +918,7 @@ object FinancialDetailsTestConstants {
         latePaymentInterestId = Some("latePaymentInterestId1"),
         interestFromDate = Some(LocalDate.of(2018, 3, 29)),
         interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-        accruingInterestAmount = None,
+        accruingInterestAmount = Some(100),
         lpiWithDunningLock = None,
         paymentLotItem = Some("paymentLotItem"),
         paymentLot = Some("paymentLot"))
@@ -1028,7 +1028,7 @@ object FinancialDetailsTestConstants {
         latePaymentInterestId = Some("latePaymentInterestId1"),
         interestFromDate = Some(LocalDate.of(2018, 3, 29)),
         interestEndDate = Some(LocalDate.of(2018, 3, 29)),
-        accruingInterestAmount = Some(-100),
+        accruingInterestAmount = Some(100),
         lpiWithDunningLock = None,
         paymentLotItem = Some("paymentLotItem"),
         paymentLot = Some("paymentLot"))

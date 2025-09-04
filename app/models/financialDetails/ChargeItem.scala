@@ -92,10 +92,7 @@ case class ChargeItem (
 
   def getAmountCodedOut: BigDecimal = amountCodedOut.getOrElse(throw MissingFieldException("documentAmountCodedOut"))
 
-  def isPaid: Boolean = outstandingAmount match {
-    case amount if amount == 0 => true
-    case _ => false
-  }
+  def isPaid: Boolean = outstandingAmount == 0
 
   val isAccruingInterest: Boolean = accruingInterestAmount match {
     case Some(amount) if amount <= 0 => false

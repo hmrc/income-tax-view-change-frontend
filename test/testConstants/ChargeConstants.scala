@@ -179,12 +179,13 @@ trait ChargeConstants {
   def financialDetailsOverdueWithLpi(
                                       accruingInterestAmount: List[Option[BigDecimal]],
                                       dunningLock: List[Option[String]],
-                                      lpiWithDunningLock: List[Option[BigDecimal]] = List(None, None)): List[ChargeItem] =
+                                      lpiWithDunningLock: List[Option[BigDecimal]] = List(None, None),
+                                      outstandingAmount: List[BigDecimal] = List(50.0, 75.0)): List[ChargeItem] =
     testFinancialDetailsChargeItems(
       dueDate = List(Some(fixedDate.minusDays(10)), Some(fixedDate.minusDays(1))),
       dunningLock = dunningLock,
       lpiWithDunningLock = lpiWithDunningLock,
-      outstandingAmount = List(50.0, 75.0),
+      outstandingAmount = outstandingAmount,
       taxYear = fixedDate.getYear.toString,
       interestRate = List(Some(2.6), Some(6.2)),
       accruingInterestAmount = accruingInterestAmount,
@@ -576,7 +577,7 @@ trait ChargeConstants {
         documentDate = LocalDate.of(2018, 3, 29),
         dueDate = Some(fixedDate.minusDays(10)),
         originalAmount = 43.21,
-        outstandingAmount = 50.0,
+        outstandingAmount = 0.0,
         interestOutstandingAmount = None,
         accruingInterestAmount = accruingInterestAmount,
         interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -794,7 +795,7 @@ trait ChargeConstants {
     transactionId = List(id1040000123, id1040000124),
     transactionTypes = List(LateSubmissionPenalty, PoaTwoDebit),
     dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
-    outstandingAmount = List(100.0, 0),
+    outstandingAmount = List(0, 0),
     taxYear = fixedDate.getYear.toString,
     accruingInterestAmount = List(Some(100.0), None),
     interestEndDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
