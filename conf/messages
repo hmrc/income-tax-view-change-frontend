@@ -3208,6 +3208,40 @@ reporting.frequency.table.mandated.r17                              = Required
 reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
 reporting.frequency.table.annual.r17                                = Opted out
 
+#changing reporting obligations section - R17
+reporting.obligations.changing.h2                                   = Changing your reporting obligations
+
+reporting.obligations.changing.signUp.currentYear.onwards           = Sign up from the current tax year
+reporting.obligations.changing.signUp.currentYear.single            = Sign up to the current tax year
+reporting.obligations.changing.desc1.signUp.currentYear.onwards     = You can start using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc1.signUp.currentYear.single      = You can start using Making Tax Digital for Income Tax for the {0} to {1} tax year.
+reporting.obligations.changing.desc2.signUp.currentYear             = Start now
+reporting.obligations.changing.desc2.signUp.currentYear.withDate    = Start from 6 April {0}
+reporting.obligations.changing.desc3.signUp.currentYear             = If you sign up to the current tax year after
+reporting.obligations.changing.desc4.signUp.currentYear             = 7 August {0},
+reporting.obligations.changing.desc5.signUp.currentYear             = you would have at least one quarterly update overdue.
+reporting.obligations.changing.signUp.nextYear                      = Sign up from the next tax year
+reporting.obligations.changing.desc1.signUp.nextYear                = You can choose to use Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc2.signUp.nextYear                = Start from 6 April {0}
+reporting.obligations.changing.signUp.link.text                     = Sign up
+
+reporting.obligations.changing.optOut.previousYear.onwards          = Opt out from the last tax year
+reporting.obligations.changing.optOut.previousYear.single           = Opt out of the last tax year
+reporting.obligations.changing.desc1.optOut.previousYear.onwards    = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year.
+reporting.obligations.changing.desc1.optOut.previousYear.single     = You can stop using Making Tax Digital for Income Tax for the {0} to {1} tax year.
+reporting.obligations.changing.desc2.optOut.previousYear            = Stop now
+reporting.obligations.changing.optOut.currentYear.onwards           = Opt out from the current tax year
+reporting.obligations.changing.optOut.currentYear.single            = Opt out of the current tax year
+reporting.obligations.changing.desc1.optOut.currentYear.onwards     = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc1.optOut.currentYear.single      = You can stop using Making Tax Digital for Income Tax for the {0} to {1} tax year.
+reporting.obligations.changing.desc2.optOut.currentYear             = Stop now
+reporting.obligations.changing.desc2.optOut.currentYear.withDate    = Stop from 6 April {0}
+reporting.obligations.changing.optOut.nextYear                      = Opt out from the next tax year
+reporting.obligations.changing.desc1.optOut.nextYear                = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc2.optOut.nextYear                = Stop from 6 April {0}
+reporting.obligations.changing.optOut.link.text                     = Opt out
+
+#ceased business warning message
 reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
 reporting.frequency.ceasedBusiness.warning.link                     = your businesses
 reporting.frequency.ceasedBusiness.warning.text.2                   = page.
