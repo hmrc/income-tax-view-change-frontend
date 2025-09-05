@@ -1314,6 +1314,9 @@ paymentHistory.balancingCharge                                  = Credit from ov
 paymentHistory.repaymentInterest                                = Credit from repayment interest
 paymentHistory.POA1RR-credit                                    = First payment on account: credit from your tax return
 paymentHistory.POA2RR-credit                                    = Second payment on account: credit from your tax return
+paymentHistory.POA1                                             = First payment on account collected through your PAYE tax code
+paymentHistory.POA2                                             = Second payment on account collected through your PAYE tax code
+paymentHistory.BCD                                              = Balancing payment collected through PAYE tax code
 
 paymentHistory.taxYear                                          = {0} to {1} tax year
 
