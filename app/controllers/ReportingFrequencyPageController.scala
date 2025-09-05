@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateServiceInterface
 import services.optIn.OptInService
-import services.optout.OptOutService
+import services.optout.{OptOutPropositionTypes, OptOutService, OptOutState}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.MtdConstants
 import viewUtils.ReportingFrequencyViewUtils
@@ -70,6 +70,7 @@ class ReportingFrequencyPageController @Inject()(
                 controllers.optOut.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
             }
           }
+
           Ok(view(
             ReportingFrequencyViewModel(
               isAgent = user.isAgent(),
