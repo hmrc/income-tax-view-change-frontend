@@ -62,7 +62,7 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   // ===========================
   val incomeSourceDetailsUrl: String => String = mtditid => s"/income-tax-view-change/income-sources/$mtditid"
 
-  def stubGetIncomeSourceDetailsResponse(mtditid: String)(status: Int, response: IncomeSourceDetailsResponse): Unit =
+  def stubGetIncomeSourceDetailsResponse(mtditid: String)(status: Int, response: IncomeSourceDetailsResponse): StubMapping =
     WiremockHelper.stubGet(incomeSourceDetailsUrl(mtditid), status, response.toJson.toString)
 
   def stubGetIncomeSourceDetailsErrorResponse(mtditid: String)(status: Int): Unit =
@@ -102,7 +102,7 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
     s"/income-tax-view-change/$nino/open-obligations"
   }
 
-  def stubGetAllObligations(nino: String, fromDate: LocalDate, toDate: LocalDate, deadlines: ObligationsModel): Unit =
+  def stubGetAllObligations(nino: String, fromDate: LocalDate, toDate: LocalDate, deadlines: ObligationsModel): StubMapping =
     WiremockHelper.stubGet(allObligationsUrl(nino, fromDate, toDate), Status.OK, Json.toJson(deadlines).toString())
 
   def stubGetAllObligationsNotFound(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =

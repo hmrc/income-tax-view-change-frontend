@@ -26,24 +26,30 @@ import testConstants.BaseIntegrationTestConstants.testSessionId
 
 class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) extends CustomMatchers {
 
-  def stubOptOutInitialState(currentTaxYear: TaxYear,
-                             previousYearCrystallised: Boolean,
-                             previousYearStatus: ITSAStatus.Value,
-                             currentYearStatus: ITSAStatus.Value,
-                             nextYearStatus: ITSAStatus.Value): Unit = {
+  def stubOptOutInitialState(
+                              currentTaxYear: TaxYear,
+                              previousYearCrystallised: Boolean,
+                              previousYearStatus: ITSAStatus.Value,
+                              currentYearStatus: ITSAStatus.Value,
+                              nextYearStatus: ITSAStatus.Value,
+                              selectedOptOutYear: Option[String] = None
+                            ): Boolean = {
     repository.set(
-        UIJourneySessionData(
-          sessionId = testSessionId,
-          journeyType = OptOutJourney.toString,
-          optOutSessionData =
-            Some(OptOutSessionData(
-              Some(OptOutContextData(
-                currentYear = currentTaxYear.toString,
-                previousYearCrystallised,
-                statusToString(status = previousYearStatus),
-                statusToString(status = currentYearStatus),
-                statusToString(status = nextYearStatus))), None))))
-      .futureValue shouldBe true
+      UIJourneySessionData(
+        sessionId = testSessionId,
+        journeyType = OptOutJourney.toString,
+        optOutSessionData =
+          Some(OptOutSessionData(
+            Some(OptOutContextData(
+              currentYear = currentTaxYear.toString,
+              crystallisationStatus = previousYearCrystallised,
+              previousYearITSAStatus = statusToString(status = previousYearStatus),
+              currentYearITSAStatus = statusToString(status = currentYearStatus),
+              nextYearITSAStatus = statusToString(status = nextYearStatus))),
+            selectedOptOutYear = selectedOptOutYear
+          ))
+      )
+    ).futureValue
   }
 
 }

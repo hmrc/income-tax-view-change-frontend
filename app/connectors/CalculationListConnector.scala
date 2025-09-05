@@ -54,7 +54,9 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
                 s"Json validation error parsing legacy calculation list response, error $invalid")
               CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing legacy calculation list response")
             },
-            valid => valid
+            valid => {
+              valid
+            }
           )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {

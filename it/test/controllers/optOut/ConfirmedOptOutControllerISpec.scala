@@ -23,12 +23,16 @@ import helpers.{OptOutSessionRepositoryHelper, WiremockHelper}
 import models.admin.{NavBarFs, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
+import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.ITSAStatusTestConstants.successITSAStatusResponseJson
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
+import testConstants.ITSAStatusTestConstants.{successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+
+import java.time.LocalDate
 
 class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
 
@@ -47,40 +51,80 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
     pathStart + "/optout/confirmed"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole)
-    val additionalCookies = getAdditionalCookies(mtdUserRole)
-    s"GET $path" when {
-      s"a user is a $mtdUserRole" that {
-        "is authenticated, with a valid enrolment" should {
-          s"render confirm single year opt out page" in {
-            enable(OptOutFs)
-            disable(NavBarFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+  mtdAllRoles.foreach {
+    mtdUserRole =>
+      val path = getPath(mtdUserRole)
+      val additionalCookies = getAdditionalCookies(mtdUserRole)
 
-            val responseBody = Json.arr(successITSAStatusResponseJson)
-            val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+      s"GET $path" when {
+        s"a user is a $mtdUserRole" that {
+          "is authenticated, with a valid enrolment" should {
+            s"render confirm single year opt out page" in {
 
-            WiremockHelper.stubGet(url, OK, responseBody.toString())
+              enable(OptOutFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
 
-            helper.stubOptOutInitialState(currentTaxYear,
-              previousYearCrystallised = false,
-              previousYearStatus = Voluntary,
-              currentYearStatus = Mandated,
-              nextYearStatus = Mandated)
+              IncomeTaxViewChangeStub.stubGetAllObligations(
+                nino = testNino,
+                fromDate = LocalDate.of(2021, 1, 1),
+                toDate = LocalDate.of(2022, 1, 1),
+                deadlines = ObligationsModel(Seq(GroupedObligationsModel(
+                  identification = "fakeId",
+                  obligations = List(
+                    SingleObligationModel(
+                      start = LocalDate.of(2021, 1, 1),
+                      end = LocalDate.of(2022, 1, 1),
+                      due = LocalDate.of(2023, 1, 1),
+                      obligationType = "Quarterly",
+                      dateReceived = Some(LocalDate.of(2021, 1, 1)),
+                      periodKey = "#004",
+                      status = StatusFulfilled,
+                    )
+                  )
+                )))
+              )
 
-            val result = buildGETMTDClient(path, additionalCookies).futureValue
-            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            result should have(
-              httpStatus(OK),
-              pageTitle(mtdUserRole, "optout.confirmedOptOut.heading")
-            )
+              val calcResponseBody =
+                """
+                  |{
+                  |  "calculationId": "TEST_ID",
+                  |  "calculationTimestamp": "TEST_STAMP",
+                  |  "calculationType": "TEST_TYPE",
+                  |  "crystallised": false
+                  |}
+                  |""".stripMargin
+
+              WiremockHelper.stubGet("/income-tax-view-change/list-of-calculation-results/AA123456A/2022", 200, calcResponseBody)
+
+              val responseBody = Json.arr(successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023)
+
+              val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+
+              WiremockHelper.stubGet(url, OK, responseBody.toString())
+
+              helper.stubOptOutInitialState(
+                currentTaxYear = currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Voluntary,
+                currentYearStatus = Mandated,
+                nextYearStatus = Mandated,
+                selectedOptOutYear = Some("2022-2023")
+              )
+
+              val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "optout.confirmedOptOut.heading")
+              )
+            }
           }
+          testAuthFailures(path, mtdUserRole)
         }
-        testAuthFailures(path, mtdUserRole)
       }
-    }
   }
 }
