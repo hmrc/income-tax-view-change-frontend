@@ -97,7 +97,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
       financialDetails             = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) => fd }
       documentDetailsWithDueDate   = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
       chargeItems                  = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
-      codedOutBCAndPoas            = chargeItems.filter(x => x.isCodingOutAndNotCancelled && (x.isBalancingCharge || x.isPoaDebit))
+      codedOutBCAndPoas            = chargeItems.filter(x => x.isCodingOutAcceptedOrFullyCollected && (x.isBalancingCharge || x.isPoaDebit))
     } yield {
 
       Future.traverse(codedOutBCAndPoas) { chargeItem =>

@@ -118,7 +118,7 @@ case class ChargeItem (
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
-  def isCodingOutAndNotCancelled: Boolean = {
+  def isCodingOutAcceptedOrFullyCollected: Boolean = {
     val codingOutSubTypes = Seq(Accepted, FullyCollected)
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
