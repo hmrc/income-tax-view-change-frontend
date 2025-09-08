@@ -101,9 +101,11 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
       updatedCharges              <- Future.traverse(codedOutBCAndPoas) { chargeItem =>
 
         chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, chargeItem.chargeReference, isEnabled(ChargeHistory)).map {
+
           case Left(ChargesHistoryErrorModel(code, message)) =>
             Logger("application").info(s"Failed to retrieve history for charge with id: ${chargeItem.transactionId}, code: $code, message: $message")
             chargeItem
+
           case Right(chargeHistoryItems) =>
 
             val maybeLatestDocumentDate =
