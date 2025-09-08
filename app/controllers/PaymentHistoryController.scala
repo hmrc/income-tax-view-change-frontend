@@ -67,7 +67,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     for {
       payments                                 <- paymentHistoryService.getPaymentHistory
       repayments                               <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
-      codedOutBCCAndPoasWithLatestDocumentDate <- paymentHistoryService.getChargesWithUpdatedDocumentDateIfChargeHistoryExists()
+      codedOutBCAndPoasWithLatestDocumentDate  <- paymentHistoryService.getChargesWithUpdatedDocumentDateIfChargeHistoryExists()
     } yield (payments, repayments) match {
 
       case (Right(payments), Right(repayments)) =>
@@ -80,7 +80,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           isAgent = isAgent,
           payments = payments,
           repayments = repayments,
-          codedOutCharges = codedOutBCCAndPoasWithLatestDocumentDate,
+          codedOutCharges = codedOutBCAndPoasWithLatestDocumentDate,
           languageUtils = languageUtils
         )
 

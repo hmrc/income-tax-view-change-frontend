@@ -97,10 +97,10 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
       financialDetails             = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) => fd }
       documentDetailsWithDueDate   = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
       chargeItems                  = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
-      codedOutBCCAndPoas           = chargeItems.filter(x => x.isCodingOut && (x.isBalancingCharge || x.isPoaDebit))
+      codedOutBCAndPoas            = chargeItems.filter(x => x.isCodingOut && (x.isBalancingCharge || x.isPoaDebit))
     } yield {
 
-      Future.traverse(codedOutBCCAndPoas) { chargeItem =>
+      Future.traverse(codedOutBCAndPoas) { chargeItem =>
         chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, chargeItem.chargeReference, isEnabled(ChargeHistory)).map {
           case Left(ChargesHistoryErrorModel(code, message)) =>
             Logger("application").info(s"Failed to retrieve history for charge with id: ${chargeItem.transactionId}, code: $code, message: $message")
@@ -108,8 +108,8 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
           case Right(chargeHistoryItems) =>
 
             val maybeLatestDocumentDate = chargeHistoryItems.sortWith { (a, b) =>
-              if (a.documentDate.isEqual(b.documentDate)) a.documentId < b.documentId
-              else a.documentDate.isAfter(b.documentDate)
+              if (a.documentDate.isEqual(b.documentDate)) a.documentId < b.documentId             // tie-break on documentId
+              else                                        a.documentDate.isAfter(b.documentDate)
             }
               .map(_.documentDate)
               .headOption
