@@ -16,6 +16,7 @@
 
 package testConstants
 
+import cats.implicits.catsSyntaxOptionId
 import models.nrs._
 import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS}
 import play.api.libs.json.{JsValue, Json}
@@ -126,10 +127,10 @@ object NrsUtils {
         .withBody(nrsMetadataBody)
 
     NrsMetadata(
-      Instant.parse("2018-04-07T12:13:25.000Z"),
-      "3216783621-123873821-12332",
-      identityData,
       request,
+      Instant.parse("2018-04-07T12:13:25.000Z"),
+      identityData,
+      SearchKeys("credId".some, "saUtr".some, "nino"),
       request.body.calculateSha256)
   }
 

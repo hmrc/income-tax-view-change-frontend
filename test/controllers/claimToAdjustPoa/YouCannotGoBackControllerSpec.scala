@@ -22,8 +22,8 @@ import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionServ
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 

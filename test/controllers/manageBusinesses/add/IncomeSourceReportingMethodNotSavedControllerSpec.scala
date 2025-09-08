@@ -16,7 +16,6 @@
 
 package controllers.manageBusinesses.add
 
-import controllers.routes
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -29,7 +28,7 @@ import play.api.Application
 import play.api.mvc.Result
 import play.api.test.Helpers._
 import services.SessionService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, ukPlusForeignPropertyAndSoleTraderNoLatency}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderNoLatency
 
 import scala.concurrent.Future
 

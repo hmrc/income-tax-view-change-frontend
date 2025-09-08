@@ -65,7 +65,8 @@ formWithCSRF: FormWithCSRF
             @govukButton(Button(
                 id = Some("confirm-button"),
                 content = Text(messages("base.confirm-and-save")),
-                attributes = Map("id" -> "confirm-button")
+                attributes = Map("id" -> "confirm-button"),
+                preventDoubleClick = Some(true)
             ))
             <a class="govuk-link" href=@cancelURL id="cancel-button">@messages("optout.checkAnswers.cancel")</a>
         </div>

@@ -113,6 +113,7 @@ object FeatureSwitchName {
       PenaltiesBackendEnabled,
       YourSelfAssessmentCharges,
       OptInOptOutContentUpdateR17,
+      SubmitClaimToAdjustToNrs,
       SelfServeTimeToPayR17,
       TriggeredMigration
     )
@@ -208,4 +209,9 @@ case object SelfServeTimeToPayR17 extends FeatureSwitchName {
 case object TriggeredMigration extends FeatureSwitchName {
   override val name: String = "triggered-migration"
   override val toString: String = "Triggered Migration"
+}
+
+case object SubmitClaimToAdjustToNrs extends FeatureSwitchName {
+  override val name: String = "submit-claim-to-adjust-to-nrs"
+  override val toString: String = "Submit Claim to Adjust to NRS"
 }
