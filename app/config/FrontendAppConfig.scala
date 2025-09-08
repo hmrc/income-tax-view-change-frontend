@@ -18,7 +18,7 @@ package config
 
 import com.google.inject.Inject
 import play.api.Configuration
-import play.api.i18n.Lang
+import play.api.i18n.{Lang, Messages}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Singleton
@@ -205,6 +205,11 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //External-Urls
   val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
   val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
+ def compatibleSoftwareLink(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "en" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+      case "cy" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy"
+    }
 
 
 
