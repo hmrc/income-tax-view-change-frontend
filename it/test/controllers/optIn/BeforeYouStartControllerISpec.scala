@@ -122,7 +122,11 @@ class BeforeYouStartControllerISpec extends ControllerISpecHelper {
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus), statusToString(nextYearStatus))), None)))))
+              currentTaxYear.toString,
+              statusToString(currentYearStatus),
+              statusToString(nextYearStatus)
+            )),
+            None)))))
   }
 }
 

@@ -16,7 +16,6 @@
 
 package controllers.manageBusinesses.add
 
-import controllers.manageBusinesses.add.routes
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -27,7 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.manageBusinesses.IncomeSourceRFService
 import services.{DateService, SessionService, UpdateIncomeSourceService}

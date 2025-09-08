@@ -77,7 +77,7 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
       }
 
       "return a response of Not Applicable" when {
-        val notApplicableStatuses = List(ITSAStatus.NoStatus, ITSAStatus.Dormant, ITSAStatus.Exempt, ITSAStatus.NonDigital)
+        val notApplicableStatuses = List(ITSAStatus.NoStatus, ITSAStatus.Dormant, ITSAStatus.Exempt, ITSAStatus.DigitallyExempt)
 
         notApplicableStatuses.foreach{ status =>
           s"ITSA status is ${status.toString}" in {

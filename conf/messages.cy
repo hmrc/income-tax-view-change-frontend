@@ -1302,7 +1302,7 @@ paymentHistory.heading                                          = Hanes taliadau
 paymentHistory.info                                             = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
 paymentHistory.info.2                                           = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
-paymentHistory.button                                           = Taliadau {0}
+paymentHistory.button                                           = Taliadau, credydau ac ad-daliadau {0}
 
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
 paymentHistory.payment                                          = Taliad roeddech wedi’i wneud i CThEF
@@ -1313,6 +1313,11 @@ paymentHistory.balancingCharge                                  = Credyd o ordal
 paymentHistory.repaymentInterest                                = Credyd o log ar ad-daliadau
 paymentHistory.POA1RR-credit                                    = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 paymentHistory.POA2RR-credit                                    = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
+paymentHistory.activity                                         = Gweithgarwch {0}
+
+paymentHistory.POA1                                             = First payment on account collected through your PAYE tax code
+paymentHistory.POA2                                             = Second payment on account collected through your PAYE tax code
+paymentHistory.BCD                                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 
 paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
 
