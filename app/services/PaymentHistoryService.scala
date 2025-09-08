@@ -92,15 +92,14 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
 
   def getChargesWithUpdatedDocumentDateIfChargeHistoryExists()(implicit mtdItUser: MtdItUser[_], hc: HeaderCarrier): Future[List[ChargeItem]] = {
 
-    (for {
+    for {
       financialDetailsModel       <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
       financialDetails             = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) => fd }
       documentDetailsWithDueDate   = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
       chargeItems                  = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
       codedOutBCAndPoas            = chargeItems.filter(x => x.isCodingOutAcceptedOrFullyCollected && (x.isBalancingCharge || x.isPoaDebit))
-    } yield {
+      updatedCharges              <- Future.traverse(codedOutBCAndPoas) { chargeItem =>
 
-      Future.traverse(codedOutBCAndPoas) { chargeItem =>
         chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, chargeItem.chargeReference, isEnabled(ChargeHistory)).map {
           case Left(ChargesHistoryErrorModel(code, message)) =>
             Logger("application").info(s"Failed to retrieve history for charge with id: ${chargeItem.transactionId}, code: $code, message: $message")
@@ -109,9 +108,8 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
 
             val maybeLatestDocumentDate =
               chargeHistoryItems
-                .sortWith((a, b) => a.documentDate.isAfter(b.documentDate))
                 .map(_.documentDate)
-                .headOption
+                .maxOption
 
             maybeLatestDocumentDate.fold {
               Logger("application").info(s"Empty charge history found for charge with chargeReference: ${chargeItem.chargeReference}")
@@ -121,8 +119,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
             }
         }
       }
-    })
-      .flatten
+    } yield updatedCharges
   }
 }
 
