@@ -32,7 +32,7 @@ import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, PaymentHistoryService, RepaymentService}
+import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -49,8 +49,6 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                                          itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService,
                                          val repaymentService: RepaymentService,
-                                         financialDetailsService: FinancialDetailsService,
-                                         chargeHistoryService: ChargeHistoryService,
                                          paymentHistoryView: PaymentHistory,
                                          val customNotFoundErrorView: CustomNotFoundError
                                         )(implicit val appConfig: FrontendAppConfig,

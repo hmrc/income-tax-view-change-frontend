@@ -30,7 +30,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import services.PaymentHistoryService.PaymentHistoryError
-import services.{FinancialDetailsService, PaymentHistoryService, RepaymentService}
+import services.{PaymentHistoryService, RepaymentService}
 
 import scala.concurrent.Future
 
@@ -39,7 +39,6 @@ class PaymentHistoryControllerSpec extends MockAuthActions
 
   lazy val paymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
   lazy val mockRepaymentService: RepaymentService = mock(classOf[RepaymentService])
-  lazy val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
