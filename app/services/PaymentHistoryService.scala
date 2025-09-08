@@ -107,12 +107,11 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
             chargeItem
           case Right(chargeHistoryItems) =>
 
-            val maybeLatestDocumentDate = chargeHistoryItems.sortWith { (a, b) =>
-              if (a.documentDate.isEqual(b.documentDate)) a.documentId < b.documentId             // tie-break on documentId
-              else                                        a.documentDate.isAfter(b.documentDate)
-            }
-              .map(_.documentDate)
-              .headOption
+            val maybeLatestDocumentDate =
+              chargeHistoryItems
+                .sortWith((a, b) => a.documentDate.isAfter(b.documentDate))
+                .map(_.documentDate)
+                .headOption
 
             maybeLatestDocumentDate.fold {
               Logger("application").info(s"Empty charge history found for charge with chargeReference: ${chargeItem.chargeReference}")
