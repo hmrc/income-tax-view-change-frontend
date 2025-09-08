@@ -118,6 +118,11 @@ case class ChargeItem (
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
+  def isCodingOutAndNotCancelled: Boolean = {
+    val codingOutSubTypes = Seq(Accepted, FullyCollected)
+    codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
+  }
+
   def interestIsPaid: Boolean = interestOutstandingAmount.exists(_ <= 0)
 
   def remainingToPay: BigDecimal = {
