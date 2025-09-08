@@ -1313,6 +1313,7 @@ paymentHistory.balancingCharge                                  = Credyd o ordal
 paymentHistory.repaymentInterest                                = Credyd o log ar ad-daliadau
 paymentHistory.POA1RR-credit                                    = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 paymentHistory.POA2RR-credit                                    = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
+
 paymentHistory.POA1                                             = First payment on account collected through your PAYE tax code
 paymentHistory.POA2                                             = Second payment on account collected through your PAYE tax code
 paymentHistory.BCD                                              = Taliad mantoli a gesglir drwy’r cod treth TWE
