@@ -37,20 +37,13 @@
 
 @soleTraderSection = {
     @h3(messages("triggered-migration.check-hmrc-records.soleTrader.heading"), classes = "govuk-heading-m", optId = Some("sole-trader-heading"))
-    @if(viewModel.hasSoleTraderBusinesses) {
-        @soleTraderContent
-    } else {
-        @p(id = Some("sole-trader-no-active-business-desc")){@messages("triggered-migration.check-hmrc-records.soleTrader.noActiveBusinesses")}
-    }
-    @link(link = "", messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link", id = Some("sole-trader-add-link"))
-}
+    @p(id = Some("sole-trader-guidance")){@messages("triggered-migration.check-hmrc-records.soleTrader.guidance")}
 
-@soleTraderContent = {
     @for((business, index) <- viewModel.soleTraderBusinesses.zipWithIndex) {
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title" id="sole-trader-business-@index">
-                    @business.incomeSource.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
+                @business.incomeSource.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
                 </h2>
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
@@ -65,7 +58,7 @@
                         @messages("triggered-migration.check-hmrc-records.soleTrader.businessName")
                         </dt>
                         <dd class="govuk-summary-list__value" id="sole-trader-business-name-value-@index">
-                            @business.businessName.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
+                        @business.businessName.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -80,13 +73,14 @@
             </div>
         </div>
     }
+    @link(link = "", messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link", id = Some("sole-trader-add-link"))
 }
 
 @propertyBusinessSection = @{
     (viewModel.hasActiveUkProperty, viewModel.hasActiveForeignProperty) match {
-        case (true, true) => HtmlFormat.fill(Seq(ukPropertyContent, foreignPropertyContent, addForeignPropertyLink))
+        case (true, true) => HtmlFormat.fill(Seq(ukPropertyContent, foreignPropertyContent))
         case (true, false) => HtmlFormat.fill(Seq(ukPropertyContent, addForeignPropertyLink))
-        case (false, true) => HtmlFormat.fill(Seq(addUkPropertyLink, foreignPropertyContent, addForeignPropertyLink))
+        case (false, true) => HtmlFormat.fill(Seq(addUkPropertyLink, foreignPropertyContent))
         case _ => HtmlFormat.fill(Seq(noActivePropertiesContent, addUkPropertyLink, addForeignPropertyLink))
     }
 }

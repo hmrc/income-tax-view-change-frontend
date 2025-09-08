@@ -3198,7 +3198,7 @@ triggered-migration.check-hmrc-records.soleTrader.businessName       = Business 
 triggered-migration.check-hmrc-records.soleTrader.businessState      = Business state
 triggered-migration.check-hmrc-records.soleTrader.active             = Active
 triggered-migration.check-hmrc-records.soleTrader.add.link           = Add a sole trader business
-triggered-migration.check-hmrc-records.soleTrader.noActiveBusinesses = You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader.
+triggered-migration.check-hmrc-records.soleTrader.guidance           = You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader.
 triggered-migration.check-hmrc-records.soleTrader.unknown            = Unknown
 
 triggered-migration.check-hmrc-records.property.heading              = Property businesses

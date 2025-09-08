@@ -45,7 +45,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
     val yourActiveBusinessesHeading = "Your active businesses"
     val soleTraderHeading = "Sole trader businesses"
     val addASoleTraderBusinessText = "Add a sole trader business"
-    val noActiveBusinessesText = "You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader."
+    val soleTraderGuidance = "You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader."
 
     val propertyHeading = "Property businesses"
     val ukPropertyHeading = "UK property"
@@ -96,6 +96,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 checkActiveSoleTrader(result)
                 checkActiveUkProperty(result)
+                checkNoForeignProperty(result)
               }
             }
             "has an active sole trader business and foreign property only" in {
@@ -118,7 +119,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
-                checkNoSoleTrader(result)
                 checkActiveForeignProperty(result)
                 checkActiveUkProperty(result)
               }
@@ -133,6 +133,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 checkActiveSoleTrader(result)
                 checkNoUkProperty(result)
+                checkNoForeignProperty(result)
                 checkNoProperty(result)
               }
             }
@@ -143,8 +144,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
-                checkNoSoleTrader(result)
                 checkActiveUkProperty(result)
+                checkNoForeignProperty(result)
               }
             }
             "has an active foreign property only" in {
@@ -154,7 +155,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
-                checkNoSoleTrader(result)
                 checkActiveForeignProperty(result)
                 checkNoUkProperty(result)
               }
@@ -166,9 +166,9 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
-                checkNoSoleTrader(result)
                 checkNoUkProperty(result)
                 checkNoProperty(result)
+                checkNoForeignProperty(result)
               }
             }
 
@@ -207,12 +207,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
     )
   }
 
-  def checkNoSoleTrader(res: WSResponse) = {
-    res should have(
-      elementTextByID("sole-trader-no-active-business-desc")(CheckHmrcRecordsMessages.noActiveBusinessesText),
-    )
-  }
-
   def checkActiveForeignProperty(res: WSResponse) = {
     res should have(
       elementTextByID("foreign-property-heading")(CheckHmrcRecordsMessages.foreignPropertyHeading),
@@ -243,6 +237,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
     )
   }
 
+  def checkNoForeignProperty(res: WSResponse) = {
+    res should have(
+      elementTextByID("foreign-property-add-link")(CheckHmrcRecordsMessages.addForeignPropertyBusinessText),
+    )
+  }
+
   def checkCommonContent(res: WSResponse, mtdUserRole: MTDUserRole): Assertion = {
     res should have(
       httpStatus(OK),
@@ -253,10 +253,10 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
       elementTextByID("check-hmrc-records-bullet-start")(CheckHmrcRecordsMessages.bulletStart),
       elementTextByID("check-hmrc-records-bullets")(s"${CheckHmrcRecordsMessages.bullet1} ${CheckHmrcRecordsMessages.bullet2}"),
       elementTextByID("your-active-businesses-heading")(CheckHmrcRecordsMessages.yourActiveBusinessesHeading),
+      elementTextByID("sole-trader-guidance")(CheckHmrcRecordsMessages.soleTraderGuidance),
       elementTextByID("sole-trader-heading")(CheckHmrcRecordsMessages.soleTraderHeading),
       elementTextByID("property-heading")(CheckHmrcRecordsMessages.propertyHeading),
       elementTextByID("sole-trader-add-link")(CheckHmrcRecordsMessages.addASoleTraderBusinessText),
-      elementTextByID("foreign-property-add-link")(CheckHmrcRecordsMessages.addForeignPropertyBusinessText),
       elementTextByID("confirm-records-heading")(CheckHmrcRecordsMessages.confirmRecordsHeading),
       elementTextByID("confirm-records-desc")(CheckHmrcRecordsMessages.confirmRecordsText),
       elementTextByID("continue-button")(CheckHmrcRecordsMessages.confirmRecordsButton)

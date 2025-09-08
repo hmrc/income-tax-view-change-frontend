@@ -3186,7 +3186,7 @@ triggered-migration.check-hmrc-records.soleTrader.businessName       = Enw’r b
 triggered-migration.check-hmrc-records.soleTrader.businessState      = Statws y busnes
 triggered-migration.check-hmrc-records.soleTrader.active             = Cyfredol
 triggered-migration.check-hmrc-records.soleTrader.add.link           = Ychwanegu busnes unig fasnachwr
-triggered-migration.check-hmrc-records.soleTrader.noActiveBusinesses = Rydych yn hunangyflogedig os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn ‘unig fasnachwr’. Os ydych yn gweithio drwy gwmni cyfyngedig, nid unig fasnachwr ydych chi.
+triggered-migration.check-hmrc-records.soleTrader.guidance           = Rydych yn hunangyflogedig os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn ‘unig fasnachwr’. Os ydych yn gweithio drwy gwmni cyfyngedig, nid unig fasnachwr ydych chi.
 triggered-migration.check-hmrc-records.soleTrader.unknown            = Anhysbys
 
 triggered-migration.check-hmrc-records.property.heading              = Busnesau eiddo
