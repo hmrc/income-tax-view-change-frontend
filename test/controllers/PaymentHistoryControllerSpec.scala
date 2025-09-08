@@ -21,7 +21,7 @@ import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import models.admin.PaymentHistoryRefunds
-import models.financialDetails.Payment
+import models.financialDetails.{ChargeItem, Payment}
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -30,7 +30,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import services.PaymentHistoryService.PaymentHistoryError
-import services.{PaymentHistoryService, RepaymentService}
+import services.{FinancialDetailsService, PaymentHistoryService, RepaymentService}
 
 import scala.concurrent.Future
 
@@ -39,6 +39,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
 
   lazy val paymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
   lazy val mockRepaymentService: RepaymentService = mock(classOf[RepaymentService])
+  lazy val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -73,6 +74,8 @@ class PaymentHistoryControllerSpec extends MockAuthActions
                 .thenReturn(Future.successful(Right(testPayments)))
               when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
                 .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
+              when(paymentHistoryService.getChargesWithUpdatedDocumentDateIfChargeHistoryExists()(any(), any()))
+                .thenReturn(Future.successful(List.empty[ChargeItem]))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
