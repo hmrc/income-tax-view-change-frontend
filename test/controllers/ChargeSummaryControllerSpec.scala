@@ -499,7 +499,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 document.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
                 document.getElementById("rar-charge-link").attr("href") shouldBe
-                  RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
+                  RepaymentHistoryUtils.getChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
                 document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
                 document.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
               }
@@ -518,7 +518,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
                 document.getElementById("rar-charge-link").attr("href") shouldBe
-                  RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
+                  RepaymentHistoryUtils.getChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
                 document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
                 document.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
               }
