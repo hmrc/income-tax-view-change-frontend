@@ -64,7 +64,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                     origin: Option[String] = None,
                     isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
-    for {
+    (for {
       payments                                 <- paymentHistoryService.getPaymentHistory
       repayments                               <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
       codedOutBCAndPoasWithLatestDocumentDate  <- paymentHistoryService.getChargesWithUpdatedDocumentDateIfChargeHistoryExists()
@@ -97,7 +97,11 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
         ))
           .addingToSession(gatewayPage -> PaymentHistoryPage.name)
 
-      case _ => logAndHandleError("failed to get payments and/or repayments")
+      case (Left(_), _) => logAndHandleError("failed to get payments")
+      case (_, Left(_)) => logAndHandleError("failed to get repayments")
+    }) recover {
+      case ex =>
+        logAndHandleError(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
     }
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
