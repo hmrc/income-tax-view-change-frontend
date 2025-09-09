@@ -211,6 +211,25 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. 30 March 2019 £2,000.00"
               }
 
+              "provided with an id associated to an ITSA Return Amendment charges" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment) {
+                enable(YourSelfAssessmentCharges, ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Balancing payment: extra amount due to amended return"
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £10.33"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementById("itsa-return-amendment-p1").text() shouldBe "You owe this extra tax because of a change you made to your return."
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
+                document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning This charge will have a daily interest until it is paid. The interest is backdated to the original due date."
+                document.getElementById("charge-history-heading").text() shouldBe "Balancing payment: extra amount due to amended return history"
+              }
+
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
                 enable(YourSelfAssessmentCharges, ChargeHistory, PenaltiesAndAppeals)
                 setupMockSuccess(mtdUserRole)
