@@ -29,7 +29,7 @@ class ConfirmedOptOutViewUtils @Inject()(
                                           h2: views.html.components.h2,
                                           p: views.html.components.p,
                                           appConfig: FrontendAppConfig
-                                        )(implicit messages: Messages) {
+                                        ) {
 
 
   val selfAssessmentTaxReturnLink = appConfig.selfAssessmentTaxReturn
