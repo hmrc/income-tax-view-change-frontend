@@ -27,13 +27,12 @@ import javax.inject.Inject
 class ConfirmedOptOutViewUtils @Inject()(
                                           link: views.html.components.link,
                                           h2: views.html.components.h2,
-                                          p: views.html.components.p,
-                                          appConfig: FrontendAppConfig
+                                          p: views.html.components.p
                                         ) {
 
 
-  val selfAssessmentTaxReturnLink = appConfig.selfAssessmentTaxReturn
-  val compatibleSoftwareLink = appConfig.compatibleSoftwareLink
+  val selfAssessmentTaxReturnLink = "https://www.gov.uk/log-in-file-self-assessment-tax-return"
+  val compatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   private def submitYourTaxReturnHeading()(implicit messages: Messages): HtmlFormat.Appendable =
     h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-tax-heading"))
