@@ -41,7 +41,7 @@ object ExternalUrlHelper {
   def quarterlyUpdatesGuidanceUrl(implicit messages: Messages): String =
   messages.lang.code match {
     case "en" => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
-    case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm"
+    case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm/anfon-diweddariadau-chwarterol"
   }
 
   def saWhoNeedsToSignUpUrl(implicit messages: Messages): String =
