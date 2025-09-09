@@ -204,7 +204,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //External-Urls
   val selfAssessmentTaxReturn = servicesConfig.getString("external-urls.self-assessment-tax-return-link")
-  val compatibleSoftwareLink = servicesConfig.getString("external-urls.compatible-software-link")
  def compatibleSoftwareLink(implicit messages: Messages): String =
     messages.lang.code match {
       case "en" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
