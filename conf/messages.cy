@@ -1196,7 +1196,7 @@ chargeSummary.chargeHistory.description							        = Disgrifiad
 chargeSummary.chargeHistory.amount								        = Swm
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = Gwnaeth CThEF greu eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = Gwnaeth CThEF greu eich ail daliad ar gyfrif
-chargeSummary.chargeHistory.created.balancingCharge.text		        = Taliad Mantoli wedi’i greu
+chargeSummary.chargeHistory.created.balancingCharge.text		        = Gwnaeth CThEF greu eich taliad mantoli
 chargeSummary.chargeHistory.created.class2Nic.text                      = Yswiriant Gwladol Dosbarth 2 wedi’i greu
 chargeSummary.chargeHistory.created.codingOut.text                      = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
@@ -1220,8 +1220,6 @@ chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = Gwnaet
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = Gwnaethoch ddiweddaru eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.POA1RR-credit                               = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 chargeSummary.chargeHistory.POA2RR-credit                               = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
-chargeSummary.chargeHistory.paymentOnAccount.text                       = Mae’r taliad ar gyfrif hwn yn mynd tuag at eich bil treth {0} i {1}.
-
 chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
 chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
 chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
