@@ -917,8 +917,8 @@ whatYouOwe.firstLatePaymentPenalty.text                            = Cosb gyntaf
 whatYouOwe.secondLatePaymentPenalty.text                           = Ail gosb am dalu’n hwyr
 whatYouOwe.lpi.firstLatePaymentPenalty.text                        = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
 whatYouOwe.lpi.secondLatePaymentPenalty.text                       = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
-whatYouOwe.itsaReturnAmendment.text                                = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
-tax-year-summary.payments.itsaReturnAmendment.text             = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
+whatYouOwe.lpi.lateSubmissionPenalty.text                          = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
+whatYouOwe.itsaReturnAmendment.text                                = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 
 whatYouOwe.payments-due                                         = Taliadau treth incwm
 whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
