@@ -20,7 +20,6 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.{DatesModel, IncomeSourceCeasedObligationsViewModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
-import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
 import testUtils.ViewSpec
 import views.html.manageBusinesses.cease.IncomeSourceCeasedObligations
 

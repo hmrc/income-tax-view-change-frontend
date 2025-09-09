@@ -27,7 +27,7 @@ import models.core.CheckMode
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa
@@ -41,6 +41,7 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
                                            val claimToAdjustService: ClaimToAdjustService,
                                            val poaSessionService: PaymentOnAccountSessionService,
                                            val ctaCalculationService: ClaimToAdjustPoaCalculationService,
+                                           val nrsService: NrsService,
                                            val checkYourAnswers: CheckYourAnswers,
                                            val auditingService: AuditingService)
                                           (implicit val appConfig: FrontendAppConfig,
@@ -79,6 +80,7 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
         claimToAdjustService = claimToAdjustService,
         ctaCalculationService = ctaCalculationService,
         poaSessionService = poaSessionService,
+        nrsService = nrsService,
         auditingService = auditingService
       ) recover logAndRedirect
   }

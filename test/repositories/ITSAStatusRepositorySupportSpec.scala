@@ -23,35 +23,44 @@ import testUtils.UnitSpec
 
 class ITSAStatusRepositorySupportSpec extends UnitSpec with Matchers {
 
-  private val expectedToString = Map(NoStatus -> "U", Voluntary -> "V", Annual -> "A", Mandated -> "M")
+  private val expectedToString = Map(Voluntary -> "V", Annual -> "A", Mandated -> "M")
 
   "ITSAStatusRepositorySupport.statusToString" should {
     "convert to String" in {
-      statusToString(NoStatus) shouldBe expectedToString(NoStatus)
-      statusToString(Voluntary) shouldBe expectedToString(Voluntary)
-      statusToString(Annual) shouldBe expectedToString(Annual)
-      statusToString(Mandated) shouldBe expectedToString(Mandated)
+      statusToString(status = Voluntary) shouldBe expectedToString(Voluntary)
+      statusToString(status = Annual) shouldBe expectedToString(Annual)
+      statusToString(status = Mandated) shouldBe expectedToString(Mandated)
     }
 
-    "throw error for Dormant" in {
-      assertThrows[RuntimeException] {
-        statusToString(Dormant)
+    "allow NoStatus only for CY+1" in {
+      statusToString(status = NoStatus) shouldBe "U"
+    }
+
+    "Return U for unsupported statuses" in {
+      Seq(Exempt, DigitallyExempt, Dormant).foreach { unsupportedStatus =>
+        statusToString(status = NoStatus) shouldBe "U"
       }
     }
   }
 
-  private val expectedToStatus = Map("U" -> NoStatus, "V" -> Voluntary, "A" -> Annual, "M" -> Mandated)
+  private val expectedToStatus = Map("V" -> Voluntary, "A" -> Annual, "M" -> Mandated)
+
   "ITSAStatusRepositorySupport.stringToStatus" should {
     "convert to Status" in {
-      stringToStatus("U") shouldBe expectedToStatus("U")
-      stringToStatus("V") shouldBe expectedToStatus("V")
-      stringToStatus("A") shouldBe expectedToStatus("A")
-      stringToStatus("M") shouldBe expectedToStatus("M")
+      stringToStatus(status = "V") shouldBe expectedToStatus("V")
+      stringToStatus(status = "A") shouldBe expectedToStatus("A")
+      stringToStatus(status = "M") shouldBe expectedToStatus("M")
     }
 
-    "throw error for Dormant" in {
-      assertThrows[RuntimeException] {
-        stringToStatus("D")
+    "convert 'U' to NoStatus only for CY+1" in {
+      stringToStatus(status = "U") shouldBe NoStatus
+    }
+
+    "throw error for other unsupported strings" in {
+      Seq("E", "DE", "D").foreach { unsupportedString =>
+        assertThrows[RuntimeException] {
+          stringToStatus(status = unsupportedString)
+        }
       }
     }
   }

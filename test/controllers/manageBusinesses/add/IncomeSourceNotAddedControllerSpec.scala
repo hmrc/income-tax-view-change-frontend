@@ -23,11 +23,10 @@ import org.jsoup.Jsoup
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import play.api.mvc.Result
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.CreateBusinessDetailsService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 

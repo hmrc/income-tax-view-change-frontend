@@ -392,7 +392,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
@@ -426,7 +426,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
+        val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Annual, ITSAStatus.Annual)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
@@ -515,7 +515,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
     }
 
-    "show Next updates page" when {
+    "show internal server error page" when {
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
           enable(OptOutFs)
@@ -530,9 +530,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
-          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange)
+          ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange, futureYears = true)
           CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
-
 
           val res = buildGETMTDClient(path).futureValue
 
@@ -542,10 +541,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
           IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
-          Then("the view displays the correct title even if the OptOut fail")
           res should have(
-            httpStatus(OK),
-            pageTitleIndividual("nextUpdates.heading")
+            httpStatus(INTERNAL_SERVER_ERROR)
           )
         }
 
@@ -574,10 +571,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
           IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
-          Then("the view displays the correct title even if the OptOut fail")
           res should have(
-            httpStatus(OK),
-            pageTitleIndividual("nextUpdates.heading")
+            httpStatus(INTERNAL_SERVER_ERROR)
           )
         }
 
@@ -606,10 +601,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
           IncomeTaxViewChangeStub.verifyGetObligations(testNino)
 
-          Then("the view displays the correct title even if the OptOut fail")
           res should have(
-            httpStatus(OK),
-            pageTitleIndividual("nextUpdates.heading")
+            httpStatus(INTERNAL_SERVER_ERROR)
           )
         }
       }

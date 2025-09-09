@@ -27,9 +27,9 @@ import models.incomeSourceDetails._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{await, defaultAwaitTimeout, status}
 import services._
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants.{year2018, year2019}
