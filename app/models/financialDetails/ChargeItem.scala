@@ -46,6 +46,7 @@ case class ChargeItem (
                         dueDateForFinancialDetail: Option[LocalDate] = None,
                         paymentLotItem: Option[String] = None,
                         paymentLot: Option[String] = None,
+                        lastUpdated: Option[LocalDate] = None,
                         chargeReference: Option[String]
                       ) extends TransactionItem {
 

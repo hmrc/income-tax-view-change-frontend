@@ -17,6 +17,7 @@
 package services
 
 import auth.MtdItUser
+import cats.implicits.catsSyntaxOptionId
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
@@ -113,12 +114,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
                 .map(_.documentDate)
                 .maxOption
 
-            maybeLatestDocumentDate.fold {
-              Logger("application").info(s"Empty charge history found for charge with chargeReference: ${chargeItem.chargeReference}")
-              chargeItem
-            } {
-              docDate => chargeItem.copy(documentDate = docDate)
-            }
+            chargeItem.copy(lastUpdated = maybeLatestDocumentDate)
         }
       }
     } yield updatedCharges
