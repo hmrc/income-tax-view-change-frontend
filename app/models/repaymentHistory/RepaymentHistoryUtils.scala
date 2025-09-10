@@ -168,7 +168,7 @@ object RepaymentHistoryUtils {
       creditType = chargeItem.transactionType,
       amount = Some(chargeItem.originalAmount),
       transactionId = Some(chargeItem.transactionId),
-      linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId),
+      linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.toFinancialYearEnd.getYear, chargeItem.transactionId),
       visuallyHiddenText = chargeItem.transactionType.toString
     )
   }
