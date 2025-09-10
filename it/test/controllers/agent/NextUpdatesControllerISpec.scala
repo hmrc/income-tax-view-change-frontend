@@ -221,7 +221,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           }
 
           "Opt Out feature switch is enabled" should {
-            "show next updates" when {
+            "take the user to an error page" when {
 
               "there is an ITSA Status API failure" in {
                 stubAuthorised(mtdUserRole)
@@ -255,10 +255,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
                 IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
-                Then("the next update view displays the correct title even if the OptOut fail")
                 res should have(
-                  httpStatus(OK),
-                  pageTitleAgent("nextUpdates.heading")
+                  httpStatus(INTERNAL_SERVER_ERROR)
                 )
               }
 
@@ -294,10 +292,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
                 IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
-                Then("the next update view displays the correct title even if the OptOut fail")
                 res should have(
-                  httpStatus(OK),
-                  pageTitleAgent("nextUpdates.heading")
+                  httpStatus(INTERNAL_SERVER_ERROR)
                 )
               }
 
@@ -333,10 +329,8 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
                 IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
 
-                Then("the next update view displays the correct title even if the OptOut fail")
                 res should have(
-                  httpStatus(OK),
-                  pageTitleAgent("nextUpdates.heading")
+                  httpStatus(INTERNAL_SERVER_ERROR)
                 )
               }
             }

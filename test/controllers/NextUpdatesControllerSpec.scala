@@ -17,10 +17,13 @@
 package controllers
 
 import mocks.auth.MockAuthActions
+import mocks.connectors.MockITSAStatusConnector
 import mocks.services.{MockNextUpdatesService, MockOptOutService}
-import mocks.views.agent.MockNextUpdates
 import models.admin.OptOutFs
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.obligations._
+import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -32,19 +35,23 @@ import play.api.mvc.Result
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import services.NextUpdatesService
+import services.optout.{OptOutProposition, OptOutService}
+import testConstants.BaseTestConstants.testNino
+import testConstants.ITSAStatusTestConstants.successITSAStatusResponseMTDMandatedModel
 import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class NextUpdatesControllerSpec extends MockAuthActions
-  with MockNextUpdatesService with MockNextUpdates with MockOptOutService {
+  with MockNextUpdatesService with MockOptOutService {
 
   val nextTitle: String = NextUpdatesTestConstants.title
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
+      api.inject.bind[OptOutService].toInstance(mockOptOutService)
     ).build()
 
   lazy val testNextUpdatesController: NextUpdatesController = app.injector.instanceOf[NextUpdatesController]
@@ -60,6 +67,23 @@ class NextUpdatesControllerSpec extends MockAuthActions
   )).obligationsByDate(isR17ContentEnabled = true).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
   })
+
+  val contentChecks = NextUpdatesQuarterlyReportingContentChecks(
+    currentYearItsaStatus = true,
+    previousYearItsaStatus = false,
+    previousYearCrystallisedStatus = false
+  )
+
+  val optOutViewModel = OptOutMultiYearViewModel()
+
+  val optOutProposition: OptOutProposition =
+    OptOutProposition.createOptOutProposition(
+      currentYear = TaxYear(2024, 2025),
+      previousYearCrystallised = false,
+      previousYearItsaStatus = Mandated,
+      currentYearItsaStatus = Voluntary,
+      nextYearItsaStatus = Mandated
+    )
 
   private def getQuarterType(string: String) = {
     if (string == "Quarterly") QuarterlyObligation else EopsObligation
@@ -94,6 +118,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           setupMockUserAuth
           mockSingleBusinessIncomeSource()
           mockSingleBusinessIncomeSourceWithDeadlines()
+          mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, Some(optOutViewModel), optOutProposition)))
           mockObligations
           mockViewModel
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
@@ -279,9 +304,9 @@ class NextUpdatesControllerSpec extends MockAuthActions
           setupMockAgentWithClientAuth(isSupportingAgent)
           mockSingleBusinessIncomeSourceWithDeadlines()
           mockSingleBusinessIncomeSource()
+          mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, Some(optOutViewModel), optOutProposition)))
           mockViewModel
           mockObligations
-          mockNextUpdates(nextUpdatesViewModel, controllers.routes.HomeController.showAgent().url, isAgent = true, isSupportingAgent)(HtmlFormat.empty)
 
           val result: Future[Result] = testNextUpdatesController.showAgent()(
             fakeRequestConfirmedClient(isSupportingAgent = isSupportingAgent)
@@ -295,6 +320,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
           mockSingleBusinessIncomeSource()
           mockNoObligations
+          mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, Some(optOutViewModel), optOutProposition)))
           mockNoIncomeSourcesWithDeadlines()
 
           val result: Future[Result] = testNextUpdatesController.showAgent()(

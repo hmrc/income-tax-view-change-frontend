@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optOut
+package controllers.optOutNew
 
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
@@ -22,7 +22,7 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
+import models.obligations._
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListIntegrationTestConstants
