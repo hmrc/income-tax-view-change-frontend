@@ -1315,8 +1315,8 @@ paymentHistory.POA1RR-credit                                    = Taliad cyntaf 
 paymentHistory.POA2RR-credit                                    = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
 paymentHistory.activity                                         = Gweithgarwch {0}
 
-paymentHistory.POA1                                             = First payment on account collected through your PAYE tax code
-paymentHistory.POA2                                             = Second payment on account collected through your PAYE tax code
+paymentHistory.POA1                                             = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy’ch cod treth TWE
+paymentHistory.POA2                                             = Ail daliad ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
 paymentHistory.BCD                                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 
 paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
