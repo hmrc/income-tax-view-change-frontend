@@ -17,7 +17,6 @@
 package services
 
 import auth.MtdItUser
-import cats.implicits.catsSyntaxOptionId
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
