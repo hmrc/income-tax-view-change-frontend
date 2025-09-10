@@ -138,6 +138,7 @@ object TransactionType {
       ChargeType.balancingCharge            -> BalancingCharge,
       ChargeType.poaOneReconciliationDebit  -> PoaOneReconciliationDebit,
       ChargeType.poaTwoReconciliationDebit  -> PoaTwoReconciliationDebit,
+      ChargeType.lateSubmissionPenalty      -> LateSubmissionPenalty,
       ChargeType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
       ChargeType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit,
       CreditType.cutOver                    -> CutOverCreditType,
