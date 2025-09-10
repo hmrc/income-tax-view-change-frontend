@@ -44,7 +44,7 @@ class ConfirmedOptOutViewUtilsSpec extends UnitSpec with FeatureSwitching with I
   val compatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   val confirmedOptOutViewUtils =
-    new ConfirmedOptOutViewUtils(linkComponent, h2Component, paragraphComponent, appConfig)
+    new ConfirmedOptOutViewUtils(linkComponent, h2Component, paragraphComponent)
 
   val submitYourTaxReturnHeading: HtmlFormat.Appendable =
     h2Component(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-tax-heading"))

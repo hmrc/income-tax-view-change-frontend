@@ -16,6 +16,8 @@
 
 package viewUtils
 
+import play.api.i18n.{Lang, Messages}
+
 object ExternalUrlHelper {
 
   val homepageLink = "https://www.gov.uk"
@@ -23,15 +25,40 @@ object ExternalUrlHelper {
   //SA for Agents Online Service
   val saForAgents: String = "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
 
-  val clientAuthorisationGuidance: String = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
+  def clientAuthorisationGuidance(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "en" => "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
+      case "cy" => "https://www.gov.uk/government/collections/troi-treth-yn-ddigidol-ar-gyfer-treth-incwm-fel-asiant-cam-wrth-gam.cy"
+      case _ => "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax-as-an-agent-step-by-step"
+    }
 
-  val seNationalInsuranceRatesUrl = "https://www.gov.uk/self-employed-national-insurance-rates"
+  def seNationalInsuranceRatesUrl(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "en" => "https://www.gov.uk/self-employed-national-insurance-rates"
+      case "cy" => "https://www.gov.uk/cyfraddau-yswiriant-gwladol-ir-hunangyflogedig"
+      case _ => "https://www.gov.uk/self-employed-national-insurance-rates"
+    }
 
-  val chooseAgentGuidanceUrl = "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
+  def chooseAgentGuidanceUrl(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "en" => "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
+      case "cy" => "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax.cy"
+      case _ => "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
+    }
 
-  val quarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
+  def quarterlyUpdatesGuidanceUrl(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "en" => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
+      case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm/anfon-diweddariadau-chwarterol"
+      case _ => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
+    }
 
-  val saWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+  def saWhoNeedsToSignUpUrl(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "en" => "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+      case "cy" => "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru"
+      case _ => "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+    }
 
   val interestRateBankRateUrl = "https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate"
 
@@ -43,5 +70,10 @@ object ExternalUrlHelper {
 
   val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
 
-  val checkPayeTaxCodeUrl = "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
+  def checkPayeTaxCodeUrl(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "en" => "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
+      case "cy" => "https://www.access.service.gov.uk/login/signin/creds?lang=cy"
+      case _ => "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
+    }
 }
