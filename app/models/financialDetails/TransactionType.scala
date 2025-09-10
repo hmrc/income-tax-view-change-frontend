@@ -131,48 +131,32 @@ object TransactionType {
 
   implicit val format: Format[TransactionType] = Format( read, write)
 
-  def fromCode(mainTransaction: String): Option[TransactionType] = {
-    mainTransaction match {
-      case ChargeType.poaOneDebit =>
-        Some(PoaOneDebit)
-      case ChargeType.poaTwoDebit =>
-        Some(PoaTwoDebit)
-      case ChargeType.balancingCharge =>
-        Some(BalancingCharge)
-      case ChargeType.poaOneReconciliationDebit =>
-        Some(PoaOneReconciliationDebit)
-      case ChargeType.poaTwoReconciliationDebit =>
-        Some(PoaTwoReconciliationDebit)
-      case ChargeType.poaOneReconciliationCredit =>
-        Some(PoaOneReconciliationCredit)
-      case ChargeType.poaTwoReconciliationCredit =>
-        Some(PoaTwoReconciliationCredit)
-      case ChargeType.lateSubmissionPenalty =>
-        Some(LateSubmissionPenalty)
-      case x if ChargeType.firstLatePaymentPenalty.contains(x) =>
-        Some(FirstLatePaymentPenalty)
-      case x if ChargeType.secondLatePaymentPenalty.contains(x) =>
-        Some(SecondLatePaymentPenalty)
-      case x if ChargeType.mfaDebit.contains(x) =>
-        Some(MfaDebitCharge)
-      case CreditType.cutOver =>
-        Some(CutOverCreditType)
-      case CreditType.balancingCharge =>
-        Some(BalancingChargeCreditType)
-      case CreditType.repaymentInterest =>
-        Some(RepaymentInterest)
-      case CreditType.poaOneReconciliationCredit =>
-        Some(PoaOneReconciliationCredit)
-      case CreditType.poaTwoReconciliationCredit =>
-        Some(PoaTwoReconciliationCredit)
-      case x if CreditType.mfaCredit.contains(x) =>
-        Some(MfaCreditType)
-      case x if CreditType.payment.contains(x) =>
-        Some(PaymentType)
-      case _ => None
-    }
+  private lazy val codeToTransactionType: Map[String, TransactionType] = {
+    val fixed = Map[String, TransactionType](
+      ChargeType.poaOneDebit                -> PoaOneDebit,
+      ChargeType.poaTwoDebit                -> PoaTwoDebit,
+      ChargeType.balancingCharge            -> BalancingCharge,
+      ChargeType.poaOneReconciliationDebit  -> PoaOneReconciliationDebit,
+      ChargeType.poaTwoReconciliationDebit  -> PoaTwoReconciliationDebit,
+      ChargeType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
+      ChargeType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit,
+      CreditType.cutOver                    -> CutOverCreditType,
+      CreditType.balancingCharge            -> BalancingChargeCreditType,
+      CreditType.repaymentInterest          -> RepaymentInterest,
+      CreditType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
+      CreditType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit
+    )
+    val penalties1 = ChargeType.firstLatePaymentPenalty.map(_ -> FirstLatePaymentPenalty)
+    val penalties2 = ChargeType.secondLatePaymentPenalty.map(_ -> SecondLatePaymentPenalty)
+    val mfaDebits  = ChargeType.mfaDebit.map(_                  -> MfaDebitCharge)
+    val mfaCredits = CreditType.mfaCredit.map(_                 -> MfaCreditType)
+    val payments   = CreditType.payment.map(_                   -> PaymentType)
+
+    (fixed ++ penalties1 ++ penalties2 ++ mfaDebits ++ mfaCredits ++ payments).toMap
   }
 
+  def fromCode(mainTransaction: String): Option[TransactionType] =
+    codeToTransactionType.get(mainTransaction)
 }
 
 object ChargeType {
