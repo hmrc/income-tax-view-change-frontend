@@ -26,6 +26,7 @@ import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
 import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
+import models.financialDetails.TransactionUtils
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.Logger
@@ -55,15 +56,16 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                                           val languageUtils: LanguageUtils,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching with ImplicitDateFormatter {
+  with I18nSupport with FeatureSwitching with ImplicitDateFormatter with TransactionUtils {
 
   def handleRequest(backUrl: String,
                     origin: Option[String] = None,
                     isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] =
-    for {
-      payments                       <- paymentHistoryService.getPaymentHistory
-      repayments                     <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
+    (for {
+      payments                                 <- paymentHistoryService.getPaymentHistory
+      repayments                               <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds))
+      codedOutBCAndPoasWithLatestDocumentDate  <- paymentHistoryService.getChargesWithUpdatedDocumentDateIfChargeHistoryExists()
     } yield (payments, repayments) match {
 
       case (Right(payments), Right(repayments)) =>
@@ -76,6 +78,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           isAgent = isAgent,
           payments = payments,
           repayments = repayments,
+          codedOutCharges = codedOutBCAndPoasWithLatestDocumentDate,
           languageUtils = languageUtils
         )
 
@@ -92,7 +95,11 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
         ))
           .addingToSession(gatewayPage -> PaymentHistoryPage.name)
 
-      case _ => logAndHandleError("failed to get payments and/or repayments")
+      case (Left(_), _) => logAndHandleError("failed to get payments")
+      case (_, Left(_)) => logAndHandleError("failed to get repayments")
+    }) recover {
+      case ex =>
+        logAndHandleError(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
     }
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {

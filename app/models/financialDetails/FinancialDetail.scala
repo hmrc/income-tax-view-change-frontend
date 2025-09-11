@@ -76,7 +76,7 @@ case class FinancialDetail(taxYear: String,
     case None => Seq.empty[Payment]
   }
 
-  def getCreditType: Option[TransactionType] = mainTransaction.flatMap(TransactionType.fromCode)
+  def getChargeType: Option[TransactionType] = mainTransaction.flatMap(TransactionType.fromCode)
 }
 
 

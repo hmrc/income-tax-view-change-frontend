@@ -18,9 +18,12 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
+import models.admin.ChargeHistory
+import models.chargeHistory.ChargesHistoryErrorModel
 import models.core.Nino
-import models.financialDetails.{Payment, Payments, PaymentsError}
+import models.financialDetails.{ChargeItem, FinancialDetailsModel, Payment, Payments, PaymentsError, TransactionUtils}
 import models.incomeSourceDetails.TaxYear
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
@@ -34,9 +37,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistoryConnector,
                                       financialDetailsConnector: FinancialDetailsConnector,
+                                      financialDetailsService: FinancialDetailsService,
+                                      chargeHistoryService: ChargeHistoryService,
                                       implicit val dateService: DateServiceInterface,
                                       val appConfig: FrontendAppConfig)
-                                     (implicit ec: ExecutionContext) {
+                                     (implicit ec: ExecutionContext) extends TransactionUtils with FeatureSwitching {
 
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
 
@@ -83,6 +88,35 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
         case RepaymentHistoryErrorModel(_, _) => Left(RepaymentHistoryErrorModel)
       }
     else Future(Right(Nil))
+  }
+
+  def getChargesWithUpdatedDocumentDateIfChargeHistoryExists()(implicit mtdItUser: MtdItUser[_], hc: HeaderCarrier): Future[List[ChargeItem]] = {
+
+    for {
+      financialDetailsModel       <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
+      financialDetails             = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) => fd }
+      documentDetailsWithDueDate   = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
+      chargeItems                  = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
+      codedOutBCAndPoas            = chargeItems.filter(x => x.isCodingOutAcceptedOrFullyCollected && (x.isBalancingCharge || x.isPoaDebit))
+      updatedCharges              <- Future.traverse(codedOutBCAndPoas) { chargeItem =>
+
+        chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, chargeItem.chargeReference, isEnabled(ChargeHistory)).map {
+
+          case Left(ChargesHistoryErrorModel(code, message)) =>
+            Logger("application").info(s"Failed to retrieve history for charge with id: ${chargeItem.transactionId}, code: $code, message: $message")
+            chargeItem
+
+          case Right(chargeHistoryItems) =>
+
+            val maybeEarliestDocumentDate =
+              chargeHistoryItems
+                .map(_.documentDate)
+                .minOption
+
+            chargeItem.copy(creationDate = maybeEarliestDocumentDate)
+        }
+      }
+    } yield updatedCharges
   }
 }
 
