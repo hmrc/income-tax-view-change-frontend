@@ -146,7 +146,7 @@ object TransactionType {
       ChargeType.lateSubmissionPenalty      -> LateSubmissionPenalty,
       ChargeType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
       ChargeType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit,
-      ChargeType.itsa
+      ChargeType.itsaReturnAmendment        -> ITSAReturnAmendment,
       CreditType.cutOver                    -> CutOverCreditType,
       CreditType.balancingCharge            -> BalancingChargeCreditType,
       CreditType.repaymentInterest          -> RepaymentInterest,
