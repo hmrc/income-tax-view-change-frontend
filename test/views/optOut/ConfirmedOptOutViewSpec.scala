@@ -17,125 +17,296 @@
 package views.optOut
 
 import config.FrontendAppConfig
-import enums.NextTaxYear
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Voluntary
-import models.optout.ConfirmedOptOutViewModel
+import models.optout._
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
-import play.api.test.Helpers._
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services.optout._
 import testUtils.TestSupport
-import viewUtils.ConfirmedOptOutViewUtils
-import views.html.optOut.ConfirmedOptOut
-import views.messages.ConfirmedOptOutMessages
+import views.html.optOut.ConfirmedOptOutView
 
 class ConfirmedOptOutViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val confirmedOptOutView: ConfirmedOptOut = app.injector.instanceOf[ConfirmedOptOut]
-  val confirmedOptOutViewUtils: ConfirmedOptOutViewUtils = app.injector.instanceOf[ConfirmedOptOutViewUtils]
+
+  val confirmedOptOutView: ConfirmedOptOutView = app.injector.instanceOf[ConfirmedOptOutView]
 
   val taxYear: TaxYear = TaxYear.forYearEnd(2024)
   val optOutTaxYear: OptOutTaxYear = CurrentOptOutTaxYear(Voluntary, taxYear)
+  val nextUpdatesUrl = controllers.routes.NextUpdatesController.show().url
 
-  val submitYourTaxReturnContent = confirmedOptOutViewUtils.submitYourTaxReturnContent(Voluntary, Voluntary, Voluntary, NextTaxYear, isMultiYear = true, isPreviousYearCrystallised = false)
+  object Selectors {
 
-  class Setup(
-               isAgent: Boolean = true,
-               state: OptOutState = OneYearOptOutFollowedByMandated,
-               showReportingFrequencyContent: Boolean
-             ) {
+    val greenPanel = "out-opt-complete-green-panel"
 
-    private val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(state))
-    val pageDocument: Document = Jsoup.parse(contentAsString(confirmedOptOutView(viewModel, isAgent, showReportingFrequencyContent, submitYourTaxReturnContent)))
+    val h2SubmitYourTaxReturn = "submit-your-tax-return-heading"
+    val submitTaxReturnParagraph1 = "now-you-have-opted-out"
+    val submitTaxReturnParagraph2 = "tax-year-reporting-quarterly"
+    val selfAssessmentTaxReturnLink = "self-assessment-tax-return-link"
+    val compatibleSoftwareLink = "compatible-software-link"
+
+    val yourReportingObligationsHeading = "your-reporting-obligations-heading"
+
+    val useMtdInFuture = "use-mtd-in-future"
+    val requiredToUseMtdInset = "required-to-use-mtd-inset"
+    val thisIsBecause = "this-could-be-because"
+
+    val yourObligationsBullet: Int => String = (i: Int) => s"your-obligations-bullet-$i"
+    val grossIncomeThresholdWarning = "gross-income-threshold-warning"
+    val weWillLetYouKnow = "we-will-let-you-know"
+    val youCanCheckThresholds = "you-can-check-thresholds"
+
+    val revisedDeadlinesHeading = "revised-deadlines-heading"
+    val revisedDeadlinesP1 = "revised-deadlines-p1"
+    val yourReportingFrequencyBlock = "your-reporting-frequency-block"
+    val yourReportingFrequencyLink = "your-reporting-frequency-link"
+
+    val viewUpcomingUpdatesLink = "view-upcoming-updates-link"
+    val reportingUpdateBlock = "reporting-updates"
   }
 
-  "Opt-out confirmed page" should {
+  "ConfirmedOptOutView" when {
 
-    "have the correct title" in new Setup(false, showReportingFrequencyContent = false) {
-      pageDocument.title() shouldBe ConfirmedOptOutMessages.title
-    }
+    "Scenario1" when {
 
-    "have the correct confirmation panel content" when {
+      val isAgent = false
 
-      "one year opt out is followed by mandated ITSA Status" in new Setup(isAgent = false, state = OneYearOptOutFollowedByMandated, showReportingFrequencyContent = false) {
-        val panel = pageDocument.select(".govuk-panel--confirmation").get(0)
-        panel.child(0).text() shouldBe ConfirmedOptOutMessages.heading
-        panel.child(1).text() shouldBe ConfirmedOptOutMessages.panelBodyOneYear
+      val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(OneYearOptOutFollowedByMandated))
+      val pageDocument = Jsoup.parse(contentAsString(confirmedOptOutView(
+        viewModel = viewModel,
+        isAgent = isAgent,
+        showReportingFrequencyContent = true,
+        confirmedOptOutViewScenarios = Scenario1Content,
+        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
+      )))
+
+      "show the green panel" in {
+
+        pageDocument.getElementById(Selectors.greenPanel).text() shouldBe "Opt out completed You no longer need to use Making Tax Digital for Income Tax"
       }
 
-      "multi year opt out" in new Setup(isAgent = false, state = MultiYearOptOutDefault, showReportingFrequencyContent = false) {
-        val panel = pageDocument.select(".govuk-panel--confirmation").get(0)
-        panel.child(0).text() shouldBe ConfirmedOptOutMessages.heading
-        panel.child(1).text() shouldBe ConfirmedOptOutMessages.panelBodyMultiYear
+      "show the revised details section" in {
+
+        pageDocument.getElementById(Selectors.revisedDeadlinesHeading).text() shouldBe "Your revised deadlines"
+        pageDocument.getElementById(Selectors.revisedDeadlinesP1).text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025."
+        pageDocument.getElementById(Selectors.viewUpcomingUpdatesLink).text() shouldBe "View your upcoming deadlines"
+        pageDocument.getElementById(Selectors.yourReportingFrequencyBlock).text() shouldBe "You can decide at any time to sign back up to Making Tax Digital for Income Tax for all of your businesses on your reporting obligations page."
+      }
+
+      "show the submit your tax return section" in {
+
+        pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
+      }
+
+      "show the 'Your reporting obligations' section" in {
+
+        pageDocument.getElementById(Selectors.yourReportingObligationsHeading).text() shouldBe "Your reporting obligations in the future"
+        pageDocument.getElementById(Selectors.useMtdInFuture).text() shouldBe "You could be required to use Making Tax Digital for Income Tax again in the future if:"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowers the income threshold for it"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you report an increase in your qualifying income in a tax return"
+        pageDocument.getElementById(Selectors.grossIncomeThresholdWarning).text() shouldBe "For example, if your income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026."
+        pageDocument.getElementById(Selectors.weWillLetYouKnow).text() shouldBe "If this happens, we will write to you to let you know."
+        pageDocument.getElementById(Selectors.youCanCheckThresholds).text() shouldBe "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
       }
     }
 
-    "have the correct submit your tax return content" in new Setup(isAgent = false, showReportingFrequencyContent = false) {
-      val submitTaxBlock: Element = pageDocument.getElementById("submit-tax")
+    "Scenario2" when {
 
-      submitTaxBlock.getElementById("submit-tax-heading").text() shouldBe ConfirmedOptOutMessages.submitTaxHeading
-      submitTaxBlock.getElementById("now-you-have-opted-out").text() shouldBe ConfirmedOptOutMessages.submitTaxP1
-      submitTaxBlock.getElementById("tax-year-reporting-quarterly").text() shouldBe ConfirmedOptOutMessages.submitTaxP2
-    }
+      val isAgent = false
 
-    "Individual - revised deadlines content " in new Setup(isAgent = false, showReportingFrequencyContent = false) {
-      val revisedDeadlinesBlock: Element = pageDocument.getElementById("revised-deadlines")
-      revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesHeading
-      revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesContentP1
-      revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text shouldBe ""
-      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.show().url
-    }
+      val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(OneYearOptOutFollowedByMandated))
 
-    "Agent - revised deadlines content" in new Setup(isAgent = true, showReportingFrequencyContent = false) {
-      val revisedDeadlinesBlock: Element = pageDocument.getElementById("revised-deadlines")
-      revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesHeading
-      revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesContentP1
-      revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text() shouldBe ""
-      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
-    }
+      val pageDocument = Jsoup.parse(contentAsString(confirmedOptOutView(
+        viewModel = viewModel,
+        isAgent = isAgent,
+        showReportingFrequencyContent = true,
+        confirmedOptOutViewScenarios = Scenario2Content,
+        selfAssessmentTaxReturnLink = mockAppConfig.compatibleSoftwareLink,
+        compatibleSoftwareLink = mockAppConfig.selfAssessmentTaxReturnLink
+      )))
 
-    "Individual - revised deadlines with reporting frequency content" in new Setup(isAgent = false, showReportingFrequencyContent = true) {
-      val revisedDeadlinesBlock: Element = pageDocument.getElementById("revised-deadlines")
-      revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesHeading
-      revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesContentP1
-      revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesContentP2
-      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.show().url
-    }
+      "show the green panel" in {
 
-    "Agent - revised deadlines with reporting frequency content" in new Setup(isAgent = true, showReportingFrequencyContent = true) {
-      val revisedDeadlinesBlock: Element = pageDocument.getElementById("revised-deadlines")
-      revisedDeadlinesBlock.getElementById("revised-deadlines-heading").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesHeading
-      revisedDeadlinesBlock.getElementById("revised-deadlines-p1").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesContentP1
-      revisedDeadlinesBlock.getElementById("your-reporting-frequency-block").text() shouldBe ConfirmedOptOutMessages.yourRevisedDeadlinesContentP2
-      revisedDeadlinesBlock.getElementById("view-upcoming-updates-link").attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
-    }
-
-    "have the correct reporting updates content" when {
-
-      "one year opt out is followed by mandated ITSA Status" in new Setup(isAgent = false, state = OneYearOptOutFollowedByMandated, showReportingFrequencyContent = false) {
-        val reportingUpdateBlock: Element = pageDocument.getElementById("reporting-updates")
-        reportingUpdateBlock.child(0).text() shouldBe ConfirmedOptOutMessages.singleYearReportingUpdatesHeading
-        reportingUpdateBlock.child(1).text() shouldBe ConfirmedOptOutMessages.singleYearReportingUpdatesInset
-        reportingUpdateBlock.child(2).text() shouldBe ConfirmedOptOutMessages.singleYearReportingUpdatesP1
-        reportingUpdateBlock.child(3).child(0).text() shouldBe ConfirmedOptOutMessages.singleYearReportingUpdatesListP1
-        reportingUpdateBlock.child(3).child(1).text() shouldBe ConfirmedOptOutMessages.singleYearReportingUpdatesListP2
-        reportingUpdateBlock.getElementById("software-compatible-ext").attr("href") shouldBe ConfirmedOptOutMessages.singleYearSoftwareCompatibleLink
-        reportingUpdateBlock.getElementById("sign-up-criteria-ext").attr("href") shouldBe ConfirmedOptOutMessages.multiYearReportingUpdatesP3Link
+        pageDocument.getElementById(Selectors.greenPanel).text() shouldBe "Opt out completed You do not need to use Making Tax Digital for Income Tax for the 2023 to 2024 tax year"
       }
 
-      "multi year opt out" in new Setup(isAgent = false, state = MultiYearOptOutDefault, showReportingFrequencyContent = false) {
-        val reportingUpdateBlock: Element = pageDocument.getElementById("reporting-updates")
-        reportingUpdateBlock.child(0).text() shouldBe ConfirmedOptOutMessages.multiYearReportingUpdatesHeading
-        reportingUpdateBlock.child(1).text() shouldBe ConfirmedOptOutMessages.multiYearReportingUpdatesP1
-        reportingUpdateBlock.child(2).child(0).text() shouldBe ConfirmedOptOutMessages.multiYearReportingUpdatesListP1
-        reportingUpdateBlock.child(2).child(1).text() shouldBe ConfirmedOptOutMessages.multiYearReportingUpdatesListP2
-        reportingUpdateBlock.child(3).text() shouldBe ConfirmedOptOutMessages.multiYearReportingUpdatesInset
-        reportingUpdateBlock.child(4).text() shouldBe ConfirmedOptOutMessages.multiYearReportingUpdatesP2
-        reportingUpdateBlock.child(5).text() shouldBe ConfirmedOptOutMessages.multiYearReportingUpdatesP3
-        reportingUpdateBlock.getElementById("sign-up-criteria-ext").attr("href") shouldBe ConfirmedOptOutMessages.multiYearReportingUpdatesP3Link
+      "show the revised details section" in {
 
+        pageDocument.getElementById(Selectors.revisedDeadlinesHeading).text() shouldBe "Your revised deadlines"
+        pageDocument.getElementById(Selectors.revisedDeadlinesP1).text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025."
+        pageDocument.getElementById(Selectors.viewUpcomingUpdatesLink).text() shouldBe "View your upcoming deadlines"
+        pageDocument.getElementById(Selectors.yourReportingFrequencyBlock).text() shouldBe "You can decide at any time to sign back up to Making Tax Digital for Income Tax for all of your businesses on your reporting obligations page."
+        pageDocument.getElementById(Selectors.yourReportingFrequencyLink).attr("href") shouldBe controllers.routes.ReportingFrequencyPageController.show(false).url
+      }
+
+      "show the submit your tax return section" in {
+
+        pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph2).text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+
+      }
+
+      "show the 'Your reporting obligations' section" in {
+
+        pageDocument.getElementById(Selectors.yourReportingObligationsHeading).text() shouldBe "Your reporting obligations from the next tax year onwards"
+        pageDocument.getElementById(Selectors.requiredToUseMtdInset).text() shouldBe "From 6 April 2024, you will be required to use Making Tax Digital for Income tax."
+        pageDocument.getElementById(Selectors.thisIsBecause).text() shouldBe "This could be because:"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowers the income threshold for it"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you report an increase in your qualifying income in a tax return"
+        pageDocument.getElementById(Selectors.youCanCheckThresholds).text() shouldBe "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
+      }
+    }
+
+    "Scenario3" when {
+
+      val isAgent = false
+
+      val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(OneYearOptOutFollowedByMandated))
+      val pageDocument = Jsoup.parse(contentAsString(confirmedOptOutView(
+        viewModel = viewModel,
+        isAgent = isAgent,
+        showReportingFrequencyContent = true,
+        confirmedOptOutViewScenarios = Scenario3Content,
+        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
+      )))
+
+      "show the green panel" in {
+
+        pageDocument.getElementById(Selectors.greenPanel).text() shouldBe "Opt out completed From the 2023 to 2024 tax year onwards you do not need to use Making Tax Digital for Income Tax"
+      }
+
+      "show the revised details section" in {
+
+        pageDocument.getElementById(Selectors.revisedDeadlinesHeading).text() shouldBe "Your revised deadlines"
+        pageDocument.getElementById(Selectors.revisedDeadlinesP1).text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025."
+        pageDocument.getElementById(Selectors.viewUpcomingUpdatesLink).text() shouldBe "View your upcoming deadlines"
+        pageDocument.getElementById(Selectors.yourReportingFrequencyBlock).text() shouldBe "You can decide at any time to sign back up to Making Tax Digital for Income Tax for all of your businesses on your reporting obligations page."
+      }
+
+      "show the submit your tax return section" in {
+
+        pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+      }
+
+      "show the 'Your reporting obligations' section" in {
+
+        pageDocument.getElementById(Selectors.yourReportingObligationsHeading).text() shouldBe "Your reporting obligations in the future"
+
+        pageDocument.getElementById(Selectors.useMtdInFuture).text() shouldBe "You are opted out from next tax year onwards, but you could be required to use Making Tax Digital for Income Tax again in the future if:"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowers the income threshold for it"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you report an increase in your qualifying income in a tax return"
+        pageDocument.getElementById(Selectors.grossIncomeThresholdWarning).text() shouldBe "For example, if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026."
+        pageDocument.getElementById(Selectors.weWillLetYouKnow).text() shouldBe "If this happens, we will write to you to let you know."
+        pageDocument.getElementById(Selectors.youCanCheckThresholds).text() shouldBe "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
+      }
+    }
+
+    "Scenario4" when {
+
+      val isAgent = false
+
+      val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(OneYearOptOutFollowedByMandated))
+      val pageDocument = Jsoup.parse(contentAsString(confirmedOptOutView(
+        viewModel = viewModel,
+        isAgent = isAgent,
+        showReportingFrequencyContent = true,
+        confirmedOptOutViewScenarios = Scenario4Content,
+        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
+      )))
+
+      "show the green panel" in {
+
+        pageDocument.getElementById(Selectors.greenPanel).text() shouldBe "Opt out completed You no longer need to use Making Tax Digital for Income Tax"
+      }
+
+      "show the revised details section" in {
+
+        pageDocument.getElementById(Selectors.revisedDeadlinesHeading).text() shouldBe "Your revised deadlines"
+        pageDocument.getElementById(Selectors.revisedDeadlinesP1).text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025."
+        pageDocument.getElementById(Selectors.viewUpcomingUpdatesLink).text() shouldBe "View your upcoming deadlines"
+        pageDocument.getElementById(Selectors.yourReportingFrequencyBlock).text() shouldBe "You can decide at any time to sign back up to Making Tax Digital for Income Tax for all of your businesses on your reporting obligations page."
+      }
+
+      "show the submit your tax return section" in {
+
+        pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "As you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "file your Self Assessment tax return (opens in new tab)."
+      }
+
+      "show the 'Your reporting obligations' section" in {
+
+        pageDocument.getElementById(Selectors.yourReportingObligationsHeading).text() shouldBe "Your reporting obligations in the future"
+
+        pageDocument.getElementById(Selectors.useMtdInFuture).text() shouldBe "You could be required to use Making Tax Digital for Income Tax again in the future if:"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowers the income threshold for it"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you report an increase in your qualifying income in a tax return"
+        pageDocument.getElementById(Selectors.grossIncomeThresholdWarning).text() shouldBe "For example, if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026."
+        pageDocument.getElementById(Selectors.weWillLetYouKnow).text() shouldBe "If this happens, we will write to you to let you know."
+        pageDocument.getElementById(Selectors.youCanCheckThresholds).text() shouldBe "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
+      }
+    }
+
+
+    "Scenario5" when {
+
+      val isAgent = false
+
+      val viewModel = ConfirmedOptOutViewModel(optOutTaxYear = optOutTaxYear.taxYear, state = Some(OneYearOptOutFollowedByMandated))
+      val pageDocument = Jsoup.parse(contentAsString(confirmedOptOutView(
+        viewModel = viewModel,
+        isAgent = isAgent,
+        showReportingFrequencyContent = true,
+        confirmedOptOutViewScenarios = Scenario5Content,
+        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
+      )))
+
+      "show the green panel" in {
+
+        pageDocument.getElementById(Selectors.greenPanel).text() shouldBe "Opt out completed You no longer need to use Making Tax Digital for Income Tax"
+      }
+
+      "show the revised details section" in {
+
+        pageDocument.getElementById(Selectors.revisedDeadlinesHeading).text() shouldBe "Your revised deadlines"
+        pageDocument.getElementById(Selectors.revisedDeadlinesP1).text() shouldBe "Your tax return for the 2023 to 2024 tax year is due by 31 January 2025."
+        pageDocument.getElementById(Selectors.viewUpcomingUpdatesLink).text() shouldBe "View your upcoming deadlines"
+        pageDocument.getElementById(Selectors.yourReportingFrequencyBlock).text() shouldBe "You can decide at any time to sign back up to Making Tax Digital for Income Tax for all of your businesses on your reporting obligations page."
+      }
+
+      "show the submit your tax return section" in {
+
+        pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
+      }
+
+      "show the 'Your reporting obligations' section" in {
+
+        pageDocument.getElementById(Selectors.yourReportingObligationsHeading).text() shouldBe "Your reporting obligations in the future"
+
+        pageDocument.getElementById(Selectors.useMtdInFuture).text() shouldBe "You could be required to use Making Tax Digital for Income Tax again in the future if:"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowers the income threshold for it"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you report an increase in your qualifying income in a tax return"
+        pageDocument.getElementById(Selectors.grossIncomeThresholdWarning).text() shouldBe "For example, if your income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026."
+        pageDocument.getElementById(Selectors.weWillLetYouKnow).text() shouldBe "If this happens, we will write to you to let you know."
+        pageDocument.getElementById(Selectors.youCanCheckThresholds).text() shouldBe "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
       }
     }
   }

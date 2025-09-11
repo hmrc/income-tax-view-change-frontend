@@ -100,6 +100,7 @@ object ITSAStatusTestConstants {
       |}
       |""".stripMargin
   )
+
   val successITSAStatusResponseJson = Json.parse(
     """
       |{
@@ -108,6 +109,51 @@ object ITSAStatusTestConstants {
       |      {
       |        "submittedOn": "2023-06-15T15:38:33.960Z",
       |        "status": "No Status",
+      |        "statusReason": "Sign up - return available",
+      |        "businessIncomePriorTo2Years": 8000.25
+      |      }
+      |    ]
+      |  }
+      |""".stripMargin)
+
+  val successITSAStatusResponseJson2021 = Json.parse(
+    """
+      |{
+      |    "taxYear": "2021-2022",
+      |    "itsaStatusDetails": [
+      |      {
+      |        "submittedOn": "2023-06-15T15:38:33.960Z",
+      |        "status": "MTD Voluntary",
+      |        "statusReason": "Sign up - return available",
+      |        "businessIncomePriorTo2Years": 8000.25
+      |      }
+      |    ]
+      |  }
+      |""".stripMargin)
+
+  val successITSAStatusResponseJson2022 = Json.parse(
+    """
+      |{
+      |    "taxYear": "2022-2023",
+      |    "itsaStatusDetails": [
+      |      {
+      |        "submittedOn": "2023-06-15T15:38:33.960Z",
+      |        "status": "MTD Voluntary",
+      |        "statusReason": "Sign up - return available",
+      |        "businessIncomePriorTo2Years": 8000.25
+      |      }
+      |    ]
+      |  }
+      |""".stripMargin)
+
+  val successITSAStatusResponseJson2023 = Json.parse(
+    """
+      |{
+      |    "taxYear": "2023-2024",
+      |    "itsaStatusDetails": [
+      |      {
+      |        "submittedOn": "2023-06-15T15:38:33.960Z",
+      |        "status": "MTD Voluntary",
       |        "statusReason": "Sign up - return available",
       |        "businessIncomePriorTo2Years": 8000.25
       |      }
