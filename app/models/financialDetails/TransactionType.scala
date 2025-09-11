@@ -153,7 +153,7 @@ object TransactionType {
     val mfaCredits = CreditType.mfaCredit.map(_                 -> MfaCreditType)
     val payments   = CreditType.payment.map(_                   -> PaymentType)
 
-    (fixed ++ penalties1 ++ penalties2 ++ mfaDebits ++ mfaCredits ++ payments).toMap
+    fixed ++ penalties1 ++ penalties2 ++ mfaDebits ++ mfaCredits ++ payments
   }
 
   def fromCode(mainTransaction: String): Option[TransactionType] =
