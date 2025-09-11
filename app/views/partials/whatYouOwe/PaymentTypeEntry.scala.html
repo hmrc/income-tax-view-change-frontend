@@ -20,6 +20,7 @@
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
+@import services.DateServiceInterface
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import models.financialDetails.MfaDebitCharge
 
@@ -60,7 +61,7 @@
 }
 
 @{
-    val isInterest = chargeItem.isAccruingInterest
+    val isInterest = chargeItem.isOnlyInterest
 
     def getLinkSuffix(): String = {
         if(!isOverduePayment) {

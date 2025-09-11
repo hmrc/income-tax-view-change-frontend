@@ -32,6 +32,7 @@
 @import _root_.implicits.HtmlFormatter.NbspString
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
 @import _root_.implicits.ImplicitDateFormatterImpl
+@import services.DateServiceInterface
 
 @this(
     p: p,
@@ -49,7 +50,8 @@
     origin: Option[String]
 )(
     implicit user: MtdItUser[_],
-    messages: Messages
+    messages: Messages,
+    dateServiceInterface: DateServiceInterface
 )
 
 @import implicitDateFormatter.longDate
