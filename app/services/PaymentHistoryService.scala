@@ -108,12 +108,12 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
 
           case Right(chargeHistoryItems) =>
 
-            val maybeLatestDocumentDate =
+            val maybeEarliestDocumentDate =
               chargeHistoryItems
                 .map(_.documentDate)
-                .maxOption
+                .minOption
 
-            chargeItem.copy(lastUpdated = maybeLatestDocumentDate)
+            chargeItem.copy(creationDate = maybeEarliestDocumentDate)
         }
       }
     } yield updatedCharges
