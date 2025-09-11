@@ -20,26 +20,24 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.ChosenTaxYear
+import enums._
 import models.admin.ReportingFrequencyPage
-import models.optout.ConfirmedOptOutViewModel
+import models.itsaStatus.ITSAStatus
+import models.optout._
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import play.twirl.api.Html
-import services.optout.{OptOutProposition, OptOutService}
+import services.optout.{MultiYearOptOutProposition, OptOutService}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ReportingObligationsUtils
-import viewUtils.ConfirmedOptOutViewUtils
-import views.html.optOut.ConfirmedOptOut
+import views.html.optOut.ConfirmedOptOutView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
-                                          confirmedOptOutViewUtils: ConfirmedOptOutViewUtils,
-                                          val view: ConfirmedOptOut,
+                                          val view: ConfirmedOptOutView,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                           val optOutService: OptOutService
@@ -52,6 +50,54 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
+  private[controllers] def viewScenarioHandler()(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]):
+  Future[Either[ConfirmedOptOutViewScenariosError, ConfirmedOptOutViewScenarios]] = {
+
+    for {
+      optOutProposition <- optOutService.fetchOptOutProposition()
+      chosenTaxYear <- optOutService.determineOptOutIntentYear()
+      quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
+    } yield {
+      val isCurrentQuarterly = optOutProposition.isCurrentYearQuarterly
+      val isNextQuarterly = optOutProposition.isNextYearQuarterly
+      val isNextAnnual = optOutProposition.isNextYearAnnual
+      val isCurrentAnnual = optOutProposition.isCurrentYearAnnual
+      val isMandatedNext = optOutProposition.nextTaxYear.status == ITSAStatus.Mandated
+      val isMandatedCurrent = optOutProposition.currentTaxYear.status == ITSAStatus.Mandated
+
+      (chosenTaxYear, optOutProposition.optOutPropositionType) match {
+        case (CurrentTaxYear, _) if isCurrentQuarterly && isMandatedNext && quarterlyUpdatesCount > 0 =>
+          Right(Scenario2Content)
+        case (CurrentTaxYear, _) if isCurrentQuarterly && isMandatedNext =>
+          Right(Scenario2Content)
+        case (CurrentTaxYear, Some(MultiYearOptOutProposition(p))) if p.isCurrentYearQuarterly && p.isNextYearQuarterly =>
+          Right(Scenario1Content)
+        case (CurrentTaxYear, _) if isCurrentQuarterly && isNextQuarterly =>
+          Right(Scenario1Content)
+        case (CurrentTaxYear, _) if isCurrentQuarterly && isNextAnnual && quarterlyUpdatesCount > 0 =>
+          Right(Scenario1Content)
+        case (CurrentTaxYear, _) if isCurrentQuarterly && isNextAnnual =>
+          Right(Scenario1Content)
+        case (NextTaxYear, _) if isCurrentAnnual && isNextQuarterly =>
+          Right(Scenario4Content)
+        case (NextTaxYear, _) if isCurrentQuarterly || isNextQuarterly =>
+          Right(Scenario3Content)
+        case (NextTaxYear, _) if isMandatedCurrent && isNextQuarterly =>
+          Right(Scenario3Content)
+        case (NoChosenTaxYear | PreviousTaxYear, _) if
+          (isCurrentAnnual && isNextAnnual) ||
+            (isCurrentQuarterly && isNextAnnual) ||
+            (isCurrentAnnual && isNextQuarterly) ||
+            (isCurrentQuarterly && isNextQuarterly) =>
+          Right(Scenario5Content)
+
+        case _ =>
+          Left(UnableToDetermineContent)
+      }
+    }
+  }
+
+
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
       case ex: Exception =>
@@ -60,37 +106,35 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      withOptOutFS {
-        withRecover(isAgent) {
+  def show(isAgent: Boolean = false): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        withOptOutFS {
+          withRecover(isAgent) {
 
-          val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
+            val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
 
-          for {
-            proposition: OptOutProposition <- optOutService.fetchOptOutProposition()
-            chosenTaxYear: ChosenTaxYear <- optOutService.determineOptOutIntentYear()
-            viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
-            submitYourTaxReturnContent: Option[Html] =
-              confirmedOptOutViewUtils
-                .submitYourTaxReturnContent(
-                  `itsaStatusCY-1` = proposition.previousTaxYear.status,
-                  `itsaStatusCY` = proposition.currentTaxYear.status,
-                  `itsaStatusCY+1` = proposition.nextTaxYear.status,
-                  chosenTaxYear = chosenTaxYear,
-                  isMultiYear = proposition.isMultiYearOptOut,
-                  isPreviousYearCrystallised = proposition.previousTaxYear.crystallised
-                )
-          } yield {
-            viewModel match {
-              case Some(viewModel) =>
-                Ok(view(viewModel, isAgent, showReportingFrequencyContent, submitYourTaxReturnContent))
-              case None =>
-                Logger("application").error(s"error, invalid Opt-out journey")
-                errorHandler(isAgent).showInternalServerError()
+            for {
+              viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
+              viewScenarioContent: Either[ConfirmedOptOutViewScenariosError, ConfirmedOptOutViewScenarios] <- viewScenarioHandler()
+            } yield {
+              (viewScenarioContent, viewModel) match {
+                case (Left(error), _) =>
+                  Logger("application").error(s"[ConfirmedOptOutController][show] Error, invalid Opt-out journey, error: $error")
+                  errorHandler(isAgent).showInternalServerError()
+                case (Right(viewScenario), Some(viewModel)) =>
+                  Logger("application").debug(s"[ConfirmedOptOutController][show] Success, showing ConfirmedOptOutView for scenario: $viewScenario")
+                  Ok(view(
+                    viewModel = viewModel,
+                    isAgent = isAgent,
+                    showReportingFrequencyContent = showReportingFrequencyContent,
+                    confirmedOptOutViewScenarios = viewScenario,
+                    selfAssessmentTaxReturnLink = appConfig.selfAssessmentTaxReturnLink,
+                    compatibleSoftwareLink = appConfig.compatibleSoftwareLink
+                  ))
+              }
             }
           }
         }
-      }
-  }
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package models.obligations
+package models.triggeredMigration.viewModels
 
-import play.api.libs.json.{Format, Json}
-
-case class GroupedObligationsModel(identification: String, obligations: List[SingleObligationModel]) {
-
-  val currentCrystDeadlines: List[SingleObligationModel] = obligations.filter(_.obligationType == "Crystallisation")
-    .sortBy(_.start.toEpochDay)
+case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecordsSoleTraderDetails],
+                                     hasActiveUkProperty: Boolean,
+                                     hasActiveForeignProperty: Boolean) {
+  val hasSoleTraderBusinesses: Boolean = soleTraderBusinesses.nonEmpty
 }
 
-object GroupedObligationsModel {
-  implicit val format: Format[GroupedObligationsModel] = Json.format[GroupedObligationsModel]
-}
+case class CheckHmrcRecordsSoleTraderDetails(incomeSource: Option[String],
+                                             businessName: Option[String])
+
+

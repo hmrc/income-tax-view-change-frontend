@@ -2655,13 +2655,22 @@ optout.updates.checkAnswers.inset       = You have <b>2 quarterly updates submit
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed
+
+#### maybe get rid of these
 optout.confirmedOptOut.taxYear                                   = You are reporting annually from the {0} to {1} tax year onwards
 optout.confirmedOptOut.one-year                                  = You are reporting annually for the {0} to {1} tax year
+####
+
+optout.confirmedOptOut.green.panel.scenario1And4                 = You no longer need to use Making Tax Digital for Income Tax
+optout.confirmedOptOut.green.panel.scenario2                     = You do not need to use Making Tax Digital for Income Tax for the {0} to {1} tax year
+optout.confirmedOptOut.green.panel.scenario3                     = From the {0} to {1} tax year onwards you do not need to use Making Tax Digital for Income Tax
+optout.confirmedOptOut.green.panel.scenario5                     = You no longer need to use Making Tax Digital for Income Tax
+
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Your revised deadlines
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Your tax return for the {0} to {1} tax year is due by <b>31 January {2}</b>.
 optout.confirmedOptOut.viewUpcomingDeadlines.text                = View your upcoming deadlines
-optout.confirmedOptOut.yourRevisedDeadlines.desc2                = You can decide at any time to opt back in to reporting quarterly for all of your businesses on {0} page.
-optout.confirmedOptOut.yourReportingFrequency.text               = your reporting frequency
+optout.confirmedOptOut.yourRevisedDeadlines.desc2                = You can decide at any time to sign back up to Making Tax Digital for Income Tax for all of your businesses on {0} page.
+optout.confirmedOptOut.yourReportingFrequency.text               = your reporting obligations
 
 optout.confirmedOptOut.submitTax                                 = Submit your tax return
 
@@ -2671,10 +2680,17 @@ optout.confirmedOptOut.submitTax.confirmed.p1.link               = filed your Se
 optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are reporting quarterly, you will need
 optout.confirmedOptOut.submitTax.confirmed.p2.link               = software compatible with Making Tax Digital for Income Tax
 
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1                    = As you are opted out, you can find out here how to
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link               = file your Self Assessment tax return
+
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1                    = Now you have opted out, you will need to go back to the way you have previously
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link               = filed your Self Assessment tax return
+
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
 optout.confirmedOptOut.next-updates                              = next updates
-optout.confirmedOptOut.reportQuarterly                           = Reporting quarterly again in the future
+
+optout.confirmedOptOut.reportQuarterly                           = Your reporting obligations in the future
 optout.confirmedOptOut.reportQuarterly.desc1                     = You could be required to report quarterly again in the future if:
 optout.confirmedOptOut.reportQuarterly.p1                        = HMRC lowers the income threshold for Making Tax Digital
 optout.confirmedOptOut.reportQuarterly.p2                        = you report an increase in your qualifying income in a tax return
@@ -2688,6 +2704,50 @@ optout.confirmedOptOut.software-compatible                       = software comp
 optout.confirmedOptOut.reportQuarterly.reason-list               = This could be because:
 optout.confirmedOptOut.reportQuarterly.reason1                   = HMRC lowered the income threshold for Making Tax Digital
 optout.confirmedOptOut.reportQuarterly.reason2                   = you reported an increase in your qualifying income in last year’s tax return
+
+optout.confirmedOptOut.scenario1.reporting.obligations.heading                = Your reporting obligations in the future
+optout.confirmedOptOut.scenario1.reporting.obligations.p1                     = You could be required to use Making Tax Digital for Income Tax again in the future if:
+optout.confirmedOptOut.scenario1.reporting.obligations.bullet1                = HMRC lowers the income threshold for it
+optout.confirmedOptOut.scenario1.reporting.obligations.bullet2                = you report an increase in your qualifying income in a tax return
+optout.confirmedOptOut.scenario1.reporting.obligations.inset                  = For example, if your income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026.
+optout.confirmedOptOut.scenario1.reporting.obligations.p3                     = If this happens, we will write to you to let you know.
+optout.confirmedOptOut.scenario1.reporting.obligations.p4                     = You can check the threshold for qualifying income in the
+optout.confirmedOptOut.scenario1.reporting.obligations.p4.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+
+optout.confirmedOptOut.scenario2.reporting.obligations.heading                = Your reporting obligations from the next tax year onwards
+optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = From 6 April {0}, you will be required to use Making Tax Digital for Income tax.
+optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = This could be because:
+optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = HMRC lowered the income threshold for it
+optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = you reported an increase in your qualifying income in a tax return
+optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = You can check the threshold for qualifying income in the
+optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
+
+optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Your reporting obligations in the future
+optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = You are opted out from next tax year onwards, but you could be required to use Making Tax Digital for Income Tax again in the future if:
+optout.confirmedOptOut.scenario3.reporting.obligations.bullet1                = HMRC lowers the income threshold for it
+optout.confirmedOptOut.scenario3.reporting.obligations.bullet2                = you report an increase in your qualifying income in a tax return
+optout.confirmedOptOut.scenario3.reporting.obligations.inset                  = For example, if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026.
+optout.confirmedOptOut.scenario3.reporting.obligations.p2                     = If this happens, we will write to you to let you know.
+optout.confirmedOptOut.scenario3.reporting.obligations.p3                     = You can check the threshold for qualifying income in the
+optout.confirmedOptOut.scenario3.reporting.obligations.p3.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+
+optout.confirmedOptOut.scenario4.reporting.obligations.heading                = Your reporting obligations in the future
+optout.confirmedOptOut.scenario4.reporting.obligations.p1                     = You could be required to use Making Tax Digital for Income Tax again in the future if:
+optout.confirmedOptOut.scenario4.reporting.obligations.bullet1                = HMRC lowers the income threshold for it
+optout.confirmedOptOut.scenario4.reporting.obligations.bullet2                = you report an increase in your qualifying income in a tax return
+optout.confirmedOptOut.scenario4.reporting.obligations.inset                  = For example, if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026.
+optout.confirmedOptOut.scenario4.reporting.obligations.p2                     = If this happens, we will write to you to let you know.
+optout.confirmedOptOut.scenario4.reporting.obligations.p3                     = You can check the threshold for qualifying income in the
+optout.confirmedOptOut.scenario4.reporting.obligations.p3.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax
+
+optout.confirmedOptOut.scenario5.reporting.obligations.heading                = Your reporting obligations in the future
+optout.confirmedOptOut.scenario5.reporting.obligations.p1                     = You could be required to use Making Tax Digital for Income Tax again in the future if:
+optout.confirmedOptOut.scenario5.reporting.obligations.bullet1                = HMRC lowers the income threshold for it
+optout.confirmedOptOut.scenario5.reporting.obligations.bullet2                = you report an increase in your qualifying income in a tax return
+optout.confirmedOptOut.scenario5.reporting.obligations.inset                  = For example, if your income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026.
+optout.confirmedOptOut.scenario5.reporting.obligations.p2                     = If this happens, we will write to you to let you know.
+optout.confirmedOptOut.scenario5.reporting.obligations.p3                     = You can check the threshold for qualifying income in the
+optout.confirmedOptOut.scenario5.reporting.obligations.p3.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax
 
 optOut.confirmSingleYearOptOut.title                        = Opt out of quarterly reporting for a single tax year
 optOut.confirmSingleYearOptOut.detail.text                  = You can only opt out for the {0} to {1} tax year.
@@ -3252,3 +3312,44 @@ income-sources.check-details-reporting-frequency.change-choose-tax-year-key     
 
 income-sources.check-details-reporting-frequency.r17.change-rf-key              = Do you want to sign this new business up to Making Tax Digital for Income Tax?
 income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Which tax years do you want to sign up for?
+
+#######################################################################################################################
+## Triggered Migration Journey ##
+#######################################################################################################################
+
+# Check HMRC records page
+
+triggered-migration.check-hmrc-records.heading     = Check HMRC records only list your active businesses
+triggered-migration.check-hmrc-records.title       = Check HMRC records only list your active businesses
+triggered-migration.check-hmrc-records.desc        = You now have quarterly deadlines for your sole trader and/or property businesses listed here.
+triggered-migration.check-hmrc-records.inset       = Making sure this page is correct will help avoid both missing deadlines for your active businesses and having deadlines for an income source you may have closed down or sold.
+triggered-migration.check-hmrc-records.bulletStart = If necessary, you must:
+triggered-migration.check-hmrc-records.bullet1     = add any businesses that are missing
+triggered-migration.check-hmrc-records.bullet2     = cease any that you no longer get income from
+
+triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Your active businesses
+triggered-migration.check-hmrc-records.soleTrader.heading            = Sole trader businesses
+triggered-migration.check-hmrc-records.soleTrader.cease.link         = Cease
+triggered-migration.check-hmrc-records.soleTrader.businessName       = Business name
+triggered-migration.check-hmrc-records.soleTrader.businessState      = Business state
+triggered-migration.check-hmrc-records.soleTrader.active             = Active
+triggered-migration.check-hmrc-records.soleTrader.add.link           = Add a sole trader business
+triggered-migration.check-hmrc-records.soleTrader.guidance           = You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader.
+triggered-migration.check-hmrc-records.soleTrader.unknown            = Unknown
+
+triggered-migration.check-hmrc-records.property.heading              = Property businesses
+triggered-migration.check-hmrc-records.ukProperty.heading            = UK property
+triggered-migration.check-hmrc-records.ukProperty.cease.link         = Cease
+triggered-migration.check-hmrc-records.ukProperty.businessState      = Business state
+triggered-migration.check-hmrc-records.ukProperty.active             = Active
+triggered-migration.check-hmrc-records.ukProperty.add.link           = Add a property business
+triggered-migration.check-hmrc-records.foreignProperty.heading       = Foreign property
+triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Cease
+triggered-migration.check-hmrc-records.foreignProperty.businessState = Business state
+triggered-migration.check-hmrc-records.foreignProperty.active        = Active
+triggered-migration.check-hmrc-records.foreignProperty.add.link      = Add foreign property business
+triggered-migration.check-hmrc-records.noActiveProperties            = If you get income from one or more properties in the UK, you have a UK property business. If the property is abroad, you have a foreign property business. For example: letting houses, flats or holiday homes either on a long or short term basis.
+
+triggered-migration.check-hmrc-records.confirmRecords.heading = Confirm HMRC records only list your active businesses
+triggered-migration.check-hmrc-records.confirmRecords.text    = This page only needs to list all your active sole trader and property income sources. Any other business details that are not right, misspelt or out of date, can be amended at a later date.
+triggered-migration.check-hmrc-records.confirmRecords.button  = Confirm and continue

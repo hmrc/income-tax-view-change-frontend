@@ -2650,6 +2650,12 @@ optout.updates.checkAnswers.inset       = Mae gennych <b>2 ddiweddariad chwarter
 optout.confirmedOptOut.heading                                   = Optio allan wedi’i gwblhau
 optout.confirmedOptOut.taxYear                                   = Rydych yn cyflwyno adroddiadau’n flynyddol o flwyddyn dreth {0} i {1} ymlaen
 optout.confirmedOptOut.one-year                                  = Rydych yn cyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
+
+optout.confirmedOptOut.green.panel.scenario1And4                 = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
+optout.confirmedOptOut.green.panel.scenario2                     = Nid oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach ar gyfer blwyddyn dreth {0} i {1}
+optout.confirmedOptOut.green.panel.scenario3                     = Nid oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach ar gyfer blwyddyn dreth {0} i {1}
+optout.confirmedOptOut.green.panel.scenario5                     = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
+
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Eich dyddiadau cau sydd wedi’u haddasu
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>31 Ionawr {2}</b>.
 optout.confirmedOptOut.viewUpcomingDeadlines.text                = Bwrw golwg dros eich dyddiadau cau sydd ar y gweill
@@ -2663,9 +2669,16 @@ optout.confirmedOptOut.submitTax.confirmed.p1.link               = cyflwyno’ch
 optout.confirmedOptOut.submitTax.confirmed.p2                    = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
 optout.confirmedOptOut.submitTax.confirmed.p2.link               =  meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = Gan eich bod wedi optio allan, gallwch ddefnyddio’r cysylltiad hwn i gael gwybod sut i
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflen Dreth Hunanasesiad
+
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1          = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech arfer ei defnyddio i
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflenni Treth Hunanasesiad.
+
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
 optout.confirmedOptOut.next-updates                              = diweddariadau nesaf
+
 optout.confirmedOptOut.reportQuarterly                           = Cyflwyno adroddiadau’n chwarterol eto yn y dyfodol
 optout.confirmedOptOut.reportQuarterly.desc1                     = Mae’n bosibl y bydd gofyn i chi gyflwyno adroddiadau’n chwarterol eto yn y dyfodol os yw’r canlynol yn digwydd:
 optout.confirmedOptOut.reportQuarterly.p1                        = CThEF yn gostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn
@@ -2680,6 +2693,50 @@ optout.confirmedOptOut.software-compatible                       = feddalwedd sy
 optout.confirmedOptOut.reportQuarterly.reason-list               = Gallai hyn fod oherwydd y canlynol:
 optout.confirmedOptOut.reportQuarterly.reason1                   = gostyngodd CThEF y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
 optout.confirmedOptOut.reportQuarterly.reason2                   = gwnaethoch roi gwybod am gynnydd yn eich incwm cymwys mewn Ffurflen Dreth
+
+optout.confirmedOptOut.scenario1.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
+optout.confirmedOptOut.scenario1.reporting.obligations.p1                     = Mae’n bosibl y bydd gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os daw’r canlynol yn berthnasol:
+optout.confirmedOptOut.scenario1.reporting.obligations.bullet1                = mae CThEF yn gostwng y trothwy incwm ar gyfer defnyddio’r cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario1.reporting.obligations.bullet2                = rydych yn rhoi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario1.reporting.obligations.inset                  = Er enghraifft, os bydd cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn mynd dros y trothwy o £50,000 ym mlwyddyn dreth 2024 i 2025, bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill 2026 ymlaen
+optout.confirmedOptOut.scenario1.reporting.obligations.p3                     = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.confirmedOptOut.scenario1.reporting.obligations.p4                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario1.reporting.obligations.p4.link                = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+optout.confirmedOptOut.scenario2.reporting.obligations.heading                = Eich ymrwymiadau o ran adrodd o’r flwyddyn dreth nesaf ymlaen
+optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = O 6 Ebrill {0} ymlaen, efallai bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = Gallai hyn fod oherwydd y canlynol:
+optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = meini prawf i bobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
+optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = Rydych wedi optio allan o’r flwyddyn dreth nesaf ymlaen, ond gallai fod yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os yw’r canlynol yn wir:
+optout.confirmedOptOut.scenario3.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario3.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario3.reporting.obligations.inset                  = Er enghraifft, pe byddai cyfanswm eich incwm gros o hunangyflogaeth neu eiddo – neu o’r ddau – yn uwch na’r trothwy o £50,000 ym mlwyddyn dreth 2024 i 2025, byddai’n rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill 2026 ymlaen.
+optout.confirmedOptOut.scenario3.reporting.obligations.p2                     = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.confirmedOptOut.scenario3.reporting.obligations.p3                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario3.reporting.obligations.p3.link                = meini prawf i bobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+optout.confirmedOptOut.scenario4.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
+optout.confirmedOptOut.scenario4.reporting.obligations.p1                     = Mae’n bosibl y bydd gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os daw’r canlynol yn berthnasol:
+optout.confirmedOptOut.scenario4.reporting.obligations.bullet1                = mae CThEF yn gostwng y trothwy incwm ar gyfer defnyddio’r cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario4.reporting.obligations.bullet2                = rydych yn rhoi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario4.reporting.obligations.inset                  = Er enghraifft, os bydd cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn mynd dros y trothwy o £50,000 ym mlwyddyn dreth 2024 i 2025, bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill 2026 ymlaen
+optout.confirmedOptOut.scenario4.reporting.obligations.p2                     = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.confirmedOptOut.scenario4.reporting.obligations.p3                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario4.reporting.obligations.p3.link                = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+optout.confirmedOptOut.scenario5.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
+optout.confirmedOptOut.scenario5.reporting.obligations.p1                     = Mae’n bosibl y bydd gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os daw’r canlynol yn berthnasol:
+optout.confirmedOptOut.scenario5.reporting.obligations.bullet1                = mae CThEF yn gostwng y trothwy incwm ar gyfer defnyddio’r cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario5.reporting.obligations.bullet2                = rydych yn rhoi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario5.reporting.obligations.inset                  = Er enghraifft, os bydd cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn mynd dros y trothwy o £50,000 ym mlwyddyn dreth 2024 i 2025, bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill 2026 ymlaen
+optout.confirmedOptOut.scenario5.reporting.obligations.p2                     = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.confirmedOptOut.scenario5.reporting.obligations.p3                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario5.reporting.obligations.p3.link                = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 optOut.confirmSingleYearOptOut.title                        = Optio allan o gyflwyno adroddiadau am flwyddyn dreth unigol
 optOut.confirmSingleYearOptOut.detail.text                  = Gallwch opio allan ar gyfer blwyddyn dreth {0} i {1} yn unig.
@@ -3240,3 +3297,44 @@ income-sources.check-details-reporting-frequency.change-choose-tax-year-key     
 
 income-sources.check-details-reporting-frequency.r17.change-rf-key              = A ydych am gofrestru’r busnes newydd hwn gyda’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm?
 income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Pa flynyddoedd treth ydych am gofrestru ar eu cyfer?
+
+#######################################################################################################################
+## Triggered Migration Journey ##
+#######################################################################################################################
+
+# Check HMRC records page
+
+triggered-migration.check-hmrc-records.heading     = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.title       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.desc        = Nawr, mae’ch dyddiadau cau chwarterol ar gyfer eich busnesau fel unig fasnachwr a/neu eich busnesau eiddo wedi’u rhestru yma.
+triggered-migration.check-hmrc-records.inset       = Bydd sicrhau bod y manylion ar y dudalen hon yn gywir yn eich helpu chi i osgoi colli dyddiadau cau ar gyfer eich busnesau cyfredol, ac yn osgoi rhoi dyddiadau cau i chi ar gyfer ffynonellau incwm y gallech fod wedi’u cau neu eu gwerthu.
+triggered-migration.check-hmrc-records.bulletStart = Bydd yn rhaid i chi wneud y canlynol, os oes angen:
+triggered-migration.check-hmrc-records.bullet1     = ychwanegu unrhyw fusnesau sydd ar goll
+triggered-migration.check-hmrc-records.bullet2     = dod ag unrhyw fusnesau, nad ydynt bellach yn rhoi incwm i chi, i ben
+
+triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Eich busnesau cyfredol
+triggered-migration.check-hmrc-records.soleTrader.heading            = Busnesau unig fasnachwr
+triggered-migration.check-hmrc-records.soleTrader.cease.link         = Wedi dod i ben
+triggered-migration.check-hmrc-records.soleTrader.businessName       = Enw’r busnes
+triggered-migration.check-hmrc-records.soleTrader.businessState      = Statws y busnes
+triggered-migration.check-hmrc-records.soleTrader.active             = Cyfredol
+triggered-migration.check-hmrc-records.soleTrader.add.link           = Ychwanegu busnes unig fasnachwr
+triggered-migration.check-hmrc-records.soleTrader.guidance           = Rydych yn hunangyflogedig os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn ‘unig fasnachwr’. Os ydych yn gweithio drwy gwmni cyfyngedig, nid unig fasnachwr ydych chi.
+triggered-migration.check-hmrc-records.soleTrader.unknown            = Anhysbys
+
+triggered-migration.check-hmrc-records.property.heading              = Busnesau eiddo
+triggered-migration.check-hmrc-records.ukProperty.heading            = Eiddo yn y DU
+triggered-migration.check-hmrc-records.ukProperty.cease.link         = Wedi dod i ben
+triggered-migration.check-hmrc-records.ukProperty.businessState      = Statws y busnes
+triggered-migration.check-hmrc-records.ukProperty.active             = Cyfredol
+triggered-migration.check-hmrc-records.ukProperty.add.link           = Ychwanegu busnes eiddo
+triggered-migration.check-hmrc-records.foreignProperty.heading       = Eiddo Tramor
+triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Wedi dod i ben
+triggered-migration.check-hmrc-records.foreignProperty.businessState = Statws y busnes
+triggered-migration.check-hmrc-records.foreignProperty.active        = Cyfredol
+triggered-migration.check-hmrc-records.foreignProperty.add.link      = Ychwanegu eiddo busnes tramor
+triggered-migration.check-hmrc-records.noActiveProperties            = Os ydych yn cael incwm o un eiddo neu fwy yn y DU, mae gennych fusnes eiddo yn y DU. Os yw’r eiddo dramor, mae gennych fusnes eiddo tramor. Er enghraifft: incwm o roi tai, fflatiau, neu gartrefi gwyliau ar osod, a hynny naill ai ar sail tymor hir neu dymor byr.
+
+triggered-migration.check-hmrc-records.confirmRecords.heading = Cadarnhau bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.confirmRecords.text    = Dylai’r dudalen hon dim ond rhestru’ch ffynonellau incwm cyfredol o fod yn unig fasnachwr a’ch ffynonellau incwm cyfredol o eiddo. Gall unrhyw fanylion busnes eraill sy’n anghywir, sydd wedi’u camsillafu, neu sydd ddim yn gyfredol, gael eu diweddaru yn nes ymlaen.
+triggered-migration.check-hmrc-records.confirmRecords.button  = Cadarnhau a pharhau
