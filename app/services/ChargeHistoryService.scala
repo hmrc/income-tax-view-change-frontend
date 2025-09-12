@@ -23,6 +23,7 @@ import models.chargeHistory._
 import models.financialDetails._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,23 +50,23 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
         AdjustmentHistoryModel(creation, List.empty)
       case _ =>
         val creation = AdjustmentModel(amount = chargeHistory.minBy(_.documentDate).totalAmount, adjustmentDate = Some(chargeHistory.minBy(_.documentDate).documentDate), reasonCode = CreateReversalReason)
-        val poaAdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.sortBy(_.documentDate), documentDetail.originalAmount)
-        AdjustmentHistoryModel(creation, poaAdjustmentHistory.sortBy(_.adjustmentDate))
+        val AdjustmentHistory: List[AdjustmentModel] = adjustments(chargeHistory.sortBy(_.documentDate), documentDetail.originalAmount, documentDetail.documentDate)
+        AdjustmentHistoryModel(creation, AdjustmentHistory.sortBy(_.adjustmentDate))
     }
   }
 
-  private def adjustments(chargeHistory: List[ChargeHistoryModel], finalAmount: BigDecimal): List[AdjustmentModel] = {
-    chargeHistory.foldRight((finalAmount, List.empty[AdjustmentModel])) { (current, acc) =>
-      val (nextAmount, adjList) = acc
+  private def adjustments(chargeHistory: List[ChargeHistoryModel], finalAmount: BigDecimal, finalDate: LocalDate): List[AdjustmentModel] = {
+    chargeHistory.foldRight(((finalAmount, finalDate), List.empty[AdjustmentModel])) { (current, acc) =>
+      val (nextAmountAndDate, adjList) = acc
       val newAdjustment = AdjustmentModel(
-        adjustmentDate = Some(current.reversalDate),
+        adjustmentDate = Some(nextAmountAndDate._2),
         reasonCode = current.reasonCode match {
           case Left(ex) => throw new Exception(ex)
           case Right(rc) => rc
         },
-        amount = nextAmount
+        amount = nextAmountAndDate._1
       )
-      (current.totalAmount, newAdjustment :: adjList)
+      ((current.totalAmount, current.documentDate), newAdjustment :: adjList)
     } match {
       case (_, adjustmentModels) => adjustmentModels
     }
