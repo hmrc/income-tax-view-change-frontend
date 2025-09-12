@@ -1304,7 +1304,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     ) {
       document.select("#SAChargesInterestLink").text() shouldBe interestSALinkText
       document.select("#SAChargesInterestLink").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
-      document.select("#p-interest-locks-msg").text().contains(s"$interestLinkFirstWord $interestSALinkText $interestLinkFullText") shouldBe true
+      document.select("#p-interest-locks-msg").text().contains(s"$interestSALinkText $interestLinkFullText") shouldBe true
     }
 
     "have a interest lock payment link when the interest has previously and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
@@ -1314,7 +1314,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     ) {
       document.select("#SAChargesInterestLink").text() shouldBe interestSALinkText
       document.select("#SAChargesInterestLink").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
-      document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestSALinkText $interestLinkFullText"
+      document.select("#p-interest-locks-msg").text() shouldBe s"$interestSALinkText $interestLinkFullText"
     }
 
     "have no interest lock payment link when there is no accrued interest and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(

@@ -105,7 +105,7 @@
 
       @if(!viewModel.chargeItem.isCodingOut) {
           @p(id = Some("due-date-text")) {
-              @getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)
+              @getMessage("due", viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString, (viewModel.chargeItem.taxYear.startYear + 1).toString, (viewModel.chargeItem.taxYear.endYear+1).toString)
           }
       }
 
@@ -124,7 +124,6 @@
               @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
               @messages("chargeSummary.selfAssessmentCharges.textTwo-agent")
           } else {
-              @messages("chargeSummary.selfAssessmentCharges.textOne")
               @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
               @messages("chargeSummary.selfAssessmentCharges.textTwo")
           }

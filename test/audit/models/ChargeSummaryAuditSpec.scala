@@ -264,7 +264,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
             "chargeHistory" -> Json.arr(
               Json.obj(
                 "date" -> "2018-07-06",
-                "description" -> messages("chargeSummary.chargeHistory.amend.paymentOnAccount1.text"),
+                "description" -> messages("chargeSummary.chargeHistory.amend.paymentOnAccount1.text", 2019.toString, 2020.toString),
                 "amount" -> 1500
               ),
               Json.obj(
