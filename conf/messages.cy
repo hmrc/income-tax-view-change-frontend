@@ -1331,6 +1331,8 @@ paymentHistory.check-refund-3                                   = a wnaethoch am
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad roeddech wedi’i wneud i CThEF
+paymentAllocation.youPaid                                       = Rydych chi wedi talu:
+paymentAllocation.paymentDate.p                                 = Cafodd y taliad hwn ei wneud ar
 paymentAllocation.sa.info                                       = Dyma arian a daloch i mewn i’ch cyfrif cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ewch i’ch
 paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
@@ -1344,9 +1346,10 @@ paymentAllocation.creditOnAccount                               = Credyd ar gyfr
 paymentAllocation.na                                            = Amh
 paymentAllocation.moneyOnAccount                                = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
 
+paymentAllocation.details.title                                 = Sut ydyn ni’n trin eich taliadau i dalu costau?
 paymentAllocation.intro                                         = Pan fyddwch yn gwneud taliad, mae CThEF yn neilltuo’r arian i’r gwahanol daliadau yn eich cyfrif yn y drefn ganlynol.
-paymentAllocation.condition-1                                   = Costau hwyr ac unrhyw daliadau eraill sy’n cronni llog.
-paymentAllocation.condition-2                                   = Taliadau sy’n dod yn ddyledus.
+paymentAllocation.condition-1                                   = Taliadau â llog, gan gynnwys taliadau hwyr.
+paymentAllocation.condition-2                                   = Taliadau sy’n ddyledus heddiw.
 paymentAllocation.condition-3                                   = Taliadau’n ddyledus cyn pen 30 diwrnod.
 paymentAllocation.outro                                         = Gallwch weld sut y cafodd y taliad hwn ei ddyrannu yn y tabl isod.
 

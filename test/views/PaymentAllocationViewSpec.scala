@@ -55,7 +55,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   )
 
   val heading: String = messages("paymentAllocation.heading")
-  val date: String = "31 January 2021"
+  val date: String = "This payment was made on 31 January 2021"
+  val headingAmount: String = "You paid: £300.00"
   val amount: String = "£300.00"
   val paymentAllocationHeading: String = messages("paymentAllocation.tableSection.heading")
   val tableHeadings: Seq[String] = Seq(messages("paymentAllocation.tableHead.allocation"), messages("paymentAllocation.tableHead.allocated-date"), messages("paymentAllocation.tableHead.amount"))
@@ -114,14 +115,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         document.getElementsByTag("h1").text shouldBe heading
       }
 
-      s"have the correct date of $date" in new PaymentAllocationSetup {
-        document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").eq(0).text shouldBe date
+      s"have the correct payment date message of '$date'" in new PaymentAllocationSetup {
+        document.getElementById("payment-date").text() shouldBe date
       }
 
-      s"have the correct Amount of $amount" in new PaymentAllocationSetup {
-        document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").last.text shouldBe amount
+      s"have the correct payment amount message of '$headingAmount'" in new PaymentAllocationSetup {
+        document.getElementById("payment-amount").text() shouldBe headingAmount
       }
 
       "have payment allocation introduction" in new PaymentAllocationSetup() {
@@ -148,12 +147,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup() {
-        document.getElementsByTag("h2").eq(1).text() shouldBe paymentAllocationHeading
+        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
       }
 
       "check that the heading section is not present when credit is defined but outstandingAmount is 0" in
         new PaymentAllocationSetupCreditZeroOutstanding() {
-          document.getElementsByClass("govuk-heading-m").eq(0).text() shouldBe ""
+          document.getElementsByClass("govuk-heading-m").eq(1).text() shouldBe ""
         }
 
       "check that the allocation table section is not present when credit is defined but outstandingAmount is 0" in
@@ -234,14 +233,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "checking the heading" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         document.getElementsByTag("h1").text shouldBe heading
       }
-      s"have the correct date of $date" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").eq(0).text shouldBe date
+      s"have the correct payment date message of '$date'" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("payment-date").text() shouldBe date
       }
 
-      s"have the correct Amount of $amount" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.selectById("payment-allocation-charge-table")
-          .getElementsByTag("dd").last.text shouldBe amount
+      s"have the correct payment amount message of '$headingAmount'" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
+        document.getElementById("payment-amount").text() shouldBe headingAmount
       }
 
       "have payment allocation introduction" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
@@ -268,7 +265,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "check that the second section information is present" when {
       "has a main heading" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        document.getElementsByTag("h2").eq(1).text() shouldBe paymentAllocationHeading
+        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
       }
 
       "has table headers" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
@@ -349,7 +346,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.CreditAndRefundController.show().url
         )
 
-        layoutContent.h2.text() shouldBe paymentAllocationHeading
+        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
@@ -390,7 +387,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.CreditAndRefundController.show().url
         )
 
-        layoutContent.h2.text() shouldBe paymentAllocationHeading
+        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
@@ -427,7 +424,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.CreditAndRefundController.show().url
         )
 
-        layoutContent.h2.text() shouldBe paymentAllocationHeading
+        document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText

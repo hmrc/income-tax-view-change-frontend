@@ -1332,6 +1332,8 @@ paymentHistory.check-refund-3                                   = you’ve made 
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment you made to HMRC
+paymentAllocation.youPaid                                       = You paid:
+paymentAllocation.paymentDate.p                                 = This payment was made on
 paymentAllocation.sa.info                                       = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous {0}
 paymentAllocation.earlyTaxYear.heading                          = Credit from an earlier tax year
 paymentAllocation.date                                          = Date
@@ -1345,9 +1347,10 @@ paymentAllocation.creditOnAccount                               = Credit on acco
 paymentAllocation.na                                            = N/A
 paymentAllocation.moneyOnAccount                                = Remaining amount (added to available credit)
 
+paymentAllocation.details.title                                 = How do we allocate your payments to charges?
 paymentAllocation.intro                                         = When you make a payment, HMRC assigns the money to the different charges in your account in the following order.
-paymentAllocation.condition-1                                   = Overdue charges and any other charges accruing interest.
-paymentAllocation.condition-2                                   = Charges that become due.
+paymentAllocation.condition-1                                   = Charges with interest, including overdue charges.
+paymentAllocation.condition-2                                   = Charges due today.
 paymentAllocation.condition-3                                   = Charges due within 30 days.
 paymentAllocation.outro                                         = You can see how this payment was allocated in the table below.
 
