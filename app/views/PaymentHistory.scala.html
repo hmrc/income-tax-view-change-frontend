@@ -99,9 +99,10 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @getItems = @{
-    groupedPayments.map {
-        case ((year: Int, yearPayments: List[PaymentHistoryEntry])) =>
+    groupedPayments.zipWithIndex.map {
+        case ((year: Int, yearPayments: List[PaymentHistoryEntry]), index) =>
             Section(
+                expanded = Some(index == 0),
                 headingContent = HtmlContent(headingContent(year)),
                 content = HtmlContent(bodyContent(year, yearPayments))
             )
