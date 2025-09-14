@@ -1330,6 +1330,9 @@ paymentHistory.check-refund-1                                   = You can
 paymentHistory.check-refund-2                                   = check the progress of a refund request
 paymentHistory.check-refund-3                                   = you’ve made at any time.
 
+paymentHistory.cell.taxYear                                     = {0} to {1}
+paymentHistory.tableHead.taxYear                                = Tax year
+
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment you made to HMRC
 paymentAllocation.sa.info                                       = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous {0}

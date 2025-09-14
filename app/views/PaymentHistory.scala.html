@@ -73,6 +73,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         <tr class="govuk-table__row">
             <th class="govuk-table__header" scope="col">@messages("paymentHistory.table.header.date")</th>
             <th class="govuk-table__header" scope="col">@messages("paymentHistory.table.header.description")</th>
+            <th class="govuk-table__header" scope="col">@messages("paymentHistory.tableHead.taxYear")</th>
             <th class="govuk-table__header govuk-table__header--numeric" scope="col">@messages("paymentHistory.table.header.amount")</th>
         </tr>
         </thead>
@@ -90,6 +91,9 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
                         @messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)
                     </a>
                     }
+                </td>
+                <td class="govuk-table__cell" id="tax-year-cell">
+                    @messages("paymentHistory.cell.taxYear", (payment.getTaxYear.startYear).toString, payment.getTaxYear.endYear.toString).toNonBreaking
                 </td>
                 <td class="govuk-table__cell numeric govuk-table__cell--numeric"> @payment.amount.map(_.abs.toCurrency).getOrElse(getMessage("unknown"))</td>
             </tr>
