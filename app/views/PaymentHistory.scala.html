@@ -137,12 +137,15 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         </div>
     }
 
-    @if(groupedPayments.nonEmpty) {
-        @govukAccordion(Accordion(
-            id = "accordion-default",
-            items = getItems
-        ))
-    }
-
-
+    @{groupedPayments match {
+        case Nil         =>
+        case head :: Nil => bodyContent(head._1, head._2)
+        case _           => {
+            govukAccordion(Accordion(
+                id = "accordion-default",
+                rememberExpanded = Some(true),
+                items = getItems
+            ))
+        }
+    }}
 }
