@@ -148,10 +148,10 @@ class ConfirmedOptOutViewSpec extends TestSupport {
 
         pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
         pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById(Selectors.submitTaxReturnParagraph2).text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph2).text() shouldBe "For any tax year you are still using Making Tax Digital for Income Tax, you will need compatible software (opens in new tab)."
 
         pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "compatible software (opens in new tab)."
 
       }
 
@@ -199,7 +199,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
 
         pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "compatible software (opens in new tab)."
       }
 
       "show the 'Your reporting obligations' section" in {
