@@ -17,17 +17,14 @@
 package models.repaymentHistory
 
 
-import cats.implicits.catsSyntaxOptionId
 import models.financialDetails._
 import models.repaymentHistory.RepaymentHistoryUtils._
 import org.scalatest.matchers.should.Matchers
-import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{id1040000123, id1040000124, id1040000125}
 import testUtils.TestSupport
 
 import java.time.LocalDate
 
-class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeConstants {
+class RepaymentHistoryUtilsSpec extends TestSupport with Matchers {
 
   val repaymentRequestNumber: String = "000000003135"
 
@@ -130,12 +127,6 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeCon
       status = RepaymentHistoryStatus("I")
     ))
 
-  val codedOutBcdCharges = List(codedOutDocumentDetailPayeSACi.copy(documentDate = LocalDate.of(2018, 3, 29)), balancingChargePaye.copy(documentDate = LocalDate.of(2017, 3, 29)))
-
-  val codedOutPoaCharges = List(poa1WithCodingOutAccepted.copy(documentDate = LocalDate.of(2015, 3, 29)), poa2WithCodingutAccepted.copy(documentDate = LocalDate.of(2016, 3, 29)))
-
-  val codedOutCharges = codedOutBcdCharges ++ codedOutPoaCharges
-
   private def groupedRepayments(isAgent: Boolean = false) = List(
     (2021, List(PaymentHistoryEntry(LocalDate.parse("2021-08-20"), Repayment, Some(301.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
       PaymentHistoryEntry(LocalDate.parse("2021-08-21"), Repayment, Some(300.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber))),
@@ -162,42 +153,23 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeCon
     mfa ++ List((2019, reviewAndReconcileCredits ++ bcc ++ cutover ++ standardPayments))
   }
 
-  private def groupedCodedOutBcdCharges() = List(
-    (2018, List(PaymentHistoryEntry(date = LocalDate.of(2018, 3, 29), creditType = BalancingCharge, amount = codedOutDocumentDetailPayeSACi.originalAmount.some, transactionId = codedOutDocumentDetailPayeSACi.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02", visuallyHiddenText = BalancingCharge.toString))),
-    (2017, List(PaymentHistoryEntry(date = LocalDate.of(2017, 3, 29), creditType = BalancingCharge, amount = balancingChargePaye.originalAmount.some, transactionId = balancingChargePaye.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=1040000126", visuallyHiddenText = BalancingCharge.toString)))
-  )
-
-  private def groupedCodedOutPoaCharges() = List(
-    (2016, List(PaymentHistoryEntry(date = LocalDate.of(2016, 3, 29), creditType = PoaTwoDebit, amount = poa2WithCodingutAccepted.originalAmount.some, transactionId = poa2WithCodingutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000124", visuallyHiddenText = PoaTwoDebit.toString))),
-    (2015, List(PaymentHistoryEntry(date = LocalDate.of(2015, 3, 29), creditType = PoaOneDebit, amount = poa1WithCodingOutAccepted.originalAmount.some, transactionId = poa1WithCodingOutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000123", visuallyHiddenText = PoaOneDebit.toString)))
-  )
-
   "RepaymentHistoryUtils" should {
     "getGroupedPaymentHistoryData should combine payments and approved repayments and group by year" when {
-      "both payments, repayments, coded out POAs and coded out BCDs are present" in {
-        getGroupedPaymentHistoryData(payments, repaymentHistory, codedOutCharges, isAgent = false, languageUtils
-        )(messages, dateService ) shouldBe groupedRepayments() ++ groupedPayments() ++ groupedCodedOutBcdCharges() ++ groupedCodedOutPoaCharges()
+      "both payments and repayments are present" in {
+        getGroupedPaymentHistoryData(payments, repaymentHistory, isAgent = false, languageUtils
+        )(messages, dateService ) shouldBe groupedRepayments() ++ groupedPayments()
       }
 
       "only payments are present" in {
-        getGroupedPaymentHistoryData(payments, List(), List(), isAgent = false, languageUtils
+        getGroupedPaymentHistoryData(payments, List(), isAgent = false, languageUtils
         )(messages, dateService) shouldBe groupedPayments()
       }
 
       "only approved repayments are present" in {
-        getGroupedPaymentHistoryData(List(), repaymentHistory, List(), isAgent = false, languageUtils
+        getGroupedPaymentHistoryData(List(), repaymentHistory, isAgent = false, languageUtils
         )(messages, dateService) shouldBe groupedRepayments()
       }
 
-      "only coded out Balancing Charge Debits are present" in {
-        getGroupedPaymentHistoryData(List(), List(), codedOutBcdCharges, isAgent = false, languageUtils
-        )(messages, dateService) shouldBe groupedCodedOutBcdCharges()
-      }
-
-      "only coded out Payment On Account charges are present" in {
-        getGroupedPaymentHistoryData(List(), List(), codedOutPoaCharges, isAgent = false, languageUtils
-        )(messages, dateService) shouldBe groupedCodedOutPoaCharges()
-      }
     }
   }
 }

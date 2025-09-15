@@ -21,7 +21,7 @@ import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import models.admin.PaymentHistoryRefunds
-import models.financialDetails.{ChargeItem, Payment}
+import models.financialDetails.Payment
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -73,8 +73,6 @@ class PaymentHistoryControllerSpec extends MockAuthActions
                 .thenReturn(Future.successful(Right(testPayments)))
               when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
                 .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
-              when(paymentHistoryService.getChargesWithUpdatedDocumentDateIfChargeHistoryExists()(any(), any()))
-                .thenReturn(Future.successful(List.empty[ChargeItem]))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK

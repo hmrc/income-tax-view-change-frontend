@@ -1315,11 +1315,6 @@ paymentHistory.repaymentInterest                                = Credit from re
 paymentHistory.POA1RR-credit                                    = First payment on account: credit from your tax return
 paymentHistory.POA2RR-credit                                    = Second payment on account: credit from your tax return
 paymentHistory.activity                                         = {0} activity
-
-paymentHistory.POA1                                             = First payment on account collected through your PAYE tax code
-paymentHistory.POA2                                             = Second payment on account collected through your PAYE tax code
-paymentHistory.BCD                                              = Balancing payment collected through PAYE tax code
-
 paymentHistory.taxYear                                          = {0} to {1} tax year
 
 paymentsHistory.CardRef                                         = Payment made by debit card ref:

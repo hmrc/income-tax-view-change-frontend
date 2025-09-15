@@ -540,7 +540,7 @@
                     <tr>
                         <td class="govuk-table__cell" id="rar-due-date">@{charge.getDueDate.toLongDateShort.toNonBreaking}</td>
                         <td class="govuk-table__cell">
-                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
+                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
                                 @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
                             </a>
                         </td>
