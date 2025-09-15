@@ -123,7 +123,7 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
                   Logger("application").error(s"[ConfirmedOptOutController][show] Error, invalid Opt-out journey, error: $error")
                   errorHandler(isAgent).showInternalServerError()
                 case (Right(viewScenario), Some(viewModel)) =>
-                  Logger("application").debug(s"[ConfirmedOptOutController][show] Success, showing ConfirmedOptOutView for scenario: $viewScenario")
+                  Logger("application").info(s"[ConfirmedOptOutController][show] Success, showing ConfirmedOptOutView for scenario: $viewScenario")
                   Ok(view(
                     viewModel = viewModel,
                     isAgent = isAgent,
