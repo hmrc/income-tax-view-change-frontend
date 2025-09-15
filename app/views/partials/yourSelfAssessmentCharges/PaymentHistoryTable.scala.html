@@ -42,7 +42,7 @@
 @import implicitDateFormatter.longDate
 
 @reviewAndReconcileCreditMessage(charge: ChargeItem) = {
-    <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
+    <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
         @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
     </a>
 }
