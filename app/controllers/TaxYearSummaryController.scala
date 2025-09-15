@@ -204,9 +204,10 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
               FirstLatePaymentPenalty, SecondLatePaymentPenalty, LateSubmissionPenalty))
         }
 
+        println("Beep "+ chargeItemsNoPayments.map(x => (x.interestOutstandingAmount, x.accruingInterestAmount)))
         val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {
           chargeItemsNoPayments
-            .filter(_.isAccruingInterest)
+            .filter(_.isOnlyInterest)
             .flatMap(dd => getChargeItem(dd)
               .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.interestEndDate, isLatePaymentInterest = true)))
         }
