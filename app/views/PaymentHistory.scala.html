@@ -70,8 +70,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 @bodyContent(year: Int, yearPayments: List[PaymentHistoryEntry]) = {
 @govukTable(Table(
        classes = "govuk-table govuk-body govuk-!-margin-bottom-8",
-    caption = Some(messages("paymentHistory.button", year.toString
-    )),
+       caption = Some(messages("paymentHistory.button", year.toString)),
        captionClasses = "govuk-table__caption govuk-table__caption--m",
     head = Some(Seq(
       HeadCell(
