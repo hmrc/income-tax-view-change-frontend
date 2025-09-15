@@ -2657,8 +2657,9 @@ optout.confirmedOptOut.green.panel.scenario5                     = Does dim ange
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Eich dyddiadau cau sydd wedi’u haddasu
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>31 Ionawr {2}</b>.
 optout.confirmedOptOut.viewUpcomingDeadlines.text                = Bwrw golwg dros eich dyddiadau cau sydd ar y gweill
-optout.confirmedOptOut.yourRevisedDeadlines.desc2                = Gallwch, ar unrhyw adeg, optio’n ôl i mewn i adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch {0}
-optout.confirmedOptOut.yourReportingFrequency.text               = amlder eich adroddiadau.
+optout.confirmedOptOut.yourRevisedDeadlines.desc2                = Gallwch benderfynu, ar unrhyw adeg, optio’n ôl i mewn i’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau ar dudalen {0}
+optout.confirmedOptOut.yourReportingFrequency.text               = eich ymrwymiadau o ran adrodd.
+
 
 optout.confirmedOptOut.submitTax                                 = Cyflwyno’ch Ffurflen Dreth
 optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd rydych wedi
@@ -2671,7 +2672,7 @@ optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = Gan eich bod 
 optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 
 optout.confirmedOptOut.scenario5.submitTax.confirmed.p1          = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech arfer ei defnyddio i
-optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflenni Treth Hunanasesiad.
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflenni Treth Hunanasesiad
 
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
