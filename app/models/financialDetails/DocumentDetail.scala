@@ -65,8 +65,6 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
-  def isOnlyInterest: Boolean = interestRemainingToPay > 0 && isPaid
-
   def isPaid: Boolean = outstandingAmount match {
     case amount if amount == 0 => true
     case _ => false
