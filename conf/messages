@@ -3356,3 +3356,20 @@ triggered-migration.check-hmrc-records.noActiveProperties            = If you ge
 triggered-migration.check-hmrc-records.confirmRecords.heading = Confirm HMRC records only list your active businesses
 triggered-migration.check-hmrc-records.confirmRecords.text    = This page only needs to list all your active sole trader and property income sources. Any other business details that are not right, misspelt or out of date, can be amended at a later date.
 triggered-migration.check-hmrc-records.confirmRecords.button  = Confirm and continue
+
+#check complete page
+triggered-migration.checkComplete.greenBoxHeading.1                                     = Check complete
+triggered-migration.checkComplete.greenBoxHeading.2                                     = You have confirmed that HMRC records only list your active businesses
+triggered-migration.checkComplete.whatNext.heading                                      = What to do next
+triggered-migration.checkComplete.whatNext.p1                                           = You now need to provide HMRC a quarterly update for each of your active sole trader and property income sources.
+triggered-migration.checkComplete.whatNext.p2                                           = To do this, you need to:
+triggered-migration.checkComplete.whatNext.ul.li1                                       = get software that works with Making Tax Digital for Income Tax
+triggered-migration.checkComplete.whatNext.ul.li2                                       = find out what is due and submit your late update(s)
+triggered-migration.checkComplete.gettingSoftware.heading                               = Getting software
+triggered-migration.checkComplete.gettingSoftware.p1                                    = To submit your quarterly updates, you or your agent must have software compatible with Making Tax Digital for Income Tax. There are both paid and free options to choose from.
+triggered-migration.checkComplete.gettingSoftware.linkText                              = Find out about compatible software
+triggered-migration.checkComplete.submitUpdates.heading                                 = Submitting your update(s)
+triggered-migration.checkComplete.submitUpdates.p1                                      = In your account you can see which quarterly updates are due and what information you need to provide. Then you must use your compatible software to:
+triggered-migration.checkComplete.submitUpdates.ul.li1                                  = create a digital record of your property and sole trader income and expenses
+triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send the late quarterly update to HMRC
+triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest updates and deadlines
