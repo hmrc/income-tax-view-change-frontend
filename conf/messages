@@ -2681,7 +2681,9 @@ optout.confirmedOptOut.submitTax.confirmed.p1                    = Now you have 
 optout.confirmedOptOut.submitTax.confirmed.p1.link               = filed your Self Assessment tax return
 
 optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are still using Making Tax Digital for Income Tax, you will need
-optout.confirmedOptOut.submitTax.confirmed.p2.link               = compatible software
+optout.confirmedOptOut.submitTax.confirmed.p2.link.a             = compatible software
+optout.confirmedOptOut.submitTax.confirmed.p2.link.b             = .
+optout.confirmedOptOut.submitTax.confirmed.p2.link.c             =
 
 optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = As you are opted out, you can find out here how to
 optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = file your Self Assessment tax return

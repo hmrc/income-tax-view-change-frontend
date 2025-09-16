@@ -2656,7 +2656,7 @@ optout.confirmedOptOut.one-year                                  = Rydych yn cyf
 
 optout.confirmedOptOut.green.panel.scenario1And4                 = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
 optout.confirmedOptOut.green.panel.scenario2                     = Nid oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach ar gyfer blwyddyn dreth {0} i {1}
-optout.confirmedOptOut.green.panel.scenario3                     = Nid oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach ar gyfer blwyddyn dreth {0} i {1}
+optout.confirmedOptOut.green.panel.scenario3                     = O flwyddyn dreth {0} i {1} ymlaen, ni fydd angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 optout.confirmedOptOut.green.panel.scenario5                     = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
 
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Eich dyddiadau cau sydd wedi’u haddasu
@@ -2667,11 +2667,14 @@ optout.confirmedOptOut.yourReportingFrequency.text               = eich ymrwymia
 
 
 optout.confirmedOptOut.submitTax                                 = Cyflwyno’ch Ffurflen Dreth
-optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd rydych wedi
-optout.confirmedOptOut.submitTax.confirmed.p1.link               = cyflwyno’ch Ffurflen Dreth Hunanasesiad yn y gorffennol
+
+optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech arfer ei defnyddio i
+optout.confirmedOptOut.submitTax.confirmed.p1.link               = gyflwyno’ch Ffurflenni Treth Hunanasesiad
 
 optout.confirmedOptOut.submitTax.confirmed.p2                    = Ar gyfer unrhyw flwyddyn dreth lle’r ydych yn dal i fod yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen
-optout.confirmedOptOut.submitTax.confirmed.p2.link               = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optout.confirmedOptOut.submitTax.confirmed.p2.link.a             = meddalwedd sy’n cydweddu
+optout.confirmedOptOut.submitTax.confirmed.p2.link.b             =
+optout.confirmedOptOut.submitTax.confirmed.p2.link.c             = arnoch.
 
 optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = Gan eich bod wedi optio allan, gallwch ddefnyddio’r cysylltiad hwn i gael gwybod sut i
 optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflen Dreth Hunanasesiad
@@ -2713,7 +2716,7 @@ optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = 
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
 optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
-optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = meini prawf i bobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
 optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = Rydych wedi optio allan o’r flwyddyn dreth nesaf ymlaen, ond gallai fod yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os yw’r canlynol yn wir:
