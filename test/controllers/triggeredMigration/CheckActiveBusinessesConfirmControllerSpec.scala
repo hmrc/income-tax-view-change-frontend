@@ -77,7 +77,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
-    "submit(isAgent = $isAgent)" when {
+    s"submit(isAgent = $isAgent)" when {
       val action = controller.submit(isAgent)
 
       s"the user is authenticated as a $mtdRole" should {
