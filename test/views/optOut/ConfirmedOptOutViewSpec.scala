@@ -206,7 +206,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
 
         pageDocument.getElementById(Selectors.yourReportingObligationsHeading).text() shouldBe "Your reporting obligations in the future"
 
-        pageDocument.getElementById(Selectors.useMtdInFuture).text() shouldBe "You could be required to use Making Tax Digital for Income Tax again in the future if:"
+        pageDocument.getElementById(Selectors.useMtdInFuture).text() shouldBe "You are opted out from next tax year onwards, but you could be required to use Making Tax Digital for Income Tax again in the future if:"
         pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowers the income threshold for it"
         pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you report an increase in your qualifying income in a tax return"
         pageDocument.getElementById(Selectors.grossIncomeThresholdWarning).text() shouldBe "For example, if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026."
