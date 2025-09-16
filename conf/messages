@@ -3351,3 +3351,12 @@ triggered-migration.check-hmrc-records.noActiveProperties            = If you ge
 triggered-migration.check-hmrc-records.confirmRecords.heading = Confirm HMRC records only list your active businesses
 triggered-migration.check-hmrc-records.confirmRecords.text    = This page only needs to list all your active sole trader and property income sources. Any other business details that are not right, misspelt or out of date, can be amended at a later date.
 triggered-migration.check-hmrc-records.confirmRecords.button  = Confirm and continue
+
+# Triggered migration – Check Active Businesses Confirm page
+triggered-migration.check-active-businesses-confirm.heading          = Have you checked that HMRC records only list your active businesses?
+triggered-migration.check-active-businesses-confirm.text             = You can change any other business details at a later date.
+triggered-migration.check-active-businesses-confirm.yes              = Yes
+triggered-migration.check-active-businesses-confirm.yes.hint         = If the previous page only lists your active businesses then the check is complete
+triggered-migration.check-active-businesses-confirm.no               = No
+triggered-migration.check-active-businesses-confirm.no.hint          = Select this option if you have not checked the previous page
+triggered-migration.check-active-businesses-confirm.error.required   = Select yes if HMRC has an up to date record of your business

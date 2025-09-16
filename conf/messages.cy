@@ -3337,3 +3337,12 @@ triggered-migration.check-hmrc-records.noActiveProperties            = Os ydych 
 triggered-migration.check-hmrc-records.confirmRecords.heading = Cadarnhau bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
 triggered-migration.check-hmrc-records.confirmRecords.text    = Dylai’r dudalen hon dim ond rhestru’ch ffynonellau incwm cyfredol o fod yn unig fasnachwr a’ch ffynonellau incwm cyfredol o eiddo. Gall unrhyw fanylion busnes eraill sy’n anghywir, sydd wedi’u camsillafu, neu sydd ddim yn gyfredol, gael eu diweddaru yn nes ymlaen.
 triggered-migration.check-hmrc-records.confirmRecords.button  = Cadarnhau a pharhau
+
+# Triggered migration – Check Active Businesses Confirm page
+triggered-migration.check-active-businesses-confirm.heading          = A ydych wedi gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol?
+triggered-migration.check-active-businesses-confirm.text             = Gallwch newid unrhyw fanylion busnes eraill yn nes ymlaen.
+triggered-migration.check-active-businesses-confirm.yes              = Iawn
+triggered-migration.check-active-businesses-confirm.yes.hint         = Os yw'r dudalen flaenorol dim ond yn cynnwys eich busnesau cyfredol, mae’r gwiriad wedi’i gwblhau
+triggered-migration.check-active-businesses-confirm.no               = Na
+triggered-migration.check-active-businesses-confirm.no.hint          = Dewiswch yr opsiwn hwn os nad ydych wedi gwirio’r dudalen flaenorol
+triggered-migration.check-active-businesses-confirm.error.required   = Dewiswch ‘Iawn’ os oes gan CThEF gofnodion cyfredol ar gyfer eich busnes
