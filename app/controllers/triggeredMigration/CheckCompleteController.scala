@@ -23,19 +23,24 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.triggeredMigration.CheckCompleteView
+import utils.TriggeredMigrationUtils
 
 import scala.concurrent.Future
 
 @Singleton
-class CheckCompleteController @Inject()(view: CheckCompleteView, val auth: AuthActions, config: FrontendAppConfig)
-                                          (mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport {
+class CheckCompleteController @Inject()(view: CheckCompleteView,
+                                        val auth: AuthActions)
+                                       (mcc: MessagesControllerComponents,
+                                        implicit val appConfig: FrontendAppConfig)
+  extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    val compatibleSoftwareLink: String = config.compatibleSoftwareLink
-    val nextUpdatesLink: String =
-      if(isAgent) controllers.routes.NextUpdatesController.showAgent().url
-      else controllers.routes.NextUpdatesController.show().url
-    Future.successful(Ok(view(isAgent, compatibleSoftwareLink, nextUpdatesLink)))
+    withTriggeredMigrationFS {
+      val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
+      val nextUpdatesLink: String =
+        if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
+        else controllers.routes.NextUpdatesController.show().url
+      Future.successful(Ok(view(isAgent, compatibleSoftwareLink, nextUpdatesLink)))
+    }
   }
 }
