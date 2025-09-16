@@ -361,10 +361,14 @@
 }
 
 @submitTaxReturnParagraph2 = {
-    @p(id = Some("tax-year-reporting-quarterly")) {
+    <p class="govuk-body" id="tax-year-reporting-quarterly">
         @messages("optout.confirmedOptOut.submitTax.confirmed.p2")
-        @link(link = compatibleSoftwareLink, id = Some("compatible-software-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p2.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
-    }
+        <a href="@compatibleSoftwareLink" class="govuk-link govuk-body" id="compatible-software-link" target="_blank">
+            @messages("optout.confirmedOptOut.submitTax.confirmed.p2.link.a") @messages("pagehelp.opensInNewTabText")@messages("optout.confirmedOptOut.submitTax.confirmed.p2.link.b")
+        </a>
+        @messages("optout.confirmedOptOut.submitTax.confirmed.p2.link.c")
+    </p>
+
 }
 
 @submitTaxReturnScenario4Paragraph1 = {
