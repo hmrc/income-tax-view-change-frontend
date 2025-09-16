@@ -71,7 +71,6 @@ class CheckActiveBusinessesConfirmController @Inject()(
               )
             ),
           _ =>
-            // TODO: Replace this - Currently on submit we loop back to the page for both selections
             Future.successful(Redirect(routes.CheckActiveBusinessesConfirmController.show(isAgent)))
         )
       }

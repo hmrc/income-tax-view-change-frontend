@@ -21,6 +21,7 @@ import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
+import play.api.Application
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
@@ -28,7 +29,7 @@ import scala.concurrent.Future
 
 class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
 
-  override lazy val app = applicationBuilderWithAuthBindings.build()
+  override lazy val app: Application = applicationBuilderWithAuthBindings.build()
 
   private lazy val controller =
     app.injector.instanceOf[CheckActiveBusinessesConfirmController]
