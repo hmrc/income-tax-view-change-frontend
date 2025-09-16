@@ -159,7 +159,7 @@ case class ChargeItem (
     validCharge && !isAccruingInterest
   }
 
-
+  val isPoaDebit: Boolean = transactionType == PoaOneDebit || transactionType == PoaTwoDebit
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != accruingInterestAmount.getOrElse[BigDecimal](0)

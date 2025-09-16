@@ -3231,6 +3231,7 @@ reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = 
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = You owe:
+yourSelfAssessmentChargeSummary.youOwe                              = You owe:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
