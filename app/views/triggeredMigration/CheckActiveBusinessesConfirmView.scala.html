@@ -66,25 +66,36 @@
             isPageHeading = true
           ))
         )),
-        hint = Some(Hint( id = Some("check-active-businesses-body-hint"), content = Text(messages("triggered-migration.check-active-businesses-confirm.text")))),
+        hint = Some(Hint(
+          id = Some("check-active-businesses-confirm-hint"),
+          content = Text(messages("triggered-migration.check-active-businesses-confirm.text"))
+        )),
         items = Seq(
           RadioItem(
-            id = Some("yes"),
+            id = Some("check-active-businesses-confirm-yes"),
             value = Some(CheckActiveBusinessesConfirmForm.responseYes),
             content = Text(messages("triggered-migration.check-active-businesses-confirm.yes")),
-            hint = Some(Hint(content = Text(messages("triggered-migration.check-active-businesses-confirm.yes.hint"))))
+            hint = Some(Hint(
+              id = Some("check-active-businesses-confirm-yes-hint"),
+              content = Text(messages("triggered-migration.check-active-businesses-confirm.yes.hint"))
+            ))
           ),
           RadioItem(
-            id = Some("no"),
+            id = Some("check-active-businesses-confirm-no"),
             value = Some(CheckActiveBusinessesConfirmForm.responseNo),
             content = Text(messages("triggered-migration.check-active-businesses-confirm.no")),
-            hint = Some(Hint(content = Text(messages("triggered-migration.check-active-businesses-confirm.no.hint"))))
+            hint = Some(Hint(
+              id = Some("check-active-businesses-confirm-no-hint"),
+              content = Text(messages("triggered-migration.check-active-businesses-confirm.no.hint"))
+            ))
           )
         ),
         errorMessage = form.error(CheckActiveBusinessesConfirmForm.response)
           .map(e => ErrorMessage(content = Text(messages(e.message, e.args: _*))))
+
       ).withFormField(form(CheckActiveBusinessesConfirmForm.response))
     )
+
 
     @continueButton()
   }
