@@ -1196,6 +1196,7 @@ chargeSummary.chargeHistory.LSPHeading                                  = Hanes 
 chargeSummary.chargeHistory.date								        = Dyddiad
 chargeSummary.chargeHistory.description							        = Disgrifiad
 chargeSummary.chargeHistory.amount								        = Swm
+chargeSummary.chargeHistory.created.text		                        = Y swm iw gasglu drwych cod treth TWE yn ystod blwyddyn dreth {0} i {1}
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = Gwnaeth CThEF greu eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = Gwnaeth CThEF greu eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.created.balancingCharge.text		        = Taliad Mantoli wedi’i greu
