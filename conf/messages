@@ -1181,12 +1181,10 @@ chargeSummary.whatYouOwe.textTwo-agent							   = to check if they have any othe
 chargeSummary.whatYouOwe.linkText								   = what you owe
 chargeSummary.whatYouOwe.linkText-agent							   = what your client owes
 
-chargeSummary.selfAssessmentCharges.textOne							= View
-chargeSummary.selfAssessmentCharges.textTwo							= to check if you have any other payments due.
-chargeSummary.selfAssessmentCharges.textOne-agent					= View
-chargeSummary.selfAssessmentCharges.textTwo-agent					= to check if they have any other payments due.
-chargeSummary.selfAssessmentCharges.linkText						= your Self Assessment charges
-chargeSummary.selfAssessmentCharges.linkText-agent					= your client’s Self Assessment charges
+chargeSummary.selfAssessmentCharges.text							= to check if you have any other payments due.
+chargeSummary.selfAssessmentCharges.text-agent					    = to check if they have any other payments due.
+chargeSummary.selfAssessmentCharges.linkText						= View your Self Assessment charges
+chargeSummary.selfAssessmentCharges.linkText-agent					= View your client’s Self Assessment charges
 
 chargeSummary.chargeHistory.heading								        = History of this charge
 chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
@@ -1199,7 +1197,7 @@ chargeSummary.chargeHistory.description							        = Description
 chargeSummary.chargeHistory.amount								        = Amount
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = HMRC created your first payment on account
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = HMRC created your second payment on account
-chargeSummary.chargeHistory.created.balancingCharge.text		        = Balancing payment created
+chargeSummary.chargeHistory.created.balancingCharge.text		        = HMRC created your balancing payment
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
 chargeSummary.chargeHistory.created.codingOut.text                      = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
@@ -3230,7 +3228,7 @@ reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = 
 
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
-yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
+yourSelfAssessmentChargeSummary.overDueCharge                       = You owe:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
@@ -3262,10 +3260,10 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = 250,000 / 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0.0725 = 49.66
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = ‘Payments on account’ are two advance payments made towards your next tax bill.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = If you make an amendment to the tax return and tax bill changes, then each payment on account will be updated to half the new total.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help with understanding your Self Assessment tax bill
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
@@ -3295,8 +3293,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.headi
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
 
-yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill.
-
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = This balancing payment goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = This payment on account goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
