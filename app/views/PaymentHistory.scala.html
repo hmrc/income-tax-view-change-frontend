@@ -29,9 +29,10 @@
 @import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 @import _root_.implicits.HtmlFormatter.NbspString
 @import viewUtils.ExternalUrlHelper
-@import views.html.partials.paymentHistory.PaymentDate
+@import views.html.partials.paymentHistory.PaymentDescription
 
 @this(
+    paymentDescription: PaymentDescription,
     mainTemplate: unifiedLayout,
     appConfig: config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -94,20 +95,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
           classes = "govuk-table__cell"
         ),
         TableRow(
-          content = HtmlContent(s"""
-                       <a class="govuk-link" href="${payment.linkUrl}">
-                           ${messages(s"paymentHistory.${payment.creditType.key}")}
-                           <div><span class="govuk-visually-hidden">
-                               ${payment.visuallyHiddenText}
-                              ${if (yearPayments.size > 1) s" Item ${(index + 1)} " else ""}
-                             </span></div>
-                       </a>
-                    ${if(payment.isCredit) {s"""
-                       <a class="govuk-body-s">
-                           ${messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)}
-                       </a>"""
-                       } else ""}
-          """),
+          content = HtmlContent(paymentDescription(payment, yearPayments, index)),
           classes = "govuk-table__cell",
           attributes = Map("id" -> s"payment-$index")
         ),
