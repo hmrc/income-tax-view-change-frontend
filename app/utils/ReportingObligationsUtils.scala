@@ -19,7 +19,6 @@ package utils
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
-import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -50,12 +49,31 @@ trait ReportingObligationsUtils extends FeatureSwitching {
     }
   }
 
-  def withSignUpRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+  def withRFAndOptInOptOutR17FS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     (isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
       case (true, true) => codeBlock
-      case _ =>
-        Logger("application").warn("Feature Switches not enabled, redirecting to Home Page")
+      case (true, false) =>
+        user.userType match {
+          case Some(Agent) => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(true)))
+          case _ => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(false)))
+        }
+      case (false, _) =>
+        user.userType match {
+          case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
+          case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
+        }
+    }
+  }
 
+  def withOptOutRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+    (isEnabled(OptOutFs), isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
+      case (true, true, true) => codeBlock
+      case (true, true, false) =>
+        user.userType match {
+          case Some(Agent) => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(true)))
+          case _ => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(false)))
+        }
+      case _ =>
         user.userType match {
           case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
           case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))

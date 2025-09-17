@@ -26,7 +26,8 @@ import mocks.services.{MockCalculationListService, MockDateService, MockITSAStat
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
 import models.itsaStatus.{StatusDetail, StatusReason}
-import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData, SignUpTaxYearQuestionViewModel}
+import models.optin.newJourney.SignUpTaxYearQuestionViewModel
+import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

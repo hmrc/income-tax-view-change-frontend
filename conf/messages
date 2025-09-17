@@ -2655,7 +2655,7 @@ optout.checkAnswers.cancel              = Cancel
 #opt out with submitted updates check answers
 optout.updates.checkAnswers.heading     = Confirm and opt out for the {0} to {1} tax year
 optout.updates.checkAnswers.p1          = If you opt out, you would no longer need software compatible with Making Tax Digital for Income Tax.
-optout.updates.checkAnswers.inset       = You have <b>2 quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.updates.checkAnswers.inset       = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed
@@ -3231,7 +3231,7 @@ reporting.obligations.changing.desc1.optOut.previousYear.onwards    = You can st
 reporting.obligations.changing.desc1.optOut.previousYear.single     = You can stop using Making Tax Digital for Income Tax for the {0} to {1} tax year.
 reporting.obligations.changing.desc2.optOut.previousYear            = Stop now
 reporting.obligations.changing.optOut.currentYear.onwards           = Opt out from the current tax year
-reporting.obligations.changing.optOut.currentYear.single            = Opt out of the current tax year
+reporting.obligations.changing.optOut.currentYear.single            = Opt out for the current tax year
 reporting.obligations.changing.desc1.optOut.currentYear.onwards     = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
 reporting.obligations.changing.desc1.optOut.currentYear.single      = You can stop using Making Tax Digital for Income Tax for the {0} to {1} tax year.
 reporting.obligations.changing.desc2.optOut.currentYear             = Stop now

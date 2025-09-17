@@ -1,0 +1,128 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import forms.optIn.ChooseTaxYearForm
+@import models.optin.ChooseTaxYearViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.helpers.injected.ErrorSummary
+@import views.html.layouts.unifiedLayout
+
+@this(
+        mainTemplate: unifiedLayout,
+        formWithCSRF: FormWithCSRF,
+        govukRadios: GovukRadios,
+        continueButton: ContinueButton,
+        errorSummary: ErrorSummary,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable,
+        govukInsetText: GovukInsetText,
+        detailsDropdown: detailsDropdown
+)
+@(form: Form[ChooseTaxYearForm], model: ChooseTaxYearViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@confirmOptInPostUrl = @{
+    controllers.optIn.oldJourney.routes.ChooseYearController.submit(model.isAgent)
+}
+
+@formBlock = {
+@formWithCSRF(action = confirmOptInPostUrl, Symbol("id") -> "confirm-multi-year-opt-in-form") {
+    @govukRadios(Radios(
+        fieldset = Some(Fieldset(
+            legend = Some(Legend(
+                content = Text(messages("optin.chooseOptInTaxYear.whichTaxYear")),
+                classes = "govuk-fieldset__legend--m"
+            )),
+            attributes = Map("id" -> "whichTaxYear")
+        )),
+        items = model.availableOptInTaxYear.zipWithIndex.map { case (optOutTaxYear, index) =>
+            RadioItem(
+                id = Some(s"choice-year-$index"),
+                value = Some(optOutTaxYear.toString),
+                content = Text(messages("optin.chooseOptInTaxYear.taxYearOnwards", s"${optOutTaxYear.startYear}", s"${optOutTaxYear.endYear}")),
+                hint = Some(Hint(
+                    id = Some(s"radio-hint-$index"),
+                    classes = "govuk-hint govuk-radios__hint",
+                    content = Text(messages(s"optin.chooseOptInTaxYear.radiobutton.hint${index + 1}"))
+                ))
+            )
+        },
+        errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*))))
+    ).withFormField(form(ChooseTaxYearForm.choiceField)))
+
+    <div class="govuk-button-group">
+        @continueButton(Some(messages("optin.chooseOptInTaxYear.continue")))
+        <a class="govuk-link" id="cancel-button" href=@model.cancelURL>
+        @messages("optin.confirmOptIn.cancel")
+        </a>
+    </div>
+}
+}
+
+@detailsDropdownContent = {
+@p(id = Some("dropdown-insettext-p1")) {
+    @messages("optin.chooseOptInTaxYear.dropDown.insetText.p1")
+}
+@p(id = Some("dropdown-insettext-p2")) {
+    @messages("optin.chooseOptInTaxYear.dropDown.insetText.p2")
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="dropdown-insettext-p2-listitems1">
+        @messages("optin.chooseOptInTaxYear.dropDown.insetText.p2.list1")
+        </li>
+        <li id="dropdown-insettext-p2-listitems2">
+        @messages("optin.chooseOptInTaxYear.dropDown.insetText.p2.list2")
+        </li>
+    </ul>
+}
+
+}
+@mainTemplate(
+    pageTitle = messages("optin.chooseOptInTaxYear.heading"),
+    backUrl = Some("#"),
+    isAgent = model.isAgent,
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true
+) {
+
+    @errorSummary(form = form)
+
+    @h1(id = Some("heading"), msg = messages("optin.chooseOptInTaxYear.heading"), size = "l")
+
+    <div class="govuk-!-margin-bottom-7 ">
+    @p(id = Some("description1")) {
+        @messages("optin.chooseOptInTaxYear.desc1")
+    }
+    </div>
+
+    <div class="govuk-!-margin-bottom-7 ">
+    @p(id = Some("description2")) {
+        @h2(msg = "optin.chooseOptInTaxYear.desc2.heading", optId = Some("description2-heading"))
+        @govukInsetText(InsetText(content = HtmlContent(messages("optin.chooseOptInTaxYear.desc2.insetText")), id = Some("description2-insettext")))
+        @p(id = Some("description2-text")) {
+            @messages("optin.chooseOptInTaxYear.desc2.text")
+        }
+    }
+    </div>
+
+    @detailsDropdown("optin.chooseOptInTaxYear.dropDown.heading", detailsDropdownContent)
+
+    @formBlock
+
+}
