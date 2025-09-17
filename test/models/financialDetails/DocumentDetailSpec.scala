@@ -17,7 +17,8 @@
 package models.financialDetails
 
 import enums.CodingOutType._
-import testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel}
+import enums.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
+import testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -25,8 +26,6 @@ import java.time.LocalDate
 class DocumentDetailSpec extends UnitSpec {
 
   "DocumentDetail" when {
-    
-    
 
     "calling predicate hasAccruingInterest" should {
 
@@ -96,7 +95,6 @@ class DocumentDetailSpec extends UnitSpec {
 
     "getChargeTypeKey" should {
 
-
       "return POA1" when {
         "when document description is ITSA- POA 1" in {
           fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")).getChargeTypeKey shouldBe "paymentOnAccount1.text"
@@ -151,6 +149,54 @@ class DocumentDetailSpec extends UnitSpec {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
             documentText = Some(CODING_OUT_CANCELLED)).getChargeTypeKey shouldBe "cancelledPayeSelfAssessment.text"
         }
+      }
+      "return POA 1 Reconciliation Debit" when {
+        "document description is POA 1 Reconciliation Debit" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("POA 1 Reconciliation Debit")).getChargeTypeKey shouldBe "poa1ExtraCharge.text"
+        }
+      }
+      "return POA 2 Reconciliation Debit" when {
+        "document description is POA 2 Reconciliation Debit" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("POA 2 Reconciliation Debit")).getChargeTypeKey shouldBe "poa2ExtraCharge.text"
+        }
+      }
+      "return Late submission penalty" when {
+        "document description is LSP" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("LSP")).getChargeTypeKey shouldBe "lateSubmissionPenalty.text"
+        }
+      }
+      "return Balancing charge" when {
+        "document description is ITSA BCD" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA BCD")).getChargeTypeKey shouldBe "balancingCharge.text"
+        }
+      }
+      "return First late payment penalty" when {
+        "document description is LPP1" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("LPP1")).getChargeTypeKey shouldBe "firstLatePaymentPenalty.text"
+        }
+      }
+      "return Second late payment penalty" when {
+        "document description is LPP2" in {
+          fullDocumentDetailModel.copy(documentDescription = Some("LPP2")).getChargeTypeKey shouldBe "secondLatePaymentPenalty.text"
+        }
+      }
+    }
+
+    "getDocType" should {
+      "return Poa1ReconciliationDebit when correct key is passed" in {
+        fullDocumentDetailModel.copy(documentDescription = Some("POA 1 Reconciliation Debit")).getDocType shouldBe Poa1ReconciliationDebit
+      }
+      "return Poa2ReconciliationDebit when correct key is passed" in {
+        fullDocumentDetailModel.copy(documentDescription = Some("POA 2 Reconciliation Debit")).getDocType shouldBe Poa2ReconciliationDebit
+      }
+      "return BalancingCharge when correct key is passed" in {
+        fullDocumentDetailModel.copy(documentDescription = Some("ITSA BCD")).getDocType shouldBe BalancingCharge
+      }
+    }
+
+    "isReviewAndReconcileDebit" should {
+      "return false if both values passed are false" in {
+        fullDocumentDetailWithDueDateModel.isReviewAndReconcileDebit shouldBe false
       }
     }
 
@@ -264,4 +310,22 @@ class DocumentDetailSpec extends UnitSpec {
       }
     }
   }
+
+  "remainingToPay" should {
+    "return outstandingAmount when amount is not paid" in {
+      fullDocumentDetailModel.remainingToPay shouldBe BigDecimal(1400)
+    }
+  }
+
+  "interestRemainingToPay" should {
+    "return zero when there is no interest remaining to pay" in {
+      fullDocumentDetailModel.copy(interestOutstandingAmount = Some(BigDecimal(0)))
+        .interestRemainingToPay shouldBe BigDecimal(0)
+    }
+
+    "return an amount when there is interest remaining to pay" in {
+      fullDocumentDetailModel.interestRemainingToPay shouldBe BigDecimal(80)
+    }
+  }
+
 }
