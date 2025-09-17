@@ -91,7 +91,7 @@
             }
             @p(id = Some("lpi-poa6"), classes = "govuk-body govuk-!-margin-bottom-8") {
                 @messages("chargeSummary.lpi.paymentsOnAccount.p3")
-                <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
+                <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
             }
         }
     </div>
@@ -142,12 +142,12 @@
         @p(id = Some("lpi-LSP1")){@messages("chargeSummary.lpi.lateSubmissionPenalty.p1")}
         @p(id = Some("lpi-LSP2")) {
             @messages("chargeSummary.lpi.penalties.textOne")
-            <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.penalties.linkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.penalties.linkText")</a>
             @messages("chargeSummary.lpi.penalties.textTwo")
         }
         @p(id = Some("lpi-LSP3"), classes = "govuk-body govuk-!-margin-bottom-8") {
             @messages("chargeSummary.lpi.penalties.p3")
-            <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
             }
     </div>
 }
@@ -157,12 +157,12 @@
         @p(id = Some("lpi-LPP1")){@messages("chargeSummary.lpi.firstLatePaymentPenalty.p1")}
         @p(id = Some("lpi-LPP2")) {
             @messages("chargeSummary.lpi.penalties.textOne")
-            <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.penalties.linkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.penalties.linkText")</a>
             @messages("chargeSummary.lpi.penalties.textTwo")
         }
         @p(id = Some("lpi-LPP3"), classes = "govuk-body govuk-!-margin-bottom-8") {
             @messages("chargeSummary.lpi.penalties.p3")
-            <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
             }
     </div>
 }
@@ -179,12 +179,12 @@
         @p(id = Some("lpi-bcd1")){@messages("chargeSummary.lpi.balancingCharge.p1")}
         @p(id = Some("lpi-bcd2")) {
             @messages("chargeSummary.lpi.balancingCharge.textOne")
-            <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
             @messages("chargeSummary.lpi.balancingCharge.textTwo")
         }
         @p(id = Some("lpi-bcd3"), classes = "govuk-body govuk-!-margin-bottom-8") {
         @messages("chargeSummary.lpi.balancingCharge.p3")
-        <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
+        <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
         }
     </div>
 }
@@ -269,7 +269,7 @@
 @checkPayeCodePara = {
     @p(id = Some("check-paye-para")){
         @messages("chargeSummary.check-paye-tax-code-1")
-<a class="govuk-link" id="paye-tax-code-link" href="@{ExternalUrlHelper.checkPayeTaxCodeUrl}/@{viewModel.taxYearEndToCheckCode}">
+<a class="govuk-link" id="paye-tax-code-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.checkPayeTaxCodeUrl}/@{viewModel.taxYearEndToCheckCode}">
 @messages("chargeSummary.check-paye-tax-code-2")</a>
         @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
     }
