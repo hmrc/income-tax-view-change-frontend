@@ -148,10 +148,10 @@ class ConfirmedOptOutViewSpec extends TestSupport {
 
         pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
         pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById(Selectors.submitTaxReturnParagraph2).text() shouldBe "For any tax year you are reporting quarterly, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph2).text() shouldBe "For any tax year you are still using Making Tax Digital for Income Tax, you will need compatible software (opens in new tab)."
 
         pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "compatible software (opens in new tab)."
 
       }
 
@@ -160,8 +160,8 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         pageDocument.getElementById(Selectors.yourReportingObligationsHeading).text() shouldBe "Your reporting obligations from the next tax year onwards"
         pageDocument.getElementById(Selectors.requiredToUseMtdInset).text() shouldBe "From 6 April 2024, you will be required to use Making Tax Digital for Income tax."
         pageDocument.getElementById(Selectors.thisIsBecause).text() shouldBe "This could be because:"
-        pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowers the income threshold for it"
-        pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you report an increase in your qualifying income in a tax return"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowered the income threshold for it"
+        pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you reported an increase in your qualifying income in a tax return"
         pageDocument.getElementById(Selectors.youCanCheckThresholds).text() shouldBe "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
       }
     }
@@ -199,7 +199,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
 
         pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "software compatible with Making Tax Digital for Income Tax (opens in new tab)."
+        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "compatible software (opens in new tab)."
       }
 
       "show the 'Your reporting obligations' section" in {
