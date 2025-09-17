@@ -1315,6 +1315,11 @@ paymentHistory.repaymentInterest                                = Credit from re
 paymentHistory.POA1RR-credit                                    = First payment on account: credit from your tax return
 paymentHistory.POA2RR-credit                                    = Second payment on account: credit from your tax return
 paymentHistory.activity                                         = {0} activity
+
+paymentHistory.POA1                                             = First payment on account collected through your PAYE tax code
+paymentHistory.POA2                                             = Second payment on account collected through your PAYE tax code
+paymentHistory.BCD                                              = Balancing payment collected through PAYE tax code
+
 paymentHistory.taxYear                                          = {0} to {1} tax year
 
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
@@ -1332,6 +1337,8 @@ paymentHistory.check-refund-3                                   = you’ve made 
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment you made to HMRC
+paymentAllocation.youPaid                                       = You paid:
+paymentAllocation.paymentDate.p                                 = This payment was made on
 paymentAllocation.sa.info                                       = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous {0}
 paymentAllocation.earlyTaxYear.heading                          = Credit from an earlier tax year
 paymentAllocation.date                                          = Date
@@ -1345,9 +1352,10 @@ paymentAllocation.creditOnAccount                               = Credit on acco
 paymentAllocation.na                                            = N/A
 paymentAllocation.moneyOnAccount                                = Remaining amount (added to available credit)
 
+paymentAllocation.details.title                                 = How do we allocate your payments to charges?
 paymentAllocation.intro                                         = When you make a payment, HMRC assigns the money to the different charges in your account in the following order.
-paymentAllocation.condition-1                                   = Overdue charges and any other charges accruing interest.
-paymentAllocation.condition-2                                   = Charges that become due.
+paymentAllocation.condition-1                                   = Charges with interest, including overdue charges.
+paymentAllocation.condition-2                                   = Charges due today.
 paymentAllocation.condition-3                                   = Charges due within 30 days.
 paymentAllocation.outro                                         = You can see how this payment was allocated in the table below.
 
@@ -2672,14 +2680,16 @@ optout.confirmedOptOut.submitTax                                 = Submit your t
 optout.confirmedOptOut.submitTax.confirmed.p1                    = Now you have opted out, you will need to go back to the way you have previously
 optout.confirmedOptOut.submitTax.confirmed.p1.link               = filed your Self Assessment tax return
 
-optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are reporting quarterly, you will need
-optout.confirmedOptOut.submitTax.confirmed.p2.link               = software compatible with Making Tax Digital for Income Tax
+optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are still using Making Tax Digital for Income Tax, you will need
+optout.confirmedOptOut.submitTax.confirmed.p2.link.a             = compatible software
+optout.confirmedOptOut.submitTax.confirmed.p2.link.b             = .
+optout.confirmedOptOut.submitTax.confirmed.p2.link.c             =
 
-optout.confirmedOptOut.scenario4.submitTax.confirmed.p1                    = As you are opted out, you can find out here how to
-optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link               = file your Self Assessment tax return
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = As you are opted out, you can find out here how to
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = file your Self Assessment tax return
 
-optout.confirmedOptOut.scenario5.submitTax.confirmed.p1                    = Now you have opted out, you will need to go back to the way you have previously
-optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link               = filed your Self Assessment tax return
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1          = Now you have opted out, you will need to go back to the way you have previously
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = filed your Self Assessment tax return
 
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
@@ -3254,10 +3264,10 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = 250,000 / 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0.0725 = 49.66
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = ‘Payments on account’ are two advance payments made towards your next tax bill.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = If you make an amendment to the tax return and tax bill changes, then each payment on account will be updated to half the new total.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help with understanding your Self Assessment tax bill
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
@@ -3287,8 +3297,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.headi
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
 
-yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill.
-
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = This balancing payment goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = This payment on account goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.

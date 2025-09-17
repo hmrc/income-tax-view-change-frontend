@@ -1222,7 +1222,6 @@ chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = Gwnaet
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = Gwnaethoch ddiweddaru eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.POA1RR-credit                               = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 chargeSummary.chargeHistory.POA2RR-credit                               = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
-
 chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
 chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
 chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
@@ -1314,6 +1313,11 @@ paymentHistory.repaymentInterest                                = Credyd o log a
 paymentHistory.POA1RR-credit                                    = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 paymentHistory.POA2RR-credit                                    = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
 paymentHistory.activity                                         = Gweithgarwch {0}
+
+paymentHistory.POA1                                             = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy’ch cod treth TWE
+paymentHistory.POA2                                             = Ail daliad ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
+paymentHistory.BCD                                              = Taliad mantoli a gesglir drwy’r cod treth TWE
+
 paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
 
 paymentsHistory.CardRef                                         = Cyfeirnod ar gyfer taliad a wnaed drwy gerdyn debyd:
@@ -1331,6 +1335,8 @@ paymentHistory.check-refund-3                                   = a wnaethoch am
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad roeddech wedi’i wneud i CThEF
+paymentAllocation.youPaid                                       = Rydych chi wedi talu:
+paymentAllocation.paymentDate.p                                 = Cafodd y taliad hwn ei wneud ar
 paymentAllocation.sa.info                                       = Dyma arian a daloch i mewn i’ch cyfrif cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ewch i’ch
 paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
@@ -1344,9 +1350,10 @@ paymentAllocation.creditOnAccount                               = Credyd ar gyfr
 paymentAllocation.na                                            = Amh
 paymentAllocation.moneyOnAccount                                = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
 
+paymentAllocation.details.title                                 = Sut ydyn ni’n trin eich taliadau i dalu costau?
 paymentAllocation.intro                                         = Pan fyddwch yn gwneud taliad, mae CThEF yn neilltuo’r arian i’r gwahanol daliadau yn eich cyfrif yn y drefn ganlynol.
-paymentAllocation.condition-1                                   = Costau hwyr ac unrhyw daliadau eraill sy’n cronni llog.
-paymentAllocation.condition-2                                   = Taliadau sy’n dod yn ddyledus.
+paymentAllocation.condition-1                                   = Taliadau â llog, gan gynnwys taliadau hwyr.
+paymentAllocation.condition-2                                   = Taliadau sy’n ddyledus heddiw.
 paymentAllocation.condition-3                                   = Taliadau’n ddyledus cyn pen 30 diwrnod.
 paymentAllocation.outro                                         = Gallwch weld sut y cafodd y taliad hwn ei ddyrannu yn y tabl isod.
 
@@ -2648,27 +2655,31 @@ optout.confirmedOptOut.one-year                                  = Rydych yn cyf
 
 optout.confirmedOptOut.green.panel.scenario1And4                 = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
 optout.confirmedOptOut.green.panel.scenario2                     = Nid oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach ar gyfer blwyddyn dreth {0} i {1}
-optout.confirmedOptOut.green.panel.scenario3                     = Nid oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach ar gyfer blwyddyn dreth {0} i {1}
+optout.confirmedOptOut.green.panel.scenario3                     = O flwyddyn dreth {0} i {1} ymlaen, ni fydd angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 optout.confirmedOptOut.green.panel.scenario5                     = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
 
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Eich dyddiadau cau sydd wedi’u haddasu
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>31 Ionawr {2}</b>.
 optout.confirmedOptOut.viewUpcomingDeadlines.text                = Bwrw golwg dros eich dyddiadau cau sydd ar y gweill
-optout.confirmedOptOut.yourRevisedDeadlines.desc2                = Gallwch, ar unrhyw adeg, optio’n ôl i mewn i adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch {0}
-optout.confirmedOptOut.yourReportingFrequency.text               = amlder eich adroddiadau.
+optout.confirmedOptOut.yourRevisedDeadlines.desc2                = Gallwch benderfynu, ar unrhyw adeg, optio’n ôl i mewn i’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau ar dudalen {0}
+optout.confirmedOptOut.yourReportingFrequency.text               = eich ymrwymiadau o ran adrodd.
+
 
 optout.confirmedOptOut.submitTax                                 = Cyflwyno’ch Ffurflen Dreth
-optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd rydych wedi
-optout.confirmedOptOut.submitTax.confirmed.p1.link               = cyflwyno’ch Ffurflen Dreth Hunanasesiad yn y gorffennol
 
-optout.confirmedOptOut.submitTax.confirmed.p2                    = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-optout.confirmedOptOut.submitTax.confirmed.p2.link               =  meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech arfer ei defnyddio i
+optout.confirmedOptOut.submitTax.confirmed.p1.link               = gyflwyno’ch Ffurflenni Treth Hunanasesiad
+
+optout.confirmedOptOut.submitTax.confirmed.p2                    = Ar gyfer unrhyw flwyddyn dreth lle’r ydych yn dal i fod yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen
+optout.confirmedOptOut.submitTax.confirmed.p2.link.a             = meddalwedd sy’n cydweddu
+optout.confirmedOptOut.submitTax.confirmed.p2.link.b             =
+optout.confirmedOptOut.submitTax.confirmed.p2.link.c             = arnoch.
 
 optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = Gan eich bod wedi optio allan, gallwch ddefnyddio’r cysylltiad hwn i gael gwybod sut i
 optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 
 optout.confirmedOptOut.scenario5.submitTax.confirmed.p1          = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech arfer ei defnyddio i
-optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflenni Treth Hunanasesiad.
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflenni Treth Hunanasesiad
 
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
@@ -3218,7 +3229,7 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = Beth yw ta
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, roedd eich bil treth Hunanasesiad diwethaf yn llai na £1,000)
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = mae arnoch fwy na’r swm y gwnaethoch ei dalu yn ystod y flwyddyn (er enghraifft, drwy daliadau ar gyfrif neu TWE)
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = have changed your tax return and it resulted in you owing more (WELSH)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = rydych wedi newid eich Ffurflen Dreth a’r canlyniad yw bod arnoch ragor i’w dalu
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = Hefyd, mae angen i chi wneud taliad mantoli os oes gennych unrhyw ddyledion Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar eich {0}
@@ -3239,11 +3250,11 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p5          = £5,000 x 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = £250,000 / 365 = £684.93
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = £684.93 x 0.115 = £78.77
 
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = Beth yw ‘taliad ar gyfrif’?
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae taliadau ar gyfrif yn ddau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am y canlynol:
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Treth Incwm
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae pob taliad yn hanner y swm hwnnw.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = Beth yw taliad ar gyfrif?
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae ‘taliadau ar gyfrif’ yn dau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Os byddwch chi’n gwneud diwygiad i’r Ffurflen Dreth ac mae’r bil treth yn newid, yna bydd pob taliad ar gyfrif yn cael ei ddiweddaru i hanner y cyfanswm newydd.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i ddeall eich bil treth Hunanasesiad
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = Byddwch yn cael pwynt cosb am gyflwyno’n hwyr pob tro y byddwch yn hwyr wrth gyflwyno. Gall cyflwyniad fod yn ddiweddariad chwarterol neu’n ddatganiad treth blynyddol.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = Os byddwch yn cyrraedd 4 o bwyntiau, bydd angen i chi dalu cosb o £200.
@@ -3273,7 +3284,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.headi
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Hanes eich taliad mantoli
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = Hanes y tâl hwn
 
-yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill. (WELSH)
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = Mae’r taliad mantoli hwn yn mynd tuag at eich bil treth ar gyfer {0} i {0}.
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = Mae’r taliad ar gyfrif hwn yn mynd tuag at eich bil treth {0} i {1}.
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = Cosb gyntaf am dalu’n hwyr
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y gosb hon oherwydd eich bod yn hwyr wrth dalu eich Treth Incwm.
