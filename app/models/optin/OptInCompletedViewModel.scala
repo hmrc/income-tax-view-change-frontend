@@ -49,6 +49,6 @@ case class OptInCompletedViewModel(
     else controllers.routes.NextUpdatesController.show().url
   }
 
-  val reportingFrequencyLink: String = controllers.optIn.routes.OptInCompletedController.show(isAgent).url // TODO: Fix the navigation in future stories
+  val reportingFrequencyLink: String = controllers.optIn.oldJourney.routes.OptInCompletedController.show(isAgent).url // TODO: Fix the navigation in future stories
 
 }

@@ -17,23 +17,27 @@
 package models
 
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
 import services.DateServiceInterface
+import services.optout.OptOutProposition
 
 case class ReportingFrequencyViewModel(
                                         isAgent: Boolean,
                                         optOutJourneyUrl: Option[String],
-                                        optOutTaxYears: Seq[TaxYear],
                                         optInTaxYears: Seq[TaxYear],
                                         itsaStatusTable: Seq[(String, Option[String], Option[String])],
                                         displayCeasedBusinessWarning: Boolean,
                                         isAnyOfBusinessLatent: Boolean,
                                         displayManageYourReportingFrequencySection: Boolean = true,
-                                        mtdThreshold: String
+                                        mtdThreshold: String,
+                                        proposition: OptOutProposition
                                       )(implicit dateService: DateServiceInterface) {
 
   private val currentTaxYear: TaxYear = dateService.getCurrentTaxYear
   private val previousTaxYear: TaxYear = currentTaxYear.previousYear
   private val nextTaxYear: TaxYear = currentTaxYear.nextYear
+
+  val optOutTaxYears: Seq[TaxYear] = proposition.availableTaxYearsForOptOut
 
   val isOptInLinkOnward: Boolean =
     optInTaxYears.size == 1 && optInTaxYears.head == currentTaxYear.nextYear
@@ -47,59 +51,31 @@ case class ReportingFrequencyViewModel(
 
   val atLeastOneOfOptInOrOptOutExists: Boolean = optOutTaxYears.nonEmpty || optInTaxYears.nonEmpty
 
-  private val previousYearSuffix = if (optOutTaxYears.contains(currentTaxYear.previousYear)) {
-    if (optOutTaxYears.size == 1) {
-      Some("optOut.previousYear.single")
-    } else {
-      Some("optOut.previousYear.onwards")
-    }
-  } else {
-    None
+  private def selectYearSuffix(year: TaxYear, optOutSingle: String, optOutOnwards: String, signUpLabel: String): Option[String] = {
+    if (optOutTaxYears.contains(year)) {
+      if (optOutTaxYears.size == 1) Some(optOutSingle) else Some(optOutOnwards)
+    } else if (optInTaxYears.contains(year)) {
+      Some(signUpLabel)
+    } else None
   }
 
-  private val currentYearSuffix: Option[String] = {
-    if (optOutTaxYears.contains(currentTaxYear)) {
-      if (optOutTaxYears.contains(nextTaxYear) || (!optInTaxYears.contains(nextTaxYear) && !optOutTaxYears.contains(nextTaxYear))) {
-        Some("optOut.currentYear.onwards")
-      } else {
-        Some("optOut.currentYear.single")
-      }
-    } else if (optInTaxYears.contains(currentTaxYear)) {
-      if (optInTaxYears.contains(nextTaxYear)) {
-        Some("signUp.currentYear.onwards")
-      } else {
-        Some("signUp.currentYear.single")
-      }
-    } else {
-      None
-    }
-  }
-
-  private val nextYearSuffix: Option[String] = {
-    if (optOutTaxYears.contains(currentTaxYear.nextYear)) Some("optOut.nextYear")
-    else if (optInTaxYears.contains(currentTaxYear.nextYear)) Some("signUp.nextYear")
-    else None
-  }
-
-  val listOfMessageSuffixes: Seq[String] = Seq(previousYearSuffix, currentYearSuffix, nextYearSuffix).flatten
+  private val previousYearSuffix = selectYearSuffix(previousTaxYear, "optOut.previousYear.single", "optOut.previousYear.onwards", "")
+  private val currentYearSuffix = selectYearSuffix(currentTaxYear, "optOut.currentYear", "optOut.currentYear", "signUp.currentYear")
+  private val nextYearSuffix = selectYearSuffix(nextTaxYear, "optOut.nextYear", "optOut.nextYear", "signUp.nextYear")
 
   def getChangeLinkText(suffix: String): String = if (suffix.contains("optOut")) "optOut.link.text" else "signUp.link.text"
 
-  def getSecondDescText(suffix: String): String = if (!suffix.contains("currentYear")) {
-    suffix.replaceAll("\\.(single|onwards)$", "")
-  } else {
-    if (previousYearSuffix.isDefined) {
-      if(suffix.contains("optOut")) {
-        suffix.replaceAll("\\.(single|onwards)$", ".withDate")
+  def getSecondDescText(suffix: String): String = {
+    val base = suffix.stripSuffix(".single").stripSuffix(".onwards")
+
+    if (suffix.contains("currentYear") && previousYearSuffix.isDefined) {
+      if (suffix.contains("optOut")) {
+        if (optOutTaxYears.size > 1) base + ".withDate" else base
       } else {
-        if(nextYearSuffix.exists(_.contains("optOut"))) {
-          suffix.replaceAll("\\.(single|onwards)$", "")
-        } else {
-          suffix.replaceAll("\\.(single|onwards)$", ".withDate")
-        }
+        if (optInTaxYears.size > 1) base + ".withDate" else base
       }
     } else {
-      suffix.replaceAll("\\.(single|onwards)$", "")
+      base
     }
   }
 
@@ -108,5 +84,48 @@ case class ReportingFrequencyViewModel(
     case s if s.contains("currentYear")  => currentTaxYear
     case s if s.contains("nextYear")     => nextTaxYear
     case _ => throw new RuntimeException("Invalid suffix passed to taxYearFromSuffix")
+  }
+
+  def getOptOutSignUpLink(taxYear: TaxYear, suffix: String): String = {
+    if (suffix.contains("optOut")) {
+      controllers.optOut.newJourney.routes.OptOutTaxYearQuestionController.show(isAgent, Some(taxYear.startYear.toString)).url
+    } else {
+      controllers.optIn.newJourney.routes.SignUpStartController.show(isAgent, Some(taxYear.startYear.toString)).url
+    }
+  }
+
+  private val checkIfOnwards: List[Option[Boolean]] = {
+    val currentYearStatus = proposition.currentTaxYear.status
+    val nextYearStatus = proposition.nextTaxYear.status
+
+    val previousYearCheck = if (proposition.previousTaxYear.canOptOut) {
+      if (optOutTaxYears.size > 1) Some(true) else Some(false)
+    } else {
+      None
+    }
+
+    val currentYearCheck = currentYearStatus match {
+      case Voluntary => if (optOutTaxYears.size > 1) Some(true) else Some(false)
+      case Annual    => if (optInTaxYears.size > 1) Some(true) else Some(false)
+      case _         => None
+    }
+
+    val nextYearCheck = nextYearStatus match {
+      case Voluntary | Annual => Some(true)
+      case _                  => None
+    }
+
+    List(previousYearCheck, currentYearCheck, nextYearCheck)
+  }
+
+  val getSummaryCardSuffixes: List[Option[String]] = {
+    checkIfOnwards.zipWithIndex.map {
+      case (Some(true), 0) => Some("optOut.previousYear.onwards")
+      case (Some(false), 0) => Some("optOut.previousYear.single")
+      case (Some(true), 1) => currentYearSuffix.map(_ + ".onwards")
+      case (Some(false), 1) => currentYearSuffix.map(_ + ".single")
+      case (Some(true), 2) => nextYearSuffix
+      case _ => None
+    }
   }
 }

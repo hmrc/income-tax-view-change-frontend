@@ -24,6 +24,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import models.itsaStatus.{StatusDetail, StatusReason}
 import models.optout._
+import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito._

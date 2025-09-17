@@ -18,9 +18,11 @@ package views
 
 import models.ReportingFrequencyViewModel
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{Voluntary, Annual}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
+import services.optout.{OptOutProposition, OptOutTestSupport}
 import testUtils.TestSupport
 import views.html.ReportingFrequencyView
 import views.messages.ReportingFrequencyViewMessages._
@@ -29,17 +31,19 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
   val view: ReportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
 
-  def beforeYouStartUrl(isAgent: Boolean): String = controllers.optIn.routes.BeforeYouStartController.show(isAgent).url
+  def beforeYouStartUrl(isAgent: Boolean): String = controllers.optIn.oldJourney.routes.BeforeYouStartController.show(isAgent).url
 
-  def optOutChooseTaxYearUrl(isAgent: Boolean): String = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url
+  def optOutChooseTaxYearUrl(isAgent: Boolean): String = controllers.optOut.oldJourney.routes.OptOutChooseTaxYearController.show(isAgent).url
 
-  def confirmOptOutUrl(isAgent: Boolean): String = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url
+  def confirmOptOutUrl(isAgent: Boolean): String = controllers.optOut.oldJourney.routes.ConfirmOptOutController.show(isAgent).url
 
   val govGuidanceUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   def nextUpdatesUrl(isAgent: Boolean): String =
     if(isAgent) controllers.routes.NextUpdatesController.showAgent().url
     else controllers.routes.NextUpdatesController.show().url
+
+  val optOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
 
   def bullet(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
@@ -49,6 +53,12 @@ class ReportingFrequencyViewSpec extends TestSupport {
     val h2 = "manage-reporting-frequency-heading"
     val p1 = "change-reporting-frequency"
     val p2 = "what-you-can-do"
+
+    val manageReportingObligationsHeading = "manage-reporting-obligations-heading"
+    val manageReportingObligationsCardHeading = "manage-reporting-obligations-card-heading-1"
+    val manageReportingObligationsCardLink = "manage-reporting-obligations-card-link-1"
+    val manageReportingObligationsCardDesc = "manage-reporting-obligations-card-desc-1"
+    val manageReportingObligationsCardText = "manage-reporting-obligations-card-text-1"
 
     val latencyDetailsDropdownPara1 = "separately-choose-to-opt-out"
     val latencyDetailsDropdownBullet1 = "latency-section-1-bullet-1"
@@ -97,9 +107,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
         Seq(
           Selectors.h1 -> pageHeadingContentNew,
-          Selectors.h2 -> manageRFHeadingContent,
-          Selectors.p1 -> p1Content,
-          Selectors.p2 -> p2Content,
+          Selectors.manageReportingObligationsHeading -> manageReportingObligationsHeading,
+          Selectors.manageReportingObligationsCardHeading -> manageReportingObligationsCardHeading,
+          Selectors.manageReportingObligationsCardLink -> manageReportingObligationsCardLink,
+          Selectors.manageReportingObligationsCardDesc -> manageReportingObligationsCardDesc,
+          Selectors.manageReportingObligationsCardText -> manageReportingObligationsCardText,
           Selectors.mandatoryReportingH2 -> mandatoryReportingHeadingR17,
           Selectors.mandatoryReportingInset -> mandatoryReportingInsetR17,
           Selectors.mandatoryReportingText -> mandatoryReportingTextR17,
@@ -110,7 +122,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
         ) ++ additionalIdsAndContent ++ differentObligationsContent
 
 
-      }else{
+      } else {
         Seq(
           Selectors.h1 -> pageHeadingContent,
           Selectors.h2 -> manageRFHeadingContent,
@@ -148,11 +160,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAgent = isAgentFlag,
               Some(optOutChooseTaxYearUrl(isAgentFlag)),
               Seq(TaxYear(2024, 2025)),
-              Seq(TaxYear(2024, 2025)),
               Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -171,14 +183,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
           testContentByIds(pageDocument, R17ContentEnabled = true)
 
           pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-          pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYearOnwards
-
-          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
-
-          pageDocument.select(bullet(2)).text() shouldBe optInContentWithTaxYearOnwards
-
-          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
         }
 
         "return the correct content when opt in and opt out has single tax year and it is not next tax year(2024)" in {
@@ -189,7 +193,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
               optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              optOutTaxYears = Seq(TaxYear(2023, 2024)),
               optInTaxYears = Seq(TaxYear(2023, 2024)),
               itsaStatusTable = Seq(
                 ("2023 to 2024", Some("Yes"), Some("Quarterly (mandatory)")),
@@ -198,7 +201,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               ),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -217,14 +221,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
           testContentByIds(pageDocument, R17ContentEnabled = true)
 
           pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-          pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYear
-
-          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
-
-          pageDocument.select(bullet(2)).text() shouldBe optInContentWithTaxYear
-
-          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
 
           pageDocument.select("#table-head-name-taxyear").text() shouldBe "Tax year"
 
@@ -267,12 +263,12 @@ class ReportingFrequencyViewSpec extends TestSupport {
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
               optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              optOutTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = true,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -291,14 +287,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
           pageDocument.title() shouldBe titleNew
 
           pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-          pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
-
-          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
-
-          pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
-
-          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
         }
 
         "return the correct content when opt in and opt out has multiple tax years" in {
@@ -309,12 +297,12 @@ class ReportingFrequencyViewSpec extends TestSupport {
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
               optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              optOutTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -335,14 +323,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
           testContentByIds(pageDocument, R17ContentEnabled = true)
 
           pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-          pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
-
-          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
-
-          pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
-
-          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
 
         }
       }
@@ -358,12 +338,12 @@ class ReportingFrequencyViewSpec extends TestSupport {
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
               optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              optOutTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = true,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -382,14 +362,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
           pageDocument.title() shouldBe titleNew
 
           pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-          pageDocument.select(bullet(1)).text() shouldBe optOutGenericContent
-
-          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
-
-          pageDocument.select(bullet(2)).text() shouldBe optInGenericContent
-
-          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
         }
 
         "return the correct content when opt in and opt out has multiple tax years" in {
@@ -400,11 +372,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAgent = isAgentFlag,
               Some(optOutChooseTaxYearUrl(isAgentFlag)),
               Seq(TaxYear(2024, 2025)),
-              Seq(TaxYear(2024, 2025)),
               Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -423,14 +395,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
           testContentByIds(pageDocument, R17ContentEnabled = true)
 
           pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-          pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYearOnwards
-
-          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
-
-          pageDocument.select(bullet(2)).text() shouldBe optInContentWithTaxYearOnwards
-
-          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
         }
 
         "return the correct content when opt in and opt out has single tax year and it is next tax year(2024)" in {
@@ -442,11 +406,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAgent = isAgentFlag,
               Some(optOutChooseTaxYearUrl(isAgentFlag)),
               Seq(TaxYear(2024, 2025)),
-              Seq(TaxYear(2024, 2025)),
               Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -465,14 +429,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
           testContentByIds(pageDocument, R17ContentEnabled = true)
 
           pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-          pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYearOnwards
-
-          pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
-
-          pageDocument.select(bullet(2)).text() shouldBe optInContentWithTaxYearOnwards
-
-          pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
         }
 
         "return the correct content when the user has a ceased business" in {
@@ -482,7 +438,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
               optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              optOutTaxYears = Seq(TaxYear(2023, 2024)),
               optInTaxYears = Seq(TaxYear(2023, 2024)),
               itsaStatusTable = Seq(
                 ("2023 to 2024", Some("Yes"), Some("Quarterly (mandatory)")),
@@ -491,7 +446,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               ),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = true,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -524,7 +480,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
           ReportingFrequencyViewModel(
             isAgent = isAgentFlag,
             optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-            optOutTaxYears = Seq(TaxYear(2023, 2024)),
             optInTaxYears = Seq(TaxYear(2023, 2024)),
             itsaStatusTable = Seq(
               ("2023 to 2024", Some("Required"), Some("Quarterly (mandatory)")),
@@ -533,7 +488,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
             ),
             isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = false,
-            mtdThreshold = "£50,000"
+            mtdThreshold = "£50,000",
+            proposition = optOutProposition
           )
 
         val pageDocument: Document =
@@ -552,14 +508,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
         testContentByIds(pageDocument, R17ContentEnabled = true)
 
         pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
-
-        pageDocument.select(bullet(1)).text() shouldBe optOutContentWithTaxYear
-
-        pageDocument.select(bullet(1)).attr("href") shouldBe optOutChooseTaxYearUrl(isAgentFlag)
-
-        pageDocument.select(bullet(2)).text() shouldBe optInContentWithTaxYear
-
-        pageDocument.select(bullet(2)).attr("href") shouldBe beforeYouStartUrl(isAgentFlag)
 
         pageDocument.select("#table-head-name-taxyear").text() shouldBe "Tax year"
 
@@ -609,11 +557,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAgent = isAgentFlag,
               Some(optOutChooseTaxYearUrl(isAgentFlag)),
               Seq(TaxYear(2024, 2025)),
-              Seq(TaxYear(2024, 2025)),
               Seq(("2024 to 2025", None, Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), true, Annual, Voluntary, Annual)
             )
 
           val pageDocument: Document =
@@ -650,7 +598,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
               optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              optOutTaxYears = Seq(TaxYear(2023, 2024)),
               optInTaxYears = Seq(TaxYear(2023, 2024)),
               itsaStatusTable = Seq(
                 ("2023 to 2024", None, Some("Quarterly (mandatory)")),
@@ -659,7 +606,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               ),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = OptOutProposition.createOptOutProposition(TaxYear(2023, 2024), true, Annual, Voluntary, Annual)
             )
 
           val pageDocument: Document =
@@ -725,12 +673,12 @@ class ReportingFrequencyViewSpec extends TestSupport {
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
               optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
-              optOutTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq(("2024 to 2025", None, Some("Quarterly"))),
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = true,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
 
@@ -779,11 +727,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAgent = isAgentFlag,
               Some(optOutChooseTaxYearUrl(isAgentFlag)),
               Seq(TaxYear(2024, 2025)),
-              Seq(TaxYear(2024, 2025)),
               Seq(("2024 to 2025", None, Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = true,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -816,11 +764,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAgent = isAgentFlag,
               Some(confirmOptOutUrl(isAgentFlag)),
               Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-              Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               Seq(("2024 to 2025", None, Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000"
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition
             )
 
           val pageDocument: Document =
@@ -862,11 +810,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
                 isAgent = isAgentFlag,
                 Some(confirmOptOutUrl(isAgentFlag)),
                 Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-                Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
                 Seq(("2024 to 2025", None, Some("Quarterly"))),
                 isAnyOfBusinessLatent = false,
                 displayCeasedBusinessWarning = false,
-                mtdThreshold = "£50,000"
+                mtdThreshold = "£50,000",
+                proposition = optOutProposition
               )
 
             val pageDocument: Document =
@@ -894,11 +842,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
                 isAgent = isAgentFlag,
                 Some(optOutChooseTaxYearUrl(isAgentFlag)),
                 Seq(TaxYear(2024, 2025)),
-                Seq(TaxYear(2024, 2025)),
                 Seq(("2024 to 2025", None, Some("Quarterly"))),
                 isAnyOfBusinessLatent = false,
                 displayCeasedBusinessWarning = true,
-                mtdThreshold = "£50,000"
+                mtdThreshold = "£50,000",
+                proposition = optOutProposition
               )
 
             val pageDocument: Document =

@@ -31,7 +31,7 @@
     detailsDropdown: detailsDropdown,
     bulletList: bulletPointList,
     govukTable: GovukTable,
-    govukInsetText : GovukInsetText,
+    govukInsetText : GovukInsetText
 )
 
 
@@ -101,11 +101,11 @@
 
 @optInLink = {
     @if(viewModel.optInTaxYears.size > 1) {
-        @linkComponent(id = Some("opt-in-link"), url = controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.generic"))
+        @linkComponent(id = Some("opt-in-link"), url = controllers.optIn.oldJourney.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.generic"))
     } else if (viewModel.isOptInLinkOnward) {
-        @linkComponent(id = Some("opt-in-link"), url = controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.onwards", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
+        @linkComponent(id = Some("opt-in-link"), url = controllers.optIn.oldJourney.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.onwards", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
     } else if (viewModel.optInTaxYears.size == 1) {
-        @linkComponent(id = Some("opt-in-link"), url = controllers.optIn.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.taxyear", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
+        @linkComponent(id = Some("opt-in-link"), url = controllers.optIn.oldJourney.routes.BeforeYouStartController.show(viewModel.isAgent).url, message = messages("reporting.frequency.manageReportingFrequency.optIn.link.taxyear", viewModel.optInTaxYears.head.startYear.toString, viewModel.optInTaxYears.head.endYear.toString))
     }
 }
 
@@ -121,37 +121,40 @@
 
 @manageReportingFrequency = {
     @if(optInOptOutContentUpdateR17IsEnabled) {
-        @h2(msg = "reporting.obligations.changing.h2", optId = Some("change-reporting-obligations-heading"))
-        @viewModel.listOfMessageSuffixes.map { suffix =>
-            <div class="govuk-summary-card">
-                <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title">
-                        @messages(s"reporting.obligations.changing.$suffix")
-                    </h2>
-                    <ul class="govuk-summary-card__actions">
-                        <li class="govuk-summary-card__action">
-                            <a class="govuk-link" href="#">@messages(s"reporting.obligations.changing.${viewModel.getChangeLinkText(suffix)}")</a>
-                        </li>
-                    </ul>
+        @h2(msg = "reporting.obligations.changing.h2", optId = Some("manage-reporting-obligations-heading"))
+        @viewModel.getSummaryCardSuffixes.zipWithIndex.map { case (suffix, index) =>
+            @suffix.map { endMessage =>
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title" id="manage-reporting-obligations-card-heading-@index" >
+                        @messages(s"reporting.obligations.changing.$endMessage")
+                        </h2>
+                        <ul class="govuk-summary-card__actions">
+                            <li class="govuk-summary-card__action">
+                                <a class="govuk-link" id="manage-reporting-obligations-card-link-@index" href="@{viewModel.getOptOutSignUpLink(viewModel.taxYearFromSuffix(endMessage), endMessage)}">@messages(s"reporting.obligations.changing.${viewModel.getChangeLinkText(endMessage)}")</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key govuk-!-width-three-quarters" id="manage-reporting-obligations-card-desc-@index">
+                                @messages(s"reporting.obligations.changing.desc1.$endMessage", viewModel.taxYearFromSuffix(endMessage).startYear.toString, viewModel.taxYearFromSuffix(endMessage).endYear.toString)
+                                </dt>
+                                <dd class="govuk-summary-list__value govuk-!-text-align-right govuk-!-width-one-quarter" id="manage-reporting-obligations-card-text-@index">
+                                @messages(s"reporting.obligations.changing.desc2.${viewModel.getSecondDescText(endMessage)}", viewModel.taxYearFromSuffix(endMessage).startYear.toString)
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
                 </div>
-                <div class="govuk-summary-card__content">
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key govuk-!-width-three-quarters">
-                            @messages(s"reporting.obligations.changing.desc1.$suffix", viewModel.taxYearFromSuffix(suffix).startYear.toString, viewModel.taxYearFromSuffix(suffix).endYear.toString)
-                            </dt>
-                            <dd class="govuk-summary-list__value govuk-!-text-align-right govuk-!-width-one-quarter">
-                            @messages(s"reporting.obligations.changing.desc2.${viewModel.getSecondDescText(suffix)}", viewModel.taxYearFromSuffix(suffix).startYear.toString)
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-            </div>
-            @if(suffix.contains("signUp.currentYear")) {
-                @p(id = Some("change-reporting-obligations-note")) {
-                    @messages("reporting.obligations.changing.desc3.signUp.currentYear")
-                    <strong class="govuk-!-font-weight-bold">@messages("reporting.obligations.changing.desc4.signUp.currentYear", viewModel.taxYearFromSuffix(suffix).startYear.toString)</strong>
-                    @messages("reporting.obligations.changing.desc5.signUp.currentYear")
+
+                @if(endMessage.contains("signUp.currentYear")) {
+                    @p(id = Some("manage-reporting-obligations-note")) {
+                        @messages("reporting.obligations.changing.desc3.signUp.currentYear")
+                        <strong class="govuk-!-font-weight-bold">@messages("reporting.obligations.changing.desc4.signUp.currentYear", viewModel.taxYearFromSuffix(endMessage).startYear.toString)</strong>
+                        @messages("reporting.obligations.changing.desc5.signUp.currentYear")
+                    }
                 }
             }
         }
