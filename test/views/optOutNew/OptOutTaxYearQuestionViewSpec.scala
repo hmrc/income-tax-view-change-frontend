@@ -48,7 +48,8 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       taxYear = optOutYear,
       optOutState = Some(state),
       numberOfQuarterlyUpdates = numberOfQuarterlyUpdates,
-      currentYearStatus = currentYearItsaStatus
+      currentYearStatus = currentYearItsaStatus,
+      nextYearStatus = nextYearItsaStatus
     )
 
     val form = if (withError) {
@@ -79,7 +80,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2024 to 2025 tax year"
       }
     }
-    "opting out for the current year onwards - Multi" should {
+    "opting out for the current year onwards with voluntary next year - Multi" should {
       "have the correct title" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.currentYearTitleMulti
       }
@@ -94,6 +95,26 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct radio question" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.currentYearQuestionMulti
+      }
+      "display the correct error message when form has errors" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, withError = true) {
+        pageDocument.getElementsByClass("govuk-error-summary__title").text() shouldBe "There is a problem"
+        pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
+      }
+    }
+    "opting out for the current year onwards with annual next year - Multi" should {
+      "have the correct title" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Annual) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.currentYearTitleMultiAnnualFollowing
+      }
+      "have the correct heading" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Annual) {
+        pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.currentYearHeadingMultiAnnualFollowing
+      }
+      "have the correct description" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Annual) {
+        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc1MultiAnnualFollowing
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc2MultiAnnualFollowing
+        pageDocument.getElementById("opt-out-question-desc-3").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc3MultiAnnualFollowing
+      }
+      "have the correct radio question" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary) {
+        pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.currentYearQuestionMultiAnnualFollowing
       }
       "display the correct error message when form has errors" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, withError = true) {
         pageDocument.getElementsByClass("govuk-error-summary__title").text() shouldBe "There is a problem"

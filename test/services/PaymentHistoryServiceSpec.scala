@@ -21,6 +21,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import connectors.RepaymentHistoryConnector
 import mocks.connectors.MockFinancialDetailsConnector
+import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService}
 import models.financialDetails.{Payment, Payments, PaymentsError}
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.mock
@@ -32,7 +33,12 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
 
-class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsConnector with FeatureSwitching {
+class PaymentHistoryServiceSpec
+  extends TestSupport
+    with MockFinancialDetailsConnector
+    with MockFinancialDetailsService
+    with MockChargeHistoryService
+    with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -53,7 +59,7 @@ class PaymentHistoryServiceSpec extends TestSupport with MockFinancialDetailsCon
   val mockRepaymentHistoryConnector: RepaymentHistoryConnector = mock(classOf[RepaymentHistoryConnector])
 
   object TestPaymentHistoryService extends PaymentHistoryService(mockRepaymentHistoryConnector,
-    mockFinancialDetailsConnector, dateService, appConfig)
+    mockFinancialDetailsConnector, mockFinancialDetailsService, mockChargeHistoryService, dateService, appConfig)
 
   "getPaymentHistory" when {
     "An error is returned from the connector" should {
