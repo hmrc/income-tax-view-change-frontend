@@ -17,7 +17,7 @@
 package models.optout
 
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import services.optout._
 
 case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
