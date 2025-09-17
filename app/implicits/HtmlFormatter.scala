@@ -23,9 +23,4 @@ object HtmlFormatter {
     def toNonBreaking: Html =
       Html(str.replace(" ", "&nbsp;"))
   }
-
-  implicit class EmspString(val str: String) extends AnyVal {
-    def toEmsp: Html =
-      Html(str.replace("\t", "&emsp;"))
-  }
 }
