@@ -392,6 +392,31 @@ trait ChargeConstants {
     paymentLot = Some("paymentLot"),
     chargeReference = Some("ABCD1234")
   )
+
+  val poa1WithCodingOutAccepted = ChargeItem(
+    transactionId = id1040000123,
+    taxYear = TaxYear.forYearEnd(currentYear.toInt),
+    transactionType = PoaOneDebit,
+    codedOutStatus = Some(Accepted),
+    outstandingAmount = 1000,
+    originalAmount = 43.21,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(fixedDate.plusDays(30)),
+    accruingInterestAmount = None,
+    interestOutstandingAmount = None,
+    interestFromDate = Some(LocalDate.of(2018, 3, 29)),
+    interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+    lpiWithDunningLock = Some(100),
+    interestRate = Some(100),
+    amountCodedOut = Some(30),
+    dunningLock = false,
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = Some(LocalDate.parse("2024-01-14")),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentLot = Some("paymentLot"),
+    chargeReference = Some("ABCD1234")
+  )
+
   val poa2WithCodedOut = ChargeItem(
     transactionId = id1040000124,
     taxYear = TaxYear.forYearEnd(currentYear.toInt),
@@ -411,6 +436,30 @@ trait ChargeConstants {
     dunningLock = false,
     poaRelevantAmount = None,
     dueDateForFinancialDetail = Some( LocalDate.parse("2023-12-14")),
+    paymentLotItem = Some("paymentLotItem"),
+    paymentLot = Some("paymentLot"),
+    chargeReference = Some("ABCD1234")
+  )
+
+  val poa2WithCodingutAccepted = ChargeItem(
+    transactionId = id1040000124,
+    taxYear = TaxYear.forYearEnd(currentYear.toInt),
+    transactionType = PoaTwoDebit,
+    codedOutStatus = Some(Accepted),
+    outstandingAmount = 400,
+    originalAmount = 12.34,
+    documentDate = LocalDate.of(2018, 3, 29),
+    dueDate = Some(fixedDate.minusDays(1)),
+    accruingInterestAmount = None,
+    interestOutstandingAmount = None,
+    interestFromDate = Some(LocalDate.of(2018, 3, 29)),
+    interestEndDate = Some(LocalDate.of(2018, 3, 29)),
+    lpiWithDunningLock = Some(100),
+    interestRate = Some(100),
+    amountCodedOut = Some(70),
+    dunningLock = false,
+    poaRelevantAmount = None,
+    dueDateForFinancialDetail = Some(LocalDate.parse("2023-12-14")),
     paymentLotItem = Some("paymentLotItem"),
     paymentLot = Some("paymentLot"),
     chargeReference = Some("ABCD1234")

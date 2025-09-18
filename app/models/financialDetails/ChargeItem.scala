@@ -46,6 +46,7 @@ case class ChargeItem (
                         dueDateForFinancialDetail: Option[LocalDate] = None,
                         paymentLotItem: Option[String] = None,
                         paymentLot: Option[String] = None,
+                        creationDate: Option[LocalDate] = None,
                         chargeReference: Option[String]
                       ) extends TransactionItem {
 
@@ -115,6 +116,11 @@ case class ChargeItem (
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
+  def isCodingOutAcceptedOrFullyCollected: Boolean = {
+    val codingOutSubTypes = Seq(Accepted, FullyCollected)
+    codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
+  }
+
   def interestIsPaid: Boolean = interestOutstandingAmount.exists(_ <= 0)
 
   def remainingToPay: BigDecimal = {
@@ -162,7 +168,11 @@ case class ChargeItem (
   val isPoaReconciliationDebit: Boolean = transactionType == PoaOneReconciliationDebit ||
     transactionType == PoaTwoReconciliationDebit
 
+  val isPoaDebit: Boolean = transactionType == PoaOneDebit || transactionType == PoaTwoDebit
+
   val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
+
+  val isBalancingCharge: Boolean = transactionType == BalancingCharge
 
   val isPenalty: Boolean = List(LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty).contains(this.transactionType)
 
