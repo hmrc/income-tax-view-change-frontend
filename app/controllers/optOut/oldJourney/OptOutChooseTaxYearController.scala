@@ -27,7 +27,7 @@ import play.api.mvc._
 import repositories.OptOutSessionDataRepository
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.ReportingObligationsUtils
 import views.html.optOut.oldJourney.OptOutChooseTaxYear
 
 import javax.inject.{Inject, Singleton}

@@ -28,7 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.ReportingObligationsUtils
 import views.html.optIn.oldJourney.OptInCompletedView
 
 import javax.inject.{Inject, Singleton}

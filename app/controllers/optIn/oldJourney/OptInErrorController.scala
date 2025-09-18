@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.ReportingObligationsUtils
 import views.html.optIn.oldJourney.OptInError
 
 import javax.inject.{Inject, Singleton}

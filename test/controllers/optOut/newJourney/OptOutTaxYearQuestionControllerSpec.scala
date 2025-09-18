@@ -24,6 +24,7 @@ import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPa
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
+import org.mockito.ArgumentMatchers.any
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -97,6 +98,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+          mockSaveIntent(Future.successful(true))
 
           val result = action(fakeRequest)
 

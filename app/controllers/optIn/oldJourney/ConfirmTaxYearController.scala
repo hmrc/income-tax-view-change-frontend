@@ -29,7 +29,7 @@ import play.api.mvc._
 import services.DateService
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.ReportingObligationsUtils
 import views.html.optIn.oldJourney.ConfirmTaxYear
 
 import javax.inject.{Inject, Singleton}

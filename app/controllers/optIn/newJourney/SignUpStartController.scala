@@ -27,22 +27,23 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DateServiceInterface
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.JourneyCheckerSignUp
 import views.html.optIn.newJourney.SignUpStart
+
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SignUpStartController @Inject()(authActions: AuthActions,
                                       signUpStart: SignUpStart,
-                                      optInService: OptInService,
+                                      val optInService: OptInService,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       implicit val dateService: DateServiceInterface)
                                      (implicit val ec: ExecutionContext,
                                       val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with JourneyCheckerSignUp {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -53,8 +54,9 @@ class SignUpStartController @Inject()(authActions: AuthActions,
       withRecover(isAgent) {
         optInService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
-            optInService.saveIntent(viewModel.signUpTaxYear.taxYear)
-            Future.successful(Ok(signUpStart(isAgent, dateService.getCurrentTaxYearEnd.equals(viewModel.signUpTaxYear.taxYear.endYear), buttonUrl(isAgent, viewModel.signUpTaxYear.taxYear.startYear.toString))))
+            withSessionData(isStart = true, viewModel.signUpTaxYear.taxYear) {
+              Future.successful(Ok(signUpStart(isAgent, dateService.getCurrentTaxYearEnd.equals(viewModel.signUpTaxYear.taxYear.endYear), buttonUrl(isAgent, viewModel.signUpTaxYear.taxYear.startYear.toString))))
+            }
           case None =>
             Logger("application").warn("[SignUpStartController.show] chosen tax year intent not found. Redirecting to reporting obligations page.")
             Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(isAgent)))

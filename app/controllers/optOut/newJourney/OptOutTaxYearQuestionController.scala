@@ -23,30 +23,27 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import forms.optOut.OptOutTaxYearQuestionForm
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import repositories.OptOutSessionDataRepository
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.JourneyCheckerOptOut
 import views.html.optOut.newJourney.OptOutTaxYearQuestionView
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OptOutTaxYearQuestionController @Inject()(optOutService: OptOutService,
+class OptOutTaxYearQuestionController @Inject()(val optOutService: OptOutService,
                                                 authActions: AuthActions,
                                                 view: OptOutTaxYearQuestionView,
-                                                itvcErrorHandler: ItvcErrorHandler,
-                                                itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                repository: OptOutSessionDataRepository
+                                                val itvcErrorHandler: ItvcErrorHandler,
+                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                                )(implicit val appConfig: FrontendAppConfig,
                                                  val mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with JourneyCheckerOptOut {
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
@@ -57,21 +54,17 @@ class OptOutTaxYearQuestionController @Inject()(optOutService: OptOutService,
       withOptOutRFChecks {
         optOutService.isOptOutTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
-            repository.saveIntent(viewModel.taxYear.taxYear).recover {
-              case ex: Exception =>
-                Logger("application").error(s"[OptOutTaxYearQuestionController.show] - Could not save intent tax year to session: $ex")
-                errorHandler(isAgent).showInternalServerError()
+            withSessionData(true, viewModel.taxYear.taxYear) {
+              Future.successful(Ok(
+                view(
+                  isAgent,
+                  viewModel,
+                  OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear),
+                  controllers.optOut.newJourney.routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
+                )
+              ))
             }
-            Future.successful(Ok(
-              view(
-                isAgent,
-                viewModel,
-                OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear),
-                controllers.optOut.newJourney.routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
-              )
-            ))
-          case None =>
-            Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
+          case None => Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
         }
       }
   }

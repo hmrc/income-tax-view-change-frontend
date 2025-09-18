@@ -74,4 +74,8 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
   def mockIsOptOutTaxYearValid(out: Future[Option[OptOutTaxYearQuestionViewModel]]): Unit = {
     when(mockOptOutService.isOptOutTaxYearValid(any())(any(), any(), any())).thenReturn(out)
   }
+
+  def mockSaveIntent(out: Future[Boolean]): Unit = {
+    when(mockOptOutService.saveIntent(any())(any(), any())).thenReturn(out)
+  }
 }

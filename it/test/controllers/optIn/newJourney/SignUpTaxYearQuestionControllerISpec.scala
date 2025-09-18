@@ -25,7 +25,7 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.Annual
+import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -100,6 +100,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
+          await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear))
+
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
           result should have(
@@ -126,6 +128,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           enable(OptInOptOutContentUpdateR17)
           enable(ReportingFrequencyPage)
+
+          await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Voluntary, currentTaxYear))
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -164,6 +168,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           enable(OptInOptOutContentUpdateR17)
           enable(ReportingFrequencyPage)
 
+          await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Mandated, currentTaxYear))
+
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
@@ -201,6 +207,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           enable(OptInOptOutContentUpdateR17)
           enable(ReportingFrequencyPage)
 
+          await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear.nextYear))
+
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
@@ -226,6 +234,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           enable(OptInOptOutContentUpdateR17)
           enable(ReportingFrequencyPage)
+
+          await(setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, currentTaxYear.nextYear))
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -253,6 +263,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           enable(OptInOptOutContentUpdateR17)
           enable(ReportingFrequencyPage)
 
+          await(setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Annual, currentTaxYear.nextYear))
+
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
@@ -278,6 +290,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           enable(OptInOptOutContentUpdateR17)
           enable(ReportingFrequencyPage)
+
+          await(setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear))
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
