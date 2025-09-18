@@ -61,14 +61,6 @@ case class AddIncomeSourceData(
       incomeSourceCreatedJourneyComplete  .map(SensitiveBoolean),
       incomeSourceRFJourneyComplete       .map(SensitiveBoolean)
     )
-
-  def sanitiseDates: AddIncomeSourceData = {
-    this.copy(
-      accountingPeriodStartDate = None,
-      accountingPeriodEndDate = None,
-      dateStarted = None
-    )
-  }
 }
 
 
