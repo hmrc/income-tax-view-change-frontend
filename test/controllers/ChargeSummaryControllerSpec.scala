@@ -229,7 +229,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Balancing payment: extra amount due to amended return"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £10.33"
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementById("itsa-return-amendment-p1").text() shouldBe "You owe this extra tax because of a change you made to your return."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
