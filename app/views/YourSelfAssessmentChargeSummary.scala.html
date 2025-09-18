@@ -105,7 +105,7 @@
 
       @if(!viewModel.chargeItem.isCodingOut) {
           @p(id = Some("due-date-text")) {
-              <b>@getMessage("due", viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString, (viewModel.chargeItem.taxYear.startYear + 1).toString, (viewModel.chargeItem.taxYear.endYear+1).toString)</b>
+              <b>@getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)</b>
           }
       }
 
