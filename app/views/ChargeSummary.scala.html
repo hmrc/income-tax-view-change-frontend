@@ -269,7 +269,7 @@
 @checkPayeCodePara = {
     @p(id = Some("check-paye-para")){
         @messages("chargeSummary.check-paye-tax-code-1")
-<a class="govuk-link" id="paye-tax-code-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.checkPayeTaxCodeUrl}/@{viewModel.taxYearEndToCheckCode}">
+<a class="govuk-link" id="paye-tax-code-link" href="@{ExternalUrlHelper.checkPayeTaxCodeUrl}/@{viewModel.taxYearEndToCheckCode}">
 @messages("chargeSummary.check-paye-tax-code-2")</a>
         @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
     }
