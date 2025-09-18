@@ -65,25 +65,26 @@ class ReportingFrequencyPageController @Inject()(
           val optOutUrl: Option[String] = {
             optOutJourneyType.map {
               case _: OptOutOneYearViewModel =>
-                controllers.optOut.routes.ConfirmOptOutController.show(user.isAgent()).url
+                controllers.optOut.oldJourney.routes.ConfirmOptOutController.show(user.isAgent()).url
               case _: OptOutMultiYearViewModel =>
-                controllers.optOut.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
+                controllers.optOut.oldJourney.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
             }
           }
+
           Ok(view(
             ReportingFrequencyViewModel(
               isAgent = user.isAgent(),
               optOutJourneyUrl = optOutUrl,
-              optOutTaxYears = optOutProposition.availableTaxYearsForOptOut,
               optInTaxYears = optInTaxYears,
               itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
               displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
               isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
               displayManageYourReportingFrequencySection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased),
-              mtdThreshold = getMtdThreshold
+              mtdThreshold = getMtdThreshold,
+              proposition = optOutProposition
             ),
             optInOptOutContentUpdateR17IsEnabled = isEnabled(OptInOptOutContentUpdateR17),
-            nextUpdatesLink = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
+            nextUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
           ))
         } else {
           InternalServerError(

@@ -109,7 +109,7 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
                   Html(messages("nextUpdates.optOutOneYear.p.message", taxYear.startYear.toString, taxYear.endYear.toString)),
                   linkComponent(
                     id = Some("single-year-opt-out-warning-link"),
-                    link = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url,
+                    link = controllers.optOut.oldJourney.routes.SingleYearOptOutWarningController.show(isAgent).url,
                     messageKey = "nextUpdates.optOutOneYear.p.link"
                   )
                 )
@@ -138,7 +138,7 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
                   Html(messages("nextUpdates.optOutOneYear.p.message", taxYear.startYear.toString, taxYear.endYear.toString)),
                   linkComponent(
                     id = Some("confirm-opt-out-link"),
-                    link = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url,
+                    link = controllers.optOut.oldJourney.routes.ConfirmOptOutController.show(isAgent).url,
                     messageKey = "nextUpdates.optOutOneYear.p.link"
                   )
                 )
@@ -165,7 +165,7 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
                   Html(messages("nextUpdates.optOutMultiYear.p.message")),
                   linkComponent(
                     id = Some("opt-out-link"),
-                    link = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url,
+                    link = controllers.optOut.oldJourney.routes.OptOutChooseTaxYearController.show(isAgent).url,
                     messageKey = "nextUpdates.optOutMultiYear.p.link"
                   )
                 )

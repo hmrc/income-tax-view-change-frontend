@@ -1,0 +1,119 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, InsetText}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukRadios, _}
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import models.optout.newJourney.OptOutTaxYearQuestionViewModel
+
+@this(
+        mainTemplate: unifiedLayout,
+        formWithCSRF: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        h1: h1,
+        p: p,
+        govukInsetText: GovukInsetText,
+        govukRadios: GovukRadios,
+        continueButton: ContinueButton
+)
+
+@(isAgent: Boolean, viewModel: OptOutTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"optout.taxYearQuestion.$key.${viewModel.messageSuffix}", args: _*)
+}
+
+@startTaxYear = @{ viewModel.taxYear.taxYear.startYear.toString }
+@endTaxYear = @{ viewModel.taxYear.taxYear.endYear.toString }
+
+@mainTemplate(
+    pageTitle = getMessage("title", startTaxYear, endTaxYear),
+    backUrl = Some("#"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @formWithCSRF(action = postAction) {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("opt-out-tax-year-question" -> "yes-response")))
+        }
+
+        @h1(id = Some("opt-out-question-heading"), msg = getMessage("heading", startTaxYear, endTaxYear))
+
+        @p(id = Some("opt-out-question-desc-1")) {
+            @getMessage("desc1", startTaxYear, endTaxYear)
+        }
+
+        @if(viewModel.showInset) {
+            @govukInsetText(InsetText(
+                id = Some("opt-out-question-inset"),
+                content = HtmlContent(
+                    getMessage("inset", endTaxYear)
+                )
+            ))
+        }
+
+        @if(viewModel.showQuarterlyUpdatesInset) {
+            @govukInsetText(InsetText(
+                id = Some("opt-out-question-inset"),
+                content = HtmlContent(s"""
+                    ${getMessage("inset")}
+                    <strong class="govuk-!-font-weight-bold">${getMessage("insetBold", viewModel.numberOfQuarterlyUpdates.toString)}</strong>
+                    ${getMessage("inset2")}
+                    """
+                )
+            ))
+        }
+
+        @if(viewModel.showSecondParagraph) {
+            @p(id = Some("opt-out-question-desc-2")) {
+                @getMessage("desc2")
+            }
+        }
+
+        @if(viewModel.showThirdParagraph) {
+            @p(id = Some("opt-out-question-desc-3")) {
+                @getMessage("desc3")
+            }
+        }
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(getMessage("radioQuestion", startTaxYear, endTaxYear)),
+                    classes = "govuk-fieldset__legend--m"
+                ))
+            )),
+            items = Seq(
+                RadioItem(
+                    id = Some("yes-response"),
+                    value = Some("Yes"),
+                    content = Text(messages("radioForm.yes"))
+                ),
+                RadioItem(
+                    id = Some("no-response"),
+                    value = Some("No"),
+                    content = Text(messages("radioForm.no"))
+                )
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
+            classes = "govuk-radios--inline"
+        ).withFormField(form("opt-out-tax-year-question")))
+
+        @continueButton()
+    }
+}

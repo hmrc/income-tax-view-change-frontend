@@ -28,7 +28,8 @@ import enums.JourneyType.{Opt, OptInJourney}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData, SignUpTaxYearQuestionViewModel}
+import models.optin.newJourney.SignUpTaxYearQuestionViewModel
+import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData}
 import play.api.Logger
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository

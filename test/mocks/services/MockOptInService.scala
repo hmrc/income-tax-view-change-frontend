@@ -17,7 +17,7 @@
 package mocks.services
 
 import models.incomeSourceDetails.TaxYear
-import models.optin.SignUpTaxYearQuestionViewModel
+import models.optin.newJourney.SignUpTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
