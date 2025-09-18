@@ -105,8 +105,8 @@ case class ReportingFrequencyViewModel(
     }
 
     val currentYearCheck = currentYearStatus match {
-      case Voluntary => if (optOutTaxYears.size > 1) Some(true) else Some(false)
-      case Annual    => if (optInTaxYears.size > 1) Some(true) else Some(false)
+      case Voluntary => Some(optOutTaxYears.size > 1)
+      case Annual    => Some(optInTaxYears.size > 1)
       case _         => None
     }
 
