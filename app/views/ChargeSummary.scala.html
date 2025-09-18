@@ -417,11 +417,9 @@
             @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
                 @p(id = Some("p-interest-locks-msg")) {
             @if(viewModel.isAgent) {
-                @messages("chargeSummary.selfAssessmentCharges.textOne-agent")
                 @link(id = Some("SAChargesAgentInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
                 @messages("chargeSummary.interestLocks.text-agent")
             } else {
-                @messages("chargeSummary.selfAssessmentCharges.textOne")
                 @link(id = Some("SAChargesInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
                 @messages("chargeSummary.interestLocks.text")
                 }
@@ -430,13 +428,11 @@
         } else {
             @p() {
             @if(viewModel.isAgent) {
-                @messages("chargeSummary.selfAssessmentCharges.textOne-agent"),
                 @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
-                @messages("chargeSummary.selfAssessmentCharges.textTwo-agent")
+                @messages("chargeSummary.selfAssessmentCharges.text-agent")
             } else {
-                @messages("chargeSummary.selfAssessmentCharges.textOne")
                 @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
-                @messages("chargeSummary.selfAssessmentCharges.textTwo")
+                @messages("chargeSummary.selfAssessmentCharges.text")
                 }
             }
         }
@@ -540,7 +536,7 @@
                     <tr>
                         <td class="govuk-table__cell" id="rar-due-date">@{charge.getDueDate.toLongDateShort.toNonBreaking}</td>
                         <td class="govuk-table__cell">
-                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
+                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
                                 @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
                             </a>
                         </td>

@@ -22,7 +22,7 @@ import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.libs.json.Json
-import services.DateServiceInterface
+import services.{DateService, DateServiceInterface}
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
@@ -46,7 +46,7 @@ object RepaymentHistoryUtils {
     }
   }
 
-  def getPoaChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String): String = {
+  def getChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String): String = {
     if (isAgent) {
       controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeId).url
     } else {
@@ -69,16 +69,18 @@ object RepaymentHistoryUtils {
       .map { case (year, payments) => (year, sortPayments(payments)) }
   }
 
-  def getGroupedPaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], isAgent: Boolean, languageUtils: LanguageUtils
+  def getGroupedPaymentHistoryData(payments: List[Payment], repayments: List[RepaymentHistory], codedOutCharges: List[ChargeItem],
+                                   isAgent: Boolean, languageUtils: LanguageUtils
                                   )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[(Int, List[PaymentHistoryEntry])] = {
 
-    val combinedPayments = combinePaymentHistoryData(payments, repayments, isAgent, languageUtils)
+    val combinedPayments = combinePaymentHistoryData(payments, repayments, codedOutCharges, isAgent, languageUtils)
 
     groupedPayments(combinedPayments)
   }
 
   private def combinePaymentHistoryData(payments: List[Payment],
                                         repayments: List[RepaymentHistory],
+                                        codedOutCharges: List[ChargeItem],
                                         isAgent: Boolean,
                                         languageUtils: LanguageUtils
                                        )(implicit messages: Messages, dateServiceInterface: DateServiceInterface): List[PaymentHistoryEntry] = {
@@ -91,9 +93,11 @@ object RepaymentHistoryUtils {
       }
     }
 
+    val codedOutChargesList = codedOutCharges.map(codedOutChargeEntry(_, isAgent))
+
     val filteredRepayments = repayments.filter(_.status.isInstanceOf[Approved]).map(repayment => filterRepayment(repayment)(messages, languageUtils, dateServiceInterface))
 
-    filteredPayments ++ filteredRepayments
+    filteredPayments ++ filteredRepayments ++ codedOutChargesList
   }
 
   private def filterPayment(payment: Payment,
@@ -151,10 +155,21 @@ object RepaymentHistoryUtils {
       creditType = creditType,
       amount = amount,
       linkUrl = if (isPoaReconciliationCredit)
-        getPoaChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
+        getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
       else
         getCreditsLinkUrl(dueDate, isAgent),
       visuallyHiddenText = transactionId
+    )
+  }
+
+  private def codedOutChargeEntry(chargeItem: ChargeItem, isAgent: Boolean)(implicit dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
+    PaymentHistoryEntry(
+      date = chargeItem.creationDate.getOrElse(chargeItem.documentDate),
+      creditType = chargeItem.transactionType,
+      amount = Some(chargeItem.originalAmount),
+      transactionId = Some(chargeItem.transactionId),
+      linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId),
+      visuallyHiddenText = chargeItem.transactionType.toString
     )
   }
 
