@@ -54,7 +54,7 @@
                 viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
         }
     } else {
-        @if(viewModel.chargeItem.transactionType == BalancingCharge || ITSAReturnAmendment) {
+        @if(viewModel.chargeItem.transactionType == BalancingCharge || viewModel.chargeItem.transactionType == ITSAReturnAmendment) {
             @p(id = Some("charge-history-caption")) {
                 @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption",
                     viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)

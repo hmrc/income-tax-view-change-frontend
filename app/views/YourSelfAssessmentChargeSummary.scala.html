@@ -118,14 +118,15 @@
           viewModel.LSPUrl,
           viewModel.LPPUrl
       )
-
-      @p() {
-          @if(viewModel.isAgent) {
-              @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
-              @messages("chargeSummary.selfAssessmentCharges.text-agent")
-          } else {
-              @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
-              @messages("chargeSummary.selfAssessmentCharges.text")
+      @if(yourSelfAssessmentChargesFS) {
+          @p() {
+              @if(viewModel.isAgent) {
+                  @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+                  @messages("chargeSummary.selfAssessmentCharges.text-agent")
+              } else {
+                  @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+                  @messages("chargeSummary.selfAssessmentCharges.text")
+              }
           }
       } else {
           @p() {
