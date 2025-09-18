@@ -80,6 +80,8 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions
             when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
               .thenReturn(Future.successful(2))
 
+            when(mockOptOutService.recallSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear)))
+
             val result = action(fakeRequest)
 
             status(result) shouldBe Status.OK

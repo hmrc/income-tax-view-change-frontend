@@ -28,35 +28,38 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.JourneyCheckerOptOut
 import views.html.optOut.newJourney.CheckOptOutUpdateAnswers
+
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ConfirmOptOutUpdateController @Inject()(view: CheckOptOutUpdateAnswers,
-                                              optOutService: OptOutService,
+                                              val optOutService: OptOutService,
                                               authActions: AuthActions,
                                               val itvcErrorHandler: ItvcErrorHandler,
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                              (implicit val appConfig: FrontendAppConfig,
                                         val ec: ExecutionContext,
                                         val mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with JourneyCheckerOptOut {
 
 
   def show(isAgent: Boolean = false, taxYear: String): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withOptOutRFChecks {
         withRecover(isAgent) {
-          for {
-            optOutProposition <- optOutService.fetchOptOutProposition()
-            quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
-          } yield {
-            val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
-            val cancelURL = controllers.optOut.oldJourney.routes.OptOutCancelledController.show().url
-            Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, cancelURL))
+          withSessionData(false, TaxYear(taxYear.toInt, taxYear.toInt + 1)) {
+            for {
+              optOutProposition <- optOutService.fetchOptOutProposition()
+              quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
+            } yield {
+              val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
+              val cancelURL = controllers.optOut.oldJourney.routes.OptOutCancelledController.show().url
+              Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, cancelURL))
+            }
           }
         }
       }

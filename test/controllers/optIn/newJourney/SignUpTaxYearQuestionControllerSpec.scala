@@ -92,6 +92,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           mockIsSignUpTaxYearValid(Future.successful(Some(viewModel)))
+          mockFetchSavedChosenTaxYear(Some(signUpTaxYear.taxYear))
 
           val result = action(fakeRequest)
 

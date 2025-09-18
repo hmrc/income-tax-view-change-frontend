@@ -62,7 +62,8 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
               previousYearCrystallised = false,
               previousYearStatus = Annual,
               currentYearStatus = Voluntary,
-              nextYearStatus = Annual)
+              nextYearStatus = Annual,
+              Some(currentTaxYear(dateService).toString))
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
             IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)

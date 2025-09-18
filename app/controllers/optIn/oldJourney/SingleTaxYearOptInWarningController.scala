@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.ReportingObligationsUtils
 import views.html.optIn.oldJourney.SingleTaxYearWarningView
 
 import javax.inject.{Inject, Singleton}

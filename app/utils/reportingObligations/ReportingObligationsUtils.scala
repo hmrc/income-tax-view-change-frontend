@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package utils
+package utils.reportingObligations
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import scala.concurrent.Future
@@ -29,10 +30,7 @@ trait ReportingObligationsUtils extends FeatureSwitching {
 
   def withReportingObligationsFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (!isEnabled(ReportingFrequencyPage)) {
-      user.userType match {
-        case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
-        case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
-      }
+      redirectHome(user.userType)
     } else {
       comeBlock
     }
@@ -40,10 +38,7 @@ trait ReportingObligationsUtils extends FeatureSwitching {
 
   def withOptOutFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (!isEnabled(OptOutFs)) {
-      user.userType match {
-        case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
-        case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
-      }
+      redirectHome(user.userType)
     } else {
       comeBlock
     }
@@ -52,32 +47,29 @@ trait ReportingObligationsUtils extends FeatureSwitching {
   def withRFAndOptInOptOutR17FS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     (isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
       case (true, true) => codeBlock
-      case (true, false) =>
-        user.userType match {
-          case Some(Agent) => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(true)))
-          case _ => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(false)))
-        }
-      case (false, _) =>
-        user.userType match {
-          case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
-          case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
-        }
+      case (true, false) => redirectReportingFrequency(user.userType)
+      case (false, _) => redirectHome(user.userType)
     }
   }
 
   def withOptOutRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     (isEnabled(OptOutFs), isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
       case (true, true, true) => codeBlock
-      case (true, true, false) =>
-        user.userType match {
-          case Some(Agent) => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(true)))
-          case _ => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(false)))
-        }
-      case _ =>
-        user.userType match {
-          case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
-          case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
-        }
+      case (true, true, false) => redirectReportingFrequency(user.userType)
+      case _ => redirectHome(user.userType)
     }
   }
+
+  private def redirectHome(userType: Option[AffinityGroup]): Future[Result] =
+    userType match {
+      case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
+      case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
+    }
+
+  protected def redirectReportingFrequency(userType: Option[AffinityGroup]): Future[Result] =
+    userType match {
+      case Some(Agent) => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(true)))
+      case _ => Future.successful(Redirect(controllers.routes.ReportingFrequencyPageController.show(false)))
+    }
+
 }

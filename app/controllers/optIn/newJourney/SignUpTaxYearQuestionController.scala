@@ -27,21 +27,22 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.JourneyCheckerSignUp
 import views.html.optIn.newJourney.SignUpTaxYearQuestionView
+
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SignUpTaxYearQuestionController @Inject()(optInService: OptInService,
+class SignUpTaxYearQuestionController @Inject()(val optInService: OptInService,
                                                 authActions: AuthActions,
                                                 view: SignUpTaxYearQuestionView,
-                                                itvcErrorHandler: ItvcErrorHandler,
-                                                itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                                val itvcErrorHandler: ItvcErrorHandler,
+                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                                )(implicit val appConfig: FrontendAppConfig,
                                                  val mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with ReportingObligationsUtils {
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp {
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
@@ -56,14 +57,16 @@ class SignUpTaxYearQuestionController @Inject()(optInService: OptInService,
       withRFAndOptInOptOutR17FS {
         optInService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
-            Future.successful(Ok(
-              view(
-                isAgent,
-                viewModel,
-                SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY),
-                routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
-              )
-            ))
+            withSessionData(isStart = false, viewModel.signUpTaxYear.taxYear) {
+              Future.successful(Ok(
+                view(
+                  isAgent,
+                  viewModel,
+                  SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY),
+                  routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
+                )
+              ))
+            }
           case None =>
             Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
         }
