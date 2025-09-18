@@ -71,10 +71,10 @@
     head = Some(
         Seq(
             HeadCell(
-                content = Text(messages("chargeSummary.chargeHistory.description"))
+                content = HtmlContent(messages("chargeSummary.chargeHistory.date"))
             ),
             HeadCell(
-                content = HtmlContent(messages("chargeSummary.chargeHistory.date"))
+                content = Text(messages("chargeSummary.chargeHistory.description"))
             ),
             HeadCell(
                 content = Text(messages("chargeSummary.chargeHistory.amount")),
@@ -82,16 +82,18 @@
             )
         )
     ),
+  caption = Some(messages(s"chargeSummary.chargeHistory.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)),
+  captionClasses = "custom-caption-font-weight",
     rows = (Seq(
         if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
-                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
-                ),
-                TableRow(
                     content = HtmlContent(
                         viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDate.toNonBreaking).getOrElse(Html(messages("incomeSources.generic.unknown")))
                     )
+                ),
+                TableRow(
+                    content = Text(messages("chargeSummary.chargeHistory.created.text", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString))
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.adjustmentHistory.creationEvent.amount.toCurrency), format = Some("numeric")
@@ -164,10 +166,10 @@
             case charge if viewModel.chargeHistoryEnabled =>
                 Seq(
                     TableRow(
-                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
+                        content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
                     ),
                     TableRow(
-                        content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate.toNonBreaking)
+                        content = Text(messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
                     ),
                     TableRow(
                         content = HtmlContent(charge.amount.toCurrency),

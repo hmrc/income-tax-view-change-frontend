@@ -76,9 +76,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "First payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.select("h1").first().text() shouldBe "First payment on account made through your PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "This is the tax you owe for the 2017 to 2018 tax year. It will be collected in the 2018 to 2019 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
@@ -92,9 +92,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "Second payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.select("h1").first().text() shouldBe "Second payment on account made through your PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "This is the tax you owe for the 2017 to 2018 tax year. It will be collected in the 2018 to 2019 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
@@ -108,11 +108,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "First payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.select("h1").first().text() shouldBe "First payment on account made through your PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "This is the tax you owe for the 2017 to 2018 tax year. It will be collected in the 2018 to 2019 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account made through your paye tax code"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
@@ -128,11 +128,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "Second payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.select("h1").first().text() shouldBe "Second payment on account made through your PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "This is the tax you owe for the 2017 to 2018 tax year. It will be collected in the 2018 to 2019 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account made through your paye tax code"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
@@ -150,8 +150,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Balancing payment"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £10.33"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £10.33"
+                document.getElementById("due-date-text").select("p").text() shouldBe "This is the tax you owe for the 2018 to 2019 tax year. It will be collected in the 2019 to 2020 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2018 to 2019 tax bill."
@@ -168,8 +168,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £100.00"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £100.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "This is the tax you owe for the 2018 to 2019 tax year. It will be collected in the 2019 to 2020 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your balancing payment"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
@@ -190,8 +190,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Class 2 National Insurance")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £12.34"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 25 August 2021"
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount due to be collected: £12.34"
+                document.getElementById("due-date-text").select("p").text() shouldBe "This is the tax you owe for the 2020 to 2021 tax year. It will be collected in the 2021 to 2022 tax year through your PAYE tax code."
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
 
               }
@@ -215,7 +215,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
                 document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. 29 March 2018 £2,500.00"
-                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. 30 March 2019 £2,000.00"
+                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 March 2019 Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. £2,000.00"
               }
 
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
@@ -229,8 +229,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Late submission penalty"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £10.33"
+                document.getElementById("due-date-text").select("p").text() shouldBe "This is the tax you owe for the 2018 to 2019 tax year. It will be collected in the 2019 to 2020 tax year through your PAYE tax code."
                 document.getElementById("LSP-content-1").text() shouldBe "You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return."
                 document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
                 document.getElementById("LSP-content-3").text() shouldBe "To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time."
@@ -251,8 +251,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First late payment penalty"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £200.33"
-                document.getElementById("due-date-text").text() shouldBe "Due 29 March 2020"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £200.33"
+                document.getElementById("due-date-text").text() shouldBe "This is the tax you owe for the 2020 to 2021 tax year. It will be collected in the 2021 to 2022 tax year through your PAYE tax code."
                 document.getElementById("first-payment-penalty-p1").text() shouldBe "You have received this penalty because you are late paying your Income Tax."
                 document.getElementById("charge-history-heading").text() shouldBe "First late payment penalty history"
               }
