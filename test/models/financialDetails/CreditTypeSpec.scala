@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import play.api.libs.json.{JsString, JsSuccess, Json}
 import testUtils.UnitSpec
 
 class CreditTypeSpec extends UnitSpec {
@@ -55,5 +56,13 @@ class CreditTypeSpec extends UnitSpec {
         TransactionType.fromCode("9999") shouldBe None
       }
     }
+
+    "read" should{
+      "return correct type based on the string passed" in {
+        Json.fromJson[CreditType](JsString("POA1RR-credit")) shouldBe(JsSuccess(PoaOneReconciliationCredit))
+        Json.fromJson[CreditType](JsString("POA2RR-credit")) shouldBe(JsSuccess(PoaTwoReconciliationCredit))
+      }
+    }
+
   }
 }

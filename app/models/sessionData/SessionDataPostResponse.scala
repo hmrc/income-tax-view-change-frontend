@@ -17,6 +17,7 @@
 package models.sessionData
 
 import play.api.http.Status.{CONFLICT, OK}
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object SessionDataPostResponse {
@@ -25,6 +26,9 @@ object SessionDataPostResponse {
 
   case class SessionDataPostSuccess(status: Int)
 
+  object SessionDataPostSuccess {
+    implicit val format: OFormat[SessionDataPostSuccess] = Json.format[SessionDataPostSuccess]
+  }
   case class SessionDataPostFailure(status: Int, errorMessage: String)
 
   implicit object SessionDataPostResponseReads extends HttpReads[SessionDataPostResponse] {

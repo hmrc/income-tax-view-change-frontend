@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
-package forms.models
+package enums
 
-case class YesNo(isYes: Boolean)
+import enums.IncomeSourceJourney.ForeignProperty
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.wordspec.AnyWordSpec
+import play.api.libs.json.{JsString, Json}
 
-object YesNo {
-  val yesAndNoAnswer = "yes-no-answer"
+class IncomeSourceTypeSpec extends AnyWordSpec{
+
+
+  "writes" should {
+    "return a string representation of class passed in" in {
+      Json.toJson(ForeignProperty) mustBe JsString("ForeignProperty")
+    }
+  }
 }

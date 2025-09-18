@@ -74,6 +74,8 @@ object FeatureSwitchName {
       JsSuccess(SelfServeTimeToPayR17)
     case JsString(TriggeredMigration.name) =>
       JsSuccess(TriggeredMigration)
+    case JsString(SubmitClaimToAdjustToNrs.name) =>
+      JsSuccess(SubmitClaimToAdjustToNrs)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)

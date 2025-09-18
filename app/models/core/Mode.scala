@@ -27,8 +27,6 @@ object Mode {
 
   def isChange(mode: Mode): Boolean = mode == CheckMode
 
-  def isCheckMode(isChange: Boolean): Mode = if (isChange) CheckMode else NormalMode
-
   implicit val jsLiteral: JavascriptLiteral[Mode] = {
     case NormalMode => "NormalMode"
     case CheckMode => "CheckMode"
