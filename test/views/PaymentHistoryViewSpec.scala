@@ -180,8 +180,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             entry.copy(date = "2020-12-23", creditType = PoaTwoReconciliationCredit)(dateServiceInterface),
             entry.copy(date = "2020-12-23", creditType = PoaOneReconciliationCredit)(dateServiceInterface))))) {
 
-          document.getElementById("payment-0").text().startsWith("First payment on account: credit from your tax return")
-          document.getElementById("payment-1").text().startsWith("Second payment on account: credit from your tax return")
+          document.getElementById("payment-0").child(0).ownText() shouldBe "First payment on account: credit from your tax return"
+          document.getElementById("payment-1").child(0).ownText() shouldBe "Second payment on account: credit from your tax return"
         }
 
         "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in
