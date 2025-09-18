@@ -55,10 +55,10 @@ GET         /agents/optout                                                contro
 POST        /optout                                                       controllers.optOut.newJourney.OptOutTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
 POST        /agents/optout                                                controllers.optOut.newJourney.OptOutTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
 
-GET         /opt-out/check-your-answers/:taxYear                          controllers.optOut.newJourney.ConfirmOptOutUpdateController.show(isAgent: Boolean = false, taxYear: String)
-GET         /agents/opt-out/check-your-answers/:taxYear                   controllers.optOut.newJourney.ConfirmOptOutUpdateController.show(isAgent: Boolean = true, taxYear: String)
-POST        /opt-out/check-your-answers/:taxYear                          controllers.optOut.newJourney.ConfirmOptOutUpdateController.submit(isAgent: Boolean = false, taxYear: String)
-POST        /agents/opt-out/check-your-answers/:taxYear                   controllers.optOut.newJourney.ConfirmOptOutUpdateController.submit(isAgent: Boolean = true, taxYear: String)
+GET         /optout/check-your-answers/:taxYear                           controllers.optOut.newJourney.ConfirmOptOutUpdateController.show(isAgent: Boolean = false, taxYear: String)
+GET         /agents/optout/check-your-answers/:taxYear                    controllers.optOut.newJourney.ConfirmOptOutUpdateController.show(isAgent: Boolean = true, taxYear: String)
+POST        /optout/check-your-answers/:taxYear                           controllers.optOut.newJourney.ConfirmOptOutUpdateController.submit(isAgent: Boolean = false, taxYear: String)
+POST        /agents/optout/check-your-answers/:taxYear                    controllers.optOut.newJourney.ConfirmOptOutUpdateController.submit(isAgent: Boolean = true, taxYear: String)
 
 # Opt In
 GET         /opt-in/start                                                 controllers.optIn.oldJourney.BeforeYouStartController.show(isAgent: Boolean = false)

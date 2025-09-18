@@ -42,7 +42,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole, taxYear: String = currentTaxYear(dateService).startYear.toString): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
-    pathStart + s"/opt-out/check-your-answers/$taxYear"
+    pathStart + s"/optout/check-your-answers/$taxYear"
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
