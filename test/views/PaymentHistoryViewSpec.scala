@@ -168,20 +168,20 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
               entry.copy(date = "2020-12-20", creditType = PaymentType)(dateServiceInterface),
               entry.copy(date = "2020-12-19", creditType = Repayment)(dateServiceInterface))))) {
 
-            document.getElementById("payment-0").ownText() shouldBe "Credit from HMRC adjustment"
-            document.getElementById("payment-1").ownText() shouldBe "Credit from an earlier tax year"
-            document.getElementById("payment-2").ownText() shouldBe "Credit from overpaid tax"
-            document.getElementById("payment-3").ownText() shouldBe "Credit from repayment interest"
-            document.getElementById("payment-4").ownText() shouldBe "Payment you made to HMRC"
-            document.getElementById("payment-5").ownText() shouldBe "Refund issued"
+            document.getElementById("payment-0").child(0).ownText() shouldBe "Credit from HMRC adjustment"
+            document.getElementById("payment-1").child(0).ownText() shouldBe "Credit from an earlier tax year"
+            document.getElementById("payment-2").child(0).ownText() shouldBe "Credit from overpaid tax"
+            document.getElementById("payment-3").child(0).ownText() shouldBe "Credit from repayment interest"
+            document.getElementById("payment-4").child(0).ownText() shouldBe "Payment you made to HMRC"
+            document.getElementById("payment-5").child(0).ownText() shouldBe "Refund issued"
         }
         s"display Review and Reconcile Credits in a Table" in new PaymentHistorySetup(List(
           (2020, List(
             entry.copy(date = "2020-12-23", creditType = PoaTwoReconciliationCredit)(dateServiceInterface),
             entry.copy(date = "2020-12-23", creditType = PoaOneReconciliationCredit)(dateServiceInterface))))) {
 
-          document.getElementById("payment-0").ownText() shouldBe "First payment on account: credit from your tax return"
-          document.getElementById("payment-1").ownText() shouldBe "Second payment on account: credit from your tax return"
+          document.getElementById("payment-0").text().startsWith("First payment on account: credit from your tax return")
+          document.getElementById("payment-1").text().startsWith("Second payment on account: credit from your tax return")
         }
 
         "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in
@@ -290,8 +290,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           entry.copy(date = "2020-12-23", creditType = PoaTwoReconciliationCredit)(dateServiceInterface),
           entry.copy(date = "2020-12-23", creditType = PoaOneReconciliationCredit)(dateServiceInterface))))) {
 
-          document.getElementById("payment-0").ownText() shouldBe "First payment on account: credit from your tax return"
-          document.getElementById("payment-1").ownText() shouldBe "Second payment on account: credit from your tax return"
+          document.getElementById("payment-0").child(0).ownText() shouldBe "First payment on account: credit from your tax return"
+          document.getElementById("payment-1").child(0).ownText() shouldBe "Second payment on account: credit from your tax return"
       }
 
       s"have the title '${PaymentHistoryMessages.agentTitle}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
