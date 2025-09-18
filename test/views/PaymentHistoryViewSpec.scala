@@ -215,8 +215,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           val row: Element = layoutContent.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
           row.selectNth("th", 1).text shouldBe PaymentHistoryMessages.paymentHeadingDate
           row.selectNth("th", 2).text shouldBe PaymentHistoryMessages.paymentHeadingDescription
-          row.selectNth("th", 3).text shouldBe PaymentHistoryMessages.paymentHeadingTaxYear
           row.selectNth("th", 4).text shouldBe PaymentHistoryMessages.paymentHeadingAmount
+          row.selectNth("th", 3).text shouldBe PaymentHistoryMessages.paymentHeadingTaxYear
         }
         s"have table headings for amount column right aligned" in new PaymentHistorySetup(paymentEntriesMFA) {
           val row: Element = layoutContent.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
@@ -245,8 +245,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
                 row.selectNth("td", 2).text shouldBe s"Credit from HMRC adjustment hidden-text1 Item " +
                   s"${index + 1} ${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear} tax year"
                 row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
-                row.selectNth("td", 3).text shouldBe s"${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear}"
                 row.selectNth("td", 4).text shouldBe payment.amount.get.abs.toCurrencyString
+                row.selectNth("td", 3).text shouldBe s"${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear}"
             }
           }
         }
@@ -258,20 +258,20 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 August 2021"
         tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
         tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 1).selectNth("td", 4).text() shouldBe "Unknown"
+        tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "2021 to 2022"
 
         tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
         tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 2).selectNth("td", 4).text() shouldBe "£300.00"
+        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"
 
         tbody.selectNth("tr", 3).selectNth("td", 1).text() shouldBe "20 August 2021"
         tbody.selectNth("tr", 3).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 3"
         tbody.selectNth("tr", 3).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 3).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 3).selectNth("td", 4).text() shouldBe "£301.00"
+        tbody.selectNth("tr", 3).selectNth("td", 3).text() shouldBe "2021 to 2022"
       }
 
       s"should have a amount column right aligned" in new PaymentHistorySetup(groupedRepayments) {
@@ -318,8 +318,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
         tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 2).selectNth("td", 4).text() shouldBe "£300.00"
+        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"
       }
     }
   }
