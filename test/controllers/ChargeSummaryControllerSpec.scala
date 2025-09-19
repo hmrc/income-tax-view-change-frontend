@@ -214,8 +214,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("paye-tax-code-link").attr("href") shouldBe "https://www.tax.service.gov.uk/check-income-tax/tax-codes/2022"
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
-                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. 29 March 2018 £2,500.00"
-                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. 30 March 2019 £2,000.00"
+                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 March 2018 Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. £2,500.00"
+                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 March 2019 Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. £2,000.00"
               }
 
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
