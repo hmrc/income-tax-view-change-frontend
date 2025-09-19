@@ -86,6 +86,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     val paymentHeadingDate: String = messages("paymentHistory.table.header.date")
     val paymentHeadingDescription: String = messages("paymentHistory.table.header.description")
+    val paymentHeadingTaxYear: String = messages("paymentHistory.tableHead.taxYear")
     val paymentHeadingAmount: String = messages("paymentHistory.table.header.amount")
     val partialH2Heading = "payments"
     val saLink: String = s"${messages("whatYouOwe.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
@@ -167,20 +168,20 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
               entry.copy(date = "2020-12-20", creditType = PaymentType)(dateServiceInterface),
               entry.copy(date = "2020-12-19", creditType = Repayment)(dateServiceInterface))))) {
 
-            getContent(0) shouldBe "Credit from HMRC adjustment"
-            getContent(1) shouldBe "Credit from an earlier tax year"
-            getContent(2) shouldBe "Credit from overpaid tax"
-            getContent(3) shouldBe "Credit from repayment interest"
-            getContent(4) shouldBe "Payment you made to HMRC"
-            getContent(5) shouldBe "Refund issued"
+            document.getElementById("payment-0").child(0).ownText() shouldBe "Credit from HMRC adjustment"
+            document.getElementById("payment-1").child(0).ownText() shouldBe "Credit from an earlier tax year"
+            document.getElementById("payment-2").child(0).ownText() shouldBe "Credit from overpaid tax"
+            document.getElementById("payment-3").child(0).ownText() shouldBe "Credit from repayment interest"
+            document.getElementById("payment-4").child(0).ownText() shouldBe "Payment you made to HMRC"
+            document.getElementById("payment-5").child(0).ownText() shouldBe "Refund issued"
         }
-        s"display Review and Reconcile Credits" in new PaymentHistorySetup(List(
+        s"display Review and Reconcile Credits in a Table" in new PaymentHistorySetup(List(
           (2020, List(
             entry.copy(date = "2020-12-23", creditType = PoaTwoReconciliationCredit)(dateServiceInterface),
             entry.copy(date = "2020-12-23", creditType = PoaOneReconciliationCredit)(dateServiceInterface))))) {
 
-          getContent(0) shouldBe "First payment on account: credit from your tax return"
-          getContent(1) shouldBe "Second payment on account: credit from your tax return"
+          document.getElementById("payment-0").child(0).ownText() shouldBe "First payment on account: credit from your tax return"
+          document.getElementById("payment-1").child(0).ownText() shouldBe "Second payment on account: credit from your tax return"
         }
 
         "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in
@@ -214,7 +215,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           val row: Element = layoutContent.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
           row.selectNth("th", 1).text shouldBe PaymentHistoryMessages.paymentHeadingDate
           row.selectNth("th", 2).text shouldBe PaymentHistoryMessages.paymentHeadingDescription
-          row.selectNth("th", 3).text shouldBe PaymentHistoryMessages.paymentHeadingAmount
+          row.selectNth("th", 3).text shouldBe PaymentHistoryMessages.paymentHeadingTaxYear
+          row.selectNth("th", 4).text shouldBe PaymentHistoryMessages.paymentHeadingAmount
         }
         s"have table headings for amount column right aligned" in new PaymentHistorySetup(paymentEntriesMFA) {
           val row: Element = layoutContent.selectHead("div").selectNth("div", 2).selectHead("table").selectHead("thead").selectHead("tr")
@@ -243,35 +245,37 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
                 row.selectNth("td", 2).text shouldBe s"Credit from HMRC adjustment hidden-text1 Item " +
                   s"${index + 1} ${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear} tax year"
                 row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
-                row.selectNth("td", 3).text shouldBe payment.amount.get.abs.toCurrencyString
+                row.selectNth("td", 3).text shouldBe s"${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear}"
+                row.selectNth("td", 4).text shouldBe payment.amount.get.abs.toCurrencyString
             }
           }
         }
       }
 
       s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments) {
-        val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
-        val tbody = sectionContent.selectHead("table > tbody")
+        val tbody = layoutContent.selectHead("table > tbody")
 
         tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 Aug 2021"
         tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
         tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "Unknown"
+        tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "2021 to 2022"
+        tbody.selectNth("tr", 1).selectNth("td", 4).text() shouldBe "Unknown"
 
         tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 Aug 2021"
         tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
+        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"
+        tbody.selectNth("tr", 2).selectNth("td", 4).text() shouldBe "£300.00"
 
         tbody.selectNth("tr", 3).selectNth("td", 1).text() shouldBe "20 Aug 2021"
         tbody.selectNth("tr", 3).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 3"
         tbody.selectNth("tr", 3).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 3).selectNth("td", 3).text() shouldBe "£301.00"
+        tbody.selectNth("tr", 3).selectNth("td", 3).text() shouldBe "2021 to 2022"
+        tbody.selectNth("tr", 3).selectNth("td", 4).text() shouldBe "£301.00"
       }
 
       s"should have a amount column right aligned" in new PaymentHistorySetup(groupedRepayments) {
-        val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
-        val tbody = sectionContent.selectHead("table > tbody")
+        val tbody = layoutContent.selectHead("table > tbody")
 
         tbody.selectNth("tr", 1).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
         tbody.selectNth("tr", 2).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
@@ -286,8 +290,8 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           entry.copy(date = "2020-12-23", creditType = PoaTwoReconciliationCredit)(dateServiceInterface),
           entry.copy(date = "2020-12-23", creditType = PoaOneReconciliationCredit)(dateServiceInterface))))) {
 
-        getContent(0) shouldBe "First payment on account: credit from your tax return"
-        getContent(1) shouldBe "Second payment on account: credit from your tax return"
+          document.getElementById("payment-0").child(0).ownText() shouldBe "First payment on account: credit from your tax return"
+          document.getElementById("payment-1").child(0).ownText() shouldBe "Second payment on account: credit from your tax return"
       }
 
       s"have the title '${PaymentHistoryMessages.agentTitle}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
@@ -304,17 +308,18 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments, saUtr = None, isAgent = true) {
-        val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
-        val tbody = sectionContent.selectHead("table > tbody")
+        val tbody = layoutContent.selectHead("table > tbody")
 
         tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 Aug 2021"
         tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
+        tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
 
         tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 Aug 2021"
         tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
-        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "£300.00"
+        tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"
+        tbody.selectNth("tr", 2).selectNth("td", 4).text() shouldBe "£300.00"
       }
     }
   }
