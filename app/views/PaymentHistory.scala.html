@@ -91,7 +91,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     rows = yearPayments.sortBy(_.date).reverse.zipWithIndex.map{ case (payment, index) =>
       Seq(
         TableRow(
-          content = HtmlContent({payment.date.toLongDate.toNonBreaking.toString}),
+          content = HtmlContent({payment.date.toLongDateShort.toNonBreaking.toString}),
           classes = "govuk-table__cell"
         ),
         TableRow(
