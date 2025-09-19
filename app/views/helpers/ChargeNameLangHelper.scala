@@ -16,7 +16,7 @@
 
 package views.helpers
 
-import models.financialDetails.ChargeItem
+import models.financialDetails.{ChargeItem, BalancingCharge, ITSAReturnAmendment, Nics2}
 import play.api.i18n.Messages
 
 
@@ -33,7 +33,9 @@ object ChargeNameLangHelper {
   }
 
   def chargeHistoryCaption(chargeItem: ChargeItem)(implicit messages: Messages): String = {
-    messages(s"yourSelfAssessmentChargeSummary.chargeHistory.${chargeItem.getChargeTypeKey}.caption",
+    if (List(BalancingCharge, ITSAReturnAmendment).contains(chargeItem.transactionType) && !chargeItem.codedOutStatus.contains(Nics2))
+      messages(s"yourSelfAssessmentChargeSummary.chargeHistory.default.caption",
       chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString)
+    else ""
   }
 }

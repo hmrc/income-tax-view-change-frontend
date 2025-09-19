@@ -219,19 +219,22 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   )
 
   def whatYouOweDataWithOverdueAccruedInterest(latePaymentInterest: List[Option[BigDecimal]],
-                                               dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+                                               dunningLock: List[Option[String]] = noDunningLocks,
+                                               outstandingAmount: List[BigDecimal] = List(50.0, 75.0)): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-    chargesList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock),
+    chargesList = financialDetailsOverdueWithLpi(latePaymentInterest, dunningLock, outstandingAmount = outstandingAmount),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
   def whatYouOweDataWithOverdueLPIDunningLock(accruingInterestAmount: Option[BigDecimal],
-                                              lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
+                                              lpiWithDunningLock: Option[BigDecimal],
+                                              outstandingAmount: List[BigDecimal] = List(50.0, 75.0)): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpi(
       List(accruingInterestAmount, accruingInterestAmount),
       List(None, None),
-      List(lpiWithDunningLock, lpiWithDunningLock)),
+      List(lpiWithDunningLock, lpiWithDunningLock),
+      outstandingAmount),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
   )
 
@@ -539,7 +542,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
           overduePaymentsTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2 $paymentUnderReview"
         }
 
-        "show late payment interest as a charge where underlying charge is paid off" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(Some(34.56), None))) {
+        "show late payment interest as a charge where underlying charge is paid off" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(Some(34.56), None), outstandingAmount = List(0,0))) {
           val tableHead = pageDocument.getElementById("charges-due-now-table").select("thead").first()
           tableHead.select("th").first().text() shouldBe dueDate
           tableHead.select("th").get(1).text() shouldBe chargeType
@@ -560,7 +563,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
 
         "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
-          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLock(Some(34.56), Some(100.0))) {
+          new TestSetup(charges = whatYouOweDataWithOverdueLPIDunningLock(Some(34.56), Some(100.0), outstandingAmount = List(0,0))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
             overdueTableHeader.select("th").first().text() shouldBe dueDate

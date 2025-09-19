@@ -64,6 +64,10 @@ case object SecondLatePaymentPenalty extends ChargeType {
   override val key: String = "LPP2"
 }
 
+case object ITSAReturnAmendment extends ChargeType {
+  override val key: String = "IRA"
+}
+
 case object MfaDebitCharge extends ChargeType {
   override val key = "MfaDebit"
 }
@@ -126,6 +130,7 @@ object TransactionType {
     case LateSubmissionPenalty.key => LateSubmissionPenalty
     case FirstLatePaymentPenalty.key => FirstLatePaymentPenalty
     case SecondLatePaymentPenalty.key => SecondLatePaymentPenalty
+    case ITSAReturnAmendment.key => ITSAReturnAmendment
     case MfaDebitCharge.key => MfaDebitCharge
   }
 
@@ -141,6 +146,7 @@ object TransactionType {
       ChargeType.lateSubmissionPenalty      -> LateSubmissionPenalty,
       ChargeType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
       ChargeType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit,
+      ChargeType.itsaReturnAmendment        -> ITSAReturnAmendment,
       CreditType.cutOver                    -> CutOverCreditType,
       CreditType.balancingCharge            -> BalancingChargeCreditType,
       CreditType.repaymentInterest          -> RepaymentInterest,
@@ -179,6 +185,8 @@ object ChargeType {
   val firstLatePaymentPenalty: List[String] = List("4028", "4031")
   val secondLatePaymentPenalty: List[String] = List("4029", "4032")
 
+  val itsaReturnAmendment = "4915"
+
   lazy val penaltyMainTransactions = List(lateSubmissionPenalty) ++ firstLatePaymentPenalty ++ secondLatePaymentPenalty
 
   val mfaDebit = Range.inclusive(4000, 4003)
@@ -201,6 +209,7 @@ object ChargeType {
     case LateSubmissionPenalty.key => LateSubmissionPenalty
     case FirstLatePaymentPenalty.key => FirstLatePaymentPenalty
     case SecondLatePaymentPenalty.key => SecondLatePaymentPenalty
+    case ITSAReturnAmendment.key => ITSAReturnAmendment
     case MfaDebitCharge.key => MfaDebitCharge
   }
 
