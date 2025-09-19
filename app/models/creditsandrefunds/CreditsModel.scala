@@ -24,8 +24,11 @@ import play.api.libs.json._
 import java.time.LocalDate
 
 
-case class CreditsModel(availableCredit: BigDecimal,
-                        allocatedCredit: BigDecimal,
+case class CreditsModel(availableCreditForRepayment: BigDecimal,
+                        allocatedCreditForOverdueCharges: BigDecimal,
+                        allocatedCreditForFutureCharges: BigDecimal,
+                        unallocatedCredit: BigDecimal,
+                        totalCredit: BigDecimal,
                         transactions: List[Transaction] ) extends SuccessModel
 
 object CreditsModel {

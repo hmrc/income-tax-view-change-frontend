@@ -32,5 +32,5 @@
 @(viewModel: CreditAndRefundViewModel)(implicit request: Request[_], messages: Messages)
 
 @p(classes = "govuk-body govuk-!-font-size-27 govuk-body govuk-!-font-weight-bold", id = Some("available-to-claim")) {
-    @messages("credit-and-refund.available-to-claim", viewModel.availableCredit.toCurrencyString)
+    @messages("credit-and-refund.available-to-claim", viewModel.totalCredit.toCurrencyString)
 }

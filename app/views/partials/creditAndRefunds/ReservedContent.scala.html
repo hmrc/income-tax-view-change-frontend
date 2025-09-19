@@ -44,10 +44,10 @@
 }
 
 @p() {
-    @if(viewModel.allocatedCredit != viewModel.availableCredit) {
-        @messages("credit-and-refund.upcoming-allocated-credit-1", viewModel.allocatedCredit.toCurrencyString)
+    @if(viewModel.allocatedCreditForFutureCharges != viewModel.availableCredit) {
+        @messages("credit-and-refund.upcoming-allocated-credit-1", viewModel.allocatedCreditForFutureCharges.toCurrencyString)
     } else {
-        @messages("credit-and-refund.upcoming-allocated-credit-1-all", viewModel.allocatedCredit.toCurrencyString)
+        @messages("credit-and-refund.upcoming-allocated-credit-1-all", viewModel.allocatedCreditForFutureCharges.toCurrencyString)
     }
     @if(yourSelfAssessmentChargesFS) {
         @link(

@@ -57,7 +57,7 @@
         @creditAndRefundList(viewModel)
 
         @if(viewModel.hasAvailableCredit) {
-            @if(viewModel.hasAllocatedCredit) {
+            @if(viewModel.hasAllocatedCreditForFutureCharges) {
                 @reservedContent(viewModel, yourSelfAssessmentChargesFS, isAgent)
             }
             @howMuchCanIClaim(viewModel)

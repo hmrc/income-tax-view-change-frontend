@@ -35,14 +35,14 @@
     @messages("credit-and-refund.does-not-include-refunds")
 }
 
-@if(viewModel.allocatedCredit != 0) {
-    @if(viewModel.allocatedCredit >= viewModel.availableCredit) {
+@if(viewModel.allocatedCreditForFutureCharges != 0) {
+    @if(viewModel.allocatedCreditForFutureCharges >= viewModel.availableCredit) {
         @govukInsetText(InsetText(
             content = Text(messages("credit-and-refund.if-you-claim-back-any"))
         ))
     } else {
         @govukInsetText(InsetText(
-            content = Text(messages("credit-and-refund.if-you-claim-back-more", (viewModel.availableCredit - viewModel.allocatedCredit).toCurrencyString))
+            content = Text(messages("credit-and-refund.if-you-claim-back-more", viewModel.unallocatedCredit.toCurrencyString))
         ))
     }
 }

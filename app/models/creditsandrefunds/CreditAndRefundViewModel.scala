@@ -61,21 +61,27 @@ case class RefundRow(amount: BigDecimal) extends CreditRow {
 }
 
 case class CreditAndRefundViewModel(availableCredit: BigDecimal,
-                                    allocatedCredit: BigDecimal,
+                                    allocatedCreditForOverdueCharges: BigDecimal,
+                                    allocatedCreditForFutureCharges: BigDecimal,
+                                    unallocatedCredit: BigDecimal,
+                                    totalCredit: BigDecimal,
                                     creditRows: List[CreditRow]) {
   val hasCreditOrRefunds: Boolean = {
-    availableCredit > 0 || allocatedCredit > 0 || creditRows.exists(_.amount > 0)
+    availableCredit > 0 || allocatedCreditForFutureCharges > 0 || creditRows.exists(_.amount > 0)
   }
   val hasAvailableCredit = availableCredit != 0
-  val hasAllocatedCredit = allocatedCredit != 0
+  val hasAllocatedCreditForFutureCharges = allocatedCreditForFutureCharges != 0
 }
 
 object CreditAndRefundViewModel {
 
   def fromCreditAndRefundModel(model: CreditsModel): CreditAndRefundViewModel = {
     CreditAndRefundViewModel(
-      availableCredit = model.availableCredit,
-      allocatedCredit = model.allocatedCredit,
+      availableCredit = model.availableCreditForRepayment,
+      allocatedCreditForOverdueCharges = model.allocatedCreditForOverdueCharges,
+      allocatedCreditForFutureCharges = model.allocatedCreditForFutureCharges,
+      unallocatedCredit = model.unallocatedCredit,
+      totalCredit = model.totalCredit,
       creditRows =
         (removeNoRemainingCredit andThen
           orderByDescendingTaxYear andThen
