@@ -36,7 +36,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
     val title = "Have you checked that HMRC records only list your active businesses?"
     val continueText = "Continue"
     val errorSummaryHeading = "There is a problem"
-    val errorMessage = "Select yes if you've checked that HMRC records only list your active businesses"
+    val errorMessage = "Select yes if you’ve checked that HMRC records only list your active businesses"
   }
 
   private def checkPageContent(result: WSResponse, mtdRole: MTDUserRole): Unit = {
