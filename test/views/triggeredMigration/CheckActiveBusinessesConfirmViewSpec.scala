@@ -38,7 +38,7 @@ class CheckActiveBusinessesConfirmViewSpec extends TestSupport{
     val noHint = "Select this option if you have not checked the previous page"
     val continue = "Continue"
     val errorSummaryHeading = "There is a problem"
-    val errorMessage = "Select yes if HMRC has an up to date record of your business"
+    val errorMessage = "Select yes if you've checked that HMRC records only list your active businesses"
   }
 
   class Setup(form: Form[CheckActiveBusinessesConfirmForm], isAgent: Boolean = false) {
