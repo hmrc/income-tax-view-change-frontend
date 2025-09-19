@@ -57,12 +57,22 @@
         collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
 }
 
-@p(id = Some("check-paye-para")){
+@payeTaxCodeChange = {
+@p(id = Some("check-paye-para")) {
     @messages("chargeSummary.check-paye-tax-code-1")
-    <a class="govuk-link" id="paye-tax-code-link" href="@{checkPayeTaxCodeUrl}/@{collectionTaxYear.endYear}">
+    <a class="govuk-link" id="paye-tax-code-link" href="@{
+        checkPayeTaxCodeUrl
+    }/@{
+        collectionTaxYear.endYear
+    }">
     @messages("chargeSummary.check-paye-tax-code-2")</a>
     @messages("chargeSummary.check-paye-tax-code-3", collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
 }
+}
+@{chargeItem.transactionType match {
+    case BalancingCharge             => payeTaxCodeChange
+    case PoaOneDebit | PoaTwoDebit   =>
+}}
 
 @{chargeItem.transactionType match {
     case BalancingCharge             => whatIsABalancingPayment()

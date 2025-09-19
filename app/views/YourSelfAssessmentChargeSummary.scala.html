@@ -120,10 +120,12 @@
 
       @p() {
           @if(viewModel.isAgent) {
-              @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+              @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part1")
+              @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part2")
               @messages("chargeSummary.selfAssessmentCharges.text-agent")
           } else {
-              @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+              @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part1")
+              @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part2")
               @messages("chargeSummary.selfAssessmentCharges.text")
           }
       }
