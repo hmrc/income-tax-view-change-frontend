@@ -49,7 +49,7 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
                     date = chargeItem.dueDateForFinancialDetail.get,
                     charge = chargeItem,
                     CutOverCreditType,
-                    availableCredit = financialDetailsModel.balanceDetails.availableCredit)
+                    availableCredit = financialDetailsModel.balanceDetails.totalCreditAvailableForRepayment)
                 )
 
               case (creditTypeV, true) =>
@@ -58,7 +58,7 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
                     date = chargeItem.documentDate,
                     chargeItem,
                     creditType = creditTypeV.asInstanceOf[CreditType], // TODO: use safe type conversion instead
-                    availableCredit = financialDetailsModel.balanceDetails.availableCredit)
+                    availableCredit = financialDetailsModel.balanceDetails.totalCreditAvailableForRepayment)
                 )
               case (_, _) =>
                 None

@@ -201,7 +201,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
@@ -296,7 +296,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
@@ -336,7 +336,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
 
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
@@ -373,7 +373,7 @@ class YourSelfAssessmentChargesControllerISpec extends ControllerISpecHelper wit
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems)
                   }
                   AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList, dateService))

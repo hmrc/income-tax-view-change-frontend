@@ -59,7 +59,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     OptInOptOutContentUpdateR17,
     SelfServeTimeToPayR17,
     SubmitClaimToAdjustToNrs,
-    TriggeredMigration
+    TriggeredMigration,
+    ClaimARefundR18
   )
 
   "FeatureSwitchName" when {

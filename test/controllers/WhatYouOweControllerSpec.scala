@@ -59,7 +59,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     List(chargeItemModel(TaxYear.forYearEnd(2019)))
       ++ List(chargeItemModel(TaxYear.forYearEnd(2020)))
       ++ List(chargeItemModel(TaxYear.forYearEnd(2021))),
@@ -69,7 +69,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
   )
 
   def whatYouOweChargesListWithReviewReconcile: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsReviewAndReconcileCi,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
@@ -77,17 +77,17 @@ class WhatYouOweControllerSpec extends MockAuthActions
   )
 
   def whatYouOweChargesListWithOverdueCharge: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsOverdueCharges,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 10.23, 1234), OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 1.23, 1234))
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None), List.empty)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None), List.empty)
 
   def whatYouOweChargesListWithBalancingChargeNotOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsBalancingChargeNotOverdue,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("BCD", None, 1.23, 1234))
@@ -95,13 +95,13 @@ class WhatYouOweControllerSpec extends MockAuthActions
   )
 
   def whatYouOweChargesListWithLpp2: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsLPP2,
     Some(OutstandingChargesModel(List()))
   )
 
   def whatYouOweChargesListWithLPP2NoChargeRef: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsLPP2NoChargeRef,
     Some(OutstandingChargesModel(List()))
   )

@@ -85,7 +85,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   utr = Some(testSaUtr),
                   isAgent = isAgent,
                   charges = chargesList,
-                  maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
+                  maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
                 ).toString
 
@@ -103,7 +103,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
             "contains a back link to the Payment Refund History and the Money in your account section should not be available" when {
               "available credit is Some(0.00)" in {
                 val emptyBalanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None, None)
-                val chargesList = creditAndRefundCreditDetailListMFA.map(_.copy(availableCredit = emptyBalanceDetails.availableCredit))
+                val chargesList = creditAndRefundCreditDetailListMFA.map(_.copy(availableCredit = emptyBalanceDetails.totalCreditAvailableForRepayment))
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockCreditHistoryService(chargesList)
@@ -148,7 +148,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   utr = Some(testSaUtr),
                   isAgent = isAgent,
                   charges = chargesList,
-                  maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
+                  maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
                 ).toString
 
@@ -177,7 +177,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   utr = Some(testSaUtr),
                   isAgent = isAgent,
                   charges = chargesList,
-                  maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
+                  maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
                 ).toString
 
@@ -205,7 +205,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   utr = Some(testSaUtr),
                   isAgent = isAgent,
                   charges = chargesList,
-                  maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.availableCredit,
+                  maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
                 ).toString
 
