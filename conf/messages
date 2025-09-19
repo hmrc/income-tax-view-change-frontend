@@ -3359,4 +3359,4 @@ triggered-migration.check-active-businesses-confirm.yes              = Yes
 triggered-migration.check-active-businesses-confirm.yes.hint         = If the previous page only lists your active businesses then the check is complete
 triggered-migration.check-active-businesses-confirm.no               = No
 triggered-migration.check-active-businesses-confirm.no.hint          = Select this option if you have not checked the previous page
-triggered-migration.check-active-businesses-confirm.error.required   = Select yes if you've checked that HMRC records only list your active businesses
+triggered-migration.check-active-businesses-confirm.error.required   = Select yes if you’ve checked that HMRC records only list your active businesses

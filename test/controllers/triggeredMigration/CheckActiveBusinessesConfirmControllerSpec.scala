@@ -128,7 +128,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
           )
 
           status(result) shouldBe 400
-          contentAsString(result) should include("Select yes if you've checked that HMRC records only list your active businesses")
+          contentAsString(result) should include("Select yes if you’ve checked that HMRC records only list your active businesses")
         }
 
         "redirect to the home page when the TriggeredMigration FS is disabled" in {
