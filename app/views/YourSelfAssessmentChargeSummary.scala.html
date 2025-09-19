@@ -29,6 +29,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourChargeSection
 @import views.helpers.ChargeNameLangHelper
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
 
 @import java.time.LocalDate
@@ -52,7 +53,8 @@
         interestOnYourChargeSection: InterestOnYourChargeSection,
         interestOnYourChargeTable: InterestOnYourChargeTable,
         paymentHistoryTable: PaymentHistoryTable,
-        chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock
+        chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
+        whatIsPaymentOnAccount: WhatIsPaymentOnAccount
 )
 
 @(
@@ -128,6 +130,25 @@
           }
       }
   }
+    @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
+    <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
+        s"${ getMessage("youOwe")
+        }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp
+        }</h1>
+
+     @whatIsPaymentOnAccount()
+
+    @p() {
+        @if(viewModel.isAgent) {
+            @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+            @messages("chargeSummary.selfAssessmentCharges.text-agent")
+        } else {
+            @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+            @messages("chargeSummary.selfAssessmentCharges.text")
+        }
+    }
+ }
+
 
     @if(viewModel.poaExtraChargeLink.isDefined){
         @p(id = Some("poa-extra-charge-content")) {

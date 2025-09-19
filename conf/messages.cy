@@ -3228,6 +3228,7 @@ reporting.frequency.latency.details.section.text.para3.text.2.updateR17       =
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} Blwyddyn dreth
 yourSelfAssessmentChargeSummary.overDueCharge                       = Mae arnoch:
+yourSelfAssessmentChargeSummary.youOwe                              = Mae arnoch:
 yourSelfAssessmentChargeSummary.charge                              = Tâl:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected: (WELSH)
 yourSelfAssessmentChargeSummary.due                                 = Yn ddyledus {0}
