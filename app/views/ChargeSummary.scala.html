@@ -86,12 +86,12 @@
         @if((viewModel.chargeItem.transactionType == PoaOneDebit | viewModel.chargeItem.transactionType == PoaTwoDebit) && viewModel.latePaymentInterestCharge) {
             @p(id = Some("lpi-poa5"), classes = "govuk-body") {
                 @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
-                <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
+                <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
                 @messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
             }
             @p(id = Some("lpi-poa6"), classes = "govuk-body govuk-!-margin-bottom-8") {
                 @messages("chargeSummary.lpi.paymentsOnAccount.p3")
-                <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
+                <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
             }
         }
     </div>
@@ -119,7 +119,7 @@
         @p(id = Some("poa1-extra-charge-p2")){@messages("chargeSummary.poa1ExtraAmountInterest.p2")}
         @p(id = Some("poa1-extra-charge-p3")){
             @messages("chargeSummary.poa1ExtraAmountInterest.p3")
-            <a class="govuk-link" rel="noreferrer noopener" target="_blank"  href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.poa1ExtraAmountInterest.p3LinkText")</a>
+            <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.poa1ExtraAmountInterest.p3LinkText")</a>
             @messages("chargeSummary.poa1ExtraAmountInterest.p3AfterLink")
         }
     </div>
@@ -142,12 +142,12 @@
         @p(id = Some("lpi-LSP1")){@messages("chargeSummary.lpi.lateSubmissionPenalty.p1")}
         @p(id = Some("lpi-LSP2")) {
             @messages("chargeSummary.lpi.penalties.textOne")
-            <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.penalties.linkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.penalties.linkText")</a>
             @messages("chargeSummary.lpi.penalties.textTwo")
         }
         @p(id = Some("lpi-LSP3"), classes = "govuk-body govuk-!-margin-bottom-8") {
             @messages("chargeSummary.lpi.penalties.p3")
-            <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
             }
     </div>
 }
@@ -157,12 +157,12 @@
         @p(id = Some("lpi-LPP1")){@messages("chargeSummary.lpi.firstLatePaymentPenalty.p1")}
         @p(id = Some("lpi-LPP2")) {
             @messages("chargeSummary.lpi.penalties.textOne")
-            <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.penalties.linkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.penalties.linkText")</a>
             @messages("chargeSummary.lpi.penalties.textTwo")
         }
         @p(id = Some("lpi-LPP3"), classes = "govuk-body govuk-!-margin-bottom-8") {
             @messages("chargeSummary.lpi.penalties.p3")
-            <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
             }
     </div>
 }
@@ -179,12 +179,12 @@
         @p(id = Some("lpi-bcd1")){@messages("chargeSummary.lpi.balancingCharge.p1")}
         @p(id = Some("lpi-bcd2")) {
             @messages("chargeSummary.lpi.balancingCharge.textOne")
-            <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
+            <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
             @messages("chargeSummary.lpi.balancingCharge.textTwo")
         }
         @p(id = Some("lpi-bcd3"), classes = "govuk-body govuk-!-margin-bottom-8") {
         @messages("chargeSummary.lpi.balancingCharge.p3")
-        <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
+        <a class="govuk-link"  rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
         }
     </div>
 }
