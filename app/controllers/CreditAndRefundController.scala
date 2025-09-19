@@ -103,7 +103,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
       case creditsModel: CreditsModel =>
-        repaymentService.start(user.nino, Some(creditsModel.availableCredit)) map {
+        repaymentService.start(user.nino, Some(creditsModel.availableCreditForRepayment)) map {
           case Right(nextUrl) =>
             Redirect(nextUrl)
           case Left(ex) =>
