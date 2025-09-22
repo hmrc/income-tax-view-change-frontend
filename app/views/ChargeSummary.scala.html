@@ -167,12 +167,6 @@
     </div>
 }
 
-@getInterestRatesLink = {
-    @p(id = Some("interest-link")) {
-        @messages("chargeSummary.lpi.poaExtraCharge.link")
-        <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.poaExtraCharge.linkText")</a>
-        }
-}
 
 @getBalancingPaymentsExplanationContent = {
     <div>
