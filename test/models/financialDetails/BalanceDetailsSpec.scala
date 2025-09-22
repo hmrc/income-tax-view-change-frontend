@@ -27,7 +27,7 @@ class BalanceDetailsSpec extends UnitSpec {
     "balanceDueWithin30Days" -> 1.00,
     "overDueAmount" -> 2.00,
     "totalBalance" -> 3.00
-  ) ++ availableCredit.fold(Json.obj())(amount => Json.obj("availableCredit" -> amount)) ++
+  ) ++ availableCredit.fold(Json.obj())(amount => Json.obj("totalCreditAvailableForRepayment" -> amount)) ++
     firstPendingAmountRequested.fold(Json.obj())(amount => Json.obj("firstPendingAmountRequested" -> amount)) ++
     secondPendingAmountRequested.fold(Json.obj())(amount => Json.obj("secondPendingAmountRequested" -> amount))
 
