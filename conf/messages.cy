@@ -1343,6 +1343,9 @@ paymentHistory.check-refund-1                                   = Gallwch
 paymentHistory.check-refund-2                                   = wirio cynnydd cais
 paymentHistory.check-refund-3                                   = a wnaethoch am ad-daliad ar unrhyw adeg.
 
+paymentHistory.cell.taxYear                                     = {0} i {1}
+paymentHistory.tableHead.taxYear                                = Blwyddyn dreth
+
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad roeddech wedi’i wneud i CThEF
 paymentAllocation.youPaid                                       = Rydych chi wedi talu:
