@@ -54,7 +54,7 @@ class NextUpdatesViewUtils @Inject()(link: link)(
           Seq(
             Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
             link(
-              link = controllers.optOut.routes.SingleYearOptOutWarningController.show(isAgent).url,
+              link = controllers.optOut.oldJourney.routes.SingleYearOptOutWarningController.show(isAgent).url,
               messageKey = "nextUpdates.optOutOneYear.p.link",
               id = Some("single-year-opt-out-warning-link")
             )
@@ -65,7 +65,7 @@ class NextUpdatesViewUtils @Inject()(link: link)(
           Seq(
             Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
             link(
-              link = controllers.optOut.routes.ConfirmOptOutController.show(isAgent).url,
+              link = controllers.optOut.oldJourney.routes.ConfirmOptOutController.show(isAgent).url,
               messageKey = "nextUpdates.optOutOneYear.p.link",
               id = Some("confirm-opt-out-link")
             )
@@ -76,7 +76,7 @@ class NextUpdatesViewUtils @Inject()(link: link)(
           Seq(
             Html(messages("nextUpdates.optOutMultiYear.p.message")),
             link(
-              link = controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url,
+              link = controllers.optOut.oldJourney.routes.OptOutChooseTaxYearController.show(isAgent).url,
               messageKey = "nextUpdates.optOutMultiYear.p.link",
               id = Some("opt-out-link")
             )

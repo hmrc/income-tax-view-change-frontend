@@ -97,8 +97,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               reportingFrequencyView(
                 ReportingFrequencyViewModel(
                   isAgent = isAgent,
-                  optOutJourneyUrl = Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url),
-                  optOutTaxYears = Seq(TaxYear(2024, 2025)),
+                  optOutJourneyUrl = Some(controllers.optOut.oldJourney.routes.OptOutChooseTaxYearController.show(isAgent).url),
                   optInTaxYears = Seq(TaxYear(2024, 2025)),
                   itsaStatusTable =
                     Seq(
@@ -108,7 +107,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                     ),
                   isAnyOfBusinessLatent = true,
                   displayCeasedBusinessWarning = false,
-                  mtdThreshold = "£50,000"
+                  mtdThreshold = "£50,000",
+                  proposition = optOutProposition
                 ),
                 optInOptOutContentUpdateR17IsEnabled = false,
                 nextUpdatesLink = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
@@ -144,8 +144,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               reportingFrequencyView(
                 ReportingFrequencyViewModel(
                   isAgent = isAgent,
-                  optOutJourneyUrl = Some(controllers.optOut.routes.OptOutChooseTaxYearController.show(isAgent).url),
-                  optOutTaxYears = Seq(TaxYear(2024, 2025)),
+                  optOutJourneyUrl = Some(controllers.optOut.oldJourney.routes.OptOutChooseTaxYearController.show(isAgent).url),
                   optInTaxYears = Seq(TaxYear(2024, 2025)),
                   itsaStatusTable =
                     Seq(
@@ -155,7 +154,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                     ),
                   isAnyOfBusinessLatent = true,
                   displayCeasedBusinessWarning = false,
-                  mtdThreshold = "£50,000"
+                  mtdThreshold = "£50,000",
+                  proposition = optOutProposition
                 ),
                 optInOptOutContentUpdateR17IsEnabled = true,
                 nextUpdatesLink = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
