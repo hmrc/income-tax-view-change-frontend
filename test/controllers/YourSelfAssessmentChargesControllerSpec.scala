@@ -226,7 +226,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
             "displays the money in your account" when {
               "the user has available credit in his account and CreditsRefundsRepay FS enabled" in {
                 def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
-                  BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None), List.empty)
+                  BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 enable(CreditsRefundsRepay)
@@ -252,7 +252,7 @@ class YourSelfAssessmentChargesControllerSpec extends MockAuthActions
             "does not display the money in your account" when {
               "the user has available credit in his account but CreditsRefundsRepay FS disabled" in {
                 def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
-                  BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None), List.empty)
+                  BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 mockSingleBISWithCurrentYearAsMigrationYear()
