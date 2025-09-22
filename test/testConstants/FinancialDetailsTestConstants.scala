@@ -2098,8 +2098,20 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
     ANewCreditAndRefundModel(model.copy(availableCreditForRepayment = availableCredit))
   }
 
-  def withAllocatedCredit(allocatedCredit: BigDecimal): ANewCreditAndRefundModel = {
+  def withAllocatedFutureCredit(allocatedCredit: BigDecimal): ANewCreditAndRefundModel = {
     ANewCreditAndRefundModel(model.copy(allocatedCreditForFutureCharges = allocatedCredit))
+  }
+
+  def withAllocatedOverdueCredit(allocatedCredit: BigDecimal): ANewCreditAndRefundModel = {
+    ANewCreditAndRefundModel(model.copy(allocatedCreditForOverdueCharges = allocatedCredit))
+  }
+
+  def withTotalCredit(totalCredit: BigDecimal): ANewCreditAndRefundModel = {
+    ANewCreditAndRefundModel(model.copy(totalCredit = totalCredit))
+  }
+
+  def withUnallocatedCredit(unallocatedCredit: BigDecimal): ANewCreditAndRefundModel = {
+    ANewCreditAndRefundModel(model.copy(unallocatedCredit = unallocatedCredit))
   }
 
   def withCutoverCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {

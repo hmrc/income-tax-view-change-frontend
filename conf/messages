@@ -1420,7 +1420,7 @@ inYear-tax-overview.agent.inset                                  = This calculat
 ## credits and refunds
 credit-and-refund.heading                                         = Claim a refund
 
-credit-and-refund.available-to-claim                              = {0} available to claim
+credit-and-refund.in-your-account                                 = {0} is in your account
 
 credit-and-refund.upcoming-allocated-credit-1                     = HMRC has reserved {0} of this to cover your upcoming tax bill.
 credit-and-refund.upcoming-allocated-credit-1-all                 = HMRC has reserved all {0} to cover your upcoming tax bill.
