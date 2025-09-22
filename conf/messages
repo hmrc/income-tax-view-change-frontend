@@ -3274,7 +3274,7 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = ‘Payments on account’ are two advance payments made towards your next tax bill.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = If you make an amendment to the tax return and tax bill changes, then each payment on account will be updated to half the new total.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = If you make an amendment to the tax return and the tax bill changes, then each payment on account will be updated to half of the new total.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help with understanding your Self Assessment tax bill
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
