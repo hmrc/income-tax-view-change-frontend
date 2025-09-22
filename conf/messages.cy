@@ -1180,12 +1180,10 @@ chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw dalia
 chargeSummary.whatYouOwe.linkText                               = yr hyn sydd arnoch
 chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 
-chargeSummary.selfAssessmentCharges.textOne                     = Bwriwch olwg dros
-chargeSummary.selfAssessmentCharges.textTwo                     = sydd arnoch i wirio a oes gennych unrhyw daliadau eraill sy’n ddyledus.
-chargeSummary.selfAssessmentCharges.textOne-agent               = Bwriwch olwg dros
-chargeSummary.selfAssessmentCharges.textTwo-agent				= sydd ar eich cleient i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
-chargeSummary.selfAssessmentCharges.linkText                    = y taliadau Hunanasesiad
-chargeSummary.selfAssessmentCharges.linkText-agent				= y taliadau Hunanasesiad
+chargeSummary.selfAssessmentCharges.text                        = sydd arnoch i wirio a oes gennych unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.selfAssessmentCharges.text-agent				    = sydd ar eich cleient i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
+chargeSummary.selfAssessmentCharges.linkText                    = Bwriwch olwg dros y taliadau Hunanasesiad
+chargeSummary.selfAssessmentCharges.linkText-agent				= Bwriwch olwg dros y taliadau Hunanasesiad
 
 chargeSummary.chargeHistory.heading								        = Hanes y tâl hwn
 chargeSummary.chargeHistory.lateInterestPayment					        = Hanes llog am dalu’n hwyr
@@ -1198,7 +1196,7 @@ chargeSummary.chargeHistory.description							        = Disgrifiad
 chargeSummary.chargeHistory.amount								        = Swm
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = Gwnaeth CThEF greu eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = Gwnaeth CThEF greu eich ail daliad ar gyfrif
-chargeSummary.chargeHistory.created.balancingCharge.text		        = Taliad Mantoli wedi’i greu
+chargeSummary.chargeHistory.created.balancingCharge.text		        = Gwnaeth CThEF greu eich taliad mantoli
 chargeSummary.chargeHistory.created.class2Nic.text                      = Yswiriant Gwladol Dosbarth 2 wedi’i greu
 chargeSummary.chargeHistory.created.codingOut.text                      = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
@@ -1222,7 +1220,6 @@ chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = Gwnaet
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = Gwnaethoch ddiweddaru eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.POA1RR-credit                               = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 chargeSummary.chargeHistory.POA2RR-credit                               = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
-
 chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
 chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
 chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
@@ -1302,7 +1299,7 @@ paymentHistory.heading                                          = Hanes taliadau
 paymentHistory.info                                             = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
 paymentHistory.info.2                                           = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
-paymentHistory.button                                           = Taliadau {0}
+paymentHistory.button                                           = Taliadau, credydau ac ad-daliadau {0}
 
 paymentHistory.refund                                           = Anfonwyd yr ad-daliad
 paymentHistory.payment                                          = Taliad roeddech wedi’i wneud i CThEF
@@ -1313,6 +1310,11 @@ paymentHistory.balancingCharge                                  = Credyd o ordal
 paymentHistory.repaymentInterest                                = Credyd o log ar ad-daliadau
 paymentHistory.POA1RR-credit                                    = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 paymentHistory.POA2RR-credit                                    = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
+paymentHistory.activity                                         = Gweithgarwch {0}
+
+paymentHistory.POA1                                             = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy’ch cod treth TWE
+paymentHistory.POA2                                             = Ail daliad ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
+paymentHistory.BCD                                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 
 paymentHistory.taxYear                                          = blwyddyn dreth {0} i {1}
 
@@ -1329,8 +1331,13 @@ paymentHistory.check-refund-1                                   = Gallwch
 paymentHistory.check-refund-2                                   = wirio cynnydd cais
 paymentHistory.check-refund-3                                   = a wnaethoch am ad-daliad ar unrhyw adeg.
 
+paymentHistory.cell.taxYear                                     = {0} i {1}
+paymentHistory.tableHead.taxYear                                = Blwyddyn dreth
+
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Taliad roeddech wedi’i wneud i CThEF
+paymentAllocation.youPaid                                       = Rydych chi wedi talu:
+paymentAllocation.paymentDate.p                                 = Cafodd y taliad hwn ei wneud ar
 paymentAllocation.sa.info                                       = Dyma arian a daloch i mewn i’ch cyfrif cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ewch i’ch
 paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
@@ -1344,9 +1351,10 @@ paymentAllocation.creditOnAccount                               = Credyd ar gyfr
 paymentAllocation.na                                            = Amh
 paymentAllocation.moneyOnAccount                                = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
 
+paymentAllocation.details.title                                 = Sut ydyn ni’n trin eich taliadau i dalu costau?
 paymentAllocation.intro                                         = Pan fyddwch yn gwneud taliad, mae CThEF yn neilltuo’r arian i’r gwahanol daliadau yn eich cyfrif yn y drefn ganlynol.
-paymentAllocation.condition-1                                   = Costau hwyr ac unrhyw daliadau eraill sy’n cronni llog.
-paymentAllocation.condition-2                                   = Taliadau sy’n dod yn ddyledus.
+paymentAllocation.condition-1                                   = Taliadau â llog, gan gynnwys taliadau hwyr.
+paymentAllocation.condition-2                                   = Taliadau sy’n ddyledus heddiw.
 paymentAllocation.condition-3                                   = Taliadau’n ddyledus cyn pen 30 diwrnod.
 paymentAllocation.outro                                         = Gallwch weld sut y cafodd y taliad hwn ei ddyrannu yn y tabl isod.
 
@@ -2645,22 +2653,39 @@ optout.updates.checkAnswers.inset       = Mae gennych <b>2 ddiweddariad chwarter
 optout.confirmedOptOut.heading                                   = Optio allan wedi’i gwblhau
 optout.confirmedOptOut.taxYear                                   = Rydych yn cyflwyno adroddiadau’n flynyddol o flwyddyn dreth {0} i {1} ymlaen
 optout.confirmedOptOut.one-year                                  = Rydych yn cyflwyno adroddiadau’n flynyddol ar gyfer blwyddyn dreth {0} i {1}
+
+optout.confirmedOptOut.green.panel.scenario1And4                 = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
+optout.confirmedOptOut.green.panel.scenario2                     = Nid oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach ar gyfer blwyddyn dreth {0} i {1}
+optout.confirmedOptOut.green.panel.scenario3                     = O flwyddyn dreth {0} i {1} ymlaen, ni fydd angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optout.confirmedOptOut.green.panel.scenario5                     = Does dim angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach
+
 optout.confirmedOptOut.yourRevisedDeadlines.h2                   = Eich dyddiadau cau sydd wedi’u haddasu
 optout.confirmedOptOut.yourRevisedDeadlines.desc1                = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn <b>31 Ionawr {2}</b>.
 optout.confirmedOptOut.viewUpcomingDeadlines.text                = Bwrw golwg dros eich dyddiadau cau sydd ar y gweill
-optout.confirmedOptOut.yourRevisedDeadlines.desc2                = Gallwch, ar unrhyw adeg, optio’n ôl i mewn i adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch {0}
-optout.confirmedOptOut.yourReportingFrequency.text               = amlder eich adroddiadau.
+optout.confirmedOptOut.yourRevisedDeadlines.desc2                = Gallwch benderfynu, ar unrhyw adeg, optio’n ôl i mewn i’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau ar dudalen {0}
+optout.confirmedOptOut.yourReportingFrequency.text               = eich ymrwymiadau o ran adrodd.
+
 
 optout.confirmedOptOut.submitTax                                 = Cyflwyno’ch Ffurflen Dreth
-optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd rydych wedi
-optout.confirmedOptOut.submitTax.confirmed.p1.link               = cyflwyno’ch Ffurflen Dreth Hunanasesiad yn y gorffennol
 
-optout.confirmedOptOut.submitTax.confirmed.p2                    = Os ydych yn adrodd am flwyddyn dreth yn chwarterol, bydd angen i chi ddefnyddio
-optout.confirmedOptOut.submitTax.confirmed.p2.link               =  meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech arfer ei defnyddio i
+optout.confirmedOptOut.submitTax.confirmed.p1.link               = gyflwyno’ch Ffurflenni Treth Hunanasesiad
+
+optout.confirmedOptOut.submitTax.confirmed.p2                    = Ar gyfer unrhyw flwyddyn dreth lle’r ydych yn dal i fod yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen
+optout.confirmedOptOut.submitTax.confirmed.p2.link.a             = meddalwedd sy’n cydweddu
+optout.confirmedOptOut.submitTax.confirmed.p2.link.b             =
+optout.confirmedOptOut.submitTax.confirmed.p2.link.c             = arnoch.
+
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = Gan eich bod wedi optio allan, gallwch ddefnyddio’r cysylltiad hwn i gael gwybod sut i
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflen Dreth Hunanasesiad
+
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1          = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech arfer ei defnyddio i
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflenni Treth Hunanasesiad
 
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
 optout.confirmedOptOut.next-updates                              = diweddariadau nesaf
+
 optout.confirmedOptOut.reportQuarterly                           = Cyflwyno adroddiadau’n chwarterol eto yn y dyfodol
 optout.confirmedOptOut.reportQuarterly.desc1                     = Mae’n bosibl y bydd gofyn i chi gyflwyno adroddiadau’n chwarterol eto yn y dyfodol os yw’r canlynol yn digwydd:
 optout.confirmedOptOut.reportQuarterly.p1                        = CThEF yn gostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn
@@ -2675,6 +2700,50 @@ optout.confirmedOptOut.software-compatible                       = feddalwedd sy
 optout.confirmedOptOut.reportQuarterly.reason-list               = Gallai hyn fod oherwydd y canlynol:
 optout.confirmedOptOut.reportQuarterly.reason1                   = gostyngodd CThEF y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
 optout.confirmedOptOut.reportQuarterly.reason2                   = gwnaethoch roi gwybod am gynnydd yn eich incwm cymwys mewn Ffurflen Dreth
+
+optout.confirmedOptOut.scenario1.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
+optout.confirmedOptOut.scenario1.reporting.obligations.p1                     = Mae’n bosibl y bydd gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os daw’r canlynol yn berthnasol:
+optout.confirmedOptOut.scenario1.reporting.obligations.bullet1                = mae CThEF yn gostwng y trothwy incwm ar gyfer defnyddio’r cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario1.reporting.obligations.bullet2                = rydych yn rhoi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario1.reporting.obligations.inset                  = Er enghraifft, os bydd cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn mynd dros y trothwy o £50,000 ym mlwyddyn dreth 2024 i 2025, bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill 2026 ymlaen
+optout.confirmedOptOut.scenario1.reporting.obligations.p3                     = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.confirmedOptOut.scenario1.reporting.obligations.p4                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario1.reporting.obligations.p4.link                = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+optout.confirmedOptOut.scenario2.reporting.obligations.heading                = Eich ymrwymiadau o ran adrodd o’r flwyddyn dreth nesaf ymlaen
+optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = O 6 Ebrill {0} ymlaen, efallai bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = Gallai hyn fod oherwydd y canlynol:
+optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = meini prawf i bobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
+optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = Rydych wedi optio allan o’r flwyddyn dreth nesaf ymlaen, ond gallai fod yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os yw’r canlynol yn wir:
+optout.confirmedOptOut.scenario3.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario3.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario3.reporting.obligations.inset                  = Er enghraifft, pe byddai cyfanswm eich incwm gros o hunangyflogaeth neu eiddo – neu o’r ddau – yn uwch na’r trothwy o £50,000 ym mlwyddyn dreth 2024 i 2025, byddai’n rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill 2026 ymlaen.
+optout.confirmedOptOut.scenario3.reporting.obligations.p2                     = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.confirmedOptOut.scenario3.reporting.obligations.p3                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario3.reporting.obligations.p3.link                = meini prawf i bobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+optout.confirmedOptOut.scenario4.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
+optout.confirmedOptOut.scenario4.reporting.obligations.p1                     = Mae’n bosibl y bydd gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os daw’r canlynol yn berthnasol:
+optout.confirmedOptOut.scenario4.reporting.obligations.bullet1                = mae CThEF yn gostwng y trothwy incwm ar gyfer defnyddio’r cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario4.reporting.obligations.bullet2                = rydych yn rhoi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario4.reporting.obligations.inset                  = Er enghraifft, os bydd cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn mynd dros y trothwy o £50,000 ym mlwyddyn dreth 2024 i 2025, bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill 2026 ymlaen
+optout.confirmedOptOut.scenario4.reporting.obligations.p2                     = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.confirmedOptOut.scenario4.reporting.obligations.p3                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario4.reporting.obligations.p3.link                = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+optout.confirmedOptOut.scenario5.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
+optout.confirmedOptOut.scenario5.reporting.obligations.p1                     = Mae’n bosibl y bydd gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os daw’r canlynol yn berthnasol:
+optout.confirmedOptOut.scenario5.reporting.obligations.bullet1                = mae CThEF yn gostwng y trothwy incwm ar gyfer defnyddio’r cynllun Troi Treth yn Ddigidol
+optout.confirmedOptOut.scenario5.reporting.obligations.bullet2                = rydych yn rhoi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
+optout.confirmedOptOut.scenario5.reporting.obligations.inset                  = Er enghraifft, os bydd cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn mynd dros y trothwy o £50,000 ym mlwyddyn dreth 2024 i 2025, bydd yn rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o 6 Ebrill 2026 ymlaen
+optout.confirmedOptOut.scenario5.reporting.obligations.p2                     = Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.confirmedOptOut.scenario5.reporting.obligations.p3                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
+optout.confirmedOptOut.scenario5.reporting.obligations.p3.link                = meini prawf ar gyfer pobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 optOut.confirmSingleYearOptOut.title                        = Optio allan o gyflwyno adroddiadau am flwyddyn dreth unigol
 optOut.confirmSingleYearOptOut.detail.text                  = Gallwch opio allan ar gyfer blwyddyn dreth {0} i {1} yn unig.
@@ -2742,6 +2811,13 @@ optout.taxYearQuestion.desc1.nextYear.multiYear                        = O 6 Ebr
 optout.taxYearQuestion.desc2.nextYear.multiYear                        = Yn ogystal â hyn, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech yn cyflwyno’ch Ffurflenni Treth yn y gorffennol ar gyfer pob un o’ch busnesau cyfredol, ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
 optout.taxYearQuestion.desc3.nextYear.multiYear                        = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = A ydych am optio allan o’r flwyddyn dreth nesaf ymlaen?
+
+optout.taxYearQuestion.heading.currentYear.multiYearCYFollowedByAnnual                   = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.title.currentYear.multiYearCYFollowedByAnnual                     = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
+optout.taxYearQuestion.desc1.currentYear.multiYearCYFollowedByAnnual                     = O 6 Ebrill {0} ymlaen, byddai hyn yn golygu na fydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
+optout.taxYearQuestion.desc2.currentYear.multiYearCYFollowedByAnnual                     = Yn ogystal â hyn, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech yn cyflwyno’ch Ffurflenni Treth yn y gorffennol ar gyfer pob un o’ch busnesau cyfredol, ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
+optout.taxYearQuestion.desc3.currentYear.multiYearCYFollowedByAnnual                     = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual             = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
 ## opt out single year - followed by mandated
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
@@ -3151,7 +3227,7 @@ reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = 
 reporting.frequency.latency.details.section.text.para3.text.2.updateR17       =
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} Blwyddyn dreth
-yourSelfAssessmentChargeSummary.overDueCharge                       = Tâl gorddyledus:
+yourSelfAssessmentChargeSummary.overDueCharge                       = Mae arnoch:
 yourSelfAssessmentChargeSummary.charge                              = Tâl:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected: (WELSH)
 yourSelfAssessmentChargeSummary.due                                 = Yn ddyledus {0}
@@ -3161,7 +3237,7 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = Beth yw ta
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, roedd eich bil treth Hunanasesiad diwethaf yn llai na £1,000)
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = mae arnoch fwy na’r swm y gwnaethoch ei dalu yn ystod y flwyddyn (er enghraifft, drwy daliadau ar gyfrif neu TWE)
-yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = have changed your tax return and it resulted in you owing more (WELSH)
+yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = rydych wedi newid eich Ffurflen Dreth a’r canlyniad yw bod arnoch ragor i’w dalu
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = Hefyd, mae angen i chi wneud taliad mantoli os oes gennych unrhyw ddyledion Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar eich {0}
@@ -3182,11 +3258,11 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p5          = £5,000 x 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = £250,000 / 365 = £684.93
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = £684.93 x 0.115 = £78.77
 
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = Beth yw ‘taliad ar gyfrif’?
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae taliadau ar gyfrif yn ddau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf. Maent yn talu am y canlynol:
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Treth Incwm
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae pob taliad yn hanner y swm hwnnw.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = Beth yw taliad ar gyfrif?
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae ‘taliadau ar gyfrif’ yn dau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Os byddwch chi’n gwneud diwygiad i’r Ffurflen Dreth ac mae’r bil treth yn newid, yna bydd pob taliad ar gyfrif yn cael ei ddiweddaru i hanner y cyfanswm newydd.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i ddeall eich bil treth Hunanasesiad
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = Byddwch yn cael pwynt cosb am gyflwyno’n hwyr pob tro y byddwch yn hwyr wrth gyflwyno. Gall cyflwyniad fod yn ddiweddariad chwarterol neu’n ddatganiad treth blynyddol.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = Os byddwch yn cyrraedd 4 o bwyntiau, bydd angen i chi dalu cosb o £200.
@@ -3216,7 +3292,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.headi
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Hanes eich taliad mantoli
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = Hanes y tâl hwn
 
-yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill. (WELSH)
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = Mae’r taliad mantoli hwn yn mynd tuag at eich bil treth ar gyfer {0} i {0}.
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = Mae’r taliad ar gyfrif hwn yn mynd tuag at eich bil treth {0} i {1}.
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = Cosb gyntaf am dalu’n hwyr
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y gosb hon oherwydd eich bod yn hwyr wrth dalu eich Treth Incwm.
@@ -3235,3 +3312,44 @@ income-sources.check-details-reporting-frequency.change-choose-tax-year-key     
 
 income-sources.check-details-reporting-frequency.r17.change-rf-key              = A ydych am gofrestru’r busnes newydd hwn gyda’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm?
 income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Pa flynyddoedd treth ydych am gofrestru ar eu cyfer?
+
+#######################################################################################################################
+## Triggered Migration Journey ##
+#######################################################################################################################
+
+# Check HMRC records page
+
+triggered-migration.check-hmrc-records.heading     = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.title       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.desc        = Nawr, mae’ch dyddiadau cau chwarterol ar gyfer eich busnesau fel unig fasnachwr a/neu eich busnesau eiddo wedi’u rhestru yma.
+triggered-migration.check-hmrc-records.inset       = Bydd sicrhau bod y manylion ar y dudalen hon yn gywir yn eich helpu chi i osgoi colli dyddiadau cau ar gyfer eich busnesau cyfredol, ac yn osgoi rhoi dyddiadau cau i chi ar gyfer ffynonellau incwm y gallech fod wedi’u cau neu eu gwerthu.
+triggered-migration.check-hmrc-records.bulletStart = Bydd yn rhaid i chi wneud y canlynol, os oes angen:
+triggered-migration.check-hmrc-records.bullet1     = ychwanegu unrhyw fusnesau sydd ar goll
+triggered-migration.check-hmrc-records.bullet2     = dod ag unrhyw fusnesau, nad ydynt bellach yn rhoi incwm i chi, i ben
+
+triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Eich busnesau cyfredol
+triggered-migration.check-hmrc-records.soleTrader.heading            = Busnesau unig fasnachwr
+triggered-migration.check-hmrc-records.soleTrader.cease.link         = Wedi dod i ben
+triggered-migration.check-hmrc-records.soleTrader.businessName       = Enw’r busnes
+triggered-migration.check-hmrc-records.soleTrader.businessState      = Statws y busnes
+triggered-migration.check-hmrc-records.soleTrader.active             = Cyfredol
+triggered-migration.check-hmrc-records.soleTrader.add.link           = Ychwanegu busnes unig fasnachwr
+triggered-migration.check-hmrc-records.soleTrader.guidance           = Rydych yn hunangyflogedig os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn ‘unig fasnachwr’. Os ydych yn gweithio drwy gwmni cyfyngedig, nid unig fasnachwr ydych chi.
+triggered-migration.check-hmrc-records.soleTrader.unknown            = Anhysbys
+
+triggered-migration.check-hmrc-records.property.heading              = Busnesau eiddo
+triggered-migration.check-hmrc-records.ukProperty.heading            = Eiddo yn y DU
+triggered-migration.check-hmrc-records.ukProperty.cease.link         = Wedi dod i ben
+triggered-migration.check-hmrc-records.ukProperty.businessState      = Statws y busnes
+triggered-migration.check-hmrc-records.ukProperty.active             = Cyfredol
+triggered-migration.check-hmrc-records.ukProperty.add.link           = Ychwanegu busnes eiddo
+triggered-migration.check-hmrc-records.foreignProperty.heading       = Eiddo Tramor
+triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Wedi dod i ben
+triggered-migration.check-hmrc-records.foreignProperty.businessState = Statws y busnes
+triggered-migration.check-hmrc-records.foreignProperty.active        = Cyfredol
+triggered-migration.check-hmrc-records.foreignProperty.add.link      = Ychwanegu eiddo busnes tramor
+triggered-migration.check-hmrc-records.noActiveProperties            = Os ydych yn cael incwm o un eiddo neu fwy yn y DU, mae gennych fusnes eiddo yn y DU. Os yw’r eiddo dramor, mae gennych fusnes eiddo tramor. Er enghraifft: incwm o roi tai, fflatiau, neu gartrefi gwyliau ar osod, a hynny naill ai ar sail tymor hir neu dymor byr.
+
+triggered-migration.check-hmrc-records.confirmRecords.heading = Cadarnhau bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.confirmRecords.text    = Dylai’r dudalen hon dim ond rhestru’ch ffynonellau incwm cyfredol o fod yn unig fasnachwr a’ch ffynonellau incwm cyfredol o eiddo. Gall unrhyw fanylion busnes eraill sy’n anghywir, sydd wedi’u camsillafu, neu sydd ddim yn gyfredol, gael eu diweddaru yn nes ymlaen.
+triggered-migration.check-hmrc-records.confirmRecords.button  = Cadarnhau a pharhau

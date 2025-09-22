@@ -112,13 +112,13 @@ class FinancialDetailSpec extends UnitSpec {
 
     "checking credit types" should {
       "return correct credit type" in {
-        financialDetail(mainType = "ITSA Misc Credit", mainTransaction = "4023").getCreditType shouldBe Some(MfaCreditType)
-        financialDetail(mainType = "ITSA Cutover Credits", mainTransaction = "6110").getCreditType shouldBe Some(CutOverCreditType)
-        financialDetail(mainType = "SA Balancing Charge Credit", mainTransaction = "4905").getCreditType shouldBe Some(BalancingChargeCreditType)
-        financialDetail(mainType = "Not a valid type", mainTransaction = "9999").getCreditType shouldBe None
+        financialDetail(mainType = "ITSA Misc Credit", mainTransaction = "4023").getChargeType shouldBe Some(MfaCreditType)
+        financialDetail(mainType = "ITSA Cutover Credits", mainTransaction = "6110").getChargeType shouldBe Some(CutOverCreditType)
+        financialDetail(mainType = "SA Balancing Charge Credit", mainTransaction = "4905").getChargeType shouldBe Some(BalancingChargeCreditType)
+        financialDetail(mainType = "Not a valid type", mainTransaction = "9999").getChargeType shouldBe None
 
         val emptyMainTypeDetail =  FinancialDetail.apply(taxYear = "2022", mainType = None, items = None)
-        emptyMainTypeDetail.getCreditType shouldBe None
+        emptyMainTypeDetail.getChargeType shouldBe None
       }
     }
   }

@@ -22,7 +22,7 @@
 @import views.html.components.h3
 @import views.html.components.p
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.BalancingCharge
+@import models.financialDetails.{BalancingCharge, PoaOneDebit, PoaTwoDebit}
 @import views.html.partials.yourSelfAssessmentCharges.LatePaymentInterestChargeMessage
 @import models.repaymentHistory.RepaymentHistoryUtils
 @import models.financialDetails.ChargeItem
@@ -42,18 +42,30 @@
 @import implicitDateFormatter.longDate
 
 @reviewAndReconcileCreditMessage(charge: ChargeItem) = {
-    <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getPoaChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
+    <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
         @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
     </a>
 }
 
-@h3(ChargeNameLangHelper.chargeHistoryHeading(viewModel.chargeItem), classes = "govuk-heading-m", optId = Some("charge-history-heading"))
-
-@if(viewModel.chargeItem.isCodingOut && viewModel.chargeItem.transactionType == BalancingCharge) {
-    @p(id = Some("charge-history-caption")) {
-        @ChargeNameLangHelper.chargeHistoryCaption(viewModel.chargeItem)
+@chargeHistoryCaption = {
+    @if(viewModel.chargeItem.transactionType == PoaOneDebit || viewModel.chargeItem.transactionType == PoaTwoDebit) {
+        @p(id = Some("charge-history-caption")) {
+            @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption",
+                viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+        }
+    } else {
+        @if(viewModel.chargeItem.transactionType == BalancingCharge) {
+            @p(id = Some("charge-history-caption")) {
+                @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption",
+                    viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+            }
+        }
     }
 }
+
+@h3(ChargeNameLangHelper.chargeHistoryHeading(viewModel.chargeItem), classes = "govuk-heading-m", optId = Some("charge-history-heading"))
+
+@chargeHistoryCaption
 
 @govukTable(Table(
     head = Some(

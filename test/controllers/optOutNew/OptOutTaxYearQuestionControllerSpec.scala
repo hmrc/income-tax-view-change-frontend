@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.optOut
+package controllers.optOutNew
 
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -54,7 +54,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
     taxYear = optOutTaxYear,
     optOutState = optOutState,
     numberOfQuarterlyUpdates = 0,
-    currentYearStatus = ITSAStatus.Voluntary
+    currentYearStatus = ITSAStatus.Voluntary,
+    nextYearStatus = ITSAStatus.Voluntary
   )
 
   private def reportingObligationsLink(isAgent: Boolean): Option[String] = {
