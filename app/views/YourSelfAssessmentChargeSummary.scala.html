@@ -61,6 +61,7 @@
     viewModel: ChargeSummaryViewModel,
     whatYouOweUrl: String,
     saChargesUrl: String,
+    yourSelfAssessmentChargesFS: Boolean
 )(
     implicit request: Request[_],
     messages: Messages,
@@ -119,14 +120,27 @@
           viewModel.LSPUrl,
           viewModel.LPPUrl
       )
-
-      @p() {
-          @if(viewModel.isAgent) {
-              @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
-              @messages("chargeSummary.selfAssessmentCharges.text-agent")
-          } else {
-              @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
-              @messages("chargeSummary.selfAssessmentCharges.text")
+      @if(yourSelfAssessmentChargesFS) {
+          @p() {
+              @if(viewModel.isAgent) {
+                  @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+                  @messages("chargeSummary.selfAssessmentCharges.text-agent")
+              } else {
+                  @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+                  @messages("chargeSummary.selfAssessmentCharges.text")
+              }
+          }
+      } else {
+          @p() {
+              @if(viewModel.isAgent) {
+                  @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                  @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                  @messages("chargeSummary.whatYouOwe.textTwo-agent")
+              } else {
+                  @messages("chargeSummary.whatYouOwe.textOne")
+                  @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                  @messages("chargeSummary.whatYouOwe.textTwo")
+              }
           }
       }
   }
@@ -158,7 +172,7 @@
         }
     }
 
-    @if(viewModel.chargeItem.hasAccruingInterest) {
+    @if(viewModel.chargeItem.isAccruingInterest) {
 
         @interestOnYourChargeSection(viewModel.chargeItem)
 
