@@ -3356,5 +3356,5 @@ triggered-migration.checkComplete.gettingSoftware.linkText                      
 triggered-migration.checkComplete.submitUpdates.heading                                 = Cyflwyno’ch diweddariad(au)
 triggered-migration.checkComplete.submitUpdates.p1                                      = Mae’r diweddariadau chwarterol sy’n ddyledus, a’r wybodaeth y mae angen i chi ei darparu, i’w gweld yn eich cyfrif. Wedyn, bydd yn rhaid i chi ddefnyddio’ch meddalwedd sy’n cydweddu i wneud y canlynol:
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = creu cofnod digidol o’ch incwm o eiddo a’ch incwm o fod yn unig fasnachwr, a’r treuliau cysylltiedig
-triggered-migration.checkComplete.submitUpdates.ul.li2                                  = anfon eich diweddariad chwarterol hwyr at CThEF
+triggered-migration.checkComplete.submitUpdates.ul.li2                                  = anfon eich diweddariad(au) chwarterol at CThEF
 triggered-migration.checkComplete.submitUpdates.linkText                                = Gwiriwch eich diweddariadau diweddaraf a’r dyddiadau cau

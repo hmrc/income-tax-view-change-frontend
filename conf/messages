@@ -3371,5 +3371,5 @@ triggered-migration.checkComplete.gettingSoftware.linkText                      
 triggered-migration.checkComplete.submitUpdates.heading                                 = Submitting your update(s)
 triggered-migration.checkComplete.submitUpdates.p1                                      = In your account you can see which quarterly updates are due and what information you need to provide. Then you must use your compatible software to:
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = create a digital record of your property and sole trader income and expenses
-triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send the late quarterly update to HMRC
+triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send your quarterly update(s) to HMRC
 triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest updates and deadlines
