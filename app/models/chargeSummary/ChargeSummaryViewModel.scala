@@ -101,10 +101,10 @@ case class ChargeSummaryViewModel(
     payment <- allocation.allocations
   } yield (payment.dueDate.getOrElse(chargeItem.documentDate), allocation)
 
+  // TODO: Hello Elouise change as needed and delete this message :)
   val sortedChargeHistoriesAndPaymentAllocationsWithDates: List[(LocalDate, Product)] = {
     chargeHistoriesWithDates ++ paymentAllocationsWithDates
-  }.sortBy(_._1)
-
+  }.distinct.sortBy(_._1)
 
 }
 
