@@ -17,7 +17,7 @@
 package models.chargeSummary
 
 import enums.GatewayPage._
-import models.chargeHistory.AdjustmentHistoryModel
+import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails._
 import play.twirl.api.Html
 
@@ -73,7 +73,7 @@ case class ChargeSummaryViewModel(
 
   val taxYearEndToCheckCode = currentTaxYearEnd + 1
 
-  val messagePrefix = if(latePaymentInterestCharge)"lpi."
+  val messagePrefix = if (latePaymentInterestCharge) "lpi."
   else ""
   val pageTitle: String =
     s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}"
@@ -93,6 +93,17 @@ case class ChargeSummaryViewModel(
   val isCodedOut: Boolean = chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !isCodedOut
+
+  val chargeHistoriesWithDates: List[(LocalDate, AdjustmentModel)] = for (adjustment <- adjustmentHistory.adjustments) yield (adjustment.adjustmentDate.getOrElse(chargeItem.documentDate), adjustment)
+
+  val paymentAllocationsWithDates: List[(LocalDate, PaymentHistoryAllocations)] = for {
+    allocation <- paymentAllocations;
+    payment <- allocation.allocations
+  } yield (payment.dueDate.getOrElse(chargeItem.documentDate), allocation)
+
+  val sortedChargeHistoriesAndPaymentAllocationsWithDates: List[(LocalDate, Product)] = {
+    chargeHistoriesWithDates ++ paymentAllocationsWithDates
+  }.sortBy(_._1)
 
 }
 
