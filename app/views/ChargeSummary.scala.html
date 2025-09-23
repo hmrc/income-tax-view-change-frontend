@@ -17,7 +17,8 @@
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.ChargeType
-@import models.chargeSummary.ChargeSummaryViewModel
+@import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
+@import models.chargeHistory.AdjustmentModel
 @import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, FirstLatePaymentPenalty, LateSubmissionPenalty}
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -328,6 +329,21 @@
     }
 }
 
+@formatAdjustmentModel(product: AdjustmentModel) = {
+    <tr>
+        <td class="govuk-table__cell">@{product.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking}</td>
+        <td class="govuk-table__cell">@{messages(s"chargeSummary.chargeHistory.${product.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)}</td>
+        <td class="govuk-table__cell govuk-table__cell--numeric">@{product.amount.toCurrency}</td>
+    </tr>
+}
+
+@formatProduct(product: Product) = @{product match {
+    case product: AdjustmentModel => formatAdjustmentModel(product)
+    case product: PaymentHistoryAllocations => if(!viewModel.latePaymentInterestCharge) {
+        chargeSummaryPaymentAllocation(List(product), viewModel.payments, viewModel.chargeItem, viewModel.isAgent, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
+    }
+}}
+
 @mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
     useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage) {
 
@@ -544,18 +560,9 @@
                     </tr>
                 }
 
-                @for(charge <- viewModel.adjustmentHistory.adjustments) {
-                    <tr>
-                        <td class="govuk-table__cell">@{charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.chargeHistory.${charge.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{charge.amount.toCurrency}</td>
-                    </tr>
-                }
-            }
-
-            @if(!viewModel.latePaymentInterestCharge) {
-                @chargeSummaryPaymentAllocation(viewModel.paymentAllocations, viewModel.payments, viewModel.chargeItem, viewModel.isAgent, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
-            }
+            @for((date, product) <- viewModel.sortedChargeHistoriesAndPaymentAllocationsWithDates) {
+                @formatProduct(product)
+            }}
             </tbody>
         </table>
     }
