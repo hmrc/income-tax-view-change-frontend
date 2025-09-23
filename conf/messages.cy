@@ -261,6 +261,7 @@ tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’
 tax-year-summary.payments.firstLatePaymentPenalty.text         = Cosb gyntaf am dalu’n hwyr
 tax-year-summary.payments.secondLatePaymentPenalty.text        = Ail gosb am dalu’n hwyr
 tax-year-summary.payments.lateSubmissionPenalty.text           = Cosb am gyflwyno’n hwyr
+tax-year-summary.payments.itsaReturnAmendment.text             = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 tax-year-summary.payments.cancelledPayeSelfAssessment.text     = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 tax-year-summary.payments.hmrcAdjustment.text                  = Addasiad CThEF
 tax-year-summary.payments.overdue                              = Yn hwyr
@@ -273,6 +274,7 @@ tax-year-summary.payments.lpi.reviewAndReconcilePoa2.text      = Llog ar gyfer a
 tax-year-summary.payments.lpi.firstLatePaymentPenalty.text     = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
 tax-year-summary.payments.lpi.secondLatePaymentPenalty.text    = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
 tax-year-summary.payments.lpi.lateSubmissionPenalty.text       = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
+tax-year-summary.payments.lpi.itsaReturnAmendment.text         = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 tax-year-summary.section                                       = Adran
 tax-year-summary.amount                                        = Swm
 tax-year-summary.payments.class2Nic.text                       = Yswiriant Gwladol Dosbarth 2
@@ -917,6 +919,9 @@ whatYouOwe.secondLatePaymentPenalty.text                           = Ail gosb am
 whatYouOwe.lpi.firstLatePaymentPenalty.text                        = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
 whatYouOwe.lpi.secondLatePaymentPenalty.text                       = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
 whatYouOwe.lpi.lateSubmissionPenalty.text                          = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
+whatYouOwe.itsaReturnAmendment.text                                = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
+whatYouOwe.lpi.itsaReturnAmendment.text                            = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
+
 whatYouOwe.payments-due                                         = Taliadau treth incwm
 whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
 whatYouOwe.payments-made-agent                                  = O ran unrhyw daliadau a wneir gan eich cleient:
@@ -1009,6 +1014,7 @@ selfAssessmentCharges.lpi.paymentOnAccount2.text                              = 
 selfAssessmentCharges.lateSubmissionPenalty.text                              = Cosb am gyflwyno’n hwyr
 selfAssessmentCharges.firstLatePaymentPenalty.text                            = Cosb gyntaf am dalu’n hwyr
 selfAssessmentCharges.secondLatePaymentPenalty.text                           = Ail gosb am dalu’n hwyr
+selfAssessmentCharges.itsaReturnAmendment.text                                = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 selfAssessmentCharges.lpi.lateSubmissionPenalty.text                          = Llog ar gosb am gyflwyno’n hwyr
 selfAssessmentCharges.lpi.balancingCharge.text                                = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 selfAssessmentCharges.balancingCharge.text  							      = Taliad mantoli
@@ -1058,6 +1064,7 @@ selfAssessmentCharges.adjust-poa.paid-5                                       = 
 selfAssessmentCharges.interestChargesWarning                                  = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
 selfAssessmentCharges.lpi.firstLatePaymentPenalty.text                        = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
 selfAssessmentCharges.lpi.secondLatePaymentPenalty.text                       = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
+selfAssessmentCharges.lpi.itsaReturnAmendment.text                            = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
@@ -1075,8 +1082,10 @@ chargeSummary.poa1CodedOut.text                                 = Taliad ar gyfr
 chargeSummary.poa2CodedOut.text                                 = Ail daliad ar gyfrif sy’n cael ei gasglu drwy god treth TWE
 chargeSummary.lateSubmissionPenalty.text                        = Cosb am gyflwyno’n hwyr
 chargeSummary.firstLatePaymentPenalty.text                      = Cosb gyntaf am dalu’n hwyr
+chargeSummary.itsaReturnAmendment.text                          = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.lpi.lateSubmissionPenalty.text                    = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
 chargeSummary.lpi.firstLatePaymentPenalty.text                  = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
+chargeSummary.lpi.itsaReturnAmendment.text                      = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.cancelledPayeSelfAssessment.text                  = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 chargeSummary.hmrcAdjustment.text                               = Addasiad CThEF
 chargeSummary.dueDate                                           = Dyddiad dyledus
@@ -1206,12 +1215,14 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = Gwnaeth CThEF greu eich cosb am gyflwyno’n hwyr
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = Gwnaeth CThEF greu eich cosb am dalu’n hwyr
+chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = Gwnaeth CThEF greu eich taliad mantoli
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = Addasiad CThEF wedi’i greu
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = 	Yr ail daliad ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.lpi.chargeHistory.created.firstLatePaymentPenalty.text    = Gwnaeth CThEF greu’ch llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
 chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text      = Gwnaeth CThEF greu’ch llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
+chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Yr ail daliad ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Taliad Mantoli wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
@@ -1231,6 +1242,7 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog a
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text     = CThEF sydd wedi creu’r tâl hwn
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text     = CThEF sydd wedi creu’r tâl hwn
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
+chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text        = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
 
 chargeSummary.lpi.balancingCharge.p1                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
 chargeSummary.lpi.balancingCharge.textOne                          = Mae llog am dalu’n hwyr yn cael ei godi o’r diwrnod cyntaf y mae’ch taliad yn hwyr tan y diwrnod y mae’n cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
@@ -3314,6 +3326,7 @@ yourSelfAssessmentChargeSummary.balancingCharge.text.heading                    
 yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = Taliad cyntaf ar gyfrif
 yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                      = Ail daliad ar gyfrif
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading                  = Cosb am gyflwyno’n hwyr
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.text.heading                    = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Yswiriant Gwladol Dosbarth 2
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Anhysbys
@@ -3324,6 +3337,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading    
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading        = Hanes eich ail daliad ar gyfrif
 yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading    = Hanes cosbau am gyflwyno’n hwyr
 yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = Hanes eich cosb gyntaf am dalu’n hwyr
+yourSelfAssessmentChargeSummary.chargeHistory.itsaReturnAmendment.text.heading      = Taliad mantoli: swm ychwanegol oherwydd hanes y Ffurflen Dreth ddiwygiedig
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Hanes eich taliad mantoli
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = Hanes y tâl hwn
 
@@ -3333,6 +3347,10 @@ yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption     
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = Cosb gyntaf am dalu’n hwyr
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y gosb hon oherwydd eich bod yn hwyr wrth dalu eich Treth Incwm.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb.
+
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = Mae arnoch y dreth ychwanegol hon oherwydd y newid gwnaethoch i’ch Ffurflen Dreth.
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Bydd gan y tâl hwn log dyddiol hyd nes y bydd wedi’i dalu. Mae’r llog wedi’i ôl-ddyddio i’r dyddiad dyledus gwreiddiol.
+
 
 income-sources.check-details-reporting-frequency.heading                        = Unig fasnachwr
 income-sources.check-details-reporting-frequency-uk.heading                     = Eiddo yn y DU
