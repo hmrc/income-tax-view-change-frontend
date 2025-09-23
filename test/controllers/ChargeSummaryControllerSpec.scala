@@ -254,7 +254,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
                 document.getElementById("LSP-content-3").text() shouldBe "To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time."
                 document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal."
-                document.getElementsByClass("govuk-heading-l").first().text() shouldBe "Interest on your late submission penalty"
+                document.getElementsByClass("govuk-heading-m").get(1).text() shouldBe "Interest on your late submission penalty"
                 document.getElementById("charge-history-heading").text() shouldBe "Late submission penalty history"
               }
 
