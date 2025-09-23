@@ -2647,7 +2647,7 @@ optout.checkAnswers.cancel              = Canslo
 #opt out with submitted updates check answers
 optout.updates.checkAnswers.heading     = Cadarnhau ac optio allan ar gyfer blwyddyn dreth {0} i {1}
 optout.updates.checkAnswers.p1          = Os byddwch yn optio allan, ni fydd angen meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.updates.checkAnswers.inset       = Mae gennych <b>2 ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.updates.checkAnswers.inset       = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Optio allan wedi’i gwblhau
@@ -3196,6 +3196,40 @@ reporting.frequency.table.mandated.r17                              = Yn ofynnol
 reporting.frequency.table.voluntary.r17                             = Wedi cofrestru’n wirfoddol
 reporting.frequency.table.annual.r17                                = Wedi optio allan
 
+#changing reporting obligations section - R17
+reporting.obligations.changing.h2                                   = Newid eich ymrwymiadau o ran adrodd
+
+reporting.obligations.changing.signUp.currentYear.onwards           = Cofrestru o’r flwyddyn dreth bresennol
+reporting.obligations.changing.signUp.currentYear.single            = Cofrestru ar gyfer y flwyddyn dreth bresennol
+reporting.obligations.changing.desc1.signUp.currentYear.onwards     = Gallwch ddechrau defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth 2024 i 2025 ymlaen.
+reporting.obligations.changing.desc1.signUp.currentYear.single      = Gallwch ddechrau defnyddio’r cynllun Troi Treth yn ddigidol ar gyfer Treth Incwm ar gyfer blwyddyn dreth {0} i {1} ymlaen.
+reporting.obligations.changing.desc2.signUp.currentYear             = Yn dechrau nawr
+reporting.obligations.changing.desc2.signUp.currentYear.withDate    = Yn dechrau o 6 Ebrill {0}
+reporting.obligations.changing.desc3.signUp.currentYear             = Os byddwch yn cofrestru ar gyfer y flwyddyn dreth bresennol ar ôl
+reporting.obligations.changing.desc4.signUp.currentYear             = 7 Awst {0},
+reporting.obligations.changing.desc5.signUp.currentYear             = bydd o leiaf un o’ch diweddariadau chwarterol yn hwyr yn barod.
+reporting.obligations.changing.signUp.nextYear                      = Cofrestru o’r flwyddyn dreth nesaf ymlaen
+reporting.obligations.changing.desc1.signUp.nextYear                = Gallwch ddewis i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen.
+reporting.obligations.changing.desc2.signUp.nextYear                = Yn dechrau o 6 Ebrill {0}
+reporting.obligations.changing.signUp.link.text                     = Cofrestru
+
+reporting.obligations.changing.optOut.previousYear.onwards          = Optio allan o’r flwyddyn dreth ddiwethaf
+reporting.obligations.changing.optOut.previousYear.single           = Optio allan o’r flwyddyn dreth ddiwethaf
+reporting.obligations.changing.desc1.optOut.previousYear.onwards    = Gallwch roi’r gorau i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen.
+reporting.obligations.changing.desc1.optOut.previousYear.single     = Gallwch roi’r gorau i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth incwm ar gyfer blwyddyn dreth {0} i {1} ymlaen.
+reporting.obligations.changing.desc2.optOut.previousYear            = Stopio nawr
+reporting.obligations.changing.optOut.currentYear.onwards           = Optio allan o’r flwyddyn dreth bresennol
+reporting.obligations.changing.optOut.currentYear.single            = Optio allan o’r flwyddyn dreth bresennol
+reporting.obligations.changing.desc1.optOut.currentYear.onwards     = Gallwch rhoi’r gorau i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen.
+reporting.obligations.changing.desc1.optOut.currentYear.single      = Gallwch roi’r gorau i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth incwm ar gyfer blwyddyn dreth {0} i {1} ymlaen.
+reporting.obligations.changing.desc2.optOut.currentYear             = Stopio nawr
+reporting.obligations.changing.desc2.optOut.currentYear.withDate    = Stopio o 6 Ebrill {0}
+reporting.obligations.changing.optOut.nextYear                      = Optio allan o’r flwyddyn dreth nesaf ymlaen
+reporting.obligations.changing.desc1.optOut.nextYear                = Gallwch rhoi’r gorau i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen.
+reporting.obligations.changing.desc2.optOut.nextYear                = Stopio o 6 Ebrill {0}
+reporting.obligations.changing.optOut.link.text                     = Optio allan
+
+# ceased business warning message
 reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
 reporting.frequency.ceasedBusiness.warning.link                     = Eich busnes.
 reporting.frequency.ceasedBusiness.warning.text.2                   =
@@ -3228,6 +3262,7 @@ reporting.frequency.latency.details.section.text.para3.text.2.updateR17       =
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} Blwyddyn dreth
 yourSelfAssessmentChargeSummary.overDueCharge                       = Mae arnoch:
+yourSelfAssessmentChargeSummary.youOwe                              = Mae arnoch:
 yourSelfAssessmentChargeSummary.charge                              = Tâl:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected: (WELSH)
 yourSelfAssessmentChargeSummary.due                                 = Yn ddyledus {0}

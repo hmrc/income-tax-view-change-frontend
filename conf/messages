@@ -2655,7 +2655,7 @@ optout.checkAnswers.cancel              = Cancel
 #opt out with submitted updates check answers
 optout.updates.checkAnswers.heading     = Confirm and opt out for the {0} to {1} tax year
 optout.updates.checkAnswers.p1          = If you opt out, you would no longer need software compatible with Making Tax Digital for Income Tax.
-optout.updates.checkAnswers.inset       = You have <b>2 quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.updates.checkAnswers.inset       = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed
@@ -3208,6 +3208,40 @@ reporting.frequency.table.mandated.r17                              = Required
 reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
 reporting.frequency.table.annual.r17                                = Opted out
 
+#changing reporting obligations section - R17
+reporting.obligations.changing.h2                                   = Changing your reporting obligations
+
+reporting.obligations.changing.signUp.currentYear.onwards           = Sign up from the current tax year
+reporting.obligations.changing.signUp.currentYear.single            = Sign up to the current tax year
+reporting.obligations.changing.desc1.signUp.currentYear.onwards     = You can start using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc1.signUp.currentYear.single      = You can start using Making Tax Digital for Income Tax for the {0} to {1} tax year.
+reporting.obligations.changing.desc2.signUp.currentYear             = Start now
+reporting.obligations.changing.desc2.signUp.currentYear.withDate    = Start from 6 April {0}
+reporting.obligations.changing.desc3.signUp.currentYear             = If you sign up to the current tax year after
+reporting.obligations.changing.desc4.signUp.currentYear             = 7 August {0},
+reporting.obligations.changing.desc5.signUp.currentYear             = you would have at least one quarterly update overdue.
+reporting.obligations.changing.signUp.nextYear                      = Sign up from the next tax year
+reporting.obligations.changing.desc1.signUp.nextYear                = You can choose to use Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc2.signUp.nextYear                = Start from 6 April {0}
+reporting.obligations.changing.signUp.link.text                     = Sign up
+
+reporting.obligations.changing.optOut.previousYear.onwards          = Opt out from the last tax year
+reporting.obligations.changing.optOut.previousYear.single           = Opt out of the last tax year
+reporting.obligations.changing.desc1.optOut.previousYear.onwards    = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year.
+reporting.obligations.changing.desc1.optOut.previousYear.single     = You can stop using Making Tax Digital for Income Tax for the {0} to {1} tax year.
+reporting.obligations.changing.desc2.optOut.previousYear            = Stop now
+reporting.obligations.changing.optOut.currentYear.onwards           = Opt out from the current tax year
+reporting.obligations.changing.optOut.currentYear.single            = Opt out for the current tax year
+reporting.obligations.changing.desc1.optOut.currentYear.onwards     = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc1.optOut.currentYear.single      = You can stop using Making Tax Digital for Income Tax for the {0} to {1} tax year.
+reporting.obligations.changing.desc2.optOut.currentYear             = Stop now
+reporting.obligations.changing.desc2.optOut.currentYear.withDate    = Stop from 6 April {0}
+reporting.obligations.changing.optOut.nextYear                      = Opt out from the next tax year
+reporting.obligations.changing.desc1.optOut.nextYear                = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc2.optOut.nextYear                = Stop from 6 April {0}
+reporting.obligations.changing.optOut.link.text                     = Opt out
+
+#ceased business warning message
 reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
 reporting.frequency.ceasedBusiness.warning.link                     = your businesses
 reporting.frequency.ceasedBusiness.warning.text.2                   = page.
@@ -3241,6 +3275,7 @@ reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = 
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
 yourSelfAssessmentChargeSummary.overDueCharge                       = You owe:
+yourSelfAssessmentChargeSummary.youOwe                              = You owe:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
@@ -3274,7 +3309,7 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = ‘Payments on account’ are two advance payments made towards your next tax bill.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = If you make an amendment to the tax return and tax bill changes, then each payment on account will be updated to half the new total.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = If you make an amendment to the tax return and the tax bill changes, then each payment on account will be updated to half of the new total.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help with understanding your Self Assessment tax bill
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
