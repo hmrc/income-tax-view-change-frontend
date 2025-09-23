@@ -84,7 +84,7 @@ case class DocumentDetail(taxYear: Int,
 
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
-    else interestOutstandingAmount.getOrElse(accruingInterestAmount.get)
+    else interestOutstandingAmount.getOrElse(accruingInterestAmount.getOrElse(BigDecimal(0)))
   }
 
   def getChargePaidStatus: String = {

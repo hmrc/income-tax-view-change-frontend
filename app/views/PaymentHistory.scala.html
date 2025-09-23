@@ -29,15 +29,18 @@
 @import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 @import _root_.implicits.HtmlFormatter.NbspString
 @import viewUtils.ExternalUrlHelper
+@import views.html.partials.paymentHistory.PaymentDescription
 
 @this(
+    paymentDescription: PaymentDescription,
     mainTemplate: unifiedLayout,
     appConfig: config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1: h1,
     p: p,
     link: link,
-    govukAccordion : GovukAccordion
+    govukAccordion : GovukAccordion,
+    govukTable : GovukTable
 )
 
 @(groupedPayments: List[(Int, List[PaymentHistoryEntry])], viewModel: PaymentCreditAndRefundHistoryViewModel, paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
@@ -67,41 +70,49 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
 }
 
 @bodyContent(year: Int, yearPayments: List[PaymentHistoryEntry]) = {
-    <table class="govuk-table govuk-body govuk-!-margin-bottom-8">
-        <caption class="govuk-table__caption govuk-table__caption--m">@messages("paymentHistory.button", year.toString)</caption>
-        <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th class="govuk-table__header" scope="col">@messages("paymentHistory.table.header.date")</th>
-            <th class="govuk-table__header" scope="col">@messages("paymentHistory.table.header.description")</th>
-            <th class="govuk-table__header govuk-table__header--numeric" scope="col">@messages("paymentHistory.table.header.amount")</th>
-        </tr>
-        </thead>
-        <tbody>
-        @for((payment, index) <- yearPayments.sortBy(x => x.date).reverse.zipWithIndex) {
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">@payment.date.toLongDate.toNonBreaking</td>
-                <td class="govuk-table__cell">
-                    <a class="govuk-link" href="@payment.linkUrl" id="payment-@index">
-                        @messages(s"paymentHistory.${payment.creditType.key}")
-                       <div> <span class="govuk-visually-hidden">@payment.visuallyHiddenText @if(yearPayments.size > 1){ Item @(index + 1)}</span></div>
-                    </a>
-                    @if(payment.isCredit) {
-                    <a class="govuk-body-s">
-                        @messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)
-                    </a>
-                    }
-                </td>
-                <td class="govuk-table__cell numeric govuk-table__cell--numeric"> @payment.amount.map(_.abs.toCurrency).getOrElse(getMessage("unknown"))</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+    @govukTable(Table(
+        head = Some(Seq(
+            HeadCell(
+                content = Text(messages("paymentHistory.table.header.date"))
+            ),
+            HeadCell(
+                content = Text(messages("paymentHistory.table.header.description"))
+            ),
+            HeadCell(
+                content = Text(messages("paymentHistory.tableHead.taxYear"))
+            ),
+            HeadCell(
+                content = Text(messages("paymentHistory.table.header.amount"))
+            )
+        )),
+        rows = yearPayments.sortBy(_.date).reverse.zipWithIndex.map{ case (payment, index) => Seq(
+            TableRow(
+                content = HtmlContent(payment.date.toLongDate.toNonBreaking.toString)
+            ),
+            TableRow(
+                content = HtmlContent(paymentDescription(payment, yearPayments, index)),
+                attributes = Map("id" -> s"payment-$index")
+            ),
+            TableRow(
+                content = HtmlContent(messages("paymentHistory.cell.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString).toNonBreaking),
+                attributes = Map("id" -> s"tax-year-cell-$index")
+            ),
+            TableRow(
+                content = HtmlContent(payment.amount.map(_.abs.toCurrency).getOrElse(getMessage("unknown")).toString),
+                format = Some("numeric")
+            )
+        )},
+        classes = "govuk-!-margin-bottom-8",
+        caption = Some(messages("paymentHistory.button", year.toString)),
+        captionClasses = "govuk-table__caption--m",
+    ))
 }
 
 @getItems = @{
-    groupedPayments.map {
-        case ((year: Int, yearPayments: List[PaymentHistoryEntry])) =>
+    groupedPayments.zipWithIndex.map {
+        case ((year: Int, yearPayments: List[PaymentHistoryEntry]), index) =>
             Section(
+                expanded = Some(index == 0),
                 headingContent = HtmlContent(headingContent(year)),
                 content = HtmlContent(bodyContent(year, yearPayments))
             )
@@ -137,12 +148,15 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         </div>
     }
 
-    @if(groupedPayments.nonEmpty) {
-        @govukAccordion(Accordion(
-            id = "accordion-default",
-            items = getItems
-        ))
-    }
-
-
+    @{groupedPayments match {
+        case Nil         =>
+        case head :: Nil => bodyContent(head._1, head._2)
+        case _           => {
+            govukAccordion(Accordion(
+                id = "accordion-default",
+                rememberExpanded = Some(true),
+                items = getItems
+            ))
+        }
+    }}
 }

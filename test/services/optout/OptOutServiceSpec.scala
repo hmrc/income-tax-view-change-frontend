@@ -24,6 +24,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import models.itsaStatus.{StatusDetail, StatusReason}
 import models.optout._
+import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito._
@@ -640,7 +641,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(MultiYearOptOutDefault), 0, Voluntary))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(MultiYearOptOutDefault), 0, Voluntary, Voluntary))
       }
       "the next tax year is submitted that has a state of MultiYearOptOutDefault" in {
         val currentTaxYear = TaxYear(2025, 2026)
@@ -657,7 +658,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026))), Some(MultiYearOptOutDefault), 0, Voluntary))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026))), Some(MultiYearOptOutDefault), 0, Voluntary, Voluntary))
       }
       "the current tax year is submitted that has a state of OneYearOptOutFollowedByMandated" in {
         val currentTaxYear = TaxYear(2025, 2026)
@@ -677,7 +678,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByMandated), 0, Voluntary))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByMandated), 0, Voluntary, Mandated))
       }
 
       "the current tax year is submitted that has a state of OneYearOptOutFollowedByMandated with submitted quarterly updates" in {
@@ -698,7 +699,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByMandated), 1, Voluntary))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByMandated), 1, Voluntary, Mandated))
       }
 
       "the current tax year is submitted that has a state of OneYearOptOutFollowedByAnnual" in {
@@ -719,7 +720,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByAnnual), 0, Voluntary))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Annual))
       }
 
       "the current tax year is submitted that has a state of OneYearOptOutFollowedByAnnual with submitted quarterly updates" in {
@@ -740,7 +741,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByAnnual), 1, Voluntary))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)), Some(OneYearOptOutFollowedByAnnual), 1, Voluntary, Annual))
       }
 
       "the next tax year is submitted that has a state of NextYearOptOut and CY is Annual" in {
@@ -761,7 +762,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Annual, TaxYear(2025, 2026))), Some(NextYearOptOut), 0, Annual))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Annual, TaxYear(2025, 2026))), Some(NextYearOptOut), 0, Annual, Voluntary))
       }
       "the next tax year is submitted that has a state of NextYearOptOut and CY is Mandated" in {
         val currentTaxYear = TaxYear(2025, 2026)
@@ -781,7 +782,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Mandated, TaxYear(2025, 2026))), Some(NextYearOptOut), 0, Mandated))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Mandated, TaxYear(2025, 2026))), Some(NextYearOptOut), 0, Mandated, Voluntary))
       }
 
       "the previous tax year is submitted that has a state of MultiYearDefault" in {
@@ -802,7 +803,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(MultiYearOptOutDefault), 0, Voluntary))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(MultiYearOptOutDefault), 0, Voluntary, Voluntary))
       }
 
       "the previous tax year is submitted that has a state of OneYearOptOutFollowedByAnnual" in {
@@ -823,7 +824,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(OneYearOptOutFollowedByAnnual), 0, Annual))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(OneYearOptOutFollowedByAnnual), 0, Annual, Annual))
       }
       "the previous tax year is submitted that has a state of OneYearOptOutFollowedByMandated" in {
         val currentTaxYear = TaxYear(2025, 2026)
@@ -843,7 +844,7 @@ class OptOutServiceSpec
 
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(OneYearOptOutFollowedByMandated), 0, Mandated))
+        result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(OneYearOptOutFollowedByMandated), 0, Mandated, Mandated))
       }
     }
     "return None" when {
