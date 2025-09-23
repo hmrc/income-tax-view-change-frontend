@@ -633,16 +633,29 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  def financialDetailsModelWithPoaOneAndTwoWithLpi() =
+  def financialDetailsModelWithPoaOneWithLpi() =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
-        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(-100), documentDueDate = Some(LocalDate.of(2020,1,1)))
+        documentDetailModel(transactionId = "CODINGOUT01", documentText = Some(CODING_OUT_ACCEPTED),
+          taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(-100),
+          documentDueDate = Some(LocalDate.of(2020,1,1))),
       ),
       financialDetails = List(
-        financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
-        financialDetail(transactionId = Some(id1040000126), taxYear = testTaxYear, mainTransaction = "4930")
+        financialDetail(transactionId = Some("CODINGOUT01"), taxYear = testTaxYear, mainTransaction = "4920"),
+      )
+    )
+
+  def financialDetailsModelWithPoaTwoWithLpi() =
+    FinancialDetailsModel(
+      balanceDetails = balanceDetails,
+      documentDetails = List(
+        documentDetailModel(transactionId = "CODINGOUT01", documentText = Some(CODING_OUT_ACCEPTED),
+          taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = Some(-100),
+          documentDueDate = Some(LocalDate.of(2020,1,1))),
+      ),
+      financialDetails = List(
+        financialDetail(transactionId = Some("CODINGOUT01"), taxYear = testTaxYear, mainTransaction = "4930",  mainType = "SA Payment on Account 2"),
       )
     )
 
@@ -1229,25 +1242,6 @@ object FinancialDetailsTestConstants {
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
           interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
-          effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
-          documentDueDate = Some(LocalDate.parse("2021-08-25"))
-        )),
-      financialDetails = List(
-        FinancialDetail("2021", Some("SA Payment on Account 2"), Some("4930"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100),
-          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25"))))))
-      )
-    )
-
-  def testFinancialDetailsModelWithPayeSACodingOutPOA2WithInterest(): FinancialDetailsModel =
-    FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
-      documentDetails = List(
-        DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
-          documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 12.34,
-          originalAmount = 11.22, documentDate = LocalDate.of(2018, 3, 29),
-          interestOutstandingAmount = Some(BigDecimal(34.56)), interestRate = Some(BigDecimal(2)),
-          latePaymentInterestId =  Some("latePaymentInterestId"), interestFromDate = Some(LocalDate.parse("2019-05-25")),
-          interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = Some(BigDecimal(100)),
           effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
           documentDueDate = Some(LocalDate.parse("2021-08-25"))
         )),

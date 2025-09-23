@@ -3270,7 +3270,7 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = HMRC estimates the total amount based on your previous year's tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = HMRC estimates the total amount based on your previous years tax bill. Each payment is half of that amount.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet1      = Income Tax
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet2      = Class 4 National Insurance contributions (opens in new tab)
 yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part1 = View

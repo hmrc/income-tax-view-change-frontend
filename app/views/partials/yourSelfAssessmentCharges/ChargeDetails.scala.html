@@ -60,6 +60,7 @@
     case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent)
     case (BalancingCharge, Some(Accepted)) => codedOutExplanationContent(chargeItem)
     case (BalancingCharge, None)        => whatIsABalancingPayment()
+    case (PoaOneDebit | PoaTwoDebit, None) => whatIsPaymentOnAccount()
     case (PoaOneDebit | PoaTwoDebit, Some(Accepted)) => codedOutExplanationContent(chargeItem)
     case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(LSPUrl)
     case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(LPPUrl)

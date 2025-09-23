@@ -97,7 +97,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1WithInterest(), adjustmentHistoryModel = codedOutAdjustmentHistory){
+              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneWithLpi(), adjustmentHistoryModel = codedOutAdjustmentHistory){
                 enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -106,17 +106,17 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "First payment on account collected through PAYE tax code"
-                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
+                document.select("h1").first().text() shouldBe "First payment on account made through your PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £1,400.00"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account made through your paye tax code"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
-                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2020 to 2021 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
               }
-              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2WithInterest, adjustmentHistoryModel = codedOutAdjustmentHistory){
+              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaTwoWithLpi(), adjustmentHistoryModel = codedOutAdjustmentHistory){
                 enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -125,16 +125,15 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "Second payment on account collected through PAYE tax code"
-                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.select("h1").first().text() shouldBe "Second payment on account made through your PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £1,400.00"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account made through your paye tax code"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
-                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)

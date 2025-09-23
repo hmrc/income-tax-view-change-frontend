@@ -156,7 +156,7 @@ case class ChargeItem (
       case _                              => false
     }
 
-    validCharge && !isAccruingInterest
+    validCharge && !(isAccruingInterest && isPaid)
   }
 
 
