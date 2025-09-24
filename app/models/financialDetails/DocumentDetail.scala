@@ -87,12 +87,6 @@ case class DocumentDetail(taxYear: Int,
     else interestOutstandingAmount.getOrElse(accruingInterestAmount.getOrElse(BigDecimal(0)))
   }
 
-  @deprecated("Use checkIfEitherChargeOrLpiHasRemainingToPay in ChargeItem model instead","")
-  def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (isAccruingInterest) interestRemainingToPay > 0
-    else remainingToPay > 0
-  }
-
   def getChargePaidStatus: String = {
     if (isPaid) "paid"
     else if (isPartPaid) "part-paid"

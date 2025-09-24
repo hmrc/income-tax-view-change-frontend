@@ -16,7 +16,7 @@
 
 package models.sessionData
 
-import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionDataUnexpectedResponse, SessionGetResponseReads}
+import models.sessionData.SessionDataGetResponse._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsObject, Json, JsonValidationError}
 import testUtils.UnitSpec
@@ -79,5 +79,36 @@ class SessionDataGetResponseSpec extends UnitSpec {
       result shouldBe Left(SessionDataUnexpectedResponse("User session could not be retrieved. status: 500"))
     }
 
+  }
+
+  "SessionDataNotFound" should {
+    "extend Exception and SessionDataGetFailure" in {
+      val ex = SessionDataNotFound("not found message")
+
+      ex shouldBe a [Exception]
+      ex shouldBe a [SessionDataGetFailure]
+    }
+
+    "return the provided message from msg and getMessage" in {
+      val ex = SessionDataNotFound("not found message")
+
+      ex.msg shouldBe "not found message"
+      ex.getMessage shouldBe "not found message"
+    }
+  }
+
+  "SessionDataUnexpectedResponse" should {
+    "extend Exception and SessionDataGetFailure" in {
+      val ex = SessionDataUnexpectedResponse("unexpected response")
+
+      ex shouldBe a [Exception]
+      ex shouldBe a [SessionDataGetFailure]
+    }
+    "return the provided message from msg and getMessage" in {
+      val ex = SessionDataUnexpectedResponse("unexpected response")
+
+      ex.msg shouldBe "unexpected response"
+      ex.getMessage shouldBe "unexpected response"
+    }
   }
 }
