@@ -67,7 +67,7 @@ case class ChargeItem (
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
   def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && accruingInterestAmount.getOrElse[BigDecimal](0) <= 0
+    interestOutstandingAmount.getOrElse[BigDecimal](0) != 0 && accruingInterestAmount.getOrElse[BigDecimal](0) <= 0
 
   def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
