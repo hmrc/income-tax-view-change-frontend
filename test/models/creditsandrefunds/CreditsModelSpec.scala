@@ -29,7 +29,7 @@ class CreditsModelSpec extends UnitSpec {
 
   val availableCreditForRepayment:BigDecimal = 20
 
-  val allocatedCreditForOverdueCharges:BigDecimal = 5
+  val allocatedCredit:BigDecimal = 5
   val allocatedCreditForFutureCharges:BigDecimal = 10
 
   val unallocatedCredit:BigDecimal = 20
@@ -40,7 +40,7 @@ class CreditsModelSpec extends UnitSpec {
     s"""
       |{
       |  "availableCreditForRepayment" : ${availableCreditForRepayment},
-      |  "allocatedCreditForOverdueCharges" : ${allocatedCreditForOverdueCharges},
+      |  "allocatedCredit" : ${allocatedCredit},
       |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
       |  "unallocatedCredit" : ${unallocatedCredit},
       |  "totalCredit" : ${totalCredit},
@@ -74,7 +74,7 @@ class CreditsModelSpec extends UnitSpec {
       |}
       |""".stripMargin
 
-  val allCreditsObj = CreditsModel(availableCreditForRepayment, allocatedCreditForOverdueCharges, allocatedCreditForFutureCharges,
+  val allCreditsObj = CreditsModel(availableCreditForRepayment, allocatedCredit, allocatedCreditForFutureCharges,
     unallocatedCredit, totalCredit, List(
     Transaction(transactionType = Repayment,
       amount = 5,
@@ -155,7 +155,7 @@ class CreditsModelSpec extends UnitSpec {
 
       val result = Json.toJson(allCreditsObj)
 
-      (result \ "allocatedCreditForOverdueCharges").get shouldBe JsNumber(allocatedCreditForOverdueCharges)
+      (result \ "allocatedCredit").get shouldBe JsNumber(allocatedCredit)
       (result \ "allocatedCreditForFutureCharges").get shouldBe JsNumber(allocatedCreditForFutureCharges)
       (result \ "availableCreditForRepayment").get shouldBe JsNumber(availableCreditForRepayment)
       (result \ "totalCredit").get shouldBe JsNumber(totalCredit)
@@ -176,7 +176,7 @@ class CreditsModelSpec extends UnitSpec {
         s"""
           |{
           |  "availableCreditForRepayment" : ${availableCreditForRepayment},
-          |  "allocatedCreditForOverdueCharges" : ${allocatedCreditForOverdueCharges},
+          |  "allocatedCredit" : ${allocatedCredit},
           |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
           |  "unallocatedCredit" : ${unallocatedCredit},
           |  "totalCredit" : ${totalCredit},

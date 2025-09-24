@@ -61,7 +61,7 @@ case class RefundRow(amount: BigDecimal) extends CreditRow {
 }
 
 case class CreditAndRefundViewModel(availableCredit: BigDecimal,
-                                    allocatedCreditForOverdueCharges: BigDecimal,
+                                    allocatedCredit: BigDecimal,
                                     allocatedCreditForFutureCharges: BigDecimal,
                                     unallocatedCredit: BigDecimal,
                                     totalCredit: BigDecimal,
@@ -78,7 +78,7 @@ object CreditAndRefundViewModel {
   def fromCreditAndRefundModel(model: CreditsModel): CreditAndRefundViewModel = {
     CreditAndRefundViewModel(
       availableCredit = model.availableCreditForRepayment,
-      allocatedCreditForOverdueCharges = model.allocatedCreditForOverdueCharges,
+      allocatedCredit = model.allocatedCredit,
       allocatedCreditForFutureCharges = model.allocatedCreditForFutureCharges,
       unallocatedCredit = model.unallocatedCredit,
       totalCredit = model.totalCredit,

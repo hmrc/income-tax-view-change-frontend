@@ -35,7 +35,7 @@ class BalanceDetailsSpec extends UnitSpec {
   def balanceDetailsModel(availableCreditForRepayment: Option[BigDecimal] = None,
                           firstPendingAmountRequested: Option[BigDecimal] = None,
                           secondPendingAmountRequested: Option[BigDecimal] = None,
-                          allocatedCreditForOverdueCharges: Option[BigDecimal] = None,
+                          allocatedCredit: Option[BigDecimal] = None,
                           allocatedCreditForFutureCharges: Option[BigDecimal] = None,
                           totalCredit: Option[BigDecimal] = None,
                           unallocatedCredit: Option[BigDecimal] = None
@@ -44,7 +44,7 @@ class BalanceDetailsSpec extends UnitSpec {
     overDueAmount = 2.00,
     totalBalance = 3.00,
     availableCreditForRepayment,
-    allocatedCreditForOverdueCharges,
+    allocatedCredit,
     allocatedCreditForFutureCharges,
     totalCredit,
     firstPendingAmountRequested,

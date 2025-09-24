@@ -2171,7 +2171,7 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
   }
 
   def withAllocatedOverdueCredit(allocatedCredit: BigDecimal): ANewCreditAndRefundModel = {
-    ANewCreditAndRefundModel(model.copy(allocatedCreditForOverdueCharges = allocatedCredit))
+    ANewCreditAndRefundModel(model.copy(allocatedCredit = allocatedCredit))
   }
 
   def withTotalCredit(totalCredit: BigDecimal): ANewCreditAndRefundModel = {
@@ -2232,7 +2232,7 @@ object CreditAndRefundConstants {
     overDueAmount = 2.00,
     totalBalance = 3.00,
     totalCreditAvailableForRepayment = availableCredit,
-    allocatedCreditForOverdueCharges = allocatedCreditOverdue,
+    allocatedCredit = allocatedCreditOverdue,
     allocatedCreditForFutureCharges = allocatedCreditFuture,
     totalCredit = totalCredit,
     firstPendingAmountRequested = firstPendingAmountRequested,
