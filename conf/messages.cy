@@ -3345,4 +3345,4 @@ triggered-migration.check-active-businesses-confirm.yes              = Iawn
 triggered-migration.check-active-businesses-confirm.yes.hint         = Os ywr dudalen flaenorol dim ond yn cynnwys eich busnesau cyfredol, mae’r gwiriad wedi’i gwblhau
 triggered-migration.check-active-businesses-confirm.no               = Na
 triggered-migration.check-active-businesses-confirm.no.hint          = Dewiswch yr opsiwn hwn os nad ydych wedi gwirio’r dudalen flaenorol
-triggered-migration.check-active-businesses-confirm.error.required   = Dewiswch ‘Iawn’ os oes gan CThEF gofnodion cyfredol ar gyfer eich busnes
+triggered-migration.check-active-businesses-confirm.error.required   = Dewiswch ‘Iawn’ os ydych wedi gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
