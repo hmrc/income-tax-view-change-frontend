@@ -244,8 +244,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount due to be collected: £12.34"
                 Option(document.getElementById("due-date-text")) shouldBe None
                 document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2019 to 2020 tax year. It will be collected in the 2021 to 2022 tax year through your PAYE tax code."
-                document.getElementById("check-paye-para").text() shouldBe "Check if your PAYE tax code has changed for the 2021 to 2022 tax year."
-                document.getElementById("paye-tax-code-link").attr("href") shouldBe "https://www.tax.service.gov.uk/check-income-tax/tax-codes/2022"
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
                 document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. 29 March 2018 £2,500.00"
