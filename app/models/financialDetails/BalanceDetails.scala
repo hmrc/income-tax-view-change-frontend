@@ -39,6 +39,10 @@ case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
     totalCredit.map (credit => math.abs(credit.toDouble))
   }
 
+  def getAbsoluteAvailableCreditAmount: Option[BigDecimal] = {
+    totalCreditAvailableForRepayment.map (credit => math.abs(credit.toDouble))
+  }
+
 }
 
 

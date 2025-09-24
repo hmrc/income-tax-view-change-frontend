@@ -147,7 +147,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
       val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
 
       val paymentCreditAndRefundHistoryTileViewModel =
-        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
+        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), isEnabled(ClaimARefundR18), user.incomeSources.yearOfMigration.isDefined)
 
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
 
@@ -211,7 +211,7 @@ private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsRespo
     isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
     mainChargeIsNotPaidFilter
   ) map {
-    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
+    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _, _) =>
       outstandingCharges.filter(_.isBalancingChargeDebit)
         .filter(_.relevantDueDate.isDefined)
     case _ => Nil

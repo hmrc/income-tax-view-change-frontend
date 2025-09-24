@@ -85,7 +85,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
             isFilterCodedOutPoasEnabled,
             isPenaltiesEnabled,
             remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot),
-          codedOutDetails = codingOutDetails)
+          codedOutDetails = codingOutDetails,
+          claimARefundR18Enabled = isEnabled(ClaimARefundR18))
 
         {
           for {
