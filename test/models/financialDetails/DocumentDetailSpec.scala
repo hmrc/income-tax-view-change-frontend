@@ -18,7 +18,7 @@ package models.financialDetails
 
 import enums.CodingOutType._
 import enums.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
-import testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
+import testConstants.FinancialDetailsTestConstants.{dateService, documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailModel, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -325,6 +325,17 @@ class DocumentDetailSpec extends UnitSpec {
 
     "return an amount when there is interest remaining to pay" in {
       fullDocumentDetailModel.interestRemainingToPay shouldBe BigDecimal(80)
+    }
+
+    "return zero when interestOutstandingAmount is not present" in {
+      fullDocumentDetailModel.copy(interestOutstandingAmount = None, accruingInterestAmount = None)
+        .interestRemainingToPay shouldBe BigDecimal(0)
+    }
+  }
+
+  "isAccruingInterest" should {
+    "false when isReviewAndReconcileDebit is false with outstanding amount unpaid and obligations is still due" in {
+      fullDocumentDetailWithDueDateModel.isAccruingInterest shouldBe false
     }
   }
 
