@@ -110,7 +110,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
             val result: Future[Result] = showAction(requestGET)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+              "/report-quarterly/income-and-expenses/view/agents"
             } else {
               "/report-quarterly/income-and-expenses/view"
             }
@@ -210,7 +210,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
             val result: Future[Result] = submitAction(requestPOST)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+              "/report-quarterly/income-and-expenses/view/agents"
             } else {
               "/report-quarterly/income-and-expenses/view"
             }

@@ -79,7 +79,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
     }
   }
   val homeBackLink: Boolean => String = isAgent => {
-    "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents/client-income-tax" else ""}
+    "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents" else "" }
   }
   val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
   val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))

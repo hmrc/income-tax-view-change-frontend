@@ -33,7 +33,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
   implicit val lang: Lang = Lang("GB")
 
   val testCancelUrl: String = "/report-quarterly/income-and-expenses/view"
-  val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+  val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents"
 
   class Setup(isAgent: Boolean, isAmountZero: Boolean) {
     val viewModel = ConfirmationForAdjustingPoaViewModel(TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAmountZero)

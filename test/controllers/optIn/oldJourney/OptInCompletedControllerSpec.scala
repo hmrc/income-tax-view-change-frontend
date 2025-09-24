@@ -112,7 +112,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+              "/report-quarterly/income-and-expenses/view/agents"
             } else {
               "/report-quarterly/income-and-expenses/view"
             }
