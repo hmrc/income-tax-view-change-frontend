@@ -23,19 +23,9 @@ import scala.xml.NodeSeq
 
 case class RawPayload(byteString: ByteString, encoding: Option[String]) {
   lazy val byteArray: Array[Byte] = byteString.toArray
-
-  def length: Int = byteString.length
-
-  def inputStream: InputStream = new ByteArrayInputStream(byteArray)
 }
 
 object RawPayload {
-  // For testing
-  def apply(string: String): RawPayload = RawPayload(ByteString.fromString(string), Some("UTF-8"))
-
-  // For testing
-  def apply(xml: NodeSeq): RawPayload = RawPayload(ByteString.fromString(xml.toString), None)
-
   // For testing
   def apply(bytes: Array[Byte], encoding: Option[String] = None): RawPayload = RawPayload(ByteString(bytes), encoding)
 }

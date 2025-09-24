@@ -78,14 +78,6 @@ case object ViewObligationsResponse extends TransactionName {
   val name = "view-obligations-response"
 }
 
-case object NinoLookup extends TransactionName {
-  val name = "ITVCNinoLookup"
-}
-
-case object NinoLookupError extends TransactionName {
-  val name = "ITVCNinoLookupError"
-}
-
 case object PaymentAllocations extends TransactionName {
   val name = "payment-allocations-response"
 }

@@ -16,7 +16,7 @@
 
 package viewUtils
 
-import play.api.i18n.{Lang, Messages}
+import play.api.i18n.Messages
 
 object ExternalUrlHelper {
 
