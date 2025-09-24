@@ -628,8 +628,8 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
-        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, outstandingAmount = 0.00, originalAmount = 1500.00, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, outstandingAmount = 0.00, originalAmount = 1500.00, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
+        documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, outstandingAmount = 0.00, originalAmount = 1500.00, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, interestOutstandingAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, outstandingAmount = 0.00, originalAmount = 1500.00, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, interestOutstandingAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
       ),
       financialDetails = List(
         financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
