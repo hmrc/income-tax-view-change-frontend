@@ -78,14 +78,6 @@ case object ViewObligationsResponse extends AuditType {
   val name = "ViewObligationsResponse"
 }
 
-case object NinoLookup extends AuditType {
-  val name = "ninoLookup"
-}
-
-case object NinoLookupError extends AuditType {
-  val name = "ninoLookupError"
-}
-
 case object PaymentAllocations extends AuditType {
   val name = "PaymentAllocations"
 }

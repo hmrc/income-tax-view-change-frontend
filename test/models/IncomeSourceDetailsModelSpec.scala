@@ -17,6 +17,7 @@
 package models
 
 import auth.MtdItUser
+import enums.IncomeSourceJourney.SelfEmployment
 import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import forms.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -221,6 +222,12 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
 
         result shouldBe List.empty
       }
+    }
+  }
+
+  "getIncomeSourceBusinessName" should {
+    "return None when we don't pass sole trader business id for SelfEmployment" in {
+      singleBusinessIncome.getIncomeSourceBusinessName(SelfEmployment, None) shouldBe None
     }
   }
 }
