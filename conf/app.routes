@@ -5,15 +5,11 @@
 GET         /assets/*file                                                 controllers.Assets.versioned(path = "/public", file)
 
 # Assets
-GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
-GET        /language/:lang                                                controllers.LocalLanguageController.switchToLanguage(lang: String)
 
 
 #Home Controller
 GET         /                                                             controllers.HomeController.show(origin: Option[String] ?= None)
-GET         /income-tax                                                   controllers.HomeController.show(origin: Option[String] ?= None)
-GET         /agents/client-income-tax                                     controllers.HomeController.showAgent()
 GET         /agents                                                       controllers.HomeController.showAgent()
 
 #NextUpdates

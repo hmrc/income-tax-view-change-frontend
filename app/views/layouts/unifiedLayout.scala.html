@@ -105,8 +105,8 @@
 
 @head = {
     @hmrcTrackingConsentSnippet()
-    <!--[if lte IE 8]><link href=' @controllers.routes.Assets.at("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
-    <!--[if gt IE 8]><!--> <link href='@controllers.routes.Assets.at("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
+    <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
+    <!--[if gt IE 8]><!--> <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
     <!--<![endif]-->
 
     @if(timeout) {
@@ -127,8 +127,8 @@
         <div id="language-switch">
             @languageSwitch(LanguageSelect(
                 if (messages.lang.code == "cy") Cy else En,
-                (En, controllers.routes.LocalLanguageController.switchToLanguage("english").url),
-                (Cy, controllers.routes.LocalLanguageController.switchToLanguage("cymraeg").url)
+                (En, controllers.routes.ItvcLanguageController.switchToLanguage("english").url),
+                (Cy, controllers.routes.ItvcLanguageController.switchToLanguage("cymraeg").url)
             ))
         </div>
 
