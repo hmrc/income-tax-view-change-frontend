@@ -45,7 +45,6 @@
     link: link,
     govukWarningText : GovukWarningText,
     chargeSummaryAccruingInterestCharge: ChargeSummaryAccruingInterestCharge,
-    chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
     chargeSummaryCodingOut: ChargeSummaryCodingOut,
     chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
@@ -538,7 +537,7 @@
                 }
             }
 
-            @viewModel.sortedChargeHistoriesAndPaymentAllocationsWithDates.map { chargeItem =>
+            @viewModel.sortedChargeHistoriesAndPaymentAllocationsWithDates.map { chargeHistoryItem =>
                 <tr>
                     <td class="govuk-table__cell">@{chargeHistoryItem.date.toLongDateShort.toNonBreaking}</td>
                     <td class="govuk-table__cell">@{chargeHistoryItem.description}</td>

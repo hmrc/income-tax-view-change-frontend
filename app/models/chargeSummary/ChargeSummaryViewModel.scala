@@ -116,39 +116,42 @@ case class ChargeSummaryViewModel(
   } yield {
       ChargeHistoryItem(
         date = payment.getDueDateOrThrow,
-        description = {
-
-          val matchingPayment = payment.clearingId
-
-          if (matchingPayment.isDefined) {
-
-            val link = {
-              if (isAgent) PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get)
-              else         PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, origin)
-            }.url
-
-            val linkText = {
-              if (chargeItem.transactionType == MfaDebitCharge)
-                messages("chargeSummary.paymentAllocations.mfaDebit")
-              else
-                messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
-            }
-
-            Html(
-              s"""
-                 |<a class="govuk-link" href="$link">
-                 |  $linkText
-                 |  <span class="govuk-visually-hidden">$taxYearTo</span>
-                 |</a>
-                 |""".stripMargin
-            )
-          } else {
-            Html(messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut))
-          }
-        },
+        description = getPaymentAllocationDescription(payment, allocation),
         amount = payment.getAmountOrThrow.abs
       )
     }
+
+  def getPaymentAllocationDescription(payment: PaymentHistoryAllocation, allocation: PaymentHistoryAllocations): Html = {
+
+    val matchingPayment = payment.clearingId
+
+    matchingPayment.fold(
+      Html(
+        messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
+      )
+    ) { paymentId =>
+
+      val link = {
+        if (isAgent) PaymentAllocationsController.viewPaymentAllocationAgent(paymentId)
+        else         PaymentAllocationsController.viewPaymentAllocation(paymentId)
+      }.url
+
+      val linkText =
+        if (chargeItem.transactionType == MfaDebitCharge)
+          messages("chargeSummary.paymentAllocations.mfaDebit")
+        else
+          messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
+
+      Html(
+        s"""
+           |<a class="govuk-link" href="$link">
+           |  $linkText
+           |  <span class="govuk-visually-hidden">$taxYearTo</span>
+           |</a>
+           |""".stripMargin
+      )
+    }
+  }
 
   val sortedChargeHistoriesAndPaymentAllocationsWithDates: List[ChargeHistoryItem] = {
     chargeHistoriesWithDates ++ paymentAllocationsWithDates
