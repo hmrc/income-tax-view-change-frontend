@@ -33,6 +33,12 @@ object ReportingFrequencyViewMessages {
   val optOutContentWithTaxYear = "Opt out of quarterly reporting and report annually for the 2023 to 2024 tax year"
   val optOutContentWithTaxYearOnwards = "Opt out of quarterly reporting and report annually from the 2024 to 2025 tax year onwards"
 
+  val manageReportingObligationsHeading = "Changing your reporting obligations"
+  val manageReportingObligationsCardHeading = "Opt out from the current tax year"
+  val manageReportingObligationsCardLink = "Opt out"
+  val manageReportingObligationsCardDesc = "You can stop using Making Tax Digital for Income Tax from the 2023 to 2024 tax year onwards."
+  val manageReportingObligationsCardText = "Stop from 6 April 2023"
+
   val differentObligationsHeading = "What the different reporting obligations are"
   val differentObligationsText = "When you are using Making Tax Digital for Income Tax you need to submit:"
   val differentObligationsLiOne = "4 updates a year for each source of self employment and property income"

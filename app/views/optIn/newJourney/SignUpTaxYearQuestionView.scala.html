@@ -1,0 +1,153 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, InsetText}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukRadios, _}
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import models.optin.newJourney.SignUpTaxYearQuestionViewModel
+
+@this(
+        mainTemplate: unifiedLayout,
+        formWithCSRF: FormWithCSRF,
+        govukErrorSummary: GovukErrorSummary,
+        h1: h1,
+        h2: h2,
+        p: p,
+        govukInsetText: GovukInsetText,
+        govukRadios: GovukRadios,
+        continueButton: ContinueButton
+)
+
+@(isAgent: Boolean, viewModel: SignUpTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@startYear = @{ viewModel.signUpTaxYear.taxYear.startYear.toString }
+@endYear = @{ viewModel.signUpTaxYear.taxYear.endYear.toString }
+@pageTitle = @{
+    if (viewModel.signingUpForCY) {
+        messages("signUp.taxYearQuestion.title.currentYear")
+    } else {
+        messages("signUp.taxYearQuestion.title.nextYear", startYear, endYear)
+    }
+}
+
+@pageQuestion = @{
+    if (viewModel.signingUpForCY) {
+        messages("signUp.taxYearQuestion.radioQuestion.currentYear")
+    } else {
+        messages("signUp.taxYearQuestion.radioQuestion.nextYear", startYear, endYear)
+    }
+}
+
+@hintText = @{
+    if (viewModel.signingUpForCY) {
+        Some(Hint(content = Text(messages("signUp.taxYearQuestion.radioHint.currentYear"))))
+    } else {
+        None
+    }
+}
+
+@mainTemplate(
+    pageTitle = pageTitle,
+    backUrl = Some("#"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial) {
+
+    @formWithCSRF(action = postAction) {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("sign-up-tax-year-question" -> "yes-response")))
+        }
+
+        @if(viewModel.signingUpForCY) {
+            @currentYearContent
+        } else {
+            @nextYearContent
+        }
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(pageQuestion),
+                    classes = "govuk-fieldset__legend--m"
+                ))
+            )),
+            hint = hintText,
+            items = Seq(
+                RadioItem(
+                    id = Some("yes-response"),
+                    value = Some("Yes"),
+                    content = Text(messages("radioForm.yes"))
+                ),
+                RadioItem(
+                    id = Some("no-response"),
+                    value = Some("No"),
+                    content = Text(messages("radioForm.no"))
+                )
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
+            classes = "govuk-radios--inline"
+        ).withFormField(form("sign-up-tax-year-question")))
+
+        @continueButton(id = Some("confirm-button"), alternativeText = Some(messages("base.confirm-and-continue")))
+    }
+}
+
+@currentYearContent = {
+    @h1(id = Some("sign-up-question-heading"), msg = messages("signUp.taxYearQuestion.heading.currentYear"))
+
+    @p(id = Some("sign-up-question-desc-1")) {
+        @messages("signUp.taxYearQuestion.desc1.currentYear")
+    }
+
+    @p(id = Some("sign-up-question-desc-2")) {
+        @messages("signUp.taxYearQuestion.desc2.currentYear")
+    }
+
+    <ul class="govuk-list govuk-list--bullet" id="sign-up-quarterly-deadlines">
+        <li id="quarterly-deadlines-1">@messages("signUp.taxYearQuestion.bullet1.currentYear", startYear)</li>
+        <li id="quarterly-deadlines-2">@messages("signUp.taxYearQuestion.bullet2.currentYear", startYear)</li>
+        <li id="quarterly-deadlines-3">@messages("signUp.taxYearQuestion.bullet3.currentYear", endYear)</li>
+        <li id="quarterly-deadlines-4">@messages("signUp.taxYearQuestion.bullet4.currentYear", endYear)</li>
+    </ul>
+
+    @h2(optId = Some("sign-up-question-subheading"), msg = messages("signUp.taxYearQuestion.subheading.currentYear"))
+
+    @p(id = Some("sign-up-question-desc-3")) {
+        @messages("signUp.taxYearQuestion.desc3.currentYear")
+    }
+
+    @p(id = Some("sign-up-question-desc-4")) {
+        @messages("signUp.taxYearQuestion.desc4.currentYear")
+    }
+
+    @govukInsetText(InsetText(
+        id = Some("sign-up-question-inset"),
+        content = HtmlContent(messages("signUp.taxYearQuestion.inset.currentYear"))
+    ))
+
+    @p(id = Some("sign-up-question-desc-5")) {
+        @messages("signUp.taxYearQuestion.desc5.currentYear")
+    }
+}
+
+@nextYearContent = {
+    @h1(id = Some("sign-up-question-heading"), msg = messages("signUp.taxYearQuestion.heading.nextYear", startYear, endYear))
+
+    @p(id = Some("sign-up-question-desc-1")) {
+        @messages("signUp.taxYearQuestion.desc1.nextYear", startYear)
+    }
+}

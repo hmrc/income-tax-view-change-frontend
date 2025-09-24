@@ -41,19 +41,6 @@ case object FullyCollected extends CodedOutStatusType {
 
 object CodedOutStatusType {
 
-  @deprecated
-  def fromDocumentText(documentText: String): Option[CodedOutStatusType] = {
-    documentText match {
-      case CODING_OUT_CLASS2_NICS.name =>
-        Some(Nics2)
-      case CODING_OUT_ACCEPTED.name =>
-        Some(Accepted)
-      case CODING_OUT_CANCELLED.name =>
-        Some(Cancelled)
-      case _ => None
-    }
-  }
-
   def fromCodedOutStatusAndDocumentText(documentText: Option[String], codedOutStatus: Option[String]): Option[CodedOutStatusType] = {
     (documentText, codedOutStatus) match {
       case (Some(CODING_OUT_CLASS2_NICS.name),     _)                                              => Some(Nics2)

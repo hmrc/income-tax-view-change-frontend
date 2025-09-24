@@ -46,6 +46,7 @@ case class ChargeItem (
                         dueDateForFinancialDetail: Option[LocalDate] = None,
                         paymentLotItem: Option[String] = None,
                         paymentLot: Option[String] = None,
+                        creationDate: Option[LocalDate] = None,
                         chargeReference: Option[String]
                       ) extends TransactionItem {
 
@@ -92,10 +93,7 @@ case class ChargeItem (
 
   def getAmountCodedOut: BigDecimal = amountCodedOut.getOrElse(throw MissingFieldException("documentAmountCodedOut"))
 
-  def isPaid: Boolean = outstandingAmount match {
-    case amount if amount == 0 => true
-    case _ => false
-  }
+  def isPaid: Boolean = outstandingAmount == 0
 
   val isAccruingInterest: Boolean = accruingInterestAmount match {
     case Some(amount) if amount <= 0 => false
@@ -103,9 +101,9 @@ case class ChargeItem (
     case _ => false
   }
 
-  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isAccruingInterest) || (interestRemainingToPay > 0 && isPaid)}
+  def isOnlyInterest: Boolean = interestRemainingToPay > 0 && isPaid
 
-  def remainingToPayOnCharge(implicit dateServiceInterface: DateServiceInterface): BigDecimal =
+  def remainingToPayOnCharge: BigDecimal =
     if (isOnlyInterest) interestRemainingToPay
     else remainingToPay
 
@@ -115,6 +113,11 @@ case class ChargeItem (
 
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Accepted, Cancelled, FullyCollected)
+    codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
+  }
+
+  def isCodingOutAcceptedOrFullyCollected: Boolean = {
+    val codingOutSubTypes = Seq(Accepted, FullyCollected)
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
@@ -147,12 +150,12 @@ case class ChargeItem (
       case (PoaTwoDebit, None           ) => true
       case (LateSubmissionPenalty,     _) => true
       case (FirstLatePaymentPenalty,   _) => true
+      case (ITSAReturnAmendment,       _) => true
       case _                              => false
     }
 
-    validCharge && !isAccruingInterest
+    validCharge && !isOnlyInterest
   }
-
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
@@ -164,7 +167,11 @@ case class ChargeItem (
   val isPoaReconciliationDebit: Boolean = transactionType == PoaOneReconciliationDebit ||
     transactionType == PoaTwoReconciliationDebit
 
+  val isPoaDebit: Boolean = transactionType == PoaOneDebit || transactionType == PoaTwoDebit
+
   val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
+
+  val isBalancingCharge: Boolean = transactionType == BalancingCharge
 
   val isPenalty: Boolean = List(LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty).contains(this.transactionType)
 
@@ -227,7 +234,7 @@ object ChargeItem {
   )
 
   private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
-    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
+    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, ITSAReturnAmendment, MfaDebitCharge)
 
   val isAKnownTypeOfCharge: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.codedOutStatus) match {

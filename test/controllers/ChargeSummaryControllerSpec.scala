@@ -77,10 +77,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First payment on account"
-                document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -92,11 +93,46 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Second payment on account"
-                document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
               }
+              "provided with an id associated to a POA1 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid()) {
+                enable(YourSelfAssessmentCharges, ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000125)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "First payment on account"
+                document.select("h1").eq(1).text() shouldBe "You owe: £0.00"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
+              }
+              "provided with an id associated to a POA2 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid()) {
+                enable(YourSelfAssessmentCharges, ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000126)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Second payment on account"
+                document.select("h1").eq(1).text() shouldBe "You owe: £0.00"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
+              }
+
+
+
+
+
+
               "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -107,7 +143,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First payment on account"
-                document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account"
@@ -115,6 +151,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -126,7 +163,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Second payment on account"
-                document.select("h1").eq(1).text() shouldBe "Overdue charge: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account"
@@ -134,6 +171,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -146,10 +184,12 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Balancing payment"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £10.33"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £10.33"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
+                document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2018 to 2019 tax bill."
+
               }
               "provided with an id associated to a Balancing payment with accruing interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -162,7 +202,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £100.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £100.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your balancing payment"
@@ -170,6 +210,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
+                document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2018 to 2019 tax bill."
               }
 
               "provided with an id associated to a charge for Class 2 National Insurance" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
@@ -183,7 +224,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Class 2 National Insurance")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £12.34"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £12.34"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 25 August 2021"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
 
@@ -200,7 +241,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment collected through PAYE tax code")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount due to be collected: £12.34"
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount due to be collected: £12.34"
                 Option(document.getElementById("due-date-text")) shouldBe None
                 document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2019 to 2020 tax year. It will be collected in the 2021 to 2022 tax year through your PAYE tax code."
                 document.getElementById("check-paye-para").text() shouldBe "Check if your PAYE tax code has changed for the 2021 to 2022 tax year."
@@ -209,6 +250,25 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
                 document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. 29 March 2018 £2,500.00"
                 document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. 30 March 2019 £2,000.00"
+              }
+
+              "provided with an id associated to an ITSA Return Amendment charges" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment) {
+                enable(YourSelfAssessmentCharges, ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Balancing payment: extra amount due to amended return"
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementById("itsa-return-amendment-p1").text() shouldBe "You owe this extra tax because of a change you made to your return."
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
+                document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning This charge will have a daily interest until it is paid. The interest is backdated to the original due date."
+                document.getElementById("charge-history-heading").text() shouldBe "Balancing payment: extra amount due to amended return history"
               }
 
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
@@ -222,13 +282,13 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Late submission penalty"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Overdue charge: £10.33"
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementById("LSP-content-1").text() shouldBe "You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return."
                 document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
                 document.getElementById("LSP-content-3").text() shouldBe "To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time."
                 document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal."
-                document.getElementsByClass("govuk-heading-l").first().text() shouldBe "Interest on your late submission penalty"
+                document.getElementsByClass("govuk-heading-m").get(1).text() shouldBe "Interest on your late submission penalty"
                 document.getElementById("charge-history-heading").text() shouldBe "Late submission penalty history"
               }
 
@@ -244,7 +304,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First late payment penalty"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "Overdue charge: £200.33"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £200.33"
                 document.getElementById("due-date-text").text() shouldBe "Due 29 March 2020"
                 document.getElementById("first-payment-penalty-p1").text() shouldBe "You have received this penalty because you are late paying your Income Tax."
                 document.getElementById("charge-history-heading").text() shouldBe "First late payment penalty history"
@@ -499,7 +559,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 document.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
                 document.getElementById("rar-charge-link").attr("href") shouldBe
-                  RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
+                  RepaymentHistoryUtils.getChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
                 document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
                 document.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
               }
@@ -518,7 +578,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
                 document.getElementById("rar-charge-link").attr("href") shouldBe
-                  RepaymentHistoryUtils.getPoaChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
+                  RepaymentHistoryUtils.getChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
                 document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
                 document.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
               }

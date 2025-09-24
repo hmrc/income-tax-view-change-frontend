@@ -16,7 +16,7 @@
 
 package viewUtils
 
-import play.api.i18n.{Lang, Messages}
+import play.api.i18n.Messages
 
 object ExternalUrlHelper {
 
@@ -76,4 +76,6 @@ object ExternalUrlHelper {
       case "cy" => "https://www.access.service.gov.uk/login/signin/creds?lang=cy"
       case _ => "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
     }
+
+  val saUnderstandYourTaxBillUrl = "https://www.gov.uk/understand-self-assessment-bill/payments-on-account"
 }

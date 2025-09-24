@@ -260,6 +260,7 @@ tax-year-summary.payments.lpi.balancingCharge.text                 = Late paymen
 tax-year-summary.payments.firstLatePaymentPenalty.text             = First late payment penalty
 tax-year-summary.payments.secondLatePaymentPenalty.text            = Second late payment penalty
 tax-year-summary.payments.lateSubmissionPenalty.text               = Late submission penalty
+tax-year-summary.payments.itsaReturnAmendment.text                 = Balancing payment: extra amount due to amended return
 tax-year-summary.payments.cancelledPayeSelfAssessment.text         = Cancelled PAYE Self Assessment (through your PAYE tax code)
 tax-year-summary.payments.hmrcAdjustment.text                      = HMRC adjustment
 tax-year-summary.payments.overdue                                  = Overdue
@@ -272,6 +273,7 @@ tax-year-summary.payments.lpi.reviewAndReconcilePoa2.text          = Interest fo
 tax-year-summary.payments.lpi.firstLatePaymentPenalty.text         = Late payment interest on first late payment penalty
 tax-year-summary.payments.lpi.secondLatePaymentPenalty.text        = Late payment interest on second late payment penalty
 tax-year-summary.payments.lpi.lateSubmissionPenalty.text           = Late payment interest on late submission penalty
+tax-year-summary.payments.lpi.itsaReturnAmendment.text             = Late payment interest on balancing payment: extra amount due to amended return
 tax-year-summary.section                                           = Section
 tax-year-summary.amount                                            = Amount
 tax-year-summary.payments.class2Nic.text                           = Class 2 National Insurance
@@ -917,6 +919,7 @@ whatYouOwe.reviewAndReconcilePoa1.text                             = First payme
 whatYouOwe.reviewAndReconcilePoa2.text                             = Second payment on account: extra amount from your tax return
 whatYouOwe.lpi.reviewAndReconcilePoa1.text                         = Interest for first payment on account: extra amount
 whatYouOwe.lpi.reviewAndReconcilePoa2.text                         = Interest for second payment on account: extra amount
+whatYouOwe.lpi.itsaReturnAmendment.text                            = Late payment interest on balancing payment: extra amount due to amended return
 whatYouOwe.hmrcAdjustment.text                                     = HMRC adjustment
 whatYouOwe.lpi.paymentOnAccount1.text                              = Late payment interest on first payment on account
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on second payment on account
@@ -930,6 +933,7 @@ whatYouOwe.secondLatePaymentPenalty.text                           = Second late
 whatYouOwe.lpi.firstLatePaymentPenalty.text                        = Late payment interest on first late payment penalty
 whatYouOwe.lpi.secondLatePaymentPenalty.text                       = Late payment interest on second late payment penalty
 whatYouOwe.lpi.lateSubmissionPenalty.text                          = Late payment interest on late submission penalty
+whatYouOwe.itsaReturnAmendment.text                                = Balancing payment: extra amount due to amended return
 whatYouOwe.payments-due                                            = Payments Due
 whatYouOwe.over-due                                                = Overdue
 whatYouOwe.over-due.interest.line1                                 = Interest for late payment
@@ -1010,6 +1014,7 @@ selfAssessmentCharges.lpi.paymentOnAccount2.text                              = 
 selfAssessmentCharges.lateSubmissionPenalty.text                              = Late submission penalty
 selfAssessmentCharges.firstLatePaymentPenalty.text                            = First late payment penalty
 selfAssessmentCharges.secondLatePaymentPenalty.text                           = Second late payment penalty
+selfAssessmentCharges.itsaReturnAmendment.text                                = Balancing payment: extra amount due to amended return
 selfAssessmentCharges.lpi.lateSubmissionPenalty.text                          = Interest for late submission penalty
 selfAssessmentCharges.lpi.balancingCharge.text                                = Late payment interest on balancing payment
 selfAssessmentCharges.balancingCharge.text  							      = Balancing payment
@@ -1059,6 +1064,7 @@ selfAssessmentCharges.adjust-poa.paid-5                                       =
 selfAssessmentCharges.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
 selfAssessmentCharges.lpi.firstLatePaymentPenalty.text                        = Late payment interest on first late payment penalty
 selfAssessmentCharges.lpi.secondLatePaymentPenalty.text                       = Late payment interest on second late payment penalty
+selfAssessmentCharges.lpi.itsaReturnAmendment.text                            = Late payment interest on balancing payment: extra amount due to amended return
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
@@ -1077,8 +1083,10 @@ chargeSummary.poa2CodedOut.text                                    = Second paym
 chargeSummary.cancelledPayeSelfAssessment.text                     = Cancelled PAYE Self Assessment (through your PAYE tax code)
 chargeSummary.lateSubmissionPenalty.text                           = Late submission penalty
 chargeSummary.firstLatePaymentPenalty.text                         = First late payment penalty
+chargeSummary.itsaReturnAmendment.text                             = Balancing payment: extra amount due to amended return
 chargeSummary.lpi.lateSubmissionPenalty.text                       = Late payment interest on late submission penalty
 chargeSummary.lpi.firstLatePaymentPenalty.text                     = Late payment interest on first late payment penalty
+chargeSummary.lpi.itsaReturnAmendment.text                         = Late payment interest on balancing payment: extra amount due to amended return
 chargeSummary.hmrcAdjustment.text                                  = HMRC adjustment
 chargeSummary.dueDate											   = Due date
 chargeSummary.paymentAmount   									   = Amount
@@ -1181,12 +1189,10 @@ chargeSummary.whatYouOwe.textTwo-agent							   = to check if they have any othe
 chargeSummary.whatYouOwe.linkText								   = what you owe
 chargeSummary.whatYouOwe.linkText-agent							   = what your client owes
 
-chargeSummary.selfAssessmentCharges.textOne							= View
-chargeSummary.selfAssessmentCharges.textTwo							= to check if you have any other payments due.
-chargeSummary.selfAssessmentCharges.textOne-agent					= View
-chargeSummary.selfAssessmentCharges.textTwo-agent					= to check if they have any other payments due.
-chargeSummary.selfAssessmentCharges.linkText						= your Self Assessment charges
-chargeSummary.selfAssessmentCharges.linkText-agent					= your client’s Self Assessment charges
+chargeSummary.selfAssessmentCharges.text							= to check if you have any other payments due.
+chargeSummary.selfAssessmentCharges.text-agent					    = to check if they have any other payments due.
+chargeSummary.selfAssessmentCharges.linkText						= View your Self Assessment charges
+chargeSummary.selfAssessmentCharges.linkText-agent					= View your client’s Self Assessment charges
 
 chargeSummary.chargeHistory.heading								        = History of this charge
 chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
@@ -1199,7 +1205,7 @@ chargeSummary.chargeHistory.description							        = Description
 chargeSummary.chargeHistory.amount								        = Amount
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = HMRC created your first payment on account
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = HMRC created your second payment on account
-chargeSummary.chargeHistory.created.balancingCharge.text		        = Balancing payment created
+chargeSummary.chargeHistory.created.balancingCharge.text		        = HMRC created your balancing payment
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
 chargeSummary.chargeHistory.created.codingOut.text                      = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
@@ -1209,6 +1215,7 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC c
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
+chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = HMRC created your balancing payment
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = First payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Second payment on account reduced by taxpayer request
@@ -1234,7 +1241,8 @@ chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text = HMRC creat
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text = HMRC created this charge
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	    = Late payment interest on balancing payment created
 chargeSummary.lpi.chargeHistory.created.firstLatePaymentPenalty.text = HMRC created your late payment interest on first late payment penalty
-chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text = HMRC created your late payment interest on late submission penalty
+chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text  = HMRC created your late payment interest on late submission penalty
+chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text    = Late payment interest on balancing payment created
 
 chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
 chargeSummary.lpi.balancingCharge.textOne                          = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
@@ -1315,6 +1323,11 @@ paymentHistory.repaymentInterest                                = Credit from re
 paymentHistory.POA1RR-credit                                    = First payment on account: credit from your tax return
 paymentHistory.POA2RR-credit                                    = Second payment on account: credit from your tax return
 paymentHistory.activity                                         = {0} activity
+
+paymentHistory.POA1                                             = First payment on account collected through your PAYE tax code
+paymentHistory.POA2                                             = Second payment on account collected through your PAYE tax code
+paymentHistory.BCD                                              = Balancing payment collected through PAYE tax code
+
 paymentHistory.taxYear                                          = {0} to {1} tax year
 
 paymentsHistory.CardRef                                         = Payment made by debit card ref:
@@ -1329,6 +1342,9 @@ paymentHistory.unknown                                          = Unknown
 paymentHistory.check-refund-1                                   = You can
 paymentHistory.check-refund-2                                   = check the progress of a refund request
 paymentHistory.check-refund-3                                   = you’ve made at any time.
+
+paymentHistory.cell.taxYear                                     = {0} to {1}
+paymentHistory.tableHead.taxYear                                = Tax year
 
 ## Payment Allocation ##
 paymentAllocation.heading                                       = Payment you made to HMRC
@@ -2649,7 +2665,7 @@ optout.checkAnswers.cancel              = Cancel
 #opt out with submitted updates check answers
 optout.updates.checkAnswers.heading     = Confirm and opt out for the {0} to {1} tax year
 optout.updates.checkAnswers.p1          = If you opt out, you would no longer need software compatible with Making Tax Digital for Income Tax.
-optout.updates.checkAnswers.inset       = You have <b>2 quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.updates.checkAnswers.inset       = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed
@@ -2676,7 +2692,9 @@ optout.confirmedOptOut.submitTax.confirmed.p1                    = Now you have 
 optout.confirmedOptOut.submitTax.confirmed.p1.link               = filed your Self Assessment tax return
 
 optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are still using Making Tax Digital for Income Tax, you will need
-optout.confirmedOptOut.submitTax.confirmed.p2.link               = compatible software
+optout.confirmedOptOut.submitTax.confirmed.p2.link.a             = compatible software
+optout.confirmedOptOut.submitTax.confirmed.p2.link.b             = .
+optout.confirmedOptOut.submitTax.confirmed.p2.link.c             =
 
 optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = As you are opted out, you can find out here how to
 optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = file your Self Assessment tax return
@@ -2721,7 +2739,7 @@ optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = 
 optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
 
 optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Your reporting obligations in the future
-optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = You could be required to use Making Tax Digital for Income Tax again in the future if:
+optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = You are opted out from next tax year onwards, but you could be required to use Making Tax Digital for Income Tax again in the future if:
 optout.confirmedOptOut.scenario3.reporting.obligations.bullet1                = HMRC lowers the income threshold for it
 optout.confirmedOptOut.scenario3.reporting.obligations.bullet2                = you report an increase in your qualifying income in a tax return
 optout.confirmedOptOut.scenario3.reporting.obligations.inset                  = For example, if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold in the 2024 to 2025 tax year, you would have to use Making Tax Digital for Income Tax from 6 April 2026.
@@ -2813,6 +2831,13 @@ optout.taxYearQuestion.desc1.nextYear.multiYear                        = From 6 
 optout.taxYearQuestion.desc2.nextYear.multiYear                        = You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
 optout.taxYearQuestion.desc3.nextYear.multiYear                        = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = Do you want to opt out from the next tax year?
+
+optout.taxYearQuestion.heading.currentYear.multiYearCYFollowedByAnnual                   = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
+optout.taxYearQuestion.title.currentYear.multiYearCYFollowedByAnnual                     = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
+optout.taxYearQuestion.desc1.currentYear.multiYearCYFollowedByAnnual                     = From 6 April {0}, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.desc2.currentYear.multiYearCYFollowedByAnnual                     = You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
+optout.taxYearQuestion.desc3.currentYear.multiYearCYFollowedByAnnual                     = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual             = Do you want to opt out for the {0} to {1} tax year?
 
 ## opt out single year - followed by mandated
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
@@ -3193,6 +3218,40 @@ reporting.frequency.table.mandated.r17                              = Required
 reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
 reporting.frequency.table.annual.r17                                = Opted out
 
+#changing reporting obligations section - R17
+reporting.obligations.changing.h2                                   = Changing your reporting obligations
+
+reporting.obligations.changing.signUp.currentYear.onwards           = Sign up from the current tax year
+reporting.obligations.changing.signUp.currentYear.single            = Sign up to the current tax year
+reporting.obligations.changing.desc1.signUp.currentYear.onwards     = You can start using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc1.signUp.currentYear.single      = You can start using Making Tax Digital for Income Tax for the {0} to {1} tax year.
+reporting.obligations.changing.desc2.signUp.currentYear             = Start now
+reporting.obligations.changing.desc2.signUp.currentYear.withDate    = Start from 6 April {0}
+reporting.obligations.changing.desc3.signUp.currentYear             = If you sign up to the current tax year after
+reporting.obligations.changing.desc4.signUp.currentYear             = 7 August {0},
+reporting.obligations.changing.desc5.signUp.currentYear             = you would have at least one quarterly update overdue.
+reporting.obligations.changing.signUp.nextYear                      = Sign up from the next tax year
+reporting.obligations.changing.desc1.signUp.nextYear                = You can choose to use Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc2.signUp.nextYear                = Start from 6 April {0}
+reporting.obligations.changing.signUp.link.text                     = Sign up
+
+reporting.obligations.changing.optOut.previousYear.onwards          = Opt out from the last tax year
+reporting.obligations.changing.optOut.previousYear.single           = Opt out of the last tax year
+reporting.obligations.changing.desc1.optOut.previousYear.onwards    = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year.
+reporting.obligations.changing.desc1.optOut.previousYear.single     = You can stop using Making Tax Digital for Income Tax for the {0} to {1} tax year.
+reporting.obligations.changing.desc2.optOut.previousYear            = Stop now
+reporting.obligations.changing.optOut.currentYear.onwards           = Opt out from the current tax year
+reporting.obligations.changing.optOut.currentYear.single            = Opt out for the current tax year
+reporting.obligations.changing.desc1.optOut.currentYear.onwards     = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc1.optOut.currentYear.single      = You can stop using Making Tax Digital for Income Tax for the {0} to {1} tax year.
+reporting.obligations.changing.desc2.optOut.currentYear             = Stop now
+reporting.obligations.changing.desc2.optOut.currentYear.withDate    = Stop from 6 April {0}
+reporting.obligations.changing.optOut.nextYear                      = Opt out from the next tax year
+reporting.obligations.changing.desc1.optOut.nextYear                = You can stop using Making Tax Digital for Income Tax from the {0} to {1} tax year onwards.
+reporting.obligations.changing.desc2.optOut.nextYear                = Stop from 6 April {0}
+reporting.obligations.changing.optOut.link.text                     = Opt out
+
+#ceased business warning message
 reporting.frequency.ceasedBusiness.warning.text.1                   = There are currently no businesses on this account. You can add a sole trader or property business on the
 reporting.frequency.ceasedBusiness.warning.link                     = your businesses
 reporting.frequency.ceasedBusiness.warning.text.2                   = page.
@@ -3225,7 +3284,8 @@ reporting.frequency.latency.details.section.text.para3.text.2.updateR17       = 
 
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} to {1} tax year
-yourSelfAssessmentChargeSummary.overDueCharge                       = Overdue charge:
+yourSelfAssessmentChargeSummary.overDueCharge                       = You owe:
+yourSelfAssessmentChargeSummary.youOwe                              = You owe:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
@@ -3257,10 +3317,10 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = 250,000 / 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0.0725 = 49.66
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Income Tax
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Class 4 National Insurance contributions
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = ‘Payments on account’ are two advance payments made towards your next tax bill.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = If you make an amendment to the tax return and the tax bill changes, then each payment on account will be updated to half of the new total.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help with understanding your Self Assessment tax bill
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
@@ -3277,6 +3337,7 @@ yourSelfAssessmentChargeSummary.balancingCharge.text.heading                    
 yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = First payment on account
 yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                      = Second payment on account
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading                  = Late submission penalty
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.text.heading                    = Balancing payment: extra amount due to amended return
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Class 2 National Insurance
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
@@ -3287,15 +3348,19 @@ yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading    
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount2.text.heading        = Second payment on account history
 yourSelfAssessmentChargeSummary.chargeHistory.lateSubmissionPenalty.text.heading    = Late submission penalty history
 yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.heading  = First late payment penalty history
+yourSelfAssessmentChargeSummary.chargeHistory.itsaReturnAmendment.text.heading      = Balancing payment: extra amount due to amended return history
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
 
-yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.caption                = This balancing payment goes towards your {0} to {1} tax bill.
-
+yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = This balancing payment goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = This payment on account goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p                           = You have received this penalty because you are late paying your Income Tax.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                        = View how your penalty was calculated.
+
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = You owe this extra tax because of a change you made to your return.
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = This charge will have a daily interest until it is paid. The interest is backdated to the original due date.
 
 income-sources.check-details-reporting-frequency.heading                        = Sole trader
 income-sources.check-details-reporting-frequency-uk.heading                     = UK property
@@ -3360,3 +3425,20 @@ triggered-migration.check-active-businesses-confirm.yes.hint         = If the pr
 triggered-migration.check-active-businesses-confirm.no               = No
 triggered-migration.check-active-businesses-confirm.no.hint          = Select this option if you have not checked the previous page
 triggered-migration.check-active-businesses-confirm.error.required   = Select yes if you’ve checked that HMRC records only list your active businesses
+
+# Triggered migration - Check complete page
+triggered-migration.checkComplete.greenBoxHeading.1                                     = Check complete
+triggered-migration.checkComplete.greenBoxHeading.2                                     = You have confirmed that HMRC records only list your active businesses
+triggered-migration.checkComplete.whatNext.heading                                      = What to do next
+triggered-migration.checkComplete.whatNext.p1                                           = You now need to provide HMRC a quarterly update for each of your active sole trader and property income sources.
+triggered-migration.checkComplete.whatNext.p2                                           = To do this, you need to:
+triggered-migration.checkComplete.whatNext.ul.li1                                       = get software that works with Making Tax Digital for Income Tax
+triggered-migration.checkComplete.whatNext.ul.li2                                       = find out what is due and submit your late update(s)
+triggered-migration.checkComplete.gettingSoftware.heading                               = Getting software
+triggered-migration.checkComplete.gettingSoftware.p1                                    = To submit your quarterly updates, you or your agent must have software compatible with Making Tax Digital for Income Tax. There are both paid and free options to choose from.
+triggered-migration.checkComplete.gettingSoftware.linkText                              = Find out about compatible software
+triggered-migration.checkComplete.submitUpdates.heading                                 = Submitting your update(s)
+triggered-migration.checkComplete.submitUpdates.p1                                      = In your account you can see which quarterly updates are due and what information you need to provide. Then you must use your compatible software to:
+triggered-migration.checkComplete.submitUpdates.ul.li1                                  = create a digital record of your property and sole trader income and expenses
+triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send your quarterly update(s) to HMRC
+triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest updates and deadlines

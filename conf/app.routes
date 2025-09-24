@@ -25,85 +25,85 @@ GET         /reporting-frequency                                          contro
 GET         /agents/reporting-frequency                                   controllers.ReportingFrequencyPageController.show(isAgent:Boolean = true)
 
 #OptOut
-GET         /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.show(isAgent:Boolean = false)
-GET         /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.show(isAgent:Boolean = true)
-POST        /optout/review-confirm-taxyear                                controllers.optOut.ConfirmOptOutController.submit(isAgent: Boolean = false)
-POST        /agents/optout/review-confirm-taxyear                         controllers.optOut.ConfirmOptOutController.submit(isAgent: Boolean = true)
+GET         /optout/review-confirm-taxyear                                controllers.optOut.oldJourney.ConfirmOptOutController.show(isAgent:Boolean = false)
+GET         /agents/optout/review-confirm-taxyear                         controllers.optOut.oldJourney.ConfirmOptOutController.show(isAgent:Boolean = true)
+POST        /optout/review-confirm-taxyear                                controllers.optOut.oldJourney.ConfirmOptOutController.submit(isAgent: Boolean = false)
+POST        /agents/optout/review-confirm-taxyear                         controllers.optOut.oldJourney.ConfirmOptOutController.submit(isAgent: Boolean = true)
 
-GET         /optout/error                                                 controllers.optOut.OptOutErrorController.show(isAgent: Boolean = false)
-GET         /agents/optout/error                                          controllers.optOut.OptOutErrorController.show(isAgent: Boolean = true)
+GET         /optout/error                                                 controllers.optOut.oldJourney.OptOutErrorController.show(isAgent: Boolean = false)
+GET         /agents/optout/error                                          controllers.optOut.oldJourney.OptOutErrorController.show(isAgent: Boolean = true)
 
 GET         /optout/confirmed                                             controllers.optOut.ConfirmedOptOutController.show(isAgent: Boolean = false)
 GET         /agents/optout/confirmed                                      controllers.optOut.ConfirmedOptOutController.show(isAgent: Boolean = true)
 
-GET         /optout/single-taxyear-warning                                controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = false)
-GET         /agents/optout/single-taxyear-warning                         controllers.optOut.SingleYearOptOutWarningController.show(isAgent: Boolean = true)
-POST        /optout/single-taxyear-warning                                controllers.optOut.SingleYearOptOutWarningController.submit(isAgent: Boolean = false)
-POST        /agents/optout/single-taxyear-warning                         controllers.optOut.SingleYearOptOutWarningController.submit(isAgent: Boolean = true)
+GET         /optout/single-taxyear-warning                                controllers.optOut.oldJourney.SingleYearOptOutWarningController.show(isAgent: Boolean = false)
+GET         /agents/optout/single-taxyear-warning                         controllers.optOut.oldJourney.SingleYearOptOutWarningController.show(isAgent: Boolean = true)
+POST        /optout/single-taxyear-warning                                controllers.optOut.oldJourney.SingleYearOptOutWarningController.submit(isAgent: Boolean = false)
+POST        /agents/optout/single-taxyear-warning                         controllers.optOut.oldJourney.SingleYearOptOutWarningController.submit(isAgent: Boolean = true)
 
-GET         /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.show(isAgent: Boolean = false)
-GET         /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.show(isAgent: Boolean = true)
-POST        /optout/choose-taxyear                                        controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = false)
-POST        /agents/optout/choose-taxyear                                 controllers.optOut.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
+GET         /optout/choose-taxyear                                        controllers.optOut.oldJourney.OptOutChooseTaxYearController.show(isAgent: Boolean = false)
+GET         /agents/optout/choose-taxyear                                 controllers.optOut.oldJourney.OptOutChooseTaxYearController.show(isAgent: Boolean = true)
+POST        /optout/choose-taxyear                                        controllers.optOut.oldJourney.OptOutChooseTaxYearController.submit(isAgent: Boolean = false)
+POST        /agents/optout/choose-taxyear                                 controllers.optOut.oldJourney.OptOutChooseTaxYearController.submit(isAgent: Boolean = true)
 
-GET         /optout                                                       controllers.optOutNew.OptOutTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-GET         /agents/optout                                                controllers.optOutNew.OptOutTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-POST        /optout                                                       controllers.optOutNew.OptOutTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-POST        /agents/optout                                                controllers.optOutNew.OptOutTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-
-GET         /sign-up                                                      controllers.optIn.SignUpTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-GET         /agents/sign-up                                               controllers.optIn.SignUpTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-POST        /sign-up                                                      controllers.optIn.SignUpTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-POST        /agents/sign-up                                               controllers.optIn.SignUpTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-
-GET         /optout/cancelled                                             controllers.optOut.OptOutCancelledController.show()
-GET         /agents/optout/cancelled                                      controllers.optOut.OptOutCancelledController.showAgent()
+GET         /optout/cancelled                                             controllers.optOut.oldJourney.OptOutCancelledController.show()
+GET         /agents/optout/cancelled                                      controllers.optOut.oldJourney.OptOutCancelledController.showAgent()
 
 #OptOut new
-GET         /opt-out/check-your-answers/:taxYear                          controllers.optOutNew.ConfirmOptOutUpdateController.show(isAgent: Boolean = false, taxYear: String)
-GET         /agents/opt-out/check-your-answers/:taxYear                   controllers.optOutNew.ConfirmOptOutUpdateController.show(isAgent: Boolean = true, taxYear: String)
-POST        /opt-out/check-your-answers/:taxYear                          controllers.optOutNew.ConfirmOptOutUpdateController.submit(isAgent: Boolean = false, taxYear: String)
-POST        /agents/opt-out/check-your-answers/:taxYear                   controllers.optOutNew.ConfirmOptOutUpdateController.submit(isAgent: Boolean = true, taxYear: String)
+GET         /optout                                                       controllers.optOut.newJourney.OptOutTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+GET         /agents/optout                                                controllers.optOut.newJourney.OptOutTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+POST        /optout                                                       controllers.optOut.newJourney.OptOutTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+POST        /agents/optout                                                controllers.optOut.newJourney.OptOutTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+
+GET         /optout/check-your-answers/:taxYear                           controllers.optOut.newJourney.ConfirmOptOutUpdateController.show(isAgent: Boolean = false, taxYear: String)
+GET         /agents/optout/check-your-answers/:taxYear                    controllers.optOut.newJourney.ConfirmOptOutUpdateController.show(isAgent: Boolean = true, taxYear: String)
+POST        /optout/check-your-answers/:taxYear                           controllers.optOut.newJourney.ConfirmOptOutUpdateController.submit(isAgent: Boolean = false, taxYear: String)
+POST        /agents/optout/check-your-answers/:taxYear                    controllers.optOut.newJourney.ConfirmOptOutUpdateController.submit(isAgent: Boolean = true, taxYear: String)
 
 # Opt In
-GET         /opt-in/start                                                 controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/start                                          controllers.optIn.BeforeYouStartController.show(isAgent: Boolean = true)
+GET         /opt-in/start                                                 controllers.optIn.oldJourney.BeforeYouStartController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/start                                          controllers.optIn.oldJourney.BeforeYouStartController.show(isAgent: Boolean = true)
 
-GET         /sign-up/start                                                controllers.optIn.SignUpStartController.show(isAgent: Boolean = false)
-GET         /agents/sign-up/start                                         controllers.optIn.SignUpStartController.show(isAgent: Boolean = true)
+GET         /opt-in/single-taxyear-warning                                controllers.optIn.oldJourney.SingleTaxYearOptInWarningController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/single-taxyear-warning                         controllers.optIn.oldJourney.SingleTaxYearOptInWarningController.show(isAgent: Boolean = true)
+POST        /opt-in/single-taxyear-warning                                controllers.optIn.oldJourney.SingleTaxYearOptInWarningController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/single-taxyear-warning                         controllers.optIn.oldJourney.SingleTaxYearOptInWarningController.submit(isAgent: Boolean = true)
 
-GET         /opt-in/single-taxyear-warning                                controllers.optIn.SingleTaxYearOptInWarningController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/single-taxyear-warning                         controllers.optIn.SingleTaxYearOptInWarningController.show(isAgent: Boolean = true)
-POST        /opt-in/single-taxyear-warning                                controllers.optIn.SingleTaxYearOptInWarningController.submit(isAgent: Boolean = false)
-POST        /agents/opt-in/single-taxyear-warning                         controllers.optIn.SingleTaxYearOptInWarningController.submit(isAgent: Boolean = true)
+GET         /opt-in/choose-tax-year                                       controllers.optIn.oldJourney.ChooseYearController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/choose-tax-year                                controllers.optIn.oldJourney.ChooseYearController.show(isAgent: Boolean = true)
+POST        /opt-in/choose-tax-year                                       controllers.optIn.oldJourney.ChooseYearController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/choose-tax-year                                controllers.optIn.oldJourney.ChooseYearController.submit(isAgent: Boolean = true)
 
-GET         /opt-in/choose-tax-year                                         controllers.optIn.ChooseYearController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/choose-tax-year                                  controllers.optIn.ChooseYearController.show(isAgent: Boolean = true)
-POST        /opt-in/choose-tax-year                                         controllers.optIn.ChooseYearController.submit(isAgent: Boolean = false)
-POST        /agents/opt-in/choose-tax-year                                  controllers.optIn.ChooseYearController.submit(isAgent: Boolean = true)
+GET         /opt-in/check-your-answers                                    controllers.optIn.oldJourney.CheckYourAnswersController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/check-your-answers                             controllers.optIn.oldJourney.CheckYourAnswersController.show(isAgent: Boolean = true)
+POST        /opt-in/check-your-answers                                    controllers.optIn.oldJourney.CheckYourAnswersController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/check-your-answers                             controllers.optIn.oldJourney.CheckYourAnswersController.submit(isAgent: Boolean = true)
 
-GET         /opt-in/check-your-answers                                         controllers.optIn.CheckYourAnswersController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/check-your-answers                                  controllers.optIn.CheckYourAnswersController.show(isAgent: Boolean = true)
-POST        /opt-in/check-your-answers                                         controllers.optIn.CheckYourAnswersController.submit(isAgent: Boolean = false)
-POST        /agents/opt-in/check-your-answers                                  controllers.optIn.CheckYourAnswersController.submit(isAgent: Boolean = true)
+GET         /opt-in/completed                                             controllers.optIn.oldJourney.OptInCompletedController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/completed                                      controllers.optIn.oldJourney.OptInCompletedController.show(isAgent: Boolean = true)
 
-GET         /opt-in/completed                                             controllers.optIn.OptInCompletedController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/completed                                      controllers.optIn.OptInCompletedController.show(isAgent: Boolean = true)
+GET         /opt-in/error                                                 controllers.optIn.oldJourney.OptInErrorController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/error                                          controllers.optIn.oldJourney.OptInErrorController.show(isAgent: Boolean = true)
 
-GET         /sign-up/completed                                            controllers.optIn.SignUpCompletedController.show(isAgent: Boolean = false)
-GET         /agents/sign-up/completed                                     controllers.optIn.SignUpCompletedController.show(isAgent: Boolean = true)
+GET         /opt-in/confirm-tax-year                                      controllers.optIn.oldJourney.ConfirmTaxYearController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/confirm-tax-year                               controllers.optIn.oldJourney.ConfirmTaxYearController.show(isAgent: Boolean = true)
+POST        /opt-in/confirm-tax-year                                      controllers.optIn.oldJourney.ConfirmTaxYearController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/confirm-tax-year                               controllers.optIn.oldJourney.ConfirmTaxYearController.submit(isAgent: Boolean = true)
 
+GET         /opt-in/cancelled                                             controllers.optIn.oldJourney.OptInCancelledController.show()
+GET         /agents/opt-in/cancelled                                      controllers.optIn.oldJourney.OptInCancelledController.showAgent()
 
-GET         /opt-in/error                                                 controllers.optIn.OptInErrorController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/error                                          controllers.optIn.OptInErrorController.show(isAgent: Boolean = true)
+# Sign Up
+GET         /sign-up/start                                                controllers.optIn.newJourney.SignUpStartController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+GET         /agents/sign-up/start                                         controllers.optIn.newJourney.SignUpStartController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
 
-GET         /opt-in/confirm-tax-year                                      controllers.optIn.ConfirmTaxYearController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/confirm-tax-year                               controllers.optIn.ConfirmTaxYearController.show(isAgent: Boolean = true)
-POST        /opt-in/confirm-tax-year                                      controllers.optIn.ConfirmTaxYearController.submit(isAgent: Boolean = false)
-POST        /agents/opt-in/confirm-tax-year                               controllers.optIn.ConfirmTaxYearController.submit(isAgent: Boolean = true)
+GET         /sign-up                                                      controllers.optIn.newJourney.SignUpTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+GET         /agents/sign-up                                               controllers.optIn.newJourney.SignUpTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+POST        /sign-up                                                      controllers.optIn.newJourney.SignUpTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+POST        /agents/sign-up                                               controllers.optIn.newJourney.SignUpTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
 
-GET         /opt-in/cancelled                                             controllers.optIn.OptInCancelledController.show()
-GET         /agents/opt-in/cancelled                                      controllers.optIn.OptInCancelledController.showAgent()
+GET         /sign-up/completed                                            controllers.optIn.newJourney.SignUpCompletedController.show(isAgent: Boolean = false)
+GET         /agents/sign-up/completed                                     controllers.optIn.newJourney.SignUpCompletedController.show(isAgent: Boolean = true)
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
@@ -150,6 +150,8 @@ GET         /agents/tax-years/:taxYear/charge                             contro
 #Triggered Migration
 GET         /check-your-active-businesses/hmrc-record                     controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = false)
 GET         /agents/check-your-active-businesses/hmrc-record              controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = true)
+GET         /check-your-active-businesses/complete                        controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = false)
+GET         /agents/check-your-active-businesses/complete                 controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = true)
 
 # Triggered migration – confirm active businesses
 GET   /check-your-active-businesses/confirm          controllers.triggeredMigration.CheckActiveBusinessesConfirmController.show(isAgent: Boolean = false)
