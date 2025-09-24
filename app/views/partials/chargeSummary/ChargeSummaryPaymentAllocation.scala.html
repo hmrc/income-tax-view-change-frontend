@@ -53,11 +53,13 @@
                 val matchingPayment = payment.clearingId
 
                 if(matchingPayment.isDefined) {
+
                     val link = if(isAgent) {
                         controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
                     } else {
                         controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, origin).url
                     }
+
                     val linkText = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
                                 messages(allocation.getPaymentAllocationTextInChargeSummary, codingOutFrom, codingOutTo)
                     allocationLinkHTML(link, linkText)
