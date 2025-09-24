@@ -576,7 +576,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, Some(796), None, None, None),
                 documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                   documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
                 financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
@@ -593,7 +593,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
             status(result) shouldBe Status.OK
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£786.00")
+            document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£796.00")
           }
 
           "CreditsAndRefundsRepay FS is enabled and credit is not available" in new Setup {

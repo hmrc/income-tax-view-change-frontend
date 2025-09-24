@@ -550,7 +550,7 @@ object FinancialDetailsTestConstants {
     totalCreditAvailableForRepayment = Some(100.00),
     None,
     None,
-    None,
+    totalCredit = Some(200.00),
     None,
     None,
     None
@@ -918,7 +918,7 @@ object FinancialDetailsTestConstants {
   )
 
   val testValidFinancialDetailsModelWithITSAReturnAmendment: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
         transactionId = id1040000123,

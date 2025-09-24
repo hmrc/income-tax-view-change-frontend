@@ -22,11 +22,11 @@ import play.api.i18n.Messages
 case class PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges: List[FinancialDetailsResponseModel],
                                                       creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean,
                                                       isUserMigrated: Boolean = false) {
-  val availableCredit: Option[BigDecimal] =
+  val creditInAccount: Option[BigDecimal] =
     if (creditsRefundsRepayEnabled) {
       Some(unpaidCharges.collectFirst {
         case fdm: FinancialDetailsModel =>
-          fdm.balanceDetails.getAbsoluteAvailableCreditAmount.getOrElse(BigDecimal(0.00))
+          fdm.balanceDetails.getAbsoluteTotalCreditAmount.getOrElse(BigDecimal(0.00))
       }.getOrElse(BigDecimal(0.00)))
     } else None
 
