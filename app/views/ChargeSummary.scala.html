@@ -332,7 +332,9 @@
 }
 
 @formatProduct(product: Product) = @{product match {
-    case product: AdjustmentModel => formatAdjustmentModel(product)
+    case product: AdjustmentModel => if(viewModel.chargeHistoryEnabled) {
+        formatAdjustmentModel(product)
+    }
     case product: PaymentHistoryAllocations => if(!viewModel.latePaymentInterestCharge) {
         chargeSummaryPaymentAllocation(List(product), viewModel.payments, viewModel.chargeItem, viewModel.isAgent, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
     }
@@ -550,10 +552,11 @@
                         <td class="govuk-table__cell govuk-table__cell--numeric" id="rar-total-amount">@{charge.originalAmount.abs.toCurrency}</td>
                     </tr>
                 }
+            }
 
-                @for((date, product) <- viewModel.sortedChargeHistoriesAndPaymentAllocationsWithDates) {
-                    @formatProduct(product)
-                }}
+            @for((date, product) <- viewModel.sortedChargeHistoriesAndPaymentAllocationsWithDates) {
+            @formatProduct(product)
+                }
             </tbody>
         </table>
     }
