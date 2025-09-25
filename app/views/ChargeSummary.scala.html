@@ -323,23 +323,6 @@
     }
 }
 
-@formatAdjustmentModel(product: AdjustmentModel) = {
-    <tr>
-        <td class="govuk-table__cell">@{product.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking}</td>
-        <td class="govuk-table__cell">@{messages(s"chargeSummary.chargeHistory.${product.reasonCode}.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)}</td>
-        <td class="govuk-table__cell govuk-table__cell--numeric">@{product.amount.toCurrency}</td>
-    </tr>
-}
-
-@formatProduct(product: Product) = @{product match {
-    case product: AdjustmentModel => if(viewModel.chargeHistoryEnabled) {
-        formatAdjustmentModel(product)
-    }
-    case product: PaymentHistoryAllocations => if(!viewModel.latePaymentInterestCharge) {
-        chargeSummaryPaymentAllocation(List(product), viewModel.payments, viewModel.chargeItem, viewModel.isAgent, None, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
-    }
-}}
-
 @mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
     useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage) {
 
@@ -503,36 +486,6 @@
 
             <tbody class = "govuk-table__body">
             @if(viewModel.chargeHistoryEnabled){
-                @if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
-                    <tr>
-                        <td class="govuk-table__cell">@{
-                            getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
-                        }</td>
-                        <td class="govuk-table__cell">@{
-                            messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}")
-                        }
-                        </td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                            viewModel.adjustmentHistory.creationEvent.amount.toCurrency
-                        }</td>
-                    </tr>
-                }
-
-                @if(viewModel.isCodedOut) {
-                    <tr>
-                        <td class="govuk-table__cell">@{
-                            getCreationDate(viewModel.adjustmentHistory.creationEvent.adjustmentDate)
-                        }</td>
-                        <td class="govuk-table__cell">@{
-                            messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
-                        }
-                        </td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                            viewModel.adjustmentHistory.creationEvent.amount.toCurrency
-                        }</td>
-                    </tr>
-                }
-
                 @if(viewModel.latePaymentInterestCharge){
                     <tr>
                         <td class="govuk-table__cell">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort.toNonBreaking}</td>
@@ -554,9 +507,13 @@
                 }
             }
 
-            @for((date, product) <- viewModel.sortedChargeHistoriesAndPaymentAllocationsWithDates) {
-            @formatProduct(product)
-                }
+            @viewModel.sortedChargeHistoryTableEntries.map { chargeHistoryItem =>
+                <tr>
+                    <td class="govuk-table__cell">@{chargeHistoryItem.date.toLongDateShort.toNonBreaking}</td>
+                    <td class="govuk-table__cell">@{chargeHistoryItem.description}</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{chargeHistoryItem.amount.toCurrency}</td>
+                </tr>
+            }
             </tbody>
         </table>
     }
