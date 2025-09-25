@@ -129,6 +129,29 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
     }
 
+    "hasAccruingInterest" when {
+
+      "Is true if we have and accruing interest amount and an interestOutstanding amount for a POA1" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails.copy(accruingInterestAmount = Some(-1.00), interestOutstandingAmount = Some(10.00)),
+          financialDetails = List(poa1FinancialDetails))
+
+        chargeItem.hasAccruingInterest shouldBe true
+
+      }
+
+      "Is false if we have and accruing interest amount and an interestOutstanding amount of zero for a POA1" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails.copy(accruingInterestAmount = Some(0.00), interestOutstandingAmount = Some(0.00)),
+          financialDetails = List(poa1FinancialDetails))
+
+        chargeItem.hasAccruingInterest shouldBe false
+
+      }
+    }
+
     "getDueDate" when {
 
       "successfully gets due date" in {
