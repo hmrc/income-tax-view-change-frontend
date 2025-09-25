@@ -31,9 +31,6 @@ case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
                           ) {
 
   val refundInProgress: Boolean = firstPendingAmountRequested.isDefined || secondPendingAmountRequested.isDefined
-  val total: Option[BigDecimal] = totalCreditAvailableForRepayment.map{ total =>
-    total - firstPendingAmountRequested.getOrElse(0) - secondPendingAmountRequested.getOrElse(0)
-  }
 
   def getAbsoluteTotalCreditAmount: Option[BigDecimal] = {
     totalCredit.map (credit => math.abs(credit.toDouble))
