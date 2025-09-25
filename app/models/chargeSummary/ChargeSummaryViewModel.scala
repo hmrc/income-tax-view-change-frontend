@@ -137,10 +137,8 @@ case class ChargeSummaryViewModel(
       }.url
 
       val linkText =
-        if (chargeItem.transactionType == MfaDebitCharge)
-          messages("chargeSummary.paymentAllocations.mfaDebit")
-        else
-          messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
+        if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
+        else messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
 
       Html(
         s"""
@@ -156,7 +154,6 @@ case class ChargeSummaryViewModel(
   val sortedChargeHistoriesAndPaymentAllocationsWithDates: List[ChargeHistoryItem] = {
     chargeHistoriesWithDates ++ paymentAllocationsWithDates
   }.sortBy(_.date)
-
 }
 
 
