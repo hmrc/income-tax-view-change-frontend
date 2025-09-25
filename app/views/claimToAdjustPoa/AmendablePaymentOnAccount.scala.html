@@ -22,6 +22,8 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.claimToAdjustPoa.PaymentOnAccountViewModel
+@import viewUtils.ExternalUrlHelper
+
 
 @this(
         p: p,
@@ -128,10 +130,10 @@
     @p(id = Some("paragraph-1-text")) {
         @getMessage("p1")
         @link(
-            link = getMessage("class4NationalInsurance.link"),
+            link = ExternalUrlHelper.seNationalInsuranceRatesUrl,
             messageKey = getMessage("class4NationalInsurance.link.text"),
             rel = Some("noreferrer noopener"),
-            target = None
+            target = Some("_blank")
         )
         @getMessage("p2")
     }
