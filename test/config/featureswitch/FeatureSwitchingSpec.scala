@@ -60,7 +60,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     SelfServeTimeToPayR17,
     SubmitClaimToAdjustToNrs,
     TriggeredMigration,
-    PostFinalisationAmendments
+    PostFinalisationAmendmentsR18
   )
 
   "FeatureSwitchName" when {
