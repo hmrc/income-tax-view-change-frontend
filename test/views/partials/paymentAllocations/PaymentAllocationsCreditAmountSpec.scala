@@ -16,6 +16,7 @@
 
 package views.partials.paymentAllocations
 
+import forms.IncomeSourcesFormsSpec.mockImplicitDateFormatter.longDate
 import models.paymentAllocationCharges.PaymentAllocationViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -56,7 +57,7 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
 
     "not display link when credits and refunds page feature switch is disabled" in new Setup(false, false) {
       pageDocument.select("a#money-on-account-link").size() shouldBe 0
-      pageDocument.select("tr#money-on-account > td:first-child").text() shouldBe messages("paymentAllocation.moneyOnAccount")
+      pageDocument.select("tr#money-on-account > td:first-child").text() shouldBe dueDate.map(_.toLongDateShort).getOrElse("")
     }
   }
 }
