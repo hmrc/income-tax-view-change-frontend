@@ -29,6 +29,26 @@
     ))
 }
 
+@latestCalculationTabItem() = @{
+    Some(TabItem(
+        id = Some("latestCalculation"),
+        label = messages("tax-year-summary.latest-calculation"),
+        panel = TabPanel(
+            content = HtmlContent(taxCalculationContent)
+        )
+    ))
+}
+
+@previousCalculationTabItem() = @{
+    Some(TabItem(
+        id = Some("previousCalculation"),
+        label = messages("tax-year-summary.previous-calculation"),
+        panel = TabPanel(
+            content = HtmlContent(taxCalculationContent)
+        )
+    ))
+}
+
 @forecastTabItem() = @{
     if(showForecastData){
         Some(TabItem(
@@ -70,6 +90,8 @@
 @tableTabItems() = @{
     Seq(
         taxCalculationTabItem(),
+        latestCalculationTabItem(),
+        previousCalculationTabItem(),
         forecastTabItem(),
         paymentsTabItem(),
         updatesTabItem()
