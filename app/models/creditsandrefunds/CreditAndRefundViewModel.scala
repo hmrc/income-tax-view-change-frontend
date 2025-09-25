@@ -62,17 +62,15 @@ case class RefundRow(amount: BigDecimal) extends CreditRow {
 
 case class CreditAndRefundViewModel(availableCredit: BigDecimal,
                                     allocatedCredit: BigDecimal,
-                                    allocatedCreditForFutureCharges: BigDecimal,
                                     unallocatedCredit: BigDecimal,
                                     totalCredit: BigDecimal,
                                     creditRows: List[CreditRow],
                                     claimARefundR18Enabled: Boolean) {
   val hasCreditOrRefunds: Boolean = {
-    if (claimARefundR18Enabled) {availableCredit > 0 || allocatedCreditForFutureCharges > 0 || creditRows.exists(_.amount > 0)}
-    else {availableCredit > 0 || allocatedCredit > 0 || creditRows.exists(_.amount > 0)}
+    availableCredit > 0 || allocatedCredit > 0 || creditRows.exists(_.amount > 0)
   }
   val hasAvailableCredit = availableCredit != 0
-  val hasAllocatedCreditForFutureCharges = if (claimARefundR18Enabled) allocatedCreditForFutureCharges != 0 else allocatedCredit != 0
+  val hasAllocatedCredit = allocatedCredit != 0
 }
 
 object CreditAndRefundViewModel {
@@ -80,8 +78,7 @@ object CreditAndRefundViewModel {
   def fromCreditAndRefundModel(model: CreditsModel, claimARefundR18Enabled: Boolean = true): CreditAndRefundViewModel = {
     CreditAndRefundViewModel(
       availableCredit = model.availableCreditForRepayment,
-      allocatedCredit = model.allocatedCredit,
-      allocatedCreditForFutureCharges = if (claimARefundR18Enabled) model.allocatedCreditForFutureCharges else model.allocatedCredit,
+      allocatedCredit = if (claimARefundR18Enabled) model.allocatedCreditForFutureCharges else model.allocatedCredit,
       unallocatedCredit = if(claimARefundR18Enabled) model.unallocatedCredit else model.availableCreditForRepayment - model.allocatedCredit,
       totalCredit = if (claimARefundR18Enabled) model.totalCredit else model.availableCreditForRepayment,
       creditRows =

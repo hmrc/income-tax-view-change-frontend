@@ -35,8 +35,8 @@
     @messages("credit-and-refund.does-not-include-refunds")
 }
 
-@if(viewModel.allocatedCreditForFutureCharges != 0) {
-    @if(viewModel.allocatedCreditForFutureCharges >= viewModel.availableCredit) {
+@if(viewModel.allocatedCredit != 0) {
+    @if(viewModel.allocatedCredit >= viewModel.availableCredit) {
         @govukInsetText(InsetText(
             content = Text(messages("credit-and-refund.if-you-claim-back-any"))
         ))
