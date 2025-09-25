@@ -84,7 +84,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
 
     when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
       .thenReturn(Future.successful(List(FinancialDetailsModel(
-        balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+        balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
         documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", None, None, 1000.00, 0, LocalDate.of(2018, 3, 29))),
         financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
           items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))

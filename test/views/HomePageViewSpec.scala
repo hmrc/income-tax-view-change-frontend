@@ -99,14 +99,15 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
-              reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsIsEnabled: Boolean = true,
+              reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsIsEnabled: Boolean = true, claimARefundR18Enabled: Boolean = true,
               penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary, yourSelfAssessmentChargesEnabled: Boolean = false) {
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
     val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount, yourSelfAssessmentChargesEnabled)
 
-    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
+    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()),
+      creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined, claimARefundR18enabled = claimARefundR18Enabled)
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
@@ -486,7 +487,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/payment-refund-history")
           link.map(_.text) shouldBe Some("Payment history")
         }
-        s"has the available credit " in new Setup(creditAndRefundEnabled = true) {
+        s"has the available credit using totalCredit when ClaimToAdjustR18 FS is true" in new Setup(creditAndRefundEnabled = true) {
+          getTextOfElementById("available-credit") shouldBe Some("£200.00 is in your account")
+        }
+        s"has the available credit using availableCredit when ClaimToAdjustR18 FS is false" in new Setup(creditAndRefundEnabled = true, claimARefundR18Enabled = false) {
           getTextOfElementById("available-credit") shouldBe Some("£100.00 is in your account")
         }
       }

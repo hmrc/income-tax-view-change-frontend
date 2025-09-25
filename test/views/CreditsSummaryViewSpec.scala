@@ -44,7 +44,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
   val testCalendarYear: Int = 2018
   val expectedDate: String = "29 Mar 2018"
   val utr: Option[String] = Some(testMtditid)
-  val testMaybeBalanceDetails: Option[BigDecimal] = financialDetailCreditCharge.balanceDetails.availableCredit
+  val testMaybeBalanceDetails: Option[BigDecimal] = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment
 
   val creditsSummaryHeading: String = messages("credits.heading", s"$testCalendarYear")
   val creditsSummaryTitle: String = messages("htmlTitle", creditsSummaryHeading)
@@ -71,8 +71,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
   val moneyInYourAccountHeading: String = messages("credits.money-in-your-account-section.name")
   val moneyInYourAccountAgentHeading: String = messages("credits.money-in-your-account-section.agent.name")
   val moneyInYourAccountMoneyClaimARefundLinkText: String = messages("credits.money-in-your-account-section.claim-a-refund-link")
-  val moneyInYourAccountContent: String = s"""${messages("credits.money-in-your-account-section.content", s"${financialDetailCreditCharge.balanceDetails.availableCredit.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
-  val moneyInYourAccountAgentContent: String = s"""${messages("credits.money-in-your-account-section.agent.content", s"${financialDetailCreditCharge.balanceDetails.availableCredit.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
+  val moneyInYourAccountContent: String = s"""${messages("credits.money-in-your-account-section.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
+  val moneyInYourAccountAgentContent: String = s"""${messages("credits.money-in-your-account-section.agent.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
   val moneyInYourAccountMoneyClaimARefundLink: String = "/report-quarterly/income-and-expenses/view/claim-refund"
   val moneyInYourAccountMoneyClaimARefundAgentLink: String = "/report-quarterly/income-and-expenses/view/agents/claim-refund"
 

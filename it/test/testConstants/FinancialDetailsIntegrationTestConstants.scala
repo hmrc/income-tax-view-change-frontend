@@ -99,7 +99,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
 
   def financialDetailsModel(taxYear: Int = 2018, outstandingAmount: BigDecimal = 1400.0): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(documentDetailModel(taxYear, outstandingAmount = outstandingAmount)),
       financialDetails = List(financialDetail(taxYear))
     )
@@ -182,7 +182,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
                                 accruingInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100))
                                ): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear.toInt, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), accruingInterestAmount(0), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head),
@@ -221,7 +221,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
                                                      outstandingAmount: List[BigDecimal],
                                                      taxYear: String): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear.toInt, transactionIds(0).get, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head),
@@ -420,7 +420,7 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   )
 
   val financialDetailsWithMFADebits: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(
         taxYear = currentDate.getYear,
@@ -467,14 +467,14 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   val staticDateOutstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(LocalDate.parse("2022-01-01"))
 
 
-  val whatYouOweOutstandingChargesOnly: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+  val whatYouOweOutstandingChargesOnly: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     outstandingChargesModel = Some(outstandingChargesOverdueData))
 
-  val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 3.0, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
+  val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 3.0, None, None, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
 
-  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None), List.empty)
+  val whatYouOweNoChargeList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None), List.empty)
 
-  val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+  val whatYouOweFinancialDetailsEmptyBCDCharge: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     outstandingChargesModel = Some(outstandingChargesEmptyBCDModel))
 
   val testInvalidFinancialDetailsJson: JsValue = Json.obj(

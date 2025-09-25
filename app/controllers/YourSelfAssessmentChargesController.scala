@@ -63,7 +63,8 @@ class YourSelfAssessmentChargesController @Inject()(val authActions: AuthActions
     for {
       whatYouOweChargesList <- whatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
         isEnabled(PenaltiesAndAppeals),
-        mainChargeIsPaidFilter)
+        mainChargeIsPaidFilter,
+        isEnabled(ClaimARefundR18))
       selfServeTimeToPayStartUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(isEnabled(YourSelfAssessmentCharges))
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
     } yield {

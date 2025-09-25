@@ -37,12 +37,12 @@ trait MockCreditHistoryService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockCreditHistoryService(creditDetailsModel: List[CreditDetailModel]): Unit = {
-    when(mockCreditHistoryService.getCreditsHistory(any(), any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockCreditHistoryService.getCreditsHistory(any(), any(), any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(Right(creditDetailsModel)))
   }
 
   def mockCreditHistoryFailed(): Unit = {
-    when(mockCreditHistoryService.getCreditsHistory(any(), any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
+    when(mockCreditHistoryService.getCreditsHistory(any(), any(), any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(Left(CreditHistoryError)))
   }
 

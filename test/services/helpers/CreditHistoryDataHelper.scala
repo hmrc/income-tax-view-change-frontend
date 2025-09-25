@@ -77,7 +77,7 @@ trait CreditHistoryDataHelper {
 
 
   val taxYearFinancialDetails = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       documentDetailsWhichIsCutOverCredit,
       DocumentDetail(2022, "testTransactionId6", None, None, 0, 0, LocalDate.of(taxYear, 3, 29)),
@@ -100,7 +100,7 @@ trait CreditHistoryDataHelper {
   )
 
   val taxYearFinancialDetailsTwoYears = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       documentDetailsWhichIsCutOverCredit,
       DocumentDetail(2022, "testTransactionId6", None, None, 0, 0, LocalDate.of(taxYear, 3, 29)),
@@ -136,7 +136,7 @@ trait CreditHistoryDataHelper {
   )
 
   val taxYearFinancialDetailsAllCredits = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       documentDetailsWhichIsRepaymentInterestCredit
     ),
@@ -150,7 +150,7 @@ trait CreditHistoryDataHelper {
   )
 
   val taxYearFinancialDetailsAllCreditsPlusOneYear = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       documentDetailsWhichIsCutOverCredit,
       documentDetailsWhichIsMfaCredit,
@@ -176,7 +176,7 @@ trait CreditHistoryDataHelper {
   )
 
   val taxYearFinancialDetailsAllCreditsTwoYears = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       documentDetailsWhichIsRepaymentInterestCredit,
       documentDetailsWhichIsCutOverCredit,
@@ -208,7 +208,7 @@ trait CreditHistoryDataHelper {
   )
 
 
-  val expectedBalancedDetails = BalanceDetails(1.0,2.0,3.0,None,None,None,None,None)
+  val expectedBalancedDetails = BalanceDetails(1.0,2.0,3.0,None,None,None,None,None,None,None)
 
   // TODO: tidy up mainType text !!!
   val financialDetailsForCutOver = List(
@@ -264,30 +264,30 @@ trait CreditHistoryDataHelper {
     date = LocalDate.parse("2022-08-25"),
     charge = newCutOverCharge, //documentDetailsWhichIsCutOverCredit,
     CutOverCreditType,
-    availableCredit = expectedBalancedDetails.availableCredit
+    availableCredit = expectedBalancedDetails.totalCreditAvailableForRepayment
   )
   val creditDetailModelasMfa = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
     charge = newMfaCharge, // documentDetailsWhichIsMfaCredit,
     MfaCreditType,
-    availableCredit = expectedBalancedDetails.availableCredit
+    availableCredit = expectedBalancedDetails.totalCreditAvailableForRepayment
   )
   val creditDetailModelasBCC = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
     charge = newBccCharge, // documentDetailsWhichIsBCCredit,
     BalancingChargeCreditType,
-    availableCredit = expectedBalancedDetails.availableCredit
+    availableCredit = expectedBalancedDetails.totalCreditAvailableForRepayment
   )
 
   val creditDetailModelasSetInterest = CreditDetailModel(
     date = LocalDate.parse("2022-03-29"),
     charge = newRepaymentCharge, //§  = documentDetailsWhichIsRepaymentInterestCredit,
     RepaymentInterest,
-    availableCredit = expectedBalancedDetails.availableCredit
+    availableCredit = expectedBalancedDetails.totalCreditAvailableForRepayment
   )
 
   val taxYearFinancialDetails_PlusOneYear = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       documentDetailsWhichIsMfaCredit,
       DocumentDetail(taxYear = 2022, transactionId = "testTransactionId8", documentDescription = None,

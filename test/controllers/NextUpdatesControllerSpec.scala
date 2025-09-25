@@ -17,7 +17,6 @@
 package controllers
 
 import mocks.auth.MockAuthActions
-import mocks.connectors.MockITSAStatusConnector
 import mocks.services.{MockNextUpdatesService, MockOptOutService}
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
@@ -33,11 +32,8 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
 import services.NextUpdatesService
 import services.optout.{OptOutProposition, OptOutService}
-import testConstants.BaseTestConstants.testNino
-import testConstants.ITSAStatusTestConstants.successITSAStatusResponseMTDMandatedModel
 import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 
 import java.time.LocalDate

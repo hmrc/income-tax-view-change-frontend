@@ -23,7 +23,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.admin.{CreditsRefundsRepay, YourSelfAssessmentCharges}
+import models.admin.{ClaimARefundR18, CreditsRefundsRepay, YourSelfAssessmentCharges}
 import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -67,7 +67,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case creditsModel: CreditsModel =>
-        val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel)
+        val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel, isEnabled(ClaimARefundR18))
         auditClaimARefund(creditsModel)
         Ok(view(viewModel, isAgent, backUrl, isEnabled(YourSelfAssessmentCharges))(user, user, messages))
       case _ => logAndRedirect("Invalid response from financial transactions")
@@ -103,7 +103,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Future.successful(Ok(customNotFoundErrorView()(user, messages)))
       case creditsModel: CreditsModel =>
-        repaymentService.start(user.nino, Some(creditsModel.availableCredit)) map {
+        repaymentService.start(user.nino, Some(creditsModel.availableCreditForRepayment)) map {
           case Right(nextUrl) =>
             Redirect(nextUrl)
           case Left(ex) =>
