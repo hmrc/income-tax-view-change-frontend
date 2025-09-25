@@ -571,12 +571,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
         }
 
-        "money in your account section with available credits" in new TestSetup(charges = whatYouOweDataWithAvailableCredits()) {
+        "money in your account section with available credits with totalCredit when ClaimARefundR18 FS is true" in
+          new TestSetup(charges = whatYouOweDataWithAvailableCredits()) {
           pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount") + " " +
             messages("whatYouOwe.moneyOnAccount-1") + " £350.00" + " " +
             messages("whatYouOwe.moneyOnAccount-2") + " " +
             messages("whatYouOwe.moneyOnAccount-3") + "."
         }
+
+        "money in your account section with available credits with availableCredit when ClaimARefundR18 FS is false" in
+          new TestSetup(charges = whatYouOweDataWithAvailableCredits(claimARefundR18Enabled = false)) {
+            pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount") + " " +
+              messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+              messages("whatYouOwe.moneyOnAccount-2") + " " +
+              messages("whatYouOwe.moneyOnAccount-3") + "."
+          }
 
         "money in your account section with no available credits" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
           findElementById("money-in-your-account") shouldBe None
@@ -1273,12 +1282,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findAgentElementById("payment-button") shouldBe None
       }
 
-      "money in your account section with available credits" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
+      "money in your account section with available credits with totalCredit when ClaimARefundR18 FS is true" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
         pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
           messages("whatYouOwe.moneyOnAccount-1") + " £350.00" + " " +
           messages("whatYouOwe.moneyOnAccount-agent-2") + " " +
           messages("whatYouOwe.moneyOnAccount-3") + "."
       }
+
+      "money in your account section with available credits with availableCredit when ClaimARefundR18 FS is false" in
+        new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits(claimARefundR18Enabled = false)) {
+          pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
+            messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+            messages("whatYouOwe.moneyOnAccount-agent-2") + " " +
+            messages("whatYouOwe.moneyOnAccount-3") + "."
+        }
 
       "money in your account section with no available credits" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         findAgentElementById("money-in-your-account") shouldBe None

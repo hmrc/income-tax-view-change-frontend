@@ -905,6 +905,30 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
       }
 
+    "money in your account section with available credits with totalCredit when ClaimARefundR18 FS is true" in
+      new TestSetup(charges = whatYouOweDataWithAvailableCredits()) {
+        pageDocument.getElementById("money-in-your-account").text shouldBe messages("selfAssessmentCharges.moneyOnAccount") + " " +
+          messages("selfAssessmentCharges.moneyOnAccount-1") + " £350.00" + " " +
+          messages("selfAssessmentCharges.moneyOnAccount-2") + " " +
+          messages("selfAssessmentCharges.moneyOnAccount-3") + "."
+      }
+
+    "money in your account section with available credits with availableCredit when ClaimARefundR18 FS is false" in
+      new TestSetup(charges = whatYouOweDataWithAvailableCredits(claimARefundR18Enabled = false)) {
+        pageDocument.getElementById("money-in-your-account").text shouldBe messages("selfAssessmentCharges.moneyOnAccount") + " " +
+          messages("selfAssessmentCharges.moneyOnAccount-1") + " £300.00" + " " +
+          messages("selfAssessmentCharges.moneyOnAccount-2") + " " +
+          messages("selfAssessmentCharges.moneyOnAccount-3") + "."
+      }
+
+    "money in your account section with no available credits" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
+      findElementById("money-in-your-account") shouldBe None
+    }
+
+    "money in your account section with an available credit of £0.00" in new TestSetup(charges = whatYouOweDataWithDataDueIn30DaysAvailableCreditZero()) {
+      findElementById("money-in-your-account") shouldBe None
+    }
+
     "codingOut is enabled" should {
       "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
         Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
@@ -964,12 +988,21 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
         findAgentElementById("payment-plan") shouldBe None
       }
 
-      "money in your account section with available credits" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
+      "money in your account section with available credits with totalCredit when ClaimARefundR18 FS is true" in
+        new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
         pageDocument.getElementById("money-in-your-account").text shouldBe messages("selfAssessmentCharges.moneyOnAccount-agent") + " " +
           messages("selfAssessmentCharges.moneyOnAccount-1") + " £350.00" + " " +
           messages("selfAssessmentCharges.moneyOnAccount-agent-2") + " " +
           messages("selfAssessmentCharges.moneyOnAccount-3") + "."
       }
+
+      "money in your account section with available credits with availableCredit when ClaimARefundR18 FS is false" in
+        new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits(claimARefundR18Enabled = false)) {
+          pageDocument.getElementById("money-in-your-account").text shouldBe messages("selfAssessmentCharges.moneyOnAccount-agent") + " " +
+            messages("selfAssessmentCharges.moneyOnAccount-1") + " £300.00" + " " +
+            messages("selfAssessmentCharges.moneyOnAccount-agent-2") + " " +
+            messages("selfAssessmentCharges.moneyOnAccount-3") + "."
+        }
 
       "money in your account section with no available credits" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         findAgentElementById("money-in-your-account") shouldBe None
