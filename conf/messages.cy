@@ -1281,9 +1281,6 @@ chargeSummary.codingOutInset-1                                     = Os na ellir
 chargeSummary.codingOutInset-2                                     = drwy’ch cod treth TWE
 chargeSummary.codingOutInset-3                                     = am unrhyw reswm, bydd angen i chi dalu’r swm sy’n weddill. Bydd gennych 42 diwrnod i wneud y taliad hwn, cyn y gellir codi llog a chosbau arnoch.
 chargeSummary.codingOutPayHistoryAmount                            = Swm a gasglwyd drwy’ch cod treth TWE ar gyfer blwyddyn dreth {0} i {1}
-chargeSummary.check-paye-tax-code-1                                = Gwiriwch a yw’ch
-chargeSummary.check-paye-tax-code-2                                = cod treth TWE
-chargeSummary.check-paye-tax-code-3                                = wedi newid ar gyfer blwyddyn dreth {0} i {1}.
 chargeSummary.cancelledPayeInset-1                                 = Rydych eisoes wedi cytuno i dalu peth o’ch bil Hunanasesiad
 chargeSummary.cancelledPayeInset-2                                 = drwy’ch cod treth TWE
 chargeSummary.cancelledPayeInset-3                                 = Nid yw CThEF wedi gallu casglu’r holl daliadau hyn gennych, felly dyma’r dreth sydd yn weddill y mae angen i chi ei thalu.
@@ -2559,7 +2556,7 @@ claimToAdjustPoa.confirmation.cancel                                    =   Cans
 paymentOnAccount.caption                             = Blwyddyn dreth {0} i {1}
 paymentOnAccount.heading                             = Addasu eich taliadau ar gyfrif
 paymentOnAccount.p1                                  = Gallwch addasu’r ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch
-paymentOnAccount.class4NationalInsurance.link.text   = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
+paymentOnAccount.class4NationalInsurance.link.text   = Cyfraniadau Yswiriant Gwladol Dosbarth 4
 paymentOnAccount.p2                                  = i fod yn is na’r flwyddyn dreth flaenorol.
 paymentOnAccount.heading.example                     = Enghraifft
 paymentOnAccount.hint                                = Er enghraifft, os oedd eich bil treth y llynedd yn £4,000, ac rydych o’r farn y dylech dalu dim ond £3,000 eleni, gallwch ostwng y ddau daliad gan £1,500 yr un, ar gyfrif.
@@ -3407,7 +3404,16 @@ triggered-migration.check-hmrc-records.confirmRecords.heading = Cadarnhau bod co
 triggered-migration.check-hmrc-records.confirmRecords.text    = Dylai’r dudalen hon dim ond rhestru’ch ffynonellau incwm cyfredol o fod yn unig fasnachwr a’ch ffynonellau incwm cyfredol o eiddo. Gall unrhyw fanylion busnes eraill sy’n anghywir, sydd wedi’u camsillafu, neu sydd ddim yn gyfredol, gael eu diweddaru yn nes ymlaen.
 triggered-migration.check-hmrc-records.confirmRecords.button  = Cadarnhau a pharhau
 
-#check complete page
+# Triggered migration – Check Active Businesses Confirm page
+triggered-migration.check-active-businesses-confirm.heading          = A ydych wedi gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol?
+triggered-migration.check-active-businesses-confirm.text             = Gallwch newid unrhyw fanylion busnes eraill yn nes ymlaen.
+triggered-migration.check-active-businesses-confirm.yes              = Iawn
+triggered-migration.check-active-businesses-confirm.yes.hint         = Os ywr dudalen flaenorol dim ond yn cynnwys eich busnesau cyfredol, mae’r gwiriad wedi’i gwblhau
+triggered-migration.check-active-businesses-confirm.no               = Na
+triggered-migration.check-active-businesses-confirm.no.hint          = Dewiswch yr opsiwn hwn os nad ydych wedi gwirio’r dudalen flaenorol
+triggered-migration.check-active-businesses-confirm.error.required   = Dewiswch ‘Iawn’ os ydych wedi gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+
+# Triggered migration – Complete page
 triggered-migration.checkComplete.greenBoxHeading.1                                     = Gwiriad wedi’i gwblhau
 triggered-migration.checkComplete.greenBoxHeading.2                                     = Rydych wedi cadarnhau bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
 triggered-migration.checkComplete.whatNext.heading                                      = Yr hyn i’w wneud nesaf

@@ -289,9 +289,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
     def payeTaxCodeText(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", year - 1, year)}"
 
-    def payeTaxCodeTextWithStringMessage(year: Int) = s"${messages("chargeSummary.check-paye-tax-code-1")} ${messages("chargeSummary.check-paye-tax-code-2")} ${messages("chargeSummary.check-paye-tax-code-3", (year - 1).toString, year.toString)}"
-
-    val payeTaxCodeLink = s"https://www.tax.service.gov.uk/check-income-tax/tax-codes/${getCurrentTaxYearEnd.getYear + 1}"
     val cancelledPayeTaxCodeInsetText = s"${messages("chargeSummary.cancelledPayeInset-1")} ${messages("chargeSummary.cancelledPayeInset-2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("chargeSummary.cancelledPayeInset-3")}"
     val cancelledPayeTaxCodeInsetLink = "https://www.gov.uk/pay-self-assessment-tax-bill/through-your-tax-code"
 
@@ -527,8 +524,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa1CodedOutHeading
-              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
-              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#coding-out-notice").text() shouldBe insetPara
               document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
@@ -538,8 +533,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             "Coding Out is Enabled for BCD" in new TestSetup(codedOutBCDItem, adjustmentHistory = codedOutAdjustmentHistory) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
-              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
-              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#coding-out-notice").text() shouldBe insetPara
               document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
@@ -562,8 +555,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.getElementById("charge-explanation").child(1).child(1).text() shouldBe "Class 4 National Insurance contributions (opens in new tab)"
               document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe "https://www.gov.uk/self-employed-national-insurance-rates"
               document.getElementById("charge-explanation").child(2).text() shouldBe "HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount."
-              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
-              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#coding-out-notice").text() shouldBe insetPara
               document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
@@ -674,8 +665,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa2CodedOutHeading
-              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
-              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#coding-out-notice").text() shouldBe insetPara
               document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
@@ -697,8 +686,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.getElementById("charge-explanation").child(1).child(1).text() shouldBe "Class 4 National Insurance contributions (opens in new tab)"
               document.getElementById("charge-explanation").child(1).child(1).link.attr("href") shouldBe "https://www.gov.uk/self-employed-national-insurance-rates"
               document.getElementById("charge-explanation").child(2).text() shouldBe "HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount."
-              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
-              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#coding-out-notice").text() shouldBe insetPara
               document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
               document.select(".govuk-table").size() shouldBe 1
@@ -720,8 +707,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               document.select("#charge-explanation > p:nth-child(1)").text() shouldBe poaTextParagraph
               document.select("#charge-explanation>:nth-child(2)").text() shouldBe poaTextBullets
               document.select("#charge-explanation > p:nth-child(3)").text() shouldBe poaTextP2
-              document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
-              document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
               document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
               document.select(".govuk-table").size() shouldBe 1
               document.select(".govuk-table tbody tr").size() shouldBe 1
@@ -871,8 +856,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           "Coding Out is Enabled" in new TestSetup(creditItemCodingOut, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
             document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
-            document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
-            document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
             document.select("#coding-out-notice").text() shouldBe insetPara
             document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
             document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
@@ -929,8 +912,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         "have a paragraphs explaining Cancelled PAYE self assessment" in new TestSetup(
           chargeItem = baseBalancingCancelled.copy(lpiWithDunningLock = None)
         ) {
-          document.select("#check-paye-para").text() shouldBe payeTaxCodeTextWithStringMessage(2019)
-          document.select("#paye-tax-code-link").attr("href") shouldBe payeTaxCodeLink
           document.select("#cancelled-coding-out-notice").text() shouldBe cancelledPayeTaxCodeInsetText
           document.select("#cancelled-coding-out-notice a").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
         }

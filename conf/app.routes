@@ -153,6 +153,12 @@ GET         /agents/check-your-active-businesses/hmrc-record              contro
 GET         /check-your-active-businesses/complete                        controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = false)
 GET         /agents/check-your-active-businesses/complete                 controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = true)
 
+# Triggered migration – confirm active businesses
+GET   /check-your-active-businesses/confirm          controllers.triggeredMigration.CheckActiveBusinessesConfirmController.show(isAgent: Boolean = false)
+GET   /agents/check-your-active-businesses/confirm   controllers.triggeredMigration.CheckActiveBusinessesConfirmController.show(isAgent: Boolean = true)
+POST  /check-your-active-businesses/confirm          controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = false)
+POST  /agents/check-your-active-businesses/confirm   controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = true)
+
 #Feedback Routes
 GET         /feedback                                                     controllers.feedback.FeedbackController.show()
 GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()

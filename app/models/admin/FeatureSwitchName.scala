@@ -78,6 +78,8 @@ object FeatureSwitchName {
       JsSuccess(ClaimARefundR18)
     case JsString(SubmitClaimToAdjustToNrs.name) =>
       JsSuccess(SubmitClaimToAdjustToNrs)
+    case JsString(PostFinalisationAmendmentsR18.name) =>
+      JsSuccess(PostFinalisationAmendmentsR18)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -120,6 +122,7 @@ object FeatureSwitchName {
       SubmitClaimToAdjustToNrs,
       SelfServeTimeToPayR17,
       TriggeredMigration,
+      PostFinalisationAmendmentsR18
       ClaimARefundR18
     )
 
@@ -224,4 +227,9 @@ case object SubmitClaimToAdjustToNrs extends FeatureSwitchName {
 case object ClaimARefundR18 extends FeatureSwitchName {
   override val name: String = "claim-a-refund-r18"
   override val toString: String = "Claim A Refund R18"
+}
+
+case object PostFinalisationAmendmentsR18 extends FeatureSwitchName {
+  override val name: String = "post-finalisation-amendments-r18"
+  override val toString: String = "Post Finalisation Amendments R18"
 }
