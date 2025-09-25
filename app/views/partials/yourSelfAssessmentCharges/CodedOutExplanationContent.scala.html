@@ -14,19 +14,12 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
-@import models.financialDetails.ChargeItem
-@import models.financialDetails.BalancingCharge
-@import models.financialDetails.PoaOneDebit
-@import models.financialDetails.PoaTwoDebit
-@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
-@import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import uk.gov.hmrc.govukfrontend.views.Aliases.InsetText
-@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-@import viewUtils.ExternalUrlHelper.checkPayeTaxCodeUrl
+@import models.financialDetails.{BalancingCharge, ChargeItem, PoaOneDebit, PoaTwoDebit}
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, InsetText}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukDetails, GovukInsetText}
 @import viewUtils.ExternalUrlHelper.saThroughYourTaxCodeUrl
+@import views.html.components._
+@import views.html.partials.yourSelfAssessmentCharges.{WhatIsABalancingPayment, WhatIsPaymentOnAccount}
 
 
 @this(
@@ -56,23 +49,6 @@
     @getMessage("codingOutBCDMessage", unpaidTaxYear.startYear.toString, unpaidTaxYear.endYear.toString,
         collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
 }
-
-@payeTaxCodeChange = {
-@p(id = Some("check-paye-para")) {
-    @messages("chargeSummary.check-paye-tax-code-1")
-    <a class="govuk-link" id="paye-tax-code-link" href="@{
-        checkPayeTaxCodeUrl
-    }/@{
-        collectionTaxYear.endYear
-    }">
-    @messages("chargeSummary.check-paye-tax-code-2")</a>
-    @messages("chargeSummary.check-paye-tax-code-3", collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
-}
-}
-@{chargeItem.transactionType match {
-    case BalancingCharge             => payeTaxCodeChange
-    case PoaOneDebit | PoaTwoDebit   =>
-}}
 
 @{chargeItem.transactionType match {
     case BalancingCharge             => whatIsABalancingPayment()

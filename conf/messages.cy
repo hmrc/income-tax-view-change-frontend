@@ -1281,9 +1281,6 @@ chargeSummary.codingOutInset-1                                     = Os na ellir
 chargeSummary.codingOutInset-2                                     = drwy’ch cod treth TWE
 chargeSummary.codingOutInset-3                                     = am unrhyw reswm, bydd angen i chi dalu’r swm sy’n weddill. Bydd gennych 42 diwrnod i wneud y taliad hwn, cyn y gellir codi llog a chosbau arnoch.
 chargeSummary.codingOutPayHistoryAmount                            = Swm a gasglwyd drwy’ch cod treth TWE ar gyfer blwyddyn dreth {0} i {1}
-chargeSummary.check-paye-tax-code-1                                = Gwiriwch a yw’ch
-chargeSummary.check-paye-tax-code-2                                = cod treth TWE
-chargeSummary.check-paye-tax-code-3                                = wedi newid ar gyfer blwyddyn dreth {0} i {1}.
 chargeSummary.cancelledPayeInset-1                                 = Rydych eisoes wedi cytuno i dalu peth o’ch bil Hunanasesiad
 chargeSummary.cancelledPayeInset-2                                 = drwy’ch cod treth TWE
 chargeSummary.cancelledPayeInset-3                                 = Nid yw CThEF wedi gallu casglu’r holl daliadau hyn gennych, felly dyma’r dreth sydd yn weddill y mae angen i chi ei thalu.
@@ -3423,3 +3420,29 @@ triggered-migration.check-hmrc-records.noActiveProperties            = Os ydych 
 triggered-migration.check-hmrc-records.confirmRecords.heading = Cadarnhau bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
 triggered-migration.check-hmrc-records.confirmRecords.text    = Dylai’r dudalen hon dim ond rhestru’ch ffynonellau incwm cyfredol o fod yn unig fasnachwr a’ch ffynonellau incwm cyfredol o eiddo. Gall unrhyw fanylion busnes eraill sy’n anghywir, sydd wedi’u camsillafu, neu sydd ddim yn gyfredol, gael eu diweddaru yn nes ymlaen.
 triggered-migration.check-hmrc-records.confirmRecords.button  = Cadarnhau a pharhau
+
+# Triggered migration – Check Active Businesses Confirm page
+triggered-migration.check-active-businesses-confirm.heading          = A ydych wedi gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol?
+triggered-migration.check-active-businesses-confirm.text             = Gallwch newid unrhyw fanylion busnes eraill yn nes ymlaen.
+triggered-migration.check-active-businesses-confirm.yes              = Iawn
+triggered-migration.check-active-businesses-confirm.yes.hint         = Os ywr dudalen flaenorol dim ond yn cynnwys eich busnesau cyfredol, mae’r gwiriad wedi’i gwblhau
+triggered-migration.check-active-businesses-confirm.no               = Na
+triggered-migration.check-active-businesses-confirm.no.hint          = Dewiswch yr opsiwn hwn os nad ydych wedi gwirio’r dudalen flaenorol
+triggered-migration.check-active-businesses-confirm.error.required   = Dewiswch ‘Iawn’ os ydych wedi gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+
+# Triggered migration – Complete page
+triggered-migration.checkComplete.greenBoxHeading.1                                     = Gwiriad wedi’i gwblhau
+triggered-migration.checkComplete.greenBoxHeading.2                                     = Rydych wedi cadarnhau bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.checkComplete.whatNext.heading                                      = Yr hyn i’w wneud nesaf
+triggered-migration.checkComplete.whatNext.p1                                           = Mae angen i chi roi diweddariad chwarterol i CThEF ar gyfer pob un o’ch ffynonellau incwm cyfredol o fod yn unig fasnachwr a’ch ffynonellau incwm cyfredol o eiddo.
+triggered-migration.checkComplete.whatNext.p2                                           = I wneud hyn, bydd angen i chi wneud y canlynol:
+triggered-migration.checkComplete.whatNext.ul.li1                                       = defnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+triggered-migration.checkComplete.whatNext.ul.li2                                       = cael gwybod yr hyn sy’n ddyledus a chyflwyno’ch diweddariad(au) hwyr
+triggered-migration.checkComplete.gettingSoftware.heading                               = Cael meddalwedd
+triggered-migration.checkComplete.gettingSoftware.p1                                    = Er mwyn cyflwyno’ch diweddariadau chwarterol, mae’n rhaid i chi, neu’ch asiant, ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Mae sawl meddalwedd ar gael i chi, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
+triggered-migration.checkComplete.gettingSoftware.linkText                              = Dysgwch ragor am feddalwedd sy’n cydweddu
+triggered-migration.checkComplete.submitUpdates.heading                                 = Cyflwyno’ch diweddariad(au)
+triggered-migration.checkComplete.submitUpdates.p1                                      = Mae’r diweddariadau chwarterol sy’n ddyledus, a’r wybodaeth y mae angen i chi ei darparu, i’w gweld yn eich cyfrif. Wedyn, bydd yn rhaid i chi ddefnyddio’ch meddalwedd sy’n cydweddu i wneud y canlynol:
+triggered-migration.checkComplete.submitUpdates.ul.li1                                  = creu cofnod digidol o’ch incwm o eiddo a’ch incwm o fod yn unig fasnachwr, a’r treuliau cysylltiedig
+triggered-migration.checkComplete.submitUpdates.ul.li2                                  = anfon eich diweddariad(au) chwarterol at CThEF
+triggered-migration.checkComplete.submitUpdates.linkText                                = Gwiriwch eich diweddariadau diweddaraf a’r dyddiadau cau
