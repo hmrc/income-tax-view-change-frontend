@@ -93,10 +93,7 @@ case class ChargeItem (
 
   def getAmountCodedOut: BigDecimal = amountCodedOut.getOrElse(throw MissingFieldException("documentAmountCodedOut"))
 
-  def isPaid: Boolean = outstandingAmount match {
-    case amount if amount == 0 => true
-    case _ => false
-  }
+  def isPaid: Boolean = outstandingAmount == 0
 
   val isAccruingInterest: Boolean = accruingInterestAmount match {
     case Some(amount) if amount <= 0 => false
@@ -104,9 +101,9 @@ case class ChargeItem (
     case _ => false
   }
 
-  def isOnlyInterest(implicit dateService: DateServiceInterface): Boolean = {(isOverdue() && isAccruingInterest) || (interestRemainingToPay > 0 && isPaid)}
+  def isOnlyInterest: Boolean = interestRemainingToPay > 0 && isPaid
 
-  def remainingToPayOnCharge(implicit dateServiceInterface: DateServiceInterface): BigDecimal =
+  def remainingToPayOnCharge: BigDecimal =
     if (isOnlyInterest) interestRemainingToPay
     else remainingToPay
 
@@ -151,14 +148,16 @@ case class ChargeItem (
       case (BalancingCharge, None       ) => true
       case (PoaOneDebit, Some(Accepted)           ) => true
       case (PoaTwoDebit, Some(Accepted)           ) => true
+      case (PoaOneDebit, None           ) => true
+      case (PoaTwoDebit, None           ) => true
       case (LateSubmissionPenalty,     _) => true
       case (FirstLatePaymentPenalty,   _) => true
+      case (ITSAReturnAmendment,       _) => true
       case _                              => false
     }
 
-    validCharge && !(isAccruingInterest && isPaid)
+    validCharge && !isOnlyInterest
   }
-
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
@@ -237,7 +236,7 @@ object ChargeItem {
   )
 
   private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
-    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, MfaDebitCharge)
+    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, ITSAReturnAmendment, MfaDebitCharge)
 
   val isAKnownTypeOfCharge: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.codedOutStatus) match {

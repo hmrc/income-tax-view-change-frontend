@@ -22,11 +22,13 @@
 @import models.financialDetails.LateSubmissionPenalty
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 @import models.financialDetails.FirstLatePaymentPenalty
+@import models.financialDetails.ITSAReturnAmendment
 @import views.html.partials.yourSelfAssessmentCharges.CodedOutExplanationContent
 @import views.html.partials.yourSelfAssessmentCharges.FirstLatePaymentPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
+@import views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentContent
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
 @import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
@@ -41,6 +43,7 @@
     firstLatePaymentPenaltyContent: FirstLatePaymentPenaltyContent,
     codedOutExplanationContent: CodedOutExplanationContent,
     classTwoNICSContent: ClassTwoNICSContent,
+    itsaReturnAmendmentContent: ItsaReturnAmendmentContent,
     govukDetails: GovukDetails
 )
 
@@ -64,6 +67,7 @@
     case (PoaOneDebit | PoaTwoDebit, Some(Accepted)) => codedOutExplanationContent(chargeItem)
     case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(LSPUrl)
     case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(LPPUrl)
+    case (ITSAReturnAmendment, _)       => itsaReturnAmendmentContent()
     case _                              =>
 }}
 

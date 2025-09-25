@@ -19,6 +19,7 @@ package mocks.services
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse
 import models.incomeSourceDetails.TaxYear
 import models.optout._
+import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -72,5 +73,9 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
 
   def mockIsOptOutTaxYearValid(out: Future[Option[OptOutTaxYearQuestionViewModel]]): Unit = {
     when(mockOptOutService.isOptOutTaxYearValid(any())(any(), any(), any())).thenReturn(out)
+  }
+
+  def mockSaveIntent(out: Future[Boolean]): Unit = {
+    when(mockOptOutService.saveIntent(any())(any(), any())).thenReturn(out)
   }
 }

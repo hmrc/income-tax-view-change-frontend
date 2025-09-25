@@ -106,10 +106,10 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "First payment on account made through your PAYE tax code"
-                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £1,400.00"
+                document.select("h1").first().text() shouldBe "First payment on account"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account made through your paye tax code"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
@@ -125,10 +125,10 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "Second payment on account made through your PAYE tax code"
-                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £1,400.00"
+                document.select("h1").first().text() shouldBe "Second payment on account"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account made through your paye tax code"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
@@ -214,6 +214,25 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 March 2019 Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. £2,000.00"
               }
 
+              "provided with an id associated to an ITSA Return Amendment charges" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment) {
+                enable(YourSelfAssessmentCharges, ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Balancing payment: extra amount due to amended return"
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementById("itsa-return-amendment-p1").text() shouldBe "You owe this extra tax because of a change you made to your return."
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
+                document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning This charge will have a daily interest until it is paid. The interest is backdated to the original due date."
+                document.getElementById("charge-history-heading").text() shouldBe "Balancing payment: extra amount due to amended return history"
+              }
+
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty) {
                 enable(YourSelfAssessmentCharges, ChargeHistory, PenaltiesAndAppeals)
                 setupMockSuccess(mtdUserRole)
@@ -231,7 +250,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
                 document.getElementById("LSP-content-3").text() shouldBe "To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time."
                 document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal."
-                document.getElementsByClass("govuk-heading-l").first().text() shouldBe "Interest on your late submission penalty"
+                document.getElementsByClass("govuk-heading-m").get(1).text() shouldBe "Interest on your late submission penalty"
                 document.getElementById("charge-history-heading").text() shouldBe "Late submission penalty history"
               }
 

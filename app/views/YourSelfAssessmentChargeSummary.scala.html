@@ -21,7 +21,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import _root_.implicits.HtmlFormatter.EmspString
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.partials.yourSelfAssessmentCharges.PaymentHistoryTable
@@ -29,8 +28,9 @@
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourChargeSection
 @import views.helpers.ChargeNameLangHelper
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
-
+@import _root_.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
 
 @this(
@@ -52,13 +52,15 @@
         interestOnYourChargeSection: InterestOnYourChargeSection,
         interestOnYourChargeTable: InterestOnYourChargeTable,
         paymentHistoryTable: PaymentHistoryTable,
-        chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock
+        chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
+        whatIsPaymentOnAccount: WhatIsPaymentOnAccount
 )
 
 @(
     viewModel: ChargeSummaryViewModel,
     whatYouOweUrl: String,
     saChargesUrl: String,
+    yourSelfAssessmentChargesFS: Boolean
 )(
     implicit request: Request[_],
     messages: Messages,
@@ -117,7 +119,7 @@
           viewModel.LSPUrl,
           viewModel.LPPUrl
       )
-
+      @if(yourSelfAssessmentChargesFS) {
       @p() {
           @if(viewModel.isAgent) {
               @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part1")
@@ -129,7 +131,39 @@
               @messages("chargeSummary.selfAssessmentCharges.text")
           }
       }
+      }  else {
+          @p() {
+              @if(viewModel.isAgent) {
+                  @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                  @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                  @messages("chargeSummary.whatYouOwe.textTwo-agent")
+              } else {
+                  @messages("chargeSummary.whatYouOwe.textOne")
+                  @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                  @messages("chargeSummary.whatYouOwe.textTwo")
+              }
+          }
+      }
   }
+    @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
+    <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
+        s"${ getMessage("youOwe")
+        }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp
+        }</h1>
+
+     @whatIsPaymentOnAccount()
+
+    @p() {
+        @if(viewModel.isAgent) {
+            @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+            @messages("chargeSummary.selfAssessmentCharges.text-agent")
+        } else {
+            @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+            @messages("chargeSummary.selfAssessmentCharges.text")
+        }
+    }
+ }
+
 
     @if(viewModel.poaExtraChargeLink.isDefined){
         @p(id = Some("poa-extra-charge-content")) {
@@ -139,7 +173,7 @@
         }
     }
 
-    @if(viewModel.chargeItem.hasAccruingInterest) {
+    @if(viewModel.chargeItem.isAccruingInterest) {
 
         @interestOnYourChargeSection(viewModel.chargeItem)
 

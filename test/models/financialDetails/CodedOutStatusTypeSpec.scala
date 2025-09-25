@@ -16,6 +16,8 @@
 
 package models.financialDetails
 
+import enums.CodingOutType
+import play.api.libs.json.{JsString, JsSuccess, Json}
 import testUtils.UnitSpec
 
 class CodedOutStatusTypeSpec extends UnitSpec{
@@ -61,5 +63,20 @@ class CodedOutStatusTypeSpec extends UnitSpec{
     }
   }
 
+  "write" should {
+    "return a string representation of a type passed" in {
+      Accepted.toString shouldBe "Accepted"
+    }
+  }
 
+  "read" should {
+    "return type based on the String passed" in {
+      Json.fromJson[CodedOutStatusType](JsString("Class 2 National Insurance")) shouldBe(JsSuccess(Nics2))
+      Json.fromJson[CodedOutStatusType](JsString("Balancing payment collected through PAYE tax code")) shouldBe(JsSuccess(Accepted))
+      Json.fromJson[CodedOutStatusType](JsString("Fully Collected")) shouldBe(JsSuccess(FullyCollected))
+      Json.fromJson[CodedOutStatusType](JsString("Cancelled PAYE Self Assessment")) shouldBe(JsSuccess(Cancelled))
+      Json.fromJson[CodedOutStatusType](JsString("Not Collected")) shouldBe(JsSuccess(Cancelled))
+      Json.fromJson[CodedOutStatusType](JsString("Partly Collected")) shouldBe(JsSuccess(Cancelled))
+    }
+  }
 }

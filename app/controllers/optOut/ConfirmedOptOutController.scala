@@ -30,12 +30,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optout.{MultiYearOptOutProposition, OptOutService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ReportingObligationsUtils
+import utils.reportingObligations.ReportingObligationsUtils
 import views.html.optOut.ConfirmedOptOutView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
                                           val view: ConfirmedOptOutView,
                                           val itvcErrorHandler: ItvcErrorHandler,
@@ -106,14 +107,11 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def show(isAgent: Boolean = false): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        withOptOutFS {
-          withRecover(isAgent) {
-
-            val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
-
+  def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      withOptOutFS {
+        withRecover(isAgent) {
+          val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
             for {
               viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
               viewScenarioContent: Either[ConfirmedOptOutViewScenariosError, ConfirmedOptOutViewScenarios] <- viewScenarioHandler()
