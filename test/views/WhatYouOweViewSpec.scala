@@ -573,7 +573,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "money in your account section with available credits" in new TestSetup(charges = whatYouOweDataWithAvailableCredits()) {
           pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount") + " " +
-            messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+            messages("whatYouOwe.moneyOnAccount-1") + " £350.00" + " " +
             messages("whatYouOwe.moneyOnAccount-2") + " " +
             messages("whatYouOwe.moneyOnAccount-3") + "."
         }
@@ -1275,7 +1275,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       "money in your account section with available credits" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
         pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
-          messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
+          messages("whatYouOwe.moneyOnAccount-1") + " £350.00" + " " +
           messages("whatYouOwe.moneyOnAccount-agent-2") + " " +
           messages("whatYouOwe.moneyOnAccount-3") + "."
       }
@@ -1345,7 +1345,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   "what you owe view" should {
 
-    val unallocatedCreditMsg = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
+    val unallocatedCreditMsg = "You have £350.00 in your account. We’ll use this to pay the amount due on the next due date."
     "show unallocated credits" when {
       "user is an individual with the feature switch on" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg

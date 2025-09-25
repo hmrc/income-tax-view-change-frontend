@@ -966,7 +966,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
       "money in your account section with available credits" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
         pageDocument.getElementById("money-in-your-account").text shouldBe messages("selfAssessmentCharges.moneyOnAccount-agent") + " " +
-          messages("selfAssessmentCharges.moneyOnAccount-1") + " £300.00" + " " +
+          messages("selfAssessmentCharges.moneyOnAccount-1") + " £350.00" + " " +
           messages("selfAssessmentCharges.moneyOnAccount-agent-2") + " " +
           messages("selfAssessmentCharges.moneyOnAccount-3") + "."
       }
@@ -1024,7 +1024,7 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
   "what you owe view" should {
 
-    val unallocatedCreditMsg = "You have £100.00 in your account. We’ll use this to pay the amount due on the next due date."
+    val unallocatedCreditMsg = "You have £350.00 in your account. We’ll use this to pay the amount due on the next due date."
     "show unallocated credits" when {
       "user is an individual with the feature switch on" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
         pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg

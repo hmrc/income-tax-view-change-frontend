@@ -106,7 +106,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount, yourSelfAssessmentChargesEnabled)
 
-    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()), creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
+    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()),
+      creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined, claimARefundR18enabled = true)
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
