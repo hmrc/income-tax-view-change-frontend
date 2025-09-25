@@ -443,6 +443,9 @@ tax-year-summary.agent.message.C559114                             = for your cl
 tax-year-summary.adjust-poa-paragraph                              = You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account.
 tax-year-summary.adjust-poa                                        = Adjust payments on account
 
+# Tax Year Summary - PFA #
+tax-year-summary.latest-calculation                                = Latest Calculation
+tax-year-summary.previous-calculation                              = Previous Calculation
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income
