@@ -122,7 +122,7 @@ object FeatureSwitchName {
       SubmitClaimToAdjustToNrs,
       SelfServeTimeToPayR17,
       TriggeredMigration,
-      PostFinalisationAmendmentsR18
+      PostFinalisationAmendmentsR18,
       ClaimARefundR18
     )
 
