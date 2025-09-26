@@ -389,6 +389,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(7).isDefined shouldBe false
     }
 
+    "do not render the latency paragraph when no latency details are present" in new SelfEmploymentUnknownsSetup(false) {
+      Option(document.getElementById("up-to-two-tax-years")) shouldBe None
+    }
+
     "display standard update period dropdown when NO latency details" in new SelfEmploymentUnknownsSetup(false) {
       val expandableInfo = document.getElementById("standard-update-period-dropdown")
       expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
@@ -663,6 +667,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(4).isDefined shouldBe false
     }
 
+    "do not render the latency paragraph when no latency details are present" in new UkSetupUnknowns(false) {
+      Option(document.getElementById("up-to-two-tax-years")) shouldBe None
+    }
+
     "render the reporting frequency rows IF there are latency details" in new UkSetup(false) {
       summaryListRowKeys().eq(3).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(4).text() shouldBe reportingMethod2
@@ -815,6 +823,10 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(4).isDefined shouldBe false
     }
 
+    "do not render the latency paragraph when no latency details are present" in new ForeignSetupUnknowns(false) {
+      Option(document.getElementById("up-to-two-tax-years")) shouldBe None
+    }
+
     "render the reporting frequency rows IF there are latency details" in new ForeignSetup(false) {
       summaryListRowKeys().eq(3).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(4).text() shouldBe reportingMethod2
@@ -887,6 +899,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       document.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
       document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
       document.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
+      Option(document.getElementById("up-to-two-tax-years")) shouldBe None
     }
 
     "do not display start date if DisplayBusinessStartDate is disabled" in new ForeignSetup(true, startDateEnabled = false) {
