@@ -137,7 +137,7 @@ case class ChargeSummaryViewModel(
       amount = payment.getAmountOrThrow.abs)
   }
 
-  def getPaymentAllocationDescription(allocation: PaymentHistoryAllocations, payment: PaymentHistoryAllocation): Html = {
+  private def getPaymentAllocationDescription(allocation: PaymentHistoryAllocations, payment: PaymentHistoryAllocation): Html = {
     val matchingPayment = payment.clearingId
     matchingPayment match {
       case Some(paymentId) => {
