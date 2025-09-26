@@ -51,12 +51,12 @@ messages("paymentAllocation.moneyOnAccount")
             <tbody class="govuk-table__body">
                 <tr id="money-on-account">
                     <td class="govuk-table__cell">
-                    @getLink
+                        @{
+                        dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort.toNonBreaking
+                        }
                     </td>
                     <td class="govuk-table__cell">
-                    @{
-                        dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort.toNonBreaking
-                    }
+                    @getLink
                     </td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@{
                         amount.abs.toCurrencyString
