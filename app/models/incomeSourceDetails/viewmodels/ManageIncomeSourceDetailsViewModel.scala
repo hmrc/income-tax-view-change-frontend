@@ -52,11 +52,6 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
     }
   }
 
-  //TODO: Could be removed while oldIncomeSource journey is cleaned up.
-  def shouldShowTaxYears: Boolean = {
-    latencyYearsQuarterly.secondYear.getOrElse(false) && latencyDetails.isDefined
-  }
-
   def isBusinessInLatency: Boolean = {
     latencyDetails.exists(_.isBusinessOrPropertyInLatency(currentTaxYearEnd))
   }
