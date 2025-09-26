@@ -37,7 +37,3 @@ case object  AdjustmentReversalReason extends ReversalReason {
 case object  CustomerRequestReason extends ReversalReason {
   override val value: String = "request"
 }
-
-case object  UnknownReversalReason extends ReversalReason {
-  override val value: String = "unrecognisedReason"
-}
