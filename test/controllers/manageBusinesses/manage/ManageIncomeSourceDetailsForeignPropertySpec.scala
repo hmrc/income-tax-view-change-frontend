@@ -62,6 +62,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasGracePeriodInfo(document) shouldBe false
               getManageDetailsSummaryValues(document).get(2).text() shouldBe calendar
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+              Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
             "the user has a valid id parameter and latency information expired" in {
               enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)

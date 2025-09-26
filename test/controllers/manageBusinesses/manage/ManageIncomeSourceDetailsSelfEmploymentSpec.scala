@@ -63,6 +63,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryRows.eq(6).isEmpty
             manageDetailsSummaryRows.eq(7).isEmpty
             document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+            Option(document.getElementById("up-to-two-tax-years")) shouldBe None
           }
 
           "the user has a valid id parameter and latency information but user is not in latency period" in {

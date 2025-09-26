@@ -21,8 +21,8 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, NavBarFs, OptInOptOutContentUpdateR17}
-import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
+import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BaseIntegrationTestConstants._
@@ -71,7 +71,8 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod)
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod),
+                elementTextByID("up-to-two-tax-years")("")
               )
             }
 

@@ -18,13 +18,12 @@ package controllers.manageBusinesses.manage
 
 import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, NavBarFs}
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BaseIntegrationTestConstants._
-import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
 
 import java.time.LocalDate
@@ -63,7 +62,8 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod)
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
+                elementTextByID("up-to-two-tax-years")("")
               )
             }
             //Crystallisation doesn't matter, need to cleanup tests after discussion

@@ -63,6 +63,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasGracePeriodInfo(document) shouldBe false
               getManageDetailsSummaryValues(document).get(2).text() shouldBe standard
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+              Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
 
             "the user has a valid id parameter and latency period expired" in {
