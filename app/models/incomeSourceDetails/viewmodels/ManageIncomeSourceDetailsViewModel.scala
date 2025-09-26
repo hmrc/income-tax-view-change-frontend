@@ -61,10 +61,6 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
     latencyDetails.exists(_.isBusinessOrPropertyInLatency(currentTaxYearEnd))
   }
 
-  def showLatencyDetails: Boolean = {
-    latencyYearsCrystallised.secondYear.contains(false)
-  }
-
   def shouldShowChangeLinksForTaxYearOne: Boolean = {
     isBusinessInLatency &&
     (latencyYearsCrystallised.firstYear contains false) &&
