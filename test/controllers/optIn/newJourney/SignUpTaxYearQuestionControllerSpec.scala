@@ -63,7 +63,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
 
   private def homeLink(isAgent: Boolean): Option[String] = {
     if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents")
+      Some("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
     } else {
       Some("/report-quarterly/income-and-expenses/view")
     }

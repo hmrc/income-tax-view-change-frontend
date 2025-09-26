@@ -112,7 +112,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents"
+              "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
             } else {
               "/report-quarterly/income-and-expenses/view"
             }
