@@ -158,6 +158,11 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               getHeading(document) shouldBe heading
 
               hasInsetText(document) shouldBe true
+
+              val latencyParagraph = document.getElementById("up-to-two-tax-years")
+              latencyParagraph should not be null
+              latencyParagraph.text().nonEmpty shouldBe true
+
               document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
 
               val summaryKeys = getManageDetailsSummaryKeys(document)
@@ -194,6 +199,11 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe true
               hasChangeSecondYearReportingMethodLink(document) shouldBe true
               hasInsetText(document) shouldBe true
+
+              val latencyParagraph = document.getElementById("up-to-two-tax-years")
+              latencyParagraph should not be null
+              latencyParagraph.text().nonEmpty shouldBe true
+
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
               manageDetailsSummaryValues.get(2).text() shouldBe annuallyGracePeriod
               manageDetailsSummaryValues.get(3).text() shouldBe annuallyGracePeriod

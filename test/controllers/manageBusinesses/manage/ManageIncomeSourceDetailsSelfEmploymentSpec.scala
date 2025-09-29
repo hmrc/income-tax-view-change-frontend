@@ -118,6 +118,11 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             hasChangeFirstYearReportingMethodLink(document) shouldBe true
             hasChangeSecondYearReportingMethodLink(document) shouldBe true
             hasInsetText(document) shouldBe true
+
+            val latencyParagraph = document.getElementById("up-to-two-tax-years")
+            latencyParagraph should not be None
+            latencyParagraph.text().nonEmpty shouldBe true
+
             val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
             val manageDetailsSummaryKeys = getManageDetailsSummaryKeys(document)
             manageDetailsSummaryKeys.get(1).text() shouldBe "Address"
@@ -332,6 +337,11 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             getHeading(document) shouldBe heading
 
             hasInsetText(document) shouldBe true
+
+            val latencyParagraph = document.getElementById("up-to-two-tax-years")
+            latencyParagraph should not be None
+            latencyParagraph.text().nonEmpty shouldBe true
+
             document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
 
             val summaryKeys = getManageDetailsSummaryKeys(document)

@@ -119,7 +119,8 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
                 elementTextByID("change-link-1")(messagesChangeLinkText),
-                elementTextByID("change-link-2")(messagesChangeLinkText)
+                elementTextByID("change-link-2")(messagesChangeLinkText),
+                elementTextByID("up-to-two-tax-years")("Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2027, you could be required to report quarterly.")
               )
             }
 
