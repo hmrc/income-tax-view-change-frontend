@@ -626,21 +626,21 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the table headings in the Payments tab" in new Setup(estimateView()) {
-        layoutContent.selectHead("#paymentTypeHeading").text shouldBe chargeType
         layoutContent.selectHead("#paymentDueDateHeading").text shouldBe dueDate
+        layoutContent.selectHead("#paymentTypeHeading").text shouldBe chargeType
         layoutContent.selectHead("#paymentAmountHeading").text shouldBe amount
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(chargeItems = testChargesWithoutLpiList)) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2) a")
         paymentTypeLink.text shouldBe paymentOnAccount1
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(testYear, fullDocumentDetailModel.transactionId).url
       }
 
       "display the Due date in the Payments tab" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 Jun 2019"
-        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 Jul 2019"
-        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Aug 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(1)").text shouldBe "15 Jun 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(1)").text shouldBe "15 Jul 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(1)").text shouldBe "15 Aug 2019"
       }
 
 
@@ -660,14 +660,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2) a")
         paymentTypeLink.text shouldBe lpiPaymentOnAccount1
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
       "display the Due date in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 Jun 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(1)").text shouldBe "15 Jun 2019"
       }
 
 
@@ -676,14 +676,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(2) a")
         paymentTypeLink.text shouldBe lpiPaymentOnAccount2
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
       "display the Due date in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(2)").text shouldBe "15 Jul 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(2) td:nth-child(1)").text shouldBe "15 Jul 2019"
       }
 
 
@@ -692,14 +692,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
-        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) a")
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2) a")
         paymentTypeLink.text shouldBe lpiRemainingBalance
         paymentTypeLink.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId, true).url
       }
 
       "display the Due date in the Payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(2)").text shouldBe "15 Aug 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(3) td:nth-child(1)").text shouldBe "15 Aug 2019"
       }
 
 
@@ -728,7 +728,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       s"display the Due date in the Payments tab for PAYE Self Assessment as ${na}" in new Setup(payeView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe na
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(1)").text shouldBe na
       }
 
       "display the Amount in the payments tab for PAYE Self Assessment" in new Setup(payeView()) {
@@ -736,7 +736,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the Due date in the Payments tab for Cancelled" in new Setup(rejectedByNpsPartWayView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe "15 May 2019"
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(1)").text shouldBe "15 May 2019"
       }
 
       "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView()) {
@@ -793,7 +793,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val paymentTypeLinkOption: Option[Element] = Option(layoutContent.getElementById("paymentTypeLink-0"))
         val paymentTabRow: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
         paymentTabRow.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
-        paymentTabRow.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(0).toCurrencyString
+        paymentTabRow.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(0).toCurrencyString
         paymentTypeText.text shouldBe remainingBalance
         paymentTypeLinkOption.isEmpty shouldBe true
       }
@@ -802,7 +802,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val paymentTypeText1: Element = layoutContent.getElementById("paymentTypeLink-0")
         val paymentTabRow1: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
         paymentTabRow1.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
-        paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTabRow1.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText1.text shouldBe codedOutPoa1
         paymentTypeText1.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
@@ -810,7 +810,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
         val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
         paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
-        paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTabRow2.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText2.text shouldBe codedOutPoa2
         paymentTypeText2.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
@@ -820,7 +820,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val paymentTypeText1: Element = layoutContent.getElementById("paymentTypeLink-0")
         val paymentTabRow1: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
         paymentTabRow1.getElementsByClass("govuk-table__cell").first().text() shouldBe "31 Mar 2040"
-        paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTabRow1.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText1.text() shouldBe cancelledPaye
         paymentTypeText1.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
@@ -828,7 +828,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
         val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
         paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "31 Mar 2040"
-        paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTabRow2.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText2.text() shouldBe cancelledPaye
         paymentTypeText2.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
