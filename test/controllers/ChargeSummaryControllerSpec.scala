@@ -336,7 +336,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .getElementsByClass("govuk-table__body")
                   .first()
                   .getElementsByClass("govuk-table__cell")
-                  .get(1)
+                  .get(4)
                   .text() shouldBe descriptionTextForRAR1
               }
 
@@ -365,7 +365,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .getElementsByClass("govuk-table__body")
                   .first()
                   .getElementsByClass("govuk-table__cell")
-                  .get(1)
+                  .get(4)
                   .text() shouldBe descriptionTextForRAR2
               }
 
