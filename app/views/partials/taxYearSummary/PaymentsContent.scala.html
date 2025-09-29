@@ -20,12 +20,13 @@
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import services.DateServiceInterface
 @import views.html.components.{h2, p}
-@import views.html.partials.taxYearSummary.{GetChargeSummaryMessage, PaymentsTableHead}
+@import views.html.partials.taxYearSummary.{GetChargeSummaryMessage, PaymentsTableHead, ChargeTypeCell}
 
 @this(h2: h2,
         p: p,
         paymentsTableHead: PaymentsTableHead,
         getChargeSummaryMessage: GetChargeSummaryMessage,
+        chargeTypeCell: ChargeTypeCell,
         implicitDateFormatter: ImplicitDateFormatterImpl)
 @(viewModel: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean, origin: Option[String])(implicit messages: Messages, dateService: DateServiceInterface)
 @import implicitDateFormatter._
@@ -40,51 +41,24 @@
         <tbody>
         @for((chargeItem, index) <- viewModel.charges.sortBy(_.dueDate).sortBy(_.codedOutStatus.contains(Accepted)).zipWithIndex) {
             <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
-                    @if(chargeItem.isOverdue() &&
-                            !chargeItem.codedOutStatus.contains(Accepted) &&
-                            ((!chargeItem.isAccruingInterest && !chargeItem.isPaid) ||
-                                    (chargeItem.isAccruingInterest && !chargeItem.interestIsPaid))) {
-                        <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
-                    }
-
-                    @if(chargeItem.isAccruingInterest()) {
-                        <div class="govuk-tag govuk-tag--red" id="accrues-interest-tag">@messages("taxYears.accruesInterest")</div>
-                    }
-                <div id="paymentTypeText-@{
-                    index
-                }">
-                @if(chargeItem.originalAmount == 0) {
-                    @getChargeSummaryMessage(chargeItem)
-                } else {
-                    <a class="govuk-link" id="paymentTypeLink-@{
-                        index
-                    }" href="@viewModel.getChargeSummaryHref(chargeItem, taxYear, isAgent, origin)">@getChargeSummaryMessage(chargeItem)</a>
-                }
-                </div>
-                    @if(chargeItem.dunningLock) {
-                        <div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>
-                    }
-                    @if(chargeItem.hasLpiWithDunningLock) {
-                        <div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>
-                    }
-                </th>
                 @if(chargeItem.isAccruingInterest) {
                     @chargeItem.accruingInterestAmount.map { accruingInterestAmount =>
                         <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
+                        <td class="govuk-table__cell"> @chargeTypeCell(chargeItem, index, viewModel, taxYear, isAgent, origin, getChargeSummaryMessage)</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@accruingInterestAmount.toCurrencyString</td>
                     }
                 } else if(chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
-                <td class="govuk-table__cell">@messages("tax-year-summary.na")</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
+                        <td class="govuk-table__cell">@messages("tax-year-summary.na")</td>
+                        <td class="govuk-table__cell"> @chargeTypeCell(chargeItem, index, viewModel, taxYear, isAgent, origin, getChargeSummaryMessage)</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
                 } else if(chargeItem.transactionType == BalancingCharge && chargeItem.codedOutStatus.isEmpty) {
-                <td class="govuk-table__cell">
-                @chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))
-                </td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
+                        <td class="govuk-table__cell">@chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
+                        <td class="govuk-table__cell"> @chargeTypeCell(chargeItem, index, viewModel, taxYear, isAgent, origin, getChargeSummaryMessage)</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
                 } else {
-                <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
+                        <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.na"))</td>
+                        <td class="govuk-table__cell"> @chargeTypeCell(chargeItem, index, viewModel, taxYear, isAgent, origin, getChargeSummaryMessage)</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
                 }
             </tr>
         }
