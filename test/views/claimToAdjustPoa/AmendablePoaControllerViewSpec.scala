@@ -62,15 +62,15 @@ class AmendablePoaControllerViewSpec extends TestSupport {
       "render the first paragraph text" in new Setup(isAgent) {
         document.getElementById("paragraph-1-text").text() shouldBe (
           messages("paymentOnAccount.p1") + " " +
-            messages("paymentOnAccount.class4NationalInsurance.link.text") + " " +
+            messages("paymentOnAccount.class4NationalInsurance.link.text") + " (opens in new tab)" + " " +
             messages("paymentOnAccount.p2")
           )
-        document.getElementById("paragraph-1-text").getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
+        document.getElementById("paragraph-1-text").getElementsByTag("a").attr("href") shouldBe "https://www.gov.uk/self-employed-national-insurance-rates"
       }
       "render the example heading and content" in new Setup(isAgent) {
         document.getElementById("heading-example").text() shouldBe messages("paymentOnAccount.heading.example")
         document.getElementById("hint").text() shouldBe messages("paymentOnAccount.hint")
-        document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe messages("paymentOnAccount.class4NationalInsurance.link")
+        document.getElementsByClass("govuk-body").first().getElementsByTag("a").attr("href") shouldBe "https://www.gov.uk/self-employed-national-insurance-rates"
       }
       "render the Payment On Account Table" in new Setup(isAgent) {
         document.getElementsByClass("govuk-table__head").text() shouldBe messages("paymentOnAccount.table-heading-charge-type") +

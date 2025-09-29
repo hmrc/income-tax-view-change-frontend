@@ -1281,9 +1281,6 @@ chargeSummary.codingOutInset-1                                     = If this tax
 chargeSummary.codingOutInset-2                                     = through your PAYE tax code
 chargeSummary.codingOutInset-3                                     = for any reason, you will need to pay the remaining amount. You will have 42 days to make this payment before you may be charged interest and penalties.
 chargeSummary.codingOutPayHistoryAmount                            = Amount collected through your PAYE tax code for {0} to {1} tax year
-chargeSummary.check-paye-tax-code-1                                = Check if your
-chargeSummary.check-paye-tax-code-2                                = PAYE tax code
-chargeSummary.check-paye-tax-code-3                                = has changed for the {0} to {1} tax year.
 chargeSummary.cancelledPayeInset-1                                 = You have previously agreed to pay some of your Self Assessment bill
 chargeSummary.cancelledPayeInset-2                                 = through your PAYE tax code
 chargeSummary.cancelledPayeInset-3                                 = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.
@@ -2566,7 +2563,7 @@ claimToAdjustPoa.confirmation.cancel                                    =   Canc
 paymentOnAccount.caption                             = {0} to {1} tax year
 paymentOnAccount.heading                             = Adjusting your payments on account
 paymentOnAccount.p1                                  = You can adjust both payments on account if you expect the total of your Income Tax and
-paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions (opens in a new tab)
+paymentOnAccount.class4NationalInsurance.link.text   = Class 4 National Insurance contributions
 paymentOnAccount.p2                                  = to be lower than the previous tax year.
 paymentOnAccount.heading.example                     = Example
 paymentOnAccount.hint                                = For example, if your tax bill was £4,000 last year, but you think you should only pay £3,000 this year, you can reduce both payments on account to £1,500 each.
@@ -3417,7 +3414,16 @@ triggered-migration.check-hmrc-records.confirmRecords.heading = Confirm HMRC rec
 triggered-migration.check-hmrc-records.confirmRecords.text    = This page only needs to list all your active sole trader and property income sources. Any other business details that are not right, misspelt or out of date, can be amended at a later date.
 triggered-migration.check-hmrc-records.confirmRecords.button  = Confirm and continue
 
-#check complete page
+# Triggered migration – Check Active Businesses Confirm page
+triggered-migration.check-active-businesses-confirm.heading          = Have you checked that HMRC records only list your active businesses?
+triggered-migration.check-active-businesses-confirm.text             = You can change any other business details at a later date.
+triggered-migration.check-active-businesses-confirm.yes              = Yes
+triggered-migration.check-active-businesses-confirm.yes.hint         = If the previous page only lists your active businesses then the check is complete
+triggered-migration.check-active-businesses-confirm.no               = No
+triggered-migration.check-active-businesses-confirm.no.hint          = Select this option if you have not checked the previous page
+triggered-migration.check-active-businesses-confirm.error.required   = Select yes if you’ve checked that HMRC records only list your active businesses
+
+# Triggered migration - Check complete page
 triggered-migration.checkComplete.greenBoxHeading.1                                     = Check complete
 triggered-migration.checkComplete.greenBoxHeading.2                                     = You have confirmed that HMRC records only list your active businesses
 triggered-migration.checkComplete.whatNext.heading                                      = What to do next

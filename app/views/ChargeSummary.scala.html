@@ -261,15 +261,6 @@
 }
 }
 
-@checkPayeCodePara = {
-    @p(id = Some("check-paye-para")){
-        @messages("chargeSummary.check-paye-tax-code-1")
-<a class="govuk-link" id="paye-tax-code-link" href="@{ExternalUrlHelper.checkPayeTaxCodeUrl}/@{viewModel.taxYearEndToCheckCode}">
-@messages("chargeSummary.check-paye-tax-code-2")</a>
-        @messages("chargeSummary.check-paye-tax-code-3", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
-    }
-}
-
 @codingOutBCDMessage = {
     @p(id=Some("coding-out-message")){
         @messages("chargeSummary.codingOutBCDMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
@@ -335,7 +326,6 @@
     @getExplanationContent
 
     @if(viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)){
-        @checkPayeCodePara
         <div id="coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
         </div>
@@ -345,7 +335,6 @@
     }
 
     @if(viewModel.chargeItem.codedOutStatus.contains(Cancelled)){
-        @checkPayeCodePara
         <div id="cancelled-coding-out-wrapper">
             @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
         </div>
