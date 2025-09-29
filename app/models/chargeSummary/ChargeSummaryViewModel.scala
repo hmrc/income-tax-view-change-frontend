@@ -97,23 +97,19 @@ case class ChargeSummaryViewModel(
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !isCodedOut
 
-  val creationEvent: List[ChargeHistoryItem] = if (chargeHistoryEnabled) {
-    if (noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
+  val creationEvent: List[ChargeHistoryItem] = if (chargeHistoryEnabled && noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
       List(ChargeHistoryItem(
         date = adjustmentHistory.creationEvent.adjustmentDate.getOrElse(chargeItem.documentDate),
         description = Html(messages(s"chargeSummary.chargeHistory.created.${chargeItem.getChargeTypeKey}")),
         amount = adjustmentHistory.creationEvent.amount
       ))
-    }
-    if (isCodedOut) {
+    } else if (chargeHistoryEnabled && isCodedOut) {
       List(ChargeHistoryItem(
         date = adjustmentHistory.creationEvent.adjustmentDate.getOrElse(chargeItem.documentDate),
         description = Html(messages(s"chargeSummary.chargeHistory.created.${chargeItem.getChargeTypeKey}",taxYearFromCodingOut, taxYearToCodingOut)),
         amount = adjustmentHistory.creationEvent.amount
       ))
-    }
-    else List()
-  } else List()
+    } else List()
 
   val chargeHistoriesFormattedList: List[ChargeHistoryItem] = for {
     adjustment <- adjustmentHistory.adjustments
