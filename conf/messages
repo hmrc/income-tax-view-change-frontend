@@ -1223,11 +1223,13 @@ chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = First payment on account reduced due to amended return
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Second payment on account reduced due to amended return
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balancing payment reduced due to amended return
-chargeSummary.chargeHistory.amend.codingOut.text                        = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year.
+chargeSummary.chargeHistory.amend.codingOut.text                        = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
 chargeSummary.chargeHistory.POA1RR-credit                               = First payment on account: credit from your tax return
 chargeSummary.chargeHistory.POA2RR-credit                               = Second payment on account: credit from your tax return
+chargeSummary.chargeHistory.amend.poa1CodedOut.text                     = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year.
+chargeSummary.chargeHistory.amend.poa2CodedOut.text                     = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year.
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on first payment on account
 chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on second payment on account
