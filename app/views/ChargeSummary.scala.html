@@ -316,13 +316,6 @@
     }
 }
 
-@getCreationDate(date: Option[LocalDate]) = @{
-    date match {
-        case Some(value) => value.toLongDateShort.toNonBreaking
-        case None => messages("incomeSources.generic.unknown")
-    }
-}
-
 @mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
     useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage) {
 
