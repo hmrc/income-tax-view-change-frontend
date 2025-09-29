@@ -279,8 +279,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a payment within the table" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messages("paymentAllocation.taxYear", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
-        allTableData.selectNth("td", 2).text() shouldBe messages("paymentAllocation.na")
+        allTableData.selectNth("td", 1).text() shouldBe messages("paymentAllocation.na")
+        allTableData.selectNth("td", 2).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messages("paymentAllocation.taxYear", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
         allTableData.selectNth("td", 3).text() shouldBe "£300.00"
 
       }
