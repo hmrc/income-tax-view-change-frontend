@@ -58,6 +58,17 @@ class DocumentDetailSpec extends UnitSpec {
           fullDocumentDetailModel.copy(interestOutstandingAmount = None, accruingInterestAmount = None)
             .hasAccruingInterest shouldBe false
         }
+
+        "interestOutstandingAmount is zero and accruingInterestAmount is a non-negative amount or does not exist" in {
+          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(0), accruingInterestAmount = Some(0))
+            .hasAccruingInterest shouldBe false
+
+          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(0), accruingInterestAmount = Some(-1))
+            .hasAccruingInterest shouldBe false
+
+          fullDocumentDetailModel.copy(interestOutstandingAmount = Some(0), accruingInterestAmount = None)
+            .hasAccruingInterest shouldBe false
+        }
       }
 
     }
