@@ -74,7 +74,7 @@
 }
 
 @home_tile("payment-history-tile", viewModel.paymentCreditAndRefundHistoryTileViewModel.title()) {
-    @viewModel.paymentCreditAndRefundHistoryTileViewModel.availableCredit.map { amount =>
+    @viewModel.paymentCreditAndRefundHistoryTileViewModel.creditInAccount.map { amount =>
             @p(id = Some("available-credit")){
                 @messages("home.paymentHistoryRefund.availableCredit", amount.toCurrencyString)
             }

@@ -27,15 +27,23 @@ import java.time.LocalDate
 
 class CreditsModelSpec extends UnitSpec {
 
-  val availableCredit:BigDecimal = 20
+  val availableCreditForRepayment:BigDecimal = 20
 
-  val allocatedCredit:BigDecimal = 10
+  val allocatedCredit:BigDecimal = 5
+  val allocatedCreditForFutureCharges:BigDecimal = 10
+
+  val unallocatedCredit:BigDecimal = 20
+
+  val totalCredit: BigDecimal = 35
 
   val allCreditsJson =
     s"""
       |{
-      |  "availableCredit" : ${availableCredit},
+      |  "availableCreditForRepayment" : ${availableCreditForRepayment},
       |  "allocatedCredit" : ${allocatedCredit},
+      |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
+      |  "unallocatedCredit" : ${unallocatedCredit},
+      |  "totalCredit" : ${totalCredit},
       |  "transactions" : [ {
       |    "transactionType" : "refund",
       |    "amount" : 5
@@ -66,7 +74,8 @@ class CreditsModelSpec extends UnitSpec {
       |}
       |""".stripMargin
 
-  val allCreditsObj = CreditsModel(availableCredit, allocatedCredit, List(
+  val allCreditsObj = CreditsModel(availableCreditForRepayment, allocatedCredit, allocatedCreditForFutureCharges,
+    unallocatedCredit, totalCredit, List(
     Transaction(transactionType = Repayment,
       amount = 5,
       taxYear = None,
@@ -147,7 +156,10 @@ class CreditsModelSpec extends UnitSpec {
       val result = Json.toJson(allCreditsObj)
 
       (result \ "allocatedCredit").get shouldBe JsNumber(allocatedCredit)
-      (result \ "availableCredit").get shouldBe JsNumber(availableCredit)
+      (result \ "allocatedCreditForFutureCharges").get shouldBe JsNumber(allocatedCreditForFutureCharges)
+      (result \ "availableCreditForRepayment").get shouldBe JsNumber(availableCreditForRepayment)
+      (result \ "totalCredit").get shouldBe JsNumber(totalCredit)
+      (result \ "unallocatedCredit").get shouldBe JsNumber(unallocatedCredit)
       (result \ "transactions").get match {
         case r: JsArray =>
           r.value.size shouldBe 6
@@ -163,8 +175,11 @@ class CreditsModelSpec extends UnitSpec {
       val invalid =
         s"""
           |{
-          |  "availableCredit" : ${availableCredit},
+          |  "availableCreditForRepayment" : ${availableCreditForRepayment},
           |  "allocatedCredit" : ${allocatedCredit},
+          |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
+          |  "unallocatedCredit" : ${unallocatedCredit},
+          |  "totalCredit" : ${totalCredit},
           |  "transactions" : [ {
           |    "transactionType" : "invalid credit type",
           |    "amount" : 5

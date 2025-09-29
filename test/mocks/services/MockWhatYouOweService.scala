@@ -33,7 +33,7 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
 
   lazy val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
-  val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None))
+  val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None, None, None))
 
   val oneOverdueBCDPaymentInWhatYouOweChargesList: WhatYouOweChargesList =
     emptyWhatYouOweChargesList.copy(
@@ -46,7 +46,7 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
   }
 
   def setupMockGetWhatYouOweChargesListFromFinancialDetails(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
+    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any(), any())(any(), any()))
       .thenReturn(Future.successful(whatYouOweChargesList))
   }
 

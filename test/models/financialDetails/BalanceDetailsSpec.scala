@@ -27,22 +27,26 @@ class BalanceDetailsSpec extends UnitSpec {
     "balanceDueWithin30Days" -> 1.00,
     "overDueAmount" -> 2.00,
     "totalBalance" -> 3.00
-  ) ++ availableCredit.fold(Json.obj())(amount => Json.obj("availableCredit" -> amount)) ++
+  ) ++ availableCredit.fold(Json.obj())(amount => Json.obj("totalCreditAvailableForRepayment" -> amount)) ++
     firstPendingAmountRequested.fold(Json.obj())(amount => Json.obj("firstPendingAmountRequested" -> amount)) ++
     secondPendingAmountRequested.fold(Json.obj())(amount => Json.obj("secondPendingAmountRequested" -> amount))
 
 
-  def balanceDetailsModel(availableCredit: Option[BigDecimal] = None,
+  def balanceDetailsModel(availableCreditForRepayment: Option[BigDecimal] = None,
                           firstPendingAmountRequested: Option[BigDecimal] = None,
                           secondPendingAmountRequested: Option[BigDecimal] = None,
                           allocatedCredit: Option[BigDecimal] = None,
+                          allocatedCreditForFutureCharges: Option[BigDecimal] = None,
+                          totalCredit: Option[BigDecimal] = None,
                           unallocatedCredit: Option[BigDecimal] = None
                          ): BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
     overDueAmount = 2.00,
     totalBalance = 3.00,
-    availableCredit,
+    availableCreditForRepayment,
     allocatedCredit,
+    allocatedCreditForFutureCharges,
+    totalCredit,
     firstPendingAmountRequested,
     secondPendingAmountRequested,
     unallocatedCredit
@@ -100,11 +104,7 @@ class BalanceDetailsSpec extends UnitSpec {
 
     "return absolute values" when {
       "-ve available credit is passed" in {
-        balanceDetailsModel(availableCredit = Some(-2000.toDouble)).getAbsoluteAvailableCreditAmount shouldBe  Some(2000.toDouble)
-      }
-
-      "-ve unallocated credit is passed" in {
-        balanceDetailsModel(unallocatedCredit = Some(-1000.toDouble)).getAbsoluteUnAllocatedCreditAmount shouldBe  Some(1000.toDouble)
+        balanceDetailsModel(totalCredit = Some(-2000.toDouble)).getAbsoluteTotalCreditAmount shouldBe  Some(2000.toDouble)
       }
     }
   }

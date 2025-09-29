@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
-import models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
+import models.admin.{ClaimARefundR18, FilterCodedOutPoas, PenaltiesAndAppeals}
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
@@ -81,7 +81,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
         TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
           isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-          mainChargeIsNotPaidFilter).futureValue shouldBe whatYouOweDataWithDataDueInMoreThan30Days(dueDates = dueDateMoreThan30Days)
+          mainChargeIsNotPaidFilter,
+          claimARefundR18Enabled = true).futureValue shouldBe whatYouOweDataWithDataDueInMoreThan30Days(dueDates = dueDateMoreThan30Days)
       }
     }
     "when both financial details and outstanding charges return success response and valid data of due in 30 days" should {
@@ -93,7 +94,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
         TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
           isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-          mainChargeIsNotPaidFilter).futureValue shouldBe whatYouOweDataWithDataDueIn30Days()
+          mainChargeIsNotPaidFilter,
+          claimARefundR18Enabled = true).futureValue shouldBe whatYouOweDataWithDataDueIn30Days()
       }
       "when both financial details and outstanding charges return success response and valid data of overdue" should {
         "return a success response back" in {
@@ -104,7 +106,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter).futureValue shouldBe whatYouOweDataWithOverdueDataIt()
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe whatYouOweDataWithOverdueDataIt()
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and in future payments" should {
@@ -116,7 +119,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter).futureValue shouldBe whatYouOweDataWithMixedData1
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe whatYouOweDataWithMixedData1
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and dueInThirtyDays" should {
@@ -128,7 +132,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter).futureValue shouldBe whatYouOweDataWithMixedData2
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe whatYouOweDataWithMixedData2
         }
       }
       "when both financial details return success and outstanding charges return 500" should {
@@ -140,7 +145,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           val res = TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter)
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true)
 
           val ex = res.failed.futureValue
           ex shouldBe an[Exception]
@@ -156,7 +162,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           val res = TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter)
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true)
 
           val ex = res.failed.futureValue
           ex shouldBe an[Exception]
@@ -172,8 +179,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(100), None, None, None, Some(100)),
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(100), None, None, Some(350), None, None, Some(100)),
             chargesList = financialDetailsDueInMoreThan30DaysCi()
           )
         }
@@ -188,8 +196,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
             chargesList = financialDetailsBalancingChargesCi
           )
         }
@@ -204,8 +213,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None)
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None)
           )
         }
         "return a success empty response with outstanding amount zero and accruing interest amount zero" in {
@@ -217,8 +227,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None)
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None)
           )
         }
         "return a success POA2 only response with outstanding amount zero and accruing interest amount non-zero" in {
@@ -231,8 +242,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(
             isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
             chargesList = List(poa2))
         }
       }
@@ -260,7 +272,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
               codingDetails = List(CodingDetails(Some(2500.00), Some("2021"))),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
@@ -274,8 +286,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             ))))
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-            mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
             chargesList = List(
               balancingChargeNics2.copy(dueDate = Some(LocalDate.parse("2021-08-24")), chargeReference = Some("ABCD1234")),
               balancingChargeCancelled.copy(dueDate =Some(LocalDate.parse("2021-08-25")), chargeReference = Some("ABCD1234"))),
@@ -292,8 +305,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = true,
             isPenaltiesEnabled = true,
-            mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
             chargesList = List())
         }
         "return PoA charges if they have an amount coded out and filtering FS disabled" in {
@@ -305,8 +319,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
           TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled =  false,
             isPenaltiesEnabled = true,
-            mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+            mainChargeIsNotPaidFilter,
+            claimARefundR18Enabled = true).futureValue shouldBe WhatYouOweChargesList(
+            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
             chargesList = List(poa2WithCodedOut, poa1WithCodedOut))
         }
       }
@@ -320,7 +335,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           .thenReturn(Future.successful(List(financialDetails)))
         TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
           isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-          mainChargeIsNotPaidFilter).futureValue shouldBe expectedResult
+          mainChargeIsNotPaidFilter,
+          claimARefundR18Enabled = true).futureValue shouldBe expectedResult
       }
 
       "return MFA Debits and non-MFA debits" in {
@@ -338,7 +354,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           .thenReturn(Future.successful(List(financialDetails)))
         TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
           isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-          mainChargeIsNotPaidFilter).futureValue shouldBe expectedResult
+          mainChargeIsNotPaidFilter,
+          claimARefundR18Enabled = true).futureValue shouldBe expectedResult
       }
 
       "return list including POA extra charges" in {
@@ -349,6 +366,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
     "with Penalties And Accruals" should {
       def testGetWhatYouOweChargesList(penaltiesEnabled: Boolean, financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
+        enable(ClaimARefundR18)
         if (penaltiesEnabled) enable(PenaltiesAndAppeals) else disable(PenaltiesAndAppeals)
         when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(OutstandingChargesModel(List())))
@@ -356,7 +374,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           .thenReturn(Future.successful(List(financialDetails)))
         TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
           isPenaltiesEnabled = penaltiesEnabled,
-          mainChargeIsNotPaidFilter).futureValue shouldBe expectedResult
+          mainChargeIsNotPaidFilter,
+          claimARefundR18Enabled = true).futureValue shouldBe expectedResult
       }
 
       "return list including penalties" in {

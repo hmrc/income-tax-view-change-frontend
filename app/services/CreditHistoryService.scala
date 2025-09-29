@@ -35,7 +35,7 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
   // Problem: we need to get list of credits (MFA + CutOver) and filter it out by calendar year
   // MFA credits are driven by taxYear
   // CutOver credit by dueDate found in financialDetails related to the corresponding documentDetail (see getDueDateFor)
-  private def getCreditsByTaxYear(taxYear: Int, nino: String)
+  private def getCreditsByTaxYear(taxYear: Int, nino: String, claimARefundR18Enabled: Boolean)
                                  (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino).flatMap {
       case financialDetailsModel: FinancialDetailsModel =>
@@ -49,7 +49,9 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
                     date = chargeItem.dueDateForFinancialDetail.get,
                     charge = chargeItem,
                     CutOverCreditType,
-                    availableCredit = financialDetailsModel.balanceDetails.availableCredit)
+                    availableCredit =
+                      if (claimARefundR18Enabled) financialDetailsModel.balanceDetails.totalCredit
+                      else financialDetailsModel.balanceDetails.totalCreditAvailableForRepayment)
                 )
 
               case (creditTypeV, true) =>
@@ -58,7 +60,9 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
                     date = chargeItem.documentDate,
                     chargeItem,
                     creditType = creditTypeV.asInstanceOf[CreditType], // TODO: use safe type conversion instead
-                    availableCredit = financialDetailsModel.balanceDetails.availableCredit)
+                    availableCredit =
+                      if (claimARefundR18Enabled) financialDetailsModel.balanceDetails.totalCredit
+                      else financialDetailsModel.balanceDetails.totalCreditAvailableForRepayment)
                 )
               case (_, _) =>
                 None
@@ -74,12 +78,12 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
     }
   }
 
-  def getCreditsHistory(calendarYear: Int, nino: String)
+  def getCreditsHistory(calendarYear: Int, nino: String, claimARefundR18Enabled: Boolean)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
 
     for {
-      creditModelForTaxYear <- getCreditsByTaxYear(calendarYear, nino)
-      creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino)
+      creditModelForTaxYear <- getCreditsByTaxYear(calendarYear, nino, claimARefundR18Enabled)
+      creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino, claimARefundR18Enabled)
     } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
       case (Right(creditModelTY), Right(creditModelTYandOne)) =>
         val creditsForTaxYearAndPlusOne =

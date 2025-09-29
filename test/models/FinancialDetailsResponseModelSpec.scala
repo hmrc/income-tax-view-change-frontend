@@ -132,7 +132,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers with Fina
       effectiveDateOfPayment = Some(LocalDate.parse("2021-12-01")),
       documentDueDate = Some(LocalDate.parse("2021-12-01")))
 
-    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None, None), List(), List(dd1, dd2), List(fd1, fd2, fd3, fd4))
+    val fdm: FinancialDetailsModel = FinancialDetailsModel(BalanceDetails(1, 2, 3, None, None, None, None, None, None, None), List(), List(dd1, dd2), List(fd1, fd2, fd3, fd4))
 
     "return a list of due dates" in {
       fdm.getAllDueDates shouldBe List(LocalDate.parse("2017-01-31"), LocalDate.parse("2021-12-01"))

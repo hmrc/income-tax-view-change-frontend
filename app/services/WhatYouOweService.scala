@@ -53,19 +53,21 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   def getWhatYouOweChargesList(isFilterCodedOutPoasEnabled: Boolean,
                                isPenaltiesEnabled: Boolean,
-                               remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem])
+                               remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem],
+                               claimARefundR18Enabled: Boolean)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
         unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails()
-      } yield getWhatYouOweChargesList(unpaidChanges, isFilterCodedOutPoasEnabled, isPenaltiesEnabled, remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot)
+      } yield getWhatYouOweChargesList(unpaidChanges, isFilterCodedOutPoasEnabled, isPenaltiesEnabled, remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot, claimARefundR18Enabled)
     }.flatten
   }
 
   def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
                                isFilterCodedOutPoasEnabled: Boolean,
                                isPenaltiesEnabled: Boolean,
-                               remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem])
+                               remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem],
+                               claimARefundR18Enabled: Boolean = true)
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
 
     unpaidCharges match {
@@ -74,7 +76,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
-          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None))
+          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None))
 
         val codingOutDetails: Option[CodingOutDetails] = financialDetailsModelList.map(_.codingDetails).maxByOption(_.size).getOrElse(List()).find(
           _.taxYearReturn.contains(dateService.getCurrentTaxYear.startYear.toString)).flatMap(_.toCodingOutDetails)
@@ -85,7 +87,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
             isFilterCodedOutPoasEnabled,
             isPenaltiesEnabled,
             remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot),
-          codedOutDetails = codingOutDetails)
+          codedOutDetails = codingOutDetails,
+          claimARefundR18Enabled = claimARefundR18Enabled)
 
         {
           for {
@@ -151,7 +154,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                 paymentHandOffUrl: Long => String)
                                (implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
     for {
-      whatYouOweChargesList        <- getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
+      whatYouOweChargesList        <- getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter, isEnabled(ClaimARefundR18))
       ctaViewModel                 <- claimToAdjustViewModel(Nino(user.nino))
       lpp2Url                       = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent())
       hasOverdueCharges             = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))

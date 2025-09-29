@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import models.admin.ClaimARefundR18
 import models.creditDetailModel.CreditDetailModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -83,7 +84,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_],
                     hc: HeaderCarrier): Future[Result] = {
-    creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
+    creditHistoryService.getCreditsHistory(calendarYear, user.nino, isEnabled(ClaimARefundR18)).flatMap {
       case Right(credits) =>
         val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
         val maybeAvailableCredit: Option[BigDecimal] =
