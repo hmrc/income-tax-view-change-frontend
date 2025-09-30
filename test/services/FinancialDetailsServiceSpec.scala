@@ -50,13 +50,13 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
   private def getFinancialDetailSuccess(documentDetails: List[DocumentDetail] = List(fullDocumentDetailModel),
                                         financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel)) = {
-    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = documentDetails, financialDetails = financialDetails)
   }
 
   private def getMultiYearFinancialDetailSuccess(documentDetails: List[DocumentDetail] = List(fullDocumentDetailModel, fullDocumentDetailModel),
                                                   financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel, fullFinancialDetailModel)) = {
-    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+    FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = documentDetails, financialDetails = financialDetails)
   }
 

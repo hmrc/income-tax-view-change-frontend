@@ -1427,7 +1427,7 @@ inYear-tax-overview.agent.inset                                  = Mae’r cyfri
 ## credits and refunds
 credit-and-refund.heading                                         = Hawlio ad-daliad
 
-credit-and-refund.available-to-claim                              = Mae {0} ar gael i’w hawlio
+credit-and-refund.in-your-account                                 = Mae {0} yn eich cyfrif
 
 credit-and-refund.upcoming-allocated-credit-1                     = Mae CThEF wedi cadw {0} o’r swm hwn i dalu’ch bil treth sydd i ddod.
 credit-and-refund.upcoming-allocated-credit-1-all                 = Mae CThEF wedi cadw’r cyfanswm o {0} i dalu’ch bil treth sydd i ddod.

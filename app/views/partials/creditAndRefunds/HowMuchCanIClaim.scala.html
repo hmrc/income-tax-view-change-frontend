@@ -42,7 +42,7 @@
         ))
     } else {
         @govukInsetText(InsetText(
-            content = Text(messages("credit-and-refund.if-you-claim-back-more", (viewModel.availableCredit - viewModel.allocatedCredit).toCurrencyString))
+            content = Text(messages("credit-and-refund.if-you-claim-back-more", viewModel.unallocatedCredit.toCurrencyString))
         ))
     }
 }

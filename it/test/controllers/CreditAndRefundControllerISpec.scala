@@ -40,7 +40,7 @@ class CreditAndRefundControllerISpec extends ControllerISpecHelper {
 
   val validResponseModel = ANewCreditAndRefundModel()
     .withAvailableCredit(5.0)
-    .withAllocatedCredit(45.0)
+    .withAllocatedFutureCredit(45.0)
     .withFirstRefund(3.0)
     .withSecondRefund(2.0)
     .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 3, 29), 2000.0)

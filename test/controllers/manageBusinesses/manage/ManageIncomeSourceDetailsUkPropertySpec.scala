@@ -63,6 +63,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasGracePeriodInfo(document) shouldBe false
               getManageDetailsSummaryValues(document).get(2).text() shouldBe standard
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+              Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
 
             "the user has a valid id parameter and latency period expired" in {
@@ -158,6 +159,11 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               getHeading(document) shouldBe heading
 
               hasInsetText(document) shouldBe true
+
+              val latencyParagraph = document.getElementById("up-to-two-tax-years")
+              latencyParagraph should not be null
+              latencyParagraph.text().nonEmpty shouldBe true
+
               document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
 
               val summaryKeys = getManageDetailsSummaryKeys(document)
@@ -195,6 +201,11 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeFirstYearReportingMethodLink(document) shouldBe true
               hasChangeSecondYearReportingMethodLink(document) shouldBe true
               hasInsetText(document) shouldBe true
+
+              val latencyParagraph = document.getElementById("up-to-two-tax-years")
+              latencyParagraph should not be null
+              latencyParagraph.text().nonEmpty shouldBe true
+
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
               manageDetailsSummaryValues.get(2).text() shouldBe calendar
               manageDetailsSummaryValues.get(3).text() shouldBe quarterlyGracePeriod

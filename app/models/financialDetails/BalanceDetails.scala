@@ -21,28 +21,23 @@ import play.api.libs.json.{Json, Reads, Writes}
 case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
                           overDueAmount: BigDecimal,
                           totalBalance: BigDecimal,
-                          availableCredit: Option[BigDecimal],
+                          totalCreditAvailableForRepayment: Option[BigDecimal],
                           allocatedCredit: Option[BigDecimal],
+                          allocatedCreditForFutureCharges: Option[BigDecimal],
+                          totalCredit: Option[BigDecimal],
                           firstPendingAmountRequested: Option[BigDecimal],
                           secondPendingAmountRequested: Option[BigDecimal],
                           unallocatedCredit: Option[BigDecimal]
                           ) {
 
   val refundInProgress: Boolean = firstPendingAmountRequested.isDefined || secondPendingAmountRequested.isDefined
-  val total: Option[BigDecimal] = availableCredit.map{ total =>
-    total - firstPendingAmountRequested.getOrElse(0) - secondPendingAmountRequested.getOrElse(0)
-  }
 
-  def getAbsoluteUnAllocatedCreditAmount: Option[BigDecimal] = {
-    unallocatedCredit.map (credit => math.abs(credit.toDouble))
+  def getAbsoluteTotalCreditAmount: Option[BigDecimal] = {
+    totalCredit.map (credit => math.abs(credit.toDouble))
   }
 
   def getAbsoluteAvailableCreditAmount: Option[BigDecimal] = {
-    availableCredit.map (credit => math.abs(credit.toDouble))
-  }
-
-  def getAbsoluteAllocatedCreditAmount: Option[BigDecimal] = {
-    allocatedCredit.map(credit => math.abs(credit.toDouble))
+    totalCreditAvailableForRepayment.map (credit => math.abs(credit.toDouble))
   }
 
 }

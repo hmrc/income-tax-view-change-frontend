@@ -74,6 +74,8 @@ object FeatureSwitchName {
       JsSuccess(SelfServeTimeToPayR17)
     case JsString(TriggeredMigration.name) =>
       JsSuccess(TriggeredMigration)
+    case JsString(ClaimARefundR18.name) =>
+      JsSuccess(ClaimARefundR18)
     case JsString(SubmitClaimToAdjustToNrs.name) =>
       JsSuccess(SubmitClaimToAdjustToNrs)
     case JsString(PostFinalisationAmendmentsR18.name) =>
@@ -120,7 +122,8 @@ object FeatureSwitchName {
       SubmitClaimToAdjustToNrs,
       SelfServeTimeToPayR17,
       TriggeredMigration,
-      PostFinalisationAmendmentsR18
+      PostFinalisationAmendmentsR18,
+      ClaimARefundR18
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -219,6 +222,11 @@ case object TriggeredMigration extends FeatureSwitchName {
 case object SubmitClaimToAdjustToNrs extends FeatureSwitchName {
   override val name: String = "submit-claim-to-adjust-to-nrs"
   override val toString: String = "Submit Claim to Adjust to NRS"
+}
+
+case object ClaimARefundR18 extends FeatureSwitchName {
+  override val name: String = "claim-a-refund-r18"
+  override val toString: String = "Claim A Refund R18"
 }
 
 case object PostFinalisationAmendmentsR18 extends FeatureSwitchName {

@@ -36,7 +36,7 @@ case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: Mtd
   private def getFullDueDate(dueDate: LocalDate) = s"${dueDate.format(DateTimeFormatter.ofPattern("dd MMMM YYYY"))}" // returns "17 January 2021"
 
   private def getAvailableCredit: Double = {
-    creditsModel.availableCredit.abs.toDouble
+    creditsModel.availableCreditForRepayment.abs.toDouble
   }
 
   case class Credit(transaction: Transaction) {
