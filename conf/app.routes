@@ -166,6 +166,8 @@ POST        /feedback                                                     contro
 POST        /agents/feedback                                              controllers.feedback.FeedbackController.submitAgent()
 GET         /thankyou                                                     controllers.feedback.FeedbackController.thankYou()
 GET         /agents/thankyou                                              controllers.feedback.FeedbackController.thankYouAgent()
+GET         /agents/thankyou                                              controllers.feedback.FeedbackController.thankYouAgent()
+
 
 #Timeout Routes
 GET         /session-timeout                                              controllers.timeout.SessionTimeoutController.timeout()
