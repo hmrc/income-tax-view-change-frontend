@@ -21,8 +21,8 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, NavBarFs, OptInOptOutContentUpdateR17}
-import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
+import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BaseIntegrationTestConstants._
@@ -71,7 +71,8 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod)
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod),
+                elementTextByID("up-to-two-tax-years")("")
               )
             }
 
@@ -150,7 +151,8 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dt")(s"Reporting frequency $taxYear2ToString"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dd")(messagesQuarterlyGracePeriod),
                 elementTextByID("change-link-1")(messagesChangeLinkText),
-                elementTextByID("change-link-2")(messagesChangeLinkText)
+                elementTextByID("change-link-2")(messagesChangeLinkText),
+                elementTextByID("up-to-two-tax-years")("Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2027, you could be required to report quarterly.")
               )
             }
 
@@ -266,7 +268,8 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")("No"),
               elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")("Yes"),
               elementTextByID("sign-up-link-1")("Sign up"),
-              elementTextByID("opt-out-link-2")("Opt out")
+              elementTextByID("opt-out-link-2")("Opt out"),
+              elementTextByID("up-to-two-tax-years")("Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April 2027, you could be required to use the service.")
             )
           }
         }

@@ -63,6 +63,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryRows.eq(6).isEmpty
             manageDetailsSummaryRows.eq(7).isEmpty
             document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+            Option(document.getElementById("up-to-two-tax-years")) shouldBe None
           }
 
           "the user has a valid id parameter and latency information but user is not in latency period" in {
@@ -117,6 +118,11 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             hasChangeFirstYearReportingMethodLink(document) shouldBe true
             hasChangeSecondYearReportingMethodLink(document) shouldBe true
             hasInsetText(document) shouldBe true
+
+            val latencyParagraph = document.getElementById("up-to-two-tax-years")
+            latencyParagraph should not be None
+            latencyParagraph.text().nonEmpty shouldBe true
+
             val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
             val manageDetailsSummaryKeys = getManageDetailsSummaryKeys(document)
             manageDetailsSummaryKeys.get(1).text() shouldBe "Address"
@@ -331,6 +337,11 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             getHeading(document) shouldBe heading
 
             hasInsetText(document) shouldBe true
+
+            val latencyParagraph = document.getElementById("up-to-two-tax-years")
+            latencyParagraph should not be None
+            latencyParagraph.text().nonEmpty shouldBe true
+
             document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
 
             val summaryKeys = getManageDetailsSummaryKeys(document)
