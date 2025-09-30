@@ -789,8 +789,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       document.selectById("allocation").text() shouldBe "Allocation"
 
-      document.selectById("heading-row").text() shouldBe "Where your money went Date Amount"
-      document.selectById("table-row-1").text() shouldBe "First payment on account 2017 to 2018 tax year 15 May 2019 £100.00"
+      document.selectById("heading-row").text() shouldBe "Date Where your money went Amount"
+      document.selectById("table-row-1").text() shouldBe "15 May 2019 First payment on account 2017 to 2018 tax year £100.00"
 
       document.selectById("poa-allocation-link").attr("href") shouldBe "testUrl1"
     }
@@ -802,8 +802,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       document.selectById("allocation").text() shouldBe "Allocation"
 
-      document.selectById("heading-row").text() shouldBe "Where your money went Date Amount"
-      document.selectById("table-row-1").text() shouldBe "Second payment on account 2017 to 2018 tax year 15 May 2019 £100.00"
+      document.selectById("heading-row").text() shouldBe "Date Where your money went Amount"
+      document.selectById("table-row-1").text() shouldBe "15 May 2019 Second payment on account 2017 to 2018 tax year £100.00"
 
       document.selectById("poa-allocation-link").attr("href") shouldBe "testUrl2"
     }

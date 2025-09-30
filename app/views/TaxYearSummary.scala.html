@@ -52,8 +52,8 @@
         messages("tax-year-summary.total-due")
     } else {
         if(model.periodFrom.isDefined && model.periodTo.isDefined) {
-            val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDate
-            val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDate
+            val calculationDateFrom = implicitDateFormatter.longDate(model.periodFrom.get).toLongDateShort
+            val calculationDateTo = implicitDateFormatter.longDate(model.periodTo.get).toLongDateShort
             messages("tax-year-summary.tax-calculation.date", calculationDateFrom, calculationDateTo)
         } else {
             ""
@@ -78,7 +78,7 @@
     Seq(
         SummaryListRow(
             key = Key(content = Text(messages("tax-year-summary.calculation-date")), classes = "govuk-summary-list__key dt-cell-width"),
-            value = Value(content = model.timestamp.map(_.toLongDate).fold(Text(""))(Text(_)), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0"),
+            value = Value(content = model.timestamp.map(_.toLongDateShort).fold(Text(""))(Text(_)), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0"),
             classes = "govuk-summary-list__row"),
         SummaryListRow(
             key = Key(content = Text(getTotalDue(model)), classes = "govuk-summary-list__key dt-cell-width"),
@@ -100,7 +100,7 @@
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id = Some("calc-date-info"))(content = Html(
                     messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
-                        model.timestamp.map(_.toLongDate).get))
+                        model.timestamp.map(_.toLongDateShort).get))
                 )
             )))
         }

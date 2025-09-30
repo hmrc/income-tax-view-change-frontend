@@ -159,12 +159,12 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
                   elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
                   elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $poa1"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "a")(poa1Lpi),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("24 Jun 2021"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-child(1)")("23 Apr 2021"),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-child(2)")(s"$overdue $poa1"),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-child(3)")("£1,000.00"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-child(1)")("24 Jun 2021"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-child(2)", "a")(poa1Lpi),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-child(3)")("£100.00"),
                   elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
                   elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
                   elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
@@ -225,17 +225,17 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   elementTextBySelector("#income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
                   elementTextBySelector("#income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
                   elementTextBySelectorList("#income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $poa1 $underReview"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-child(1)")("23 Apr 2021"),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-child(2)")(s"$overdue $poa1 $underReview"),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-child(3)")("£1,000.00"),
 
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")(s"$overdue $poa2"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£2,000.00"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-child(1)")("23 Apr 2021"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-child(2)")(s"$overdue $poa2"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-child(3)")("£2,000.00"),
 
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "th")(s"$poa1Lpi $underReview"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("24 Jun 2021"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£100.00"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-child(1)")("24 Jun 2021"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-child(2)")(s"$poa1Lpi $underReview"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-child(3)")("£100.00"),
 
                   elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
                   elementTextBySelectorList("#updates", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
@@ -295,8 +295,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "a")(balancingPayment),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")(s"$overdue $class2Nic")
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)","a")(balancingPayment),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-child(2)")(s"$overdue $class2Nic")
 
                 )
               }
@@ -345,8 +345,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $class2Nic"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")(s"$overdue $cancelledPayeSA")
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-child(2)")(s"$overdue $class2Nic"),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-child(2)")(s"$overdue $cancelledPayeSA")
                 )
               }
 
@@ -395,7 +395,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   res should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                    elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $balancingPayment"),
+                    elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-child(2)")(s"$overdue $balancingPayment"),
                     elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "a")(class2Nic),
                     elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "a")(cancelledPayeSA)
                   )
@@ -613,12 +613,12 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "th")(s"$hmrcAdjustment"),
-                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("22 Apr 2021"),
-                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£2,234.00"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")(s"$hmrcAdjustment"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,234.00"),
+                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-child(1)")("22 Apr 2021"),
+                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-child(2)")(s"$hmrcAdjustment"),
+                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-child(3)")("£2,234.00"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-child(1)")("23 Apr 2021"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-child(2)")(s"$hmrcAdjustment"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-child(3)")("£1,234.00"),
                   elementCountBySelector("#payments-table", "tbody", "tr")(2)
                 )
               }
