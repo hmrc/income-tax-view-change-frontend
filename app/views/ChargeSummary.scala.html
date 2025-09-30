@@ -467,28 +467,6 @@
             </thead>
 
             <tbody class = "govuk-table__body">
-            @if(viewModel.chargeHistoryEnabled){
-                @if(viewModel.latePaymentInterestCharge){
-                    <tr>
-                        <td class="govuk-table__cell">@{viewModel.chargeItem.interestEndDate.get.toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">@messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}")</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@{viewModel.chargeItem.accruingInterestAmount.get.toCurrency}</td>
-                    </tr>
-                }
-
-                @viewModel.reviewAndReconcileCredit.map { charge =>
-                    <tr>
-                        <td class="govuk-table__cell" id="rar-due-date">@{charge.getDueDate.toLongDateShort.toNonBreaking}</td>
-                        <td class="govuk-table__cell">
-                            <a class="govuk-link" id="rar-charge-link" href="@RepaymentHistoryUtils.getChargeLinkUrl(viewModel.isAgent, charge.taxYear.endYear, charge.transactionId)">
-                                @messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
-                            </a>
-                        </td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric" id="rar-total-amount">@{charge.originalAmount.abs.toCurrency}</td>
-                    </tr>
-                }
-            }
-
             @viewModel.sortedChargeHistoryTableEntries.map { chargeHistoryItem =>
                 <tr>
                     <td class="govuk-table__cell">@{chargeHistoryItem.date.toLongDateShort.toNonBreaking}</td>
