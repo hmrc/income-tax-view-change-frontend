@@ -50,7 +50,8 @@
     chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
-    govukInsetText : GovukInsetText
+    govukInsetText : GovukInsetText,
+    govukTable: GovukTable
 )
 
 @(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String, saChargesUrl: String, yourSelfAssessmentChargesFS: Boolean)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
@@ -456,26 +457,35 @@
             @h2(msg = chargeHistoryHeading, optId = Some("charge-history-h2"))
         }
 
-        <table class="govuk-table" id="payment-history-table">
-
-            <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.date")</th>
-                <th scope="col" class="govuk-table__header">@messages("chargeSummary.chargeHistory.description")</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("chargeSummary.chargeHistory.amount")</th>
-            </tr>
-            </thead>
-
-            <tbody class = "govuk-table__body">
-            @viewModel.sortedChargeHistoryTableEntries.map { chargeHistoryItem =>
-                <tr>
-                    <td class="govuk-table__cell">@{chargeHistoryItem.date.toLongDateShort.toNonBreaking}</td>
-                    <td class="govuk-table__cell">@{chargeHistoryItem.description}</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{chargeHistoryItem.amount.toCurrency}</td>
-                </tr>
-            }
-            </tbody>
-        </table>
+        @govukTable(Table(
+            rows = viewModel.sortedChargeHistoryTableEntries.map { chargeHistoryItem =>
+                Seq(
+                    TableRow(
+                        content = HtmlContent(chargeHistoryItem.date.toLongDateShort.toNonBreaking)
+                    ),
+                    TableRow(
+                        content = HtmlContent(chargeHistoryItem.description)
+                    ),
+                    TableRow(
+                        content = HtmlContent(chargeHistoryItem.amount.toCurrency)
+                    )
+                )
+            },
+            head = Some(Seq(
+                HeadCell(
+                    content = Text(messages("chargeSummary.chargeHistory.date"))
+                ),
+                HeadCell(
+                    content = Text(messages("chargeSummary.chargeHistory.description"))
+                ),
+                HeadCell(
+                    content = Text(messages("chargeSummary.chargeHistory.amount"))
+                )
+            )),
+            captionClasses = "govuk-table__caption--m",
+            attributes = Map("id" -> "payment-history-table"),
+            firstCellIsHeader = false
+        ))
     }
 
     @if(viewModel.chargeItem.isPoaReconciliationCredit) {
