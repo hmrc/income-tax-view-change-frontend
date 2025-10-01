@@ -86,11 +86,10 @@
         if(viewModel.noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
-                    content = HtmlContent( viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDateShort.toNonBreaking).getOrElse(Html(messages("incomeSources.generic.unknown"))))
+                    content = HtmlContent(viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDateShort.toNonBreaking).getOrElse(Html(messages("incomeSources.generic.unknown"))))
                 ),
                 TableRow(
                     content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
-
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.adjustmentHistory.creationEvent.amount.toCurrency), format = Some("numeric")
@@ -101,10 +100,10 @@
             Seq(
                 TableRow(
                     content = HtmlContent(viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDateShort.toNonBreaking).getOrElse(Html(messages("incomeSources.generic.unknown"))))
-
                 ),
                 TableRow(
                     content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
+
                 ),
                 TableRow(
                     content = HtmlContent(viewModel.adjustmentHistory.creationEvent.amount.toCurrency), format = Some("numeric")
