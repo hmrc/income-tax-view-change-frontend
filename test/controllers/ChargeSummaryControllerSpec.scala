@@ -76,7 +76,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "First payment on account made through your PAYE tax code"
+                document.select("h1").first().text() shouldBe "First payment on account collected through your PAYE tax code"
                 document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
@@ -91,7 +91,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "Second payment on account made through your PAYE tax code"
+                document.select("h1").first().text() shouldBe "Second payment on account collected through your PAYE tax code"
                 document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
@@ -209,7 +209,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
                 document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 March 2018 Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. £2,500.00"
-                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 March 2019 Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. £2,000.00"
+                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 March 2019 Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year £2,000.00"
               }
 
               "provided with an id associated to an ITSA Return Amendment charges" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment) {

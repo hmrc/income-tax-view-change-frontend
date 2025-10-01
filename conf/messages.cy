@@ -3320,7 +3320,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.caption.poa1CodedOut.text.heading 
 yourSelfAssessmentChargeSummary.chargeHistory.caption.poa2CodedOut.text.heading = Mae’r ail daliad ar gyfrif hwn yn mynd tuag at eich bil treth {0} i {1}.
 yourSelfAssessmentChargeSummary.chargeHistory.poa1CodedOut.text.heading = Hanes eich taliad ar gyfrif cyntaf
 yourSelfAssessmentChargeSummary.chargeHistory.poa2CodedOut.text.heading = Hanes eich ail daliad ar gyfrif
-yourSelfAssessmentChargeSummary.chargeHistory.amend.codingOut.text = Y swm sydd wedi’i addasu i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
+yourSelfAssessmentChargeSummary.chargeHistory.amend.codingOut.text = Y swm sydd wedi’i addasu i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}
 yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount1.text.heading = Mae’r taliad ar gyfrif cyntaf hwn yn mynd tuag at eich bil treth {0} i {1}
 yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount2.text.heading = Mae’r ail daliad ar gyfrif hwn yn mynd tuag at eich bil treth {0} i {1}
 
@@ -3344,8 +3344,8 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Anhysbys
 
-yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = Taliad ar gyfrif cyntaf sy’n cael ei wneud drwy’ch cod treth TWE
-yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Ail daliad ar gyfrif sy’n cael ei wneud drwy’ch cod treth TWE
+yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = Taliad cyntaf ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
+yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Ail daliad ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Hanes eich taliad mantoli
 yourSelfAssessmentChargeSummary.chargeHistory.class2Nic.text.heading                = Hanes y tâl hwn
