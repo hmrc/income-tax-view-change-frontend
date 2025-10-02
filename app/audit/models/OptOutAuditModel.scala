@@ -64,7 +64,18 @@ case class OptOutAuditModel(
 
 object OptOutAuditModel {
 
-    implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
+  implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
+
+  private def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
+    resolvedResponse match {
+      case response: ITSAStatusUpdateResponseFailure =>
+        Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
+      case _: ITSAStatusUpdateResponseSuccess =>
+        Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
+      case _ =>
+        Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
+    }
+  }
 
   def generateOptOutAudit(optOutProposition: OptOutProposition,
                           intentTaxYear: TaxYear,
@@ -90,15 +101,29 @@ object OptOutAuditModel {
     )
   }
 
-  private def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
-    resolvedResponse match {
-      case response: ITSAStatusUpdateResponseFailure =>
-        Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
-      case _: ITSAStatusUpdateResponseSuccess =>
-        Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
-      case _ =>
-        Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
-    }
+  def generateOptOutAudit(
+                           currentTaxYear: TaxYear,
+                           selectedTaxYear: TaxYear,
+                           resolvedOutcome: ITSAStatusUpdateResponse
+                         )(implicit user: MtdItUser[_]): OptOutAuditModel = {
+    OptOutAuditModel(
+      saUtr = user.saUtr,
+      credId = user.credId,
+      userType = user.userType,
+      agentReferenceNumber = user.arn,
+      mtditid = user.mtditid,
+      nino = user.nino,
+      optOutRequestedFromTaxYear = selectedTaxYear.formatAsShortYearRange,
+      currentYear = currentTaxYear.formatAsShortYearRange,
+      `beforeITSAStatusCurrentYear-1` = currentTaxYear.previousYear.status,
+      beforeITSAStatusCurrentYear = optOutProposition.currentTaxYear.status,
+      `beforeITSAStatusCurrentYear+1` = optOutProposition.nextTaxYear.status,
+      outcome = createOutcome(resolvedOutcome),
+      `afterAssumedITSAStatusCurrentYear-1` = optOutProposition.previousTaxYear.expectedItsaStatusAfter(selectedTaxYear),
+      afterAssumedITSAStatusCurrentYear = optOutProposition.currentTaxYear.expectedItsaStatusAfter(selectedTaxYear),
+      `afterAssumedITSAStatusCurrentYear+1` = optOutProposition.nextTaxYear.expectedItsaStatusAfter(selectedTaxYear),
+      `currentYear-1Crystallised` = optOutProposition.previousTaxYear.crystallised
+    )
   }
 
 

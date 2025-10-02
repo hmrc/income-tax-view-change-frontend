@@ -19,12 +19,10 @@ package models.optout
 import play.api.libs.json.{Json, OFormat}
 import repositories.OptOutContextData
 
-case class OptOutSessionData(optOutContextData: Option[OptOutContextData],
-                             selectedOptOutYear: Option[String]) {
-
-  val selectedOptOutYearField: String = "SelectedOptoutYear"
-
-}
+case class OptOutSessionData(
+                              optOutContextData: Option[OptOutContextData],
+                              selectedOptOutYear: Option[String]
+                            )
 
 object OptOutSessionData {
   implicit val format: OFormat[OptOutSessionData] = Json.format[OptOutSessionData]

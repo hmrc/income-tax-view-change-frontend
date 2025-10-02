@@ -32,19 +32,17 @@ import scala.concurrent.{ExecutionContext, Future}
 class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionDataRepository) {
 
   def saveIntent(intent: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    OptionT(repository.get(hc.sessionId.get.value, Opt(OptOutJourney))).
-      map(journeySd => journeySd.copy(optOutSessionData = journeySd.optOutSessionData.map(_.copy(selectedOptOutYear = Some(intent.toString))))).
-      flatMap(journeySd => OptionT.liftF(repository.set(journeySd))).
-      getOrElse(false)
+    OptionT(repository.get(hc.sessionId.get.value, Opt(OptOutJourney)))
+      .map(journeySd => journeySd.copy(optOutSessionData = journeySd.optOutSessionData.map(_.copy(selectedOptOutYear = Some(intent.toString)))))
+      .flatMap(journeySd => OptionT.liftF(repository.set(journeySd)))
+      .getOrElse(false)
   }
 
-  def recallOptOutPropositionWithIntent()
-                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[(OptOutProposition, Option[TaxYear])]] = {
+  def recallOptOutPropositionWithIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[(OptOutProposition, Option[TaxYear])]] = {
+
     repository.get(hc.sessionId.get.value, Opt(OptOutJourney)).map { sessionData =>
-      def buildResult(
-                       contextData: OptOutContextData,
-                       selectedOptOutYear: Option[String]
-                     ): Option[(OptOutProposition, Option[TaxYear])] = {
+
+      def buildResult(contextData: OptOutContextData, selectedOptOutYear: Option[String]): Option[(OptOutProposition, Option[TaxYear])] = {
         val currentYearOpt = TaxYear.getTaxYearModel(contextData.currentYear)
         currentYearOpt.map { currentYear =>
           val proposition = createOptOutProposition(
@@ -81,7 +79,7 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
     }
   }
 
-  def initialiseOptOutJourney(oop :OptOutProposition)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def initialiseOptOutJourney(oop: OptOutProposition)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val data = UIJourneySessionData(
       sessionId = hc.sessionId.get.value,
       journeyType = OptOutJourney.toString,
@@ -101,11 +99,13 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
 
 }
 
-case class OptOutContextData(currentYear: String,
-                             crystallisationStatus: Boolean,
-                             previousYearITSAStatus: String,
-                             currentYearITSAStatus: String,
-                             nextYearITSAStatus: String)
+case class OptOutContextData(
+                              currentYear: String,
+                              crystallisationStatus: Boolean,
+                              previousYearITSAStatus: String,
+                              currentYearITSAStatus: String,
+                              nextYearITSAStatus: String
+                            )
 
 object OptOutContextData {
   implicit val format: OFormat[OptOutContextData] = Json.format[OptOutContextData]

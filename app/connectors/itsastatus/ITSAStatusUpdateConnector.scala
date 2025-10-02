@@ -35,9 +35,9 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
 
   private val log = Logger("application")
 
-  def optOut(taxYear: TaxYear, taxableEntityId: String)
+  def optOut(taxYear: TaxYear, userNino: String)
             (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
-    makeITSAStatusUpdate(taxYear, taxableEntityId, optOutUpdateReason)
+    makeITSAStatusUpdate(taxYear, userNino, optOutUpdateReason)
   }
 
   def optIn(taxYear: TaxYear, taxableEntityId: String)
@@ -45,27 +45,28 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
     makeITSAStatusUpdate(taxYear, taxableEntityId, optInUpdateReason)
   }
 
-  private def buildRequestUrlWith(taxableEntityId: String): String =
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$taxableEntityId"
+  private def buildRequestUrlWith(userNino: String): String =
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$userNino"
 
-  private[connectors] def updateITSAStatus(taxableEntityId: String, requestBody: ITSAStatusUpdateRequest)
+  private[connectors] def updateITSAStatus(userNino: String, requestBody: ITSAStatusUpdateRequest)
                                           (implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     httpClient
-      .put(url"${buildRequestUrlWith(taxableEntityId)}")
+      .put(url"${buildRequestUrlWith(userNino)}")
       .withBody(Json.toJson(requestBody))
       .execute[HttpResponse]
   }
 
-  def makeITSAStatusUpdate(taxYear: TaxYear, taxableEntityId: String, updateReason: String)
+  def makeITSAStatusUpdate(taxYear: TaxYear, userNino: String, updateReason: String)
                           (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
 
     val body = ITSAStatusUpdateRequest(taxYear = taxYear.shortenTaxYearEnd, updateReason = updateReason)
 
-    updateITSAStatus(taxableEntityId, requestBody = body)
+    updateITSAStatus(userNino, requestBody = body)
       .map { response =>
         response.status match {
-          case Status.NO_CONTENT => ITSAStatusUpdateResponseSuccess()
+          case Status.NO_CONTENT =>
+            ITSAStatusUpdateResponseSuccess()
           case _ =>
             response.json.validate[ITSAStatusUpdateResponseFailure].fold(
               invalid => {
