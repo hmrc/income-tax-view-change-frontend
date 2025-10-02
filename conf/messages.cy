@@ -3331,7 +3331,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = Gallwc
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = weld y manylion ynglŷn â’ch cosb
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = a dysgu sut i apelio.
 
-yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = This is the remaining tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code. (WELSH)
+yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = Dyma’r dreth sy’n weddill y mae angen i chi ei thalu ar gyfer blwyddyn dreth {0} i {1}.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
 
