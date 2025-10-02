@@ -76,7 +76,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "First payment on account collected through your PAYE tax code"
+                document.select("h1").first().text() shouldBe "First payment on account collected through PAYE tax code"
                 document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
@@ -91,7 +91,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "Second payment on account collected through your PAYE tax code"
+                document.select("h1").first().text() shouldBe "Second payment on account collected through PAYE tax code"
                 document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"

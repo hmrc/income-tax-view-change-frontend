@@ -3352,8 +3352,8 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
 
-yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through your PAYE tax code
-yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through your PAYE tax code
+yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
+yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through PAYE tax code
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.class2Nic.text.heading                = History of this charge
