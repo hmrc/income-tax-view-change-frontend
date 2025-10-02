@@ -17,7 +17,8 @@
 package helpers
 
 import enums.JourneyType.OptOutJourney
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.OptOutSessionData
 import repositories.ITSAStatusRepositorySupport.statusToString

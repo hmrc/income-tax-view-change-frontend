@@ -21,10 +21,10 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.UIJourneySessionData
 import models.admin.NavBarFs
 import models.core.NormalMode
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
-import models.incomeSourceDetails.UIJourneySessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService

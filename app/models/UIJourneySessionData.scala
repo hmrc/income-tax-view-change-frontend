@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails
+package models
 
+import models.incomeSourceDetails._
 import models.optin.OptInSessionData
 import models.optout.OptOutSessionData
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}

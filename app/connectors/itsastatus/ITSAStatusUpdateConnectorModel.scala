@@ -32,13 +32,14 @@ object ITSAStatusUpdateConnectorModel {
 
   sealed trait ITSAStatusUpdateResponse
 
-  case class ITSAStatusUpdateResponseSuccess(statusCode: Int = NO_CONTENT) extends ITSAStatusUpdateResponse
-
   case class ErrorItem(code: String, reason: String)
+
+  case class ITSAStatusUpdateResponseSuccess(statusCode: Int = NO_CONTENT) extends ITSAStatusUpdateResponse
 
   case class ITSAStatusUpdateResponseFailure(failures: List[ErrorItem]) extends ITSAStatusUpdateResponse
 
   object ITSAStatusUpdateResponseFailure {
+
     def defaultFailure(message: String = "unknown reason"): ITSAStatusUpdateResponseFailure =
       ITSAStatusUpdateResponseFailure(
         List(ErrorItem("INTERNAL_SERVER_ERROR", s"Request failed due to $message"))

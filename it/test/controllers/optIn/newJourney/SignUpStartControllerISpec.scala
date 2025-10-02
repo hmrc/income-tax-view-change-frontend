@@ -20,8 +20,9 @@ import controllers.ControllerISpecHelper
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.MTDIndividual
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optin.OptInSessionData
 import play.api.http.Status.{OK, SEE_OTHER}

@@ -23,16 +23,17 @@ import mocks.services.MockOptInService
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.optin.OptInSessionData
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.optIn.OptInService
-import services.optIn.core.CurrentOptInTaxYear
+import services.optIn.core.{CurrentOptInTaxYear, OptInProposition}
+import services.optIn.{OptInService, OptInUpdateService}
 import services.optout._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -40,9 +41,13 @@ import scala.concurrent.Future
 
 class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptInService {
 
+  lazy val mockOptInUpdateService: OptInUpdateService = mock(classOf[OptInUpdateService])
+
+
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[OptInService].toInstance(mockOptInService)
+      api.inject.bind[OptInService].toInstance(mockOptInService),
+      api.inject.bind[OptInUpdateService].toInstance(mockOptInUpdateService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[SignUpTaxYearQuestionController]
@@ -92,7 +97,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-          mockIsSignUpTaxYearValid(Future.successful(Some(viewModel)))
+          mockIsSignUpTaxYearValid(Future(Some(viewModel)))
           mockFetchSavedChosenTaxYear(Some(signUpTaxYear.taxYear))
 
           val result = action(fakeRequest)
@@ -109,7 +114,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-          mockIsSignUpTaxYearValid(Future.successful(None))
+          mockIsSignUpTaxYearValid(Future(None))
 
           val result = action(fakeRequest)
 
@@ -151,23 +156,35 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
       }
     }
     s"submit(isAgent = $isAgent)" when {
+
       s"the user is authenticated as a $mtdRole" should {
+
         "redirect the user when they select 'Yes' - to the completion page" in {
-          val action = testController.submit(isAgent, currentYear)
-          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
           enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
+          val action = testController.submit(isAgent, currentYear)
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
+          val optInProposition: OptInProposition =
+            OptInProposition.createOptInProposition(
+              currentYear = TaxYear(2025, 2026),
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = Mandated
+            )
+
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          when(mockOptInService.makeOptInCall()(any(), any(), any()))
-            .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
 
-          mockIsSignUpTaxYearValid(Future.successful(Some(viewModel)))
+          when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+            .thenReturn(Future(optInProposition))
 
-          val formData = Map(
-            "sign-up-tax-year-question" -> "Yes",
-          )
+          when(mockOptInUpdateService.triggerOptInRequest()(any(), any(), any()))
+            .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
+
+          mockIsSignUpTaxYearValid(Future(Some(viewModel)))
+
+          val formData = Map("sign-up-tax-year-question" -> "Yes")
 
           val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
 
@@ -183,10 +200,11 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          when(mockOptInService.makeOptInCall()(any(), any(), any()))
-            .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure(List())))
 
-          mockIsSignUpTaxYearValid(Future.successful(Some(viewModel)))
+          when(mockOptInUpdateService.triggerOptInRequest()(any(), any(), any()))
+            .thenReturn(Future(ITSAStatusUpdateResponseFailure.defaultFailure()))
+
+          mockIsSignUpTaxYearValid(Future(Some(viewModel)))
 
           val formData = Map(
             "sign-up-tax-year-question" -> "Yes",
@@ -207,7 +225,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-          mockIsSignUpTaxYearValid(Future.successful(Some(viewModel)))
+          mockIsSignUpTaxYearValid(Future(Some(viewModel)))
 
           val formData = Map(
             "sign-up-tax-year-question" -> "No"
@@ -228,7 +246,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-          mockIsSignUpTaxYearValid(Future.successful(Some(viewModel)))
+          mockIsSignUpTaxYearValid(Future(Some(viewModel)))
 
           val formData = Map(
             "opt-out-tax-year-question" -> ""

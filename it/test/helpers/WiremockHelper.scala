@@ -155,6 +155,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
           withHeaders(toHttpHeaders(responseHeaders))
       )
     )
+
   def stubPostWithRequestResponseHeadersAndBody(url: String, requestBody: JsValue, status: Integer, responseHeaders: Map[String, String] = Map()): StubMapping =
     stubFor(post(urlEqualTo(url))
       .withRequestBody(equalToJson(requestBody.toString()))
@@ -280,9 +281,11 @@ trait WiremockHelper {
       .get()
   }
 
-  def buildPOSTMTDPostClient(path: String,
-                             additionalCookies: Map[String, String] = Map.empty,
-                             body: Map[String, Seq[String]]): Future[WSResponse] =
+  def buildPOSTMTDPostClient(
+                              path: String,
+                              additionalCookies: Map[String, String] = Map.empty,
+                              body: Map[String, Seq[String]]
+                            ): Future[WSResponse] =
     buildClient(path)
       .withMethod("POST")
       .withHttpHeaders(HeaderNames.COOKIE -> bakeSessionCookie(additionalCookies),

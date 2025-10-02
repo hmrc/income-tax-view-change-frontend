@@ -23,8 +23,9 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import controllers.routes
 import enums.JourneyType.{Opt, OptInJourney}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus._
 import models.itsaStatus.{StatusDetail, StatusReason}
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
 import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
@@ -90,6 +91,7 @@ class OptInServiceSpec extends UnitSpec
         journeyType = Opt(OptInJourney).toString,
         optInSessionData = Some(OptInSessionData(None, selectedOptInYear = None))
       )
+
       when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(data)))
 
       val dataAfter = data.copy(optInSessionData = Some(data.optInSessionData.get.copy(selectedOptInYear = Some(currentTaxYear.toString))))

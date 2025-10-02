@@ -22,8 +22,9 @@ import enums.MTDIndividual
 import forms.optIn.SingleTaxYearOptInWarningForm
 import helpers.WiremockHelper
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import models.UIJourneySessionData
 import models.admin.{NavBarFs, ReportingFrequencyPage, SignUpFs}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}

@@ -22,8 +22,9 @@ import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}

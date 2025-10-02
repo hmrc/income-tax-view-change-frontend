@@ -22,8 +22,9 @@ import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.optIn.ChooseTaxYearForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.UIJourneySessionData
 import models.admin.{NavBarFs, ReportingFrequencyPage, SignUpFs}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}
