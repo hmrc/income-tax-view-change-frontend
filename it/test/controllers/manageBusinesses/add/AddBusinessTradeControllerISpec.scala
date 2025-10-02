@@ -22,10 +22,11 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.add.BusinessTradeForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.UIJourneySessionData
 import models.admin.NavBarFs
 import models.core.NormalMode
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService

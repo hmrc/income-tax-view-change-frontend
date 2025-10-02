@@ -21,7 +21,8 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService

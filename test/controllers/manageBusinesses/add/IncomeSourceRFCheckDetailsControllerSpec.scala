@@ -20,7 +20,8 @@ import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
-import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseError
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

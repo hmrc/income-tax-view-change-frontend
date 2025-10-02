@@ -17,7 +17,7 @@
 package mocks.services
 
 import enums.JourneyType.IncomeSourceJourneyType
-import models.incomeSourceDetails.UIJourneySessionData
+import models.UIJourneySessionData
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.Mockito._

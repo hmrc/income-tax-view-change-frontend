@@ -18,14 +18,13 @@ package services.optIn.core
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated}
-import services.optIn.core.OptInProposition.OneItem
 
 object OptInProposition {
-  private val OneItem = 1
 
   def createOptInProposition(currentYear: TaxYear,
                              currentYearItsaStatus: ITSAStatus,
-                             nextYearItsaStatus: ITSAStatus): OptInProposition = {
+                             nextYearItsaStatus: ITSAStatus
+                            ): OptInProposition = {
 
     val currentOptInTaxYear = CurrentOptInTaxYear(
       status = currentYearItsaStatus,
@@ -44,6 +43,8 @@ object OptInProposition {
 }
 
 case class OptInProposition(currentTaxYear: CurrentOptInTaxYear, nextTaxYear: NextOptInTaxYear) {
+
+  private val OneItem = 1
 
   private val optInYears: Seq[OptInTaxYear] = Seq[OptInTaxYear](currentTaxYear, nextTaxYear)
 

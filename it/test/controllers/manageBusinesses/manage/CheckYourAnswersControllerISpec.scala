@@ -22,8 +22,9 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.UIJourneySessionData
 import models.admin.NavBarFs
-import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json

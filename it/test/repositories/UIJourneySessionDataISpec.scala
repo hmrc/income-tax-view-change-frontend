@@ -20,7 +20,8 @@ package repositories
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.AddIncomeSourceData
 import org.mongodb.scala.bson.BsonDocument
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 

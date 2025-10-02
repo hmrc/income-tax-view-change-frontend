@@ -25,7 +25,8 @@ import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import controllers.routes
 import enums.JourneyType.{Opt, OptInJourney}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
@@ -41,11 +42,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
-                             itsaStatusService: ITSAStatusService,
-                             dateService: DateServiceInterface,
-                             repository: UIJourneySessionDataRepository,
-                             auditingService: AuditingService) {
+class OptInService @Inject()(
+                              itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
+                              itsaStatusService: ITSAStatusService,
+                              dateService: DateServiceInterface,
+                              repository: UIJourneySessionDataRepository,
+                              auditingService: AuditingService
+                            ) {
 
   def saveIntent(intent: TaxYear)(implicit user: MtdItUser[_],
                                   hc: HeaderCarrier,
@@ -56,9 +59,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       getOrElse(false)
   }
 
-  def availableOptInTaxYear()(implicit user: MtdItUser[_],
-                              hc: HeaderCarrier,
-                              ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
+  def availableOptInTaxYear()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TaxYear]] =
+    fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
   def setupSessionData()(implicit hc: HeaderCarrier): Future[Boolean] = {
     repository.set(
@@ -90,7 +92,8 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
           }
           res
         }
-      case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+      case None =>
+        Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
   }
 
@@ -107,7 +110,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     savedOptInSessionData.value
   }
 
-  private def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
+  def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
                                            hc: HeaderCarrier,
                                            ec: ExecutionContext): Future[Option[OptInProposition]] = {
 
@@ -209,7 +212,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
           val isSignUpForCY = year match {
             case ty if ty == proposition.currentTaxYear.taxYear.startYear.toString => Some(true)
-            case ty if ty == proposition.nextTaxYear.taxYear.startYear.toString    => Some(false)
+            case ty if ty == proposition.nextTaxYear.taxYear.startYear.toString => Some(false)
             case _ => None
           }
 
