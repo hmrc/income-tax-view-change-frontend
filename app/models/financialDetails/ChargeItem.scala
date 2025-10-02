@@ -147,6 +147,8 @@ case class ChargeItem (
       case (BalancingCharge, Some(Nics2)) => true
       case (BalancingCharge, Some(Accepted)) => true
       case (BalancingCharge, None       ) => true
+      case (PoaOneDebit, Some(Accepted)           ) => true
+      case (PoaTwoDebit, Some(Accepted)           ) => true
       case (PoaOneDebit, None           ) => true
       case (PoaTwoDebit, None           ) => true
       case (LateSubmissionPenalty,     _) => true
