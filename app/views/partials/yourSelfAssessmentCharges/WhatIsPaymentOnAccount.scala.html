@@ -48,23 +48,13 @@
     @p(id = Some("howIsInterestCalculated.p1")) {
         @getMessage("whatIsPaymentOnAccount.p1")
     }
+  <ul>
+      <li>@getMessage("whatIsPaymentOnAccount.bullet1")</li>
+      <li>@link(link = "https://www.gov.uk/self-employed-national-insurance-rates", messageKey = getMessage("whatIsPaymentOnAccount.bullet2"))</li>
+  </ul>
 
-    @p(id = Some("howInterestIsCalculated.p2")) {
-        @getMessage("whatIsPaymentOnAccount.p2")
-    }
-
-    @p(id = Some("howIsInterestCalculated.p3")) {
-        @getMessage("whatIsPaymentOnAccount.p3")
-    }
-
-    @p(id = Some("howIsInterestCalculated.p4")) {
-        @link(
-            link = ExternalUrlHelper.saUnderstandYourTaxBillUrl,
-            messageKey = getMessage("whatIsPaymentOnAccount.p4"),
-            rel = Some("noreferrer noopener"),
-            target = Some("_blank"),
-            outerMessage = "."
-        )
-    }
+@p(id = Some("howInterestIsCalculated.p2")) {
+    @getMessage("whatIsPaymentOnAccount.p2")
+}
 }
 

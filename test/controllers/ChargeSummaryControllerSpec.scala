@@ -67,111 +67,73 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
         } else {
           "render the charge summary page" when {
             "charge history & your self assessment charges feature switch is enabled and there is a user" that {
-              "provided with an id associated to a POA1 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
+              "provided with an id associated to a POA1 Debit" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1, adjustmentHistoryModel = codedOutAdjustmentHistory){
                 enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
-                val result: Future[Result] = action(id1040000125)(fakeRequest)
+                val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "First payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.select("h1").first().text() shouldBe "First payment on account collected through PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
-                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
+              "provided with an id associated to a POA2 Debit" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2, adjustmentHistoryModel = codedOutAdjustmentHistory){
                 enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
-                val result: Future[Result] = action(id1040000126)(fakeRequest)
+                val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "Second payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.select("h1").first().text() shouldBe "Second payment on account collected through PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
-                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA1 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid()) {
+              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneWithLpi(), adjustmentHistoryModel = codedOutAdjustmentHistory){
                 enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
-                val result: Future[Result] = action(id1040000125)(fakeRequest)
-
-                status(result) shouldBe Status.OK
-                val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "First payment on account"
-                document.select("h1").eq(1).text() shouldBe "You owe: £0.00"
-                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
-              }
-              "provided with an id associated to a POA2 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid()) {
-                enable(YourSelfAssessmentCharges, ChargeHistory)
-                setupMockSuccess(mtdUserRole)
-                mockBothIncomeSources()
-
-                val result: Future[Result] = action(id1040000126)(fakeRequest)
-
-                status(result) shouldBe Status.OK
-                val document = JsoupParse(result).toHtmlDocument
-                document.select("h1").first().text() shouldBe "Second payment on account"
-                document.select("h1").eq(1).text() shouldBe "You owe: £0.00"
-                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
-                document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
-              }
-
-
-
-
-
-
-              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
-                enable(YourSelfAssessmentCharges, ChargeHistory)
-                setupMockSuccess(mtdUserRole)
-                mockBothIncomeSources()
-
-                val result: Future[Result] = action(id1040000125)(fakeRequest)
+                val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First payment on account"
                 document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
-                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
               }
-              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
+              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaTwoWithLpi(), adjustmentHistoryModel = codedOutAdjustmentHistory){
                 enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
-                val result: Future[Result] = action(id1040000126)(fakeRequest)
+                val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Second payment on account"
                 document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
-                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
                 document.getElementById("howIsInterestCalculated.linkText").text().contains("How is interest calculated?")
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
-                document.getElementById("charge-history-caption").text() shouldBe "This payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge) {
                 enable(YourSelfAssessmentCharges, ChargeHistory)
@@ -246,8 +208,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2019 to 2020 tax year. It will be collected in the 2021 to 2022 tax year through your PAYE tax code."
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
-                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. 29 March 2018 £2,500.00"
-                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year. 30 March 2019 £2,000.00"
+                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 March 2018 Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. £2,500.00"
+                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 March 2019 Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year £2,000.00"
               }
 
               "provided with an id associated to an ITSA Return Amendment charges" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment) {

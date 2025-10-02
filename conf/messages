@@ -1223,11 +1223,13 @@ chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Balancing
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = First payment on account reduced due to amended return
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Second payment on account reduced due to amended return
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Balancing payment reduced due to amended return
-chargeSummary.chargeHistory.amend.codingOut.text                        = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year.
+chargeSummary.chargeHistory.amend.codingOut.text                        = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year
 chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = You updated your first payment on account
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = You updated your second payment on account
 chargeSummary.chargeHistory.POA1RR-credit                               = First payment on account: credit from your tax return
 chargeSummary.chargeHistory.POA2RR-credit                               = Second payment on account: credit from your tax return
+chargeSummary.chargeHistory.amend.poa1CodedOut.text                     = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year.
+chargeSummary.chargeHistory.amend.poa2CodedOut.text                     = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year.
 
 chargeSummary.lpi.paymentOnAccount1.text						   = Late payment interest on first payment on account
 chargeSummary.lpi.paymentOnAccount2.text						   = Late payment interest on second payment on account
@@ -2662,7 +2664,7 @@ optout.checkAnswers.cancel              = Cancel
 #opt out with submitted updates check answers
 optout.updates.checkAnswers.heading     = Confirm and opt out for the {0} to {1} tax year
 optout.updates.checkAnswers.p1          = If you opt out, you would no longer need software compatible with Making Tax Digital for Income Tax.
-optout.updates.checkAnswers.inset       = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.updates.checkAnswers.inset       = You have <b>2 quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed
@@ -3314,10 +3316,21 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = 250,000 / 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = 684.93 x 0.0725 = 49.66
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = What is payment on account?
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = ‘Payments on account’ are two advance payments made towards your next tax bill.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = If you make an amendment to the tax return and the tax bill changes, then each payment on account will be updated to half of the new total.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help with understanding your Self Assessment tax bill
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Payments on account are two advance payments made towards your next tax bill. They pay for:
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = HMRC estimates the total amount based on your previous years tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet1      = Income Tax
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet2      = Class 4 National Insurance contributions (opens in new tab)
+yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part1 = View
+yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part2 = your Self Assessment charges
+yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part1 = View
+yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part2 = your client’s Self Assessment charges
+yourSelfAssessmentChargeSummary.chargeHistory.poa1CodedOut.text.heading = First payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.poa2CodedOut.text.heading = Second payment on account history
+yourSelfAssessmentChargeSummary.chargeHistory.caption.poa1CodedOut.text.heading = This first payment on account goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.caption.poa2CodedOut.text.heading = This second payment on account goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.amend.codingOut.text = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
@@ -3339,6 +3352,9 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
 
+yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
+yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through PAYE tax code
+
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.class2Nic.text.heading                = History of this charge
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount1.text.heading        = First payment on account history
@@ -3348,6 +3364,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.firstLatePaymentPenalty.text.headi
 yourSelfAssessmentChargeSummary.chargeHistory.itsaReturnAmendment.text.heading      = Balancing payment: extra amount due to amended return history
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Balancing payment history
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = History of this charge
+yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount1.text.heading = This first payment on account goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount2.text.heading = This second payment on account goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = This balancing payment goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = This payment on account goes towards your {0} to {1} tax bill.

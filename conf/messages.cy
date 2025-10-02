@@ -1231,11 +1231,13 @@ chargeSummary.chargeHistory.adjustment.paymentOnAccount1.text           = Gwnaet
 chargeSummary.chargeHistory.adjustment.paymentOnAccount2.text           = Gwnaethoch ddiweddaru eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.POA1RR-credit                               = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 chargeSummary.chargeHistory.POA2RR-credit                               = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
-chargeSummary.lpi.paymentOnAccount1.text						   = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
-chargeSummary.lpi.paymentOnAccount2.text						   = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
-chargeSummary.lpi.balancingCharge.text							   = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
-chargeSummary.lpi.interestPeriod								   = Cyfnod llog
-chargeSummary.lpi.interestPeriod.dates							   = {0} i {1}
+chargeSummary.lpi.paymentOnAccount1.text						        = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
+chargeSummary.lpi.paymentOnAccount2.text						        = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
+chargeSummary.lpi.balancingCharge.text							        = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+chargeSummary.lpi.interestPeriod								        = Cyfnod llog
+chargeSummary.lpi.interestPeriod.dates							        = {0} i {1}
+chargeSummary.chargeHistory.amend.poa1CodedOut.text                     = Y swm sydd wedi’i addasu i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
+chargeSummary.chargeHistory.amend.poa2CodedOut.text                     = Y swm sydd wedi’i addasu i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
 
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog am dalu’r taliad cyntaf ar gyfrif yn hwyr wedi’i greu
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’r ail daliad ar gyfrif yn hwyr wedi’i greu
@@ -3273,7 +3275,7 @@ yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} 
 yourSelfAssessmentChargeSummary.overDueCharge                       = Mae arnoch:
 yourSelfAssessmentChargeSummary.youOwe                              = Mae arnoch:
 yourSelfAssessmentChargeSummary.charge                              = Tâl:
-yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected: (WELSH)
+yourSelfAssessmentChargeSummary.toBeCollected                       = Swm dyledus i’w gasglu:
 yourSelfAssessmentChargeSummary.due                                 = Yn ddyledus {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
 
@@ -3308,6 +3310,20 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Mae CThEF 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Os byddwch chi’n gwneud diwygiad i’r Ffurflen Dreth ac mae’r bil treth yn newid, yna bydd pob taliad ar gyfrif yn cael ei ddiweddaru i hanner y cyfanswm newydd.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i ddeall eich bil treth Hunanasesiad
 
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet1      = Treth Incwm
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet2      = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part1 = Bwrw golwg dros
+yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part2 = your Self Assessment charges
+yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part1 = Bwrw golwg dros
+yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part2 = your client’s Self Assessment charges
+yourSelfAssessmentChargeSummary.chargeHistory.caption.poa1CodedOut.text.heading = Mae’r taliad ar gyfrif cyntaf hwn yn mynd tuag at eich bil treth {0} i {1}.
+yourSelfAssessmentChargeSummary.chargeHistory.caption.poa2CodedOut.text.heading = Mae’r ail daliad ar gyfrif hwn yn mynd tuag at eich bil treth {0} i {1}.
+yourSelfAssessmentChargeSummary.chargeHistory.poa1CodedOut.text.heading = Hanes eich taliad ar gyfrif cyntaf
+yourSelfAssessmentChargeSummary.chargeHistory.poa2CodedOut.text.heading = Hanes eich ail daliad ar gyfrif
+yourSelfAssessmentChargeSummary.chargeHistory.amend.codingOut.text = Y swm sydd wedi’i addasu i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}
+yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount1.text.heading = Mae’r taliad ar gyfrif cyntaf hwn yn mynd tuag at eich bil treth {0} i {1}
+yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount2.text.heading = Mae’r ail daliad ar gyfrif hwn yn mynd tuag at eich bil treth {0} i {1}
+
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = Byddwch yn cael pwynt cosb am gyflwyno’n hwyr pob tro y byddwch yn hwyr wrth gyflwyno. Gall cyflwyniad fod yn ddiweddariad chwarterol neu’n ddatganiad treth blynyddol.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = Os byddwch yn cyrraedd 4 o bwyntiau, bydd angen i chi dalu cosb o £200.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = Er mwyn osgoi cael pwyntiau cosb am gyflwyno’n hwyr yn y dyfodol, a’r posibilrwydd o gael cosb ariannol, mae angen i chi anfon eich cyflwyniadau mewn pryd.
@@ -3315,7 +3331,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = Gallwc
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = weld y manylion ynglŷn â’ch cosb
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = a dysgu sut i apelio.
 
-yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = This is the remaining tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code. (WELSH)
+yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = Dyma’r dreth sy’n weddill y mae angen i chi ei thalu ar gyfer blwyddyn dreth {0} i {1}.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
 
@@ -3327,6 +3343,9 @@ yourSelfAssessmentChargeSummary.itsaReturnAmendment.text.heading                
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Yswiriant Gwladol Dosbarth 2
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Anhysbys
+
+yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = Taliad cyntaf ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
+yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Ail daliad ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
 
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.heading          = Hanes eich taliad mantoli
 yourSelfAssessmentChargeSummary.chargeHistory.class2Nic.text.heading                = Hanes y tâl hwn
