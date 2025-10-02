@@ -86,7 +86,7 @@ class ConfirmOptOutUpdateController @Inject()(
       implicit user =>
         withOptOutRFChecks {
           for {
-            updateTaxYearsITSAStatusRequest: List[ITSAStatusUpdateResponse] <- confirmOptOutUpdateService.updateTaxYearsITSAStatusRequest(Voluntary)
+            updateTaxYearsITSAStatusRequest: List[ITSAStatusUpdateResponse] <- confirmOptOutUpdateService.updateTaxYearsITSAStatusRequest(itsaStatusToSendUpdatesFor = Voluntary)
             result = updateTaxYearsITSAStatusRequest match {
               case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.contains(ITSAStatusUpdateResponseFailure) =>
                 Redirect(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent))
