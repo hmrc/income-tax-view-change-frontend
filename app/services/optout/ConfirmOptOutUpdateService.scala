@@ -57,35 +57,30 @@ class ConfirmOptOutUpdateService @Inject()(
     } yield optOutSessionData
   }
 
-  def getOptOutYearsToUpdateWithStatuses(): Future[List[OptOutYearToUpdate]] = {
-    for {
-      getOptOutSessionData: Option[OptOutSessionData] <- getOptOutSessionData()
-      maybeOptOutContextData: Option[OptOutContextData] = getOptOutSessionData.flatMap(_.optOutContextData)
-    } yield {
-      maybeOptOutContextData match {
-        case Some(contextData) =>
+  def getOptOutYearsToUpdateWithStatuses(maybeOptOutContextData: Option[OptOutContextData]): List[OptOutYearToUpdate] = {
+    maybeOptOutContextData match {
+      case Some(contextData) =>
 
-          val currentYearTaxYear: Option[TaxYear] = TaxYear.`fromStringYYYY-YYYY`(contextData.currentYear)
-          val allTaxYears: List[TaxYear] = List(currentYearTaxYear.map(_.previousYear), currentYearTaxYear, currentYearTaxYear.map(_.nextYear)).flatten
-          val taxYearItsaStatuses: List[ITSAStatus] =
-            List(contextData.previousYearITSAStatus, contextData.currentYearITSAStatus, contextData.nextYearITSAStatus).map(ITSAStatus.fromString)
-          val optOutYearsToUpdate: List[OptOutYearToUpdate] = {
-            for {
-              taxYear: TaxYear <- allTaxYears
-              itsaStatuses: ITSAStatus <- taxYearItsaStatuses
-            } yield {
-              OptOutYearToUpdate(taxYear, itsaStatuses)
-            }
+        val currentYearTaxYear: Option[TaxYear] = TaxYear.`fromStringYYYY-YYYY`(contextData.currentYear)
+        val allTaxYears: List[TaxYear] = List(currentYearTaxYear.map(_.previousYear), currentYearTaxYear, currentYearTaxYear.map(_.nextYear)).flatten
+        val taxYearItsaStatuses: List[ITSAStatus] =
+          List(contextData.previousYearITSAStatus, contextData.currentYearITSAStatus, contextData.nextYearITSAStatus).map(ITSAStatus.fromString)
+        val optOutYearsToUpdate: List[OptOutYearToUpdate] = {
+          for {
+            taxYear: TaxYear <- allTaxYears
+            itsaStatuses: ITSAStatus <- taxYearItsaStatuses
+          } yield {
+            OptOutYearToUpdate(taxYear, itsaStatuses)
           }
-          logger.debug(
-            s"[ConfirmOptOutUpdateService][getOptOutYearsToUpdateWithStatuses] All TaxYears $allTaxYears\n" +
-              s"[ConfirmOptOutUpdateService][getOptOutYearsToUpdateWithStatuses] All TaxYears Statuses $taxYearItsaStatuses\n" +
-              s"[ConfirmOptOutUpdateService][getOptOutYearsToUpdateWithStatuses] Voluntary OptOutYearsToUpdate: $optOutYearsToUpdate"
-          )
-          optOutYearsToUpdate
-        case None =>
-          List()
-      }
+        }
+        logger.debug(
+          s"[ConfirmOptOutUpdateService][getOptOutYearsToUpdateWithStatuses] All TaxYears $allTaxYears\n" +
+            s"[ConfirmOptOutUpdateService][getOptOutYearsToUpdateWithStatuses] All TaxYears Statuses $taxYearItsaStatuses\n" +
+            s"[ConfirmOptOutUpdateService][getOptOutYearsToUpdateWithStatuses] Voluntary OptOutYearsToUpdate: $optOutYearsToUpdate"
+        )
+        optOutYearsToUpdate
+      case None =>
+        List()
     }
   }
 
@@ -143,13 +138,13 @@ class ConfirmOptOutUpdateService @Inject()(
   }
 
 
-  // This possibly makes multiple api calls to update each valid voluntary tax year
+  // This possibly makes multiple api calls to update each valid "MTD Voluntary" tax year
   def updateTaxYearsITSAStatusRequest(itsaStatusToSendUpdatesFor: ITSAStatus)(implicit user: MtdItUser[_]): Future[List[ITSAStatusUpdateResponse]] = {
     for {
       maybeSessionData: Option[OptOutSessionData] <- getOptOutSessionData()
       mayBeSelectedTaxYear: Option[String] = maybeSessionData.flatMap(_.selectedOptOutYear)
       mayBeOptOutContextData: Option[OptOutContextData] = maybeSessionData.flatMap(_.optOutContextData)
-      allItsaStatusYears: List[OptOutYearToUpdate] <- getOptOutYearsToUpdateWithStatuses()
+      allItsaStatusYears: List[OptOutYearToUpdate] = getOptOutYearsToUpdateWithStatuses(mayBeOptOutContextData)
       yearsToUpdateBasedOnUserSelection: List[OptOutYearToUpdate] = correctYearsToUpdateBasedOnUserSelection(maybeSessionData, allItsaStatusYears)
       returnOnlyDataWithDesiredItsaStatus: List[OptOutYearToUpdate] = yearsToUpdateBasedOnUserSelection.filter { yearsToUpdate => yearsToUpdate.itsaStatus == itsaStatusToSendUpdatesFor }
       taxYearsToUpdate = returnOnlyDataWithDesiredItsaStatus.map(_.taxYear)
