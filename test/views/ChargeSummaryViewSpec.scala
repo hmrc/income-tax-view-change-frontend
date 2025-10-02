@@ -413,18 +413,47 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "charge is a Review and Reconcile credit for Payment on Account 1" in new TestSetup(
         reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaOneReconciliationCredit)
       ) {
-        document.selectById("rar-due-date").text() shouldBe("6 Aug 2018")
+
         document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
         document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(2020, "some-id").url
-        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+
+        document
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(5)
+          .text() shouldBe "£1,000.00"
+
+        document
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(3)
+          .text() shouldBe "6 Aug 2018"
       }
       "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
         reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaTwoReconciliationCredit)
       ) {
-        document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
         document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(2020, "some-id").url
-        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+
+        document
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(5)
+          .text() shouldBe "£1,000.00"
+
+        document
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(3)
+          .text() shouldBe "6 Aug 2018"
       }
     }
 
@@ -1472,19 +1501,47 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         isAgent = true,
         reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaOneReconciliationCredit)
       ) {
-        document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
         document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(2020, "some-id").url
-        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+
+        document
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(5)
+          .text() shouldBe "£1,000.00"
+
+        document
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(3)
+          .text() shouldBe "6 Aug 2018"
       }
       "charge is a Review and Reconcile credit for Payment on Account 2" in new TestSetup(
         isAgent = true,
         reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaTwoReconciliationCredit)
       ) {
-        document.selectById("rar-due-date").text() shouldBe ("6 Aug 2018")
         document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
         document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(2020, "some-id").url
-        document.selectById("rar-total-amount").text() shouldBe "£1,000.00"
+
+        document
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(5)
+          .text() shouldBe "£1,000.00"
+
+        document
+          .getElementById("payment-history-table")
+          .getElementsByClass("govuk-table__body")
+          .first()
+          .getElementsByClass("govuk-table__cell")
+          .get(3)
+          .text() shouldBe "6 Aug 2018"
       }
     }
 

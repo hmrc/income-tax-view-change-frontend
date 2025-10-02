@@ -17,9 +17,13 @@
 package models.chargeSummary
 
 import enums.GatewayPage._
+import models.ChargeHistoryItem
 import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails._
+import play.api.i18n.Messages
 import play.twirl.api.Html
+import controllers.routes._
+import models.repaymentHistory.RepaymentHistoryUtils
 
 import java.time.LocalDate
 
@@ -44,7 +48,7 @@ case class ChargeSummaryViewModel(
                                    poaTwoChargeUrl: String,
                                    LSPUrl: String,
                                    LPPUrl: String
-                                 ) {
+                                 )(implicit messages: Messages) {
 
   val dueDate = chargeItem.dueDate
   val hasDunningLocks = paymentBreakdown.exists(_.dunningLockExists)
@@ -73,7 +77,7 @@ case class ChargeSummaryViewModel(
 
   val taxYearEndToCheckCode = currentTaxYearEnd + 1
 
-  val messagePrefix = if(latePaymentInterestCharge)"lpi."
+  val messagePrefix = if (latePaymentInterestCharge) "lpi."
   else ""
   val pageTitle: String =
     s"chargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}"
@@ -93,6 +97,107 @@ case class ChargeSummaryViewModel(
   val isCodedOut: Boolean = chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !isCodedOut
+
+  val creationEventNoInterestChargeAndNotCodedOut: Option[ChargeHistoryItem] = Option.when(chargeHistoryEnabled && noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
+      ChargeHistoryItem(
+        date = adjustmentHistory.creationEvent.adjustmentDate.getOrElse(chargeItem.documentDate),
+        description = Html(messages(s"chargeSummary.chargeHistory.created.${chargeItem.getChargeTypeKey}")),
+        amount = adjustmentHistory.creationEvent.amount
+      )
+    }
+
+  val creationEventCodedOut: Option[ChargeHistoryItem] = Option.when(chargeHistoryEnabled && isCodedOut) {
+      ChargeHistoryItem(
+        date = adjustmentHistory.creationEvent.adjustmentDate.getOrElse(chargeItem.documentDate),
+        description = Html(messages(s"chargeSummary.chargeHistory.created.${chargeItem.getChargeTypeKey}",taxYearFromCodingOut, taxYearToCodingOut)),
+        amount = adjustmentHistory.creationEvent.amount
+      )
+    }
+
+  val chargeItemList: Option[ChargeHistoryItem] = Option.when(chargeHistoryEnabled && latePaymentInterestCharge) {
+    ChargeHistoryItem(
+      date = chargeItem.interestEndDate.get,
+      description = Html(messages(s"chargeSummary.lpi.chargeHistory.created.${chargeItem.getChargeTypeKey}")),
+      amount = chargeItem.accruingInterestAmount.get
+    )
+  }
+
+  val reviewAndReconcileCreditList: Option[ChargeHistoryItem] = reviewAndReconcileCredit.collect {
+      case charge if chargeHistoryEnabled =>
+        ChargeHistoryItem(
+          date = charge.getDueDate,
+          description = getReviewAndReconcileCreditDescription(charge),
+          amount = charge.originalAmount.abs
+        )
+    }
+
+  private def getReviewAndReconcileCreditDescription(charge: ChargeItem): Html = {
+    val link: String = RepaymentHistoryUtils.getChargeLinkUrl(isAgent, charge.taxYear.endYear, charge.transactionId)
+    val linkText: String = messages(s"chargeSummary.chargeHistory.${charge.transactionType.key}")
+    Html(
+      s"""
+         |<a class="govuk-link" id="rar-charge-link" href="$link">
+         |    $linkText
+         |</a>
+         |""".stripMargin
+    )
+  }
+
+  val chargeHistoriesFormattedList: List[ChargeHistoryItem] = for {
+    adjustment <- adjustmentHistory.adjustments
+    if chargeHistoryEnabled
+  } yield {
+    ChargeHistoryItem(
+      date = adjustment.adjustmentDate.getOrElse(chargeItem.documentDate),
+      description = Html(messages(s"chargeSummary.chargeHistory.${adjustment.reasonCode}.${chargeItem.getChargeTypeKey}", taxYearFromCodingOut, taxYearToCodingOut)),
+      amount = adjustment.amount
+    )
+  }
+
+  val paymentAllocationsFormattedList: List[ChargeHistoryItem] = for {
+    allocation <- paymentAllocations
+    payment <- allocation.allocations
+    if !latePaymentInterestCharge
+  } yield {
+    ChargeHistoryItem(
+      date = payment.getDueDateOrThrow,
+      description = getPaymentAllocationDescription(allocation, payment),
+      amount = payment.getAmountOrThrow.abs)
+  }
+
+  private def getPaymentAllocationDescription(allocation: PaymentHistoryAllocations, payment: PaymentHistoryAllocation): Html = {
+    val matchingPayment = payment.clearingId
+    matchingPayment match {
+      case Some(paymentId) => {
+        val link: String = if (isAgent) {
+          PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
+        } else {
+          PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
+        }
+        val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
+          messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
+        Html(
+          s"""
+             |<a class="govuk-link" href="$link">
+             |    $linkText
+             |    <span class="govuk-visually-hidden">${chargeItem.taxYear.endYear}</span>
+             |</a>
+             """.stripMargin)
+      }
+      case None => {
+        Html(messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut))
+      }
+    }
+  }
+
+  val sortedChargeHistoryTableEntries: List[ChargeHistoryItem] = {
+      creationEventNoInterestChargeAndNotCodedOut.toList ++
+      creationEventCodedOut.toList ++
+      reviewAndReconcileCreditList.toList ++
+      chargeHistoriesFormattedList ++
+      chargeItemList ++
+      paymentAllocationsFormattedList
+  }.sortBy(_.date)
 
 }
 

@@ -336,7 +336,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .getElementsByClass("govuk-table__body")
                   .first()
                   .getElementsByClass("govuk-table__cell")
-                  .get(1)
+                  .get(4)
                   .text() shouldBe descriptionTextForRAR1
               }
 
@@ -365,7 +365,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .getElementsByClass("govuk-table__body")
                   .first()
                   .getElementsByClass("govuk-table__cell")
-                  .get(1)
+                  .get(4)
                   .text() shouldBe descriptionTextForRAR2
               }
 
@@ -558,8 +558,23 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
                 document.getElementById("rar-charge-link").attr("href") shouldBe
                   RepaymentHistoryUtils.getChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
-                document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
-                document.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
+
+                document
+                  .getElementById("payment-history-table")
+                  .getElementsByClass("govuk-table__body")
+                  .first()
+                  .getElementsByClass("govuk-table__cell")
+                  .get(2)
+                  .text() shouldBe "£1,000.00"
+
+                document
+                  .getElementById("payment-history-table")
+                  .getElementsByClass("govuk-table__body")
+                  .first()
+                  .getElementsByClass("govuk-table__cell")
+                  .get(0)
+                  .text() shouldBe "1 Jan 2018"
+
               }
 
               "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
@@ -577,8 +592,22 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
                 document.getElementById("rar-charge-link").attr("href") shouldBe
                   RepaymentHistoryUtils.getChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
-                document.getElementById("rar-total-amount").text() shouldBe "£1,000.00"
-                document.getElementById("rar-due-date").text() shouldBe "1 Jan 2018"
+
+                document
+                  .getElementById("payment-history-table")
+                  .getElementsByClass("govuk-table__body")
+                  .first()
+                  .getElementsByClass("govuk-table__cell")
+                  .get(2)
+                  .text() shouldBe "£1,000.00"
+
+                document
+                  .getElementById("payment-history-table")
+                  .getElementsByClass("govuk-table__body")
+                  .first()
+                  .getElementsByClass("govuk-table__cell")
+                  .get(0)
+                  .text() shouldBe "1 Jan 2018"
               }
 
               "the charge is an MFA Debit" in new Setup(
