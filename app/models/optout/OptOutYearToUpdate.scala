@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,7 @@
 
 package models.optout
 
-import play.api.libs.json.{Json, OFormat}
-import repositories.OptOutContextData
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.ITSAStatus
 
-case class OptOutSessionData(
-                              optOutContextData: Option[OptOutContextData],
-                              selectedOptOutYear: Option[String]
-                            )
-
-object OptOutSessionData {
-  implicit val format: OFormat[OptOutSessionData] = Json.format[OptOutSessionData]
-
-  def getJSONKeyPath(name: String): String = s"optOutSessionData.$name"
-}
+case class OptOutYearToUpdate(taxYear: TaxYear, itsaStatus: ITSAStatus)

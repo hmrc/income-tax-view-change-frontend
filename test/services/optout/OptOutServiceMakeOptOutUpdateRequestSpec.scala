@@ -50,8 +50,8 @@ class OptOutServiceMakeOptOutUpdateRequestSpec
   val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
   val auditingService: AuditingService = mock(classOf[AuditingService])
 
-  val service: OptOutService = new OptOutService(optOutConnector, mockITSAStatusService, mockCalculationListService,
-    nextUpdatesService, mockDateService, repository, auditingService)
+  val service: OptOutService =
+    new OptOutService(optOutConnector, mockITSAStatusService, mockCalculationListService, nextUpdatesService, mockDateService, repository, auditingService)
 
   implicit val user: MtdItUser[_] = tsTestUser
 
