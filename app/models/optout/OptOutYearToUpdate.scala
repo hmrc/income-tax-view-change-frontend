@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package services.optIn.core
+package models.optout
 
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 
-case class OptInInitialState(currentYearItsaStatus: ITSAStatus, nextYearItsaStatus: ITSAStatus)
+case class OptOutYearToUpdate(taxYear: TaxYear, itsaStatus: ITSAStatus)

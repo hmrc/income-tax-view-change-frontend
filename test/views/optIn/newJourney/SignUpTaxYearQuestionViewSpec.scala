@@ -21,7 +21,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear}
+import services.optIn.{CurrentOptInTaxYear, NextOptInTaxYear}
 import testUtils.TestSupport
 import views.html.optIn.newJourney.SignUpTaxYearQuestionView
 

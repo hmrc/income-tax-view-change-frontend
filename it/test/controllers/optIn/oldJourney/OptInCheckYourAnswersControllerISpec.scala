@@ -19,7 +19,7 @@ package controllers.optIn.oldJourney
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.ControllerISpecHelper
-import controllers.optIn.oldJourney.CheckYourAnswersControllerISpec._
+import controllers.optIn.oldJourney.OptInCheckYourAnswersControllerISpec._
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
@@ -42,7 +42,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 import scala.concurrent.Future
 
-object CheckYourAnswersControllerISpec {
+object OptInCheckYourAnswersControllerISpec {
   val headingText = "Check your answers"
   val optInSummary = "Opting in will mean you need to submit your quarterly updates through compatible software."
   val optInSummaryNextYear = "If you opt in from the next tax year onwards, from 6 April 2023 you will need to submit " +
@@ -55,7 +55,7 @@ object CheckYourAnswersControllerISpec {
   val emptyBodyString = ""
 }
 
-class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
+class OptInCheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
   val forYearEnd = dateService.getCurrentTaxYear.endYear
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)

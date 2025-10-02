@@ -27,7 +27,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import services.optIn.OptInService
-import services.optIn.core.OptInProposition.createOptInProposition
+import services.optIn.OptInProposition.createOptInProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 class OptInCompletedControllerSpec extends MockAuthActions

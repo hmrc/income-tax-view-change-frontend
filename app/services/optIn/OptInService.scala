@@ -33,19 +33,20 @@ import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel
 import play.api.Logger
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
-import services.optIn.core.OptInProposition._
-import services.optIn.core.{OptInInitialState, OptInProposition}
+import services.optIn.OptInProposition._
 import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
-                             itsaStatusService: ITSAStatusService,
-                             dateService: DateServiceInterface,
-                             repository: UIJourneySessionDataRepository,
-                             auditingService: AuditingService) {
+class OptInService @Inject()(
+                              itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
+                              itsaStatusService: ITSAStatusService,
+                              dateService: DateServiceInterface,
+                              repository: UIJourneySessionDataRepository,
+                              auditingService: AuditingService
+                            ) {
 
   def saveIntent(intent: TaxYear)(implicit user: MtdItUser[_],
                                   hc: HeaderCarrier,
@@ -209,7 +210,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
 
           val isSignUpForCY = year match {
             case ty if ty == proposition.currentTaxYear.taxYear.startYear.toString => Some(true)
-            case ty if ty == proposition.nextTaxYear.taxYear.startYear.toString    => Some(false)
+            case ty if ty == proposition.nextTaxYear.taxYear.startYear.toString => Some(false)
             case _ => None
           }
 

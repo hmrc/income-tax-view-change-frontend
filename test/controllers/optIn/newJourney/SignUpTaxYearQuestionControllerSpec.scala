@@ -30,8 +30,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.optIn.OptInService
-import services.optIn.core.CurrentOptInTaxYear
+import services.optIn.{CurrentOptInTaxYear, OptInService}
 import services.optout._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 

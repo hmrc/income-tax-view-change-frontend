@@ -61,12 +61,43 @@ case class OptOutAuditModel(
   override val detail: JsValue = Json.toJson(this)
 }
 
+case class OptOutCompleteAuditModel(
+                                     saUtr: Option[String],
+                                     credId: Option[String],
+                                     userType: Option[AffinityGroup],
+                                     agentReferenceNumber: Option[String],
+                                     mtditid: String,
+                                     nino: String,
+                                     outcome: List[Outcome],
+                                     optOutRequestedFromTaxYear: String,
+                                     currentYear: String,
+                                     `beforeITSAStatusCurrentYear-1`: ITSAStatus,
+                                     beforeITSAStatusCurrentYear: ITSAStatus,
+                                     `beforeITSAStatusCurrentYear+1`: ITSAStatus,
+                                     `afterAssumedITSAStatusCurrentYear-1`: Option[ITSAStatus],
+                                     afterAssumedITSAStatusCurrentYear: Option[ITSAStatus],
+                                     `afterAssumedITSAStatusCurrentYear+1`: Option[ITSAStatus],
+                                     `currentYear-1Crystallised`: Boolean
+                                   ) extends ExtendedAuditModel {
+
+  override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
+
+  override val auditType: String = enums.AuditType.OptOutQuarterlyReportingRequest
+
+  override val detail: JsValue = Json.toJson(this)
+}
+
+object OptOutCompleteAuditModel {
+
+  implicit val format: OFormat[OptOutCompleteAuditModel] = Json.format[OptOutCompleteAuditModel]
+}
+
 
 object OptOutAuditModel {
 
   implicit val format: OFormat[OptOutAuditModel] = Json.format[OptOutAuditModel]
 
-  private def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
+  def createOutcome(resolvedResponse: ITSAStatusUpdateResponse): Outcome = {
     resolvedResponse match {
       case response: ITSAStatusUpdateResponseFailure =>
         Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
@@ -100,31 +131,5 @@ object OptOutAuditModel {
       `currentYear-1Crystallised` = optOutProposition.previousTaxYear.crystallised
     )
   }
-
-  def generateOptOutAudit(
-                           currentTaxYear: TaxYear,
-                           selectedTaxYear: TaxYear,
-                           resolvedOutcome: ITSAStatusUpdateResponse
-                         )(implicit user: MtdItUser[_]): OptOutAuditModel = {
-    OptOutAuditModel(
-      saUtr = user.saUtr,
-      credId = user.credId,
-      userType = user.userType,
-      agentReferenceNumber = user.arn,
-      mtditid = user.mtditid,
-      nino = user.nino,
-      optOutRequestedFromTaxYear = selectedTaxYear.formatAsShortYearRange,
-      currentYear = currentTaxYear.formatAsShortYearRange,
-      `beforeITSAStatusCurrentYear-1` = currentTaxYear.previousYear.status,
-      beforeITSAStatusCurrentYear = optOutProposition.currentTaxYear.status,
-      `beforeITSAStatusCurrentYear+1` = optOutProposition.nextTaxYear.status,
-      outcome = createOutcome(resolvedOutcome),
-      `afterAssumedITSAStatusCurrentYear-1` = optOutProposition.previousTaxYear.expectedItsaStatusAfter(selectedTaxYear),
-      afterAssumedITSAStatusCurrentYear = optOutProposition.currentTaxYear.expectedItsaStatusAfter(selectedTaxYear),
-      `afterAssumedITSAStatusCurrentYear+1` = optOutProposition.nextTaxYear.expectedItsaStatusAfter(selectedTaxYear),
-      `currentYear-1Crystallised` = optOutProposition.previousTaxYear.crystallised
-    )
-  }
-
 
 }

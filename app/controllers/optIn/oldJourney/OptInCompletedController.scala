@@ -25,8 +25,7 @@ import models.optin.OptInCompletedViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.optIn.OptInService
-import services.optIn.core.OptInProposition
+import services.optIn.{OptInProposition, OptInService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
 import views.html.optIn.oldJourney.OptInCompletedView

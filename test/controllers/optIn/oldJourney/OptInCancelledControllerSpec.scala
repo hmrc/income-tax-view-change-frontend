@@ -31,8 +31,7 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.optIn.OptInService
-import services.optIn.core.OptInProposition
+import services.optIn.{OptInProposition, OptInService}
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome

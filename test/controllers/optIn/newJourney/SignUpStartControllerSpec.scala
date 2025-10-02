@@ -27,8 +27,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.optIn.OptInService
-import services.optIn.core.{CurrentOptInTaxYear, OptInTaxYear}
+import services.optIn.{CurrentOptInTaxYear, OptInService, OptInTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future

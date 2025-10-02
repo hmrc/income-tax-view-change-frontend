@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package models.optin
+package services.optIn
 
-import play.api.libs.json.{Json, OFormat}
-
-case class OptInSessionData(
-                             optInContextData: Option[OptInContextData],
-                             selectedOptInYear: Option[String]
-                           ) {
-
+sealed trait OptInPropositionTypes {
+  val proposition: OptInProposition
 }
-
-object OptInSessionData {
-
-  implicit val format: OFormat[OptInSessionData] = Json.format[OptInSessionData]
+case class OneYearOptInProposition private(proposition: OptInProposition) extends OptInPropositionTypes {
+  val intent: OptInTaxYear = proposition.availableOptInYears.head
 }
+case class MultiYearOptInProposition private(proposition: OptInProposition) extends OptInPropositionTypes

@@ -81,7 +81,7 @@ class ConfirmOptOutUpdateController @Inject()(
       }
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] =
+  def submit(isAgent: Boolean, @unused taxYear: String): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
         withOptOutRFChecks {

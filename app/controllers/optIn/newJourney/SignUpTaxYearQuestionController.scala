@@ -52,6 +52,24 @@ class SignUpTaxYearQuestionController @Inject()(val optInService: OptInService,
     controllers.routes.ReportingFrequencyPageController.show(isAgent).url
   }
 
+  private def handleValidForm(validForm: SignUpTaxYearQuestionForm, isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    val formResponse = validForm.toFormMap(SignUpTaxYearQuestionForm.response).headOption
+
+    formResponse match {
+      case Some(SignUpTaxYearQuestionForm.responseYes) =>
+        optInService.makeOptInCall() map {
+          case ITSAStatusUpdateResponseSuccess(_) =>
+            Redirect(routes.SignUpCompletedController.show(isAgent))
+          case _ =>
+            Redirect(controllers.optIn.oldJourney.routes.OptInErrorController.show(isAgent))
+        }
+      case Some(SignUpTaxYearQuestionForm.responseNo) => Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
+      case _ =>
+        Logger("application").error("[SignUpTaxYearQuestionController.submit] Invalid form response")
+        Future.successful(errorHandler(isAgent).showInternalServerError())
+    }
+  }
+
   def show(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withRFAndOptInOptOutR17FS {
@@ -95,21 +113,5 @@ class SignUpTaxYearQuestionController @Inject()(val optInService: OptInService,
             Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
         }
       }
-  }
-
-  private def handleValidForm(validForm: SignUpTaxYearQuestionForm, isAgent: Boolean)(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    val formResponse = validForm.toFormMap(SignUpTaxYearQuestionForm.response).headOption
-
-    formResponse match {
-      case Some(SignUpTaxYearQuestionForm.responseYes) =>
-        optInService.makeOptInCall() map {
-          case ITSAStatusUpdateResponseSuccess(_) => Redirect(routes.SignUpCompletedController.show(isAgent))
-          case _ => Redirect(controllers.optIn.oldJourney.routes.OptInErrorController.show(isAgent))
-        }
-      case Some(SignUpTaxYearQuestionForm.responseNo) => Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
-      case _ =>
-        Logger("application").error("[SignUpTaxYearQuestionController.submit] Invalid form response")
-        Future.successful(errorHandler(isAgent).showInternalServerError())
-    }
   }
 }
