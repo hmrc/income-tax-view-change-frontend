@@ -18,7 +18,7 @@ package models.optin.newJourney
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import services.optIn.{CurrentOptInTaxYear, NextOptInTaxYear}
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear}
 import testUtils.UnitSpec
 
 class SignUpTaxYearQuestionViewModelSpec extends UnitSpec {

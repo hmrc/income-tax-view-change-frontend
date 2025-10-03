@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package services.optIn
+package services.optIn.core
 
-import models.itsaStatus.ITSAStatus.ITSAStatus
-
-case class OptInInitialState(currentYearItsaStatus: ITSAStatus, nextYearItsaStatus: ITSAStatus)
+sealed trait OptInPropositionTypes {
+  val proposition: OptInProposition
+}
+case class OneYearOptInProposition private(proposition: OptInProposition) extends OptInPropositionTypes {
+  val intent: OptInTaxYear = proposition.availableOptInYears.head
+}
+case class MultiYearOptInProposition private(proposition: OptInProposition) extends OptInPropositionTypes

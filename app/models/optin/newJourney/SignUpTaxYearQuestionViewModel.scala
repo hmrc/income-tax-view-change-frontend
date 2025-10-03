@@ -16,7 +16,7 @@
 
 package models.optin.newJourney
 
-import services.optIn.{CurrentOptInTaxYear, NextOptInTaxYear, OptInTaxYear}
+import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInTaxYear}
 
 case class SignUpTaxYearQuestionViewModel(signUpTaxYear: OptInTaxYear) {
 

@@ -24,7 +24,8 @@ import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import enums.JourneyType.{Opt, OptOutJourney}
 import enums._
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout._

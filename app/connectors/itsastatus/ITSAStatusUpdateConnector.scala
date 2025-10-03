@@ -36,13 +36,11 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
 
   private val logger = Logger("application")
 
-  def optOut(taxYear: TaxYear, userNino: String)
-            (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+  def optOut(taxYear: TaxYear, userNino: String)(implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
     makeITSAStatusUpdate(taxYear, userNino, optOutUpdateReason)
   }
 
-  def optIn(taxYear: TaxYear, taxableEntityId: String)
-           (implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+  def optIn(taxYear: TaxYear, taxableEntityId: String)(implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
     makeITSAStatusUpdate(taxYear, taxableEntityId, optInUpdateReason)
   }
 

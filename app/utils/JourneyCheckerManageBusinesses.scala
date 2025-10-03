@@ -19,7 +19,7 @@ package utils
 import auth.MtdItUser
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
-import models.incomeSourceDetails.UIJourneySessionData
+import models.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect

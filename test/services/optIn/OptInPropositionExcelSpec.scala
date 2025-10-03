@@ -16,10 +16,11 @@
 
 package services.optIn
 
-import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
+import core.incomeSourceDetails.TaxYear
+import core.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import OptInProposition.createOptInProposition
+import services.optIn.core.OptInProposition
+import services.optIn.core.OptInProposition.createOptInProposition
 import testUtils.UnitSpec
 
 import scala.io.Source

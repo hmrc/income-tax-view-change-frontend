@@ -21,7 +21,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import controllers.manageBusinesses.add.routes
 import enums.IncomeSourceJourney.{IncomeSourceType, JourneyState}
 import enums.JourneyType.IncomeSourceJourneyType
-import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, LatencyDetails, TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, LatencyDetails, TaxYear}
 import models.itsaStatus.StatusDetail
 import play.api.Logger
 import play.api.mvc.Result

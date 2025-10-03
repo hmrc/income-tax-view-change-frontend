@@ -25,7 +25,8 @@ import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import controllers.routes
 import enums.JourneyType.{Opt, OptInJourney}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
@@ -33,7 +34,8 @@ import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel
 import play.api.Logger
 import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
-import services.optIn.OptInProposition._
+import services.optIn.core.OptInProposition._
+import services.optIn.core.{OptInInitialState, OptInProposition}
 import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -57,9 +59,8 @@ class OptInService @Inject()(
       getOrElse(false)
   }
 
-  def availableOptInTaxYear()(implicit user: MtdItUser[_],
-                              hc: HeaderCarrier,
-                              ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
+  def availableOptInTaxYear()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TaxYear]] =
+    fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
   def setupSessionData()(implicit hc: HeaderCarrier): Future[Boolean] = {
     repository.set(
@@ -91,7 +92,8 @@ class OptInService @Inject()(
           }
           res
         }
-      case None => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+      case None =>
+        Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
   }
 
@@ -108,7 +110,7 @@ class OptInService @Inject()(
     savedOptInSessionData.value
   }
 
-  private def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
+  def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
                                            hc: HeaderCarrier,
                                            ec: ExecutionContext): Future[Option[OptInProposition]] = {
 

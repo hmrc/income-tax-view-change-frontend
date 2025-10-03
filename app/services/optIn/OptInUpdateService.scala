@@ -17,24 +17,55 @@
 package services.optIn
 
 import audit.AuditingService
+import audit.models.OptInAuditModel
+import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import enums.JourneyType.{Opt, OptInJourney}
+import models.incomeSourceDetails.TaxYear
+import models.optin.{OptInContextData, OptInSessionData}
 import repositories.UIJourneySessionDataRepository
-import services.{DateServiceInterface, ITSAStatusService}
+import services.optIn.core.OptInProposition
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class OptInUpdateService @Inject()(
                                     auditingService: AuditingService,
-                                    dateService: DateServiceInterface,
                                     itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
-                                    itsaStatusService: ITSAStatusService,
-                                    repository: UIJourneySessionDataRepository,
-                                  ) {
+                                    optInService: OptInService,
+                                    uiJourneySessionDataRepository: UIJourneySessionDataRepository,
+                                  )(implicit hc: HeaderCarrier, ec: ExecutionContext) {
 
-  def aa = ???
+  def getUISessionData() =
+    uiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney))
 
-
-  def bb = ???
+  def triggerOptInRequest()(implicit user: MtdItUser[_]): Future[ITSAStatusUpdateResponse] = {
+    for {
+      uiSessionData <- getUISessionData()
+      optInSessionData: Option[OptInSessionData] = uiSessionData.flatMap(_.optInSessionData)
+      selectedOptInYear: Option[TaxYear] = optInSessionData.flatMap(_.selectedOptInYear).flatMap(TaxYear.`fromStringYYYY-YYYY`)
+      optInContextData: Option[OptInContextData] = optInSessionData.flatMap(_.optInContextData)
+      optInProposition: OptInProposition <- optInService.fetchOptInProposition()
+      updateResponse <- selectedOptInYear match {
+        case Some(taxYear) =>
+          itsaStatusUpdateConnector.optIn(taxYear = taxYear, user.nino)
+        case None =>
+          Future(ITSAStatusUpdateResponseFailure.defaultFailure())
+      }
+      sendOptInAuditEvent <-
+        selectedOptInYear match {
+          case Some(taxYear) =>
+            val optInAuditModel = OptInAuditModel(optInProposition, taxYear, updateResponse)
+            auditingService.extendedAudit(optInAuditModel)
+          case _ =>
+            Future(()) // we don't send an audit if user has not selected a tax year
+        }
+    } yield {
+      updateResponse
+    }
+  }
 
 
 }

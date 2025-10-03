@@ -22,9 +22,10 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import enums.JourneyType.{Opt, OptOutJourney}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, UnknownStatus}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, UnknownStatus}
 import models.optout.{OptOutSessionData, OptOutYearToUpdate}
 import play.api.Logging
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
@@ -113,9 +114,9 @@ class ConfirmOptOutUpdateService @Inject()(
 
     val currentTaxYear: Option[TaxYear] = mayBeOptOutContextData.flatMap(data => TaxYear.`fromStringYYYY-YYYY`(data.currentYear))
 
-    val updatedPreviousTaxYearItsaStatus: Option[ITSAStatus] = currentTaxYear.flatMap(taxYear => filteredTaxYearsForDesiredItsaStatus.find(_.taxYear == taxYear.previousYear)).map(_.itsaStatus)
-    val updatedCurrentTaxYearItsaStatus: Option[ITSAStatus] = currentTaxYear.flatMap(taxYear => filteredTaxYearsForDesiredItsaStatus.find(_.taxYear == taxYear)).map(_.itsaStatus)
-    val updatedNextTaxYearItsaStatus: Option[ITSAStatus] = currentTaxYear.flatMap(taxYear => filteredTaxYearsForDesiredItsaStatus.find(_.taxYear == taxYear.nextYear)).map(_.itsaStatus)
+    val updatedPreviousTaxYearItsaStatus = if (currentTaxYear.flatMap(taxYear => filteredTaxYearsForDesiredItsaStatus.find(_.taxYear == taxYear.previousYear)).isDefined) Some(Annual) else None
+    val updatedCurrentTaxYearItsaStatus = if (currentTaxYear.flatMap(taxYear => filteredTaxYearsForDesiredItsaStatus.find(_.taxYear == taxYear)).isDefined) Some(Annual) else None
+    val updatedNextTaxYearItsaStatus = if (currentTaxYear.flatMap(taxYear => filteredTaxYearsForDesiredItsaStatus.find(_.taxYear == taxYear.nextYear)).isDefined) Some(Annual) else None
 
     OptOutCompleteAuditModel(
       saUtr = user.saUtr,

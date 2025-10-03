@@ -28,7 +28,7 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.optIn.OptInService
-import services.optIn.OptInProposition.createOptInProposition
+import services.optIn.core.OptInProposition.createOptInProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInService {

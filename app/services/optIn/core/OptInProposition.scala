@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services.optIn
+package services.optIn.core
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated}
@@ -23,7 +23,8 @@ object OptInProposition {
 
   def createOptInProposition(currentYear: TaxYear,
                              currentYearItsaStatus: ITSAStatus,
-                             nextYearItsaStatus: ITSAStatus): OptInProposition = {
+                             nextYearItsaStatus: ITSAStatus
+                            ): OptInProposition = {
 
     val currentOptInTaxYear = CurrentOptInTaxYear(
       status = currentYearItsaStatus,

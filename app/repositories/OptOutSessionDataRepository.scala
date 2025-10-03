@@ -18,7 +18,8 @@ package repositories
 
 import cats.data.OptionT
 import enums.JourneyType.{Opt, OptOutJourney}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
 import models.optout.OptOutSessionData
 import play.api.libs.json.{Json, OFormat}
 import repositories.ITSAStatusRepositorySupport.{statusToString, stringToStatus}
