@@ -23,11 +23,11 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import controllers.routes
 import enums.JourneyType.{Opt, OptInJourney}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
-import models.itsaStatus.{StatusDetail, StatusReason}
-import models.optin.newJourney.SignUpTaxYearQuestionViewModel
-import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
+import core.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import core.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
+import core.itsaStatus.{StatusDetail, StatusReason}
+import core.optin.newJourney.SignUpTaxYearQuestionViewModel
+import core.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

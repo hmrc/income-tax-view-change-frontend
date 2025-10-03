@@ -79,7 +79,7 @@ class OptOutServiceSpec
       calculationListService = mockCalculationListService,
       nextUpdatesService = mockNextUpdatesService,
       dateService = mockDateService,
-      repository = mockRepository,
+      optOutRepository = mockRepository,
       auditingService = mockAuditingService
     )
 

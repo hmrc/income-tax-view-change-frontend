@@ -22,14 +22,17 @@ import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import enums.JourneyType.{Opt, OptOutJourney}
 import enums._
+import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout._
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import play.api.Logger
-import repositories.OptOutSessionDataRepository
+import repositories.ITSAStatusRepositorySupport.stringToStatus
+import repositories.{OptOutContextData, OptOutSessionDataRepository, UIJourneySessionDataRepository}
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
 import services.reportingfreq.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
@@ -46,7 +49,8 @@ class OptOutService @Inject()(
                                calculationListService: CalculationListService,
                                nextUpdatesService: NextUpdatesService,
                                dateService: DateServiceInterface,
-                               repository: OptOutSessionDataRepository,
+                               optOutRepository: OptOutSessionDataRepository,
+                               uiJourneySessionDataRepo: UIJourneySessionDataRepository,
                                auditingService: AuditingService
                              ) {
 
@@ -78,16 +82,41 @@ class OptOutService @Inject()(
   def recallOptOutPropositionWithIntent()(implicit hc: HeaderCarrier,
                                           ec: ExecutionContext): Future[(OptOutProposition, Option[TaxYear])] = {
 
-    OptionT(repository.recallOptOutPropositionWithIntent()).
+    OptionT(optOutRepository.recallOptOutPropositionWithIntent()).
       getOrElseF(Future.failed(new RuntimeException("Failed to recall Opt Out journey initial state")))
   }
 
   def recallSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
 
-    repository.fetchSavedIntent().flatMap {
+    optOutRepository.fetchSavedIntent().flatMap {
       case Some(chosenTaxYear) => Future.successful(Some(chosenTaxYear))
       case _ => Future.successful(None)
     }
+  }
+
+  def getTaxYearAccountItsaStatus(contextData: OptOutContextData)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutContextData]] = {
+
+    val currentYearOpt: Option[TaxYear] = TaxYear.getTaxYearModel(contextData.currentYear)
+
+    val result: Option[OptOutProposition] = {
+      currentYearOpt.map { currentYear =>
+
+        val proposition =
+          createOptOutProposition(
+            currentYear = currentYear,
+            previousYearCrystallised = contextData.crystallisationStatus,
+            previousYearItsaStatus = stringToStatus(status = contextData.previousYearITSAStatus),
+            currentYearItsaStatus = stringToStatus(status = contextData.currentYearITSAStatus),
+            nextYearItsaStatus = stringToStatus(status = contextData.nextYearITSAStatus)
+          )
+        proposition
+      }
+    }
+
+    for {
+      uiSessionData: Option[UIJourneySessionData] <- uiJourneySessionDataRepo.get(hc.sessionId.get.value, Opt(OptOutJourney))
+      optOutContextData: Option[OptOutContextData] = uiSessionData.flatMap(_.optOutSessionData.flatMap(_.optOutContextData))
+    } yield optOutContextData
   }
 
   private def getITSAStatusesFrom(previousYear: TaxYear)(implicit user: MtdItUser[_],
@@ -122,6 +151,26 @@ class OptOutService @Inject()(
     }
   }
 
+  def taxYearsToUpdateBasedOnUserAnswers()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ChosenTaxYear, List[TaxYear]]] = {
+    for {
+      userAnswers: Option[UIJourneySessionData] <- uiJourneySessionDataRepo.get(hc.sessionId.get.value, OptOutJourney)
+      maybeOptOutContextData: Option[OptOutContextData] = userAnswers.flatMap(_.optOutSessionData.flatMap(_.optOutContextData))
+      maybeSelectedOptOutYear = userAnswers.flatMap(_.optOutSessionData.flatMap(data => data.selectedOptOutYear.flatMap(chosenTaxYear => TaxYear.`fromStringYYYY-YYYY`(chosenTaxYear))))
+      maybeCurrentTaxYear: Option[TaxYear] = maybeOptOutContextData.flatMap(context => TaxYear.`fromStringYYYY-YYYY`(context.currentYear))
+    } yield {
+      (maybeSelectedOptOutYear, maybeCurrentTaxYear) match {
+        case (Some(selectedOptOutYear), Some(currentTaxYear)) if selectedOptOutYear == currentTaxYear.previousYear =>
+          Right(List(currentTaxYear.previousYear, currentTaxYear, currentTaxYear.nextYear))
+        case (Some(selectedOptOutYear), Some(currentTaxYear)) if selectedOptOutYear == currentTaxYear =>
+          Right(List(currentTaxYear, currentTaxYear.nextYear))
+        case (Some(selectedOptOutYear), Some(currentTaxYear)) if selectedOptOutYear == currentTaxYear.nextYear =>
+          Right(List(currentTaxYear.nextYear))
+        case _ =>
+          Left(NoChosenTaxYear)
+      }
+    }
+  }
+
   def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentTaxYear: TaxYear)
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
 
@@ -153,7 +202,7 @@ class OptOutService @Inject()(
                                      ec: ExecutionContext): Future[(OptOutProposition, Option[OptOutViewModel])] = {
     for {
       proposition <- fetchOptOutProposition()
-      _ <- repository.initialiseOptOutJourney(proposition)
+      _ <- optOutRepository.initialiseOptOutJourney(proposition)
     } yield (proposition, nextUpdatesOptOutViewModel(proposition))
   }
 
@@ -162,7 +211,7 @@ class OptOutService @Inject()(
                                             ec: ExecutionContext): Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel], OptOutProposition)] = {
     for {
       proposition <- fetchOptOutProposition()
-      _ <- repository.initialiseOptOutJourney(proposition)
+      _ <- optOutRepository.initialiseOptOutJourney(proposition)
     } yield (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition), proposition)
   }
 
@@ -258,7 +307,7 @@ class OptOutService @Inject()(
   def getTaxYearForOptOutCancelled()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
     for {
       proposition: OptOutProposition <- fetchOptOutProposition()
-      chosenTaxYear: Option[TaxYear] <- repository.fetchSavedIntent()
+      chosenTaxYear: Option[TaxYear] <- optOutRepository.fetchSavedIntent()
       availableOptOutYears: Seq[OptOutTaxYear] = proposition.availableOptOutYears
       singleTaxYear: Option[TaxYear] = availableOptOutYears.headOption.map(_.taxYear)
       isOneYearOptOut: Boolean = proposition.isOneYearOptOut
@@ -273,7 +322,7 @@ class OptOutService @Inject()(
 
 
   def determineOptOutIntentYear()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ChosenTaxYear] = {
-    repository.fetchSavedIntent().map {
+    optOutRepository.fetchSavedIntent().map {
       case Some(chosenYear) if chosenYear == dateService.getCurrentTaxYear.previousYear =>
         PreviousTaxYear
       case Some(chosenYear) if chosenYear == dateService.getCurrentTaxYear =>
@@ -326,10 +375,12 @@ class OptOutService @Inject()(
   }
 
   def saveIntent(taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    repository.saveIntent(taxYear).recover {
+    optOutRepository.saveIntent(taxYear).recover {
       case ex: Exception =>
         Logger("application").error(s"[OptOutService.saveIntent] - Could not save intent tax year to session: $ex")
         false
     }
   }
+
+
 }

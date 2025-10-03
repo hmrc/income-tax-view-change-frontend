@@ -20,7 +20,8 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
-import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear}
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

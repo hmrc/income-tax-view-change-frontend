@@ -74,10 +74,10 @@ GET         /agents/opt-in/choose-tax-year                                contro
 POST        /opt-in/choose-tax-year                                       controllers.optIn.oldJourney.ChooseYearController.submit(isAgent: Boolean = false)
 POST        /agents/opt-in/choose-tax-year                                controllers.optIn.oldJourney.ChooseYearController.submit(isAgent: Boolean = true)
 
-GET         /opt-in/check-your-answers                                    controllers.optIn.oldJourney.CheckYourAnswersController.show(isAgent: Boolean = false)
-GET         /agents/opt-in/check-your-answers                             controllers.optIn.oldJourney.CheckYourAnswersController.show(isAgent: Boolean = true)
-POST        /opt-in/check-your-answers                                    controllers.optIn.oldJourney.CheckYourAnswersController.submit(isAgent: Boolean = false)
-POST        /agents/opt-in/check-your-answers                             controllers.optIn.oldJourney.CheckYourAnswersController.submit(isAgent: Boolean = true)
+GET         /opt-in/check-your-answers                                    controllers.optIn.oldJourney.OptInCheckYourAnswersController.show(isAgent: Boolean = false)
+GET         /agents/opt-in/check-your-answers                             controllers.optIn.oldJourney.OptInCheckYourAnswersController.show(isAgent: Boolean = true)
+POST        /opt-in/check-your-answers                                    controllers.optIn.oldJourney.OptInCheckYourAnswersController.submit(isAgent: Boolean = false)
+POST        /agents/opt-in/check-your-answers                             controllers.optIn.oldJourney.OptInCheckYourAnswersController.submit(isAgent: Boolean = true)
 
 GET         /opt-in/completed                                             controllers.optIn.oldJourney.OptInCompletedController.show(isAgent: Boolean = false)
 GET         /agents/opt-in/completed                                      controllers.optIn.oldJourney.OptInCompletedController.show(isAgent: Boolean = true)

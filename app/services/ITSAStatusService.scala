@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
-import models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
+import models.incomeSourceDetails._
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,8 +32,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
                                   dateService: DateService,
                                   implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
+
   def getITSAStatusDetail(taxYear: TaxYear, futureYears: Boolean, history: Boolean)
-                                 (implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[List[ITSAStatusResponseModel]] = {
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[List[ITSAStatusResponseModel]] = {
     itsaStatusConnector.getITSAStatusDetail(
       nino = user.nino,
       taxYear = taxYear.formatAsShortYearRange,
@@ -50,8 +51,10 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     itsaStatusResponseModel.itsaStatusDetails.flatMap(statusDetail => statusDetail.headOption)
   }
 
-  def hasMandatedOrVoluntaryStatusCurrentYear(selector: StatusDetail => Boolean = _.isMandatedOrVoluntary)(implicit hc: HeaderCarrier,
-                                                                                                           ec: ExecutionContext, user: MtdItUser[_]): Future[Boolean] = {
+  def hasMandatedOrVoluntaryStatusCurrentYear(selector: StatusDetail => Boolean = _.isMandatedOrVoluntary)(
+    implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]
+  ): Future[Boolean] = {
+
     val yearEnd = dateService.getCurrentTaxYearEnd
     val taxYear = TaxYear.forYearEnd(yearEnd)
 
@@ -77,7 +80,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
           latencyYearTwoQuarterlyStatus =
             if (taxYear2StatusDetail.exists(_.itsaStatusDetails.exists(sd => sd.exists(_.isUnknown)
               && isTaxYear1StatusReasonRollover))) latencyYearOneQuarterlyStatus
-          else taxYear2StatusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
+            else taxYear2StatusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)))
           latencyYearOneAnnualStatus = taxYear1StatusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isAnnual)))
           latencyYearTwoAnnualStatus = if (taxYear2StatusDetail.exists(_.itsaStatusDetails.exists(sd => sd.exists(_.isUnknown)
             && isTaxYear1StatusReasonRollover))) latencyYearOneAnnualStatus
@@ -93,14 +96,14 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   }
 
 
-  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit hc: HeaderCarrier,
-                                                          ec: ExecutionContext, user: MtdItUser[_]): Future[Map[TaxYear, StatusDetail]] = {
-    getITSAStatusDetail(taxYear, futureYears = true, history = false).map {
-      _.map(responseModel => parseTaxYear(responseModel.taxYear) -> getStatusDetail(responseModel)).flatMap {
-        case (taxYear, Some(statusDetail)) => Some(taxYear -> statusDetail)
-        case _ => None
-      }.toMap
-    }
+  def getStatusTillAvailableFutureYears(taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[Map[TaxYear, StatusDetail]] = {
+    getITSAStatusDetail(taxYear, futureYears = true, history = false)
+      .map {
+        _.map(responseModel => parseTaxYear(responseModel.taxYear) -> getStatusDetail(responseModel)).flatMap {
+          case (taxYear, Some(statusDetail)) => Some(taxYear -> statusDetail)
+          case _ => None
+        }.toMap
+      }
   }
 
   private def parseTaxYear(taxYear: String) = {

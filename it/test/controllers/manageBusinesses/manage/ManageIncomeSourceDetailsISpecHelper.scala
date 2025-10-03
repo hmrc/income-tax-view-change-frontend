@@ -19,8 +19,9 @@ package controllers.manageBusinesses.manage
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import models.UIJourneySessionData
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{LatencyDetails, UIJourneySessionData}
+import models.incomeSourceDetails.LatencyDetails
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 
