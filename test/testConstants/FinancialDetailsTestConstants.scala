@@ -1262,7 +1262,7 @@ object FinancialDetailsTestConstants {
     )
   def testFinancialDetailsModelWithPayeSACodingOutPOA1(): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
           documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 12.34,
@@ -1281,7 +1281,7 @@ object FinancialDetailsTestConstants {
 
   def testFinancialDetailsModelWithPayeSACodingOutPOA1WithInterest(): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
           documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 12.34,
@@ -1300,7 +1300,7 @@ object FinancialDetailsTestConstants {
 
   def testFinancialDetailsModelWithPayeSACodingOutPOA2(): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
           documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 12.34,
