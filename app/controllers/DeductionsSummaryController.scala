@@ -54,9 +54,10 @@ class DeductionsSummaryController @Inject()(val authActions: AuthActions,
   def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
-                    isAgent: Boolean)
+                    isAgent: Boolean,
+                    previousCalculation: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
-    calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
+    calculationService.getCalculationDetailsWithFlag(user.mtditid, user.nino, taxYear, previousCalculation).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = AllowancesAndDeductionsViewModel(liabilityCalc.calculation)
         auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
@@ -73,23 +74,25 @@ class DeductionsSummaryController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def showDeductionsSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
+  def showDeductionsSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] =
     authActions.asMTDIndividual.async {
       implicit user =>
         handleRequest(
           origin = origin,
           itcvErrorHandler = itvcErrorHandler,
           taxYear = taxYear,
-          isAgent = false
+          isAgent = false,
+          previousCalculation = previousCalculation
         )
     }
 
-  def showDeductionsSummaryAgent(taxYear: Int): Action[AnyContent] = {
+  def showDeductionsSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = {
     authActions.asMTDPrimaryAgent.async { implicit response =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,
         taxYear = taxYear,
-        isAgent = true
+        isAgent = true,
+        previousCalculation = previousCalculation
       )
     }
   }

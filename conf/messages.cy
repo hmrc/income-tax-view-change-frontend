@@ -444,6 +444,23 @@ tax-year-summary.agent.message.C559114                         = ar gyfer llety 
 tax-year-summary.adjust-poa-paragraph                          = Gallwch ostwng y ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch Cyfraniadau Yswiriant Gwladol Dosbarth 4 fod yn wahanol i gyfanswm eich taliadau ar gyfrif presennol.
 tax-year-summary.adjust-poa                                    = Addasu taliadau ar gyfrif
 
+# Tax Year Summary - PFA #
+tax-year-summary.latest-calculation                                = Cyfrifiad Diweddaraf
+tax-year-summary.latest-calculation-desc                           = Cafodd eich Ffurflen Dreth ei ddiwygio ar {0} ac o ganlyniad dyma’ch cyfrifiad mwyaf diweddar.
+
+tax-year-summary.previous-calculation                              = Cyfrifiad Blaenorol
+tax-year-summary.previous-calculation-desc                         = Pan fydd eich Ffurflen Dreth wedi’i ddiwygio, bydd eich cyfrifiad treth yn newid. Os bydd hyn yn digwydd, mae’r dudalen hon yn dangos unrhyw gyfrifiadau treth blaenorol a allai fod gennych.
+tax-year-summary.previous-calculation-subheading                   = Cafodd y cyfrifiad ei wneud ar {0}
+tax-year-summary.previous-calculation-note                         = Cyflwynwyd y Ffurflen Dreth ar y dyddiad hwn.
+tax-year-summary.previous-calculation-amend-subheading             = Diwygio Ffurflen Dreth sydd wedi’i chyflwyno
+tax-year-summary.previous-calculation-bullet-start                 = Gallwch newid eich Ffurflen Dreth ar ôl i chi ei chyflwyno. I wneud hyn ar-lein, mae’n rhaid i chi wneud y canlynol:
+tax-year-summary.previous-calculation-bullet-1                     = defnyddio’r meddalwedd neu wasanaethau ar-lein CThEF a ddefnyddiwyd i gyflwyno’r Ffurflen Dreth
+tax-year-summary.previous-calculation-bullet-2                     = gwneud hynny cyn pen 12 mis o’r
+tax-year-summary.previous-calculation-bullet-2-bold                = dyddiad cau Hunanasesiad
+tax-year-summary.previous-calculation-example                      = Er enghraifft, ar gyfer blwyddyn dreth 2025 i 2026, fel arfer bydd angen i chi gwneud y newid ar-lein erbyn 31 Ionawr 2028.
+tax-year-summary.previous-calculation-contact-hmrc                 = Os yw’r dyddiad hwnnw wedi mynd heibio neu os na allwch ddiwygio’ch Ffurflen Dreth am reswm arall,
+tax-year-summary.previous-calculation-contact-hmrc-link            = bydd angen i chi gysylltu â CThEF.
+tax-year-summary.previous-calculation-bill                         = Caiff eich cyfrifiad yn ogystal â’ch bil ei ddiweddaru yn seiliedig ar yr hyn yr ydych yn rhoi gwybod amdano. Gallai hyn olygu y bydd yn rhaid i chi dalu mwy o dreth, neu gallwch hawlio ad-daliad.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm

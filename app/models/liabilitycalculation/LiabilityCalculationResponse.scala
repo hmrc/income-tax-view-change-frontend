@@ -55,6 +55,13 @@ case class Metadata(calculationTimestamp: Option[String],
       case _ => false
     }
   }
+
+  def hasAnAmendment: Boolean = {
+    calculationType match {
+      case "AM" | "CA" => true
+      case _ => false
+    }
+  }
 }
 
 object Metadata {

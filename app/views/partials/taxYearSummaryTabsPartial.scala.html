@@ -17,36 +17,41 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(govukTabs : GovukTabs)
-@(showForecastData: Boolean = false, showUpdates: Boolean = false, taxCalculationContent: Html, paymentsContent: Html, forecastContent: Html, updatesContent: Html)(implicit messages: Messages)
+@(showForecastData: Boolean = false, showUpdates: Boolean = false, taxCalculationContent: Option[Html], previousCalculation: Option[Html], paymentsContent: Html, forecastContent: Html, updatesContent: Html, hasAmendments: Boolean, pfaEnabled: Boolean)(implicit messages: Messages)
 
 @taxCalculationTabItem() = @{
-    Some(TabItem(
-        id = Some("taxCalculation"),
-        label = messages("tax-year-summary.tax-calculation"),
-        panel = TabPanel(
-            content = HtmlContent(taxCalculationContent)
-        )
-    ))
-}
-
-@latestCalculationTabItem() = @{
-    Some(TabItem(
-        id = Some("latestCalculation"),
-        label = messages("tax-year-summary.latest-calculation"),
-        panel = TabPanel(
-            content = HtmlContent(taxCalculationContent)
-        )
-    ))
+    taxCalculationContent.map { html => {
+            if(hasAmendments && pfaEnabled) {
+                TabItem(
+                    id = Some("latestCalculation"),
+                    label = messages("tax-year-summary.latest-calculation"),
+                    panel = TabPanel(
+                        content = HtmlContent(html)
+                    )
+                )
+            } else {
+                TabItem(
+                    id = Some("taxCalculation"),
+                    label = messages("tax-year-summary.tax-calculation"),
+                    panel = TabPanel(
+                        content = HtmlContent(html)
+                    )
+                )
+            }
+        }
+    }
 }
 
 @previousCalculationTabItem() = @{
-    Some(TabItem(
-        id = Some("previousCalculation"),
-        label = messages("tax-year-summary.previous-calculation"),
-        panel = TabPanel(
-            content = HtmlContent(taxCalculationContent)
+    previousCalculation.map { html =>
+        TabItem(
+            id = Some("previousCalculation"),
+            label = messages("tax-year-summary.previous-calculation"),
+            panel = TabPanel(
+                content = HtmlContent(html)
+            )
         )
-    ))
+    }
 }
 
 @forecastTabItem() = @{
@@ -90,7 +95,6 @@
 @tableTabItems() = @{
     Seq(
         taxCalculationTabItem(),
-        latestCalculationTabItem(),
         previousCalculationTabItem(),
         forecastTabItem(),
         paymentsTabItem(),
