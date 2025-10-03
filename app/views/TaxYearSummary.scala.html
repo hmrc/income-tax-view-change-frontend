@@ -25,7 +25,6 @@
 @import views.html.partials.taxYearSummaryTabsPartial
 @import models.liabilitycalculation.viewmodels.CalculationSummary
 
-
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -87,33 +86,58 @@
         )
     ) ++ addForecastData(model)
 }
-@mainTemplate(pageTitle = messages("tax-year-summary.heading"), backUrl = Some(backUrl), isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial, useFallbackBackLink = true) {
-    @h1WithCaption(
-        heading = messages("tax-year-summary.heading"),
-        captionMsg = messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString),
-        headingId = Some("heading")
-    )
 
-    @viewModel.calculationSummary.map { model =>
-        @if(!model.crystallised && model.messages.isEmpty) {
-            @govukInsetText(InsetText(content = HtmlContent(
-                p(id = Some("calc-date-info"))(content = Html(
-                    messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
-                        model.timestamp.map(_.toLongDate).get))
-                )
-            )))
+@previousCalculationContent = @{
+    if (viewModel.pfaEnabled) {
+        if (viewModel.previousCalculationSummary.isEmpty) {
+            None
+        } else {
+            Some(taxCalculationContent(taxYear, viewModel.previousCalculationSummary, isAgent, isPrevious = true))
         }
-        @if(!model.errorPresent()) {
-            @govukSummaryList(SummaryList(
-                classes = "govuk-summary-list",
-                rows = listRows(model)
-            ))
-        }
+    } else {
+        None
     }
+}
 
-    @getClaimToAdjustPoaSection(viewModel, ctaLink)
+@calculationContent = @{
+    if(viewModel.pfaEnabled && viewModel.hasAmendments) {
+        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, isLatest = true))
+    } else {
+        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent))
+    }
+}
 
-    @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showUpdates, taxCalculationContent(taxYear, viewModel, isAgent), paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), updatesContent(viewModel))
+@mainTemplate(pageTitle = messages("tax-year-summary.heading"), backUrl = Some(backUrl), isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial, mainClass = Some("govuk-width-container")) {
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            @h1WithCaption(
+                heading = messages("tax-year-summary.heading"),
+                captionMsg = messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString),
+                headingId = Some("heading")
+            )
+
+            @viewModel.calculationSummary.map { model =>
+                @if(!model.crystallised && model.messages.isEmpty) {
+                    @govukInsetText(InsetText(content = HtmlContent(
+                        p(id = Some("calc-date-info"))(content = Html(
+                            messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
+                                model.timestamp.map(_.toLongDate).get))
+                        )
+                    )))
+                }
+                @if(!model.errorPresent()) {
+                    @govukSummaryList(SummaryList(
+                        classes = "govuk-summary-list",
+                        rows = listRows(model)
+                    ))
+                }
+            }
+
+            @getClaimToAdjustPoaSection(viewModel, ctaLink)
+
+            @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showUpdates, calculationContent, previousCalculationContent, paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), updatesContent(viewModel), viewModel.hasAmendments, viewModel.pfaEnabled)
+        </div>
+    </div>
 }
 

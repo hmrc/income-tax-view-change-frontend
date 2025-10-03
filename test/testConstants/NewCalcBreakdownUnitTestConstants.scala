@@ -301,6 +301,13 @@ object NewCalcBreakdownUnitTestConstants {
     )
   )
 
+  val metadataWithAmendment = Metadata(
+    calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+    calculationType = "CA",
+    calculationReason = Some("customerRequest"),
+    periodFrom = Some(LocalDate.of(2018, 1, 1)),
+    periodTo = Some(LocalDate.of(2019, 1, 1)))
+
   val liabilityCalculationModelErrorMessagesForIndividual = liabilityCalculationModelDeductionsMinimal().copy(messages = Some(Messages(
     errors = Some(List(
       Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),

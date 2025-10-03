@@ -42,14 +42,14 @@ class DeductionsSummaryControllerISpec extends ControllerISpecHelper {
             "render the deduction summary page" in {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+              IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                 status = OK,
                 body = liabilityCalculationModelSuccessful
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 result should have(
                   httpStatus(OK),

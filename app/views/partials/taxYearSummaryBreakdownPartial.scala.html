@@ -14,13 +14,51 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitCurrencyFormatter._
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import _root_.implicits.ImplicitDateFormatterImpl
 @import models.liabilitycalculation.viewmodels.CalculationSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
+@import play.twirl.api.HtmlFormat
 
-@this(govukWarningText : GovukWarningText, h2: h2)
-@(overview: CalculationSummary, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean, caption: Option[String] = None, origin: Option[String] = None)(implicit messages: Messages)
+@this(govukWarningText : GovukWarningText,
+        h2: h2,
+        h3: h3,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        p: p)
+@(overview: CalculationSummary, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean, caption: Option[String] = None, origin: Option[String] = None, isLatest: Boolean = false, isPrevious: Boolean = false)(implicit messages: Messages)
+
+@import implicitDateFormatter._
+
+@heading = @{
+    if (isPrevious) {
+        messages("tax-year-summary.previous-calculation")
+    } else {
+        messages("tax-year-summary.tax-calculation")
+    }
+}
+
+@overviewDescription = @{
+    (isLatest, isPrevious) match {
+        case (true, false) =>
+            p(id = Some("latest-calculation-overview-description")) {
+                Html(messages("tax-year-summary.latest-calculation-desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
+            }
+        case (false, true) =>
+            HtmlFormat.fill(
+                Seq(
+                    p(id = Some("previous-calculation-overview-description")) {
+                    Html(messages("tax-year-summary.previous-calculation-desc"))
+                    },
+                    h3(optId = Some("previous-calculation-subheading"), msg = messages("tax-year-summary.previous-calculation-subheading", overview.timestamp.map(_.toLongDate).getOrElse("")), classes = "govuk-heading-m"),
+                    p(id = Some("previous-calculation-note")) {
+                        Html(messages("tax-year-summary.previous-calculation-note"))
+                    }
+                )
+            )
+        case _ => ""
+    }
+}
 
 @if(isFinalCalc){
   @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l")
@@ -94,7 +132,11 @@
             content = Text(messages("tax-year-summary.tax-calculation.unattended-calc"))
         ))
     }
-   @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l")
+
+    @h2(msg = heading, classes = "govuk-heading-l")
+
+    @overviewDescription
+
     <table class="govuk-table" id="income-deductions-contributions-table">
         <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.tax-calculation")</caption>
         <thead class="govuk-table__head">
@@ -108,10 +150,10 @@
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
                     <div>
                         @if(isAgent){
-                            <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear).url>@messages("tax-year-summary.income")</a>
+                            <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear, isPrevious).url>@messages("tax-year-summary.income")</a>
 
                         } else {
-                            <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear, origin).url>@messages("tax-year-summary.income")</a>
+                            <a class="govuk-link" href=@controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear, origin, isPrevious).url>@messages("tax-year-summary.income")</a>
                         }
                     </div>
                 </th>
@@ -124,10 +166,10 @@
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">
                     <div>
                         @if(isAgent){
-                            <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear).url>@messages("tax-year-summary.deductions")</a>
+                            <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear, isPrevious).url>@messages("tax-year-summary.deductions")</a>
 
                         } else {
-                            <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear, origin).url>@messages("tax-year-summary.deductions")</a>
+                            <a class="govuk-link" href=@controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear, origin, isPrevious).url>@messages("tax-year-summary.deductions")</a>
                         }
                     </div>
                 </th>
@@ -149,9 +191,9 @@
                 <th scope="row" class="govuk-table__header govuk-!-font-weight-bold">
                     <div>
                         @if(isAgent){
-                            <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear).url>@messages(s"tax-year-summary.tax-due")</a>
+                            <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear, isPrevious).url>@messages(s"tax-year-summary.tax-due")</a>
                         } else {
-                            <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin).url>@messages(s"tax-year-summary.tax-due")</a>
+                            <a class="govuk-link" href=@controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin, isPrevious).url>@messages(s"tax-year-summary.tax-due")</a>
                         }
                     </div>
                 </th>

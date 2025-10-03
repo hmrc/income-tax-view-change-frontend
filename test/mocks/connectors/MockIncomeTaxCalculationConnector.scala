@@ -29,11 +29,12 @@ trait MockIncomeTaxCalculationConnector extends UnitSpec with BeforeAndAfterEach
 
   lazy val mockIncomeTaxCalculationConnector: IncomeTaxCalculationConnector = mock(classOf[IncomeTaxCalculationConnector])
 
-  def mockGetCalculationResponse(mtditid: String, nino: String, taxYear: String)(response: LiabilityCalculationResponseModel): Unit = {
+  def mockGetCalculationResponse(mtditid: String, nino: String, taxYear: String, calcType: Option[String])(response: LiabilityCalculationResponseModel): Unit = {
     when(mockIncomeTaxCalculationConnector.getCalculationResponse(
       ArgumentMatchers.eq(mtditid),
       ArgumentMatchers.eq(nino),
-      ArgumentMatchers.eq(taxYear)
+      ArgumentMatchers.eq(taxYear),
+      ArgumentMatchers.eq(calcType)
     )(ArgumentMatchers.any(), ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 

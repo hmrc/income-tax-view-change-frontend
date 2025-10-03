@@ -54,10 +54,55 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
             testSupportingAgentAccessDenied(path, additionalCookies)
           } else {
             "render the tax summary page" that {
+              "includes the latest and previous calculations tab" in {
+                enable(PostFinalisationAmendmentsR18)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
+                  status = OK,
+                  body = liabilityCalculationModelSuccessfulWithAmendment
+                )
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "PREVIOUS")(
+                  status = OK,
+                  body = liabilityCalculationModelSuccessfulNotCrystallised
+                )
+                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString
+                )(
+                  status = OK,
+                  response = Json.toJson(financialDetailsSuccess)
+                )
+                IncomeTaxViewChangeStub.stubGetAllObligations(
+                  nino = testNino,
+                  fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+                  toDate = getCurrentTaxYearEnd,
+                  deadlines = allObligations
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                res should have(
+                  httpStatus(OK),
+                  elementTextByID("latest-calculation-overview-description")("Your tax return was amended on 15 February 2019 and as a result this is your most up-to-date calculation."),
+                  elementTextByID("previous-calculation-overview-description")("When your tax return is amended it changes your tax calculation. If this happens, this page shows any previous tax calculations you may have."),
+                  elementTextByID("previous-calculation-note")("The tax return was filed then."),
+                  elementTextByID("previous-calculation-bullet-start")("You can change your tax return after you have filed it. To do this online you must:"),
+                  elementTextByID("previous-calculation-bullet-1")("use the software or HMRC online service used to submit the return"),
+                  elementTextByID("previous-calculation-bullet-2")("do it within 12 months of the Self Assessment deadline"),
+                  elementTextByID("previous-calculation-contact-hmrc")("If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC."),
+                  elementTextByID("previous-calculation-example")("For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."),
+                  elementTextByID("previous-calculation-bill")("Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.")
+                )
+              }
+
               "includes the forecast calculation tab" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessfulNotCrystallised
                 )
@@ -87,7 +132,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString,
@@ -112,7 +157,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               "that includes updates" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessful
                 )
@@ -142,7 +187,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString,
@@ -178,7 +223,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               "has payments with and without dunning locks in the payments tab" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessful
                 )
@@ -208,7 +253,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString,
@@ -247,15 +292,15 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
-                    financialDetailsDunningLockSuccess.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
-                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "")))
+                    None, financialDetailsDunningLockSuccess.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
+                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, hasAmendments = false)))
               }
 
 
               "has Coding out that is requested and immediately rejected by NPS" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessful
                 )
@@ -285,7 +330,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString,
@@ -304,7 +349,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               "has Coding out that has been accepted and rejected by NPS part way through the year" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessful
                 )
@@ -335,7 +380,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 Then("I check all calls expected were made")
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString,
@@ -355,7 +400,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 "the user has the coding out requested amount has not been fully collected (partially collected)" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                     status = OK,
                     body = liabilityCalculationModelSuccessful
                   )
@@ -385,7 +430,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+                  IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                     from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                     to = getCurrentTaxYearEnd.toString,
@@ -404,7 +449,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 "financial details service returns a not found" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                     status = OK,
                     body = liabilityCalculationModelSuccessful
                   )
@@ -434,7 +479,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+                  IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(
                     nino = testNino,
                     from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
@@ -456,15 +501,15 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     messagesAPI,
                     TaxYearSummaryViewModel(
                       Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-                      emptyPaymentsList,
-                      allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = ""
+                      None, emptyPaymentsList,
+                      allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, hasAmendments = false
                     )))
                 }
                 "retrieving a calculation failed" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino,
-                    "2018")(NO_CONTENT, LiabilityCalculationError(NO_CONTENT, "error"))
+                  IncomeTaxCalculationStub.stubGetCalculationErrorResponseWithFlag(testNino,
+                    "2018", "LATEST")(NO_CONTENT, LiabilityCalculationError(NO_CONTENT, "error"))
                   IncomeTaxViewChangeStub.stubGetAllObligations(testNino,
                     LocalDate.of(2017, 4, 6),
                     LocalDate.of(2018, 4, 5),
@@ -487,7 +532,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   val res = buildGETMTDClient(getPath(mtdUserRole, "2018"), additionalCookies).futureValue
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
+                  IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, "2018", "LATEST")
 
                   res should have(
                     httpStatus(OK),
@@ -500,7 +545,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 "calculation response contain error messages" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                     status = OK,
                     body = liabilityCalculationModelErrorMessages
                   )
@@ -530,7 +575,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+                  IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                     from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                     to = getCurrentTaxYearEnd.toString, noOffcalls = 2
@@ -563,7 +608,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               "MFA Debits on the Payment Tab with FS ENABLED" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessful
                 )
@@ -594,7 +639,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 val auditDD = financialDetailsMFADebits.getAllDocumentDetailsWithDueDates()
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString, noOffcalls = 2
@@ -603,9 +648,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-
-                    auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
-                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "")))
+                    None, auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
+                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, hasAmendments = false)))
 
                 allObligations.obligations.foreach {
                   obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
@@ -627,7 +671,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 "the user has Review and Reconcile debit charges" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(status = OK, body = liabilityCalculationModelDeductionsMinimal)
                   CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
                     testValidFinancialDetailsModelReviewAndReconcileDebitsJson(2000, 2000, testYear2023.toString, futureDate.toString))
@@ -656,7 +700,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 "The user has amendable POAs for the given tax year" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(status = OK, body = liabilityCalculationModelDeductionsMinimal)
                   CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK,
                     testValidFinancialDetailsModelJson(2000, 2000, testYear2023.toString, testDate.toString))
@@ -673,7 +717,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 "The user has no amendable POAs" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, getCurrentTaxYearEnd.getYear.toString)(status = OK, body = liabilityCalculationModelDeductionsMinimal)
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(status = OK, body = liabilityCalculationModelDeductionsMinimal)
                   CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testYear2023 - 1}-04-06", s"$testYear2023-04-05")(OK, testEmptyFinancialDetailsModelJson)
 
@@ -691,7 +735,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               "financial details service returns an error" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessful
                 )
@@ -710,8 +754,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               "retrieving a calculation failed with INTERNAL_SERVER_ERROR" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino,
-                  "2018")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
+                IncomeTaxCalculationStub.stubGetCalculationErrorResponseWithFlag(testNino,
+                  "2018", "LATEST")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
                 IncomeTaxViewChangeStub.stubGetAllObligations(testNino,
                   LocalDate.of(2017, 4, 6),
                   LocalDate.of(2018, 4, 5),
@@ -734,7 +778,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 val res = buildGETMTDClient(getPath(mtdUserRole, year = testYear), additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, "2018", "LATEST")
 
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR)
@@ -784,7 +828,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   toDate = LocalDate.of(2018, 4, 5),
                   deadlines = allObligations
                 )
-                IncomeTaxCalculationStub.stubGetCalculationErrorResponse(testNino, "2018")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Error"))
+                IncomeTaxCalculationStub.stubGetCalculationErrorResponseWithFlag(testNino, "2018", "LATEST")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "Error"))
 
                 val res = buildGETMTDClient(getPath(mtdUserRole, testYear), additionalCookies).futureValue
 
