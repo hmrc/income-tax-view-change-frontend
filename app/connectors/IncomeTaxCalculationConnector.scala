@@ -36,11 +36,14 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2,
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =
     s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
-  def getCalculationResponse(mtditid: String, nino: String, taxYear: String)
+  def getCalculationResponse(mtditid: String, nino: String, taxYear: String, calcType: Option[String])
                             (implicit headerCarrier: HeaderCarrier,
                              ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
 
-    http.get(url"${getCalculationResponseUrl(nino)}?taxYear=$taxYear")
+    val queryParams = Map("taxYear" -> taxYear) ++ calcType.map("calcType" -> _)
+    val url = url"${getCalculationResponseUrl(nino)}?$queryParams"
+
+    http.get(url)
       .setHeader("mtditid" -> mtditid)
       .execute[HttpResponse] map { response =>
       response.status match {

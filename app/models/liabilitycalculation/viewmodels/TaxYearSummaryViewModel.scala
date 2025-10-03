@@ -22,21 +22,29 @@ import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
 
 case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
+                                   previousCalculationSummary: Option[CalculationSummary],
                                    charges: List[TaxYearSummaryChargeItem],
                                    obligations: ObligationsModel,
                                    showForecastData: Boolean = false,
                                    ctaViewModel: TYSClaimToAdjustViewModel,
-                                   LPP2Url: String
+                                   LPP2Url: String,
+                                   pfaEnabled: Boolean,
+                                   hasAmendments: Boolean
                                   ) {
 
   def showUpdates: Boolean = {
     obligations.obligations.exists(_.obligations.nonEmpty)
   }
 
-  calculationSummary.filter(_ => showForecastData).foreach(calculationSummaryValue => {
-    require(calculationSummaryValue.forecastIncomeTaxAndNics.isDefined, "missing Forecast Tax Due")
-    require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
-  })
+  private def validateCalculationSummary(calculationSummary: Option[CalculationSummary]) = {
+    calculationSummary.filter(_ => showForecastData).foreach(calculationSummaryValue => {
+      require(calculationSummaryValue.forecastIncomeTaxAndNics.isDefined, "missing Forecast Tax Due")
+      require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")
+    })
+  }
+
+  validateCalculationSummary(calculationSummary)
+  validateCalculationSummary(previousCalculationSummary)
 
   def getForecastSummaryHref(taxYear: Int, isAgent: Boolean): String = {
     if(isAgent) {

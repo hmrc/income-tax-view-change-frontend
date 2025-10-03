@@ -60,12 +60,13 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
   def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
-                    isAgent: Boolean
+                    isAgent: Boolean,
+                    previousCalculation: Boolean
                    )
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
     for {
-      liabilityCalc <- calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear)
+      liabilityCalc <- calculationService.getCalculationDetailsWithFlag(user.mtditid, user.nino, taxYear, isPrevious = previousCalculation)
       taxYearModel   = TaxYear.makeTaxYearWithEndYear(taxYear)
       obligations   <- obligationsConnector.getAllObligationsDateRange(taxYearModel.toFinancialYearStart, taxYearModel.toFinancialYearEnd)
     } yield (liabilityCalc, obligations) match {
@@ -100,22 +101,24 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
   }
 
 
-  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         origin = origin,
         itcvErrorHandler = itvcErrorHandler,
         taxYear = taxYear,
-        isAgent = false
+        isAgent = false,
+        previousCalculation = previousCalculation
       )
   }
 
-  def showTaxDueSummaryAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showTaxDueSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,
         taxYear = taxYear,
-        isAgent = true
+        isAgent = true,
+        previousCalculation = previousCalculation
       )
   }
 }

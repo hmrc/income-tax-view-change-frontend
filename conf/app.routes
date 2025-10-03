@@ -110,18 +110,18 @@ GET         /tax-year-summary/:taxYear                                    contro
 GET         /agents/tax-year-summary/:taxYear                             controllers.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear: Int)
 
 #IncomeSummary
-GET         /:taxYear/income                                              controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int, origin: Option[String] ?= None)
-GET         /agents/:taxYear/income                                       controllers.IncomeSummaryController.showIncomeSummaryAgent(taxYear: Int)
+GET         /:taxYear/income                                              controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int, origin: Option[String] ?= None, previousCalculation: Boolean ?= false)
+GET         /agents/:taxYear/income                                       controllers.IncomeSummaryController.showIncomeSummaryAgent(taxYear: Int, previousCalculation: Boolean ?= false)
 
 #Tax Due
-GET         /:taxYear/tax-calculation                                     controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int, origin: Option[String] ?= None)
+GET         /:taxYear/tax-calculation                                     controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int, origin: Option[String] ?= None, previousCalculation: Boolean ?= false)
 
 #Agents Tax Due
-GET         /agents/:taxYear/tax-calculation                              controllers.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear: Int)
+GET         /agents/:taxYear/tax-calculation                              controllers.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear: Int,previousCalculation: Boolean ?= false)
 
 #Deductions Summary
-GET         /:taxYear/allowances-and-deductions                           controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int, origin: Option[String] ?= None)
-GET         /agents/:taxYear/allowances-and-deductions                    controllers.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear: Int)
+GET         /:taxYear/allowances-and-deductions                           controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int, origin: Option[String] ?= None, previousCalculation: Boolean ?= false)
+GET         /agents/:taxYear/allowances-and-deductions                    controllers.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear: Int, previousCalculation: Boolean ?= false)
 
 #TaxYears
 GET         /tax-years                                                    controllers.TaxYearsController.showTaxYears(origin: Option[String] ?= None)

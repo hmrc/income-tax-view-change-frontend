@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponseModel}
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponseModel, Metadata}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
@@ -55,6 +55,23 @@ trait MockCalculationService extends UnitSpec with BeforeAndAfterEach {
     )(ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 
+  def setupMockGetCalculationDetailsWithFlag(mtditid: String, nino: String, taxYear: Int, isPrevious: Boolean)(response: LiabilityCalculationResponseModel): Unit = {
+    when(mockCalculationService.getCalculationDetailsWithFlag(
+      ArgumentMatchers.eq(mtditid),
+      ArgumentMatchers.eq(nino),
+      ArgumentMatchers.eq(taxYear),
+      ArgumentMatchers.eq(isPrevious)
+    )(ArgumentMatchers.any())) thenReturn Future.successful(response)
+  }
+
+  def setupMockGetLatestAndPreviousCalculationDetails(mtditid: String, nino: String, taxYear: Int)(response: (LiabilityCalculationResponseModel, Option[LiabilityCalculationResponseModel])): Unit = {
+    when(mockCalculationService.getLatestAndPreviousCalculationDetails(
+      ArgumentMatchers.eq(mtditid),
+      ArgumentMatchers.eq(nino),
+      ArgumentMatchers.eq(taxYear)
+    )(ArgumentMatchers.any(), ArgumentMatchers.any())) thenReturn Future.successful(response)
+  }
+
   def mockCalculationSuccessfulNew(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, nino, taxYear)(liabilityCalculationModelSuccessful)
 
@@ -63,6 +80,36 @@ trait MockCalculationService extends UnitSpec with BeforeAndAfterEach {
 
   def mockCalculationSuccessMinimalNew(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, testNino, taxYear)(liabilityCalculationModelDeductionsMinimal())
+
+  def mockCalculationSuccessWithFlag(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear, isPrevious: Boolean = false): Unit =
+    setupMockGetCalculationDetailsWithFlag(mtditid, testNino, taxYear, isPrevious)(liabilityCalculationModelSuccessful)
+
+  def mockCalculationSuccessWithFlagMinimum(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear, isPrevious: Boolean = false): Unit =
+    setupMockGetCalculationDetailsWithFlag(mtditid, testNino, taxYear, isPrevious)(liabilityCalculationModelDeductionsMinimal())
+
+  def mockCalculationSuccessWithFlagError(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear, isPrevious: Boolean = false): Unit =
+    setupMockGetCalculationDetailsWithFlag(mtditid, testNino, taxYear, isPrevious)(LiabilityCalculationError(500, "Internal server error"))
+
+  def mockCalculationSuccessWithFlagNotFound(mtditid: String = "XAIT00000000015", taxYear: Int = testTaxYear, isPrevious: Boolean = false): Unit =
+    setupMockGetCalculationDetailsWithFlag(mtditid, testNino, taxYear, isPrevious)(LiabilityCalculationError(204, "not found"))
+
+  def mockLatestAndPreviousSuccess(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear, previousCalc: Option[LiabilityCalculationResponseModel] = None): Unit =
+    setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((liabilityCalculationModelSuccessful, previousCalc))
+
+  def mockLatestAndPreviousSuccessWithAmendment(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear, previousCalc: Option[LiabilityCalculationResponseModel] = None): Unit =
+    setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((liabilityCalculationModelSuccessful.copy(metadata = metadataWithAmendment), previousCalc))
+
+  def mockLatestAndPreviousNotCrystallised(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear, previousCalc: Option[LiabilityCalculationResponseModel] = None): Unit =
+    setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((liabilityCalculationModelSuccessfulNotCrystallised, previousCalc))
+
+  def mockLatestAndPreviousNotFound(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
+    setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((LiabilityCalculationError(204, "not found"), None))
+
+  def mockLatestAndPreviousError(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
+    setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((LiabilityCalculationError(500, "Internal server error"), None))
+
+  def mockLatestAndPreviousWithErrorMessages(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
+    setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((liabilityCalculationModelErrorMessagesForIndividual, None))
 
   def mockCalculationErrorNew(mtditid: String = "XAIT00000000015", nino: String = testNino, year: Int = testTaxYear): Unit =
     setupMockGetCalculationNew(mtditid, nino, year)(LiabilityCalculationError(500, "Internal server error"))
