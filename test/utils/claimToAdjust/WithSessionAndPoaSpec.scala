@@ -20,7 +20,7 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
+import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
 import models.incomeSourceDetails.IncomeSourceDetailsModel

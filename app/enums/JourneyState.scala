@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package enums.IncomeSourceJourney
+package enums
 
 trait JourneyState {
   val key: String
