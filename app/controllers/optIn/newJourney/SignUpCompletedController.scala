@@ -21,6 +21,7 @@ import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import enums.JourneyCompleted
 import models.itsaStatus.ITSAStatus
 import models.optin.newJourney.SignUpCompletedViewModel
 import play.api.Logger
@@ -28,8 +29,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.reportingObligations.ReportingObligationsUtils
+import utils.reportingObligations.{JourneyCheckerSignUp, ReportingObligationsUtils}
 import views.html.optIn.newJourney.SignUpCompletedView
+
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
