@@ -44,7 +44,7 @@ class SignUpCompletedController @Inject()(val view: SignUpCompletedView,
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils with JourneyCheckerSignUp {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -63,6 +63,7 @@ extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Repo
           for {
             proposition <- optInService.fetchOptInProposition()
             intent <- optInService.fetchSavedChosenTaxYear()
+            _ <- setJourneyComplete
           } yield {
             intent.map { optInTaxYear =>
               val model = SignUpCompletedViewModel(
