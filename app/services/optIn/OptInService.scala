@@ -56,6 +56,15 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       getOrElse(false)
   }
 
+  def updateJourneyStatusInSessionData(journeyComplete: Boolean)(implicit user: MtdItUser[_],
+                                                                 hc: HeaderCarrier,
+                                                                 ec: ExecutionContext): Future[Boolean] = {
+    OptionT(fetchExistingUIJourneySessionDataOrInit())
+      .map(journeySd => journeySd.copy(optInSessionData = journeySd.optInSessionData.map(_.copy(journeyIsComplete = Some(journeyComplete)))))
+      .flatMap(journeySd => OptionT.liftF(repository.set(journeySd)))
+      .getOrElse(false)
+  }
+
   def availableOptInTaxYear()(implicit user: MtdItUser[_],
                               hc: HeaderCarrier,
                               ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
@@ -65,7 +74,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
       UIJourneySessionData(hc.sessionId.get.value,
         Opt(OptInJourney).toString,
         optInSessionData =
-          Some(OptInSessionData(None, None))))
+          Some(OptInSessionData(None, None, Some(false)))))
   }
 
   private def fetchExistingUIJourneySessionDataOrInit(attempt: Int = 1)(implicit user: MtdItUser[_],
@@ -94,7 +103,7 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     }
   }
 
-  private def fetchSavedOptInSessionData()
+  def fetchSavedOptInSessionData()
                                         (implicit user: MtdItUser[_],
                                          hc: HeaderCarrier,
                                          ec: ExecutionContext): Future[Option[OptInSessionData]] = {
@@ -159,11 +168,10 @@ class OptInService @Inject()(itsaStatusUpdateConnector: ITSAStatusUpdateConnecto
     } yield OptInInitialState(statusMap(currentYear), statusMap(nextYear))
   }
 
-  private def getITSAStatusesFrom(currentYear: TaxYear)(implicit user: MtdItUser[_],
+  private def getITSAStatusesFrom(taxYear: TaxYear)(implicit user: MtdItUser[_],
                                                         hc: HeaderCarrier,
                                                         ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] = {
-    itsaStatusService.getStatusTillAvailableFutureYears(currentYear.previousYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
-    //todo is passing currentYear.previousYear correct here?
+    itsaStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
   }
 
   def fetchSavedChosenTaxYear()(implicit user: MtdItUser[_],

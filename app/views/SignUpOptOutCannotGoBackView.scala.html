@@ -1,0 +1,99 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.layouts.unifiedLayout
+@import views.html.components._
+@import models.homePage.HomePageViewModel
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
+@import views.html.helpers.injected.home._
+
+
+@this(
+    mainTemplate: unifiedLayout,
+    appConfig: config.FrontendAppConfig,
+    h1: h1,
+    h2: h2,
+    p: p,
+    link: link,
+    bulletList: bulletPointList
+)
+@(isAgent: Boolean, isSignUp: Boolean)(
+  	implicit request: Request[_],
+	messages: Messages,
+  	user: auth.MtdItUser[_],
+	appConfig: config.FrontendAppConfig
+)
+
+@getMessages(messageKey: String) = @{
+    messages(s"signUpOptOut.cannotGoBack.$messageKey")
+}
+
+@heading = {
+    @h1(msg = getMessages("heading"))
+}
+
+@contextualSection = {
+    @if(isSignUp) {
+        @h2(optId = Some("contextual-section-signup"), msg = getMessages("h2.signUp"))
+    }
+    @if(!isSignUp) {
+        @h2(optId = Some("contextual-section-optout"), msg = getMessages("h2.optOut"))
+    }
+
+}
+
+@linksSection = {
+    @p(id = Some("links-section-heading")) {
+        @getMessages("ul.heading")
+    }
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="links-section-upcoming-deadlines-bullet">
+            @link(
+                id=Some("links-section-upcoming-deadlines-link"),
+                link =
+                    if(isAgent) s"${controllers.routes.NextUpdatesController.showAgent()}"
+                    else s"${controllers.routes.NextUpdatesController.show()}",
+                messageKey = getMessages("linkText1")
+            )
+        </li>
+        <li id="links-section-home-page-link">
+            @link(
+                id=Some("links-section-home-page-link"),
+                link =
+                    if(isAgent) s"${controllers.routes.HomeController.show()}"
+                    else s"${controllers.routes.HomeController.showAgent()}"
+                ,
+                messageKey = getMessages("linkText2")
+            )
+        </li>
+    </ul>
+}
+
+@mainTemplate(
+    pageTitle = getMessages("heading"),
+    mainClass = Some("full-width"),
+    isAgent = false,
+    btaNavPartial = user.btaNavPartial
+) {
+
+    @heading
+    @contextualSection
+    @linksSection
+}
+

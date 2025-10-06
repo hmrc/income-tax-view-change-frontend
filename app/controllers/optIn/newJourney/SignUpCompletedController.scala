@@ -44,7 +44,7 @@ class SignUpCompletedController @Inject()(val view: SignUpCompletedView,
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils with JourneyCheckerSignUp {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -58,23 +58,25 @@ extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Repo
 
   def show(isAgent: Boolean): Action[AnyContent] = {
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-      withRFAndOptInOptOutR17FS {
-        withRecover(isAgent) {
-          for {
-            proposition <- optInService.fetchOptInProposition()
-            intent <- optInService.fetchSavedChosenTaxYear()
-          } yield {
-            intent.map { optInTaxYear =>
-              val model = SignUpCompletedViewModel(
-                isAgent = isAgent,
-                signUpTaxYear = optInTaxYear,
-                isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
-                isCurrentYearAnnual = proposition.currentTaxYear.status == ITSAStatus.Annual,
-                isNextYearMandated = proposition.nextTaxYear.status == ITSAStatus.Mandated
-              )
-
-              Ok(view(model))
-            }.getOrElse(errorHandler(isAgent).showInternalServerError())
+      withSessionData(isStart = false, taxYear = null, Some(JourneyCompleted)) {
+        withRFAndOptInOptOutR17FS {
+          withRecover(isAgent) {
+            for {
+              proposition <- optInService.fetchOptInProposition()
+              intent <- optInService.fetchSavedChosenTaxYear()
+              _ <- setJourneyComplete
+            } yield {
+              intent.map { optInTaxYear =>
+                val model = SignUpCompletedViewModel(
+                  isAgent = isAgent,
+                  signUpTaxYear = optInTaxYear,
+                  isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+                  isCurrentYearAnnual = proposition.currentTaxYear.status == ITSAStatus.Annual,
+                  isNextYearMandated = proposition.nextTaxYear.status == ITSAStatus.Mandated
+                )
+                Ok(view(model))
+              }.getOrElse(errorHandler(isAgent).showInternalServerError())
+            }
           }
         }
       }

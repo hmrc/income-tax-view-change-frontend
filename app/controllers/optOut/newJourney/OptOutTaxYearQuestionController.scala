@@ -52,20 +52,25 @@ class OptOutTaxYearQuestionController @Inject()(val optOutService: OptOutService
   def show(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withOptOutRFChecks {
-        optOutService.isOptOutTaxYearValid(taxYear).flatMap {
-          case Some(viewModel) =>
-            withSessionData(true, viewModel.taxYear.taxYear) {
-              Future.successful(Ok(
-                view(
-                  isAgent,
-                  viewModel,
-                  OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear),
-                  controllers.optOut.newJourney.routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
-                )
-              ))
+        optOutService.fetchJourneyCompleteStatus().flatMap(journeyIsComplete => {
+          if(!journeyIsComplete){
+            optOutService.isOptOutTaxYearValid(taxYear).flatMap {
+              case Some(viewModel) =>
+                withSessionData(true, viewModel.taxYear.taxYear) {
+                  Future.successful(Ok(
+                    view(
+                      isAgent,
+                      viewModel,
+                      OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear),
+                      controllers.optOut.newJourney.routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
+                    )
+                  ))
+                }
+              case None => Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
             }
-          case None => Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
-        }
+          }
+          else Future.successful(Redirect(controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false))))
+        })
       }
   }
 
