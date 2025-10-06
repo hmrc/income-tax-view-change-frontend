@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.IncomeTaxCalculationConnector
+import enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
 import models.admin.PostFinalisationAmendmentsR18
 import models.liabilitycalculation.{LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
@@ -64,7 +65,7 @@ class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalcu
 
   def getCalculationDetailsWithFlag(mtditid: String, nino: String, taxYear: Int, isPrevious: Boolean)
                                    (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    val calcType = if(isPrevious) Some("PREVIOUS") else Some("LATEST")
-    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString, calcType)
+    val calculationRecord = if(isPrevious) Some(PREVIOUS) else Some(LATEST)
+    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString, calculationRecord)
   }
 }

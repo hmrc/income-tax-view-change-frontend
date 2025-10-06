@@ -17,6 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
+import enums.TaxYearSummary.CalculationRecord
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
 import play.api.http.Status._
@@ -36,7 +37,7 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2,
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =
     s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
-  def getCalculationResponse(mtditid: String, nino: String, taxYear: String, calculationRecord: Option[String])
+  def getCalculationResponse(mtditid: String, nino: String, taxYear: String, calculationRecord: Option[CalculationRecord])
                             (implicit headerCarrier: HeaderCarrier,
                              ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
 
