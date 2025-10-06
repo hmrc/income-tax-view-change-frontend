@@ -23,7 +23,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.ReportingMethod
+import enums.{AfterSubmissionPage, BeforeSubmissionPage, ReportingMethod}
 import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId

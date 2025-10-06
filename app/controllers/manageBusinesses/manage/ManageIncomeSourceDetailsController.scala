@@ -20,6 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney._
+import enums.InitialPage
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.core.IncomeSourceId.mkIncomeSourceId

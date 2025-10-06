@@ -19,8 +19,9 @@ package controllers.manageBusinesses.add
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.FrontendAppConfig
-import enums.IncomeSourceJourney.{IncomeSourceType, ReportingFrequencyPages}
+import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.ReportingFrequencyPages
 import forms.manageBusinesses.add.ChooseTaxYearForm
 import forms.models.ChooseTaxYearFormModel
 import models.admin.OptInOptOutContentUpdateR17

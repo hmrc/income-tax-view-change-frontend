@@ -18,6 +18,7 @@ package utils.reportingObligations
 
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import enums.{JourneyCompleted, JourneyState}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.mvc.{Request, Result}
