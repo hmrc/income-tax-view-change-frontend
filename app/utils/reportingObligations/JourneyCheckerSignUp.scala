@@ -35,22 +35,37 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
 
   val optInService: OptInService
 
-  def withSessionData(isStart: Boolean, taxYear: TaxYear)
+  def withSessionData(isStart: Boolean, taxYear: TaxYear, journeyState: Option[JourneyState])
                      (codeBlock: => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-    if (isStart) {
-      optInService.saveIntent(taxYear).flatMap {
-        case true => codeBlock
-        case false =>
-          Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session")
-          showInternalServerError(user.isAgent())
-      }
-    } else {
-      optInService.fetchSavedChosenTaxYear().flatMap {
-        case Some(savedTaxYear) if savedTaxYear == taxYear => codeBlock
-        case _ => redirectReportingFrequency(user.userType)
-      }
+
+    (isStart, journeyState) match {
+      case (true, None) =>
+        optInService.saveIntent(taxYear).flatMap {
+          case true => codeBlock
+          case false =>
+            Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session")
+            showInternalServerError(user.isAgent())
+        }
+      case (false, None) =>
+        optInService.fetchSavedChosenTaxYear().flatMap {
+          case Some(savedTaxYear) if savedTaxYear == taxYear => codeBlock
+          case _ => redirectReportingFrequency(user.userType)
+        }
+
+      case (false, Some(JourneyCompleted)) => codeBlock
     }
+  }
+
+  def retrieveIsJourneyComplete(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    optInService.fetchSavedOptInSessionData().map {
+      case Some(data) => data.journeyIsComplete.contains(true)
+      case _ => false
+    }
+  }
+
+  def setJourneyComplete(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    optInService.updateJourneyStatusInSessionData(journeyComplete = true)
   }
 
   private def showInternalServerError(isAgent: Boolean)(implicit request: Request[_]): Future[Result] = {

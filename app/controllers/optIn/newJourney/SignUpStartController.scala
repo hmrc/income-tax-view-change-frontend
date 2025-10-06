@@ -54,8 +54,20 @@ class SignUpStartController @Inject()(authActions: AuthActions,
       withRecover(isAgent) {
         optInService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
-            withSessionData(isStart = true, viewModel.signUpTaxYear.taxYear) {
-              Future.successful(Ok(signUpStart(isAgent, dateService.getCurrentTaxYearEnd.equals(viewModel.signUpTaxYear.taxYear.endYear), buttonUrl(isAgent, viewModel.signUpTaxYear.taxYear.startYear.toString))))
+            retrieveIsJourneyComplete.flatMap { journeyIsComplete =>
+              if (!journeyIsComplete) {
+                withSessionData(isStart = true, viewModel.signUpTaxYear.taxYear, None) {
+                  Future.successful(
+                    Ok(signUpStart(
+                      isAgent,
+                      dateService.getCurrentTaxYearEnd.equals(viewModel.signUpTaxYear.taxYear.endYear),
+                      buttonUrl(isAgent, viewModel.signUpTaxYear.taxYear.startYear.toString)
+                    ))
+                  )
+                }
+              } else {
+                Future.successful(Redirect(controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(true))))
+              }
             }
           case None =>
             Logger("application").warn("[SignUpStartController.show] chosen tax year intent not found. Redirecting to reporting obligations page.")

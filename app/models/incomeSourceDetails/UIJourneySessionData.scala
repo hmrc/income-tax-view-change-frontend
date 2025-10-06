@@ -34,7 +34,8 @@ case class UIJourneySessionData(
                                  optOutSessionData: Option[OptOutSessionData] = None,
                                  optInSessionData: Option[OptInSessionData] = None,
                                  incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
-                                 lastUpdated: Instant = Instant.now
+                                 lastUpdated: Instant = Instant.now,
+                                 journeyIsComplete: Boolean = false
                                ) {
 
   def encrypted: SensitiveUIJourneySessionData =
@@ -47,7 +48,8 @@ case class UIJourneySessionData(
       optOutSessionData,
       optInSessionData,
       incomeSourceReportingFrequencyData,
-      lastUpdated
+      lastUpdated,
+      journeyIsComplete
     )
 }
 
@@ -64,6 +66,7 @@ object UIJourneySessionData {
       ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
       ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
       ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
+      ~ (__ \ "journeyIsComplete").format[Boolean]
       )(UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
     )
   }
@@ -78,7 +81,8 @@ case class SensitiveUIJourneySessionData(
                                           optOutSessionData: Option[OptOutSessionData] = None,
                                           optInSessionData: Option[OptInSessionData] = None,
                                           incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
-                                          lastUpdated: Instant = Instant.now
+                                          lastUpdated: Instant = Instant.now,
+                                          journeyIsComplete: Boolean = false
                                         ) {
 
   def decrypted: UIJourneySessionData =
@@ -91,7 +95,8 @@ case class SensitiveUIJourneySessionData(
       optOutSessionData,
       optInSessionData,
       incomeSourceReportingFrequencyData,
-      lastUpdated
+      lastUpdated,
+      journeyIsComplete
     )
 }
 
@@ -108,6 +113,7 @@ object SensitiveUIJourneySessionData {
       ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
       ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
       ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
+      ~ (__ \ "journeyIsComplete").format[Boolean]
       )(SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
     )
 }

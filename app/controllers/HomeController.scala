@@ -35,6 +35,8 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
+import services.optIn.OptInService
+import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -54,6 +56,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
                                val whatYouOweService: WhatYouOweService,
                                val ITSAStatusService: ITSAStatusService,
                                val penaltyDetailsService: PenaltyDetailsService,
+                               val optInService: OptInService,
+                               val optOutService: OptOutService,
                                auditingService: AuditingService)
                               (implicit val ec: ExecutionContext,
                                implicit val itvcErrorHandler: ItvcErrorHandler,
@@ -95,6 +99,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
     for {
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
       (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
+      _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
+      _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
     } yield {
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
         currentDate = dateService.getCurrentDate,
@@ -136,6 +142,8 @@ class HomeController @Inject()(val homeView: views.html.Home,
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
       (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
+      _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
+      _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
     } yield {
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
         currentDate = dateService.getCurrentDate,

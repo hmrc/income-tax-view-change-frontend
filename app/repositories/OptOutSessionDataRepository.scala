@@ -70,6 +70,20 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
     }.map(_.flatten)
   }
 
+  def fetchJourneyCompleteStatus()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    repository.get(hc.sessionId.get.value, Opt(OptOutJourney)) map { sessionData =>
+      sessionData.exists(_.journeyIsComplete)
+    }
+  }
+
+  def setJourneyCompleteStatus(journeyComplete: Boolean)
+                              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    OptionT(repository.get(hc.sessionId.get.value, Opt(OptOutJourney))).
+      map(journeySd => journeySd.copy(journeyIsComplete = journeyComplete)).
+      flatMap(journeySd => OptionT.liftF(repository.set(journeySd))).
+      getOrElse(false)
+  }
+
   def fetchSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
     repository.get(hc.sessionId.get.value, Opt(OptOutJourney)) map { sessionData =>
       for {
