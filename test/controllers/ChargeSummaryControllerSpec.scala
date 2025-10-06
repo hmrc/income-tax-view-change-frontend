@@ -135,7 +135,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
 
 
-              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
+              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneWithLpi()) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -154,7 +154,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
               }
-              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithLpi()) {
+              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaTwoWithLpi()) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -543,7 +543,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("#payment-processing-bullets").isEmpty shouldBe true
               }
 
-              "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
+              "display the Review & Reconcile credit for POA1 when present in the user's financial details (old view)" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -576,7 +576,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               }
 
-              "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
+              "display the Review & Reconcile credit for POA2 when present in the user's financial details (old view)" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
