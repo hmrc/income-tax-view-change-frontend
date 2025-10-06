@@ -36,7 +36,7 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
     obligations.obligations.exists(_.obligations.nonEmpty)
   }
 
-  private def validateCalculationSummary(calculationSummary: Option[CalculationSummary]) = {
+  private def validateCalculationSummary(calculationSummary: Option[CalculationSummary]): Unit = {
     calculationSummary.filter(_ => showForecastData).foreach(calculationSummaryValue => {
       require(calculationSummaryValue.forecastIncomeTaxAndNics.isDefined, "missing Forecast Tax Due")
       require(calculationSummaryValue.timestamp.isDefined, "missing Calculation timestamp")

@@ -27,11 +27,11 @@ import scala.concurrent.Future
 
 class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
 
-  class GetCalculationResponseTest(nino: String, taxYear: String, response: HttpResponse, calcType: Option[String]) {
+  class GetCalculationResponseTest(nino: String, taxYear: String, response: HttpResponse, calculationRecord: Option[String]) {
     val connector = new IncomeTaxCalculationConnector(mockHttpClientV2, appConfig)
 
-    if (calcType.isDefined)
-      setupMockHttpV2Get(s"${connector.getCalculationResponseUrl(nino)}?taxYear=$taxYear&calcType=${calcType.get}")(response)
+    if (calculationRecord.isDefined)
+      setupMockHttpV2Get(s"${connector.getCalculationResponseUrl(nino)}?taxYear=$taxYear&calculationRecord=${calculationRecord.get}")(response)
     else
       setupMockHttpV2Get(s"${connector.getCalculationResponseUrl(nino)}?taxYear=$taxYear")(response)
   }

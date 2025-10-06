@@ -25,7 +25,7 @@ object IncomeTaxCalculationStub {
   def getCalculationResponseUrl(nino: String, taxYear: String): String = s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear"
 
   def getCalculationResponseWithFlagUrl(nino: String, taxYear: String, calcType: String): String =
-    s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear&calcType=$calcType"
+    s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear&calculationRecord=$calcType"
 
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String, taxYear: Int): String =
     s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details?taxYear=$taxYear"
