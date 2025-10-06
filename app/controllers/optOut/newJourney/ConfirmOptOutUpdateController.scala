@@ -57,8 +57,8 @@ class ConfirmOptOutUpdateController @Inject()(view: CheckOptOutUpdateAnswers,
               quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
             } yield {
               val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
-              val cancelURL = controllers.optOut.oldJourney.routes.OptOutCancelledController.show().url
-              Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, cancelURL))
+              val reportingObligationsURL = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+              Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, reportingObligationsURL))
             }
           }
         }
