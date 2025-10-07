@@ -86,7 +86,7 @@ class SignUpTaxYearQuestionController @Inject()(
                 val formResponse = form.toFormMap(SignUpTaxYearQuestionForm.response).headOption
                 formResponse match {
                   case Some(SignUpTaxYearQuestionForm.responseYes) =>
-                    signUpSubmissionService.triggerOptInRequest().map {
+                    signUpSubmissionService.triggerSignUpRequest().map {
                       case ITSAStatusUpdateResponseSuccess(_) =>
                         Redirect(routes.SignUpCompletedController.show(isAgent))
                       case _ =>

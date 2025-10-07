@@ -22,10 +22,13 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import enums.JourneyType.{Opt, OptInJourney}
-import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus._
 import models.optin.{OptInContextData, OptInSessionData}
+import play.api.Logging
 import repositories.UIJourneySessionDataRepository
+import services.DateServiceInterface
 import services.optIn.core.OptInProposition
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -33,11 +36,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SignUpSubmissionService @Inject()(
-                                     auditingService: AuditingService,
-                                     itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
-                                     optInService: OptInService,
-                                     uiJourneySessionDataRepository: UIJourneySessionDataRepository
-                                   ) {
+                                         auditingService: AuditingService,
+                                         dateService: DateServiceInterface,
+                                         itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
+                                         optInService: OptInService,
+                                         uiJourneySessionDataRepository: UIJourneySessionDataRepository
+                                       ) extends Logging {
 
   def getOptInSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptInSessionData]] = {
     for {
@@ -48,26 +52,69 @@ class SignUpSubmissionService @Inject()(
     }
   }
 
-  def triggerOptInRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
+  def makeUpdateRequest(
+                         selectedSignUpYear: Option[TaxYear],
+                         currentYearItsaStatus: Option[ITSAStatus],
+                         nextYearItsaStatus: Option[ITSAStatus]
+                       )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
+
+    val currentTaxYear = dateService.getCurrentTaxYear
+    val nextTaxYear = currentTaxYear.nextYear
+
+    (selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus) match {
+      case (Some(selectedTaxYear), Some(Annual), Some(Annual)) =>
+        itsaStatusUpdateConnector.optIn(taxYear = selectedTaxYear, user.nino)
+      case (None, Some(Annual), Some(nextYearStatus)) if nextYearStatus != Annual =>
+        itsaStatusUpdateConnector.optIn(taxYear = currentTaxYear, user.nino)
+      case (None, Some(currentYearStatus), Some(Annual)) if currentYearStatus != Annual =>
+        itsaStatusUpdateConnector.optIn(taxYear = nextTaxYear, user.nino)
+      case _ =>
+        Future(ITSAStatusUpdateResponseFailure.defaultFailure()) // we return a failure if it does not satisfy scenarios, e.g single tax year only, or multi year when user selects a tax year
+    }
+  }
+
+  def makeSignUpAuditEventRequest(
+                                   selectedSignUpYear: Option[TaxYear],
+                                   currentYearItsaStatus: Option[ITSAStatus],
+                                   nextYearItsaStatus: Option[ITSAStatus],
+                                   optInProposition: OptInProposition,
+                                   itsaStatusUpdateResponse: ITSAStatusUpdateResponse
+                                 )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+
+    val currentTaxYear = dateService.getCurrentTaxYear
+    val nextTaxYear = currentTaxYear.nextYear
+
+    (selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus) match {
+      case (Some(selectedTaxYear), Some(Annual), Some(Annual)) =>
+        val optInAuditModel = OptInAuditModel(optInProposition, selectedTaxYear, itsaStatusUpdateResponse)
+        auditingService.extendedAudit(optInAuditModel)
+      case (None, Some(Annual), Some(nextYearStatus)) if nextYearStatus != Annual =>
+        val optInAuditModel = OptInAuditModel(optInProposition, currentTaxYear, itsaStatusUpdateResponse)
+        auditingService.extendedAudit(optInAuditModel)
+      case (None, Some(currentYearStatus), Some(Annual)) if currentYearStatus != Annual =>
+        val optInAuditModel = OptInAuditModel(optInProposition, nextTaxYear, itsaStatusUpdateResponse)
+        auditingService.extendedAudit(optInAuditModel)
+      case _ =>
+        Future(()) // we don't send an audit if it does not satisfy scenarios, e.g single tax year only, or multi year when user selects a tax year
+    }
+  }
+
+  def triggerSignUpRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
     for {
       optInSessionData: Option[OptInSessionData] <- getOptInSessionData()
-      selectedOptInYear: Option[TaxYear] = optInSessionData.flatMap(_.selectedOptInYear).flatMap(TaxYear.`fromStringYYYY-YYYY`)
+      selectedSignUpYear: Option[TaxYear] = optInSessionData.flatMap(_.selectedOptInYear).flatMap(TaxYear.`fromStringYYYY-YYYY`)
       optInContextData: Option[OptInContextData] = optInSessionData.flatMap(_.optInContextData)
+      currentTaxYear: TaxYear = optInContextData.map(data => data.currentTaxYear).flatMap(TaxYear.`fromStringYYYY-YYYY`).getOrElse(dateService.getCurrentTaxYear)
+      currentYearItsaStatus: Option[ITSAStatus] = optInContextData.map(data => ITSAStatus.fromString(data.currentYearITSAStatus))
+      nextYearItsaStatus: Option[ITSAStatus] = optInContextData.map(data => ITSAStatus.fromString(data.nextYearITSAStatus))
       optInProposition: OptInProposition <- optInService.fetchOptInProposition()
-      updateResponse <- selectedOptInYear match {
-        case Some(taxYear) =>
-          itsaStatusUpdateConnector.optIn(taxYear = taxYear, user.nino)
-        case None =>
-          Future(ITSAStatusUpdateResponseFailure.defaultFailure())
-      }
-      sendOptInAuditEvent <-
-        selectedOptInYear match {
-          case Some(taxYear) =>
-            val optInAuditModel = OptInAuditModel(optInProposition, taxYear, updateResponse)
-            auditingService.extendedAudit(optInAuditModel)
-          case _ =>
-            Future(()) // we don't send an audit if user has not selected a tax year
-        }
+      _ = logger.debug(
+        s"\n[SignUpSubmissionService][triggerSignUpRequest] currentTaxYear: $currentTaxYear \n" +
+          s"[SignUpSubmissionService][triggerSignUpRequest] selectedSignUpYear: $selectedSignUpYear \n" +
+          s"[SignUpSubmissionService][triggerSignUpRequest] optInProposition: $optInProposition"
+      )
+      updateResponse <- makeUpdateRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus)
+      sendSignUpAuditEvent <- makeSignUpAuditEventRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus, optInProposition, updateResponse)
     } yield {
       updateResponse
     }
