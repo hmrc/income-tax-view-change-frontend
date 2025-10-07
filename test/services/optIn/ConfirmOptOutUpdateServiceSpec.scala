@@ -16,23 +16,22 @@
 
 package services.optIn
 
-import audit.mocks.MockAuditingService
+import audit.AuditingService
 import audit.models.{OptOutCompleteAuditModel, Outcome}
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import enums.JourneyType.{Opt, OptOutJourney}
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import models.optout.{OptOutSessionData, OptOutYearToUpdate}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import services.optout.ConfirmOptOutUpdateService
 import testConstants.BaseTestConstants.testSessionId
-import testUtils.UnitSpec
+import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
@@ -40,14 +39,13 @@ import scala.concurrent.Future
 
 class ConfirmOptOutUpdateServiceSpec extends UnitSpec
   with BeforeAndAfter
-  with MockITSAStatusService
-  with MockCalculationListService
-  with MockDateService
   with OneInstancePerTest
-  with MockITSAStatusUpdateConnector
-  with MockAuditingService {
+  with TestSupport
+  with BeforeAndAfterEach {
 
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
+
+  lazy val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
   val mockItsaStatusUpdateConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val mockUiJourneySessionDataRepository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
@@ -356,7 +354,7 @@ class ConfirmOptOutUpdateServiceSpec extends UnitSpec
 
         "return an empty List" in {
 
-          val optOutContextData =  None
+          val optOutContextData = None
           val allYearsToUpdate = service.getOptOutYearsToUpdateWithStatuses(optOutContextData)
 
           val optOutSessionData = OptOutSessionData(None, selectedOptOutYear = Some("2024-2025"))
