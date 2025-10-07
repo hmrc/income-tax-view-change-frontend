@@ -36,7 +36,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import scala.concurrent.Future
 
 
-class SignUpUpdateServiceSpec extends UnitSpec
+class SignUpSubmissionServiceSpec extends UnitSpec
   with BeforeAndAfter
   with OneInstancePerTest
   with TestSupport with BeforeAndAfterEach {
@@ -48,8 +48,8 @@ class SignUpUpdateServiceSpec extends UnitSpec
   val mockUiJourneySessionDataRepository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
   val mockItsaStatusUpdateConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
 
-  val service: SignUpUpdateService =
-    new SignUpUpdateService(mockAuditingService, mockItsaStatusUpdateConnector, mockOptInService, mockUiJourneySessionDataRepository)
+  val service: SignUpSubmissionService =
+    new SignUpSubmissionService(mockAuditingService, mockItsaStatusUpdateConnector, mockOptInService, mockUiJourneySessionDataRepository)
 
   "SignUpUpdateService" when {
 
