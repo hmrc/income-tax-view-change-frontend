@@ -512,6 +512,57 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           elementTextByClass("govuk-error-summary__body")("Select yes to sign up for the current tax year")
         )
       }
+
+      "has already completed the journey (according to session data)" should {
+        "redirect to the cannot go back page" in {
+          val currentYear = "2022"
+          val taxYear = TaxYear(2022, 2023)
+          enable(OptInOptOutContentUpdateR17)
+          enable(ReportingFrequencyPage)
+
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+            taxYear = taxYear,
+            `itsaStatusCY-1` = ITSAStatus.Annual,
+            itsaStatusCY = ITSAStatus.Annual,
+            `itsaStatusCY+1` = ITSAStatus.Annual
+          )
+          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+          await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear, journeyComplete = true))
+
+          val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
+          val redirectUrl = {
+            if(mtdUserRole != MTDIndividual)
+              controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent = true, isSignUpJourney = Some(true)).url
+            else
+            controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent = false, isSignUpJourney = Some(true)).url
+          }
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(redirectUrl)
+          )
+        }
+      }
     }
+  }
+
+  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
+                                    nextYearStatus: ITSAStatus.Value, intent: TaxYear, journeyComplete: Boolean = false): Future[Boolean] = {
+    repository.set(
+      UIJourneySessionData(testSessionId,
+        Opt(OptInJourney).toString,
+        optInSessionData =
+          Some(OptInSessionData(
+            Some(OptInContextData(
+              currentTaxYear.toString,
+              currentYearStatus.toString,
+              nextYearStatus.toString)
+            ),
+            Some(intent.toString),
+            journeyIsComplete = Some(journeyComplete)
+          ))))
   }
 }

@@ -99,6 +99,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
 
           mockIsSignUpTaxYearValid(Future(Some(viewModel)))
           mockFetchSavedChosenTaxYear(Some(signUpTaxYear.taxYear))
+          mockFetchSavedOptInSessionData()
 
           val result = action(fakeRequest)
 
@@ -115,6 +116,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           mockIsSignUpTaxYearValid(Future(None))
+          mockFetchSavedOptInSessionData()
 
           val result = action(fakeRequest)
 
@@ -129,6 +131,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
           setupMockSuccess(mtdRole)
+          mockFetchSavedOptInSessionData()
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
@@ -178,6 +181,8 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
 
           when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
             .thenReturn(Future(optInProposition))
+          mockFetchSavedOptInSessionData()
+          mockIsSignUpTaxYearValid(Future.successful(Some(viewModel)))
 
           when(mockOptInUpdateService.triggerSignUpRequest()(any(), any(), any()))
             .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
@@ -204,6 +209,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           when(mockOptInUpdateService.triggerSignUpRequest()(any(), any(), any()))
             .thenReturn(Future(ITSAStatusUpdateResponseFailure.defaultFailure()))
 
+          mockFetchSavedOptInSessionData()
           mockIsSignUpTaxYearValid(Future(Some(viewModel)))
 
           val formData = Map(
@@ -225,6 +231,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
+          mockFetchSavedOptInSessionData()
           mockIsSignUpTaxYearValid(Future(Some(viewModel)))
 
           val formData = Map(
@@ -246,6 +253,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
+          mockFetchSavedOptInSessionData()
           mockIsSignUpTaxYearValid(Future(Some(viewModel)))
 
           val formData = Map(
