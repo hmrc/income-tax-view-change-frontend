@@ -39,11 +39,11 @@ import scala.concurrent.Future
 
 class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutService with MockSessionService {
 
-  lazy val mockConfirmOptOutUpdateService: ConfirmOptOutUpdateService = mock(classOf[ConfirmOptOutUpdateService])
+  lazy val mockConfirmOptOutUpdateService: OptOutSubmissionService = mock(classOf[OptOutSubmissionService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[ConfirmOptOutUpdateService].toInstance(mockConfirmOptOutUpdateService),
+      api.inject.bind[OptOutSubmissionService].toInstance(mockConfirmOptOutUpdateService),
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()

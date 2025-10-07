@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SignUpUpdateService @Inject()(
+class SignUpSubmissionService @Inject()(
                                      auditingService: AuditingService,
                                      itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
                                      optInService: OptInService,

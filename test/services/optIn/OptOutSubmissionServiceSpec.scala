@@ -29,7 +29,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
-import services.optout.ConfirmOptOutUpdateService
+import services.optout.OptOutSubmissionService
 import testConstants.BaseTestConstants.testSessionId
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
@@ -37,7 +37,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.Future
 
-class ConfirmOptOutUpdateServiceSpec extends UnitSpec
+class OptOutSubmissionServiceSpec extends UnitSpec
   with BeforeAndAfter
   with OneInstancePerTest
   with TestSupport
@@ -50,8 +50,8 @@ class ConfirmOptOutUpdateServiceSpec extends UnitSpec
   val mockItsaStatusUpdateConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val mockUiJourneySessionDataRepository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
 
-  val service: ConfirmOptOutUpdateService =
-    new ConfirmOptOutUpdateService(mockAuditingService, mockItsaStatusUpdateConnector, mockUiJourneySessionDataRepository)
+  val service: OptOutSubmissionService =
+    new OptOutSubmissionService(mockAuditingService, mockItsaStatusUpdateConnector, mockUiJourneySessionDataRepository)
 
   val currentTaxYear = TaxYear(2025, 2026)
   val previousTaxYear = currentTaxYear.previousYear
