@@ -82,7 +82,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     //TODO: Remove multi-year call
     financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
-      //Logger("application").debug(s"- financialResponses = $financialResponses")
+      Logger("application").debug(s"- financialResponses = $financialResponses")
 
       val paymentsFromAllYears = financialResponses.collect {
         case (_, model: FinancialDetailsModel) => model.filterPayments()
