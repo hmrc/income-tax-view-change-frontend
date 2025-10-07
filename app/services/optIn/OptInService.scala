@@ -120,12 +120,14 @@ class OptInService @Inject()(
       contextData <- OptionT(Future(optInSessionData.optInContextData))
       currentYearAsTaxYear <- OptionT(Future(contextData.currentYearAsTaxYear()))
 
-      currentYearITSAStatus = stringToStatus(status = contextData.currentYearITSAStatus)
-      nextYearITSAStatus = stringToStatus(status = contextData.nextYearITSAStatus)
+      currentYearITSAStatus = ITSAStatus.fromString(contextData.currentYearITSAStatus)
+      nextYearITSAStatus = ITSAStatus.fromString(contextData.nextYearITSAStatus)
 
-      proposition = createOptInProposition(currentYearAsTaxYear,
-        currentYearITSAStatus,
-        nextYearITSAStatus)
+      proposition = createOptInProposition(
+        currentYear = currentYearAsTaxYear,
+        currentYearItsaStatus = currentYearITSAStatus,
+        nextYearItsaStatus = nextYearITSAStatus
+      )
 
     } yield proposition
 
