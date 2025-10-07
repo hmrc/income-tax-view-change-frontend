@@ -401,9 +401,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val previousCalculationAmendSubheading: String = "Amending a submitted tax return"
     val previousCalculationBulletStart: String = "You can change your tax return after you have filed it. To do this online you must:"
     val previousCalculationBullet1: String = "use the software or HMRC online service used to submit the return"
-    val previousCalculationBullet2: String = "do it within 12 months of the Self Assessment deadline"
+    val previousCalculationBullet2: String = "do it within 12 months of the Self Assessment deadline (opens in new tab)"
     val previousCalculationExample: String = "For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."
-    val previousCalculationContactHmrc: String = "If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC."
+    val previousCalculationContactHmrc: String = "If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC (opens in new tab)."
     val previousCalculationBill: String = "Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund."
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
