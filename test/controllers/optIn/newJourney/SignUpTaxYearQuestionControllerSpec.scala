@@ -160,7 +160,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
             .thenReturn(Future(optInProposition))
 
-          when(mockOptInUpdateService.triggerOptInRequest()(any(), any(), any()))
+          when(mockOptInUpdateService.triggerSignUpRequest()(any(), any(), any()))
             .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
           mockIsSignUpTaxYearValid(Future(Some(viewModel)))
@@ -182,7 +182,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-          when(mockOptInUpdateService.triggerOptInRequest()(any(), any(), any()))
+          when(mockOptInUpdateService.triggerSignUpRequest()(any(), any(), any()))
             .thenReturn(Future(ITSAStatusUpdateResponseFailure.defaultFailure()))
 
           mockIsSignUpTaxYearValid(Future(Some(viewModel)))
