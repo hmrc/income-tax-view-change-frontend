@@ -27,7 +27,7 @@ import models.optout.newJourney.CheckOptOutUpdateAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.optout.{ConfirmOptOutUpdateService, OptOutService}
+import services.optout.{OptOutSubmissionService, OptOutService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerOptOut
 import views.html.optOut.newJourney.CheckOptOutUpdateAnswers
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmOptOutUpdateController @Inject()(
                                                authActions: AuthActions,
-                                               confirmOptOutUpdateService: ConfirmOptOutUpdateService,
+                                               optOutSubmissionService: OptOutSubmissionService,
                                                view: CheckOptOutUpdateAnswers,
                                                val optOutService: OptOutService,
                                                val itvcErrorHandler: ItvcErrorHandler,
@@ -86,7 +86,7 @@ class ConfirmOptOutUpdateController @Inject()(
       implicit user =>
         withOptOutRFChecks {
           for {
-            updateTaxYearsITSAStatusRequest: List[ITSAStatusUpdateResponse] <- confirmOptOutUpdateService.updateTaxYearsITSAStatusRequest(itsaStatusToSendUpdatesFor = Voluntary)
+            updateTaxYearsITSAStatusRequest: List[ITSAStatusUpdateResponse] <- optOutSubmissionService.updateTaxYearsITSAStatusRequest(itsaStatusToSendUpdatesFor = Voluntary)
             result = updateTaxYearsITSAStatusRequest match {
               case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) || listOfUpdateRequestsMade == List.empty  =>
                 Redirect(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent))

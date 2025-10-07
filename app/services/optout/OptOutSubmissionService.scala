@@ -34,11 +34,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmOptOutUpdateService @Inject()(
-                                            auditingService: AuditingService,
-                                            itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
-                                            uiJourneySessionDataRepo: UIJourneySessionDataRepository
-                                          ) extends Logging {
+class OptOutSubmissionService @Inject()(
+                                         auditingService: AuditingService,
+                                         itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
+                                         uiJourneySessionDataRepo: UIJourneySessionDataRepository
+                                       ) extends Logging {
 
   def optOutResponseOutcomes(resolvedResponses: List[ITSAStatusUpdateResponse]): List[Outcome] = {
     resolvedResponses.map {
@@ -101,7 +101,7 @@ class ConfirmOptOutUpdateService @Inject()(
           allYearsToUpdate.filter(optOutYearsToUpdate => optOutYearsToUpdate.taxYear != currentTaxYear.previousYear)
         case (Some(currentTaxYear), Some(selectedTaxYear)) if selectedTaxYear == currentTaxYear.nextYear =>
           allYearsToUpdate.filter(optOutYearsToUpdate => optOutYearsToUpdate.taxYear == currentTaxYear.nextYear)
-        case _  =>
+        case _ =>
           allYearsToUpdate
       }
 
@@ -162,7 +162,7 @@ class ConfirmOptOutUpdateService @Inject()(
       yearsToUpdateBasedOnUserSelection: List[OptOutYearToUpdate] = correctYearsToUpdateBasedOnUserSelection(maybeSessionData, allItsaStatusYears)
       filteredTaxYearsForDesiredItsaStatus: List[OptOutYearToUpdate] = yearsToUpdateBasedOnUserSelection.filter { yearsToUpdate => yearsToUpdate.itsaStatus == itsaStatusToSendUpdatesFor }
       taxYearsToUpdate = filteredTaxYearsForDesiredItsaStatus.map(_.taxYear)
-      _= logger.debug(s"[ITSAStatusUpdateConnector][updateTaxYearsITSAStatusRequest] Making update requests for tax years: $taxYearsToUpdate")
+      _ = logger.debug(s"[ITSAStatusUpdateConnector][updateTaxYearsITSAStatusRequest] Making update requests for tax years: $taxYearsToUpdate")
       makeUpdateRequestsForEachYear: List[ITSAStatusUpdateResponse] <- itsaStatusUpdateConnector.makeMultipleItsaStatusUpdateRequests(taxYearsToUpdate, user.nino, optOutUpdateReason)
       auditEventModel: OptOutCompleteAuditModel = createAuditEvent(maybeSelectedTaxYear, maybeOptOutContextData, filteredTaxYearsForDesiredItsaStatus, makeUpdateRequestsForEachYear)
       _ <- auditingService.extendedAudit(auditEventModel)
