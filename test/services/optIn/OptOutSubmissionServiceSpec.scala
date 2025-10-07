@@ -17,7 +17,7 @@
 package services.optIn
 
 import audit.AuditingService
-import audit.models.{OptOutCompleteAuditModel, Outcome}
+import audit.models.{OptOutAuditModel, Outcome}
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import enums.JourneyType.{Opt, OptOutJourney}
@@ -102,51 +102,6 @@ class OptOutSubmissionServiceSpec extends UnitSpec
       }
     }
 
-    ".optOutResponseOutcomes()" when {
-
-      "given a list of successful ITSA responses" should {
-
-        "return the correct list of Outcomes with only isSuccessful == true" in {
-
-          val listOfSuccessResponses = List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess())
-          val result = service.optOutResponseOutcomes(listOfSuccessResponses)
-          val expected = List(Outcome(true, None, None), Outcome(true, None, None), Outcome(true, None, None))
-
-          result shouldBe expected
-        }
-      }
-
-      "given a list of a mix of success and failure ITSA responses" should {
-
-        "return the correct list with a mix of success and failure Outcomes - List(fail - success - fail)" in {
-
-          val listOfSuccessResponses = List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseFailure.defaultFailure())
-          val result = service.optOutResponseOutcomes(listOfSuccessResponses)
-          val expected = List(Outcome(false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")), Outcome(true, None, None), Outcome(false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")))
-          result shouldBe expected
-        }
-
-        "return the correct list with a mix of success and failure Outcomes - List(fail - success - success)" in {
-
-          val listOfSuccessResponses = List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess())
-          val result = service.optOutResponseOutcomes(listOfSuccessResponses)
-          val expected = List(Outcome(false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")), Outcome(true, None, None), Outcome(true, None, None))
-          result shouldBe expected
-        }
-      }
-
-      "given a list of only failure ITSA responses" should {
-
-        "return the correct list of Outcomes with failures" in {
-
-          val listOfSuccessResponses = List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure())
-          val result = service.optOutResponseOutcomes(listOfSuccessResponses)
-          val expected = List(Outcome(false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")), Outcome(false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")), Outcome(false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")))
-          result shouldBe expected
-        }
-      }
-    }
-
     ".getOptOutYearsToUpdateWithStatuses()" when {
 
       "there is OptOutContextData given for a user account" should {
@@ -214,12 +169,16 @@ class OptOutSubmissionServiceSpec extends UnitSpec
 
           val allYearsToUpdate =
             List(
-              OptOutYearToUpdate(TaxYear(2025, 2026), Voluntary),
+              OptOutYearToUpdate(TaxYear(2024, 2025), Voluntary),
               OptOutYearToUpdate(TaxYear(2025, 2026), Voluntary),
               OptOutYearToUpdate(TaxYear(2026, 2027), Voluntary)
             )
 
-          val expected = List.empty
+          val expected =
+            List(
+              OptOutYearToUpdate(TaxYear(2025, 2026), Voluntary),
+              OptOutYearToUpdate(TaxYear(2026, 2027), Voluntary)
+            )
 
           val result = service.correctYearsToUpdateBasedOnUserSelection(Some(optOutSessionData), allYearsToUpdate)
           result shouldBe expected
@@ -412,7 +371,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val userSelection = Some("2024-2025")
-          val listOfSuccessResponses = List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess())
+          val response = ITSAStatusUpdateResponseSuccess()
 
           val allYearsToUpdate =
             List(
@@ -422,27 +381,22 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val expectedAuditEvent =
-            OptOutCompleteAuditModel(
+            OptOutAuditModel(
               saUtr = Some("1234567890"),
               credId = Some("testCredId"),
               userType = Some(Individual),
               agentReferenceNumber = None,
               mtditid = "XAIT0000123456",
               nino = "AB123456C",
-              outcome =
-                List(
-                  Outcome(isSuccessful = true, None, None),
-                  Outcome(isSuccessful = true, None, None),
-                  Outcome(isSuccessful = true, None, None)
-                ),
+              outcome = Outcome(isSuccessful = true, None, None),
               optOutRequestedFromTaxYear = "2024-2025",
               currentYear = "25-26",
               `beforeITSAStatusCurrentYear-1` = Voluntary,
               beforeITSAStatusCurrentYear = Voluntary,
               `beforeITSAStatusCurrentYear+1` = Voluntary,
-              `afterAssumedITSAStatusCurrentYear-1` = Some(Annual),
-              afterAssumedITSAStatusCurrentYear = Some(Annual),
-              `afterAssumedITSAStatusCurrentYear+1` = Some(Annual),
+              `afterAssumedITSAStatusCurrentYear-1` = Annual,
+              afterAssumedITSAStatusCurrentYear = Annual,
+              `afterAssumedITSAStatusCurrentYear+1` = Annual,
               `currentYear-1Crystallised` = true
             )
 
@@ -450,7 +404,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             mayBeSelectedTaxYear = userSelection,
             mayBeOptOutContextData = Some(optOutContextData),
             filteredTaxYearsForDesiredItsaStatus = allYearsToUpdate,
-            updateRequestsForEachYearResponse = listOfSuccessResponses
+            updateRequestsForEachYearResponse = response
           )
 
           result shouldBe expectedAuditEvent
@@ -471,7 +425,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val userSelection = Some("2024-2025")
-          val listOfSuccessResponses = List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure())
+          val response = ITSAStatusUpdateResponseFailure.defaultFailure()
 
           val allYearsToUpdate =
             List(
@@ -481,27 +435,22 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val expectedAuditEvent =
-            OptOutCompleteAuditModel(
+            OptOutAuditModel(
               saUtr = Some("1234567890"),
               credId = Some("testCredId"),
               userType = Some(Individual),
               agentReferenceNumber = None,
               mtditid = "XAIT0000123456",
               nino = "AB123456C",
-              outcome =
-                List(
-                  Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")),
-                  Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")),
-                  Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason"))
-                ),
+              outcome = Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")),
               optOutRequestedFromTaxYear = "2024-2025",
               currentYear = "25-26",
               `beforeITSAStatusCurrentYear-1` = Voluntary,
               beforeITSAStatusCurrentYear = Voluntary,
               `beforeITSAStatusCurrentYear+1` = Voluntary,
-              `afterAssumedITSAStatusCurrentYear-1` = Some(Annual),
-              afterAssumedITSAStatusCurrentYear = Some(Annual),
-              `afterAssumedITSAStatusCurrentYear+1` = Some(Annual),
+              `afterAssumedITSAStatusCurrentYear-1` = Annual,
+              afterAssumedITSAStatusCurrentYear = Annual,
+              `afterAssumedITSAStatusCurrentYear+1` = Annual,
               `currentYear-1Crystallised` = true
             )
 
@@ -509,7 +458,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             mayBeSelectedTaxYear = userSelection,
             mayBeOptOutContextData = Some(optOutContextData),
             filteredTaxYearsForDesiredItsaStatus = allYearsToUpdate,
-            updateRequestsForEachYearResponse = listOfSuccessResponses
+            updateRequestsForEachYearResponse = response
           )
 
           result shouldBe expectedAuditEvent
@@ -530,7 +479,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val userSelection = Some("2025-2026")
-          val listOfSuccessResponses = List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess())
+          val response = ITSAStatusUpdateResponseSuccess()
 
           val allYearsToUpdate =
             List(
@@ -539,26 +488,22 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val expectedAuditEvent =
-            OptOutCompleteAuditModel(
+            OptOutAuditModel(
               saUtr = Some("1234567890"),
               credId = Some("testCredId"),
               userType = Some(Individual),
               agentReferenceNumber = None,
               mtditid = "XAIT0000123456",
               nino = "AB123456C",
-              outcome =
-                List(
-                  Outcome(isSuccessful = true, None, None),
-                  Outcome(isSuccessful = true, None, None)
-                ),
+              outcome = Outcome(isSuccessful = true, None, None),
               optOutRequestedFromTaxYear = "2025-2026",
               currentYear = "25-26",
               `beforeITSAStatusCurrentYear-1` = Mandated,
               beforeITSAStatusCurrentYear = Voluntary,
               `beforeITSAStatusCurrentYear+1` = Voluntary,
-              `afterAssumedITSAStatusCurrentYear-1` = Some(Mandated),
-              afterAssumedITSAStatusCurrentYear = Some(Annual),
-              `afterAssumedITSAStatusCurrentYear+1` = Some(Annual),
+              `afterAssumedITSAStatusCurrentYear-1` = Mandated,
+              afterAssumedITSAStatusCurrentYear = Annual,
+              `afterAssumedITSAStatusCurrentYear+1` = Annual,
               `currentYear-1Crystallised` = true
             )
 
@@ -566,7 +511,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             mayBeSelectedTaxYear = userSelection,
             mayBeOptOutContextData = Some(optOutContextData),
             filteredTaxYearsForDesiredItsaStatus = allYearsToUpdate,
-            updateRequestsForEachYearResponse = listOfSuccessResponses
+            updateRequestsForEachYearResponse = response
           )
 
           result shouldBe expectedAuditEvent
@@ -587,7 +532,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val userSelection = Some("2024-2025")
-          val listOfSuccessResponses = List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess())
+          val response = ITSAStatusUpdateResponseSuccess()
 
           val allYearsToUpdate =
             List(
@@ -597,27 +542,22 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val expectedAuditEvent =
-            OptOutCompleteAuditModel(
+            OptOutAuditModel(
               saUtr = Some("1234567890"),
               credId = Some("testCredId"),
               userType = Some(Individual),
               agentReferenceNumber = None,
               mtditid = "XAIT0000123456",
               nino = "AB123456C",
-              outcome =
-                List(
-                  Outcome(isSuccessful = true, None, None),
-                  Outcome(isSuccessful = true, None, None),
-                  Outcome(isSuccessful = true, None, None)
-                ),
+              outcome = Outcome(isSuccessful = true, None, None),
               optOutRequestedFromTaxYear = "2024-2025",
               currentYear = "25-26",
               `beforeITSAStatusCurrentYear-1` = Voluntary,
               beforeITSAStatusCurrentYear = Voluntary,
               `beforeITSAStatusCurrentYear+1` = Voluntary,
-              `afterAssumedITSAStatusCurrentYear-1` = Some(Annual),
-              afterAssumedITSAStatusCurrentYear = Some(Annual),
-              `afterAssumedITSAStatusCurrentYear+1` = Some(Annual),
+              `afterAssumedITSAStatusCurrentYear-1` = Annual,
+              afterAssumedITSAStatusCurrentYear = Annual,
+              `afterAssumedITSAStatusCurrentYear+1` = Annual,
               `currentYear-1Crystallised` = false
             )
 
@@ -625,7 +565,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             mayBeSelectedTaxYear = userSelection,
             mayBeOptOutContextData = Some(optOutContextData),
             filteredTaxYearsForDesiredItsaStatus = allYearsToUpdate,
-            updateRequestsForEachYearResponse = listOfSuccessResponses
+            updateRequestsForEachYearResponse = response
           )
 
           result shouldBe expectedAuditEvent
@@ -646,27 +586,27 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val userSelection = Some("2024-2025")
-          val listOfSuccessResponses = List()
+          val response = ITSAStatusUpdateResponseFailure.defaultFailure()
 
           val allYearsToUpdate = List()
 
           val expectedAuditEvent =
-            OptOutCompleteAuditModel(
+            OptOutAuditModel(
               saUtr = Some("1234567890"),
               credId = Some("testCredId"),
               userType = Some(Individual),
               agentReferenceNumber = None,
               mtditid = "XAIT0000123456",
               nino = "AB123456C",
-              outcome = List(),
+              outcome = Outcome(isSuccessful = false, Some("INTERNAL_SERVER_ERROR"), Some("Request failed due to unknown reason")),
               optOutRequestedFromTaxYear = "2024-2025",
               currentYear = "25-26",
               `beforeITSAStatusCurrentYear-1` = Voluntary,
               beforeITSAStatusCurrentYear = Voluntary,
               `beforeITSAStatusCurrentYear+1` = Voluntary,
-              `afterAssumedITSAStatusCurrentYear-1` = Some(Voluntary),
-              afterAssumedITSAStatusCurrentYear = Some(Voluntary),
-              `afterAssumedITSAStatusCurrentYear+1` = Some(Voluntary),
+              `afterAssumedITSAStatusCurrentYear-1` = Voluntary,
+              afterAssumedITSAStatusCurrentYear = Voluntary,
+              `afterAssumedITSAStatusCurrentYear+1` = Voluntary,
               `currentYear-1Crystallised` = true
             )
 
@@ -674,7 +614,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             mayBeSelectedTaxYear = userSelection,
             mayBeOptOutContextData = Some(optOutContextData),
             filteredTaxYearsForDesiredItsaStatus = allYearsToUpdate,
-            updateRequestsForEachYearResponse = listOfSuccessResponses
+            updateRequestsForEachYearResponse = response
           )
 
           result shouldBe expectedAuditEvent
@@ -695,7 +635,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val userSelection = Some("2026-2027")
-          val listOfSuccessResponses = List(ITSAStatusUpdateResponseSuccess())
+          val response = ITSAStatusUpdateResponseSuccess()
 
           val allYearsToUpdate =
             List(
@@ -703,25 +643,22 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             )
 
           val expectedAuditEvent =
-            OptOutCompleteAuditModel(
+            OptOutAuditModel(
               saUtr = Some("1234567890"),
               credId = Some("testCredId"),
               userType = Some(Individual),
               agentReferenceNumber = None,
               mtditid = "XAIT0000123456",
               nino = "AB123456C",
-              outcome =
-                List(
-                  Outcome(isSuccessful = true, None, None)
-                ),
+              outcome = Outcome(isSuccessful = true, None, None),
               optOutRequestedFromTaxYear = "2026-2027",
               currentYear = "25-26",
               `beforeITSAStatusCurrentYear-1` = Voluntary,
               beforeITSAStatusCurrentYear = Voluntary,
               `beforeITSAStatusCurrentYear+1` = Voluntary,
-              `afterAssumedITSAStatusCurrentYear-1` = Some(Voluntary),
-              afterAssumedITSAStatusCurrentYear = Some(Voluntary),
-              `afterAssumedITSAStatusCurrentYear+1` = Some(Annual),
+              `afterAssumedITSAStatusCurrentYear-1` = Voluntary,
+              afterAssumedITSAStatusCurrentYear = Voluntary,
+              `afterAssumedITSAStatusCurrentYear+1` = Annual,
               `currentYear-1Crystallised` = true
             )
 
@@ -729,7 +666,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             mayBeSelectedTaxYear = userSelection,
             mayBeOptOutContextData = Some(optOutContextData),
             filteredTaxYearsForDesiredItsaStatus = allYearsToUpdate,
-            updateRequestsForEachYearResponse = listOfSuccessResponses
+            updateRequestsForEachYearResponse = response
           )
 
           result shouldBe expectedAuditEvent
@@ -771,10 +708,8 @@ class OptOutSubmissionServiceSpec extends UnitSpec
                   Future(Some(retrievedUiSessionData))
                 )
 
-              when(mockItsaStatusUpdateConnector.makeMultipleItsaStatusUpdateRequests(any(), any(), any())(any()))
-                .thenReturn(
-                  Future(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess()))
-                )
+              when(mockItsaStatusUpdateConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+                .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))
@@ -789,14 +724,14 @@ class OptOutSubmissionServiceSpec extends UnitSpec
             }
           }
 
-          "user account is of MTD Voluntary status only for all tax years && is Crystallised" should {
+          "user account is of MTD Voluntary status only for all tax years && is Crystallised - should not be possible" should {
 
             "return the correct responses of 2 NoContent - 204" in {
 
               val optOutContextData =
                 OptOutContextData(
                   currentYear = "2025-2026",
-                  crystallisationStatus = false,
+                  crystallisationStatus = true,
                   previousYearITSAStatus = "MTD Voluntary",
                   currentYearITSAStatus = "MTD Voluntary",
                   nextYearITSAStatus = "MTD Voluntary"
@@ -817,10 +752,8 @@ class OptOutSubmissionServiceSpec extends UnitSpec
                   Future(Some(retrievedUiSessionData))
                 )
 
-              when(mockItsaStatusUpdateConnector.makeMultipleItsaStatusUpdateRequests(any(), any(), any())(any()))
-                .thenReturn(
-                  Future(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess()))
-                )
+              when(mockItsaStatusUpdateConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+                .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))
@@ -863,10 +796,8 @@ class OptOutSubmissionServiceSpec extends UnitSpec
                   Future(Some(retrievedUiSessionData))
                 )
 
-              when(mockItsaStatusUpdateConnector.makeMultipleItsaStatusUpdateRequests(any(), any(), any())(any()))
-                .thenReturn(
-                  Future(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess()))
-                )
+              when(mockItsaStatusUpdateConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+                .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))
@@ -912,10 +843,8 @@ class OptOutSubmissionServiceSpec extends UnitSpec
                   Future(Some(retrievedUiSessionData))
                 )
 
-              when(mockItsaStatusUpdateConnector.makeMultipleItsaStatusUpdateRequests(any(), any(), any())(any()))
-                .thenReturn(
-                  Future(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess()))
-                )
+              when(mockItsaStatusUpdateConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+                .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))
@@ -961,10 +890,8 @@ class OptOutSubmissionServiceSpec extends UnitSpec
                   Future(Some(retrievedUiSessionData))
                 )
 
-              when(mockItsaStatusUpdateConnector.makeMultipleItsaStatusUpdateRequests(any(), any(), any())(any()))
-                .thenReturn(
-                  Future(List(ITSAStatusUpdateResponseSuccess()))
-                )
+              when(mockItsaStatusUpdateConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+                .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))

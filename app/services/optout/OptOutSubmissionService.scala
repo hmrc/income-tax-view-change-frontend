@@ -17,7 +17,8 @@
 package services.optout
 
 import audit.AuditingService
-import audit.models.{OptOutCompleteAuditModel, Outcome}
+import audit.models.OptOutAuditModel
+import audit.models.OptOutAuditModel.createOutcome
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
@@ -40,16 +41,6 @@ class OptOutSubmissionService @Inject()(
                                          uiJourneySessionDataRepo: UIJourneySessionDataRepository
                                        ) extends Logging {
 
-  def optOutResponseOutcomes(resolvedResponses: List[ITSAStatusUpdateResponse]): List[Outcome] = {
-    resolvedResponses.map {
-      case response: ITSAStatusUpdateResponseFailure =>
-        Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
-      case _: ITSAStatusUpdateResponseSuccess =>
-        Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
-      case _ =>
-        Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
-    }
-  }
 
   def getOptOutSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutSessionData]] = {
     for {
@@ -94,7 +85,7 @@ class OptOutSubmissionService @Inject()(
     val gatherTaxYearsToUpdateBasedOnUserAnswerChoice =
       (maybeCurrentTaxYear, selectedOptOutTaxYear) match {
         case (Some(currentTaxYear), Some(selectedTaxYear)) if selectedTaxYear == currentTaxYear.previousYear && crystallisationStatus =>
-          allYearsToUpdate.filter(_.taxYear == currentTaxYear.previousYear)
+          allYearsToUpdate.filterNot(_.taxYear == currentTaxYear.previousYear)
         case (Some(currentTaxYear), Some(selectedTaxYear)) if selectedTaxYear == currentTaxYear.previousYear && !crystallisationStatus =>
           allYearsToUpdate
         case (Some(currentTaxYear), Some(selectedTaxYear)) if selectedTaxYear == currentTaxYear =>
@@ -114,8 +105,8 @@ class OptOutSubmissionService @Inject()(
                         mayBeSelectedTaxYear: Option[String],
                         mayBeOptOutContextData: Option[OptOutContextData],
                         filteredTaxYearsForDesiredItsaStatus: List[OptOutYearToUpdate],
-                        updateRequestsForEachYearResponse: List[ITSAStatusUpdateResponse]
-                      )(implicit user: MtdItUser[_]): OptOutCompleteAuditModel = {
+                        updateRequestsForEachYearResponse: ITSAStatusUpdateResponse
+                      )(implicit user: MtdItUser[_]): OptOutAuditModel = {
 
     val currentTaxYear: Option[TaxYear] = mayBeOptOutContextData.flatMap(data => TaxYear.`fromStringYYYY-YYYY`(data.currentYear))
 
@@ -131,7 +122,7 @@ class OptOutSubmissionService @Inject()(
       if (currentTaxYear.flatMap(taxYear => filteredTaxYearsForDesiredItsaStatus.find(_.taxYear == taxYear.nextYear)).isDefined) Annual
       else mayBeOptOutContextData.fold(UnknownStatus)(data => ITSAStatus.fromString(data.nextYearITSAStatus))
 
-    OptOutCompleteAuditModel(
+    OptOutAuditModel(
       saUtr = user.saUtr,
       credId = user.credId,
       userType = user.userType,
@@ -143,10 +134,10 @@ class OptOutSubmissionService @Inject()(
       `beforeITSAStatusCurrentYear-1` = mayBeOptOutContextData.fold(UnknownStatus)(data => ITSAStatus.fromString(data.previousYearITSAStatus)),
       beforeITSAStatusCurrentYear = mayBeOptOutContextData.fold(UnknownStatus)(data => ITSAStatus.fromString(data.currentYearITSAStatus)),
       `beforeITSAStatusCurrentYear+1` = mayBeOptOutContextData.fold(UnknownStatus)(data => ITSAStatus.fromString(data.nextYearITSAStatus)),
-      outcome = optOutResponseOutcomes(updateRequestsForEachYearResponse),
-      `afterAssumedITSAStatusCurrentYear-1` = Some(updatedPreviousTaxYearItsaStatus),
-      afterAssumedITSAStatusCurrentYear = Some(updatedCurrentTaxYearItsaStatus),
-      `afterAssumedITSAStatusCurrentYear+1` = Some(updatedNextTaxYearItsaStatus),
+      outcome = createOutcome(updateRequestsForEachYearResponse),
+      `afterAssumedITSAStatusCurrentYear-1` = updatedPreviousTaxYearItsaStatus,
+      afterAssumedITSAStatusCurrentYear = updatedCurrentTaxYearItsaStatus,
+      `afterAssumedITSAStatusCurrentYear+1` = updatedNextTaxYearItsaStatus,
       `currentYear-1Crystallised` = mayBeOptOutContextData.fold(false)(_.crystallisationStatus)
     )
   }
@@ -163,9 +154,9 @@ class OptOutSubmissionService @Inject()(
       filteredTaxYearsForDesiredItsaStatus: List[OptOutYearToUpdate] = yearsToUpdateBasedOnUserSelection.filter { yearsToUpdate => yearsToUpdate.itsaStatus == itsaStatusToSendUpdatesFor }
       taxYearsToUpdate = filteredTaxYearsForDesiredItsaStatus.map(_.taxYear)
       _ = logger.debug(s"[ITSAStatusUpdateConnector][updateTaxYearsITSAStatusRequest] Making update requests for tax years: $taxYearsToUpdate")
-      makeUpdateRequestsForEachYear: List[ITSAStatusUpdateResponse] <- itsaStatusUpdateConnector.makeMultipleItsaStatusUpdateRequests(taxYearsToUpdate, user.nino, optOutUpdateReason)
-      auditEventModel: OptOutCompleteAuditModel = createAuditEvent(maybeSelectedTaxYear, maybeOptOutContextData, filteredTaxYearsForDesiredItsaStatus, makeUpdateRequestsForEachYear)
-      _ <- auditingService.extendedAudit(auditEventModel)
+      makeUpdateRequestsForEachYear: List[ITSAStatusUpdateResponse] <- Future.sequence(taxYearsToUpdate.map(taxYear => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear, user.nino, optOutUpdateReason)))
+      auditEvents: List[OptOutAuditModel] = makeUpdateRequestsForEachYear.map(response => createAuditEvent(maybeSelectedTaxYear, maybeOptOutContextData, filteredTaxYearsForDesiredItsaStatus, response))
+      _ <- Future.sequence(auditEvents.map((event: OptOutAuditModel) => auditingService.extendedAudit(event)))
     } yield {
       makeUpdateRequestsForEachYear
     }
