@@ -32,20 +32,25 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInUpdateService @Inject()(
-                                    auditingService: AuditingService,
-                                    itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
-                                    optInService: OptInService,
-                                    uiJourneySessionDataRepository: UIJourneySessionDataRepository
-                                  ) {
+class SignUpUpdateService @Inject()(
+                                     auditingService: AuditingService,
+                                     itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
+                                     optInService: OptInService,
+                                     uiJourneySessionDataRepository: UIJourneySessionDataRepository
+                                   ) {
 
-  def getUISessionData()(implicit hc: HeaderCarrier): Future[Option[UIJourneySessionData]] =
-    uiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney))
+  def getOptInSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptInSessionData]] = {
+    for {
+      uiSessionData <- uiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney))
+      optInSessionData: Option[OptInSessionData] = uiSessionData.flatMap(_.optInSessionData)
+    } yield {
+      optInSessionData
+    }
+  }
 
   def triggerOptInRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
     for {
-      uiSessionData <- getUISessionData()
-      optInSessionData: Option[OptInSessionData] = uiSessionData.flatMap(_.optInSessionData)
+      optInSessionData: Option[OptInSessionData] <- getOptInSessionData()
       selectedOptInYear: Option[TaxYear] = optInSessionData.flatMap(_.selectedOptInYear).flatMap(TaxYear.`fromStringYYYY-YYYY`)
       optInContextData: Option[OptInContextData] = optInSessionData.flatMap(_.optInContextData)
       optInProposition: OptInProposition <- optInService.fetchOptInProposition()
