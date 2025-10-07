@@ -24,7 +24,7 @@ import forms.optIn.SignUpTaxYearQuestionForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.optIn.{OptInService, OptInUpdateService}
+import services.optIn.{OptInService, SignUpUpdateService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerSignUp
 import views.html.optIn.newJourney.SignUpTaxYearQuestionView
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SignUpTaxYearQuestionController @Inject()(
                                                  authActions: AuthActions,
                                                  view: SignUpTaxYearQuestionView,
-                                                 optInUpdateService: OptInUpdateService,
+                                                 optInUpdateService: SignUpUpdateService,
                                                  val optInService: OptInService,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler

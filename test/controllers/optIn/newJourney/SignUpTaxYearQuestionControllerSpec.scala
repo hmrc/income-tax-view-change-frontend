@@ -33,7 +33,7 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.optIn.core.{CurrentOptInTaxYear, OptInProposition}
-import services.optIn.{OptInService, OptInUpdateService}
+import services.optIn.{OptInService, SignUpUpdateService}
 import services.optout._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -41,13 +41,13 @@ import scala.concurrent.Future
 
 class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptInService {
 
-  lazy val mockOptInUpdateService: OptInUpdateService = mock(classOf[OptInUpdateService])
+  lazy val mockOptInUpdateService: SignUpUpdateService = mock(classOf[SignUpUpdateService])
 
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService),
-      api.inject.bind[OptInUpdateService].toInstance(mockOptInUpdateService)
+      api.inject.bind[SignUpUpdateService].toInstance(mockOptInUpdateService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[SignUpTaxYearQuestionController]
