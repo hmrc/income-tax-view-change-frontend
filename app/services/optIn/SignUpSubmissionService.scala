@@ -114,7 +114,7 @@ class SignUpSubmissionService @Inject()(
           s"[SignUpSubmissionService][triggerSignUpRequest] optInProposition: $optInProposition"
       )
       updateResponse <- makeUpdateRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus)
-      sendSignUpAuditEvent <- makeSignUpAuditEventRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus, optInProposition, updateResponse)
+      _ <- makeSignUpAuditEventRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus, optInProposition, updateResponse)
     } yield {
       updateResponse
     }
