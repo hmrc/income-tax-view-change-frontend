@@ -44,15 +44,15 @@
 }
 
 @heading = {
-    @h1(msg = getMessages("heading"))
+    @h1(id = Some("page-heading"), msg = getMessages("heading"))
 }
 
 @contextualSection = {
     @if(isSignUp) {
-        @h2(optId = Some("contextual-section-signup"), msg = getMessages("h2.signUp"))
+        @h2(optId = Some("contextual-section-text"), msg = getMessages("h2.signUp"))
     }
     @if(!isSignUp) {
-        @h2(optId = Some("contextual-section-optout"), msg = getMessages("h2.optOut"))
+        @h2(optId = Some("contextual-section-text"), msg = getMessages("h2.optOut"))
     }
 
 }
