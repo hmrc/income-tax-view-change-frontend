@@ -142,7 +142,6 @@ case class ChargeItem (
   // new Your Self Assessment Charge Summary feature
   def isIncludedInSACSummary: Boolean = {
 
-    println("BEEP "+transactionType + codedOutStatus + isOnlyInterest)
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
       case (BalancingCharge, Some(Accepted)) => true
