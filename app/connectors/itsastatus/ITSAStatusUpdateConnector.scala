@@ -85,46 +85,4 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
         }
       }
   }
-
-  def makeMultipleItsaStatusUpdateRequests(
-                                            taxYears: List[TaxYear],
-                                            userNino: String,
-                                            updateReason: String
-                                          )(implicit headerCarrier: HeaderCarrier): Future[List[ITSAStatusUpdateResponse]] = {
-
-    Future.sequence(
-      taxYears.map { taxYear =>
-
-        val body = ITSAStatusUpdateRequest(taxYear = taxYear.shortenTaxYearEnd, updateReason = updateReason)
-
-        httpClient
-          .put(url"${buildRequestUrlWith(userNino)}")
-          .withBody(Json.toJson(body))
-          .execute[HttpResponse]
-          .map { response =>
-            response.status match {
-              case Status.NO_CONTENT =>
-                ITSAStatusUpdateResponseSuccess()
-              case _ =>
-                response.json.validate[ITSAStatusUpdateResponseFailure].fold(
-                  (invalid: Seq[(JsPath, Seq[JsonValidationError])]) => {
-                    logger.error(s"Json validation error parsing itsa-status update response, error $invalid")
-                    ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", s"Request failed due to json response: $invalid")))
-                  },
-                  (valid: ITSAStatusUpdateResponseFailure) => {
-                    val message =
-                      valid.failures.headOption
-                        .map(failure => s"code: ${failure.code}, reason: ${failure.reason}")
-                        .getOrElse("unknown reason")
-
-                    logger.error(s"response status: ${response.status}, message: $message")
-                    valid
-                  }
-                )
-            }
-          }
-      }
-    )
-  }
-
 }
