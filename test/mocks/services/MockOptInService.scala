@@ -60,4 +60,12 @@ trait MockOptInService extends UnitSpec with BeforeAndAfterEach {
   def mockIsSignUpTaxYearValid(out: Future[Option[SignUpTaxYearQuestionViewModel]]): Unit = {
     when(mockOptInService.isSignUpTaxYearValid(any())(any(), any(), any())).thenReturn(out)
   }
+
+  def mockFetchSavedOptInSessionData(): Unit = {
+    when(mockOptInService.fetchSavedOptInSessionData()(any(), any(), any())).thenReturn(Future.successful(None))
+  }
+
+  def mockUpdateOptInJourneyStatusInSessionData(journeyComplete: Boolean = false): Unit = {
+    when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any())).thenReturn(Future.successful(journeyComplete))
+  }
 }

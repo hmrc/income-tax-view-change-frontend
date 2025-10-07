@@ -56,7 +56,7 @@ class OptOutTaxYearQuestionController @Inject()(val optOutService: OptOutService
           if(!journeyIsComplete){
             optOutService.isOptOutTaxYearValid(taxYear).flatMap {
               case Some(viewModel) =>
-                withSessionData(true, viewModel.taxYear.taxYear) {
+                withSessionData(isStart = true, viewModel.taxYear.taxYear) {
                   Future.successful(Ok(
                     view(
                       isAgent,

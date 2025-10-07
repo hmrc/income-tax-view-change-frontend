@@ -25,6 +25,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -41,18 +42,18 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
       api.inject.bind[OptOutService].toInstance(mockOptOutService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[OptOutTaxYearQuestionController]
+  lazy val testController: OptOutTaxYearQuestionController = app.injector.instanceOf[OptOutTaxYearQuestionController]
 
-  val currentYear = Some("2025")
-  val nextYear = Some("2026")
+  val currentYear: Option[String] = Some("2025")
+  val nextYear: Option[String] = Some("2026")
 
 
   val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
-  val yearEnd = optOutProposition.availableTaxYearsForOptOut(1).endYear
+  val yearEnd: Int = optOutProposition.availableTaxYearsForOptOut(1).endYear
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
   val optOutTaxYear: CurrentOptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
-  val optOutState = Some(MultiYearOptOutDefault)
-  val viewModel = OptOutTaxYearQuestionViewModel(
+  val optOutState: Option[MultiYearOptOutDefault.type] = Some(MultiYearOptOutDefault)
+  val viewModel: OptOutTaxYearQuestionViewModel = OptOutTaxYearQuestionViewModel(
     taxYear = optOutTaxYear,
     optOutState = optOutState,
     numberOfQuarterlyUpdates = 0,
@@ -99,6 +100,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
           mockSaveIntent(Future.successful(true))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
 
           val result = action(fakeRequest)
 
@@ -114,6 +117,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(None))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
 
           val result = action(fakeRequest)
 
@@ -130,6 +135,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
 
           val result = action(fakeRequest)
 
@@ -146,6 +153,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
 
           val result = action(fakeRequest)
 
@@ -166,6 +175,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
           mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
 
           val formData = Map(
             "opt-out-tax-year-question" -> "Yes",
@@ -187,6 +198,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(numberOfQuarterlyUpdates = 2, optOutState = Some(OneYearOptOutFollowedByMandated)))))
           mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
 
           val formData = Map(
             "opt-out-tax-year-question" -> "Yes",
@@ -208,6 +221,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
           mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseFailure(List())))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
 
           val formData = Map(
             "opt-out-tax-year-question" -> "Yes",
@@ -228,6 +243,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
 
           val formData = Map(
             "opt-out-tax-year-question" -> "No"
@@ -248,6 +265,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
 
           val formData = Map(
             "opt-out-tax-year-question" -> ""
