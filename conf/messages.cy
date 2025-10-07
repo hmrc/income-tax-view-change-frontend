@@ -2880,10 +2880,10 @@ optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates  
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
 ## opt out of CY+1 - CY Annual
-optout.taxYearQuestion.heading.nextYear.nextYearOptOutAnnual           = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
-optout.taxYearQuestion.title.nextYear.nextYearOptOutAnnual             = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
-optout.taxYearQuestion.desc1.nextYear.nextYearOptOutAnnual             = Yn y dyfodol, gallai fod gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
-optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutAnnual     = A ydych am optio allan o flwyddyn dreth {0} i {1}?
+optout.taxYearQuestion.heading.nextYear.nextYearOptOutDefault           = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
+optout.taxYearQuestion.title.nextYear.nextYearOptOutDefault             = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutDefault             = Yn y dyfodol, gallai fod gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutDefault     = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
 ## opt out of CY+1 - CY Mandated
 optout.taxYearQuestion.heading.nextYear.nextYearOptOutMandated           = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
