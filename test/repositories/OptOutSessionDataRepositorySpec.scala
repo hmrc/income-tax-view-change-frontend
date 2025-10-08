@@ -45,8 +45,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
   with OneInstancePerTest
   with MockITSAStatusUpdateConnector {
 
-  implicit val defaultPatience: PatienceConfig =
-    PatienceConfig(timeout = Span(10, Seconds), interval = Span(5, Millis))
+  implicit val defaultPatience: PatienceConfig = PatienceConfig(timeout = Span(10, Seconds), interval = Span(5, Millis))
 
   val optOutConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
@@ -66,14 +65,14 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
   val sessionIdValue = "123"
   val error = new RuntimeException("Some Error")
 
-
   val optOutRepository: OptOutSessionDataRepository = new OptOutSessionDataRepository(repository)
 
   val noOptOutOptionAvailable: Option[Nothing] = None
 
   val apiError: String = "some api error"
 
-  "OptOutService.initialiseOptOutJourney" should {
+  ".initialiseOptOutJourney()" should {
+
     "write the opt out data and no customer intent to the journey repository" in {
 
       val forYearEnd = 2024
@@ -92,7 +91,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
     }
   }
 
-  "OptOutService.saveIntent" should {
+  ".saveIntent()" should {
     "overwrite the customer intent, but preserve the Opt Out Data" in {
 
       val forYearEnd = 2024
@@ -118,7 +117,8 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
     }
   }
 
-  "OptOutService.recallOptOutPropositionWithIntent" should {
+  ".recallOptOutPropositionWithIntent()" should {
+
     "retrieve the opt out proposition with no intent if the user hasn't selected a year" in {
 
       when(hc.sessionId).thenReturn(Some(SessionId("123")))
@@ -126,14 +126,17 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
       val data = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
         journeyType = OptOutJourney.toString,
-        optOutSessionData = Some(OptOutSessionData(Some(
-          OptOutContextData(
-            currentYear = "2023-2024",
-            crystallisationStatus = true,
-            previousYearITSAStatus = "V",
-            currentYearITSAStatus = "V",
-            nextYearITSAStatus = "A")),
-          selectedOptOutYear = None))
+        optOutSessionData =
+          Some(OptOutSessionData(
+            Some(
+              OptOutContextData(
+                currentYear = "2023-2024",
+                crystallisationStatus = true,
+                previousYearITSAStatus = "MTD Voluntary",
+                currentYearITSAStatus = "MTD Voluntary",
+                nextYearITSAStatus = "Annual")
+            ),
+            selectedOptOutYear = None))
       )
 
       when(repository.get(any(), any())).thenReturn(Future.successful(Some(data)))
@@ -141,14 +144,18 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
       val initialState = optOutRepository.recallOptOutPropositionWithIntent()
 
       initialState.futureValue.isDefined shouldBe true
-      initialState.futureValue.get shouldBe (
+
+      val optOutProposition =
         createOptOutProposition(
           currentYear = taxYear2023_2024,
           previousYearCrystallised = true,
           previousYearItsaStatus = Voluntary,
           currentYearItsaStatus = Voluntary,
           nextYearItsaStatus = Annual
-        ), None)
+        )
+
+
+      initialState.futureValue.get shouldBe(optOutProposition, None)
     }
 
     "retrieve the opt out proposition with an intent if a tax year has been selected" in {
@@ -162,9 +169,9 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
           OptOutContextData(
             currentYear = "2023-2024",
             crystallisationStatus = true,
-            previousYearITSAStatus = "V",
-            currentYearITSAStatus = "V",
-            nextYearITSAStatus = "A")),
+            previousYearITSAStatus = "MTD Voluntary",
+            currentYearITSAStatus = "MTD Voluntary",
+            nextYearITSAStatus = "Annual")),
           selectedOptOutYear = Some("2023-2024")))
       )
 
@@ -173,7 +180,7 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
       val initialState = optOutRepository.recallOptOutPropositionWithIntent()
 
       initialState.futureValue.isDefined shouldBe true
-      initialState.futureValue.get shouldBe (
+      initialState.futureValue.get shouldBe(
         createOptOutProposition(
           currentYear = taxYear2023_2024,
           previousYearCrystallised = true,
@@ -184,7 +191,8 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
     }
   }
 
-  "OptOutService.fetchSavedIntent" should {
+  ".fetchSavedIntent()" should {
+
     "retrieve the intent year only" in {
 
       val forYearEnd = 2024

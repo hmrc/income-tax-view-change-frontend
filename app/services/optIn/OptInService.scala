@@ -32,7 +32,6 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
 import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData}
 import play.api.Logger
-import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import services.optIn.core.OptInProposition._
 import services.optIn.core.{OptInInitialState, OptInProposition}
@@ -111,8 +110,8 @@ class OptInService @Inject()(
   }
 
   def fetchSavedOptInProposition()(implicit user: MtdItUser[_],
-                                           hc: HeaderCarrier,
-                                           ec: ExecutionContext): Future[Option[OptInProposition]] = {
+                                   hc: HeaderCarrier,
+                                   ec: ExecutionContext): Future[Option[OptInProposition]] = {
 
     val savedOptInProposition = for {
 
