@@ -30,7 +30,6 @@ import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
-import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.ITSAStatusTestConstants.successITSAStatusResponseJson
@@ -43,7 +42,6 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
   private val isAgent: Boolean = false
 
   private val confirmTaxYearPage = controllers.optIn.oldJourney.routes.ConfirmTaxYearController.show(isAgent).url
-
   private val optInCancelledPageUrl = controllers.optIn.oldJourney.routes.OptInCancelledController.show().url
 
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
@@ -66,8 +64,8 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
           Some(OptInSessionData(
             optInContextData = Some(OptInContextData(
               currentTaxYear = currentTaxYear.toString,
-              currentYearITSAStatus = statusToString(status = currentYearStatus),
-              nextYearITSAStatus = statusToString(status = nextYearStatus)
+              currentYearITSAStatus = currentYearStatus.toString,
+              nextYearITSAStatus = nextYearStatus.toString
             )),
             selectedOptInYear = Some(intent.toString))))
     )

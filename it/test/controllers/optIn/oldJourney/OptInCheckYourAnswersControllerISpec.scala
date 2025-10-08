@@ -36,7 +36,6 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
 import play.mvc.Http.Status.BAD_REQUEST
-import repositories.ITSAStatusRepositorySupport._
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
@@ -71,7 +70,7 @@ class OptInCheckYourAnswersControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/opt-in/check-your-answers"
   }
 
@@ -201,8 +200,9 @@ class OptInCheckYourAnswersControllerISpec extends ControllerISpecHelper {
           Some(OptInSessionData(
             Some(OptInContextData(
               currentTaxYear.toString,
-              statusToString(status = currentYearStatus),
-              statusToString(status = nextYearStatus))),
+              currentYearStatus.toString,
+              nextYearStatus.toString
+            )),
             Some(intent.toString)
           ))))
   }

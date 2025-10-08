@@ -68,6 +68,8 @@ class SignUpSubmissionService @Inject()(
         itsaStatusUpdateConnector.optIn(taxYear = currentTaxYear, user.nino)
       case (None, Some(currentYearStatus), Some(Annual)) if currentYearStatus != Annual =>
         itsaStatusUpdateConnector.optIn(taxYear = nextTaxYear, user.nino)
+      case (Some(selectedTaxYear), None, None) =>
+        itsaStatusUpdateConnector.optIn(taxYear = selectedTaxYear, user.nino)
       case _ =>
         Future(ITSAStatusUpdateResponseFailure.defaultFailure()) // we return a failure if it does not satisfy scenarios, e.g single tax year only, or multi year when user selects a tax year
     }
@@ -108,12 +110,15 @@ class SignUpSubmissionService @Inject()(
       currentYearItsaStatus: Option[ITSAStatus] = optInContextData.map(data => ITSAStatus.fromString(data.currentYearITSAStatus))
       nextYearItsaStatus: Option[ITSAStatus] = optInContextData.map(data => ITSAStatus.fromString(data.nextYearITSAStatus))
       optInProposition: OptInProposition <- optInService.fetchOptInProposition()
-      _ = logger.debug(
+      _ = logger.info(
         s"\n[SignUpSubmissionService][triggerSignUpRequest] currentTaxYear: $currentTaxYear \n" +
           s"[SignUpSubmissionService][triggerSignUpRequest] selectedSignUpYear: $selectedSignUpYear \n" +
           s"[SignUpSubmissionService][triggerSignUpRequest] optInProposition: $optInProposition"
       )
       updateResponse <- makeUpdateRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus)
+      _ = logger.info(
+        s"\n[SignUpSubmissionService][triggerSignUpRequest] Sign Up update response: $updateResponse"
+      )
       _ <- makeSignUpAuditEventRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus, optInProposition, updateResponse)
     } yield {
       updateResponse

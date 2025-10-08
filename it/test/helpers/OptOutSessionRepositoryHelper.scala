@@ -19,9 +19,8 @@ package helpers
 import enums.JourneyType.OptOutJourney
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optout.OptOutSessionData
-import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import testConstants.BaseIntegrationTestConstants.testSessionId
 
@@ -30,9 +29,9 @@ class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) 
   def stubOptOutInitialState(
                               currentTaxYear: TaxYear,
                               previousYearCrystallised: Boolean,
-                              previousYearStatus: ITSAStatus.Value,
-                              currentYearStatus: ITSAStatus.Value,
-                              nextYearStatus: ITSAStatus.Value,
+                              previousYearStatus: ITSAStatus,
+                              currentYearStatus: ITSAStatus,
+                              nextYearStatus: ITSAStatus,
                               selectedOptOutYear: Option[String] = None
                             ): Boolean = {
     repository.set(
@@ -44,9 +43,9 @@ class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) 
             Some(OptOutContextData(
               currentYear = currentTaxYear.toString,
               crystallisationStatus = previousYearCrystallised,
-              previousYearITSAStatus = statusToString(status = previousYearStatus),
-              currentYearITSAStatus = statusToString(status = currentYearStatus),
-              nextYearITSAStatus = statusToString(status = nextYearStatus))),
+              previousYearITSAStatus = previousYearStatus.toString,
+              currentYearITSAStatus = currentYearStatus.toString,
+              nextYearITSAStatus = nextYearStatus.toString)),
             selectedOptOutYear = selectedOptOutYear
           ))
       )
