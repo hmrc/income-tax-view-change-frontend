@@ -23,6 +23,7 @@ import mocks.services.MockOptInService
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.optin.OptInSessionData
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

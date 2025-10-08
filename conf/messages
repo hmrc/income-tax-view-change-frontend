@@ -1206,6 +1206,7 @@ chargeSummary.chargeHistory.amount								        = Amount
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = HMRC created your first payment on account
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = HMRC created your second payment on account
 chargeSummary.chargeHistory.created.balancingCharge.text		        = HMRC created your balancing payment
+chargeSummary.paymentAllocations.bcd.accepted                           = HMRC created your balancing payment
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
 chargeSummary.chargeHistory.created.codingOut.text                      = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
@@ -2887,11 +2888,11 @@ optout.taxYearQuestion.inset2.currentYear.singleYearFollowedByAnnualWithUpdates 
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = Do you want to opt out for the {0} to {1} tax year?
 
-## opt out of CY+1 - CY Annual
-optout.taxYearQuestion.heading.nextYear.nextYearOptOutAnnual           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
-optout.taxYearQuestion.title.nextYear.nextYearOptOutAnnual             = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
-optout.taxYearQuestion.desc1.nextYear.nextYearOptOutAnnual             = In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
-optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutAnnual     = Do you want to opt out from the {0} to {1} tax year?
+## opt out of CY+1 - CY Default
+optout.taxYearQuestion.heading.nextYear.nextYearOptOutDefault           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
+optout.taxYearQuestion.title.nextYear.nextYearOptOutDefault             = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutDefault             = In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutDefault     = Do you want to opt out from the {0} to {1} tax year?
 
 ## opt out of CY+1 - CY Mandated
 optout.taxYearQuestion.heading.nextYear.nextYearOptOutMandated           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
