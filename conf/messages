@@ -2888,11 +2888,11 @@ optout.taxYearQuestion.inset2.currentYear.singleYearFollowedByAnnualWithUpdates 
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = Do you want to opt out for the {0} to {1} tax year?
 
-## opt out of CY+1 - CY Annual
-optout.taxYearQuestion.heading.nextYear.nextYearOptOutAnnual           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
-optout.taxYearQuestion.title.nextYear.nextYearOptOutAnnual             = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
-optout.taxYearQuestion.desc1.nextYear.nextYearOptOutAnnual             = In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
-optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutAnnual     = Do you want to opt out from the {0} to {1} tax year?
+## opt out of CY+1 - CY Default
+optout.taxYearQuestion.heading.nextYear.nextYearOptOutDefault           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
+optout.taxYearQuestion.title.nextYear.nextYearOptOutDefault             = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutDefault             = In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutDefault     = Do you want to opt out from the {0} to {1} tax year?
 
 ## opt out of CY+1 - CY Mandated
 optout.taxYearQuestion.heading.nextYear.nextYearOptOutMandated           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards

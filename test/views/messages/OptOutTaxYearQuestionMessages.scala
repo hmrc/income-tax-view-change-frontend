@@ -84,10 +84,10 @@ object OptOutTaxYearQuestionMessages {
   val singleYearFollowedByAnnualUpdatesQuestion = "Do you want to opt out for the 2025 to 2026 tax year?"
 
   // Next year opt out
-  val nextYearOptOutAnnualHeading = "Opt out of Making Tax Digital for Income Tax from the 2026 to 2027 tax year onwards"
-  val nextYearOptOutAnnualTitle = "Opt out of Making Tax Digital for Income Tax from the 2026 to 2027 tax year onwards - Manage your Self Assessment - GOV.UK"
-  val nextYearOptOutAnnualDesc1 = "In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
-  val nextYearOptOutAnnualQuestion = "Do you want to opt out from the 2026 to 2027 tax year?"
+  val nextYearOptOutDefaultHeading = "Opt out of Making Tax Digital for Income Tax from the 2026 to 2027 tax year onwards"
+  val nextYearOptOutDefaultTitle = "Opt out of Making Tax Digital for Income Tax from the 2026 to 2027 tax year onwards - Manage your Self Assessment - GOV.UK"
+  val nextYearOptOutDefaultDesc1 = "In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+  val nextYearOptOutDefaultQuestion = "Do you want to opt out from the 2026 to 2027 tax year?"
 
   val nextYearOptOutMandatedHeading = "Opt out of Making Tax Digital for Income Tax from the 2026 to 2027 tax year onwards"
   val nextYearOptOutMandatedTitle = "Opt out of Making Tax Digital for Income Tax from the 2026 to 2027 tax year onwards - Manage your Self Assessment - GOV.UK"
