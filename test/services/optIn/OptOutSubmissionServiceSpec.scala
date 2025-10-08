@@ -355,6 +355,66 @@ class OptOutSubmissionServiceSpec extends UnitSpec
 
     }
 
+    ".blockOptOutForSubsequentYearsValidation()" when {
+
+      "all tax years to update are Voluntary" should {
+
+        "return all Tax Years to potentially OptOut and update" in {
+
+          val allYearsToUpdate =
+            List(
+              OptOutYearToUpdate(TaxYear(2024, 2025), Voluntary),
+              OptOutYearToUpdate(TaxYear(2025, 2026), Voluntary),
+              OptOutYearToUpdate(TaxYear(2026, 2027), Voluntary)
+            )
+
+          val result = service.blockOptOutForSubsequentYearsValidation(allYearsToUpdate)
+          val expected = allYearsToUpdate
+
+          result shouldBe expected
+
+        }
+      }
+
+      "only CY+1 is not Voluntary" should {
+
+        "return all Tax Years to potentially OptOut and update" in {
+
+          val allYearsToUpdate =
+            List(
+              OptOutYearToUpdate(TaxYear(2024, 2025), Voluntary),
+              OptOutYearToUpdate(TaxYear(2025, 2026), Voluntary),
+              OptOutYearToUpdate(TaxYear(2026, 2027), Mandated)
+            )
+
+          val result = service.blockOptOutForSubsequentYearsValidation(allYearsToUpdate)
+          val expected = allYearsToUpdate
+
+          result shouldBe expected
+
+        }
+      }
+
+      "a CY ITSA Status is not Voluntary" should {
+
+        "return a list with only the previous TaxYear to optOut" in {
+
+          val allYearsToUpdate =
+            List(
+              OptOutYearToUpdate(TaxYear(2024, 2025), Voluntary),
+              OptOutYearToUpdate(TaxYear(2025, 2026), Mandated),
+              OptOutYearToUpdate(TaxYear(2026, 2027), Voluntary)
+            )
+
+          val result = service.blockOptOutForSubsequentYearsValidation(allYearsToUpdate)
+          val expected = List(OptOutYearToUpdate(TaxYear(2024, 2025), Voluntary))
+
+          result shouldBe expected
+
+        }
+      }
+    }
+
     ".createAuditEvent()" when {
 
       "successfully made an update request and received a successful update response back from connector" should {
