@@ -20,9 +20,9 @@ import cats.data.OptionT
 import enums.JourneyType.{Opt, OptOutJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.optout.OptOutSessionData
 import play.api.libs.json.{Json, OFormat}
-import repositories.ITSAStatusRepositorySupport.{statusToString, stringToStatus}
 import services.optout.OptOutProposition
 import services.optout.OptOutProposition.createOptOutProposition
 import uk.gov.hmrc.http.HeaderCarrier
@@ -49,9 +49,9 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
           val proposition = createOptOutProposition(
             currentYear,
             contextData.crystallisationStatus,
-            stringToStatus(status = contextData.previousYearITSAStatus),
-            stringToStatus(status = contextData.currentYearITSAStatus),
-            stringToStatus(status = contextData.nextYearITSAStatus)
+            ITSAStatus.fromString(contextData.previousYearITSAStatus),
+            ITSAStatus.fromString(contextData.currentYearITSAStatus),
+            ITSAStatus.fromString(contextData.nextYearITSAStatus)
           )
           val selectedTaxYear = selectedOptOutYear match {
             case Some(year) => TaxYear.getTaxYearModel(year)
@@ -93,9 +93,10 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
     OptOutContextData(
       oop.currentTaxYear.taxYear.toString,
       oop.previousTaxYear.crystallised,
-      statusToString(status = oop.previousTaxYear.status),
-      statusToString(status = oop.currentTaxYear.status),
-      statusToString(status = oop.nextTaxYear.status))
+      oop.previousTaxYear.status.toString,
+      oop.currentTaxYear.status.toString,
+      oop.nextTaxYear.status.toString
+    )
   }
 
 }
