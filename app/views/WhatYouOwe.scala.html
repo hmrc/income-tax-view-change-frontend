@@ -91,29 +91,6 @@
 
         @saNoteParagraph(viewModel.utr)
 
-        @if(user.isAgent()) {
-            @h2(msg = getMessage("sa-note-agent-1"))
-            @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-agent-2") +
-                    link(link = ExternalUrlHelper.saForAgents,
-                        outerMessage = ". " + getMessage("sa-note-agent-3"),
-                        messageKey = getPrefix("sa-link-agent"),
-                        id = Some("sa-note-migrated-link"),
-                        rel = Some("noreferrer noopener"),
-                        target = Some("_blank")
-                    ).toString())
-            )
-        } else {
-            @h2(msg = getMessage("sa-note-heading"))
-            @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-body") +
-                    link(link = appConfig.saViewLandPService(viewModel.utr.get), outerMessage = ".",
-                        messageKey = getPrefix("sa-link"), id = Some("sa-note-migrated-link"),
-                        rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
-            )
-        }
-        @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
-
-
-
     } else {
 
         @if(viewModel.hasOverdueOrAccruingInterestCharges) {
