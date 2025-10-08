@@ -150,6 +150,8 @@ case class ChargeItem (
       case (PoaTwoDebit, Some(Accepted)           ) => true
       case (PoaOneDebit, None           ) => true
       case (PoaTwoDebit, None           ) => true
+      case (PoaOneReconciliationDebit,     _) => true
+      case (PoaTwoReconciliationDebit,     _) => true
       case (LateSubmissionPenalty,     _) => true
       case (FirstLatePaymentPenalty,   _) => true
       case (ITSAReturnAmendment,       _) => true
