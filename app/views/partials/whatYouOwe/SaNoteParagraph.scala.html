@@ -22,6 +22,7 @@
 
 @this(
         appConfig: config.FrontendAppConfig,
+        h2: h2,
         p: p,
         link: link,
         govukInsetText: GovukInsetText
@@ -36,7 +37,8 @@
 
 @saNoteParagraphContent(utr: String) = {
     @if(user.isAgent()) {
-        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-agent-1") + ". " + getMessage("sa-note-agent-2") +
+        @h2(msg = getMessage("sa-note-agent-1"))
+        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-agent-2") +
                 link(link = ExternalUrlHelper.saForAgents,
                     outerMessage = ". " + getMessage("sa-note-agent-3"),
                     messageKey = getPrefix("sa-link-agent"),
@@ -46,7 +48,8 @@
                 ).toString())
         )
     } else {
-        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note") +
+        @h2(msg = getMessage("sa-note-heading"))
+        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-body") +
                 link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
                     messageKey = getPrefix("sa-link"), id = Some("sa-note-migrated-link"),
                     rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
