@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import forms.optOut.OptOutTaxYearQuestionForm
 import models.itsaStatus.ITSAStatus
 import play.api.Logger
@@ -33,6 +33,7 @@ import utils.reportingObligations.JourneyCheckerOptOut
 import views.html.optOut.newJourney.OptOutTaxYearQuestionView
 
 import javax.inject.Singleton
+import scala.collection.immutable.List
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -91,7 +92,7 @@ class OptOutTaxYearQuestionController @Inject()(
           Future(Redirect(controllers.optOut.newJourney.routes.ConfirmOptOutUpdateController.show(isAgent, taxYear.getOrElse(""))))
         } else {
           optOutSubmissionService.updateTaxYearsITSAStatusRequest(ITSAStatus.Voluntary).map {
-            case List(ITSAStatusUpdateResponseSuccess(_)) =>
+            case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) || listOfUpdateRequestsMade == List.empty =>
               Redirect(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent))
             case _ =>
               Redirect(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent))

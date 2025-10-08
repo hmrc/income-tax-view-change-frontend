@@ -165,6 +165,7 @@ class OptOutSubmissionService @Inject()(
       taxYearsToUpdate = filteredTaxYearsForDesiredItsaStatus.map(_.taxYear)
       _ = logger.debug(s"[ITSAStatusUpdateConnector][updateTaxYearsITSAStatusRequest] Making update requests for tax years: $taxYearsToUpdate")
       makeUpdateRequestsForEachYear: List[ITSAStatusUpdateResponse] <- Future.sequence(taxYearsToUpdate.map(taxYear => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear, user.nino, optOutUpdateReason)))
+      _ = logger.debug(s"[ITSAStatusUpdateConnector][updateTaxYearsITSAStatusRequest] ITSA Status Update Responses: $makeUpdateRequestsForEachYear")
       auditEvents: List[OptOutAuditModel] = makeUpdateRequestsForEachYear.map(response => createAuditEvent(maybeSelectedTaxYear, maybeOptOutContextData, filteredTaxYearsForDesiredItsaStatus, response))
       _ <- Future.sequence(auditEvents.map((event: OptOutAuditModel) => auditingService.extendedAudit(event)))
     } yield {
