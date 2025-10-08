@@ -1360,6 +1360,7 @@ paymentAllocation.tableHead.tax-year                            = Tax year
 paymentAllocation.tableHead.allocated-date                      = Date
 paymentAllocation.tableHead.amount                              = Amount
 paymentAllocation.taxYear										= {0} to {1}
+paymentAllocation.taxYearHidden			    					= Tax year {0} to {1}
 paymentAllocation.creditOnAccount                               = Credit on account
 paymentAllocation.na                                            = N/A
 paymentAllocation.not-applicable                                = Not applicable

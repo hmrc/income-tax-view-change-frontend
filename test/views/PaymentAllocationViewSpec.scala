@@ -59,8 +59,9 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val headingAmount: String = "You paid: £300.00"
   val amount: String = "£300.00"
   val paymentAllocationHeading: String = messages("paymentAllocation.tableSection.heading")
-  val tableHeadings: Seq[String] = Seq(messages("paymentAllocation.tableHead.allocation"), messages("paymentAllocation.tableHead.allocated-date"), messages("paymentAllocation.tableHead.amount"))
+  val tableHeadings: Seq[String] = Seq(messages("paymentAllocation.tableHead.allocated-date"), messages("paymentAllocation.tableHead.description"), messages("paymentAllocation.tableHead.tax-year"), messages("paymentAllocation.tableHead.amount"))
   val moneyOnAccount: String = messages("paymentAllocation.moneyOnAccount")
+  val notApplicable: String = messages("paymentAllocation.not-applicable")
   val moneyOnAccountAmount: String = "£200.00"
   val allocationsTableHeading: String = messages("paymentAllocation.tableSection.heading")
   val allocationsTableHeadersText: String = s"$paymentAllocationHeading ${tableHeadings.mkString(" ")}"
@@ -75,6 +76,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentAllocationTaxYearFrom2018to2019: String = messages("paymentAllocation.taxYear", "2018", "2019")
   val paymentAllocationTaxYearFrom2019to2020: String = messages("paymentAllocation.taxYear", "2019", "2020")
   val paymentAllocationTaxYearFrom2021to2022: String = messages("paymentAllocation.taxYear", "2021", "2022")
+  val paymentAllocationTaxYearFrom2017to2018Hidden: String = messages("paymentAllocation.taxYearHidden", "2017", "2018")
+  val paymentAllocationTaxYearFrom2018to2019Hidden: String = messages("paymentAllocation.taxYearHidden", "2018", "2019")
+  val paymentAllocationTaxYearFrom2019to2020Hidden: String = messages("paymentAllocation.taxYearHidden", "2019", "2020")
+  val paymentAllocationTaxYearFrom2021to2022Hidden: String = messages("paymentAllocation.taxYearHidden", "2021", "2022")
   val paymentAllocationsHmrcAdjustment: String = messages("paymentAllocation.paymentAllocations.hmrcAdjustment.text")
   val paymentAllocationViewModelDueDate: Option[LocalDate] = paymentAllocationViewModel.paymentAllocationChargeModel
     .financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
@@ -165,28 +170,32 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
         allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
         allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
+        allTableHeadings.selectNth("th", 4).text() shouldBe tableHeadings(3)
       }
 
       "has a payment within the table" in new PaymentAllocationSetup() {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")} ${messages("paymentAllocation.taxYear", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
-        allTableData.selectNth("td", 2).text() shouldBe "27 May 2019"
-        allTableData.selectNth("td", 3).text() shouldBe "£10.10"
+        allTableData.selectNth("td", 1).text() shouldBe "27 May 2019"
+        allTableData.selectNth("td", 2).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")}"
+        allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.taxYearHidden", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
+        allTableData.selectNth("td", 4).text() shouldBe "£10.10"
       }
 
       "has a Credit on account link row within payment details when refunds page FS enabled" in new PaymentAllocationSetup() {
         val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
         document.select("a#money-on-account-link").size() shouldBe 1
-        allTableData.get(0).text() shouldBe moneyOnAccount
-        allTableData.get(2).text() shouldBe moneyOnAccountAmount
+        allTableData.get(1).text() shouldBe moneyOnAccount
+        allTableData.get(2).text() shouldBe notApplicable
+        allTableData.get(3).text() shouldBe moneyOnAccountAmount
       }
 
       "has a Credit on account text row within payment details when refunds page FS disabled" in
         new PaymentAllocationSetup(creditsRefundsRepayEnabled = false) {
           val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
           document.select("a#money-on-account-link").size() shouldBe 0
-          allTableData.get(0).text() shouldBe moneyOnAccount
-          allTableData.get(2).text() shouldBe moneyOnAccountAmount
+          allTableData.get(1).text() shouldBe moneyOnAccount
+          allTableData.get(2).text() shouldBe notApplicable
+          allTableData.get(3).text() shouldBe moneyOnAccountAmount
         }
 
       "should not have Credit on account row within payment details" in new PaymentAllocationSetup(outstandingAmount =
@@ -199,9 +208,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           document.getElementsByTag("h1").text shouldBe messages("paymentAllocation.earlyTaxYear.heading")
           document.getElementById("sa-note-migrated").text shouldBe s"${messages("paymentAllocation.sa.info")} ${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}."
           val moneyOnAccountData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
-          moneyOnAccountData.get(0).text() shouldBe moneyOnAccount
-          moneyOnAccountData.get(1).text() shouldBe "31 Jan 2021"
-          moneyOnAccountData.get(2).text() shouldBe moneyOnAccountAmount
+          moneyOnAccountData.get(0).text() shouldBe "31 Jan 2021"
+          moneyOnAccountData.get(1).text() shouldBe moneyOnAccount
+          moneyOnAccountData.get(2).text() shouldBe notApplicable
+          moneyOnAccountData.get(3).text() shouldBe moneyOnAccountAmount
         }
 
       "has a payment within the table for HMRC Adjustments with link back to charge view" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelHmrcAdjustment) {
@@ -210,20 +220,21 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         val taxYear = 2022
         val chargePageLinkTrue = s"/report-quarterly/income-and-expenses/view/tax-years/$taxYear/charge?id=chargeReference3"
 
-        allTableData.selectNth("td", 1).text() shouldBe s"$paymentAllocationsHmrcAdjustment ${messages("paymentAllocation.taxYear", "2021", "2022")} $paymentAllocationTaxYearFrom2021to2022"
-        allTableData.selectNth("td", 2).text() shouldBe "31 Jan 2021"
-        allTableData.selectNth("td", 3).text() shouldBe amount
+        allTableData.selectNth("td", 1).text() shouldBe "31 Jan 2021"
+        allTableData.selectNth("td", 2).text() shouldBe s"$paymentAllocationsHmrcAdjustment"
+        allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.taxYearHidden", "2021", "2022")} $paymentAllocationTaxYearFrom2021to2022"
+        allTableData.selectNth("td", 4).text() shouldBe amount
         chargePageLink shouldBe chargePageLinkTrue
       }
 
       "has a payment within the table right aligned" in new PaymentAllocationSetup() {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 3).hasClass("govuk-table__cell--numeric")
+        allTableData.selectNth("td", 4).hasClass("govuk-table__cell--numeric")
       }
 
       "has a payment headers right aligned" in new PaymentAllocationSetup() {
         val allTableData = document.selectHead("thead").selectHead("tr")
-        allTableData.selectNth("th", 3).hasClass("govuk-table__header--numeric")
+        allTableData.selectNth("th", 4).hasClass("govuk-table__header--numeric")
       }
 
     }
@@ -273,15 +284,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
         allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
         allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
-
+        allTableHeadings.selectNth("th", 4).text() shouldBe tableHeadings(3)
       }
 
       "has a payment within the table" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messages("paymentAllocation.taxYear", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
-        allTableData.selectNth("td", 2).text() shouldBe messages("paymentAllocation.na")
-        allTableData.selectNth("td", 3).text() shouldBe "£300.00"
-
+        allTableData.selectNth("td", 1).text() shouldBe messages("paymentAllocation.na")
+        allTableData.selectNth("td", 2).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")}"
+        allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.taxYearHidden", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
+        allTableData.selectNth("td", 4).text() shouldBe "£300.00"
       }
 
       "has a payment within the table right aligned" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
@@ -350,15 +361,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
-             |$paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
-             |$paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
-             |$paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
-             |$paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 30 Jun 2019 £4,567.89
-             |$paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
-             |$paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
-             |$paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
-             |$paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2019to2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
-             |$moneyOnAccountMessage $dueDate £200.00
+             |27 Jun 2019 $paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2017to2018Hidden $paymentAllocationTaxYearFrom2017to2018 £1,234.56
+             |28 Jun 2019 $paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2017to2018Hidden $paymentAllocationTaxYearFrom2017to2018 £2,345.67
+             |29 Jun 2019 $paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £3,456.78
+             |30 Jun 2019 $paymentAllocationsPoa1IncomeTax $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £4,567.89
+             |27 Aug 2019 $paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £9,876.54
+             |28 Aug 2019 $paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £8,765.43
+             |29 Aug 2019 $paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £7,654.32
+             |30 Aug 2019 $paymentAllocationsPoa1Nic4 $paymentAllocationTaxYearFrom2019to2020Hidden $paymentAllocationTaxYearFrom2019to2020 £6,543.21
+             |$dueDate $moneyOnAccountMessage $notApplicable £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -391,15 +402,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
-             |$paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
-             |$paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
-             |$paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
-             |$paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 30 Jun 2019 £4,567.89
-             |$paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
-             |$paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
-             |$paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Aug 2019 £7,654.32
-             |$paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2019to2020 $paymentAllocationTaxYearFrom2019to2020 30 Aug 2019 £6,543.21
-             |$moneyOnAccountMessage $dueDate £200.00
+             |27 Jun 2019 $paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2017to2018Hidden $paymentAllocationTaxYearFrom2017to2018 £1,234.56
+             |28 Jun 2019 $paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2017to2018Hidden $paymentAllocationTaxYearFrom2017to2018 £2,345.67
+             |29 Jun 2019 $paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £3,456.78
+             |30 Jun 2019 $paymentAllocationsPoa2IncomeTax $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £4,567.89
+             |27 Aug 2019 $paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £9,876.54
+             |28 Aug 2019 $paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £8,765.43
+             |29 Aug 2019 $paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £7,654.32
+             |30 Aug 2019 $paymentAllocationsPoa2Nic4 $paymentAllocationTaxYearFrom2019to2020Hidden $paymentAllocationTaxYearFrom2019to2020 £6,543.21
+             |$dueDate $moneyOnAccountMessage $notApplicable £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -428,13 +439,13 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         layoutContent.selectById("payment-allocation-table").text() shouldBe
           s"""
              |$allocationsTableHeadersText
-             |${messages("paymentAllocation.paymentAllocations.bcd.incomeTax")} $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 27 Jun 2019 £1,234.56
-             |${messages("paymentAllocation.paymentAllocations.bcd.nic4")} $paymentAllocationTaxYearFrom2017to2018 $paymentAllocationTaxYearFrom2017to2018 28 Jun 2019 £2,345.67
-             |${messages("paymentAllocation.paymentAllocations.bcd.nic2")} $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 29 Jun 2019 £3,456.78
-             |${messages("paymentAllocation.paymentAllocations.bcd.cgt")} $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 27 Aug 2019 £9,876.54
-             |${messages("paymentAllocation.paymentAllocations.bcd.sl")} $paymentAllocationTaxYearFrom2018to2019 $paymentAllocationTaxYearFrom2018to2019 28 Aug 2019 £8,765.43
-             |${messages("paymentAllocation.paymentAllocations.bcd.vcnic2")} $paymentAllocationTaxYearFrom2019to2020 $paymentAllocationTaxYearFrom2019to2020 29 Aug 2019 £7,654.32
-             |$moneyOnAccountMessage $dueDate £200.00
+             |27 Jun 2019 ${messages("paymentAllocation.paymentAllocations.bcd.incomeTax")} $paymentAllocationTaxYearFrom2017to2018Hidden $paymentAllocationTaxYearFrom2017to2018 £1,234.56
+             |28 Jun 2019 ${messages("paymentAllocation.paymentAllocations.bcd.nic4")} $paymentAllocationTaxYearFrom2017to2018Hidden $paymentAllocationTaxYearFrom2017to2018 £2,345.67
+             |29 Jun 2019 ${messages("paymentAllocation.paymentAllocations.bcd.nic2")} $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £3,456.78
+             |27 Aug 2019 ${messages("paymentAllocation.paymentAllocations.bcd.cgt")} $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £9,876.54
+             |28 Aug 2019 ${messages("paymentAllocation.paymentAllocations.bcd.sl")} $paymentAllocationTaxYearFrom2018to2019Hidden $paymentAllocationTaxYearFrom2018to2019 £8,765.43
+             |29 Aug 2019 ${messages("paymentAllocation.paymentAllocations.bcd.vcnic2")} $paymentAllocationTaxYearFrom2019to2020Hidden $paymentAllocationTaxYearFrom2019to2020 £7,654.32
+             |$dueDate $moneyOnAccountMessage $notApplicable £200.00
              |""".stripMargin.trim.linesIterator.mkString(" ")
 
         layoutContent.selectById("payment-allocation-table").select(Selectors.tableRow).select(Selectors.link)
@@ -444,8 +455,9 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     "have a Credit on account row within payment details" in new PaymentAllocationSetup() {
       val allTableData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
-      allTableData.get(0).text() shouldBe moneyOnAccount
-      allTableData.get(2).text() shouldBe moneyOnAccountAmount
+      allTableData.get(1).text() shouldBe moneyOnAccount
+      allTableData.get(2).text() shouldBe notApplicable
+      allTableData.get(3).text() shouldBe moneyOnAccountAmount
 
     }
 

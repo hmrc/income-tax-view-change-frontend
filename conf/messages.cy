@@ -1360,6 +1360,7 @@ paymentAllocation.tableHead.tax-year                            = Blwyddyn dreth
 paymentAllocation.tableHead.allocated-date                      = Dyddiad
 paymentAllocation.tableHead.amount                              = Swm
 paymentAllocation.taxYear										= {0} i {1}
+paymentAllocation.taxYearHidden									= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
 paymentAllocation.na                                            = Amh
 paymentAllocation.not-applicable                                = Not applicable

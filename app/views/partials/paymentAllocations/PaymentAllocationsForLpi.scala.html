@@ -37,7 +37,7 @@
                 </a>
             </td>
             <td class="govuk-table__cell">
-                <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear.toString)</span>
+                <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYearHidden", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear.toString)</span>
                 <span class="govuk-body no-wrap" aria-hidden="true">@messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear.toString)</span>
             </td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@lpiAllocationDetails.amount.abs.toCurrencyString</td>
