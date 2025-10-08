@@ -1363,7 +1363,7 @@ paymentAllocation.taxYear										= {0} i {1}
 paymentAllocation.taxYearHidden									= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
 paymentAllocation.na                                            = Amh
-paymentAllocation.not-applicable                                = Not applicable
+paymentAllocation.not-applicable                                = Not applicable (WELSH)
 paymentAllocation.moneyOnAccount                                = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
 
 paymentAllocation.details.title                                 = Sut ydyn ni’n trin eich taliadau i dalu costau?
