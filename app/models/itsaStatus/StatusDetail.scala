@@ -26,8 +26,11 @@ case class StatusDetail(submittedOn: String,
                         businessIncomePriorTo2Years: Option[BigDecimal] = None) {
 
   def isVoluntary: Boolean = status == Voluntary
+
   def isMandated: Boolean = status == Mandated
+
   def isAnnual: Boolean = status == Annual
+
   def isUnknown: Boolean = status == NoStatus
 
   def isMandatedOrVoluntary: Boolean = isMandated || isVoluntary
@@ -41,7 +44,23 @@ object StatusDetail {
 }
 
 object ITSAStatus extends Enumeration {
+
   type ITSAStatus = Value
+
+  def fromString(string: String): ITSAStatus = {
+    string match {
+      case "UnknownStatus" => UnknownStatus
+      case "No Status" => NoStatus
+      case "MTD Mandated" => Mandated
+      case "MTD Voluntary" => Voluntary
+      case "Annual" => Annual
+      case "Digitally Exempt" => DigitallyExempt
+      case "Dormant" => Dormant
+      case "MTD Exempt" => Exempt
+    }
+  }
+
+  val UnknownStatus = Value("UnknownStatus")
   val NoStatus = Value("No Status")
   val Mandated = Value("MTD Mandated")
   val Voluntary = Value("MTD Voluntary")

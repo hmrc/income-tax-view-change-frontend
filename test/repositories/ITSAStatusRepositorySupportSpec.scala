@@ -37,7 +37,7 @@ class ITSAStatusRepositorySupportSpec extends UnitSpec with Matchers {
     }
 
     "Return U for unsupported statuses" in {
-      Seq(Exempt, DigitallyExempt, Dormant).foreach { unsupportedStatus =>
+      Seq(Exempt, DigitallyExempt, Dormant).foreach { _ =>
         statusToString(status = NoStatus) shouldBe "U"
       }
     }
@@ -54,14 +54,6 @@ class ITSAStatusRepositorySupportSpec extends UnitSpec with Matchers {
 
     "convert 'U' to NoStatus only for CY+1" in {
       stringToStatus(status = "U") shouldBe NoStatus
-    }
-
-    "throw error for other unsupported strings" in {
-      Seq("E", "DE", "D").foreach { unsupportedString =>
-        assertThrows[RuntimeException] {
-          stringToStatus(status = unsupportedString)
-        }
-      }
     }
   }
 

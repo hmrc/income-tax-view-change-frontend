@@ -20,7 +20,8 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import enums.JourneyType.OptOutJourney
 import mocks.services._
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import models.optout._
 import org.mockito.ArgumentMatchers.any

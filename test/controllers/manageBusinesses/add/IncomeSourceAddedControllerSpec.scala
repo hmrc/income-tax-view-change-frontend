@@ -23,6 +23,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockITSAStatusService, MockNextUpdatesService, MockSessionService}
+import models.UIJourneySessionData
 import models.incomeSourceDetails._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

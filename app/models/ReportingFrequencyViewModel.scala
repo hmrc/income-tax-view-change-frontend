@@ -119,7 +119,7 @@ case class ReportingFrequencyViewModel(
   }
 
   val getSummaryCardSuffixes: List[Option[String]] = {
-    checkIfOnwards.zipWithIndex.map {
+    val test = checkIfOnwards.zipWithIndex.map {
       case (Some(true), 0) => Some("optOut.previousYear.onwards")
       case (Some(false), 0) => Some("optOut.previousYear.single")
       case (Some(true), 1) => currentYearSuffix.map(_ + ".onwards")
@@ -127,5 +127,6 @@ case class ReportingFrequencyViewModel(
       case (Some(true), 2) => nextYearSuffix
       case _ => None
     }
+    test
   }
 }

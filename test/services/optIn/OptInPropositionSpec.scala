@@ -17,10 +17,10 @@
 package services.optIn
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
+import models.itsaStatus.ITSAStatus._
 import services.optIn.OptInPropositionSpec.TestData
 import services.optIn.core.OptInProposition.createOptInProposition
-import services.optIn.core._
+import services.optIn.core.{CurrentOptInTaxYear, MultiYearOptInProposition, OneYearOptInProposition}
 import testUtils.UnitSpec
 
 object OptInPropositionSpec {

@@ -21,6 +21,7 @@ import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, NoStatus, Voluntary}
 
 trait OptInTaxYear {
   val taxYear: TaxYear
+
   def canOptIn: Boolean
 }
 
@@ -35,13 +36,16 @@ case class CurrentOptInTaxYear(status: ITSAStatus, taxYear: TaxYear) extends Opt
       status
 }
 
-case class NextOptInTaxYear(status: ITSAStatus,
-                            taxYear: TaxYear,
-                            currentOptInTaxYear: CurrentOptInTaxYear) extends OptInTaxYear {
+case class NextOptInTaxYear(
+                             status: ITSAStatus,
+                             taxYear: TaxYear,
+                             currentOptInTaxYear: CurrentOptInTaxYear
+                           ) extends OptInTaxYear {
 
   def canOptIn: Boolean = canOptInDirectly || canOptInDueToRollover
 
   private def canOptInDirectly: Boolean = status == Annual
+
   private def canOptInDueToRollover: Boolean = status == NoStatus && currentOptInTaxYear.status == Annual
 
   def expectedItsaStatusAfter(customerIntent: TaxYear): ITSAStatus =

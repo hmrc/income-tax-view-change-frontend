@@ -35,19 +35,25 @@ import views.html.optIn.oldJourney.CheckYourAnswersView
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
-                                           val optInService: OptInService,
-                                           val authActions: AuthActions,
-                                           val itvcErrorHandler: ItvcErrorHandler,
-                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                          (implicit val dateService: DateService,
-                                           val appConfig: FrontendAppConfig,
-                                           mcc: MessagesControllerComponents,
-                                           val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
+class OptInCheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
+                                                val optInService: OptInService,
+                                                val authActions: AuthActions,
+                                                val itvcErrorHandler: ItvcErrorHandler,
+                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                               (
+                                                 implicit val dateService: DateService,
+                                                 val appConfig: FrontendAppConfig,
+                                                 mcc: MessagesControllerComponents,
+                                                 val ec: ExecutionContext
+                                               ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+
+  private def redirectToCheckpointPage(isAgent: Boolean): Result = {
+    val nextPage = controllers.optIn.oldJourney.routes.OptInCompletedController.show(isAgent)
+    Logger("application").info(s"redirecting to : $nextPage")
+    Redirect(nextPage)
+  }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
@@ -60,17 +66,21 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withReportingObligationsFS {
-      withRecover(isAgent) {
+        withRecover(isAgent) {
 
-        optInService.getMultiYearCheckYourAnswersViewModel(isAgent) map {
-          case Some(model) => Ok(view(MultiYearCheckYourAnswersViewModel(
-            model.intentTaxYear,
-            model.isAgent,
-            model.cancelURL,
-            model.intentIsNextYear)))
-          case None => errorHandler(isAgent).showInternalServerError()
+          optInService.getMultiYearCheckYourAnswersViewModel(isAgent) map {
+            case Some(model) =>
+              Ok(view(
+                MultiYearCheckYourAnswersViewModel(
+                  model.intentTaxYear,
+                  model.isAgent,
+                  model.cancelURL,
+                  model.intentIsNextYear
+                )
+              ))
+            case None => errorHandler(isAgent).showInternalServerError()
+          }
         }
-      }
       }
   }
 
@@ -82,11 +92,5 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
           case _ => Redirect(OptInErrorController.show(isAgent))
         }
       }
-  }
-
-  private def redirectToCheckpointPage(isAgent: Boolean): Result = {
-    val nextPage = controllers.optIn.oldJourney.routes.OptInCompletedController.show(isAgent)
-    Logger("application").info(s"redirecting to : $nextPage")
-    Redirect(nextPage)
   }
 }
