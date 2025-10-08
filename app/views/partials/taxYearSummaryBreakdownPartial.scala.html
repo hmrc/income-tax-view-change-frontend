@@ -38,6 +38,14 @@
     }
 }
 
+@tableId = @{
+    (isLatest, isPrevious) match {
+        case (true, false) => "latest-calculation"
+        case (false, true) => "previous-calculation"
+        case _ => "calculation"
+    }
+}
+
 @overviewDescription = @{
     (isLatest, isPrevious) match {
         case (true, false) =>
@@ -62,7 +70,7 @@
 
 @if(isFinalCalc){
   @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l")
-    <table class="govuk-table" id="income-deductions-contributions-table">
+    <table class="govuk-table" id="@tableId-income-deductions-contributions-table">
         <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.tax-calculation")</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -137,7 +145,7 @@
 
     @overviewDescription
 
-    <table class="govuk-table" id="income-deductions-contributions-table">
+    <table class="govuk-table" id="@tableId-income-deductions-contributions-table">
         <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.tax-calculation")</caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -173,7 +181,7 @@
                         }
                     </div>
                 </th>
-                <td class="govuk-table__cell govuk-table__cell--numeric" id="amount-due">@{
+                <td class="govuk-table__cell govuk-table__cell--numeric" id="@tableId-amount-due">@{
                     overview.deductions.toCurrencyString
                 }
                 </td>

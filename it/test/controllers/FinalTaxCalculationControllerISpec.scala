@@ -63,17 +63,17 @@ class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
     val insetText = "#main-content > div > div > div > p.govuk-inset-text"
     val insetLinkText = "#main-content > div > div > div > p > a"
 
-    val incomeRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > th > a"
-    val incomeRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(1) > td"
+    val incomeRowText = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(1) > th > a"
+    val incomeRowAmount = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(1) > td"
 
-    val allowanceRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > th > a"
-    val allowanceRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(2) > td"
+    val allowanceRowText = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(2) > th > a"
+    val allowanceRowAmount = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(2) > td"
 
-    val taxIsDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > th"
-    val taxIsDueRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(3) > td"
+    val taxIsDueRowText = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(3) > th"
+    val taxIsDueRowAmount = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(3) > td"
 
-    val contributionDueRowText = "#income-deductions-contributions-table > tbody > tr:nth-child(4) > th > a"
-    val contributionDueRowAmount = "#income-deductions-contributions-table > tbody > tr:nth-child(4) > td"
+    val contributionDueRowText = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(4) > th > a"
+    val contributionDueRowAmount = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(4) > td"
 
     val chargeInformationParagraph = "#main-content > div > div > div > p.govuk-body"
 
