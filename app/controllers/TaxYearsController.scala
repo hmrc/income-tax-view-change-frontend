@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.admin.ITSASubmissionIntegration
+import models.admin.{ITSASubmissionIntegration, PostFinalisationAmendmentsR18}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -55,6 +55,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
         isAgent = isAgent,
         utr = user.saUtr,
         itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+        isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
         earliestSubmissionTaxYear = earliestSubmissionTaxYear,
         btaNavPartial = user.btaNavPartial,
         origin = origin)

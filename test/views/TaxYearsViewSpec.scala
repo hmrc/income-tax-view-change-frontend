@@ -34,13 +34,21 @@ class TaxYearsViewSpec extends ViewSpec {
   val taxYearsOldSaLink = s"${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote = s"${messages("taxYears.oldSa.content.text")} $taxYearsOldSaLink."
   val saLinkAgent = s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}"
+  val currentTaxYear: (String, String) => String = (year, yearPlusOne) => s"${messages("taxYears.currentTaxYear", year, yearPlusOne)}"
   val taxYear: (String, String) => String = (year, yearPlusOne) => s"${messages("taxYears.taxYears", year, yearPlusOne)}"
 
   class TestSetup(calcs: List[Int],
               itsaSubmissionFeatureSwitch: Boolean = false,
+              isPostFinalisationAmendmentR18Enabled: Boolean = false,
               utr: Option[String] = None, isAgent: Boolean = false) {
     lazy val page: HtmlFormat.Appendable =
-      taxYearsView(calcs, "testBackURL", utr, itsaSubmissionFeatureSwitch, 2023, isAgent = isAgent)(FakeRequest(), implicitly)
+      taxYearsView(taxYears = calcs,
+        backUrl = "testBackURL",
+        utr = utr,
+        itsaSubmissionIntegrationEnabled = itsaSubmissionFeatureSwitch,
+        isPostFinalisationAmendmentR18Enabled = isPostFinalisationAmendmentR18Enabled,
+        earliestSubmissionTaxYear = 2023,
+        isAgent = isAgent)(FakeRequest(), implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
@@ -59,7 +67,7 @@ class TaxYearsViewSpec extends ViewSpec {
 
       "the user has two tax years" should {
         "display two tax years" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
-          document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(testTaxYear.toString, testYearPlusOne.toString)
+          document.selectHead("dl div:nth-child(1) dt").text() shouldBe currentTaxYear(testTaxYear.toString, testYearPlusOne.toString)
           document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear((testTaxYear - 1).toString, testTaxYear.toString)
         }
 
@@ -78,7 +86,7 @@ class TaxYearsViewSpec extends ViewSpec {
 
       "the user has three tax years records" should {
         "display three tax years" in new TestSetup(List(testYearPlusTwo, testYearPlusOne, testTaxYear)) {
-          document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(testYearPlusOne.toString, testYearPlusTwo.toString)
+          document.selectHead("dl div:nth-child(1) dt").text() shouldBe currentTaxYear(testYearPlusOne.toString, testYearPlusTwo.toString)
           document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear(testTaxYear.toString, testYearPlusOne.toString)
           document.selectHead("dl div:nth-child(3) dt").text() shouldBe taxYear((testTaxYear - 1).toString, testTaxYear.toString)
         }
@@ -120,7 +128,7 @@ class TaxYearsViewSpec extends ViewSpec {
     "The TaxYears view with itsaSubmissionFeatureSwitch FS enabled" when {
       "the user has two tax years" should {
         "display two tax years" in new TestSetup(List(testYearPlusOne, testTaxYear), true) {
-          document.selectHead("dl div:nth-child(1) dt").text() shouldBe taxYear(testTaxYear.toString, testYearPlusOne.toString)
+          document.selectHead("dl div:nth-child(1) dt").text() shouldBe currentTaxYear(testTaxYear.toString, testYearPlusOne.toString)
           document.selectHead("dl div:nth-child(2) dt").text() shouldBe taxYear((testTaxYear - 1).toString, testTaxYear.toString)
         }
 
@@ -150,6 +158,30 @@ class TaxYearsViewSpec extends ViewSpec {
         }
       }
     }
+
+    "The TaxYears view with PostFinalisationAmendmentR18 FS disabled" when {
+      "the user has multiple tax years" should {
+        "not display the amendment guidance text" in new TestSetup(
+          calcs = List(testYearPlusOne, testTaxYear),
+          isPostFinalisationAmendmentR18Enabled = false
+        ) {
+          Option(document.getElementById("pfa-amendment-text")) shouldBe None
+        }
+      }
+    }
+
+    "The TaxYears view with PostFinalisationAmendmentR18 FS enabled" when {
+      "the user has multiple tax years" should {
+        "display the amendment guidance text below the tax years list" in new TestSetup(
+          calcs = List(testYearPlusOne, testTaxYear),
+          isPostFinalisationAmendmentR18Enabled = true
+        ) {
+          val amendmentParagraph: Element = document.getElementById("pfa-amendment-text")
+          amendmentParagraph.text() shouldBe messages("taxYears.r18.amendment.text")
+        }
+      }
+    }
+
   }
 
   "agent" when {
