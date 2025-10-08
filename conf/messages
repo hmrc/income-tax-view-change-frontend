@@ -209,10 +209,12 @@ error.custom.message                                            = The page youâ€
 error.custom.link                                               = Return to Making Tax Digital for Income Tax
 
 ## Tax Years Page ##
-taxYears.heading                                               = Tax years
+taxYears.heading                                               = Your tax returns
+taxYears.description                                           = The tax year runs from 6 April to 5 April.
 taxYears.viewSummary                                           = View summary
 taxYears.updateReturn                                          = Update return
-taxYears.taxYears                                              = 6 April {0} to 5 April {1}
+taxYears.currentTaxYear                                        = {0} to {1} current tax year
+taxYears.taxYears                                              = {0} to {1} tax year
 taxYears.ongoing                                               = Ongoing
 taxYears.overdue                                               = Overdue
 taxYears.complete                                              = Complete
@@ -225,6 +227,7 @@ taxYears.oldSa.content.link                                    = Self Assessment
 taxYears.oldSa.agent.content.1								   = To view your clientâ€™s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your
 taxYears.oldSa.agent.content.2								   = Self Assessment for Agents account
 taxYears.oldSa.agent.content.3								   = This will be a different Government Gateway ID and password to your Agent Services account.
+taxYears.r18.amendment.text                                    = You can view the tax year summary pages to also see your options for amending the filed return for that year.
 
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                           = Tax year summary

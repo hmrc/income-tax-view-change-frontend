@@ -210,10 +210,12 @@ error.custom.message                                           = Mae’r dudalen
 error.custom.link                                              = Ewch yn ôl i ‘Troi Treth yn Ddigidol ar gyfer Treth Incwm’
 
 ## Tax Years Page ##
-taxYears.heading                                               = Mlynyddoedd treth
+taxYears.heading                                               = Eich Ffurflenni Treth
+taxYears.description                                           = Mae’r flwyddyn dreth yn mynd o 6 Ebrill i 5 Ebrill.
 taxYears.viewSummary                                           = Gweld crynodeb
 taxYears.updateReturn                                          = Diweddariad ffurflen
-taxYears.taxYears                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
+taxYears.currentTaxYear                                        = Blwyddyn dreth bresennol {0} i {1}
+taxYears.taxYears                                              = Blwyddyn dreth {0} i {1}
 taxYears.table.taxYear.heading                                 = Blwyddyn dreth
 taxYears.table.options.heading                                 = Opsiynau
 taxYears.ongoing                                               = Ar y gweill
@@ -226,6 +228,7 @@ taxYears.oldSa.content.link                                    = cyfrif Hunanase
 taxYears.oldSa.agent.content.1								   = I fwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi fewngofnodi i’ch
 taxYears.oldSa.agent.content.2								   = cyfrif Hunanasesiad ar gyfer Asiantau
 taxYears.oldSa.agent.content.3								   = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+taxYears.r18.amendment.text                                    = Gallwch fwrw golwg dros dudalennau yn crynhoi blwyddyn dreth i hefyd gael gweld beth yw eich opsiynau o ran diwygio’r ffurflen dreth rydych eisoes wedi’i chyflwyno’r flwyddyn honno.
 
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                       = Crynodeb o’r flwyddyn dreth
