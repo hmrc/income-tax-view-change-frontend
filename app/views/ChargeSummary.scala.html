@@ -28,7 +28,7 @@
 @import views.html.partials.chargeSummary._
 @import models.repaymentHistory.RepaymentHistoryUtils
 @import _root_.implicits.HtmlFormatter.NbspString
-
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import java.time.LocalDate
 @import viewUtils.ExternalUrlHelper
 
@@ -51,6 +51,7 @@
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
     govukInsetText : GovukInsetText,
+        govukDetails : GovukDetails,
     govukTable: GovukTable
 )
 
@@ -72,7 +73,19 @@
         }
     </div>
 }
-
+@paymentOnAccountExplanationNew = {
+@p(){@messages("chargeSummary.whatIsPaymentOnAccount.p1")}
+@p(){@messages("chargeSummary.whatIsPaymentOnAccount.p2")}
+@p(){@messages("chargeSummary.whatIsPaymentOnAccount.p3")}
+@p(){
+    @link(
+        link = ExternalUrlHelper.saThroughYourTaxCodeUrl,
+        target = Some("_blank"),
+        rel= Some("noreferrer noopener"),
+        messageKey = "chargeSummary.whatIsPaymentOnAccount.p4.linkText"
+    )
+    }
+}
 
 @getLpiPoaExplanationContent = {
     <div>
@@ -185,14 +198,143 @@
     </div>
 }
 
-@reviewAndReconcilePoaOneDebitExplanation = {
+@reviewAndReconcilePoaOneDebitExplanation= {
+@h2(msg = s"chargeSummary.reviewAndReconcilePoa.heading2.youOwe")
+@p(classes="govuk-heading-s"){@messages("chargeSummary.reviewAndReconcilePoa.heading2.Due",viewModel.currentTaxYearEnd.toString)}
     @p(id = Some("rar-poa1-explanation")) {
-        @messages("chargeSummary.reviewAndReconcilePoa.p1")
+        @messages("chargeSummary.reviewAndReconcilePoa.p.textOne")
         @link(id = Some("poa1-link"), link = viewModel.poaOneChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
-        @messages("chargeSummary.reviewAndReconcilePoa.p2")
+        @messages("chargeSummary.reviewAndReconcilePoa.p.textTwo", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
     }
+    @p(){@messages("chargeSummary.reviewAndReconcilePoa.p.two")}
+@govukDetails(Details(
+    summary = Text(messages(s"chargeSummary.whatIsPaymentOnAccount.linkText")),
+    content = HtmlContent(paymentOnAccountExplanationNew)
+))
+@if(Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge) {
+    @govukWarningText(WarningText(
+        iconFallbackText = Some("Warning"),
+        content = HtmlContent(warningText))
+        )
+@intrestOnChargeDescription
+    @intrestOnChargeTable
+    @p(){@messages("chargeSummary.interestOnThisCharge.guidanceText")
+        @link(
+            link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
+            target = Some("_blank"),
+            rel= Some("noreferrer noopener"),
+            messageKey = messages("chargeSummary.interestOnThisCharge.guidanceLinkText"),
+            outerMessage = messages("chargeSummary.interestOnThisCharge.guidanceLinkText.dot")
+        )
+    }
+    @p() {
+        @if(viewModel.isAgent) {
+            @messages("chargeSummary.whatYouOwe.textOne-agent"),
+            @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+            @messages("chargeSummary.whatYouOwe.textTwo-agent")
+        } else {
+            @messages("chargeSummary.whatYouOwe.textOne")
+            @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+            @messages("chargeSummary.whatYouOwe.textTwo")
+        }
+    }
+    @h2(messages("chargeSummary.historyOfCharge.heading"))
+    @historyOfChargeTable
+}
 }
 
+
+    @historyOfChargeTable = {
+    @govukTable(Table(
+        rows = Seq(
+            Seq(
+                TableRow(
+                    content = HtmlContent(
+                        viewModel.adjustmentHistory.creationEvent.adjustmentDate.map(_.toLongDate.toNonBreaking).getOrElse(Html(messages("incomeSources.generic.unknown")))
+                    )
+                ),
+                TableRow(
+                    content = Text(messages(s"chargeSummary.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
+                ),
+                TableRow(
+                    content = HtmlContent(viewModel.adjustmentHistory.creationEvent.amount.toCurrency), format = Some("numeric")
+                )
+            )),
+        head = Some(
+            Seq(
+                HeadCell(
+                    content = HtmlContent(messages("chargeSummary.chargeHistory.date"))
+                ),
+                HeadCell(
+                    content = Text(messages("chargeSummary.chargeHistory.description"))
+                ),
+                HeadCell(
+                    content = Text(messages("chargeSummary.chargeHistory.amount")),
+                    format = Some("numeric")
+                )
+            )
+        ),
+        caption = Some(messages("chargeSummary.historyOfCharge.Caption", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)),
+        captionClasses = "govuk-table__caption--m govuk-!-font-weight-regular"
+    ))
+    }
+
+    @intrestOnChargeTable ={
+    @govukTable(Table(
+        rows = Seq(
+            Seq(
+                TableRow(
+                    content = Text("1 Feb 2025 to 3 Jan 2026")
+                ),
+                TableRow(
+                    content = Text(messages("chargeSummary.interestOnThisCharge.Table.percentage"))
+                ),
+                TableRow(
+                    content = Text("£36.67"),
+                    format = Some("numeric")
+                )
+            ),
+            Seq(
+                TableRow(
+                    content = Text(messages("chargeSummary.interestOnThisCharge.Table.totalText")),
+                    attributes = Map("colspan" -> "2")
+                ),
+                TableRow(
+                    content = Text("£36.67"),
+                    format = Some("numeric"),
+                    attributes = Map("colspan" -> "2")
+                )
+            )
+        ),
+        head = Some(Seq(
+            HeadCell(
+                content = Text(messages("chargeSummary.interestOnThisCharge.Table.heading1"))
+            ),
+            HeadCell(
+                content = HtmlContent(currentIntrestRate)
+
+            ),
+            HeadCell(
+                content = HtmlContent(estimatedAmount),
+
+                format = Some("numeric")
+            )
+        ))
+    ))
+        }
+
+    @currentIntrestRate ={<div>@messages("chargeSummary.interestOnThisCharge.Table.heading2.1")</div><div>@messages("chargeSummary.interestOnThisCharge.Table.heading2.2")</div>}
+    @estimatedAmount ={<div>@messages("chargeSummary.interestOnThisCharge.Table.heading3.1")</div><div>@messages("chargeSummary.interestOnThisCharge.Table.heading3.2")</div>}
+    @intrestOnChargeDescription = {
+    @h2(messages("chargeSummary.interestOnThisCharge.heading"))
+    @p(){@messages("chargeSummary.interestOnThisCharge.p1")}
+    @p(){@messages("chargeSummary.interestOnThisCharge.p2")}
+    }
+
+@warningText = {
+   @p(classes="govuk-heading-s"){@messages("chargeSummary.reviewAndReconcilePoa.warning.p1")}
+   @p(classes="govuk-heading-s"){@messages("chargeSummary.reviewAndReconcilePoa.warning.p2")}
+}
 @reviewAndReconcilePoaTwoDebitExplanation = {
     @p(id = Some("rar-poa2-explanation")) {
         @messages("chargeSummary.reviewAndReconcilePoa.p1")
@@ -314,14 +456,16 @@
     @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
         @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
     }
-
-    @h1WithCaption(
-        heading = messages(viewModel.pageTitle),
-        captionMsg = messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
-    )
-
     @if(Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge) {
-        @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
+        @h1WithCaption(
+            heading = messages(viewModel.pageTitle),
+            captionMsg = messages("paymentDue.tax-year", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
+        )
+    }else {
+        @h1WithCaption(
+            heading = messages(viewModel.pageTitle),
+            captionMsg = messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+        )
     }
 
     @getExplanationContent
