@@ -37,10 +37,9 @@
 @getLink = @{
     if (creditsRefundsRepayEnabled) {
         link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
-
     } else {
-messages("paymentAllocation.moneyOnAccount")
-        }
+        messages("paymentAllocation.moneyOnAccount")
+    }
 }
 
 
@@ -58,6 +57,7 @@ messages("paymentAllocation.moneyOnAccount")
                     <td class="govuk-table__cell">
                     @getLink
                     </td>
+                    <td class="govuk-table__cell no-wrap">@messages("paymentAllocation.not-applicable")</td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">@{
                         amount.abs.toCurrencyString
                     }</td>

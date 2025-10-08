@@ -1356,11 +1356,13 @@ paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
 paymentAllocation.tableSection.heading                          = Dyraniadau
 paymentAllocation.tableHead.allocation                          = Ble aeth eich arian
+paymentAllocation.tableHead.tax-year                            = Blwyddyn dreth
 paymentAllocation.tableHead.allocated-date                      = Dyddiad
 paymentAllocation.tableHead.amount                              = Swm
-paymentAllocation.taxYear										= Blwyddyn dreth {0} i {1}
+paymentAllocation.taxYear										= {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
 paymentAllocation.na                                            = Amh
+paymentAllocation.not-applicable                                = Not applicable
 paymentAllocation.moneyOnAccount                                = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
 
 paymentAllocation.details.title                                 = Sut ydyn ni’n trin eich taliadau i dalu costau?
