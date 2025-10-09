@@ -16,8 +16,13 @@
 
 package services
 
+import auth.MtdItUser
+import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import connectors.IncomeTaxCalculationConnector
-import models.liabilitycalculation.LiabilityCalculationResponseModel
+import enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
+import models.admin.PostFinalisationAmendmentsR18
+import models.liabilitycalculation.{LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -25,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalculationConnector)(implicit ec: ExecutionContext) {
+class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalculationConnector)(implicit ec: ExecutionContext, val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   def getLatestCalculation(mtditid: String, nino: String, calcId: String, taxYear: Int)
                           (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
@@ -36,8 +41,31 @@ class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalcu
 
   def getLiabilityCalculationDetail(mtditid: String, nino: String, taxYear: Int)
                                    (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString).map(value =>{
+    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString, None).map(value =>{
       value
     })
+  }
+
+  def getLatestAndPreviousCalculationDetails(mtditid: String, nino: String, taxYear: Int)
+                                            (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[(LiabilityCalculationResponseModel, Option[LiabilityCalculationResponseModel])] = {
+    val latestResponse = getCalculationDetailsWithFlag(mtditid, nino, taxYear, isPrevious = false)
+
+    latestResponse.flatMap {
+      case liabilityCalc: LiabilityCalculationResponse if isEnabled(PostFinalisationAmendmentsR18) =>
+        if (liabilityCalc.metadata.hasAnAmendment) {
+          getCalculationDetailsWithFlag(mtditid, nino, taxYear, isPrevious = true).map { previous =>
+            (liabilityCalc, Some(previous))
+          }
+        } else {
+          Future.successful((liabilityCalc, None))
+        }
+      case other => Future.successful((other, None))
+    }
+  }
+
+  def getCalculationDetailsWithFlag(mtditid: String, nino: String, taxYear: Int, isPrevious: Boolean)
+                                   (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
+    val calculationRecord = if(isPrevious) Some(PREVIOUS) else Some(LATEST)
+    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString, calculationRecord)
   }
 }
