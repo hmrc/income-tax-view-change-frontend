@@ -112,7 +112,7 @@
     @if(!isAgent) {
         @utr.map { utrValue =>
             @p(id = Some("oldSa-para")) {
-                @messages("taxYears.oldSa.content.text")
+                @messages("taxYears.oldSa.content.text", (earliestSubmissionTaxYear - 1).toString, earliestSubmissionTaxYear.toString)
                 @link(link = appConfig.saViewLandPService(utrValue), messageKey = "taxYears.oldSa.content.link",
                     id = Some("self-assessment-online-account-link"),
                     outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
@@ -122,7 +122,7 @@
 
     @if(isAgent) {
         @p(id = Some("oldSa-para-agent")) {
-            @messages("taxYears.oldSa.agent.content.1")
+            @messages("taxYears.oldSa.agent.content.1", (earliestSubmissionTaxYear - 1).toString, earliestSubmissionTaxYear.toString)
             @link(link = viewUtils.ExternalUrlHelper.saForAgents,
 
                 messageKey = "taxYears.oldSa.agent.content.2",

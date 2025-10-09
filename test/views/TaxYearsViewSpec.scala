@@ -31,9 +31,12 @@ class TaxYearsViewSpec extends ViewSpec {
   val taxYearsView: TaxYears = app.injector.instanceOf[TaxYears]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val taxYearsViewSummary: String = messages("taxYears.viewSummary")
-  val taxYearsOldSaLink = s"${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}"
-  val saNote = s"${messages("taxYears.oldSa.content.text")} $taxYearsOldSaLink."
-  val saLinkAgent = s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}"
+  val earliestYear: Int = 2023
+  val previousYear: Int = earliestYear - 1
+  val taxYearsOldSaLink: String = s"${messages("taxYears.oldSa.content.link")} ${messages("pagehelp.opensInNewTabText")}"
+  val saNote = s"${messages("taxYears.oldSa.content.text", previousYear.toString, earliestYear.toString)} $taxYearsOldSaLink."
+  val taxYearsOldSaAgentLink = s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}"
+  val saNoteAgent: String = s"${messages("taxYears.oldSa.agent.content.1", previousYear.toString, earliestYear.toString)} $taxYearsOldSaAgentLink. ${messages("taxYears.oldSa.agent.content.3")}"
   val currentTaxYear: (String, String) => String = (year, yearPlusOne) => s"${messages("taxYears.currentTaxYear", year, yearPlusOne)}"
   val taxYear: (String, String) => String = (year, yearPlusOne) => s"${messages("taxYears.taxYears", year, yearPlusOne)}"
 
@@ -75,7 +78,7 @@ class TaxYearsViewSpec extends ViewSpec {
           document.getElementById("viewSummary-link-2018").text() shouldBe
             s"$taxYearsViewSummary ${taxYear((testTaxYear - 1).toString, testTaxYear.toString)}"
           document.getElementById("viewSummary-link-2019").text() shouldBe
-            s"${taxYearsViewSummary} ${taxYear(testTaxYear.toString, testYearPlusOne.toString)}"
+            s"$taxYearsViewSummary ${taxYear(testTaxYear.toString, testYearPlusOne.toString)}"
         }
 
         "not display any update return link" in new TestSetup(List(testYearPlusOne, testTaxYear)) {
@@ -190,8 +193,12 @@ class TaxYearsViewSpec extends ViewSpec {
         controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYearPlusOne).url
     }
     "the paragraph explaining about previous Self Assessments" in new TestSetup(List(testYearPlusOne), isAgent = true) {
-      layoutContent.select("#oldSa-para-agent").text shouldBe s"${messages("taxYears.oldSa.agent.content.1")} $saLinkAgent. ${messages("taxYears.oldSa.agent.content.3")}"
-      layoutContent.selectFirst("#oldSa-para-agent").hasCorrectLinkWithNewTab(saLinkAgent, "https://www.gov.uk/guidance/self-assessment-for-agents-online-service")
+      layoutContent.select("#oldSa-para-agent").text shouldBe saNoteAgent
+      layoutContent.selectFirst("#oldSa-para-agent").hasCorrectLinkWithNewTab(
+        s"${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}",
+        "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+      )
+
     }
   }
 }
