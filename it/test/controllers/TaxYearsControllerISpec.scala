@@ -19,6 +19,7 @@ package controllers
 import config.featureswitch.FeatureSwitching
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks._
+import models.admin.PostFinalisationAmendmentsR18
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
@@ -52,9 +53,28 @@ class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitchin
                   pageTitle(mtdUserRole, "taxYears.heading"),
                   nElementsWithClass("govuk-summary-list__row")(6),
                   elementTextBySelectorList("dl", "div:nth-child(1)", "dt")(
-                    expectedValue = s"6 April ${getCurrentTaxYearEnd.getYear - 1} to 5 April ${getCurrentTaxYearEnd.getYear}"
+                    expectedValue = s"${getCurrentTaxYearEnd.getYear - 1} to ${getCurrentTaxYearEnd.getYear} current tax year"
                   )
                 )
+              }
+
+              "render the amendment guidance text when PostFinalisationAmendmentsR18 FS is enabled" in {
+                enable(PostFinalisationAmendmentsR18)
+                stubAuthorised(mtdUserRole)
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                  OK,
+                  multipleBusinessesAndPropertyResponseWoMigration
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                res should have(
+                  httpStatus(OK),
+                  elementTextByID("pfa-amendment-text")
+                  ("You can view the tax year summary pages to also see your options for amending the filed return for that year.")
+                )
+
+                disable(PostFinalisationAmendmentsR18)
               }
             }
 
