@@ -1253,7 +1253,6 @@ chargeSummary.lpi.balancingCharge.textTwo                          = plws 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = Gweler yr arweiniad ynghylch y
 chargeSummary.lpi.balancingCharge.p3LinkText                       = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 chargeSummary.reviewAndReconcilePoa.heading2.youOwe                   = Mae arnoch: {0} (heb gynnwys llog wedi’i amcangyfrif)
-chargeSummary.reviewAndReconcilePoa.heading2.Due                      = Yn ddyledus {0}
 chargeSummary.reviewAndReconcilePoa.warning                           = Bydd y tâl hwn yn cronni llog hyd nes y bydd yn cael ei dalu.
 chargeSummary.reviewAndReconcilePoa.warning.p1                        = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
 chargeSummary.reviewAndReconcilePoa.warning.p2                        = Os byddwch yn talu yn hwyrach na’r dyddiad dyledus – 2 Chwefror 2026 – mae’n bosibl y cewch gosb am dalu’n hwyr.
@@ -3319,7 +3318,8 @@ yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Swm y 
 yourSelfAssessmentChargeSummary.table.head.daysOverdue                  = Dyddiau gorddyledus
 yourSelfAssessmentChargeSummary.table.head.interestRate                 = Cyfradd llog
 yourSelfAssessmentChargeSummary.table.head.amount                       = Swm
-
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.text.heading     = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.text.heading     = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = Sut mae’r llog yn cael ei gyfrifo?
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p1          = Lluoswch y swm y mae’r llog yn berthnasol iddo â nifer y dyddiau gorddyledus.
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p2          = Rhannwch yr ateb hwnnw gyda 365 (dyddiau).
