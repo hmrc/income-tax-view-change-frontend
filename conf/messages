@@ -820,7 +820,7 @@ nextUpdates.optOutMultiYear.p.message                              = You are cur
 nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
 
 nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
-nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations.
+nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations
 
 ## Next updates Page - R17 Content Changes ##
 nextUpdates.r17.tab.quarterly.label                                = Up to {0} to {1} tax year
