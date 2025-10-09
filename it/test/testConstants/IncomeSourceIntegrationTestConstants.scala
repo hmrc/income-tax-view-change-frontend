@@ -533,6 +533,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
+        "interestRate" -> "3",
         "accruingInterestAmount" -> accruingInterestAmount,
         "interestOutstandingAmount" -> 80.0,
         "effectiveDateOfPayment" -> dueDate,

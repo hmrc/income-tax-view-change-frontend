@@ -42,7 +42,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
-  val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
+  val important: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
   val lpiHistory: String = messagesAPI("chargeSummary.chargeHistory.lateInterestPayment")
 
