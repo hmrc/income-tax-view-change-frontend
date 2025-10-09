@@ -820,7 +820,7 @@ nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd 
 nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
 
 nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd.
+nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd
 
 ## Next updates Page - R17 Content Changes ##
 nextUpdates.r17.tab.quarterly.label                                = Hyd at blwyddyn dreth {0} i {1}
