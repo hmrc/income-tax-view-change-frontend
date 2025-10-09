@@ -18,6 +18,7 @@ package controllers.agent
 
 import audit.models.EnterClientUTRAuditModel
 import controllers.ControllerISpecHelper
+import enums.MTDPrimaryAgent
 import helpers.servicemocks._
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -59,7 +60,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
       result should have(
         httpStatus(OK),
-        pageTitleAgentLogin("agent.enter_clients_utr.heading")
+        pageTitle(MTDPrimaryAgent, "agent.enter_clients_utr.heading")
       )
     }
   }
