@@ -32,6 +32,7 @@
 @import views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
 @import _root_.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
+@import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
 
 @this(
         mainTemplate: unifiedLayout,
@@ -95,6 +96,9 @@
     ))
 
   @if(!viewModel.chargeItem.isPaid) {
+      @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
+          @h2(messages("yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe",viewModel.chargeItem.outstandingAmount.toCurrencyString))
+      }else {
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
@@ -104,6 +108,7 @@
               )
           }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}"
       }</h2>
+      }
 
       @if(!viewModel.chargeItem.isCodingOut) {
           @p(id = Some("due-date-text")) {
