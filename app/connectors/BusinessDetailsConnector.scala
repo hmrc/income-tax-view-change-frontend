@@ -61,7 +61,7 @@ class BusinessDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
+            Logger("application").debug(s"[FE Business Details Connector][getBusinessDetails] RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[IncomeSourceDetailsModel].fold(
               invalid => {
                 Logger("application").error(s"$invalid")
@@ -70,15 +70,15 @@ class BusinessDetailsConnector @Inject()(
               valid => valid
             )
           case status if status >= 500 =>
-            Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"[FE Business Details Connector][getBusinessDetails] RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
           case _ =>
-            Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"[FE Business Details Connector][getBusinessDetails] RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
         }
       }.recover {
         case ex =>
-          Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+          Logger("application").error(s"[FE Business Details Connector][getBusinessDetails] Unexpected future failed error, ${ex.getMessage}")
           IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       }
   }
