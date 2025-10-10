@@ -30,7 +30,7 @@
 
 @(postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@mainTemplate(pageTitle = messages("agent.utr_error.heading"), isAgent = true, isErrorPage = true, showServiceName = false) {
+@mainTemplate(pageTitle = messages("agent.utr_error.heading"), isAgent = true, isErrorPage = true) {
     @h1(msg = messages("agent.utr_error.heading"))
     @p(){@messages("agent.utr_error.utr_wrong")}
 
