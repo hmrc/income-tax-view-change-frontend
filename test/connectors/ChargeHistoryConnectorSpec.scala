@@ -28,7 +28,7 @@ import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModelPars
 import testUtils.TestSupport
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 import scala.concurrent.Future
 
 class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAuditingService {
@@ -54,7 +54,9 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
 
   "getChargeHistory" should {
 
-    val testChargeHistoryModelSuccess = ChargeHistoryModel(taxYear = "2017", documentId = "123456789", documentDate = LocalDate.of(2020, 1, 29), documentDescription = "Balancing Charge", totalAmount = 123456789012345.67, reversalDate = LocalDate.of(2020, 2, 24), reversalReason = "amended return", poaAdjustmentReason = Some("005"))
+    val testChargeHistoryModelSuccess = ChargeHistoryModel(taxYear = "2017", documentId = "123456789", documentDate = LocalDate.of(2020, 1, 29),
+      documentDescription = "Balancing Charge", totalAmount = 123456789012345.67,
+      reversalDate = LocalDateTime.of(LocalDate.of(2020, 2, 24), LocalTime.of(9, 30, 45)), reversalReason = "amended return", poaAdjustmentReason = Some("005"))
 
     val successResponseModel: ChargeHistoryResponseModel =
       ChargesHistoryModel(idType = "NINO", idValue = "AB123456C", regimeType = "ITSA", chargeHistoryDetails = Some(List(testChargeHistoryModelSuccess)))

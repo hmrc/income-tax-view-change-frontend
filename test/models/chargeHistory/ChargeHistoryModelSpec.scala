@@ -21,17 +21,17 @@ import org.scalatest.Inside.inside
 import org.scalatest.matchers.should.Matchers
 import testUtils.UnitSpec
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 class ChargeHistoryModelSpec extends UnitSpec with Matchers {
 
   def testChargeHistoryModel(reversalReason: String): ChargeHistoryModel = {
     ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0,
-      LocalDate.of(2021, 9, 9), reversalReason, None)
+      LocalDateTime.of(LocalDate.of(2021, 9, 9), LocalTime.of(9, 30, 45)), reversalReason, None)
   }
   def testPoaChargeHistoryModel(reversalReason: String): ChargeHistoryModel = {
     ChargeHistoryModel("2021", "DOCID01", LocalDate.parse("2020-07-08"), "docDescription", 15000.0,
-      LocalDate.of(2021, 9, 9), reversalReason, Some("001"))
+      LocalDateTime.of(LocalDate.of(2021, 9, 9), LocalTime.of(9, 30, 45)), reversalReason, Some("001"))
   }
 
   "chargeHistoryModel" when {

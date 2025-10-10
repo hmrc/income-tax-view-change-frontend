@@ -18,9 +18,21 @@ package utils
 
 import play.api.libs.json._
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 trait JsonUtils {
 
   def jsonObjNoNulls(fields: (String, Json.JsValueWrapper)*): JsObject =
     JsObject(Json.obj(fields:_*).fields.filterNot(_._2 == JsNull).filterNot(_._2 == Json.obj()))
+
+  val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+
+  implicit val readsLocalDateTime: Reads[LocalDateTime] = Reads[LocalDateTime] {js =>
+    js.validate[String].map[LocalDateTime](dtString => LocalDateTime.parse(dtString, dateTimeFormatter))
+  }
+
+  implicit val writesLocalDateTime: Writes[LocalDateTime] = (dateTime: LocalDateTime) =>
+    JsString(dateTimeFormatter.format(dateTime))
 
 }
