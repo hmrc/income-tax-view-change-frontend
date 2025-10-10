@@ -27,7 +27,8 @@
         link: link
 )
 @(
-        utr: Option[String]
+        utr: Option[String],
+        currentTaxYear: Int
 )(
         implicit request: Request[_],
         user: MtdItUser[_],
@@ -55,30 +56,17 @@
                 outerMessage = ".",
                 rel = Some("noreferrer noopener")).toString()))
 
-    @if(user.isAgent()) {
-        @h2(msg = getMessage("sa-note-3-agent-1"))
-        @p(id = Some("sa-note-3-migrated"))(Html(getMessage("sa-note-3-agent-2") +
-                link(link = ExternalUrlHelper.saForAgents,
-                    outerMessage = ". " + getMessage("sa-note-3-agent-3"),
-                    messageKey = getPrefix("sa-link-3-agent"),
-                    id = Some("sa-note-3-migrated-link"),
-                    rel = Some("noreferrer noopener"),
-                    target = Some("_blank")
-                ).toString())
-        )
-    } else {
-        @h2(msg = getMessage("sa-note-3-heading"))
-        @p(id = Some("sa-note-3-migrated"))(Html(getMessage("sa-note-3-body") +
-                link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
-                    messageKey = getPrefix("sa-link-3"), id = Some("sa-note-3-migrated-link"),
-                    rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
-        )
-    }
+    @h2(msg = getMessage("sa-note-3-heading"))
+    @p(id = Some("sa-note-3-migrated"))(Html(getMessage("sa-note-3-body") +
+            link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
+                messageKey = getPrefix("sa-link-3"), id = Some("sa-note-3-migrated-link"),
+                rel = Some("noreferrer noopener"), target = Some("_blank")).toString()))
+
     @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
 }
 
 @utr.map { utr =>
     <div id="payments-due-note">
-        @saNoteParagraphContent(utr)
+        @saNoteParagraphContent(utr, currentTaxYear)
     </div>
 }
