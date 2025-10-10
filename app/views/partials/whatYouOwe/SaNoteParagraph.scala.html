@@ -60,6 +60,6 @@
 
 @utr.map { utr =>
     <div id="payments-due-note">
-        @govukInsetText(InsetText(content = HtmlContent(saNoteParagraphContent(utr))))
+        @saNoteParagraphContent(utr)
     </div>
 }
