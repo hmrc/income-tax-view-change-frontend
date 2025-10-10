@@ -24,8 +24,7 @@
         appConfig: config.FrontendAppConfig,
         h2: h2,
         p: p,
-        link: link,
-        govukInsetText: GovukInsetText
+        link: link
 )
 @(
         utr: Option[String]
@@ -35,23 +34,43 @@
         messages: Messages
 )
 
-@saNoteParagraphContent(utr: String) = {
+@saNoteParagraphContent(utr: String, currentTaxYear: Int) = {
+
+    @h2(msg = getMessage("sa-note-2-heading"))
+    @p(id = Some("sa-note-2-migrated"))(Html(getMessage("sa-note-2-body-1") +
+            link(link = appConfig.saViewLandPService(utr),
+                outerMessage = ".",
+                messageKey = getPrefix("sa-link-2-body-1"),
+                rel = Some("noreferrer noopener"),
+                target = Some("_blank")).toString()))
+    @p(id = Some("sa-note-2-migrated"))(Html(getMessage("sa-note-2-body-2") +
+            link(link = appConfig.saViewLandPService(utr),
+                messageKey = getPrefix("sa-link-2-body-2"),
+                rel = Some("noreferrer noopener"),
+                target = Some("_blank")).toString() +
+            getMessage("sa-note-2-body-3")))
+    @p(id = Some("sa-note-2-migrated"))(Html(getMessage("sa-note-2-body-4") +
+            link(link = appConfig.saViewLandPService(utr),
+                messageKey = getPrefix("sa-link-2-body-3"),
+                outerMessage = ".",
+                rel = Some("noreferrer noopener")).toString()))
+
     @if(user.isAgent()) {
-        @h2(msg = getMessage("sa-note-agent-1"))
-        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-agent-2") +
+        @h2(msg = getMessage("sa-note-3-agent-1"))
+        @p(id = Some("sa-note-3-migrated"))(Html(getMessage("sa-note-3-agent-2") +
                 link(link = ExternalUrlHelper.saForAgents,
-                    outerMessage = ". " + getMessage("sa-note-agent-3"),
-                    messageKey = getPrefix("sa-link-agent"),
-                    id = Some("sa-note-migrated-link"),
+                    outerMessage = ". " + getMessage("sa-note-3-agent-3"),
+                    messageKey = getPrefix("sa-link-3-agent"),
+                    id = Some("sa-note-3-migrated-link"),
                     rel = Some("noreferrer noopener"),
                     target = Some("_blank")
                 ).toString())
         )
     } else {
-        @h2(msg = getMessage("sa-note-heading"))
-        @p(id = Some("sa-note-migrated"))(Html(getMessage("sa-note-body") +
+        @h2(msg = getMessage("sa-note-3-heading"))
+        @p(id = Some("sa-note-3-migrated"))(Html(getMessage("sa-note-3-body") +
                 link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
-                    messageKey = getPrefix("sa-link"), id = Some("sa-note-migrated-link"),
+                    messageKey = getPrefix("sa-link-3"), id = Some("sa-note-3-migrated-link"),
                     rel = Some("noreferrer noopener"), target = Some("_blank")).toString())
         )
     }
