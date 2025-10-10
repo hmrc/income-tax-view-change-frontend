@@ -56,7 +56,11 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
 
     "not display link when credits and refunds page feature switch is disabled" in new Setup(false, false) {
       pageDocument.select("a#money-on-account-link").size() shouldBe 0
-      pageDocument.select("tr#money-on-account > td:first-child").text() shouldBe messages("paymentAllocation.moneyOnAccount")
+      pageDocument.select("tr#money-on-account").text().contains(messages("paymentAllocation.moneyOnAccount")) shouldBe true
+    }
+
+    "display Not applicable in credit row" in new Setup() {
+      pageDocument.select("tr#money-on-account").text().contains(messages("paymentAllocation.not-applicable")) shouldBe true
     }
   }
 }

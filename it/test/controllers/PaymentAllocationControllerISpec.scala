@@ -87,7 +87,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper with Featur
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "paymentAllocation.heading"),
-                  elementTextBySelector("tbody")("HMRC adjustment Tax year 2021 to 2022 Tax year 2021 to 2022 31 Jan 2021 £800.00"),
+                  elementTextBySelector("tbody")("31 Jan 2021 HMRC adjustment Tax year 2021 to 2022 2021 to 2022 £800.00"),
                 )
 
                 verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModelHmrcAdjustment).detail)
@@ -113,7 +113,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper with Featur
                   pageTitle(mtdUserRole, "paymentAllocation.heading"),
                   elementAttributeBySelector("#payment-allocation-0 a", "href")(
                     "/report-quarterly/income-and-expenses/view" + {if(mtdUserRole != MTDIndividual) "/agents" else ""} +"/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
-                  elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")} ${messagesAPI("paymentAllocation.taxYear", "9998", "9999")}")
+                  elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")}")
                 )
 
                 verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), lpiPaymentAllocationViewModel).detail)
