@@ -31,7 +31,7 @@ import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 import scala.language.reflectiveCalls
 
 class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockChargeHistoryConnector
@@ -229,8 +229,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       val outstandingAmount: BigDecimal = 1250.0
 
       val chargeHistories: List[ChargeHistoryModel] = List(
-        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")),
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -268,8 +268,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       val outstandingAmount: BigDecimal = 0.0
 
       val chargeHistories: List[ChargeHistoryModel] = List(
-        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")),
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -335,8 +335,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       val taxYear: Int = 2023
 
       val chargeHistories: List[ChargeHistoryModel] = List(
-        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")),
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -364,8 +364,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       val outstandingAmount: BigDecimal = 0.0
 
       val chargeHistories: List[ChargeHistoryModel] = List(
-        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")),
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -419,7 +419,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val chargeHistoriesNoPoaAtHead: List[ChargeHistoryModel] = List(
         chargeHistoryModelNoPOA(taxYear),
-        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("001")))
+        ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -445,7 +445,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val chargeHistoriesNoPoaAtHead: List[ChargeHistoryModel] = List(
         chargeHistoryModelNoPOA(taxYear),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDate.of(taxYear + 1, 2, 14), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 

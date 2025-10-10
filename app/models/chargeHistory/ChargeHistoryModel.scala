@@ -19,8 +19,9 @@ package models.chargeHistory
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason, ReversalReason}
 import play.api.libs.json.{Format, Json}
 import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoaDocumentDescription
+import utils.JsonUtils
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 
 
 case class ChargeHistoryModel(taxYear: String,
@@ -28,7 +29,7 @@ case class ChargeHistoryModel(taxYear: String,
                               documentDate: LocalDate,
                               documentDescription: String,
                               totalAmount: BigDecimal,
-                              reversalDate: LocalDate,
+                              reversalDate: LocalDateTime,
                               reversalReason: String,
                               poaAdjustmentReason: Option[String]) {
 
@@ -46,6 +47,6 @@ case class ChargeHistoryModel(taxYear: String,
   val isPoa: Boolean = isPoaDocumentDescription(documentDescription)
 }
 
-object ChargeHistoryModel {
+object ChargeHistoryModel extends JsonUtils {
   implicit val format: Format[ChargeHistoryModel] = Json.format[ChargeHistoryModel]
 }

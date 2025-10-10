@@ -35,7 +35,7 @@ import testConstants.FinancialDetailsTestConstants.financialDetail
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentSharedFunctions {
 
@@ -94,10 +94,12 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     paymentsWithCharge("SA Payment on Account 1", ITSA_NI, "2018-03-30", -1500.0),
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, "2018-03-31", -1600.0)
   )
-  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "amended return", None)
+  val chargeHistoryModel: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500,
+    LocalDateTime.of(LocalDate.of(2018, 7, 6), LocalTime.of(9, 30, 45)), "amended return", None)
 
   paymentAllocation.map(_.getPaymentAllocationTextInChargeSummary)
-  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500, LocalDate.of(2018, 7, 6), "Customer Request", None)
+  val chargeHistoryModel2: ChargeHistoryModel = ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 7, 6), "documentDescription", 1500,
+    LocalDateTime.of(LocalDate.of(2018, 7, 6), LocalTime.of(9, 30, 45)), "Customer Request", None)
   val chargeHistory: List[ChargeHistoryModel] = List(
     chargeHistoryModel,
     chargeHistoryModel2)
@@ -263,12 +265,12 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
             ),
             "chargeHistory" -> Json.arr(
               Json.obj(
-                "date" -> "2018-07-06",
+                "date" -> "2018-07-06T09:30:45Z",
                 "description" -> messages("chargeSummary.chargeHistory.amend.paymentOnAccount1.text"),
                 "amount" -> 1500
               ),
               Json.obj(
-                "date" -> "2018-07-06",
+                "date" -> "2018-07-06T09:30:45Z",
                 "description" -> messages("chargeSummary.chargeHistory.request.paymentOnAccount1.text"),
                 "amount" -> 1500
               )
@@ -332,12 +334,12 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
             ),
             "chargeHistory" -> Json.arr(
               Json.obj(
-                "date" -> "2018-07-06",
+                "date" -> "2018-07-06T09:30:45Z",
                 "description" -> "Remaining balance reduced due to amended return with coding out",
                 "amount" -> 1500
               ),
               Json.obj(
-                "date" -> "2018-07-06",
+                "date" -> "2018-07-06T09:30:45Z",
                 "description" -> "Remaining balance reduced by taxpayer request with coding out",
                 "amount" -> 1500
               )
@@ -401,12 +403,12 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
             ),
             "chargeHistory" -> Json.arr(
               Json.obj(
-                "date" -> "2018-07-06",
+                "date" -> "2018-07-06T09:30:45Z",
                 "description" -> "Remaining balance reduced due to amended return with cancelledPayeSelfAssessment",
                 "amount" -> 1500
               ),
               Json.obj(
-                "date" -> "2018-07-06",
+                "date" -> "2018-07-06T09:30:45Z",
                 "description" -> "Remaining balance reduced by taxpayer request with cancelledPayeSelfAssessment",
                 "amount" -> 1500
               )
