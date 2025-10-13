@@ -1026,6 +1026,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa1.tex
 yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.heading               = Hanes y tâl hwn
 yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa2.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
 selfAssessmentCharges.reviewAndReconcilePoa.table.overdue                     = {0} i {1}
+selfAssessmentCharges.interestOnThisCharge.Table.heading                      = Cyfnod y llog
 selfAssessmentCharges.interestOnThisCharge.Table.heading2.1                   = Cyfradd log
 selfAssessmentCharges.interestOnThisCharge.Table.heading2.2                   = bresennol
 selfAssessmentCharges.interestOnThisCharge.Table.heading3.1                   = Swm

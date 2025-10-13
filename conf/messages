@@ -1026,6 +1026,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa1.tex
 yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.heading               = History of this charge
 yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa2.text.heading       = This charge goes towards your {0} to {1} tax bill.
 selfAssessmentCharges.reviewAndReconcilePoa.table.overdue                             = {0} to {1}
+selfAssessmentCharges.interestOnThisCharge.Table.heading                              = Interest period
 selfAssessmentCharges.interestOnThisCharge.Table.heading2.1                           = Current
 selfAssessmentCharges.interestOnThisCharge.Table.heading2.2                           = interest rate
 selfAssessmentCharges.interestOnThisCharge.Table.heading3.1                           = Estimated
