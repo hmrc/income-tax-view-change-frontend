@@ -145,12 +145,12 @@
             case charge if viewModel.chargeHistoryEnabled =>
                 Seq(
                     TableRow(
-                        content = HtmlContent(charge.getDueDate.toLongDate.toNonBreaking),
+                        content = HtmlContent(reviewAndReconcileCreditMessage(charge)),
                         attributes = Map("id" -> "rar-due-date")
                     ),
                     TableRow(
-                        content = HtmlContent(reviewAndReconcileCreditMessage(charge)),
-                        attributes = Map("id" -> "rar-description")
+                        content = HtmlContent(charge.getDueDate.toLongDate.toNonBreaking),
+                        attributes = Map("id" -> "rar-due-date")
                     ),
                     TableRow(
                         content = HtmlContent(charge.originalAmount.abs.toCurrency),
