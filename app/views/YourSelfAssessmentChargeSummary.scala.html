@@ -158,17 +158,6 @@
           viewModel.LPPUrl
       )
       @if(yourSelfAssessmentChargesFS) {
-          @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit){
-              @p() {
-                  @if(viewModel.isAgent) {
-                      @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent.concatenated")
-                      @messages("chargeSummary.whatYouOwe.textTwo-agent")
-                  } else {
-                      @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText.concatenated")
-                      @messages("chargeSummary.whatYouOwe.textTwo")
-                  }
-              }
-          }else{
       @p() {
           @if(viewModel.isAgent) {
               @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part1")
@@ -180,7 +169,7 @@
               @messages("chargeSummary.selfAssessmentCharges.text")
           }
       }
-          }
+
       }  else {
           @p() {
               @if(viewModel.isAgent) {
