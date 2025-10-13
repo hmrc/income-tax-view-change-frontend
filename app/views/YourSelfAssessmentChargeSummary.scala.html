@@ -140,9 +140,6 @@
 
           @warningRARPoa(viewModel)
 
-@interestOnChargeRARPoaSection(viewModel)
-
-
       }
 
 
@@ -216,6 +213,9 @@
         @interestOnYourChargeSection(viewModel.chargeItem)
 
         @interestOnYourChargeTable(viewModel)
+    }
+    @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
+        @interestOnChargeRARPoaSection(viewModel)
     }
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
