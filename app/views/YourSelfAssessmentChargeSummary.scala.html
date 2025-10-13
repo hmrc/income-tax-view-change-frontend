@@ -143,6 +143,7 @@
 
 @interestOnChargeRARPoaSection(viewModel)
 
+
       }
 
 
@@ -232,4 +233,7 @@
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)
     }
+    @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
+    @paymentHistoryTable(viewModel)
+}
 }

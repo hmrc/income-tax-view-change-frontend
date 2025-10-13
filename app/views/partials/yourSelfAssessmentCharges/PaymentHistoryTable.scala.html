@@ -48,7 +48,7 @@
 }
 
 @chargeHistoryCaption = {
-    @if(viewModel.chargeItem.transactionType == PoaOneDebit || viewModel.chargeItem.transactionType == PoaTwoDebit) {
+    @if(viewModel.chargeItem.transactionType == PoaOneDebit || viewModel.chargeItem.transactionType == PoaTwoDebit||viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
         @p(id = Some("charge-history-caption")) {
             @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.${viewModel.chargeItem.getChargeTypeKey}.heading",
                 viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
