@@ -32,6 +32,9 @@
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
 @import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
+@import models.financialDetails.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit}
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccountReconciliationPoaDebits
+
 
 @this(
     p: p,
@@ -44,6 +47,7 @@
     codedOutExplanationContent: CodedOutExplanationContent,
     classTwoNICSContent: ClassTwoNICSContent,
     itsaReturnAmendmentContent: ItsaReturnAmendmentContent,
+    whatIsPaymentOnAccountReconciliationPoaDebits: WhatIsPaymentOnAccountReconciliationPoaDebits,
     govukDetails: GovukDetails
 )
 
@@ -65,6 +69,7 @@
     case (BalancingCharge, None)        => whatIsABalancingPayment()
     case (PoaOneDebit | PoaTwoDebit, None) => whatIsPaymentOnAccount()
     case (PoaOneDebit | PoaTwoDebit, Some(Accepted)) => codedOutExplanationContent(chargeItem)
+    case(PoaOneReconciliationDebit | PoaTwoReconciliationDebit, _) => whatIsPaymentOnAccountReconciliationPoaDebits()
     case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(LSPUrl)
     case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(LPPUrl)
     case (ITSAReturnAmendment, _)       => itsaReturnAmendmentContent()

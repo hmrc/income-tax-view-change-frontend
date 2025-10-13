@@ -28,7 +28,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourChargeSection
 @import views.helpers.ChargeNameLangHelper
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
-@import views.html.partials.yourSelfAssessmentCharges.{WhatIsPaymentOnAccount, WhatIsPaymentOnAccountReconciliationPoaDebits, WarningRARPoa, InterestOnChargeRARPoaSection}
+@import views.html.partials.yourSelfAssessmentCharges.{WhatIsPaymentOnAccount, WarningRARPoa, InterestOnChargeRARPoaSection}
 @import views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
 @import _root_.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
@@ -55,7 +55,6 @@
         paymentHistoryTable: PaymentHistoryTable,
         chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
         whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
-        whatIsPaymentOnAccountReconciliationPoaDebits: WhatIsPaymentOnAccountReconciliationPoaDebits,
         warningRARPoa: WarningRARPoa,
         interestOnChargeRARPoaSection: InterestOnChargeRARPoaSection
 )
@@ -138,7 +137,6 @@
               @messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p2")
           }
 
-@whatIsPaymentOnAccountReconciliationPoaDebits()
           @warningRARPoa(viewModel)
 
 @interestOnChargeRARPoaSection(viewModel)
