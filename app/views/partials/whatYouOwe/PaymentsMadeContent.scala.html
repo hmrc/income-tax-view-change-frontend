@@ -15,30 +15,43 @@
  *@
 
 @import views.html.components._
-@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import auth.MtdItUser
-@import viewUtils.ExternalUrlHelper
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 
 @this(
+    h2: h2,
     p: p,
-    link: link
+    link: link,
+    govukInsetText: GovukInsetText
 )
-@()(
+@(
+        inset: Boolean,
+        currentTaxYear: Int,
+        creditAndRefundUrl: String
+)(
     implicit messages: Messages,
     user: MtdItUser[_]
 )
 
-@p(id = Some("payments-made"))(Html(getPaymentsMadeText))
+@overdueInsetText = {
+    @p(id = Some("overdue-inset-migrated"))(content = Html(messages("selfAssessmentCharges.overdue-inset-text-1")))
+    @p(id = Some("overdue-inset-migrated"))(content = Html(messages("selfAssessmentCharges.overdue-inset-text-2")))
+}
 
-<ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
-    <li>@messages("whatYouOwe.payments-made-bullet-1.1")
-        @link(
-            link = ExternalUrlHelper.saPayTaxBillUrl,
-            id = Some("sa-tax-bill"),
-            messageKey = getPaymentsMadeBulletLinkText,
-            target = Some("_blank"),
-            rel = Some("noreferrer noopener")
-        )
-    </li>
-    <li>@getPaymentsMadeBulletText</li>
-</ul>
+@h2(getMessage("payments-made-heading"))
+@p(id = Some("payments-made-migrated"))(Html(
+ getMessage("payments-made-body-1", (currentTaxYear - 1).toString, currentTaxYear.toString, "500") +
+         link(link = creditAndRefundUrl,
+          messageKey = getMessage("payments-made-link"),
+          id = Some("payments-made-migrated-link"),
+          rel = Some("noreferrer noopener")).toString() +
+         getMessage("payments-made-body-2")
+))
+
+@if(inset) {
+ @govukInsetText(InsetText(
+     content = HtmlContent(overdueInsetText)
+ ))
+}

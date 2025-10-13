@@ -27,18 +27,14 @@
 @import views.html.partials.whatYouOwe._
 @import _root_.implicits.HtmlFormatter.NbspString
 @import views.html.partials.yourSelfAssessmentCharges.PaymentPlanSection
-@import auth.MtdItUser
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import viewUtils.ExternalUrlHelper
 
 @this(
     h1: h1,
-        appConfig: config.FrontendAppConfig,
-        h2: h2,
-        link: link,
-        govukInsetText: GovukInsetText,
+    appConfig: config.FrontendAppConfig,
+    h2: h2,
+    link: link,
+    govukInsetText: GovukInsetText,
     p: p,
     govukTable: GovukTable,
     chargeInfo: ChargeInfo,
@@ -89,7 +85,9 @@
             viewModel.adjustPoaUrl
         )
 
-        @saNoteParagraph(viewModel.utr)
+        @paymentsMadeContent(inset = false,
+            currentTaxYear = viewModel.currentTaxYear,
+            creditAndRefundUrl = viewModel.creditAndRefundUrl)
 
     } else {
 
@@ -221,12 +219,13 @@
             @codingOutInsetContent(codedOutDetails, viewModel.taxYearSummaryUrl)
         }
 
-        @saNoteParagraph(viewModel.utr)
-
         @viewModel.whatYouOweChargesList.availableCredit.map { availableCreditAmt =>
             @unallocatedCreditParagraphContent(viewModel.creditAndRefundUrl, availableCreditAmt.toCurrencyString)
         }
 
+        @paymentsMadeContent(inset = true,
+            currentTaxYear = viewModel.currentTaxYear,
+            creditAndRefundUrl = viewModel.creditAndRefundUrl)
 
         @(for {
             (_, amount) <- viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
@@ -238,17 +237,19 @@
                 href = Some(viewModel.paymentHandOffUrl(amount.toPence))
             ))
         })
-
-        @paymentsMadeContent()
-
-        @if(viewModel.selfServeTimeToPayEnabled && !user.isAgent()) {
-            @paymentPlanSection(viewModel.selfServeTimeToPayStartUrl)
-        }
     }
+
+    @saNoteParagraph(utr = viewModel.utr,
+        currentTaxYear = viewModel.currentTaxYear,
+        selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl)
 
     @if(viewModel.creditAndRefundEnabled){
         @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
             @availableCreditInAccount(ac.toCurrencyString, viewModel.creditAndRefundUrl)
         }
     }
+}
+
+@paymentsMadeText() = {
+
 }

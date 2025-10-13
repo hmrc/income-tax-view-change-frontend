@@ -28,45 +28,49 @@
 )
 @(
         utr: Option[String],
-        currentTaxYear: Int
+        currentTaxYear: Int,
+        selfServeTimeToPayStartUrl: String
 )(
         implicit request: Request[_],
         user: MtdItUser[_],
         messages: Messages
 )
 
-@saNoteParagraphContent(utr: String, currentTaxYear: Int) = {
+@saNoteParagraphContent(utr: String) = {
 
-    @h2(msg = getMessage("sa-note-2-heading"))
-    @p(id = Some("sa-note-2-migrated"))(Html(getMessage("sa-note-2-body-1") +
-            link(link = appConfig.saViewLandPService(utr),
+    @h2(msg = getMessage("sa-note-1-heading"))
+    @p(id = Some("sa-note-1-migrated"))(Html(getMessage("sa-note-1-body-1") +
+            link(link = selfServeTimeToPayStartUrl,
                 outerMessage = ".",
-                messageKey = getPrefix("sa-link-2-body-1"),
+                messageKey = getMessage("sa-link-1-body-1"),
                 rel = Some("noreferrer noopener"),
                 target = Some("_blank")).toString()))
-    @p(id = Some("sa-note-2-migrated"))(Html(getMessage("sa-note-2-body-2") +
+    @p(id = Some("sa-note-1-migrated"))(Html(getMessage("sa-note-1-body-2") +
             link(link = appConfig.saViewLandPService(utr),
-                messageKey = getPrefix("sa-link-2-body-2"),
+                messageKey = getMessage("sa-link-1-body-2"),
                 rel = Some("noreferrer noopener"),
                 target = Some("_blank")).toString() +
-            getMessage("sa-note-2-body-3")))
-    @p(id = Some("sa-note-2-migrated"))(Html(getMessage("sa-note-2-body-4") +
+            getMessage("sa-note-1-body-3")))
+    @p(id = Some("sa-note-1-migrated"))(Html(getMessage("sa-note-1-body-4") +
             link(link = appConfig.saViewLandPService(utr),
-                messageKey = getPrefix("sa-link-2-body-3"),
+                messageKey = getMessage("sa-link-1-body-3", (currentTaxYear-1).toString, currentTaxYear.toString),
                 outerMessage = ".",
                 rel = Some("noreferrer noopener")).toString()))
 
-    @h2(msg = getMessage("sa-note-3-heading"))
-    @p(id = Some("sa-note-3-migrated"))(Html(getMessage("sa-note-3-body") +
-            link(link = appConfig.saViewLandPService(utr), outerMessage = ".",
-                messageKey = getPrefix("sa-link-3"), id = Some("sa-note-3-migrated-link"),
-                rel = Some("noreferrer noopener"), target = Some("_blank")).toString()))
+    @h2(msg = getMessage("sa-note-2-heading"))
+    @p(id = Some("sa-note-2-migrated"))(Html(getMessage("sa-note-2-body") +
+            link(link = appConfig.saViewLandPService(utr),
+                outerMessage = ".",
+                messageKey = getMessage("sa-link-2"),
+                id = Some("sa-note-2-migrated-link"),
+                rel = Some("noreferrer noopener"),
+                target = Some("_blank")).toString()))
 
     @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
 }
 
 @utr.map { utr =>
     <div id="payments-due-note">
-        @saNoteParagraphContent(utr, currentTaxYear)
+        @saNoteParagraphContent(utr)
     </div>
 }
