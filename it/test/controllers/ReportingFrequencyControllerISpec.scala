@@ -308,7 +308,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             }
 
             "has two opt out and one sign up summary card" when {
-              "CY-1 is Quaterly, CY is Quaterly and CY+1 is Annual" in {
+              "CY-1 is Quarterly, CY is Quarterly and CY+1 is Annual" in {
                 enable(ReportingFrequencyPage, OptOutFs, OptInOptOutContentUpdateR17)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
@@ -330,9 +330,9 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextByID("manage-reporting-obligations-card-link-0")("Opt out"),
                   elementTextByID("manage-reporting-obligations-card-desc-0")(s"You can stop using Making Tax Digital for Income Tax from the $previousStartYear to $previousEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-0")("Stop now"),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Opt out from the current tax year"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")("Opt out for the current tax year"),
                   elementTextByID("manage-reporting-obligations-card-link-1")("Opt out"),
-                  elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can stop using Making Tax Digital for Income Tax from the $currentStartYear to $currentEndYear tax year onwards."),
+                  elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can stop using Making Tax Digital for Income Tax for the $currentStartYear to $currentEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-1")(s"Stop from 6 April $currentStartYear"),
                   elementTextByID("manage-reporting-obligations-card-heading-2")("Sign up from the next tax year"),
                   elementTextByID("manage-reporting-obligations-card-link-2")("Sign up"),
