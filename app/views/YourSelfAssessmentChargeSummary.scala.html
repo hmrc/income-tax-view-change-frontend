@@ -101,12 +101,17 @@
         <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
             s"${
                 getMessage(
-                    if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
-                        if(viewModel.chargeItem.isOverdue()) "overDueCharge"
-                        else "charge"
+                    if(viewModel.chargeItem.isCodingOut) "toBeCollected" else if(viewModel.chargeItem.isOverdue()) "overDueCharge"
+                    else "charge"
                 )
-            }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}"
-        }</h2>
+            }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}${
+                if(viewModel.chargeItem.interestOutstandingAmount)
+                    s"\t${
+                        messages("yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe")
+                    }" else ""
+            }"
+        }
+         </h2>
 
       @if(!viewModel.chargeItem.isCodingOut) {
           @p(id = Some("due-date-text")) {
