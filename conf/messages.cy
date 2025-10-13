@@ -225,9 +225,9 @@ taxYears.overdue                                               = Yn hwyr
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
 taxYears.oldSa.content.text                                    = Er mwyn bwrw golwg dros grynodeb o cyn y flwyddyn dreth {0} i {1}, mae angen i chi fynd i’ch
 taxYears.oldSa.content.link                                    = cyfrif Hunanasesiad ar-lein blaenorol
-taxYears.oldSa.agent.content.1								   = I fwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi fewngofnodi i’ch
+taxYears.oldSa.agent.content.1								   = I weld crynodeb cleient o gyfnod cyn blwyddyn dreth {0} i {1}, bydd angen i chi fewngofnod i’ch
 taxYears.oldSa.agent.content.2								   = cyfrif Hunanasesiad ar gyfer Asiantau
-taxYears.oldSa.agent.content.3								   = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+taxYears.oldSa.agent.content.3								   = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair Porth y Llywodraeth gwahanol i’r rhai sydd gennych ar gyfer eich cyfrif Gwasanaethau Asiant.
 taxYears.r18.amendment.text                                    = Gallwch fwrw golwg dros dudalennau yn crynhoi blwyddyn dreth i hefyd gael gweld beth yw eich opsiynau o ran diwygio’r ffurflen dreth rydych eisoes wedi’i chyflwyno’r flwyddyn honno.
 
 ## Tax Year Summary Page New ##
