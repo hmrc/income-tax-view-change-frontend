@@ -43,7 +43,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                   ) extends FrontendController(mcc)
   with I18nSupport with FeatureSwitching {
 
-  private val earliestSubmissionTaxYear = 2023
+
   def handleRequest(backUrl: String,
                     isAgent: Boolean,
                     origin: Option[String] = None)
@@ -56,7 +56,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
         utr = user.saUtr,
         itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
         isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
-        earliestSubmissionTaxYear = earliestSubmissionTaxYear,
+        earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
         btaNavPartial = user.btaNavPartial,
         origin = origin)
     } match {
