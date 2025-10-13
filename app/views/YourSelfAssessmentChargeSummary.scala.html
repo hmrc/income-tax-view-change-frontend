@@ -97,20 +97,16 @@
         captionClasses = Some("govuk-caption-xl")
     ))
 
-  @if(!viewModel.chargeItem.isPaid) {
-      @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
-          @h2(messages("yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe",viewModel.chargeItem.outstandingAmount.toCurrencyString))
-      }else {
-      <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
-          s"${
-              getMessage(
-                  if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
-                  if(viewModel.chargeItem.isOverdue()) "overDueCharge"
-                  else "charge"
-              )
-          }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}"
-      }</h2>
-      }
+    @if(!viewModel.chargeItem.isPaid) {
+        <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
+            s"${
+                getMessage(
+                    if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
+                        if(viewModel.chargeItem.isOverdue()) "overDueCharge"
+                        else "charge"
+                )
+            }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}"
+        }</h2>
 
       @if(!viewModel.chargeItem.isCodingOut) {
           @p(id = Some("due-date-text")) {
