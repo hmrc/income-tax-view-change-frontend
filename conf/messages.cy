@@ -1209,6 +1209,8 @@ chargeSummary.whatYouOwe.textOne                                = Bwrw golwg dro
 chargeSummary.whatYouOwe.textTwo                                = i wirio a oes gennych unrhyw beth arall i’w dalu.
 chargeSummary.whatYouOwe.textOne-agent                          = Bwrw golwg dros
 chargeSummary.whatYouOwe.textTwo-agent							= i wirio a oes ganddo unrhyw daliadau eraill i’w talu.
+chargeSummary.whatYouOwe.linkText.concatenated                  = Bwrw golwg dros yr hyn sydd arnoch
+chargeSummary.whatYouOwe.linkText-agent.concatenated            = Bwrw golwg dros yr hyn sydd ar eich cleient
 chargeSummary.whatYouOwe.linkText                               = yr hyn sydd arnoch
 chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
 

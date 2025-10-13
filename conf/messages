@@ -1209,6 +1209,8 @@ chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other charges to pay.
 chargeSummary.whatYouOwe.textOne-agent							   = View
 chargeSummary.whatYouOwe.textTwo-agent							   = to check if they have any other charges to pay.
+chargeSummary.whatYouOwe.linkText.concatenated				       = View what you owe
+chargeSummary.whatYouOwe.linkText-agent.concatenated			   = View what your client owes
 chargeSummary.whatYouOwe.linkText								   = what you owe
 chargeSummary.whatYouOwe.linkText-agent							   = what your client owes
 
