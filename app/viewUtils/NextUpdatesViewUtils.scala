@@ -42,7 +42,8 @@ class NextUpdatesViewUtils @Inject()(link: link)(
           link(
             link = reportingFrequencyLink,
             messageKey = "nextUpdates.reporting.obligations.p.link",
-            id = Some("reporting-frequency-link")
+            id = Some("reporting-frequency-link"),
+            outerMessage = messages("base.fullstop")
           )
         )
       )
