@@ -20,19 +20,23 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 @import viewUtils.ExternalUrlHelper
-@import views.html.partials.yourSelfAssessmentCharges.ReviewAndReconciliationPoa1And2Explanations
+@import views.html.partials.yourSelfAssessmentCharges.{ReviewAndReconciliationPoa1And2Explanations, WarningRARPoa}
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
 
 @this(
         p: p,
         link: link,
         govukDetails: GovukDetails,
         appConfig: config.FrontendAppConfig,
-        reviewAndReconciliationPoa1And2Explanations: ReviewAndReconciliationPoa1And2Explanations
+        reviewAndReconciliationPoa1And2Explanations: ReviewAndReconciliationPoa1And2Explanations,
+        govukWarningText: GovukWarningText,
+        warningRARPoa: WarningRARPoa
 )
 
-@(viewModel: ChargeSummaryViewModel)(
+
+@(viewModel: ChargeSummaryViewModel
+)(
         implicit request: Request[_],
         messages: Messages
 )
@@ -46,6 +50,8 @@
     summary = Text(getMessage("whatIsPaymentOnAccount.linkText")),
     content = HtmlContent(html)
 ))
+
+    @warningRARPoa(viewModel)
 
 @html= {
 @p(){@messages("selfAssessmentCharges.whatIsPaymentOnAccount.p1")}
