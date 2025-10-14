@@ -43,7 +43,7 @@ htmlTitle                                                       = {0} - Rheoli�
 htmlTitle.agent                                                 = {0} - Rheoli’ch Hunanasesiad - GOV.UK
 htmlTitle.errorPage                                             = {0} - GOV.UK
 htmlTitle.invalidInput                                          = Gwall: {0} - GOV.UK
-htmlTitle.confirmClient                                         = {0} - GOV.UK
+htmlTitle.confirmClient                                         = {0} - Rheoli’ch Hunanasesiad - GOV.UK
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
@@ -59,6 +59,7 @@ agent.no_assignment.button                                      = Ewch i gyfrif 
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
+agent.utr_error.title                                           = Ni allwch fwrw golwg dros y cleient hwn - Rheoli’ch Hunanasesiad
 agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:
 agent.utr_error.reason.bullet1                                  = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
 agent.utr_error.reason.bullet2                                  = mae angen i’ch cleient {0}

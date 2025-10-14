@@ -59,7 +59,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then("The UTR Error page is returned to the user")
         result should have(
           httpStatus(OK),
-          pageTitleAgent("agent.utr_error.heading", isErrorPage = true)
+          pageTitleAgent("agent.utr_error.title", isErrorPage = true)
         )
       }
     }
