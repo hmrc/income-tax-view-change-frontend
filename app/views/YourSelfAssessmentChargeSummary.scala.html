@@ -121,22 +121,6 @@
 
 
       @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
-          @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit) {
-              @p() {
-                  @messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p1")
-                  @link(id = Some("poa1-link"), link = viewModel.poaOneChargeUrl, messageKey = "selfAssessmentCharges.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
-                  @messages("selfAssessmentCharges.reviewAndReconcilePoa.p.textTwo", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
-              }
-          } else {
-              @p() {
-                  @messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p1")
-                  @link(id = Some("poa2-link"), link = viewModel.poaTwoChargeUrl, messageKey = "selfAssessmentCharges.reviewAndReconcilePoa2.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
-                  @messages("selfAssessmentCharges.reviewAndReconcilePoa.p.textTwo", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
-              }
-          }
-          @p() {
-              @messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p2")
-          }
 
           @warningRARPoa(viewModel)
 
@@ -151,7 +135,8 @@
           viewModel.taxYearTo.toString,
           viewModel.isAgent,
           viewModel.LSPUrl,
-          viewModel.LPPUrl
+          viewModel.LPPUrl,
+          viewModel: ChargeSummaryViewModel
       )
       @if(yourSelfAssessmentChargesFS) {
       @p() {
