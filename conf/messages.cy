@@ -281,7 +281,7 @@ tax-year-summary.payments.class2Nic.text                       = Yswiriant Gwlad
 tax-year-summary.payments.codingOut.text                       = Taliad mantoli a gesglir drwy’r cod treth TWE
 tax-year-summary.payments.poa1CodedOut.text                    = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy god treth TWE
 tax-year-summary.payments.poa2CodedOut.text                    = Ail daliad ar gyfrif sy’n cael ei gasglu drwy god treth TWE
-tax-year-summary.na                                            = Amh
+tax-year-summary.noData                                            = Amh
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
@@ -1094,7 +1094,7 @@ chargeSummary.paymentAmountCodingOut                            = Swm y taliad
 chargeSummary.paidToDate                                        = wedi’i dalu hyd yma
 chargeSummary.remainingDue                                      = I’w dalu o hyd
 chargeSummary.overdue                                           = Yn hwyr
-chargeSummary.na                                                = Amh
+chargeSummary.noData                                                = Amh
 
 chargeSummary.allocation                                           = Dyraniad
 chargeSummary.whereMoneyWent                                       = Ble aeth eich arian
@@ -1362,7 +1362,7 @@ paymentAllocation.tableHead.amount                              = Swm
 paymentAllocation.taxYear										= {0} i {1}
 paymentAllocation.taxYearHidden									= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
-paymentAllocation.na                                            = Amh
+paymentAllocation.noData                                            = Amh
 paymentAllocation.not-applicable                                = Ddim yn berthnasol
 paymentAllocation.moneyOnAccount                                = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
 

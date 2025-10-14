@@ -280,7 +280,7 @@ tax-year-summary.payments.class2Nic.text                           = Class 2 Nat
 tax-year-summary.payments.codingOut.text                           = Balancing payment collected through PAYE tax code
 tax-year-summary.payments.poa1CodedOut.text                        = First payment on account collected through PAYE tax code
 tax-year-summary.payments.poa2CodedOut.text                        = Second payment on account collected through PAYE tax code
-tax-year-summary.na                                                = N/A
+tax-year-summary.noData                                            = No data
 tax-year-summary.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
 tax-year-summary.forecast_total_title                              = 6 April {0} to 5 April {1} forecast
 tax-year-summary.forecast.tax-due                                  = Forecast Self Assessment tax amount
@@ -1094,7 +1094,7 @@ chargeSummary.paymentAmountCodingOut							   = Payment amount
 chargeSummary.paidToDate    									   = Paid to date
 chargeSummary.remainingDue   									   = Still to pay
 chargeSummary.overdue                                              = Overdue
-chargeSummary.na                                                   = N/A
+chargeSummary.noData                                               = No data
 
 chargeSummary.allocation                                           = Allocation
 chargeSummary.whereMoneyWent                                       = Where your money went
@@ -1362,7 +1362,7 @@ paymentAllocation.tableHead.amount                              = Amount
 paymentAllocation.taxYear										= {0} to {1}
 paymentAllocation.taxYearHidden			    					= Tax year {0} to {1}
 paymentAllocation.creditOnAccount                               = Credit on account
-paymentAllocation.na                                            = N/A
+paymentAllocation.noData                                        = No data
 paymentAllocation.not-applicable                                = Not applicable
 paymentAllocation.moneyOnAccount                                = Remaining amount (added to available credit)
 

@@ -25,7 +25,7 @@
 @paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiAllocationDetails =>
     <tbody class="govuk-table__body">
         <tr>
-            <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
+            <td class="govuk-table__cell">@messages("paymentAllocation.noData")</td>
             <td class="govuk-table__cell" id="payment-allocation-0">
                 @if(isAgent){
                     <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.showAgent(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">

@@ -69,7 +69,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentAllocationsPoa2IncomeTax: String = messages("paymentAllocation.paymentAllocations.poa2.incomeTax")
   val paymentAllocationsPoa1Nic4: String = messages("paymentAllocation.paymentAllocations.poa1.nic4")
   val paymentAllocationsPoa2Nic4: String = messages("paymentAllocation.paymentAllocations.poa2.nic4")
-  val moneyOnAccountNA: String = s"${messages("paymentAllocation.moneyOnAccount")} ${messages("paymentAllocation.na")}"
+  val moneyOnAccountNA: String = s"${messages("paymentAllocation.moneyOnAccount")} ${messages("paymentAllocation.noData")}"
   val moneyOnAccountMessage: String = s"${messages("paymentAllocation.moneyOnAccount")}"
   val dueDate = "31 Jan 2021"
   val paymentAllocationTaxYearFrom2017to2018: String = messages("paymentAllocation.taxYear", "2017", "2018")
@@ -289,7 +289,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a payment within the table" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
         val allTableData = document.selectHead("tbody").selectHead("tr")
-        allTableData.selectNth("td", 1).text() shouldBe messages("paymentAllocation.na")
+        allTableData.selectNth("td", 1).text() shouldBe messages("paymentAllocation.noData")
         allTableData.selectNth("td", 2).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")}"
         allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.taxYearHidden", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
         allTableData.selectNth("td", 4).text() shouldBe "£300.00"
