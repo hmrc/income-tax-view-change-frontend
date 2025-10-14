@@ -275,7 +275,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "tax-year-summary.payments.codingOut.text"),
                     elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
-                    elementTextBySelector("#codedOutBCDExplanation")(codingOutMessageWithStringMessagesArgument(2016, 2017))
+                    elementTextBySelector("#codedOutBCDExplanation")(codingOutMessageWithStringMessagesArgument(2017, 2018))
                   )
                 }
               }

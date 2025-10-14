@@ -42,11 +42,10 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@collectionTaxYear = @{chargeItem.taxYear.nextYear}
-@unpaidTaxYear = @{chargeItem.taxYear.previousYear}
+@collectionTaxYear = @{chargeItem.taxYear.addYears(2)}
 
 @p(id=Some("codedOutBCDExplanation")) {
-    @getMessage("codingOutBCDMessage", unpaidTaxYear.startYear.toString, unpaidTaxYear.endYear.toString,
+    @getMessage("codingOutBCDMessage", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
         collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
 }
 
