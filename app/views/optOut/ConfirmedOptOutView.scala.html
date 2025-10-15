@@ -391,7 +391,7 @@
     btaNavPartial = user.btaNavPartial,
 ) {
 
-    @if(confirmedOptOutViewScenarios == Scenario1Content) {
+    @if(confirmedOptOutViewScenarios == CurrentYearNYQuarterlyOrAnnualScenario) {
         @greenPanelScenario1And4
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
@@ -401,7 +401,7 @@
         @scenario1ReportingObligationsSection
     }
 
-    @if(confirmedOptOutViewScenarios == Scenario2Content) {
+    @if(confirmedOptOutViewScenarios == CurrentYearNYMandatedScenario) {
         @greenPanelScenario2
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
@@ -412,7 +412,7 @@
         @scenario2ReportingObligationsSection
     }
 
-    @if(confirmedOptOutViewScenarios == Scenario3Content) {
+    @if(confirmedOptOutViewScenarios == NextYearCYMandatedOrQuarterlyScenario) {
         @greenPanelScenario3
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
@@ -423,7 +423,7 @@
         @scenario3ReportingObligationsSection
     }
 
-    @if(confirmedOptOutViewScenarios == Scenario4Content) {
+    @if(confirmedOptOutViewScenarios == NextYearCYAnnualScenario) {
         @greenPanelScenario1And4
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
@@ -433,7 +433,7 @@
         @scenario4ReportingObligationsSection
     }
 
-    @if(confirmedOptOutViewScenarios == Scenario5Content) {
+    @if(confirmedOptOutViewScenarios == PreviousAndNoStatusValidScenario) {
         @greenPanelScenario5
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
@@ -441,5 +441,14 @@
             @submitTaxReturnScenario5Paragraph1
         </div>
         @scenario5ReportingObligationsSection
+    }
+
+    @if(confirmedOptOutViewScenarios == DefaultValidScenario) {
+        @greenPanelScenario1And4
+        @revisedDeadlinesBlock
+        <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
+            @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
+            @submitTaxReturnParagraph1
+        </div>
     }
 }

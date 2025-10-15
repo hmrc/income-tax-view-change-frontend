@@ -68,32 +68,32 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
 
       (chosenTaxYear, optOutProposition.optOutPropositionType) match {
         case (CurrentTaxYear, _) if isCurrentQuarterly && isMandatedNext && quarterlyUpdatesCount > 0 =>
-          Right(Scenario2Content)
+          Right(CurrentYearNYMandatedScenario)
         case (CurrentTaxYear, _) if isCurrentQuarterly && isMandatedNext =>
-          Right(Scenario2Content)
+          Right(CurrentYearNYMandatedScenario)
         case (CurrentTaxYear, Some(MultiYearOptOutProposition(p))) if p.isCurrentYearQuarterly && p.isNextYearQuarterly =>
-          Right(Scenario1Content)
+          Right(CurrentYearNYQuarterlyOrAnnualScenario)
         case (CurrentTaxYear, _) if isCurrentQuarterly && isNextQuarterly =>
-          Right(Scenario1Content)
+          Right(CurrentYearNYQuarterlyOrAnnualScenario)
         case (CurrentTaxYear, _) if isCurrentQuarterly && isNextAnnual && quarterlyUpdatesCount > 0 =>
-          Right(Scenario1Content)
+          Right(CurrentYearNYQuarterlyOrAnnualScenario)
         case (CurrentTaxYear, _) if isCurrentQuarterly && isNextAnnual =>
-          Right(Scenario1Content)
+          Right(CurrentYearNYQuarterlyOrAnnualScenario)
         case (NextTaxYear, _) if isCurrentAnnual && isNextQuarterly =>
-          Right(Scenario4Content)
+          Right(NextYearCYAnnualScenario)
         case (NextTaxYear, _) if isCurrentQuarterly || isNextQuarterly =>
-          Right(Scenario3Content)
+          Right(NextYearCYMandatedOrQuarterlyScenario)
         case (NextTaxYear, _) if isMandatedCurrent && isNextQuarterly =>
-          Right(Scenario3Content)
+          Right(NextYearCYMandatedOrQuarterlyScenario)
         case (NoChosenTaxYear | PreviousTaxYear, _) if
           (isCurrentAnnual && isNextAnnual) ||
             (isCurrentQuarterly && isNextAnnual) ||
             (isCurrentAnnual && isNextQuarterly) ||
             (isCurrentQuarterly && isNextQuarterly) =>
-          Right(Scenario5Content)
+          Right(PreviousAndNoStatusValidScenario)
 
-        case _ =>
-          Left(UnableToDetermineContent)
+        case (PreviousTaxYear | CurrentTaxYear, _) => Right(DefaultValidScenario)
+        case _ => Left(UnableToDetermineContent)
       }
     }
   }

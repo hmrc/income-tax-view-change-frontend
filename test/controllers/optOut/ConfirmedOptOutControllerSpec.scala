@@ -170,7 +170,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
   ".viewScenarioHandler()" when {
 
-    "Scenario1Content" when {
+    "CurrentYearNYQuarterlyOrAnnualScenario" when {
 
       "CurrentTaxYear && MultiYearOptOutProposition && proposition.isCurrentYearQuarterly && proposition.isNextYearQuarterly" should {
 
@@ -199,7 +199,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario1Content)
+            result shouldBe Right(CurrentYearNYQuarterlyOrAnnualScenario)
           }
         }
       }
@@ -231,7 +231,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario1Content)
+            result shouldBe Right(CurrentYearNYQuarterlyOrAnnualScenario)
           }
         }
       }
@@ -263,13 +263,13 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario1Content)
+            result shouldBe Right(CurrentYearNYQuarterlyOrAnnualScenario)
           }
         }
       }
     }
 
-    "Scenario2Content" when {
+    "CurrentYearNYMandatedScenario" when {
 
       "CurrentTaxYear && proposition.isCurrentYearQuarterly && proposition.isNextYear == Mandated && quarterlyUpdatesCount == 0" should {
 
@@ -298,7 +298,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario2Content)
+            result shouldBe Right(CurrentYearNYMandatedScenario)
           }
         }
       }
@@ -330,13 +330,13 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario2Content)
+            result shouldBe Right(CurrentYearNYMandatedScenario)
           }
         }
       }
     }
 
-    "Scenario3Content" when {
+    "NextYearCYMandatedOrQuarterlyScenario" when {
 
       "NextTaxYear && proposition.isCurrentYearQuarterly && proposition.isNextYear == Mandated && quarterlyUpdatesCount == 0" should {
 
@@ -363,7 +363,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(NextTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario3Content)
+            result shouldBe Right(NextYearCYMandatedOrQuarterlyScenario)
           }
         }
       }
@@ -393,13 +393,13 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(NextTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario3Content)
+            result shouldBe Right(NextYearCYMandatedOrQuarterlyScenario)
           }
         }
       }
     }
 
-    "Scenario4Content" when {
+    "NextYearCYAnnualScenario" when {
 
       "NextTaxYear && proposition.isCurrentYearAnnual && proposition.isNextYearQuarterly && quarterlyUpdatesCount == 0" should {
 
@@ -426,13 +426,13 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(NextTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario4Content)
+            result shouldBe Right(NextYearCYAnnualScenario)
           }
         }
       }
     }
 
-    "Scenario5Content" when {
+    "PreviousAndNoStatusValidScenario" when {
 
       "NoChosenTaxYear && proposition.isCurrentYearAnnual && proposition.isNextYearAnnual" should {
 
@@ -459,7 +459,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(NoChosenTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario5Content)
+            result shouldBe Right(PreviousAndNoStatusValidScenario)
           }
         }
       }
@@ -489,7 +489,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(PreviousTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario5Content)
+            result shouldBe Right(PreviousAndNoStatusValidScenario)
           }
         }
       }
@@ -519,7 +519,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(PreviousTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario5Content)
+            result shouldBe Right(PreviousAndNoStatusValidScenario)
           }
         }
       }
@@ -549,11 +549,68 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(PreviousTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(Scenario5Content)
+            result shouldBe Right(PreviousAndNoStatusValidScenario)
           }
         }
       }
     }
 
+    "PreviousYearDefaultScenario" when {
+      val listOfPreviousDefaultLineups = Seq(
+        (ITSAStatus.Exempt, ITSAStatus.Voluntary),
+        (ITSAStatus.Exempt, ITSAStatus.Annual),
+        (ITSAStatus.Exempt, ITSAStatus.Mandated),
+        (ITSAStatus.DigitallyExempt, ITSAStatus.Voluntary),
+        (ITSAStatus.DigitallyExempt, ITSAStatus.Annual),
+        (ITSAStatus.DigitallyExempt, ITSAStatus.Mandated),
+        (ITSAStatus.Dormant, ITSAStatus.Voluntary),
+        (ITSAStatus.Dormant, ITSAStatus.Annual),
+        (ITSAStatus.Dormant, ITSAStatus.Mandated),
+        (ITSAStatus.Exempt, ITSAStatus.Exempt),
+        (ITSAStatus.DigitallyExempt, ITSAStatus.DigitallyExempt),
+        (ITSAStatus.Dormant, ITSAStatus.Dormant),
+        (ITSAStatus.Voluntary, ITSAStatus.Exempt),
+        (ITSAStatus.Annual, ITSAStatus.Exempt),
+        (ITSAStatus.Mandated, ITSAStatus.Exempt),
+        (ITSAStatus.Voluntary, ITSAStatus.DigitallyExempt),
+        (ITSAStatus.Annual, ITSAStatus.DigitallyExempt),
+        (ITSAStatus.Mandated, ITSAStatus.DigitallyExempt),
+        (ITSAStatus.Voluntary, ITSAStatus.Dormant),
+        (ITSAStatus.Annual, ITSAStatus.Dormant),
+        (ITSAStatus.Mandated, ITSAStatus.Dormant)
+      )
+      listOfPreviousDefaultLineups.foreach { statuses =>
+        s"PreviousTaxYear && CY = ${statuses._1} && CY+1 = ${statuses._2}" should {
+
+          "return the correct enum" in {
+
+            val quarterlyUpdatesCount = 0
+
+            when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+              .thenReturn(Future.successful(quarterlyUpdatesCount))
+
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
+              Future(
+                OptOutProposition.createOptOutProposition(
+                  currentYear = TaxYear(2024, 2025),
+                  previousYearCrystallised = false,
+                  previousYearItsaStatus = ITSAStatus.Voluntary,
+                  currentYearItsaStatus = statuses._1,
+                  nextYearItsaStatus = statuses._2
+                )
+              )
+            )
+
+            when(mockOptOutService.determineOptOutIntentYear()(any(), any()))
+              .thenReturn(Future(PreviousTaxYear))
+
+            whenReady(testController.viewScenarioHandler()) { result =>
+              result shouldBe Right(DefaultValidScenario)
+            }
+          }
+        }
+      }
+
+    }
   }
 }
