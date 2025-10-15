@@ -31,7 +31,6 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.AuditExtensions
 import utils.ErrorRecovery
 import controllers.claimToAdjustPoa.routes._
 import models.admin.SubmitClaimToAdjustToNrs
@@ -116,7 +115,6 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
                                        lang: Lang, hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val now = Instant.now()
 
-    val auditTags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags("adjust-payments-on-account", user.path)
 
     val payload = ClaimToAdjustNrsPayload(
       credId                          = user.credId,
@@ -143,9 +141,8 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
       checkSum = checksum
     )
 
-    val metadata: NrsMetadata = baseMetadata
 
-    val submission = NrsSubmission(RawPayload(jsonBytes, user.charset), metadata)
+    val submission = NrsSubmission(RawPayload(jsonBytes, user.charset), baseMetadata)
 
     nrsService.submit(submission).map {
       case Some(resp) => logger.info(s"NRS submission accepted: ${resp.nrsSubmissionId}")
