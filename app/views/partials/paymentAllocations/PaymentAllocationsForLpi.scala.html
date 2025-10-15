@@ -25,6 +25,7 @@
 @paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiAllocationDetails =>
     <tbody class="govuk-table__body">
         <tr>
+            <td class="govuk-table__cell">@messages("paymentAllocation.noData")</td>
             <td class="govuk-table__cell" id="payment-allocation-0">
                 @if(isAgent){
                     <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.showAgent(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
@@ -33,11 +34,12 @@
                     <a class="govuk-link" style="display:block" href="@{controllers.routes.ChargeSummaryController.show(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true, origin)}" class="govuk-link">
                     @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey}")
                 }
-                <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear.toString)</span>
                 </a>
-                <span class="govuk-body-s" aria-hidden="true">@messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear.toString)</span>
             </td>
-            <td class="govuk-table__cell">@messages("paymentAllocation.na")</td>
+            <td class="govuk-table__cell">
+                <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYearHidden", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear.toString)</span>
+                <span class="govuk-body no-wrap" aria-hidden="true">@messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear.toInt - 1).toString, lpiAllocationDetails.documentDetail.taxYear.toString)</span>
+            </td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@lpiAllocationDetails.amount.abs.toCurrencyString</td>
         </tr>
     </tbody>

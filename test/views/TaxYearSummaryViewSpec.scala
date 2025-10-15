@@ -380,7 +380,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val payeSA: String = "Balancing payment collected through PAYE tax code"
     val hmrcAdjustment: String = "HMRC adjustment"
     val cancelledPaye: String = "Cancelled PAYE Self Assessment (through your PAYE tax code)"
-    val na: String = "N/A"
+    val noData: String = "No data"
     val messageHeader: String = "We cannot show this calculation because:"
     val messageAction: String = "! Warning You need to amend and resubmit your return."
     val messageError1: String = "you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose."
@@ -757,8 +757,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      s"display the Due date in the Payments tab for PAYE Self Assessment as ${na}" in new Setup(payeView()) {
-        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe na
+      s"display the Due date in the Payments tab for PAYE Self Assessment as ${noData}" in new Setup(payeView()) {
+        layoutContent.selectHead("#payments-table tr:nth-child(1) td:nth-child(2)").text shouldBe noData
       }
 
       "display the Amount in the payments tab for PAYE Self Assessment" in new Setup(payeView()) {
@@ -822,7 +822,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val paymentTypeText: Element = layoutContent.getElementById("paymentTypeText-0")
         val paymentTypeLinkOption: Option[Element] = Option(layoutContent.getElementById("paymentTypeLink-0"))
         val paymentTabRow: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
-        paymentTabRow.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
+        paymentTabRow.getElementsByClass("govuk-table__cell").first().text() shouldBe "No data"
         paymentTabRow.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(0).toCurrencyString
         paymentTypeText.text shouldBe remainingBalance
         paymentTypeLinkOption.isEmpty shouldBe true
@@ -831,7 +831,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display payments on account on the payments table when coding out is accepted" in new Setup(testPaymentOnAccountChargesCodedOutAcceptedView()) {
         val paymentTypeText1: Element = layoutContent.getElementById("paymentTypeLink-0")
         val paymentTabRow1: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
-        paymentTabRow1.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
+        paymentTabRow1.getElementsByClass("govuk-table__cell").first().text() shouldBe "No data"
         paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText1.text shouldBe codedOutPoa1
         paymentTypeText1.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
@@ -839,7 +839,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
         val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
         val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
-        paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "N/A"
+        paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "No data"
         paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText2.text shouldBe codedOutPoa2
         paymentTypeText2.attr("href") shouldBe controllers.routes.ChargeSummaryController.show(

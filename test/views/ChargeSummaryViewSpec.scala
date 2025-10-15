@@ -1005,7 +1005,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.select("h1").text() shouldBe balancingChargeInterestHeading
       }
       
-      "display balancing charge due date as N/A and hide sections - Payment Breakdown," +
+      "display balancing charge due date as No data and hide sections - Payment Breakdown," +
         "Any payments you make, Payment History when balancing charge is 0" in new TestSetup(
           baseBalancing.copy(
               taxYear = TaxYear.forYearEnd(2018),
@@ -1014,7 +1014,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
               documentDate = LocalDate.of(2018, 3, 29),
               lpiWithDunningLock = None
             )) {
-          document.select(".govuk-summary-list").text() shouldBe "Due date N/A Amount £0.00 Still to pay £0.00"
+          document.select(".govuk-summary-list").text() shouldBe "Due date No data Amount £0.00 Still to pay £0.00"
           document.select("p").get(3).text shouldBe "View what you owe to check if you have any other charges to pay."
           document.select("#payment-history-table").isEmpty shouldBe true
           document.select("#heading-payment-breakdown").isEmpty shouldBe true
@@ -1153,11 +1153,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         verifySummaryListRowNumeric(1, dueDate, "Overdue 15 May 2019")
       }
 
-      "no due date, display as N/A" in new TestSetup(
+      "no due date, display as No data" in new TestSetup(
         chargeItem = chargeItemModel(dueDate = None, lpiWithDunningLock = None),
         dueDate = None)
       {
-        verifySummaryListRowNumeric(1, dueDate, "N/A")
+        verifySummaryListRowNumeric(1, dueDate, "No data")
       }
 
       "an interest charge, display interest end date" in new TestSetup(

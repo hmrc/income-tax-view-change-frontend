@@ -51,11 +51,11 @@
                 (if(interestCharge) {
                     chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
                 } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.codedOutStatus == None) {
-                    chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDate).getOrElse(messages("tax-year-summary.na"))
+                    chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDate).getOrElse(messages("tax-year-summary.noData"))
                 } else if (chargeItem.isCredit) {
-                    chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("chargeSummary.na"))
+                    chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("chargeSummary.noData"))
                 } else {
-                    chargeItem.dueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.na"))
+                    chargeItem.dueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.noData"))
                 }).toNonBreaking
             }
         </dd>
