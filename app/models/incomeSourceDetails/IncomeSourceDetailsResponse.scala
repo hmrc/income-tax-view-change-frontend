@@ -53,6 +53,12 @@ case class IncomeSourceDetailsModel(
     (startingTaxYear to dateService.getCurrentTaxYearEnd).toList
   }
 
+  def earliestSubmissionTaxYear: Option[Int] = {
+    val allEndYears = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
+      .map(_.getYear)
+    allEndYears.sorted.headOption
+  }
+
   def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
     .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
