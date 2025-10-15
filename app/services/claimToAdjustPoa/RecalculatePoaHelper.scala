@@ -143,13 +143,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
       checkSum = checksum
     )
 
-    val metadata: NrsMetadata = {
-
-      val currentHeaderData: JsObject = baseMetadata.headerData.as[JsObject]
-      val mergedHeaderData: JsObject = currentHeaderData ++ Json.obj("tags" -> Json.toJson(auditTags))
-
-      baseMetadata.copy(headerData = mergedHeaderData)
-    }
+    val metadata: NrsMetadata = baseMetadata
 
     val submission = NrsSubmission(RawPayload(jsonBytes, user.charset), metadata)
 
