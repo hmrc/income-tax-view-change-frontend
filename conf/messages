@@ -446,6 +446,23 @@ tax-year-summary.agent.message.C559114                             = for your cl
 tax-year-summary.adjust-poa-paragraph                              = You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account.
 tax-year-summary.adjust-poa                                        = Adjust payments on account
 
+# Tax Year Summary - PFA #
+tax-year-summary.latest-calculation                                = Latest calculation
+tax-year-summary.latest-calculation-desc                           = Your tax return was amended on {0} and as a result this is your most up-to-date calculation.
+
+tax-year-summary.previous-calculation                              = Previous calculation
+tax-year-summary.previous-calculation-desc                         = When your tax return is amended it changes your tax calculation. If this happens, this page shows any previous tax calculations you may have.
+tax-year-summary.previous-calculation-subheading                   = Calculation made on {0}
+tax-year-summary.previous-calculation-note                         = The tax return was filed then.
+tax-year-summary.previous-calculation-amend-subheading             = Amending a submitted tax return
+tax-year-summary.previous-calculation-bullet-start                 = You can change your tax return after you have filed it. To do this online you must:
+tax-year-summary.previous-calculation-bullet-1                     = use the software or HMRC online service used to submit the return
+tax-year-summary.previous-calculation-bullet-2                     = do it within 12 months of the
+tax-year-summary.previous-calculation-bullet-2-link                = Self Assessment deadline
+tax-year-summary.previous-calculation-example                      = For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028.
+tax-year-summary.previous-calculation-contact-hmrc                 = If that date has passed, or you cannot amend your return for another reason,
+tax-year-summary.previous-calculation-contact-hmrc-link            = you’ll need to contact HMRC
+tax-year-summary.previous-calculation-bill                         = Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income

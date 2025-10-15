@@ -557,6 +557,13 @@ object NewCalcBreakdownItTestConstants {
     )
   )
 
+  val liabilityCalculationModelSuccessfulWithAmendment: LiabilityCalculationResponse = liabilityCalculationModelSuccessful.copy(
+    metadata = Metadata(
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      calculationType = "CA"
+    )
+  )
+
   val liabilityCalculationModelErrorMessages = liabilityCalculationModelDeductionsMinimal.copy(messages = Some(Messages(
     errors = Some(List(
       Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
