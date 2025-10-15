@@ -158,7 +158,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         mainType = Some("SA Balancing Charge"),
         transactionId = Some("testTransactionId2"),
         mainTransaction = Some("4910"),
-        items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 23)))))
+        items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 23)),codedOutStatus = Some("C"))))
       )
     )
   )
@@ -223,7 +223,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
         mainType = Some("SA Balancing Charge"),
         transactionId = Some("testTransactionId3"),
         mainTransaction = Some("4910"),
-        items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 31)))))
+        items = Some(Seq(SubItem(Some(LocalDate.of(2022, 1, 31)),codedOutStatus = Some("C"))))
       )
     )
   )

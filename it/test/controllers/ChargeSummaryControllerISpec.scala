@@ -263,8 +263,9 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                         "mainTransaction" -> "4910",
                         "chargeReference" -> "chargeRef",
                         "items" -> Json.arr(
+                          Json.obj(
                           "codedOutStatus" -> "I"
-                        )
+                        ))
                       )
                     )))
 
