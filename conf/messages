@@ -24,10 +24,10 @@ base.fullstop                                                   = .
 accessibility.this-section-is                                   = This section is:
 
 # Fallback Back Links
-back.whatYouOwe     = Back to What You Owe
-back.yourSelfAssessmentChargeSummary  = Back to Your Self Assessment charges
-back.paymentHistory = Back to Payment History
-back.taxYearSummary = Back to Tax Year Summary
+back.whatYouOwe     = Back
+back.yourSelfAssessmentChargeSummary  = Back
+back.paymentHistory = Back
+back.taxYearSummary = Back
 back.nomatch        = Back
 
 # Agent Base
