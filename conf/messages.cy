@@ -1362,7 +1362,7 @@ paymentAllocation.tableHead.amount                              = Swm
 paymentAllocation.taxYear										= {0} i {1}
 paymentAllocation.taxYearHidden									= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
-paymentAllocation.noData                                            = Amh
+paymentAllocation.noData                                        = Dim data
 paymentAllocation.not-applicable                                = Ddim yn berthnasol
 paymentAllocation.moneyOnAccount                                = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
 
