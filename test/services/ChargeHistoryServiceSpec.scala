@@ -25,7 +25,7 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testConstants.BaseTestConstants.{docNumber, taxYear, testNino}
 import testUtils.TestSupport
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnector {
 
@@ -39,23 +39,23 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
 
   val testChargeHistory: List[ChargeHistoryModel] = List(ChargeHistoryModel(
     taxYear = taxYear.toString, documentId = docNumber, documentDate = LocalDate.of(2021, 1, 1), documentDescription = "desc", totalAmount = 1000,
-    reversalDate = LocalDate.of(2021, 1, 1), reversalReason = "", poaAdjustmentReason = Some(MainIncomeLower.code)
+    reversalDate = LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), reversalReason = "", poaAdjustmentReason = Some(MainIncomeLower.code)
   ))
 
   val chargesHistoryWithHistory: ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", Some(testChargeHistory))
 
   val chargeHistoryList: List[ChargeHistoryModel] = List(
-    ChargeHistoryModel("A", "12345", LocalDate.of(2024, 2, 10), "A", 2500, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
-    ChargeHistoryModel("A", "34556", LocalDate.of(2024, 2, 10), "A", 2000, LocalDate.of(2024, 3, 15), "Reversal", Some(Increase.code))
+    ChargeHistoryModel("A", "12345", LocalDate.of(2024, 2, 10), "A", 2500, LocalDateTime.of(LocalDate.of(2024, 2, 10), LocalTime.of(9, 30, 45)), "Reversal", Some(MainIncomeLower.code)),
+    ChargeHistoryModel("A", "34556", LocalDate.of(2024, 2, 10), "A", 2000, LocalDateTime.of(LocalDate.of(2024, 3, 15), LocalTime.of(9, 30, 45)), "Reversal", Some(Increase.code))
   )
   val jumbledChargeHistoryList: List[ChargeHistoryModel] = List(
-    ChargeHistoryModel("A", "12345", LocalDate.of(2024, 2, 10), "A", 2500, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
-    ChargeHistoryModel("A", "34556", LocalDate.of(2024, 7, 15), "A", 2300, LocalDate.of(2024, 10, 20), "Reversal", Some(MainIncomeLower.code)),
-      ChargeHistoryModel("A", "77777", LocalDate.of(2024, 2, 10), "A", 2000, LocalDate.of(2024, 7, 15), "Reversal", Some(Increase.code)))
+    ChargeHistoryModel("A", "12345", LocalDate.of(2024, 2, 10), "A", 2500, LocalDateTime.of(LocalDate.of(2024, 2, 10), LocalTime.of(9, 30, 45)), "Reversal", Some(MainIncomeLower.code)),
+    ChargeHistoryModel("A", "34556", LocalDate.of(2024, 7, 15), "A", 2300, LocalDateTime.of(LocalDate.of(2024, 10, 20), LocalTime.of(9, 30, 45)), "Reversal", Some(MainIncomeLower.code)),
+      ChargeHistoryModel("A", "77777", LocalDate.of(2024, 2, 10), "A", 2000, LocalDateTime.of(LocalDate.of(2024, 7, 15), LocalTime.of(9, 30, 45)), "Reversal", Some(Increase.code)))
   val chargeHistoryWithAmended: List[ChargeHistoryModel] = List(
-    ChargeHistoryModel("A", "77777", LocalDate.of(2024, 1, 15), "TRM Amend Charge", 2500, LocalDate.of(2024, 1, 15), "amended return", None),
-    ChargeHistoryModel("A", "12345", LocalDate.of(2024, 1, 15), "A", 2000, LocalDate.of(2024, 2, 10), "Reversal", Some(MainIncomeLower.code)),
-    ChargeHistoryModel("A", "34556", LocalDate.of(2024, 2, 10), "A", 2300, LocalDate.of(2024, 3, 15), "Reversal", Some(Increase.code))
+    ChargeHistoryModel("A", "77777", LocalDate.of(2024, 1, 15), "TRM Amend Charge", 2500, LocalDateTime.of(LocalDate.of(2024, 1, 15), LocalTime.of(9, 30, 45)), "amended return", None),
+    ChargeHistoryModel("A", "12345", LocalDate.of(2024, 1, 15), "A", 2000, LocalDateTime.of(LocalDate.of(2024, 2, 10), LocalTime.of(9, 30, 45)), "Reversal", Some(MainIncomeLower.code)),
+    ChargeHistoryModel("A", "34556", LocalDate.of(2024, 2, 10), "A", 2300, LocalDateTime.of(LocalDate.of(2024, 3, 15), LocalTime.of(9, 30, 45)), "Reversal", Some(Increase.code))
   )
   val unchangedDocumentDetail: DocumentDetail = DocumentDetail(
     1, "A", Some("PoA1"), None, 2500, 2500, LocalDate.of(2024, 1, 10)
@@ -150,9 +150,9 @@ class ChargeHistoryServiceSpec extends TestSupport with MockChargeHistoryConnect
 
         // should have from 1554:
         val chargeHistoryList: List[ChargeHistoryModel] = List(
-          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 6, 1), "ITSA - POA 2", 1879.93, LocalDate.of(2024, 7, 19), "Reversal", Some(MainIncomeLower.code)),
-          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 7, 19), "ITSA - POA 2", 1500, LocalDate.of(2024, 8, 2), "Reversal", Some(MainIncomeLower.code)),
-          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 2), "ITSA - POA 2", 1400, LocalDate.of(2024, 8, 3), "Reversal", Some(MainIncomeLower.code))
+          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 6, 1), "ITSA - POA 2", 1879.93, LocalDateTime.of(LocalDate.of(2024, 7, 19), LocalTime.of(9, 30, 45)), "Reversal", Some(MainIncomeLower.code)),
+          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 7, 19), "ITSA - POA 2", 1500, LocalDateTime.of(LocalDate.of(2024, 8, 2), LocalTime.of(9, 30, 45)), "Reversal", Some(MainIncomeLower.code)),
+          ChargeHistoryModel("2024", "12345", LocalDate.of(2024, 8, 2), "ITSA - POA 2", 1400, LocalDateTime.of(LocalDate.of(2024, 8, 3), LocalTime.of(9, 30, 45)), "Reversal", Some(MainIncomeLower.code))
         )
 
         // the nth change will have a charge history model with the date of the change n, and the amount of change n-1

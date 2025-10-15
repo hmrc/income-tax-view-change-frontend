@@ -25,6 +25,7 @@ import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
 import services.DateServiceInterface
+import utils.JsonUtils
 import utils.Utilities._
 
 
@@ -36,7 +37,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
                               isLatePaymentCharge: Boolean,
                               isMFADebit: Boolean = false,
                               taxYear: TaxYear
-                             )(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions {
+                             )(implicit val dateService: DateServiceInterface) extends ExtendedAuditModel with PaymentSharedFunctions with JsonUtils {
 
   private def getAllocationDescriptionFromKey(key: Option[String]): String = {
     key match {

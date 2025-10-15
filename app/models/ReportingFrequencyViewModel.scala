@@ -98,16 +98,17 @@ case class ReportingFrequencyViewModel(
     val currentYearStatus = proposition.currentTaxYear.status
     val nextYearStatus = proposition.nextTaxYear.status
 
-    val previousYearCheck = if (proposition.previousTaxYear.canOptOut) {
-      if (optOutTaxYears.size > 1) Some(true) else Some(false)
-    } else {
-      None
+    val previousYearCheck = (proposition.previousTaxYear.canOptOut, currentYearStatus) match {
+      case (false, _) => None
+      case (true, Voluntary) => Some(true)
+      case (true, _) => Some(false)
     }
 
-    val currentYearCheck = currentYearStatus match {
-      case Voluntary => Some(optOutTaxYears.size > 1)
-      case Annual    => Some(optInTaxYears.size > 1)
-      case _         => None
+    val currentYearCheck = (currentYearStatus, nextYearStatus) match {
+      case (Voluntary, Voluntary)  => Some(true)
+      case (Annual, Annual)        => Some(true)
+      case (Voluntary | Annual, _) => Some(false)
+      case _                       => None
     }
 
     val nextYearCheck = nextYearStatus match {

@@ -1297,7 +1297,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-02-14",
         "documentDescription" -> poa1Description,
         "totalAmount" -> amount,
-        "reversalDate" -> "2019-02-14",
+        "reversalDate" -> "2019-02-14T09:30:45Z",
         "reversalReason" -> "Customer Request",
         "poaAdjustmentReason" -> "002"
       )

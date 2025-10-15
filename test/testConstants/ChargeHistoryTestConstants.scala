@@ -20,7 +20,7 @@ import models.chargeHistory._
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testNino}
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 object ChargeHistoryTestConstants {
 
@@ -63,7 +63,7 @@ object ChargeHistoryTestConstants {
     idValue = testNino,
     regimeType = "ITSA",
     chargeHistoryDetails = Some(List(
-      ChargeHistoryModel("2017", "123456789", LocalDate.parse("2020-01-29"), "Balancing Charge", 123456789012345.67, LocalDate.of(2020, 2, 24), "amended return", Some("005")))))
+      ChargeHistoryModel("2017", "123456789", LocalDate.parse("2020-01-29"), "Balancing Charge", 123456789012345.67, LocalDateTime.of(LocalDate.of(2020, 2, 24), LocalTime.of(9, 30, 45)), "amended return", Some("005")))))
 
   val testChargeHistoryErrorModelParsing: ChargesHistoryErrorModel = ChargesHistoryErrorModel(
     testErrorStatus, "Json Validation Error. Parsing ChargeHistory Data Response")
@@ -86,7 +86,7 @@ object ChargeHistoryTestConstants {
         "documentDate" -> "2020-01-29",
         "documentDescription" -> "Balancing Charge",
         "totalAmount" -> 123456789012345.67,
-        "reversalDate" -> "2020-02-24",
+        "reversalDate" -> "2020-02-24T09:30:45Z",
         "reversalReason" -> "amended return",
         "poaAdjustmentReason" -> "005"
       )))
@@ -99,7 +99,7 @@ object ChargeHistoryTestConstants {
         "documentDate" -> "2020-01-29",
         "documentDescription" -> "Balancing Charge",
         "totalAmount" -> 10.33,
-        "reversalDate" -> "2020-02-24"
+        "reversalDate" -> "2020-02-24T09:30:45Z"
       )
     )
   )
