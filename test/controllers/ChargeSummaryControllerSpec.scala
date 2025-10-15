@@ -107,7 +107,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00 (not including estimated interest)"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
@@ -126,7 +126,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Second payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00 (not including estimated interest)"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
@@ -146,7 +146,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Balancing payment"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £10.33"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £10.33 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
@@ -164,7 +164,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £100.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £100.00 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your balancing payment"
@@ -223,7 +223,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Balancing payment: extra amount due to amended return"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33"
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementById("itsa-return-amendment-p1").text() shouldBe "You owe this extra tax because of a change you made to your return."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
@@ -242,7 +242,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Late submission penalty"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33"
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementById("LSP-content-1").text() shouldBe "You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return."
                 document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
@@ -264,7 +264,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First late payment penalty"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £200.33"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £200.33 (not including estimated interest)"
                 document.getElementById("due-date-text").text() shouldBe "Due 29 March 2020"
                 document.getElementById("first-payment-penalty-p1").text() shouldBe "You have received this penalty because you are late paying your Income Tax."
                 document.getElementById("charge-history-heading").text() shouldBe "First late payment penalty history"
