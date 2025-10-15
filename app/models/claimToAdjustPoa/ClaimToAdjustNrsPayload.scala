@@ -33,5 +33,23 @@ case class ClaimToAdjustNrsPayload(
 )
 
 object ClaimToAdjustNrsPayload {
-  implicit val writes: OWrites[ClaimToAdjustNrsPayload] = Json.writes[ClaimToAdjustNrsPayload]
+  implicit val writes: OWrites[ClaimToAdjustNrsPayload] =
+    OWrites[ClaimToAdjustNrsPayload] { payload =>
+      Json.obj(
+        "detail" -> Json.obj(
+          "adjustmentReasonCode"            -> payload.adjustmentReasonCode,
+          "adjustmentReasonDescription"     -> payload.adjustmentReasonDescription,
+          "credId"                          -> payload.credId,
+          "isDecreased"                     -> payload.isDecreased,
+          "mtditid"                         -> payload.mtditId,
+          "nino"                            -> payload.nino,
+          "outcome"                         -> Json.obj("isSuccessful" -> true),
+          "previousPaymentOnAccountAmount"  -> payload.previousPaymentOnAccountAmount,
+          "requestedPaymentOnAccountAmount" -> payload.requestedPaymentOnAccountAmount,
+          "saUtr"                           -> payload.saUtr,
+          "generatedAt"                     -> payload.generatedAt,
+          "userType"                        -> payload.userType
+        )
+      )
+    }
 }
