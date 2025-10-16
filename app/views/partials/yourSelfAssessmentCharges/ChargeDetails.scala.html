@@ -23,12 +23,14 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
 @import models.financialDetails.FirstLatePaymentPenalty
 @import models.financialDetails.ITSAReturnAmendment
+@import models.financialDetails.ITSAReturnAmendmentCredit
 @import views.html.partials.yourSelfAssessmentCharges.CodedOutExplanationContent
 @import views.html.partials.yourSelfAssessmentCharges.FirstLatePaymentPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
 @import views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentContent
+@import views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentCreditContent
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
 @import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
@@ -44,6 +46,7 @@
     codedOutExplanationContent: CodedOutExplanationContent,
     classTwoNICSContent: ClassTwoNICSContent,
     itsaReturnAmendmentContent: ItsaReturnAmendmentContent,
+    itsaReturnAmendmentCreditContent: ItsaReturnAmendmentCreditContent,
     govukDetails: GovukDetails
 )
 
@@ -53,7 +56,8 @@
     taxYearTo: String,
     isAgent: Boolean,
     LSPUrl: String,
-    LPPUrl: String
+    LPPUrl: String,
+    wyoUrl: String
 )(
     implicit request: Request[_],
     messages: Messages
@@ -68,6 +72,7 @@
     case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(LSPUrl)
     case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(LPPUrl)
     case (ITSAReturnAmendment, _)       => itsaReturnAmendmentContent()
+    case (ITSAReturnAmendmentCredit, _) => itsaReturnAmendmentCreditContent(chargeItem.taxYear, wyoUrl)
     case _                              =>
 }}
 

@@ -126,7 +126,7 @@
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
-                  if(viewModel.chargeItem.isCredit) "creditAmount" else
+                  if(viewModel.chargeItem.isCreditDrilldownPage) "creditAmount" else
                   if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
                   if(viewModel.chargeItem.isOverdue()) "overDueCharge"
                   else "charge"
@@ -146,12 +146,13 @@
           viewModel.taxYearTo.toString,
           viewModel.isAgent,
           viewModel.LSPUrl,
-          viewModel.LPPUrl
+          viewModel.LPPUrl,
+          if (yourSelfAssessmentChargesFS) saChargesUrl else whatYouOweUrl
       )
 
       @WYOorYSACLinkContent
   }
-    @if(viewModel.chargeItem.isCredit) {
+    @if(viewModel.chargeItem.isCreditDrilldownPage) {
         <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
             s"${getMessage("creditAmount")
             }\t${viewModel.chargeItem.originalAmount.abs.toCurrencyString}"
@@ -159,6 +160,18 @@
         @p(id = Some("credit-created-text")) {
             <b>@getMessage("creditCreated", viewModel.chargeItem.documentDate.toLongDate)</b>
         }
+
+        @chargeDetails(
+            viewModel.chargeItem,
+            viewModel.taxYearFrom.toString,
+            viewModel.taxYearTo.toString,
+            viewModel.isAgent,
+            viewModel.LSPUrl,
+            viewModel.LPPUrl,
+            if (yourSelfAssessmentChargesFS) saChargesUrl else whatYouOweUrl
+        )
+
+        @WYOorYSACLinkContent
     }
     @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
     <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
@@ -191,6 +204,6 @@
         @paymentHistoryTable(viewModel)
     }
     @if(viewModel.isCredit) {
-        @h2("Allocations placeholder")
+        @h2(getMessage("allocation.heading"))
     }
 }

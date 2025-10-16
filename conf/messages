@@ -3396,6 +3396,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading              
 yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount1.text.heading = This first payment on account goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount2.text.heading = This second payment on account goes towards your {0} to {1} tax bill.
 
+yourSelfAssessmentChargeSummary.allocation.heading                                  = Where the credit was applied
+
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = This balancing payment goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = This payment on account goes towards your {0} to {1} tax bill.
 
@@ -3405,6 +3407,11 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                    
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = You owe this extra tax because of a change you made to your return.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = This charge will have a daily interest until it is paid. The interest is backdated to the original due date.
+
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p3Link                    = View what you owe
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p3                        = to check if you have any other charges to pay.
 
 income-sources.check-details-reporting-frequency.heading                        = Sole trader
 income-sources.check-details-reporting-frequency-uk.heading                     = UK property
