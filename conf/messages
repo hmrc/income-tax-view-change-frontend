@@ -1411,7 +1411,7 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustmen
 
 
 ##Tax Years Overview Submissions Tab##
-submissionsTab.desc                                             = This is a record of what submitted for the tax year.
+submissionsTab.desc                                                  = This is a record of what you have submitted for the tax year.
 submissionsTab.due                                                   = Due {0}
 submissionsTab.updateType                                            = Update type
 submissionsTab.incomeSource                                          = Income source
