@@ -34,9 +34,9 @@ object TaxYearSummaryMessages extends ComponentSpecBase {
   val noPaymentsDue: String = messagesAPI("tax-year-summary.payments.no-payments")
   val hmrcAdjustment: String = messagesAPI("tax-year-summary.payments.hmrcAdjustment.text")
 
-  def updateTabDue(dueDate: String): String = messagesAPI("updateTab.due", dueDate)
-  val quarterlyUpdate: String = messagesAPI("updateTab.updateType.quarterly")
-  val propertyIncome: String = messagesAPI("updateTab.obligationType.property")
+  def submissionsTabDue(dueDate: String): String = messagesAPI("submissionsTab.due", dueDate)
+  val quarterlyUpdate: String = messagesAPI("submissionsTab.updateType.quarterly")
+  val propertyIncome: String = messagesAPI("submissionsTab.obligationType.property")
   val paymentHistoryHeading: String = messagesAPI("Payment refund and history")
 
 

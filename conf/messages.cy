@@ -247,7 +247,7 @@ tax-year-summary.tax-calculation.unattended-calc               = Rydym wedi diwe
 tax-year-summary.payments                                      = Taliadau
 tax-year-summary.charges                                       = Costau
 tax-year-summary.forecast                                      = Rhagolwg
-tax-year-summary.updates                                       = Diweddariadau
+tax-year-summary.submissions                                   = Cyflwyniadau
 tax-year-summary.income                                        = Incwm
 tax-year-summary.deductions                                    = Lwfansau a didyniadau
 tax-year-summary.taxable-income                                = Cyfanswm yr incwm y mae treth yn ddyledus arno
@@ -1411,18 +1411,18 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 
 
 ## Tax Years Overview Update Tab ##
-updateTab.desc                                                  = Mae diweddariad chwarterol yn cynnwys incwm a threuliau ar gyfer y flwyddyn dreth hyd yn hyn.
-updateTab.due                                                   = Yn ddyledus erbyn {0}
-updateTab.updateType                                            = Math o ddiweddariad
-updateTab.incomeSource                                          = Ffynhonnell incwm
-updateTab.dateSubmitted                                         = Dyddiad cyflwyno
-updateTab.dateToDate                                            = {0} i {1}
-updateTab.updatePeriodDateToDate                                = Y cyfnod diweddaru o {0} i {1}
-updateTab.obligationType.property                               = Incwm o eiddo
-updateTab.obligationType.business                               = Busnes
-updateTab.obligationType.crystallised                           = Pob ffynhonnell incwm
-updateTab.updateType.quarterly                                  = Diweddariad bob chwarter
-updateTab.updateType.crystallised                               = Datganiad terfynol
+submissionsTab.desc                                                  = Dyma gofnod o’r hyn a gyflwynwyd ar gyfer y flwyddyn dreth.
+submissionsTab.due                                                   = Yn ddyledus erbyn {0}
+submissionsTab.updateType                                            = Math o ddiweddariad
+submissionsTab.incomeSource                                          = Ffynhonnell incwm
+submissionsTab.dateSubmitted                                         = Dyddiad cyflwyno
+submissionsTab.dateToDate                                            = {0} i {1}
+submissionsTab.updatePeriodDateToDate                                = Y cyfnod diweddaru o {0} i {1}
+submissionsTab.obligationType.property                               = Incwm o eiddo
+submissionsTab.obligationType.business                               = Busnes
+submissionsTab.obligationType.crystallised                           = Pob ffynhonnell incwm
+submissionsTab.updateType.quarterly                                  = Diweddariad bob chwarter
+submissionsTab.updateType.crystallised                               = Datganiad terfynol
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol

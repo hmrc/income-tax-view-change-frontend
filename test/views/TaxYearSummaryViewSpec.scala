@@ -351,7 +351,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val unattendedCalcPara: String = s"! Warning We’ve updated the calculation for you. Check your record-keeping software for more details."
     val taxCalculationNoDataNote: String = "You will be able to see your latest tax year calculation here once you have sent an update."
     val charges: String = "Charges"
-    val updates: String = "Updates"
+    val submissions: String = "Submissions"
     val income: String = "Income"
     val section: String = "Section"
     val allowancesAndDeductions: String = "Allowances and deductions"
@@ -385,7 +385,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val messageAction: String = "! Warning You need to amend and resubmit your return."
     val messageError1: String = "you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose."
     val messageError2: String = "you are using cash basis accounting. This means that you cannot claim to set losses against other taxable income."
-    val updateDescription: String = "A quarterly update covers income and expenses for the tax year so far."
+    val submissionsDescription: String = "This is a record of what submitted for the tax year."
     val claimToAdjustPoaParagraph: String = "You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account."
     val claimToAdjustPoaLinkText: String = "Adjust payments on account"
     val claimToAdjustPoaLinkIndividual: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
@@ -504,7 +504,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "show three tabs with the correct tab headings" in new Setup(estimateView()) {
         layoutContent.selectHead("""a[href$="#taxCalculation"]""").text shouldBe taxCalculationTab
         layoutContent.selectHead("""a[href$="#payments"]""").text shouldBe charges
-        layoutContent.selectHead("""a[href$="#updates"]""").text shouldBe updates
+        layoutContent.selectHead("""a[href$="#submissions"]""").text shouldBe submissions
       }
 
       "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
@@ -864,17 +864,17 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
           testYear, fullDocumentDetailModel.transactionId).url
       }
 
-      "display updates by due-date" in new Setup(estimateView()) {
+      "display submissions by due-date" in new Setup(estimateView()) {
 
         testObligationsModel.allDeadlinesWithSource(previous = true).groupBy[LocalDate] { nextUpdateWithIncomeType =>
           nextUpdateWithIncomeType.obligation.due
         }.toList.sortBy(_._1)(localDateOrdering).reverse.foreach { case (due: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
           layoutContent.selectHead(s"#table-default-content-$due").text shouldBe s"Due ${due.toLongDate}"
-          val sectionContent = layoutContent.selectHead(s"#updates")
+          val sectionContent = layoutContent.selectHead(s"#submissions")
           obligations.zip(1 to obligations.length).foreach {
             case (testObligation, index) =>
               val divAccordion = sectionContent.selectHead(s"div:nth-of-type($index)")
-              document.getElementById("update-tab-description").text() shouldBe updateDescription
+              document.getElementById("submissions-tab-description").text() shouldBe submissionsDescription
 
               divAccordion.selectHead("caption").text shouldBe
                 s"The update period from ${testObligation.obligation.start.toLongDateShort} to ${testObligation.obligation.end.toLongDateShort}"
