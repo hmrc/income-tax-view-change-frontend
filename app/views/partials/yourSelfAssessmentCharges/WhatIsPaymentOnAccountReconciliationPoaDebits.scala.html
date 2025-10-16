@@ -23,6 +23,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.{ReviewAndReconciliationPoa1And2Explanations, WarningRARPoa}
 @import models.chargeSummary.ChargeSummaryViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
+@import implicits.ImplicitDateFormatterImpl
 
 @this(
         p: p,
@@ -31,7 +32,8 @@
         appConfig: config.FrontendAppConfig,
         reviewAndReconciliationPoa1And2Explanations: ReviewAndReconciliationPoa1And2Explanations,
         govukWarningText: GovukWarningText,
-        warningRARPoa: WarningRARPoa
+        warningRARPoa: WarningRARPoa,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
 )
 
 
@@ -40,7 +42,7 @@
         implicit request: Request[_],
         messages: Messages
 )
-
+@import implicitDateFormatter.longDate
 @getMessage(key: String, args: String*) = @{
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
@@ -51,7 +53,7 @@
     content = HtmlContent(html)
 ))
 
-    @warningRARPoa(viewModel)
+    @warningRARPoa(viewModel.dueDate.map(_.toLongDate).getOrElse(""))
 
 @html= {
 @p(){@messages("selfAssessmentCharges.whatIsPaymentOnAccount.p1")}

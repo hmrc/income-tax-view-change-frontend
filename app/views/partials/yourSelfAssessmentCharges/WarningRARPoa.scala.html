@@ -30,7 +30,7 @@
 )
 
 @(
-        viewModel: ChargeSummaryViewModel
+        dueDate: String
 )(implicit messages: Messages, request: RequestHeader)
 
 
@@ -39,7 +39,7 @@
  @messages("selfAssessmentCharges.reviewAndReconcilePoa.warning.p1")
 }
 @p(classes="govuk-heading-s"){
- @messages("selfAssessmentCharges.reviewAndReconcilePoa.warning.p2", viewModel.dueDate.getOrElse(""))
+ @messages("selfAssessmentCharges.reviewAndReconcilePoa.warning.p2", dueDate)
 }
 
 }
