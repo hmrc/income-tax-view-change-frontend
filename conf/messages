@@ -1343,6 +1343,7 @@ paymentHistory.balancingCharge                                  = Credit from ov
 paymentHistory.repaymentInterest                                = Credit from repayment interest
 paymentHistory.POA1RR-credit                                    = First payment on account: credit from your tax return
 paymentHistory.POA2RR-credit                                    = Second payment on account: credit from your tax return
+paymentHistory.IRA-credit                                       = Credit from your amended tax return
 paymentHistory.activity                                         = {0} activity
 
 paymentHistory.POA1                                             = First payment on account collected through your PAYE tax code
@@ -3312,8 +3313,10 @@ yourSelfAssessmentChargeSummary.overDueCharge                       = You owe:
 yourSelfAssessmentChargeSummary.youOwe                              = You owe:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:
+yourSelfAssessmentChargeSummary.creditAmount                        = Total credit amount:
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
+yourSelfAssessmentChargeSummary.creditCreated                       = This credit was created on {0}
 
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a balancing payment?
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
@@ -3375,6 +3378,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading              
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.text.heading                    = Balancing payment: extra amount due to amended return
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Class 2 National Insurance
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credit from your amended tax return
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code

@@ -126,6 +126,7 @@
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
+                  if(viewModel.chargeItem.isCredit) "creditAmount" else
                   if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
                   if(viewModel.chargeItem.isOverdue()) "overDueCharge"
                   else "charge"
@@ -150,6 +151,15 @@
 
       @WYOorYSACLinkContent
   }
+    @if(viewModel.chargeItem.isCredit) {
+        <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
+            s"${getMessage("creditAmount")
+            }\t${viewModel.chargeItem.originalAmount.abs.toCurrencyString}"
+        }</h2>
+        @p(id = Some("credit-created-text")) {
+            <b>@getMessage("creditCreated", viewModel.chargeItem.documentDate.toLongDate)</b>
+        }
+    }
     @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
     <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
         s"${ getMessage("youOwe")
@@ -179,5 +189,8 @@
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)
+    }
+    @if(viewModel.isCredit) {
+        @h2("Allocations placeholder")
     }
 }
