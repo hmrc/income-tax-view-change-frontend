@@ -25,7 +25,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import enums._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.optout._
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import play.api.Logger

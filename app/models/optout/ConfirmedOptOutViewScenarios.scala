@@ -18,15 +18,17 @@ package models.optout
 
 sealed trait ConfirmedOptOutViewScenarios
 
-case object Scenario1Content extends ConfirmedOptOutViewScenarios
+case object CurrentYearNYQuarterlyOrAnnualScenario extends ConfirmedOptOutViewScenarios
 
-case object Scenario2Content extends ConfirmedOptOutViewScenarios
+case object CurrentYearNYMandatedScenario extends ConfirmedOptOutViewScenarios
 
-case object Scenario3Content extends ConfirmedOptOutViewScenarios
+case object NextYearCYMandatedOrQuarterlyScenario extends ConfirmedOptOutViewScenarios
 
-case object Scenario4Content extends ConfirmedOptOutViewScenarios
+case object NextYearCYAnnualScenario extends ConfirmedOptOutViewScenarios
 
-case object Scenario5Content extends ConfirmedOptOutViewScenarios
+case object PreviousAndNoStatusValidScenario extends ConfirmedOptOutViewScenarios
+
+case object DefaultValidScenario extends ConfirmedOptOutViewScenarios
 
 sealed trait ConfirmedOptOutViewScenariosError
 
