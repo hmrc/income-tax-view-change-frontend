@@ -47,6 +47,7 @@
         implicit request: Request[_],
         messages: Messages
 )
+@import implicitDateFormatter.longDate
 @getMessage(key: String, args: String*) = @{
  messages(s"yourSelfAssessmentChargeSummary.table.$key", args: _*)
 }
@@ -72,7 +73,7 @@
      rows = Seq(
         Seq(
          TableRow(
-           content = Text(messages("selfAssessmentCharges.reviewAndReconcilePoa.table.overdue", viewModel.chargeItem.getInterestFromDate, viewModel.chargeItem.getInterestEndDate))
+           content = Text(messages("selfAssessmentCharges.reviewAndReconcilePoa.table.overdue", viewModel.chargeItem.getInterestFromDate.toLongDate, viewModel.chargeItem.getInterestEndDate.toLongDate))
          ),
          TableRow(
            content = Text(viewModel.chargeItem.getInterestRate.toPercentage)
