@@ -1413,7 +1413,7 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustmen
 ##Tax Years Overview Submissions Tab##
 submissionsTab.desc                                                  = This is a record of what you have submitted for the tax year.
 submissionsTab.due                                                   = Due {0}
-submissionsTab.updateType                                            = Update type
+submissionsTab.submission                                            = Submission
 submissionsTab.incomeSource                                          = Income source
 submissionsTab.dateSubmitted                                         = Date submitted
 submissionsTab.dateToDate                                            = {0} to {1}
@@ -1421,8 +1421,8 @@ submissionsTab.updatePeriodDateToDate                                = The updat
 submissionsTab.obligationType.property                               = Property income
 submissionsTab.obligationType.business                               = Business
 submissionsTab.obligationType.crystallised                           = All income sources
-submissionsTab.updateType.quarterly                                  = Quarterly update
-submissionsTab.updateType.crystallised                               = Final declaration
+submissionsTab.submission.quarterly                                  = Quarterly update
+submissionsTab.submission.crystallised                               = Tax return
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                           = Your final tax overview

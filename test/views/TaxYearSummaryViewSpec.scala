@@ -366,7 +366,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val paid: String = "Paid"
     val partPaid: String = "Part paid"
     val noPaymentsDue: String = "No payments currently due."
-    val updateType: String = "Update type"
+    val submission: String = "Submission"
     val updateIncomeSource: String = "Income source"
     val updateDateSubmitted: String = "Date submitted"
     val lpiPaymentOnAccount1: String = "Late payment interest on first payment on account"
@@ -878,7 +878,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
               divAccordion.selectHead("caption").text shouldBe
                 s"The update period from ${testObligation.obligation.start.toLongDateShort} to ${testObligation.obligation.end.toLongDateShort}"
-              divAccordion.selectHead("thead").selectNth("th", 1).text shouldBe updateType
+              divAccordion.selectHead("thead").selectNth("th", 1).text shouldBe submission
               divAccordion.selectHead("thead").selectNth("th", 2).text shouldBe updateIncomeSource
               divAccordion.selectHead("thead").selectNth("th", 3).text shouldBe updateDateSubmitted
               val row = divAccordion.selectHead("tbody").selectHead("tr")

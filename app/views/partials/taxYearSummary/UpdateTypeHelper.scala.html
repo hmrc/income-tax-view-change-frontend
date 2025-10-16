@@ -18,8 +18,8 @@
 @(updateType: String)(implicit messages: Messages)
 @{
     updateType match {
-        case "Quarterly" => messages("submissionsTab.updateType.quarterly")
-        case "Crystallisation" => messages("submissionsTab.updateType.crystallised")
+        case "Quarterly" => messages("submissionsTab.submission.quarterly")
+        case "Crystallisation" => messages("submissionsTab.submission.crystallised")
         case _ => updateType
     }
 }
