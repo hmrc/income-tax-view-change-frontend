@@ -42,7 +42,7 @@ htmlTitle                                           = {0} - Manage your Self Ass
 htmlTitle.agent                                     = {0} - Manage your Self Assessment - GOV.UK
 htmlTitle.errorPage                                 = {0} - GOV.UK
 htmlTitle.invalidInput                              = Error: {0} - GOV.UK
-htmlTitle.confirmClient                             = {0} - GOV.UK
+htmlTitle.confirmClient                             = {0} - Manage your Self Assessment - GOV.UK
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client
@@ -58,6 +58,7 @@ agent.no_assignment.button                                      = Go to agent se
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = You cannot view this client
+agent.utr_error.title                                           = You cannot view this client - Manage your Self Assessment
 agent.utr_error.utr_wrong                                       = This may be because:
 agent.utr_error.reason.bullet1                                  = you entered the wrong Unique Taxpayer Reference (UTR)
 agent.utr_error.reason.bullet2                                  = your client needs to {0}
