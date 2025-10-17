@@ -52,7 +52,7 @@ class ReportingFrequencyPageController @Inject()(
 
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with MtdConstants {
 
-  def show(isAgent: Boolean): Action[AnyContent] =
+  def show(isAgent: Boolean): Action[AnyContent] = {
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
       for {
@@ -98,4 +98,6 @@ class ReportingFrequencyPageController @Inject()(
         }
       }
     }//tesdt
+    //test3
+  }
 }
