@@ -146,15 +146,7 @@
           }
       }
 
-      @chargeDetails(
-          viewModel.chargeItem,
-          viewModel.taxYearFrom.toString,
-          viewModel.taxYearTo.toString,
-          viewModel.isAgent,
-          viewModel.LSPUrl,
-          viewModel.LPPUrl,
-          viewModel: ChargeSummaryViewModel
-      )
+      @chargeDetails(viewModel)
 
       @WYOorYSACLinkContent
   }
