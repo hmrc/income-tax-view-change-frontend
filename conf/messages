@@ -3149,7 +3149,7 @@ optIn.confirmNextTaxYear.desc                       = If you opt in for the next
 ########  Reporting Frequency Page  ########
 # Reporting Frequency Page
 reporting.frequency.title       = Your reporting frequency
-reporting.frequency.title.R17   = Your reporting obligations blah blah
+reporting.frequency.title.R17   = Your reporting obligations blahhhh
 reporting.frequency.h2          = Manage your reporting frequency for all your businesses
 
 reporting.frequency.manageReportingFrequency.p1                     = If you are reporting annually or voluntarily reporting quarterly, you may be able to change your reporting frequency for specific tax years.
