@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.AfterSubmissionPage
+import enums.AfterSubmissionPage
 import models.admin.YourSelfAssessmentCharges
 import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoaAmendmentData, SelectYourReason}
 import models.incomeSourceDetails.TaxYear

@@ -19,6 +19,7 @@ package controllers.manageBusinesses.add
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import enums.CannotGoBackPage
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import play.api.i18n.I18nSupport

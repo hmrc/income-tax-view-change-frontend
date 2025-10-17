@@ -21,6 +21,7 @@ import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import enums.JourneyCompleted
 import models.itsaStatus.ITSAStatus
 import models.optin.newJourney.SignUpCompletedViewModel
 import play.api.Logger
@@ -28,8 +29,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.reportingObligations.ReportingObligationsUtils
+import utils.reportingObligations.{JourneyCheckerSignUp, ReportingObligationsUtils}
 import views.html.optIn.newJourney.SignUpCompletedView
+
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,7 +44,7 @@ class SignUpCompletedController @Inject()(val view: SignUpCompletedView,
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils with JourneyCheckerSignUp {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -56,23 +58,25 @@ extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Repo
 
   def show(isAgent: Boolean): Action[AnyContent] = {
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-      withRFAndOptInOptOutR17FS {
-        withRecover(isAgent) {
-          for {
-            proposition <- optInService.fetchOptInProposition()
-            intent <- optInService.fetchSavedChosenTaxYear()
-          } yield {
-            intent.map { optInTaxYear =>
-              val model = SignUpCompletedViewModel(
-                isAgent = isAgent,
-                signUpTaxYear = optInTaxYear,
-                isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
-                isCurrentYearAnnual = proposition.currentTaxYear.status == ITSAStatus.Annual,
-                isNextYearMandated = proposition.nextTaxYear.status == ITSAStatus.Mandated
-              )
-
-              Ok(view(model))
-            }.getOrElse(errorHandler(isAgent).showInternalServerError())
+      withSessionData(isStart = false, taxYear = null, Some(JourneyCompleted)) {
+        withRFAndOptInOptOutR17FS {
+          withRecover(isAgent) {
+            for {
+              proposition <- optInService.fetchOptInProposition()
+              intent <- optInService.fetchSavedChosenTaxYear()
+              _ <- setJourneyComplete
+            } yield {
+              intent.map { optInTaxYear =>
+                val model = SignUpCompletedViewModel(
+                  isAgent = isAgent,
+                  signUpTaxYear = optInTaxYear,
+                  isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+                  isCurrentYearAnnual = proposition.currentTaxYear.status == ITSAStatus.Annual,
+                  isNextYearMandated = proposition.nextTaxYear.status == ITSAStatus.Mandated
+                )
+                Ok(view(model))
+              }.getOrElse(errorHandler(isAgent).showInternalServerError())
+            }
           }
         }
       }
