@@ -49,16 +49,16 @@
     @if(amount != 0) {
             <tbody class="govuk-table__body">
                 <tr id="money-on-account">
-                    <td class="govuk-table__cell">
+                    <td class="govuk-table__cell" data-th=@messages("paymentAllocation.tableHead.allocated-date")>
                     @{
                         dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort.toNonBreaking
                     }
                     </td>
-                    <td class="govuk-table__cell">
+                    <td class="govuk-table__cell" data-th=@messages("paymentAllocation.tableHead.description")>
                     @getLink
                     </td>
-                    <td class="govuk-table__cell no-wrap">@messages("paymentAllocation.not-applicable")</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                    <td class="govuk-table__cell no-wrap" data-th=@messages("paymentAllocation.tableHead.tax-year")>@messages("paymentAllocation.not-applicable")</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric" data-th=@messages("paymentAllocation.tableHead.amount")>@{
                         amount.abs.toCurrencyString
                     }</td>
                 </tr>

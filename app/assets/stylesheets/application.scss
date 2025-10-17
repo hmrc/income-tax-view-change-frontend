@@ -14,6 +14,42 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
   vertical-align: top;
 }
 
+.govuk-table {
+  &--responsive {
+    @media (max-width: 600px) {
+      .govuk-table__header {
+        display: none;
+      }
+
+      .govuk-table__head {
+        border-bottom: 0;
+      }
+
+      .govuk-table__body .govuk-table__row {
+        border-bottom: 2px;
+        display: block;
+        margin-bottom: 1rem;
+      }
+
+      .govuk-table__cell {
+        display: block;
+        padding-left: 0;
+        text-align: right;
+        &:last-child {
+          //border: 0;
+          margin-bottom: 20px;
+        }
+        &::before {
+          content: attr(data-th);
+          float: left;
+          font-weight: $govuk-font-weight-bold;
+          padding-right: 1rem;
+        }
+      }
+    }
+  }
+}
+
 .hmrc-account-menu {
   border-top: 1px solid #b1b4b6;
   font-size: 16px;
