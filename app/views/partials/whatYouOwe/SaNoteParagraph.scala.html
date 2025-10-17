@@ -48,13 +48,13 @@
                 rel = Some("noreferrer noopener"),
                 target = Some("_blank")).toString()))
     @p(id = Some("sa-note-1-migrated"))(Html(getMessage("sa-note-1-body-2") +
-            link(link = adjustPoaUrl,
+            link(link = budgetPaymentPlanUrl,
                 messageKey = getMessage("sa-link-1-body-2"),
                 rel = Some("noreferrer noopener"),
                 target = Some("_blank")).toString() +
             getMessage("sa-note-1-body-3")))
     @p(id = Some("sa-note-1-migrated"))(Html(getMessage("sa-note-1-body-4") +
-            link(link = budgetPaymentPlanUrl,
+            link(link = adjustPoaUrl,
                 messageKey = getMessage("sa-link-1-body-3", (currentTaxYear-1).toString, currentTaxYear.toString),
                 outerMessage = ".",
                 rel = Some("noreferrer noopener")).toString()))

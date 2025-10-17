@@ -21,7 +21,6 @@
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import models.financialDetails.WhatYouOweViewModel
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import forms.adjustPoa.EnterPoaAmountForm.amount
 
 @this(
         h2: h2,
@@ -48,7 +47,7 @@
     @h2(getMessage("payments-made-heading"))
     @p(id = Some("payments-made-migrated"))(Html(
         getMessage("payments-made-body-1", codedOutDetails.amountCodedOut.toCurrencyString, (viewModel.currentTaxYear - 1).toString, viewModel.currentTaxYear.toString) +
-                link(link = paymentHistoryControllerURL.toString(),
+                link(link = viewModel.paymentHistoryControllerURL(isAgent, origin),
                     messageKey = getMessage("payments-made-link"),
                     id = Some("payments-made-migrated-link"),
                     rel = Some("noreferrer noopener")).toString() +
@@ -69,13 +68,4 @@
             href = Some(viewModel.paymentHandOffUrl(amount.toPence))
         ))
     })
-}
-
-@paymentHistoryControllerURL= {
-    @if(isAgent){
-        @controllers.routes.PaymentHistoryController.showAgent().url
-    }
-    else {
-        @controllers.routes.PaymentHistoryController.show(origin).url
-    }
 }
