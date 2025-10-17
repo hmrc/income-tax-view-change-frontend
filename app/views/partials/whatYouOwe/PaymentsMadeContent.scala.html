@@ -19,17 +19,22 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+@import models.financialDetails.WhatYouOweViewModel
+@import _root_.implicits.ImplicitCurrencyFormatter._
+@import forms.adjustPoa.EnterPoaAmountForm.amount
 
 @this(
-    h2: h2,
-    p: p,
-    link: link,
-    govukInsetText: GovukInsetText
+        h2: h2,
+        p: p,
+        link: link,
+        govukInsetText: GovukInsetText,
+        govukButton: GovukButton
 )
+
 @(
-        inset: Boolean,
-        currentTaxYear: Int,
-        creditAndRefundUrl: String
+        isAgent: Boolean,
+        origin: Option[String],
+        viewModel: WhatYouOweViewModel
 )(
     implicit messages: Messages,
     user: MtdItUser[_]
@@ -39,19 +44,38 @@
     @p(id = Some("overdue-inset-migrated"))(content = Html(messages("selfAssessmentCharges.overdue-inset-text-1")))
     @p(id = Some("overdue-inset-migrated"))(content = Html(messages("selfAssessmentCharges.overdue-inset-text-2")))
 }
+@viewModel.whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
+    @h2(getMessage("payments-made-heading"))
+    @p(id = Some("payments-made-migrated"))(Html(
+        getMessage("payments-made-body-1", codedOutDetails.amountCodedOut.toCurrencyString, (viewModel.currentTaxYear - 1).toString, viewModel.currentTaxYear.toString) +
+                link(link = paymentHistoryControllerURL.toString(),
+                    messageKey = getMessage("payments-made-link"),
+                    id = Some("payments-made-migrated-link"),
+                    rel = Some("noreferrer noopener")).toString() +
+                getMessage("payments-made-body-2")
+    ))
+}
 
-@h2(getMessage("payments-made-heading"))
-@p(id = Some("payments-made-migrated"))(Html(
- getMessage("payments-made-body-1", (currentTaxYear - 1).toString, currentTaxYear.toString, "500") +
-         link(link = creditAndRefundUrl,
-          messageKey = getMessage("payments-made-link"),
-          id = Some("payments-made-migrated-link"),
-          rel = Some("noreferrer noopener")).toString() +
-         getMessage("payments-made-body-2")
-))
+@if(viewModel.utr.isDefined && !user.isAgent()) {
+    @govukInsetText(InsetText(
+        content = HtmlContent(overdueInsetText)
+    ))
+    @(for {
+        (_, amount) <- viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
+    } yield {
+        govukButton(Button(
+            id = Some("payment-button"),
+            content = Text(getMessage("payNow")),
+            href = Some(viewModel.paymentHandOffUrl(amount.toPence))
+        ))
+    })
+}
 
-@if(inset) {
- @govukInsetText(InsetText(
-     content = HtmlContent(overdueInsetText)
- ))
+@paymentHistoryControllerURL= {
+    @if(isAgent){
+        @controllers.routes.PaymentHistoryController.showAgent().url
+    }
+    else {
+        @controllers.routes.PaymentHistoryController.show(origin).url
+    }
 }

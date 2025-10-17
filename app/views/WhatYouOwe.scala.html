@@ -30,39 +30,39 @@
 @import viewUtils.ExternalUrlHelper
 
 @this(
-    h1: h1,
-    appConfig: config.FrontendAppConfig,
-    h2: h2,
-    link: link,
-    govukInsetText: GovukInsetText,
-    p: p,
-    govukTable: GovukTable,
-    chargeInfo: ChargeInfo,
-    govukButton: GovukButton,
-    mainTemplate: unifiedLayout,
-    saNoteParagraph: SaNoteParagraph,
-    govukWarningText: GovukWarningText,
-    taxYearSummaryLink: TaxYearSummaryLink,
-    paymentPlanSection: PaymentPlanSection,
-    paymentsMadeContent: PaymentsMadeContent,
-    dunningLockParagraph: DunningLockParagraph,
-    codingOutInsetContent: CodingOutInsetContent,
-    accruingInterestCharge: AccruingInterestCharge,
-    implicitDateFormatter: ImplicitDateFormatterImpl,
-    claimToAdjustPoaSection: ClaimToAdjustPoaSection,
-    availableCreditInAccount: AvailableCreditInAccount,
-    interestOnBalancingCharge: InterestOnBalancingCharge,
-    balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
-    unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent
+        h1: h1,
+        appConfig: config.FrontendAppConfig,
+        h2: h2,
+        link: link,
+        govukInsetText: GovukInsetText,
+        p: p,
+        govukTable: GovukTable,
+        chargeInfo: ChargeInfo,
+        govukButton: GovukButton,
+        mainTemplate: unifiedLayout,
+        saNoteParagraph: SaNoteParagraph,
+        govukWarningText: GovukWarningText,
+        taxYearSummaryLink: TaxYearSummaryLink,
+        paymentPlanSection: PaymentPlanSection,
+        paymentsMadeContent: PaymentsMadeContent,
+        dunningLockParagraph: DunningLockParagraph,
+        codingOutInsetContent: CodingOutInsetContent,
+        accruingInterestCharge: AccruingInterestCharge,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        claimToAdjustPoaSection: ClaimToAdjustPoaSection,
+        availableCreditInAccount: AvailableCreditInAccount,
+        interestOnBalancingCharge: InterestOnBalancingCharge,
+        balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
+        unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent
 )
 @(
-    viewModel: WhatYouOweViewModel,
-    origin: Option[String] = None
+        viewModel: WhatYouOweViewModel,
+        origin: Option[String] = None
 )(
-    implicit request: Request[_],
-    user: MtdItUser[_],
-    messages: Messages,
-    dateService: DateServiceInterface
+        implicit request: Request[_],
+        user: MtdItUser[_],
+        messages: Messages,
+        dateService: DateServiceInterface
 )
 
 @import implicitDateFormatter.longDate
@@ -77,17 +77,11 @@
 
     @if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
 
-        @p(id = Some("no-payments-due"))(Html(getNoPaymentsDueText))
-
         @claimToAdjustPoaSection(
             viewModel.whatYouOweChargesList.hasUnpaidPOAs,
             viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
             viewModel.adjustPoaUrl
         )
-
-        @paymentsMadeContent(inset = false,
-            currentTaxYear = viewModel.currentTaxYear,
-            creditAndRefundUrl = viewModel.creditAndRefundUrl)
 
     } else {
 
@@ -157,7 +151,7 @@
                                 format = Some("numeric")
                             ),
                         )
-                    ) ++ (for ((charge, index) <- viewModel.whatYouOweChargesList.sortedChargesList.zipWithIndex) yield {
+                    ) ++ (for((charge, index) <- viewModel.whatYouOweChargesList.sortedChargesList.zipWithIndex) yield {
                         Seq(
                             Seq(
                                 TableRow(
@@ -223,33 +217,21 @@
             @unallocatedCreditParagraphContent(viewModel.creditAndRefundUrl, availableCreditAmt.toCurrencyString)
         }
 
-        @paymentsMadeContent(inset = true,
-            currentTaxYear = viewModel.currentTaxYear,
-            creditAndRefundUrl = viewModel.creditAndRefundUrl)
-
-        @(for {
-            (_, amount) <- viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
-            if             viewModel.utr.isDefined && !user.isAgent()
-        } yield {
-            govukButton(Button(
-                id = Some("payment-button"),
-                content = Text(getMessage("payNow")),
-                href = Some(viewModel.paymentHandOffUrl(amount.toPence))
-            ))
-        })
+        @paymentsMadeContent(
+            isAgent = user.isAgent,
+            origin = origin,
+            viewModel = viewModel)
     }
 
     @saNoteParagraph(utr = viewModel.utr,
         currentTaxYear = viewModel.currentTaxYear,
-        selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl)
+        selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl,
+        adjustPoaUrl = viewModel.adjustPoaUrl,
+        budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL)
 
-    @if(viewModel.creditAndRefundEnabled){
+    @if(viewModel.creditAndRefundEnabled) {
         @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
             @availableCreditInAccount(ac.toCurrencyString, viewModel.creditAndRefundUrl)
         }
     }
-}
-
-@paymentsMadeText() = {
-
 }
