@@ -32,7 +32,7 @@ govukButton: GovukButton,
 formWithCSRF: FormWithCSRF
 )
 
-@(viewModel: CheckOptOutUpdateAnswersViewModel, isAgent: Boolean, cancelURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: CheckOptOutUpdateAnswersViewModel, isAgent: Boolean, reportingObligationsURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getPostAction = @{
     controllers.optOut.newJourney.routes.ConfirmOptOutUpdateController.submit(isAgent, viewModel.startYear)
@@ -67,7 +67,7 @@ formWithCSRF: FormWithCSRF
                 attributes = Map("id" -> "confirm-button"),
                 preventDoubleClick = Some(true)
             ))
-            <a class="govuk-link" href=@cancelURL id="cancel-button">@messages("optout.checkAnswers.cancel")</a>
+            <a class="govuk-link" href=@reportingObligationsURL id="cancel-button">@messages("optout.checkAnswers.cancel")</a>
         </div>
     }
 

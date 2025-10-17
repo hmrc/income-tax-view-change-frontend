@@ -140,7 +140,7 @@ case class ChargeItem (
 
   // this method is used to filter charges down to those currently allowed for the
   // new Your Self Assessment Charge Summary feature
-  def isIncludedInSACSummary: Boolean = {
+  def isIncludedInSACSummary(isInterestCharge: Boolean): Boolean = {
 
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
@@ -158,7 +158,7 @@ case class ChargeItem (
       case _                              => false
     }
 
-    validCharge && !isOnlyInterest
+    validCharge && !isInterestCharge
   }
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount

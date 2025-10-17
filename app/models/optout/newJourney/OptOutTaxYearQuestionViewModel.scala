@@ -44,9 +44,9 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
     case (Some(OneYearOptOutFollowedByAnnual), _, _, _) if isPreviousYear             => "singleYearFollowedByAnnual"
     case (Some(OneYearOptOutFollowedByAnnual), true, _, _)                            => "singleYearFollowedByAnnual"
     case (Some(OneYearOptOutFollowedByAnnual), false, _, _)                           => "singleYearFollowedByAnnualWithUpdates"
-    case (Some(NextYearOptOut), _, Annual, _)                                         => "nextYearOptOutAnnual"
     case (Some(NextYearOptOut), _, Mandated, _)                                       => "nextYearOptOutMandated"
-  case _                                                                              => "noState"
+    case (Some(NextYearOptOut), _, _, _)                                              => "nextYearOptOutDefault"
+    case _                                                                            => "noState"
   }
 
   private def isCurrentYear: Boolean = taxYear match {

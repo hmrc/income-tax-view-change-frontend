@@ -106,9 +106,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
     val singleYearFollowedByAnnualUpdatesQuestion = "Do you want to opt out for the 2022 to 2023 tax year?"
 
     // Next year opt out
-    val nextYearOptOutAnnualHeading = "Opt out of Making Tax Digital for Income Tax from the 2023 to 2024 tax year onwards"
-    val nextYearOptOutAnnualDesc1 = "In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
-    val nextYearOptOutAnnualQuestion = "Do you want to opt out from the 2023 to 2024 tax year?"
+    val nextYearOptOutDefaultHeading = "Opt out of Making Tax Digital for Income Tax from the 2023 to 2024 tax year onwards"
+    val nextYearOptOutDefaultDesc1 = "In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+    val nextYearOptOutDefaultQuestion = "Do you want to opt out from the 2023 to 2024 tax year?"
 
     val nextYearOptOutMandatedHeading = "Opt out of Making Tax Digital for Income Tax from the 2023 to 2024 tax year onwards"
     val nextYearOptOutMandatedDesc1 = "From 6 April 2023, this would mean you would not need to use software compatible with Making Tax Digital for Income Tax."
@@ -481,9 +481,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(OK),
-            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.nextYearOptOutAnnualHeading),
-            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.nextYearOptOutAnnualDesc1),
-            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.nextYearOptOutAnnualQuestion),
+            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.nextYearOptOutDefaultHeading),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.nextYearOptOutDefaultDesc1),
+            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.nextYearOptOutDefaultQuestion),
           )
         }
 

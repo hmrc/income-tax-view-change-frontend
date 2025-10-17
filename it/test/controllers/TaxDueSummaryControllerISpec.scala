@@ -55,7 +55,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
 
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessful
                 )
@@ -63,7 +63,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 verifyAuditEvent(TaxDueResponseAuditModel(testUser(mtdUserRole), TaxDueSummaryViewModel(liabilityCalculationModelSuccessful, testObligationsModel), testYearInt))
 
@@ -79,7 +79,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
               "has just Gift Aid Additional charges" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationGiftAid
                 )
@@ -87,7 +87,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 res should have(
                   httpStatus(OK),
@@ -100,7 +100,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationPensionLumpSums
                 )
@@ -108,7 +108,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 res should have(
                   httpStatus(OK),
@@ -120,7 +120,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
               "has just Pension Savings Additional charges" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationPensionSavings
                 )
@@ -128,7 +128,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 res should have(
                   httpStatus(OK),
@@ -140,7 +140,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
               "uses minimal calculation with no Additional Charges" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationMinimal
                 )
@@ -148,7 +148,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 res should have(
                   httpStatus(OK),
@@ -164,7 +164,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                 "the flag is missing from the calc data" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                     status = OK,
                     body = liabilityCalculationNonVoluntaryClass2Nic
                   )
@@ -172,7 +172,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+                  IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                   res should have(
                     httpStatus(OK),
@@ -186,7 +186,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                 "the flag is returned in the calc data" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                     status = OK,
                     body = liabilityCalculationVoluntaryClass2Nic
                   )
@@ -194,7 +194,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, testYear)
+                  IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                   res should have(
                     httpStatus(OK),

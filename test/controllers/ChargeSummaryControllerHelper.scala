@@ -76,7 +76,8 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   val successHeadingForPOA1 = s"${messages("chargeSummary.paymentOnAccount1.text")}"
   val successHeadingForBCD = s"${messages("chargeSummary.balancingCharge.text")}"
 
-  def successCaption(startYear: String, endYear: String) = s"$startYear to $endYear tax year"
+  def successCaption(startYear: String, endYear: String) = s"This section is $startYear to $endYear tax year"
+  def successCaptionOld(startYear: String, endYear: String) = s"$startYear to $endYear tax year"
   def successHeadingForRAR1 = s"${messages("chargeSummary.reviewAndReconcilePoa1.text")}"
 
   def successHeadingForRAR2 = s"${messages("chargeSummary.reviewAndReconcilePoa2.text")}"

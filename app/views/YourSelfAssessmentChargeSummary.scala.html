@@ -78,6 +78,34 @@
 
 @pageHeading = @{ ChargeNameLangHelper.getHeading(viewModel.chargeItem) }
 
+@WYOorYSACLinkContent = {
+    @if(yourSelfAssessmentChargesFS) {
+        @p() {
+            @if(viewModel.isAgent) {
+                @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part1")
+                @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part2")
+                @messages("chargeSummary.selfAssessmentCharges.text-agent")
+            } else {
+                @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part1")
+                @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part2")
+                @messages("chargeSummary.selfAssessmentCharges.text")
+            }
+        }
+    } else {
+        @p() {
+            @if(viewModel.isAgent) {
+                @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                @messages("chargeSummary.whatYouOwe.textTwo-agent")
+            } else {
+                @messages("chargeSummary.whatYouOwe.textOne")
+                @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                @messages("chargeSummary.whatYouOwe.textTwo")
+            }
+        }
+    }
+}
+
 @mainTemplate(
     pageTitle = pageHeading,
     backUrl = Some(viewModel.backUrl),
@@ -118,12 +146,6 @@
           }
       }
 
-
-
-
-
-
-
       @chargeDetails(
           viewModel.chargeItem,
           viewModel.taxYearFrom.toString,
@@ -133,32 +155,8 @@
           viewModel.LPPUrl,
           viewModel: ChargeSummaryViewModel
       )
-      @if(yourSelfAssessmentChargesFS) {
-      @p() {
-          @if(viewModel.isAgent) {
-              @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part1")
-              @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part2")
-              @messages("chargeSummary.selfAssessmentCharges.text-agent")
-          } else {
-              @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part1")
-              @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part2")
-              @messages("chargeSummary.selfAssessmentCharges.text")
-          }
-      }
 
-      }  else {
-          @p() {
-              @if(viewModel.isAgent) {
-                  @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                  @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                  @messages("chargeSummary.whatYouOwe.textTwo-agent")
-              } else {
-                  @messages("chargeSummary.whatYouOwe.textOne")
-                  @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                  @messages("chargeSummary.whatYouOwe.textTwo")
-              }
-          }
-      }
+      @WYOorYSACLinkContent
   }
     @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
     <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
@@ -168,15 +166,7 @@
 
      @whatIsPaymentOnAccount()
 
-    @p() {
-        @if(viewModel.isAgent) {
-            @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
-            @messages("chargeSummary.selfAssessmentCharges.text-agent")
-        } else {
-            @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
-            @messages("chargeSummary.selfAssessmentCharges.text")
-        }
-    }
+    @WYOorYSACLinkContent
  }
 
 

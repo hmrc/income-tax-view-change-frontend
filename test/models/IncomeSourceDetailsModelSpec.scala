@@ -230,4 +230,63 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       singleBusinessIncome.getIncomeSourceBusinessName(SelfEmployment, None) shouldBe None
     }
   }
+
+  "earliestSubmissionTaxYear" should {
+
+    "return the earliest accounting period end year across businesses and properties" in {
+      val business1 = BusinessDetailsModel(
+        incomeSourceId = "BUS1",
+        incomeSource = None,
+        accountingPeriod = None,
+        tradingName = Some("Biz One"),
+        firstAccountingPeriodEndDate = Some(LocalDate.of(2024, 4, 5)),
+        tradingStartDate = None,
+        contextualTaxYear = None,
+        cessation = None,
+        latencyDetails = None,
+        address = None,
+        cashOrAccruals = None
+      )
+
+      val business2 = business1.copy(
+        incomeSourceId = "BUS2",
+        firstAccountingPeriodEndDate = Some(LocalDate.of(2021, 4, 5))
+      )
+
+      val property1 = PropertyDetailsModel(
+        incomeSourceId = "PROP1",
+        accountingPeriod = None,
+        firstAccountingPeriodEndDate = Some(LocalDate.of(2023, 4, 5)),
+        incomeSourceType = None,
+        tradingStartDate = None,
+        contextualTaxYear = None,
+        cessation = None,
+        cashOrAccruals = None
+      )
+
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = Some("2020"),
+        businesses = List(business1, business2),
+        properties = List(property1)
+      )
+
+      model.earliestSubmissionTaxYear shouldBe Some(2021)
+    }
+
+    "return None when there are no accounting period end dates" in {
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = Some("2020"),
+        businesses = Nil,
+        properties = Nil
+      )
+
+      model.earliestSubmissionTaxYear shouldBe None
+    }
+  }
+
+
 }

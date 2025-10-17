@@ -44,7 +44,9 @@
 @returnsUpdateLink = @{
     link(
         link = appConfig.submissionFrontendTaxYearsPage(viewModel.returnsTileViewModel.currentTaxYear.endYear),
-        messageKey = messages(s"home${if(isAgent) ".agent" else ""}.your-returns.updatesLink", s"${viewModel.returnsTileViewModel.currentTaxYear.startYear}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}")
+        messageKey = messages(s"home${if(isAgent) ".agent" else ""}.your-returns.updatesLink", s"${viewModel.returnsTileViewModel.currentTaxYear.startYear}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}"),
+        id = Some(s"updateReturn-link-${viewModel.returnsTileViewModel.currentTaxYear.endYear}"
+    )
     )
 }
 

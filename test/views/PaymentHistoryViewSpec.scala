@@ -241,7 +241,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             payments.zipWithIndex.foreach {
               case (payment, index) =>
                 val row = tbody.selectNth("tr", index + 1)
-                row.selectNth("td", 1).text shouldBe payment.date.toLongDate
+                row.selectNth("td", 1).text shouldBe payment.date.toLongDateShort
                 row.selectNth("td", 2).text shouldBe s"Credit from HMRC adjustment hidden-text1 Item " +
                   s"${index + 1} ${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear} tax year"
                 row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
@@ -255,19 +255,19 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments) {
         val tbody = layoutContent.selectHead("table > tbody")
 
-        tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 August 2021"
+        tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 Aug 2021"
         tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
         tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 1).selectNth("td", 4).text() shouldBe "Unknown"
 
-        tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
+        tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 Aug 2021"
         tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 2).selectNth("td", 4).text() shouldBe "£300.00"
 
-        tbody.selectNth("tr", 3).selectNth("td", 1).text() shouldBe "20 August 2021"
+        tbody.selectNth("tr", 3).selectNth("td", 1).text() shouldBe "20 Aug 2021"
         tbody.selectNth("tr", 3).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 3"
         tbody.selectNth("tr", 3).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 3).selectNth("td", 3).text() shouldBe "2021 to 2022"
@@ -310,12 +310,12 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments, saUtr = None, isAgent = true) {
         val tbody = layoutContent.selectHead("table > tbody")
 
-        tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 August 2021"
+        tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 Aug 2021"
         tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
         tbody.selectNth("tr", 1).selectNth("td", 3).text() shouldBe "2021 to 2022"
         tbody.selectNth("tr", 1).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
 
-        tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 August 2021"
+        tbody.selectNth("tr", 2).selectNth("td", 1).text() shouldBe "21 Aug 2021"
         tbody.selectNth("tr", 2).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 2"
         tbody.selectNth("tr", 2).select("a").attr("href") shouldBe "refund-to-taxpayer/000000003135"
         tbody.selectNth("tr", 2).selectNth("td", 3).text() shouldBe "2021 to 2022"

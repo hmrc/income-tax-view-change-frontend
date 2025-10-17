@@ -72,8 +72,8 @@ case class ChargeSummaryViewModel(
   val taxYearFromBCD = chargeItem.taxYear.previousYear.startYear
   val taxYearToBCD = chargeItem.taxYear.previousYear.endYear
 
-  val taxYearFromCodingOut = s"${chargeItem.taxYear.nextYear.startYear}"
-  val taxYearToCodingOut = s"${chargeItem.taxYear.nextYear.endYear}"
+  val taxYearFromCodingOut = s"${chargeItem.taxYear.addYears(2).startYear}"
+  val taxYearToCodingOut = s"${chargeItem.taxYear.addYears(2).endYear}"
 
   val taxYearEndToCheckCode = currentTaxYearEnd + 1
 

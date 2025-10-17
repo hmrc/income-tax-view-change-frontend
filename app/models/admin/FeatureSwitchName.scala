@@ -54,6 +54,8 @@ object FeatureSwitchName {
       JsSuccess(PaymentHistoryRefunds)
     case JsString(OptOutFs.name) =>
       JsSuccess(OptOutFs)
+    case JsString(SignUpFs.name) =>
+      JsSuccess(SignUpFs)
     case JsString(FilterCodedOutPoas.name) =>
       JsSuccess(FilterCodedOutPoas)
     case JsString(ReportingFrequencyPage.name) =>
@@ -111,6 +113,7 @@ object FeatureSwitchName {
       CreditsRefundsRepay,
       PaymentHistoryRefunds,
       OptOutFs,
+      SignUpFs,
       FilterCodedOutPoas,
       ReportingFrequencyPage,
       DisplayBusinessStartDate,
@@ -162,6 +165,11 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
 case object OptOutFs extends FeatureSwitchName {
   override val name = "opt-out"
   override val toString = "Opt Out"
+}
+
+case object SignUpFs extends FeatureSwitchName {
+  override val name = "sign-up"
+  override val toString = "Sign Up"
 }
 
 case object FilterCodedOutPoas extends FeatureSwitchName {

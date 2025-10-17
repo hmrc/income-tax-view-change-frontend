@@ -43,7 +43,7 @@ htmlTitle                                                       = {0} - Rheoli�
 htmlTitle.agent                                                 = {0} - Rheoli’ch Hunanasesiad - GOV.UK
 htmlTitle.errorPage                                             = {0} - GOV.UK
 htmlTitle.invalidInput                                          = Gwall: {0} - GOV.UK
-htmlTitle.confirmClient                                         = {0} - GOV.UK
+htmlTitle.confirmClient                                         = {0} - Rheoli’ch Hunanasesiad - GOV.UK
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = Nid ydych wedi’ch awdurdodi i fwrw golwg dros y cleient hwn
@@ -59,6 +59,7 @@ agent.no_assignment.button                                      = Ewch i gyfrif 
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = Ni allwch fwrw golwg dros y cleient hwn
+agent.utr_error.title                                           = Ni allwch fwrw golwg dros y cleient hwn - Rheoli’ch Hunanasesiad
 agent.utr_error.utr_wrong                                       = Gallai hyn fod oherwydd y canlynol:
 agent.utr_error.reason.bullet1                                  = rydych wedi nodi Cyfeirnod Unigryw y Trethdalwr (UTR) anghywir
 agent.utr_error.reason.bullet2                                  = mae angen i’ch cleient {0}
@@ -210,10 +211,12 @@ error.custom.message                                           = Mae’r dudalen
 error.custom.link                                              = Ewch yn ôl i ‘Troi Treth yn Ddigidol ar gyfer Treth Incwm’
 
 ## Tax Years Page ##
-taxYears.heading                                               = Mlynyddoedd treth
+taxYears.heading                                               = Eich Ffurflenni Treth
+taxYears.description                                           = Mae’r flwyddyn dreth yn mynd o 6 Ebrill i 5 Ebrill.
 taxYears.viewSummary                                           = Gweld crynodeb
 taxYears.updateReturn                                          = Diweddariad ffurflen
-taxYears.taxYears                                              = 6 Ebrill {0} hyd at 5 Ebrill {1}
+taxYears.currentTaxYear                                        = Blwyddyn dreth bresennol {0} i {1}
+taxYears.taxYears                                              = Blwyddyn dreth {0} i {1}
 taxYears.table.taxYear.heading                                 = Blwyddyn dreth
 taxYears.table.options.heading                                 = Opsiynau
 taxYears.ongoing                                               = Ar y gweill
@@ -221,11 +224,12 @@ taxYears.complete                                              = Wedi cwblhau
 taxYears.accruesInterest                                       = Llog yn cael ei gronni
 taxYears.overdue                                               = Yn hwyr
 taxYears.noEstimates                                           = Nid oes gennych amcangyfrif ar hyn o bryd. Byddwn yn dangos eich amcangyfrif Treth Incwm nesaf pan fyddwch yn cyflwyno adroddiad gan ddefnyddio meddalwedd.
-taxYears.oldSa.content.text                                    = Er mwyn bwrw golwg dros eich blynyddoedd treth o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
+taxYears.oldSa.content.text                                    = Er mwyn bwrw golwg dros grynodeb o cyn y flwyddyn dreth {0} i {1}, mae angen i chi fynd i’ch
 taxYears.oldSa.content.link                                    = cyfrif Hunanasesiad ar-lein blaenorol
-taxYears.oldSa.agent.content.1								   = I fwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi fewngofnodi i’ch
+taxYears.oldSa.agent.content.1								   = I weld crynodeb cleient o gyfnod cyn blwyddyn dreth {0} i {1}, bydd angen i chi fewngofnodi i’ch
 taxYears.oldSa.agent.content.2								   = cyfrif Hunanasesiad ar gyfer Asiantau
-taxYears.oldSa.agent.content.3								   = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+taxYears.oldSa.agent.content.3								   = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair Porth y Llywodraeth gwahanol i’r rhai sydd gennych ar gyfer eich cyfrif Gwasanaethau Asiant.
+taxYears.r18.amendment.text                                    = Gallwch fwrw golwg dros dudalennau yn crynhoi blwyddyn dreth i hefyd gael gweld beth yw eich opsiynau o ran diwygio’r ffurflen dreth rydych eisoes wedi’i chyflwyno’r flwyddyn honno.
 
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                       = Crynodeb o’r flwyddyn dreth
@@ -281,7 +285,7 @@ tax-year-summary.payments.class2Nic.text                       = Yswiriant Gwlad
 tax-year-summary.payments.codingOut.text                       = Taliad mantoli a gesglir drwy’r cod treth TWE
 tax-year-summary.payments.poa1CodedOut.text                    = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy god treth TWE
 tax-year-summary.payments.poa2CodedOut.text                    = Ail daliad ar gyfrif sy’n cael ei gasglu drwy god treth TWE
-tax-year-summary.na                                            = Amh
+tax-year-summary.noData                                            = Amh
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
@@ -444,6 +448,23 @@ tax-year-summary.agent.message.C559114                         = ar gyfer llety 
 tax-year-summary.adjust-poa-paragraph                          = Gallwch ostwng y ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch Cyfraniadau Yswiriant Gwladol Dosbarth 4 fod yn wahanol i gyfanswm eich taliadau ar gyfrif presennol.
 tax-year-summary.adjust-poa                                    = Addasu taliadau ar gyfrif
 
+# Tax Year Summary - PFA #
+tax-year-summary.latest-calculation                                = Cyfrifiad Diweddaraf
+tax-year-summary.latest-calculation-desc                           = Cafodd eich Ffurflen Dreth ei ddiwygio ar {0} ac o ganlyniad dyma’ch cyfrifiad mwyaf diweddar.
+
+tax-year-summary.previous-calculation                              = Cyfrifiad Blaenorol
+tax-year-summary.previous-calculation-desc                         = Pan fydd eich Ffurflen Dreth wedi’i ddiwygio, bydd eich cyfrifiad treth yn newid. Os bydd hyn yn digwydd, mae’r dudalen hon yn dangos unrhyw gyfrifiadau treth blaenorol a allai fod gennych.
+tax-year-summary.previous-calculation-subheading                   = Cafodd y cyfrifiad ei wneud ar {0}
+tax-year-summary.previous-calculation-note                         = Cyflwynwyd y Ffurflen Dreth ar y dyddiad hwn.
+tax-year-summary.previous-calculation-amend-subheading             = Diwygio Ffurflen Dreth sydd wedi’i chyflwyno
+tax-year-summary.previous-calculation-bullet-start                 = Gallwch newid eich Ffurflen Dreth ar ôl i chi ei chyflwyno. I wneud hyn ar-lein, mae’n rhaid i chi wneud y canlynol:
+tax-year-summary.previous-calculation-bullet-1                     = defnyddio’r meddalwedd neu wasanaethau ar-lein CThEF a ddefnyddiwyd i gyflwyno’r Ffurflen Dreth
+tax-year-summary.previous-calculation-bullet-2                     = gwneud hynny cyn pen 12 mis o’r
+tax-year-summary.previous-calculation-bullet-2-link                = dyddiad cau Hunanasesiad
+tax-year-summary.previous-calculation-example                      = Er enghraifft, ar gyfer blwyddyn dreth 2025 i 2026, fel arfer bydd angen i chi gwneud y newid ar-lein erbyn 31 Ionawr 2028.
+tax-year-summary.previous-calculation-contact-hmrc                 = Os yw’r dyddiad hwnnw wedi mynd heibio neu os na allwch ddiwygio’ch Ffurflen Dreth am reswm arall,
+tax-year-summary.previous-calculation-contact-hmrc-link            = bydd angen i chi gysylltu â CThEF
+tax-year-summary.previous-calculation-bill                         = Caiff eich cyfrifiad yn ogystal â’ch bil ei ddiweddaru yn seiliedig ar yr hyn yr ydych yn rhoi gwybod amdano. Gallai hyn olygu y bydd yn rhaid i chi dalu mwy o dreth, neu gallwch hawlio ad-daliad.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
@@ -820,7 +841,7 @@ nextUpdates.optOutMultiYear.p.message                           = Ar hyn o bryd 
 nextUpdates.optOutMultiYear.p.link                              = optio allan o ddiweddariadau chwarterol ac am gyflwyno’n flynyddol yn lle hynny.
 
 nextUpdates.reporting.obligations.p.message                     = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
-nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd.
+nextUpdates.reporting.obligations.p.link                        = bwrw golwg dros eich ymrwymiadau adrodd
 
 ## Next updates Page - R17 Content Changes ##
 nextUpdates.r17.tab.quarterly.label                                = Hyd at blwyddyn dreth {0} i {1}
@@ -1122,7 +1143,7 @@ chargeSummary.paymentAmountCodingOut                            = Swm y taliad
 chargeSummary.paidToDate                                        = wedi’i dalu hyd yma
 chargeSummary.remainingDue                                      = I’w dalu o hyd
 chargeSummary.overdue                                           = Yn hwyr
-chargeSummary.na                                                = Amh
+chargeSummary.noData                                                = Amh
 
 chargeSummary.allocation                                           = Dyraniad
 chargeSummary.whereMoneyWent                                       = Ble aeth eich arian
@@ -1236,6 +1257,7 @@ chargeSummary.chargeHistory.amount								        = Swm
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = Gwnaeth CThEF greu eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = Gwnaeth CThEF greu eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.created.balancingCharge.text		        = Gwnaeth CThEF greu eich taliad mantoli
+chargeSummary.paymentAllocations.bcd.accepted                           = Gwnaeth CThEF greu eich taliad mantoli
 chargeSummary.chargeHistory.created.class2Nic.text                      = Yswiriant Gwladol Dosbarth 2 wedi’i greu
 chargeSummary.chargeHistory.created.codingOut.text                      = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
@@ -1380,13 +1402,16 @@ paymentAllocation.sa.info                                       = Dyma arian a d
 paymentAllocation.earlyTaxYear.heading                          = Credyd o flwyddyn dreth gynharach
 paymentAllocation.date                                          = Dyddiad
 paymentAllocation.amount                                        = Swm
-paymentAllocation.tableSection.heading                          = Dyraniadau
-paymentAllocation.tableHead.allocation                          = Ble aeth eich arian
+paymentAllocation.tableSection.heading                          = Ble aeth eich arian
+paymentAllocation.tableHead.description                         = Disgrifiad
+paymentAllocation.tableHead.tax-year                            = Blwyddyn dreth
 paymentAllocation.tableHead.allocated-date                      = Dyddiad
 paymentAllocation.tableHead.amount                              = Swm
-paymentAllocation.taxYear										= Blwyddyn dreth {0} i {1}
+paymentAllocation.taxYear										= {0} i {1}
+paymentAllocation.taxYearHidden									= Blwyddyn dreth {0} i {1}
 paymentAllocation.creditOnAccount                               = Credyd ar gyfrif
-paymentAllocation.na                                            = Amh
+paymentAllocation.noData                                        = Dim data
+paymentAllocation.not-applicable                                = Ddim yn berthnasol
 paymentAllocation.moneyOnAccount                                = Y swm sy’n weddill (wedi’i ychwanegu at y credyd sydd ar gael)
 
 paymentAllocation.details.title                                 = Sut ydyn ni’n trin eich taliadau i dalu costau?
@@ -2906,11 +2931,11 @@ optout.taxYearQuestion.inset2.currentYear.singleYearFollowedByAnnualWithUpdates 
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates         = Yn y dyfodol, gallai fod gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
-## opt out of CY+1 - CY Annual
-optout.taxYearQuestion.heading.nextYear.nextYearOptOutAnnual           = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
-optout.taxYearQuestion.title.nextYear.nextYearOptOutAnnual             = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
-optout.taxYearQuestion.desc1.nextYear.nextYearOptOutAnnual             = Yn y dyfodol, gallai fod gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
-optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutAnnual     = A ydych am optio allan o flwyddyn dreth {0} i {1}?
+## opt out of CY+1 - CY Default
+optout.taxYearQuestion.heading.nextYear.nextYearOptOutDefault           = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
+optout.taxYearQuestion.title.nextYear.nextYearOptOutDefault             = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutDefault             = Yn y dyfodol, gallai fod gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutDefault     = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
 ## opt out of CY+1 - CY Mandated
 optout.taxYearQuestion.heading.nextYear.nextYearOptOutMandated           = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen

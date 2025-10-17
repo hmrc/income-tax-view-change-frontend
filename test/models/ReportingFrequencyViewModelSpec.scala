@@ -37,12 +37,12 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
     (true, NoStatus, Mandated, Annual, List(None, None, Some("signUp.nextYear"))),
     (true, NoStatus, Mandated, Mandated, List(None, None, None)),
     (false, Voluntary, Voluntary, Voluntary, List(Some("optOut.previousYear.onwards"), Some("optOut.currentYear.onwards"), Some("optOut.nextYear"))),
-    (false, Voluntary, Voluntary, Annual, List(Some("optOut.previousYear.onwards"), Some("optOut.currentYear.onwards"), Some("signUp.nextYear"))),
-    (false, Voluntary, Voluntary, Mandated, List(Some("optOut.previousYear.onwards"), Some("optOut.currentYear.onwards"), None)),
-    (false, Voluntary, Annual, Voluntary, List(Some("optOut.previousYear.onwards"), Some("signUp.currentYear.single"), Some("optOut.nextYear"))),
+    (false, Voluntary, Voluntary, Annual, List(Some("optOut.previousYear.onwards"), Some("optOut.currentYear.single"), Some("signUp.nextYear"))),
+    (false, Voluntary, Voluntary, Mandated, List(Some("optOut.previousYear.onwards"), Some("optOut.currentYear.single"), None)),
+    (false, Voluntary, Annual, Voluntary, List(Some("optOut.previousYear.single"), Some("signUp.currentYear.single"), Some("optOut.nextYear"))),
     (false, Voluntary, Annual, Annual, List(Some("optOut.previousYear.single"), Some("signUp.currentYear.onwards"), Some("signUp.nextYear"))),
     (false, Voluntary, Annual, Mandated, List(Some("optOut.previousYear.single"), Some("signUp.currentYear.single"), None)),
-    (false, Voluntary, Mandated, Voluntary, List(Some("optOut.previousYear.onwards"), None, Some("optOut.nextYear"))),
+    (false, Voluntary, Mandated, Voluntary, List(Some("optOut.previousYear.single"), None, Some("optOut.nextYear"))),
     (false, Voluntary, Mandated, Annual, List(Some("optOut.previousYear.single"), None, Some("signUp.nextYear"))),
     (false, Voluntary, Mandated, Mandated, List(Some("optOut.previousYear.single"), None, None))
   )

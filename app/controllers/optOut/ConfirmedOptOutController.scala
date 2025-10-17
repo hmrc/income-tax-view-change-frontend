@@ -57,7 +57,6 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
     for {
       optOutProposition <- optOutService.fetchOptOutProposition()
       chosenTaxYear <- optOutService.determineOptOutIntentYear()
-      quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
     } yield {
       val isCurrentQuarterly = optOutProposition.isCurrentYearQuarterly
       val isNextQuarterly = optOutProposition.isNextYearQuarterly
@@ -67,31 +66,24 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
       val isMandatedCurrent = optOutProposition.currentTaxYear.status == ITSAStatus.Mandated
 
       (chosenTaxYear, optOutProposition.optOutPropositionType) match {
-        case (CurrentTaxYear, _) if isCurrentQuarterly && isMandatedNext && quarterlyUpdatesCount > 0 =>
-          Right(Scenario2Content)
         case (CurrentTaxYear, _) if isCurrentQuarterly && isMandatedNext =>
-          Right(Scenario2Content)
+          Right(CurrentYearNYMandatedScenario)
         case (CurrentTaxYear, Some(MultiYearOptOutProposition(p))) if p.isCurrentYearQuarterly && p.isNextYearQuarterly =>
-          Right(Scenario1Content)
-        case (CurrentTaxYear, _) if isCurrentQuarterly && isNextQuarterly =>
-          Right(Scenario1Content)
-        case (CurrentTaxYear, _) if isCurrentQuarterly && isNextAnnual && quarterlyUpdatesCount > 0 =>
-          Right(Scenario1Content)
-        case (CurrentTaxYear, _) if isCurrentQuarterly && isNextAnnual =>
-          Right(Scenario1Content)
+          Right(CurrentYearNYQuarterlyOrAnnualScenario)
+        case (CurrentTaxYear, _) if isCurrentQuarterly && (isNextQuarterly || isNextAnnual) =>
+          Right(CurrentYearNYQuarterlyOrAnnualScenario)
         case (NextTaxYear, _) if isCurrentAnnual && isNextQuarterly =>
-          Right(Scenario4Content)
-        case (NextTaxYear, _) if isCurrentQuarterly || isNextQuarterly =>
-          Right(Scenario3Content)
-        case (NextTaxYear, _) if isMandatedCurrent && isNextQuarterly =>
-          Right(Scenario3Content)
+          Right(NextYearCYAnnualScenario)
+        case (NextTaxYear, _) if isCurrentQuarterly || isNextQuarterly || (isMandatedCurrent && isNextQuarterly) =>
+          Right(NextYearCYMandatedOrQuarterlyScenario)
         case (NoChosenTaxYear | PreviousTaxYear, _) if
           (isCurrentAnnual && isNextAnnual) ||
             (isCurrentQuarterly && isNextAnnual) ||
             (isCurrentAnnual && isNextQuarterly) ||
             (isCurrentQuarterly && isNextQuarterly) =>
-          Right(Scenario5Content)
-
+          Right(PreviousAndNoStatusValidScenario)
+        case (PreviousTaxYear | CurrentTaxYear, _) =>
+          Right(DefaultValidScenario)
         case _ =>
           Left(UnableToDetermineContent)
       }

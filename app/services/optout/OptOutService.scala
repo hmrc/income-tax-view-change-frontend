@@ -25,7 +25,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import enums._
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.optout._
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import play.api.Logger
@@ -302,16 +302,10 @@ class OptOutService @Inject()(
           val currentYearStatus = proposition.currentTaxYear.status
           val nextYearStatus = proposition.nextTaxYear.status
 
-          (checkOptOutStatus, proposition.optOutPropositionType, currentYearStatus) match {
-            case (Some((true, propositionTaxYear)), Some(propositionType), status)
-              if propositionType.state().exists(state =>
-                state == MultiYearOptOutDefault ||
-                  state == OneYearOptOutFollowedByMandated ||
-                  state == OneYearOptOutFollowedByAnnual ||
-                  (state == NextYearOptOut && (status == Annual || status == Mandated))
-              ) =>
+          (checkOptOutStatus, proposition.optOutPropositionType) match {
+            case (Some((true, propositionTaxYear)), Some(propositionType)) if propositionType.state().isDefined =>
               Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus, nextYearStatus))
-            case (Some((true, _)), Some(_), _) =>
+            case (Some((true, _)), Some(_)) =>
               Logger("application").warn("[OptOutService] Unknown scenario for opt out tax year, redirecting to Reporting Obligations Page")
               None
             case _ =>

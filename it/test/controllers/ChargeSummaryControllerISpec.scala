@@ -110,7 +110,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   res should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "chargeSummary.balancingCharge.text"),
-                    elementTextBySelector("main h2")(importantPaymentBreakdown)
+                    elementTextByClass("govuk-notification-banner__title")(important)
                   )
                 }
 
@@ -144,7 +144,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   res should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "chargeSummary.balancingCharge.text"),
-                    elementTextBySelector("main h2")(importantPaymentBreakdown)
+                    elementTextByClass("govuk-notification-banner__title")(important)
                   )
                 }
               }
@@ -155,7 +155,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
-                    123.45, 1.2, accruingInterestAmount = Some(54.32)))
+                    123.45, 0.0, accruingInterestAmount = Some(54.32)))
 
                   val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
@@ -183,7 +183,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   disable(ChargeHistory)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 1.2))
+                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 0.0))
 
                   val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
@@ -209,7 +209,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                       Json.obj("taxYear" -> 2018,
                         "transactionId" -> "1040001234",
                         "documentDescription" -> "ITSA - POA 2",
-                        "outstandingAmount" -> 1.2,
+                        "outstandingAmount" -> 0.0,
                         "originalAmount" -> 10.34,
                         "documentDate" -> "2018-03-29",
                         "interestFromDate" -> "2018-03-29",
@@ -262,6 +262,9 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                         "taxYear" -> "2018",
                         "mainTransaction" -> "4910",
                         "chargeReference" -> "chargeRef",
+                        "items" -> Json.arr(
+                          "codedOutStatus" -> "I"
+                        )
                       )
                     )))
 
@@ -272,7 +275,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "tax-year-summary.payments.codingOut.text"),
                     elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
-                    elementTextBySelector("#coding-out-message")(codingOutMessageWithStringMessagesArgument(2016, 2017))
+                    elementTextBySelector("#codedOutBCDExplanation")(codingOutMessageWithStringMessagesArgument(2017, 2018))
                   )
                 }
               }

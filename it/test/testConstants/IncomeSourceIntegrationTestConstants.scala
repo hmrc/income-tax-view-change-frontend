@@ -533,6 +533,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-03-29",
         "interestFromDate" -> "2018-03-29",
         "interestEndDate" -> "2018-03-29",
+        "interestRate" -> "3",
         "accruingInterestAmount" -> accruingInterestAmount,
         "interestOutstandingAmount" -> 80.0,
         "effectiveDateOfPayment" -> dueDate,
@@ -1296,7 +1297,7 @@ object IncomeSourceIntegrationTestConstants {
         "documentDate" -> "2018-02-14",
         "documentDescription" -> poa1Description,
         "totalAmount" -> amount,
-        "reversalDate" -> "2019-02-14",
+        "reversalDate" -> "2019-02-14T09:30:45Z",
         "reversalReason" -> "Customer Request",
         "poaAdjustmentReason" -> "002"
       )

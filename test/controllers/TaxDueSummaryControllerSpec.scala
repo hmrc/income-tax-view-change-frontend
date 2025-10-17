@@ -115,7 +115,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
             "the tax year can be found in ETMP" in {
               setupMockSuccess(mtdUserRole)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
-              mockCalculationSuccessfulNew("XAIT0000123456")
+              mockCalculationSuccessWithFlag("XAIT0000123456")
               setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(testObligationsModel)
 
               val result = action(fakeRequest)
@@ -131,7 +131,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
             "the user has open obligations" in {
               setupMockSuccess(mtdUserRole)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
-              mockCalculationSuccessfulNew("XAIT0000123456")
+              mockCalculationSuccessWithFlag("XAIT0000123456")
               setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(testOpenObligationsModel)
 
               val result = action(fakeRequest)
@@ -145,7 +145,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
             "the user has fulfilled obligations" in {
               setupMockSuccess(mtdUserRole)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
-              mockCalculationSuccessfulNew("XAIT0000123456")
+              mockCalculationSuccessWithFlag("XAIT0000123456")
               setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(testFulfilledObligationsModel)
 
               val result = action(fakeRequest)
@@ -160,7 +160,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
             "given a tax year which can not be found in ETMP" in {
               setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(testObligationsModel)
               setupMockSuccess(mtdUserRole)
-              mockCalculationNotFoundNew("XAIT0000123456")
+              mockCalculationSuccessWithFlagNotFound("XAIT0000123456")
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -169,7 +169,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
             "there is a downstream error" in {
               setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(testObligationsModel)
               setupMockSuccess(mtdUserRole)
-              mockCalculationErrorNew("XAIT0000123456")
+              mockCalculationSuccessWithFlagError("XAIT0000123456")
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -178,7 +178,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
             "obligations connector returns an error" in {
               setupMockAllObligationsWithDates(testTaxYearModel.toFinancialYearStart, testTaxYearModel.toFinancialYearEnd)(obligationsError)
               setupMockSuccess(mtdUserRole)
-              mockCalculationSuccessfulNew("XAIT0000123456")
+              mockCalculationSuccessWithFlagError("XAIT0000123456")
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -187,7 +187,6 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
         }
       }
       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
-
     }
   }
 }

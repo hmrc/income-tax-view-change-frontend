@@ -60,7 +60,7 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
         "return a successful response" in {
           WiremockHelper.stubGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear", OK, jsonResponse)
 
-          val result = connector.getCalculationResponse(mtditid, nino, taxYear).futureValue
+          val result = connector.getCalculationResponse(mtditid, nino, taxYear, None).futureValue
 
           result shouldBe LiabilityCalculationResponse(Inputs(PersonalInformation("UK", None)), Metadata(Some("2024-02-15T09:35:15.094Z"), calculationType = "inYear", Some("customerRequest"), None, None), None, None)
           WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear")
@@ -69,7 +69,7 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
         "return an error when the request returns an invalid JSON" in {
           WiremockHelper.stubGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear", OK, "{}")
 
-          val result = connector.getCalculationResponse(mtditid, nino, taxYear).futureValue
+          val result = connector.getCalculationResponse(mtditid, nino, taxYear, None).futureValue
 
           result shouldBe LiabilityCalculationError(500, "Json validation error parsing calculation response")
           WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear")
@@ -78,7 +78,7 @@ class IncomeTaxCalculationConnectorISpec extends AnyWordSpec with ComponentSpecB
         "return an error when the request returns an INTERNAL SERVER ERROR" in {
           WiremockHelper.stubGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear", INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.getCalculationResponse(mtditid, nino, taxYear).futureValue
+          val result = connector.getCalculationResponse(mtditid, nino, taxYear, None).futureValue
 
           result shouldBe LiabilityCalculationError(500, "{}")
           WiremockHelper.verifyGet(s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear")

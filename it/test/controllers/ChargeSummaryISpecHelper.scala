@@ -26,7 +26,7 @@ import services.DateService
 import testConstants.BaseIntegrationTestConstants.testTaxYear
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
 
@@ -37,12 +37,13 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     paymentsWithCharge("SA Payment on Account 1", NIC4_SCOTLAND, dateService.getCurrentDate.plusDays(20).toString, -9000.0),
     paymentsWithCharge("SA Payment on Account 2", NIC4_SCOTLAND, dateService.getCurrentDate.plusDays(20).toString, -8000.0)
   )
-  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14), "ITSA- POA 1", 2500, LocalDate.of(2019, 2, 14), "Customer Request", Some("001")))
+  val chargeHistories: List[ChargeHistoryModel] = List(ChargeHistoryModel("2019", "1040000124", LocalDate.of(2018, 2, 14), "ITSA- POA 1", 2500,
+    LocalDateTime.of(LocalDate.of(2019, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")))
   val paymentBreakdown: List[FinancialDetail] = List(
     financialDetailModelPartial(originalAmount = 123.45, chargeType = ITSA_ENGLAND_AND_NI, mainType = "SA Balancing Charge", dunningLock = Some("Dunning Lock"), interestLock = Some("Interest Lock")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, dunningLock = Some("Stand over order"), interestLock = Some("Breathing Space Moratorium Act")),
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
-  val importantPaymentBreakdown: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")} ${messagesAPI("chargeSummary.paymentBreakdown.heading")}"
+  val important: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
   val lpiHistory: String = messagesAPI("chargeSummary.chargeHistory.lateInterestPayment")
 
