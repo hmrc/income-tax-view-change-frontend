@@ -46,6 +46,10 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
           padding-right: 1rem;
         }
       }
+
+      .govuk-table__cell--numeric {
+        padding-right: 5%;
+      }
     }
   }
 }
