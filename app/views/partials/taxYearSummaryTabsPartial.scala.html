@@ -17,7 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(govukTabs : GovukTabs)
-@(showForecastData: Boolean = false, showUpdates: Boolean = false, taxCalculationContent: Option[Html], previousCalculation: Option[Html], paymentsContent: Html, forecastContent: Html, updatesContent: Html, hasAmendments: Boolean, pfaEnabled: Boolean)(implicit messages: Messages)
+@(showForecastData: Boolean = false, showSubmissions: Boolean = false, taxCalculationContent: Option[Html], previousCalculation: Option[Html], paymentsContent: Html, forecastContent: Html, submissionsContent: Html, hasAmendments: Boolean, pfaEnabled: Boolean)(implicit messages: Messages)
 
 @taxCalculationTabItem() = @{
     taxCalculationContent.map { html => {
@@ -78,13 +78,13 @@
     ))
 }
 
-@updatesTabItem() = @{
-    if(showUpdates){
+@submissionsTabItem() = @{
+    if(showSubmissions){
         Some(TabItem(
-            id = Some("updates"),
-            label = messages("tax-year-summary.updates"),
+            id = Some("submissions"),
+            label = messages("tax-year-summary.submissions"),
             panel = TabPanel(
-                content = HtmlContent(updatesContent)
+                content = HtmlContent(submissionsContent)
             )
         ))
     } else {
@@ -98,7 +98,7 @@
         previousCalculationTabItem(),
         forecastTabItem(),
         paymentsTabItem(),
-        updatesTabItem()
+        submissionsTabItem()
     ).flatten
 }
 
