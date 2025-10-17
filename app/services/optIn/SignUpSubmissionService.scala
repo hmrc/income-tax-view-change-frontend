@@ -71,7 +71,7 @@ class SignUpSubmissionService @Inject()(
       case (Some(selectedTaxYear), None, None) =>
         itsaStatusUpdateConnector.optIn(taxYear = selectedTaxYear, user.nino)
       case _ =>
-        Future(ITSAStatusUpdateResponseFailure.defaultFailure()) // we return a failure if it does not satisfy scenarios, e.g single tax year only, or multi year when user selects a tax year
+        Future(ITSAStatusUpdateResponseFailure.defaultFailure()) // we return a failure if it does not satisfy scenarios
     }
   }
 
@@ -97,7 +97,7 @@ class SignUpSubmissionService @Inject()(
         val optInAuditModel = OptInAuditModel(optInProposition, nextTaxYear, itsaStatusUpdateResponse)
         auditingService.extendedAudit(optInAuditModel)
       case _ =>
-        Future(()) // we don't send an audit if it does not satisfy scenarios, e.g single tax year only, or multi year when user selects a tax year
+        Future(()) // we don't send an audit if it does not satisfy scenarios
     }
   }
 
