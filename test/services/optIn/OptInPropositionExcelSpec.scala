@@ -17,7 +17,7 @@
 package services.optIn
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
+import models.itsaStatus.ITSAStatus._
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import services.optIn.core.OptInProposition
 import services.optIn.core.OptInProposition.createOptInProposition
@@ -68,8 +68,8 @@ class OptInPropositionExcelSpec extends UnitSpec {
         case "N/A" => Seq()
         case "CY" => Seq(quote("CY"))
         case "CY+1" => Seq(quote("CY+1"))
-        case "CY and CY+1" => Seq(quote("CY"),quote("CY+1"))
-        case "CY+1 and CY" => Seq(quote("CY"),quote("CY+1"))
+        case "CY and CY+1" => Seq(quote("CY"), quote("CY+1"))
+        case "CY+1 and CY" => Seq(quote("CY"), quote("CY+1"))
         case "" => Seq()
         case _ => throw new RuntimeException(s"Unexpected presented in View and Change value: $input")
       }
@@ -153,19 +153,19 @@ class OptInPropositionExcelSpec extends UnitSpec {
   "check all required scenarios" in {
 
     forAll(scenarios) { (
-                         cyStatus: String,
-                         nyStatus: String,
-                         intent: String,
-                         valid: Boolean,
-                         presented: List[String],
-                         sent: String,
-                         expectedCY: String,
-                         expectedNY: String
+                          cyStatus: String,
+                          nyStatus: String,
+                          intent: String,
+                          valid: Boolean,
+                          presented: List[String],
+                          sent: String,
+                          expectedCY: String,
+                          expectedNY: String
                         ) =>
 
       val optInProposition = createOptInProposition(currentTaxYear,
-                                                    toITSAStatus(cyStatus),
-                                                    toITSAStatus(nyStatus))
+        toITSAStatus(cyStatus),
+        toITSAStatus(nyStatus))
 
       testOptIntScenario(optInProposition,
         valid,

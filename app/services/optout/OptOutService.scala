@@ -46,7 +46,7 @@ class OptOutService @Inject()(
                                calculationListService: CalculationListService,
                                nextUpdatesService: NextUpdatesService,
                                dateService: DateServiceInterface,
-                               repository: OptOutSessionDataRepository,
+                               optOutRepository: OptOutSessionDataRepository,
                                auditingService: AuditingService
                              ) {
 
@@ -78,13 +78,13 @@ class OptOutService @Inject()(
   def recallOptOutPropositionWithIntent()(implicit hc: HeaderCarrier,
                                           ec: ExecutionContext): Future[(OptOutProposition, Option[TaxYear])] = {
 
-    OptionT(repository.recallOptOutPropositionWithIntent()).
+    OptionT(optOutRepository.recallOptOutPropositionWithIntent()).
       getOrElseF(Future.failed(new RuntimeException("Failed to recall Opt Out journey initial state")))
   }
 
   def recallSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
 
-    repository.fetchSavedIntent().flatMap {
+    optOutRepository.fetchSavedIntent().flatMap {
       case Some(chosenTaxYear) => Future.successful(Some(chosenTaxYear))
       case _ => Future.successful(None)
     }
@@ -153,7 +153,7 @@ class OptOutService @Inject()(
                                      ec: ExecutionContext): Future[(OptOutProposition, Option[OptOutViewModel])] = {
     for {
       proposition <- fetchOptOutProposition()
-      _ <- repository.initialiseOptOutJourney(proposition)
+      _ <- optOutRepository.initialiseOptOutJourney(proposition)
     } yield (proposition, nextUpdatesOptOutViewModel(proposition))
   }
 
@@ -162,7 +162,7 @@ class OptOutService @Inject()(
                                             ec: ExecutionContext): Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel], OptOutProposition)] = {
     for {
       proposition <- fetchOptOutProposition()
-      _ <- repository.initialiseOptOutJourney(proposition)
+      _ <- optOutRepository.initialiseOptOutJourney(proposition)
     } yield (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition), proposition)
   }
 
@@ -258,7 +258,7 @@ class OptOutService @Inject()(
   def getTaxYearForOptOutCancelled()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
     for {
       proposition: OptOutProposition <- fetchOptOutProposition()
-      chosenTaxYear: Option[TaxYear] <- repository.fetchSavedIntent()
+      chosenTaxYear: Option[TaxYear] <- optOutRepository.fetchSavedIntent()
       availableOptOutYears: Seq[OptOutTaxYear] = proposition.availableOptOutYears
       singleTaxYear: Option[TaxYear] = availableOptOutYears.headOption.map(_.taxYear)
       isOneYearOptOut: Boolean = proposition.isOneYearOptOut
@@ -273,7 +273,7 @@ class OptOutService @Inject()(
 
 
   def determineOptOutIntentYear()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[ChosenTaxYear] = {
-    repository.fetchSavedIntent().map {
+    optOutRepository.fetchSavedIntent().map {
       case Some(chosenYear) if chosenYear == dateService.getCurrentTaxYear.previousYear =>
         PreviousTaxYear
       case Some(chosenYear) if chosenYear == dateService.getCurrentTaxYear =>
@@ -320,10 +320,12 @@ class OptOutService @Inject()(
   }
 
   def saveIntent(taxYear: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    repository.saveIntent(taxYear).recover {
+    optOutRepository.saveIntent(taxYear).recover {
       case ex: Exception =>
         Logger("application").error(s"[OptOutService.saveIntent] - Could not save intent tax year to session: $ex")
         false
     }
   }
+
+
 }
