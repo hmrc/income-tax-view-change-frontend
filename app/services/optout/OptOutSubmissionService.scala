@@ -65,9 +65,9 @@ class OptOutSubmissionService @Inject()(
             }
 
         logger.debug(
-          s"[ConfirmOptOutUpdateService][getOptOutYearsToUpdateWithStatuses] All TaxYears $allTaxYears\n" +
-            s"[ConfirmOptOutUpdateService][getOptOutYearsToUpdateWithStatuses] All TaxYears Statuses $taxYearItsaStatuses\n" +
-            s"[ConfirmOptOutUpdateService][getOptOutYearsToUpdateWithStatuses] Voluntary OptOutYearsToUpdate: $optOutYearsToUpdate"
+          s"[OptOutSubmissionService][getOptOutYearsToUpdateWithStatuses] All TaxYears $allTaxYears\n" +
+            s"[OptOutSubmissionService][getOptOutYearsToUpdateWithStatuses] All TaxYears Statuses $taxYearItsaStatuses\n" +
+            s"[OptOutSubmissionService][getOptOutYearsToUpdateWithStatuses] Voluntary OptOutYearsToUpdate: $optOutYearsToUpdate"
         )
         optOutYearsToUpdate
       case None =>
@@ -96,8 +96,8 @@ class OptOutSubmissionService @Inject()(
           allYearsToUpdate
       }
 
-    logger.debug(s"[ConfirmOptOutUpdateService][correctYearsToUpdateBasedOnUserSelection] User account itsa data: $maybeOptOutContextData")
-    logger.debug(s"[ConfirmOptOutUpdateService][correctYearsToUpdateBasedOnUserSelection] All years to updated based on user tax year selection: $gatherTaxYearsToUpdateBasedOnUserAnswerChoice, useranswers chosen tax year: $selectedOptOutTaxYear")
+    logger.debug(s"[OptOutSubmissionService][correctYearsToUpdateBasedOnUserSelection] User account itsa data: $maybeOptOutContextData")
+    logger.debug(s"[OptOutSubmissionService][correctYearsToUpdateBasedOnUserSelection] All years to updated based on user tax year selection: $gatherTaxYearsToUpdateBasedOnUserAnswerChoice, useranswers chosen tax year: $selectedOptOutTaxYear")
     gatherTaxYearsToUpdateBasedOnUserAnswerChoice
   }
 
@@ -163,9 +163,9 @@ class OptOutSubmissionService @Inject()(
       optOutForSubsequentYearsValidatedList = blockOptOutForSubsequentYearsValidation(yearsToUpdateBasedOnUserSelection)
       filteredTaxYearsForDesiredItsaStatus: List[OptOutYearToUpdate] = optOutForSubsequentYearsValidatedList.filter { yearsToUpdate => yearsToUpdate.itsaStatus == itsaStatusToSendUpdatesFor }
       taxYearsToUpdate = filteredTaxYearsForDesiredItsaStatus.map(_.taxYear)
-      _ = logger.debug(s"[ITSAStatusUpdateConnector][updateTaxYearsITSAStatusRequest] Making update requests for tax years: $taxYearsToUpdate")
+      _ = logger.debug(s"[OptOutSubmissionService][updateTaxYearsITSAStatusRequest] Making update requests for tax years: $taxYearsToUpdate")
       makeUpdateRequestsForEachYear: List[ITSAStatusUpdateResponse] <- Future.sequence(taxYearsToUpdate.map(taxYear => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear, user.nino, optOutUpdateReason)))
-      _ = logger.debug(s"[ITSAStatusUpdateConnector][updateTaxYearsITSAStatusRequest] ITSA Status Update Responses: $makeUpdateRequestsForEachYear")
+      _ = logger.debug(s"[OptOutSubmissionService][updateTaxYearsITSAStatusRequest] ITSA Status Update Responses: $makeUpdateRequestsForEachYear")
       auditEvents: List[OptOutAuditModel] = makeUpdateRequestsForEachYear.map(response => createAuditEvent(maybeSelectedTaxYear, maybeOptOutContextData, filteredTaxYearsForDesiredItsaStatus, response))
       _ <- Future.sequence(auditEvents.map((event: OptOutAuditModel) => auditingService.extendedAudit(event)))
     } yield {
