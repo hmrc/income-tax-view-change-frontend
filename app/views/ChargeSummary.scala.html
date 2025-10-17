@@ -479,7 +479,8 @@
                     content = Text(messages("chargeSummary.chargeHistory.description"))
                 ),
                 HeadCell(
-                    content = Text(messages("chargeSummary.chargeHistory.amount"))
+                    content = Text(messages("chargeSummary.chargeHistory.amount")),
+                    format = Some("numeric")
                 )
             )),
             captionClasses = "govuk-table__caption--m",
