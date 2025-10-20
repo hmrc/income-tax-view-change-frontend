@@ -16,6 +16,7 @@
 
 package models
 
+import enums.ReportingObligations.{MultiYearCard, NoCard, ReportingObligationSummaryCardState, SingleYearCard}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
 import services.DateServiceInterface
@@ -30,7 +31,9 @@ case class ReportingFrequencyViewModel(
                                         isAnyOfBusinessLatent: Boolean,
                                         displayManageYourReportingFrequencySection: Boolean = true,
                                         mtdThreshold: String,
-                                        proposition: OptOutProposition
+                                        proposition: OptOutProposition,
+                                        isSignUpEnabled: Boolean,
+                                        isOptOutEnabled: Boolean
                                       )(implicit dateService: DateServiceInterface) {
 
   private val currentTaxYear: TaxYear = dateService.getCurrentTaxYear
@@ -49,7 +52,8 @@ case class ReportingFrequencyViewModel(
     optOutTaxYears.isEmpty ||
       (optInTaxYears.nonEmpty && (optInTaxYears.minBy(_.startYear).startYear < optOutTaxYears.minBy(_.startYear).startYear))
 
-  val atLeastOneOfOptInOrOptOutExists: Boolean = optOutTaxYears.nonEmpty || optInTaxYears.nonEmpty
+  val optOutExistsWhileEnabled: Boolean = isOptOutEnabled && optOutTaxYears.nonEmpty
+  val signUpExistsWhileEnabled: Boolean = isSignUpEnabled && optInTaxYears.nonEmpty
 
   private def selectYearSuffix(year: TaxYear, optOutSingle: String, optOutOnwards: String, signUpLabel: String): Option[String] = {
     if (optOutTaxYears.contains(year)) {
@@ -94,26 +98,31 @@ case class ReportingFrequencyViewModel(
     }
   }
 
-  private val checkIfOnwards: List[Option[Boolean]] = {
+  private val checkIfOnwards: List[ReportingObligationSummaryCardState] = {
     val currentYearStatus = proposition.currentTaxYear.status
     val nextYearStatus = proposition.nextTaxYear.status
 
     val previousYearCheck = (proposition.previousTaxYear.canOptOut, currentYearStatus) match {
-      case (false, _) => None
-      case (true, Voluntary) => Some(true)
-      case (true, _) => Some(false)
+      case (false, _)                            => NoCard
+      case (true, _) if !isOptOutEnabled         => NoCard
+      case (true, Voluntary)                     => MultiYearCard
+      case (true, _)                             => SingleYearCard
     }
 
     val currentYearCheck = (currentYearStatus, nextYearStatus) match {
-      case (Voluntary, Voluntary)  => Some(true)
-      case (Annual, Annual)        => Some(true)
-      case (Voluntary | Annual, _) => Some(false)
-      case _                       => None
+      case (Annual, _) if !isSignUpEnabled    => NoCard
+      case (Voluntary, _) if !isOptOutEnabled => NoCard
+      case (Voluntary, Voluntary)             => MultiYearCard
+      case (Annual, Annual)                   => MultiYearCard
+      case (Voluntary | Annual, _)            => SingleYearCard
+      case _                                  => NoCard
     }
 
     val nextYearCheck = nextYearStatus match {
-      case Voluntary | Annual => Some(true)
-      case _                  => None
+      case Voluntary if !isOptOutEnabled => NoCard
+      case Annual if !isSignUpEnabled    => NoCard
+      case Voluntary | Annual            => MultiYearCard
+      case _                             => NoCard
     }
 
     List(previousYearCheck, currentYearCheck, nextYearCheck)
@@ -121,11 +130,11 @@ case class ReportingFrequencyViewModel(
 
   val getSummaryCardSuffixes: List[Option[String]] = {
     checkIfOnwards.zipWithIndex.map {
-      case (Some(true), 0) => Some("optOut.previousYear.onwards")
-      case (Some(false), 0) => Some("optOut.previousYear.single")
-      case (Some(true), 1) => currentYearSuffix.map(_ + ".onwards")
-      case (Some(false), 1) => currentYearSuffix.map(_ + ".single")
-      case (Some(true), 2) => nextYearSuffix
+      case (MultiYearCard, 0)  => Some("optOut.previousYear.onwards")
+      case (SingleYearCard, 0) => Some("optOut.previousYear.single")
+      case (MultiYearCard, 1)  => currentYearSuffix.map(_ + ".onwards")
+      case (SingleYearCard, 1) => currentYearSuffix.map(_ + ".single")
+      case (MultiYearCard, 2)  => nextYearSuffix
       case _ => None
     }
   }

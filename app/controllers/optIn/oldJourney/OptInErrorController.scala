@@ -38,7 +38,7 @@ class OptInErrorController @Inject()(val view: OptInError,
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withReportingObligationsFS {
+      withOptInRFChecks {
         Future.successful(Ok(view(isAgent)))
       }
   }

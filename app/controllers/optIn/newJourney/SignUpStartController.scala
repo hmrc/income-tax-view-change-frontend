@@ -50,7 +50,7 @@ class SignUpStartController @Inject()(authActions: AuthActions,
   private def buttonUrl(isAgent: Boolean, taxYear: String) = routes.SignUpTaxYearQuestionController.show(isAgent, Some(taxYear)).url
 
   def show(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    withRFAndOptInOptOutR17FS {
+    withSignUpRFChecks {
       withRecover(isAgent) {
         optInService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>

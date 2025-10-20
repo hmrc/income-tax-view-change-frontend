@@ -108,7 +108,9 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   isAnyOfBusinessLatent = true,
                   displayCeasedBusinessWarning = false,
                   mtdThreshold = "£50,000",
-                  proposition = optOutProposition
+                  proposition = optOutProposition,
+                  isSignUpEnabled = true,
+                  isOptOutEnabled = true
                 ),
                 optInOptOutContentUpdateR17IsEnabled = false,
                 nextUpdatesLink = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
@@ -155,7 +157,9 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   isAnyOfBusinessLatent = true,
                   displayCeasedBusinessWarning = false,
                   mtdThreshold = "£50,000",
-                  proposition = optOutProposition
+                  proposition = optOutProposition,
+                  isSignUpEnabled = true,
+                  isOptOutEnabled = true
                 ),
                 optInOptOutContentUpdateR17IsEnabled = true,
                 nextUpdatesLink = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
