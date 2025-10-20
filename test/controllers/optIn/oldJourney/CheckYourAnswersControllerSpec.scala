@@ -21,7 +21,7 @@ import controllers.routes
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.ReportingFrequencyPage
+import models.admin.{ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.optin.MultiYearCheckYourAnswersViewModel
 import org.mockito.ArgumentMatchers.any
@@ -55,7 +55,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "render the check your answers page" in {
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -72,7 +72,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
 
         s"return result with $INTERNAL_SERVER_ERROR status" when {
           "there is no check your answers view model" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -83,6 +83,27 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }
+
+        "render the reporting obligations page" when {
+          "the sign up feature switch is disabled" in {
+            disable(SignUpFs)
+            enable(ReportingFrequencyPage)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
         "render the home page" when {
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
@@ -110,7 +131,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to OptInCompletedController" in {
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -125,7 +146,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
 
         s"redirect to optInError page" when {
           "the optInCall fails" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -137,6 +158,27 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
             status(result) shouldBe Status.SEE_OTHER
           }
         }
+
+        "render the reporting obligations page" when {
+          "the Sign Up feature switch is disabled" in {
+            disable(SignUpFs)
+            enable(ReportingFrequencyPage)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
         "render the home page" when {
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)

@@ -22,7 +22,7 @@ import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.optIn.ChooseTaxYearForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{NavBarFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
@@ -78,7 +78,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the choose tax year page" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -118,7 +118,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
         )
         "is authenticated, with a valid enrolment" should {
           "redirect to check your answers page" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -136,7 +136,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
           "return a BadRequest" when {
             "the form is invalid" in {
-              enable(ReportingFrequencyPage)
+              enable(ReportingFrequencyPage, SignUpFs)
               val invalidFormData = Map(
                 ChooseTaxYearForm.choiceField -> Seq()
               )

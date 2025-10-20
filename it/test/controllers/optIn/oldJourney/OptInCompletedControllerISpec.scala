@@ -20,7 +20,7 @@ import controllers.ControllerISpecHelper
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{NavBarFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Annual
@@ -59,7 +59,7 @@ class OptInCompletedControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the completed page" that {
             "is for the current tax year" in {
-              enable(ReportingFrequencyPage)
+              enable(ReportingFrequencyPage, SignUpFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
@@ -80,7 +80,7 @@ class OptInCompletedControllerISpec extends ControllerISpecHelper {
             }
 
             "that is for next tax year" in {
-              enable(ReportingFrequencyPage)
+              enable(ReportingFrequencyPage, SignUpFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)

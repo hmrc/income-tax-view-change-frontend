@@ -21,7 +21,7 @@ import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockOptInService, MockOptOutService}
 import models.ReportingFrequencyViewModel
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.optout.OptOutMultiYearViewModel
@@ -69,7 +69,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "render the reporting frequency page" when {
           "the reporting frequency feature switch is enabled" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs, OptOutFs)
             setupMockSuccess(mtdRole)
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
@@ -117,8 +117,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               ).toString
           }
           "the reporting frequency and the R17 content feature switches are enabled" in {
-            enable(ReportingFrequencyPage)
-            enable(OptInOptOutContentUpdateR17)
+            enable(ReportingFrequencyPage, SignUpFs, OptOutFs, OptInOptOutContentUpdateR17)
             setupMockSuccess(mtdRole)
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
