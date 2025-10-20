@@ -1413,7 +1413,7 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 ## Tax Years Overview Update Tab ##
 submissionsTab.desc                                                  = Dyma gofnod o’r hyn a gyflwynwyd ar gyfer y flwyddyn dreth.
 submissionsTab.due                                                   = Yn ddyledus erbyn {0}
-submissionsTab.submission                                            = Math o ddiweddariad
+submissionsTab.submission                                            = Cyflwyniad
 submissionsTab.incomeSource                                          = Ffynhonnell incwm
 submissionsTab.dateSubmitted                                         = Dyddiad cyflwyno
 submissionsTab.dateToDate                                            = {0} i {1}
@@ -1422,7 +1422,7 @@ submissionsTab.obligationType.property                               = Incwm o e
 submissionsTab.obligationType.business                               = Busnes
 submissionsTab.obligationType.crystallised                           = Pob ffynhonnell incwm
 submissionsTab.submission.quarterly                                  = Diweddariad bob chwarter
-submissionsTab.submission.crystallised                               = Datganiad terfynol
+submissionsTab.submission.crystallised                               = Ffurflen Dreth
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                            = Eich trosolwg treth terfynol

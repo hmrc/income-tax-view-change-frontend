@@ -60,15 +60,12 @@
     input.map(nextUpdateWithIncomeType => {
         Seq(
             TableRow(classes = "govuk-table__header govuk-!-font-weight-regular",
-                attributes = Map("scope" -> "row"),
                 content = HtmlContent(updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType))),
             TableRow(classes = "govuk-table__cell",
-                attributes = Map("scope" -> "row"),
                 content = HtmlContent(obligationsTypeHelper {
                     messages(nextUpdateWithIncomeType.incomeType)
                 })),
             TableRow(classes = "govuk-table__cell",
-                attributes = Map("scope" -> "row"),
                 content = nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort).fold(HtmlContent(""))(value => HtmlContent(value)))
         )
     })
