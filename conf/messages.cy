@@ -1048,10 +1048,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.headin
 yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa2.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
 selfAssessmentCharges.reviewAndReconcilePoa.table.overdue                     = {0} i {1}
 selfAssessmentCharges.interestOnThisCharge.Table.heading                      = Cyfnod y llog
-selfAssessmentCharges.interestOnThisCharge.Table.heading2.1                   = Cyfradd log
-selfAssessmentCharges.interestOnThisCharge.Table.heading2.2                   = bresennol
-selfAssessmentCharges.interestOnThisCharge.Table.heading3.1                   = Swm
-selfAssessmentCharges.interestOnThisCharge.Table.heading3.2                   = amcangyfrifedig
+selfAssessmentCharges.interestOnThisCharge.Table.heading2                     = Cyfradd log bresennol
+selfAssessmentCharges.interestOnThisCharge.Table.heading3                     = Swm amcangyfrifedig
 selfAssessmentCharges.interestOnThisCharge.Table.totalText                    = Cyfanswm y llog ar y tâl hwn
 selfAssessmentCharges.interestOnThisCharge.guidanceText                       = Gall llog ar dâl sydd arnoch fynd i fyny neu i lawr. Gweler yr arweiniad ar y gyfradd log a bennir gan CThEF
 selfAssessmentCharges.interestOnThisCharge.guidanceLinkText                   = y gyfradd llog a bennir gan CThEF

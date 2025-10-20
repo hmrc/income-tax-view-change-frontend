@@ -1048,10 +1048,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.headin
 yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa2.text.heading       = This charge goes towards your {0} to {1} tax bill.
 selfAssessmentCharges.reviewAndReconcilePoa.table.overdue                             = {0} to {1}
 selfAssessmentCharges.interestOnThisCharge.Table.heading                              = Interest period
-selfAssessmentCharges.interestOnThisCharge.Table.heading2.1                           = Current
-selfAssessmentCharges.interestOnThisCharge.Table.heading2.2                           = interest rate
-selfAssessmentCharges.interestOnThisCharge.Table.heading3.1                           = Estimated
-selfAssessmentCharges.interestOnThisCharge.Table.heading3.2                           = amount
+selfAssessmentCharges.interestOnThisCharge.Table.heading2                             = Current interest rate
+selfAssessmentCharges.interestOnThisCharge.Table.heading3                             = Estimated amount
 selfAssessmentCharges.interestOnThisCharge.Table.totalText                            = Total interest on this charge:
 selfAssessmentCharges.interestOnThisCharge.guidanceText                               = The interest on a charge you owe can go up and down. See guidance on the
 selfAssessmentCharges.interestOnThisCharge.guidanceLinkText                           = interest rate set by HMRC

@@ -170,14 +170,14 @@
         }
     }
 
-    @if(viewModel.chargeItem.isAccruingInterest) {
+    @if(viewModel.chargeItem.hasInterest) {
+        @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
+            @interestOnChargeRARPoaSection(viewModel)
+        } else {
+            @interestOnYourChargeSection(viewModel.chargeItem)
 
-        @interestOnYourChargeSection(viewModel.chargeItem)
-
-        @interestOnYourChargeTable(viewModel)
-    }
-    @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
-        @interestOnChargeRARPoaSection(viewModel)
+            @interestOnYourChargeTable(viewModel)
+        }
     }
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
