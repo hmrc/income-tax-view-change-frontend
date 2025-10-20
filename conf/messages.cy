@@ -24,13 +24,6 @@ base.fullstop                                                   = .
 ## Accessibility ##
 accessibility.this-section-is                                   = Teitl yr adran hon yw
 
-# Fallback Back Links
-back.whatYouOwe = Yn ôl i Yr hyn sydd arnoch
-back.yourSelfAssessmentChargeSummary = Yn ôl i’ch taliadau Hunanasesiad
-back.paymentHistory = Yn ôl i Hanes taliadau
-back.taxYearSummary = Yn ôl i Crynodeb o’r flwyddyn dreth
-back.nomatch = Yn ôl
-
 # Agent Base
 agent.base.service_name                                        = Treth Incwm fanylion eich cleient
 

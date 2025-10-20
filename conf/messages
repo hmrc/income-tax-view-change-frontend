@@ -23,13 +23,6 @@ base.fullstop                                                   = .
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
 
-# Fallback Back Links
-back.whatYouOwe     = Back
-back.yourSelfAssessmentChargeSummary  = Back
-back.paymentHistory = Back
-back.taxYearSummary = Back
-back.nomatch        = Back
-
 # Agent Base
 agent.base.service_name                             = Your client’s Income Tax details
 
