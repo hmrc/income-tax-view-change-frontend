@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
-@import viewUtils.ExternalUrlHelper
+@import models.incomeSourceDetails.TaxYear
 
 @this(
         appConfig: config.FrontendAppConfig,
@@ -28,7 +28,7 @@
 )
 @(
         utr: Option[String],
-        currentTaxYear: Int,
+        claimToAdjustTaxYear: Option[TaxYear],
         selfServeTimeToPayStartUrl: String,
         adjustPoaUrl: String,
         budgetPaymentPlanUrl: String
@@ -38,26 +38,31 @@
         messages: Messages
 )
 
-@saNoteParagraphContent(utr: String) = {
+
+
+
+@saNoteParagraphContent(utr: String, ctaTaxYear: Option[TaxYear]) = {
 
     @h2(msg = getMessage("sa-note-1-heading"))
-    @p(id = Some("sa-note-1-migrated"))(Html(getMessage("sa-note-1-body-1") +
+    @p(id = Some("sa-note-1-migrated-1"))(Html(getMessage("sa-note-1-body-1") +
             link(link = selfServeTimeToPayStartUrl,
                 outerMessage = ".",
                 messageKey = getMessage("sa-link-1-body-1"),
                 rel = Some("noreferrer noopener"),
                 target = Some("_blank")).toString()))
-    @p(id = Some("sa-note-1-migrated"))(Html(getMessage("sa-note-1-body-2") +
+    @p(id = Some("sa-note-1-migrated-2"))(Html(getMessage("sa-note-1-body-2") +
             link(link = budgetPaymentPlanUrl,
                 messageKey = getMessage("sa-link-1-body-2"),
                 rel = Some("noreferrer noopener"),
                 target = Some("_blank")).toString() +
             getMessage("sa-note-1-body-3")))
-    @p(id = Some("sa-note-1-migrated"))(Html(getMessage("sa-note-1-body-4") +
-            link(link = adjustPoaUrl,
-                messageKey = getMessage("sa-link-1-body-3", (currentTaxYear-1).toString, currentTaxYear.toString),
-                outerMessage = ".",
-                rel = Some("noreferrer noopener")).toString()))
+    @ctaTaxYear.map { taxYear =>
+        @p(id = Some("sa-note-1-migrated-3"))(Html(getMessage("sa-note-1-body-4") +
+                link(link = adjustPoaUrl,
+                    messageKey = getMessage("sa-link-1-body-3", taxYear.startYear.toString, taxYear.endYear.toString),
+                    outerMessage = ".",
+                    rel = Some("noreferrer noopener")).toString()))
+    }
 
     @h2(msg = getMessage("sa-note-2-heading"))
     @p(id = Some("sa-note-2-migrated"))(Html(getMessage("sa-note-2-body") +
@@ -73,6 +78,6 @@
 
 @utr.map { utr =>
     <div id="payments-due-note">
-        @saNoteParagraphContent(utr)
+        @saNoteParagraphContent(utr, claimToAdjustTaxYear)
     </div>
 }

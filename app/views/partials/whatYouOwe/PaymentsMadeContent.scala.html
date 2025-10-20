@@ -43,6 +43,7 @@
     @p(id = Some("overdue-inset-migrated"))(content = Html(messages("selfAssessmentCharges.overdue-inset-text-1")))
     @p(id = Some("overdue-inset-migrated"))(content = Html(messages("selfAssessmentCharges.overdue-inset-text-2")))
 }
+
 @viewModel.whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
     @h2(getMessage("payments-made-heading"))
     @p(id = Some("payments-made-migrated"))(Html(

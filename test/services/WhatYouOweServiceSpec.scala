@@ -120,7 +120,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter,
-            claimARefundR18Enabled = true).futureValue shouldBe whatYouOweDataWithMixedData1
+            claimARefundR18Enabled = true).futureValue shouldBe whatYouOweDataWithMixedData1()
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and dueInThirtyDays" should {
@@ -341,7 +341,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
       "return MFA Debits and non-MFA debits" in {
         testGetWhatYouOweChargesList(financialDetails = financialDetailsMFADebits, expectedResult = whatYouOweDataWithMFADebitsData)
-        testGetWhatYouOweChargesList(financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1)
+        testGetWhatYouOweChargesList(financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1())
       }
     }
 

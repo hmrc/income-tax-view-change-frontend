@@ -26,7 +26,6 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.whatYouOwe._
 @import _root_.implicits.HtmlFormatter.NbspString
-@import views.html.partials.yourSelfAssessmentCharges.PaymentPlanSection
 @import viewUtils.ExternalUrlHelper
 
 @this(
@@ -43,17 +42,14 @@
         saNoteParagraph: SaNoteParagraph,
         govukWarningText: GovukWarningText,
         taxYearSummaryLink: TaxYearSummaryLink,
-        paymentPlanSection: PaymentPlanSection,
         paymentsMadeContent: PaymentsMadeContent,
         dunningLockParagraph: DunningLockParagraph,
-        codingOutInsetContent: CodingOutInsetContent,
         accruingInterestCharge: AccruingInterestCharge,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         claimToAdjustPoaSection: ClaimToAdjustPoaSection,
         availableCreditInAccount: AvailableCreditInAccount,
         interestOnBalancingCharge: InterestOnBalancingCharge,
-        balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
-        unallocatedCreditParagraphContent: UnallocatedCreditParagraphContent
+        balancingChargePreMtdDigital: BalancingChargePreMtdDigital
 )
 @(
         viewModel: WhatYouOweViewModel,
@@ -210,7 +206,7 @@
     }
 
     @saNoteParagraph(utr = viewModel.utr,
-        currentTaxYear = viewModel.currentTaxYear,
+        claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
         selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl,
         adjustPoaUrl = viewModel.adjustPoaUrl,
         budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL)
