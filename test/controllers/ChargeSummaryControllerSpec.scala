@@ -332,7 +332,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "First late payment penalty history"
               }
 
-              "provided with an id associated to a Review & Reconcile Debit Charge for POA1 (old view)" in new Setup(
+              "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
                 testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -347,11 +347,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingForRAR1
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
-                document.getElementById("rar-poa1-explanation").text() shouldBe explanationTextForRAR1
-                document.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
+                document.getElementById("rar-poa1-explanation-p1").text() + document.getElementById("rar-poa-explanation-p2").text() shouldBe explanationTextForRAR1
+                document.getElementById("charge-history-heading").text() shouldBe paymentHistoryHeadingForRARCharge
                 document.getElementById("poa1-link").attr("href") shouldBe chargeSummaryUrl
 
                 document
@@ -359,11 +359,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .getElementsByClass("govuk-table__body")
                   .first()
                   .getElementsByClass("govuk-table__cell")
-                  .get(4)
+                  .get(1)
                   .text() shouldBe descriptionTextForRAR1
               }
 
-              "provided with an id associated to a Review & Reconcile Debit Charge for POA2 (old view)" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
+              "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -377,18 +377,18 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   routes.ChargeSummaryController.show(testTaxYear, id1040000124).url
                 }
 
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingForRAR2
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
-                document.getElementById("rar-poa2-explanation").text() shouldBe explanationTextForRAR2
-                document.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
+                document.getElementById("rar-poa2-explanation-p1").text() + document.getElementById("rar-poa-explanation-p2").text() shouldBe explanationTextForRAR2
+                document.getElementById("charge-history-heading").text() shouldBe paymentHistoryHeadingForRARCharge
                 document.getElementById("poa2-link").attr("href") shouldBe chargeSummaryUrl
                 document
                   .getElementById("payment-history-table")
                   .getElementsByClass("govuk-table__body")
                   .first()
                   .getElementsByClass("govuk-table__cell")
-                  .get(4)
+                  .get(1)
                   .text() shouldBe descriptionTextForRAR2
               }
 
@@ -561,7 +561,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld("2022", "2023")
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2022", "2023")
                 document.select("h1").text() shouldBe successHeadingForRAR1
                 document.select("#payment-processing-bullets").isEmpty shouldBe true
               }
