@@ -17,6 +17,7 @@
 package mocks.connectors
 
 import connectors.IncomeTaxCalculationConnector
+import enums.TaxYearSummary.CalculationRecord
 import models.liabilitycalculation.LiabilityCalculationResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
@@ -29,11 +30,12 @@ trait MockIncomeTaxCalculationConnector extends UnitSpec with BeforeAndAfterEach
 
   lazy val mockIncomeTaxCalculationConnector: IncomeTaxCalculationConnector = mock(classOf[IncomeTaxCalculationConnector])
 
-  def mockGetCalculationResponse(mtditid: String, nino: String, taxYear: String)(response: LiabilityCalculationResponseModel): Unit = {
+  def mockGetCalculationResponse(mtditid: String, nino: String, taxYear: String, calculationRecord: Option[CalculationRecord])(response: LiabilityCalculationResponseModel): Unit = {
     when(mockIncomeTaxCalculationConnector.getCalculationResponse(
       ArgumentMatchers.eq(mtditid),
       ArgumentMatchers.eq(nino),
-      ArgumentMatchers.eq(taxYear)
+      ArgumentMatchers.eq(taxYear),
+      ArgumentMatchers.eq(calculationRecord)
     )(ArgumentMatchers.any(), ArgumentMatchers.any())) thenReturn Future.successful(response)
   }
 

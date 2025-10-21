@@ -44,7 +44,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(OK),
-            pageTitleAgentLogin("agent.confirmClient.heading")
+            pageTitle(MTDPrimaryAgent, "agent.confirmClient.heading")
           )
 
           val document: Document = Jsoup.parse(result.toString)
@@ -69,7 +69,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(OK),
-            pageTitleAgentLogin("agent.confirmClient.heading")
+            pageTitle(MTDPrimaryAgent, "agent.confirmClient.heading")
           )
 
           val document: Document = Jsoup.parse(result.toString)

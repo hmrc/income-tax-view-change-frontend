@@ -66,22 +66,22 @@ class BackLinkWithFallbackSpec extends ViewSpec {
 
       "has the correct text for Payment History Page" in new TestWithGatewayPage(Some(PaymentHistoryPage)) {
         val noscriptContent = document.select("noscript").text()
-        noscriptContent should include(messages("Back to Payment History"))
+        noscriptContent should include(messages("Back"))
       }
 
       "has the correct text for WhatYouOwe Page" in new TestWithGatewayPage(Some(WhatYouOwePage)) {
         val noscriptContent = document.select("noscript").text()
-        noscriptContent should include(messages("Back to What You Owe"))
+        noscriptContent should include(messages("Back"))
       }
 
       "has the correct text for Tax Year Summary Page" in new TestWithGatewayPage(Some(TaxYearSummaryPage)) {
         val noscriptContent = document.select("noscript").text()
-        noscriptContent should include(messages("back.taxYearSummary"))
+        noscriptContent should include(messages("Back"))
       }
 
       "has the correct text for NoMatch Page" in new TestWithGatewayPage(Some(NoMatch)) {
         val noscriptContent = document.select("noscript").text()
-        noscriptContent should include(messages("back.nomatch"))
+        noscriptContent should include(messages("Back"))
       }
     }
   }

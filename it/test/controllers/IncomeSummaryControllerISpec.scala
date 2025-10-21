@@ -42,7 +42,7 @@ class IncomeSummaryControllerISpec extends ControllerISpecHelper {
             "render the income summary page" in {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
-              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
+              IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, "2018", "LATEST")(
                 status = OK,
                 body = liabilityCalculationModelSuccessful
               )
@@ -50,7 +50,7 @@ class IncomeSummaryControllerISpec extends ControllerISpecHelper {
               val res = buildGETMTDClient(path, additionalCookies).futureValue
 
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-              IncomeTaxCalculationStub.verifyGetCalculationResponse(testNino, "2018")
+              IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, "2018", "LATEST")
 
               res should have(
                 httpStatus(OK),

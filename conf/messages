@@ -23,13 +23,6 @@ base.fullstop                                                   = .
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
 
-# Fallback Back Links
-back.whatYouOwe     = Back to What You Owe
-back.yourSelfAssessmentChargeSummary  = Back to Your Self Assessment charges
-back.paymentHistory = Back to Payment History
-back.taxYearSummary = Back to Tax Year Summary
-back.nomatch        = Back
-
 # Agent Base
 agent.base.service_name                             = Your client’s Income Tax details
 
@@ -42,7 +35,7 @@ htmlTitle                                           = {0} - Manage your Self Ass
 htmlTitle.agent                                     = {0} - Manage your Self Assessment - GOV.UK
 htmlTitle.errorPage                                 = {0} - GOV.UK
 htmlTitle.invalidInput                              = Error: {0} - GOV.UK
-htmlTitle.confirmClient                             = {0} - GOV.UK
+htmlTitle.confirmClient                             = {0} - Manage your Self Assessment - GOV.UK
 
 # Agent - Client Relationship Failure
 agent.client_relationship_failure.heading                       = You are not authorised to view this client
@@ -58,6 +51,7 @@ agent.no_assignment.button                                      = Go to agent se
 
 ## Agent - UTR Error
 agent.utr_error.heading                                         = You cannot view this client
+agent.utr_error.title                                           = You cannot view this client - Manage your Self Assessment
 agent.utr_error.utr_wrong                                       = This may be because:
 agent.utr_error.reason.bullet1                                  = you entered the wrong Unique Taxpayer Reference (UTR)
 agent.utr_error.reason.bullet2                                  = your client needs to {0}
@@ -209,10 +203,12 @@ error.custom.message                                            = The page you�
 error.custom.link                                               = Return to Making Tax Digital for Income Tax
 
 ## Tax Years Page ##
-taxYears.heading                                               = Tax years
+taxYears.heading                                               = Your tax returns
+taxYears.description                                           = The tax year runs from 6 April to 5 April.
 taxYears.viewSummary                                           = View summary
 taxYears.updateReturn                                          = Update return
-taxYears.taxYears                                              = 6 April {0} to 5 April {1}
+taxYears.currentTaxYear                                        = {0} to {1} current tax year
+taxYears.taxYears                                              = {0} to {1} tax year
 taxYears.ongoing                                               = Ongoing
 taxYears.overdue                                               = Overdue
 taxYears.complete                                              = Complete
@@ -220,11 +216,12 @@ taxYears.accruesInterest                                       = Accrues interes
 taxYears.noEstimates                                           = You don’t have an estimate right now. We’ll show your next Income Tax estimate when you submit a report using software.
 taxYears.table.taxYear.heading                                 = Tax year
 taxYears.table.options.heading                                 = Options
-taxYears.oldSa.content.text                                    = To view your tax years from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
+taxYears.oldSa.content.text                                    = To view a summary from before the {0} to {1} tax year, you need to visit your previous
 taxYears.oldSa.content.link                                    = Self Assessment online account
-taxYears.oldSa.agent.content.1								   = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to login into your
+taxYears.oldSa.agent.content.1								   = To view a client’s summary from before the {0} to {1} tax year, you need to log in to your
 taxYears.oldSa.agent.content.2								   = Self Assessment for Agents account
 taxYears.oldSa.agent.content.3								   = This will be a different Government Gateway ID and password to your Agent Services account.
+taxYears.r18.amendment.text                                    = You can view the tax year summary pages to also see your options for amending the filed return for that year.
 
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                           = Tax year summary
@@ -280,7 +277,7 @@ tax-year-summary.payments.class2Nic.text                           = Class 2 Nat
 tax-year-summary.payments.codingOut.text                           = Balancing payment collected through PAYE tax code
 tax-year-summary.payments.poa1CodedOut.text                        = First payment on account collected through PAYE tax code
 tax-year-summary.payments.poa2CodedOut.text                        = Second payment on account collected through PAYE tax code
-tax-year-summary.na                                                = N/A
+tax-year-summary.noData                                            = No data
 tax-year-summary.forecast_tab.insetText                            = This is an estimate of your tax bill for the whole year to 5 April {0}. It will be updated throughout the year as more information is provided.
 tax-year-summary.forecast_total_title                              = 6 April {0} to 5 April {1} forecast
 tax-year-summary.forecast.tax-due                                  = Forecast Self Assessment tax amount
@@ -443,6 +440,23 @@ tax-year-summary.agent.message.C559114                             = for your cl
 tax-year-summary.adjust-poa-paragraph                              = You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account.
 tax-year-summary.adjust-poa                                        = Adjust payments on account
 
+# Tax Year Summary - PFA #
+tax-year-summary.latest-calculation                                = Latest calculation
+tax-year-summary.latest-calculation-desc                           = Your tax return was amended on {0} and as a result this is your most up-to-date calculation.
+
+tax-year-summary.previous-calculation                              = Previous calculation
+tax-year-summary.previous-calculation-desc                         = When your tax return is amended it changes your tax calculation. If this happens, this page shows any previous tax calculations you may have.
+tax-year-summary.previous-calculation-subheading                   = Calculation made on {0}
+tax-year-summary.previous-calculation-note                         = The tax return was filed then.
+tax-year-summary.previous-calculation-amend-subheading             = Amending a submitted tax return
+tax-year-summary.previous-calculation-bullet-start                 = You can change your tax return after you have filed it. To do this online you must:
+tax-year-summary.previous-calculation-bullet-1                     = use the software or HMRC online service used to submit the return
+tax-year-summary.previous-calculation-bullet-2                     = do it within 12 months of the
+tax-year-summary.previous-calculation-bullet-2-link                = Self Assessment deadline
+tax-year-summary.previous-calculation-example                      = For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028.
+tax-year-summary.previous-calculation-contact-hmrc                 = If that date has passed, or you cannot amend your return for another reason,
+tax-year-summary.previous-calculation-contact-hmrc-link            = you’ll need to contact HMRC
+tax-year-summary.previous-calculation-bill                         = Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income
@@ -820,7 +834,7 @@ nextUpdates.optOutMultiYear.p.message                              = You are cur
 nextUpdates.optOutMultiYear.p.link                                 = opt out of quarterly updates and report annually instead.
 
 nextUpdates.reporting.obligations.p.message                        = Depending on your circumstances,
-nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations.
+nextUpdates.reporting.obligations.p.link                           = you may be able to view and change your reporting obligations
 
 ## Next updates Page - R17 Content Changes ##
 nextUpdates.r17.tab.quarterly.label                                = Up to {0} to {1} tax year
@@ -1100,7 +1114,7 @@ chargeSummary.paymentAmountCodingOut							   = Payment amount
 chargeSummary.paidToDate    									   = Paid to date
 chargeSummary.remainingDue   									   = Still to pay
 chargeSummary.overdue                                              = Overdue
-chargeSummary.na                                                   = N/A
+chargeSummary.noData                                               = No data
 
 chargeSummary.allocation                                           = Allocation
 chargeSummary.whereMoneyWent                                       = Where your money went
@@ -1212,6 +1226,7 @@ chargeSummary.chargeHistory.amount								        = Amount
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = HMRC created your first payment on account
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = HMRC created your second payment on account
 chargeSummary.chargeHistory.created.balancingCharge.text		        = HMRC created your balancing payment
+chargeSummary.paymentAllocations.bcd.accepted                           = HMRC created your balancing payment
 chargeSummary.chargeHistory.created.class2Nic.text                      = Class 2 National Insurance created
 chargeSummary.chargeHistory.created.codingOut.text                      = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
@@ -1359,13 +1374,16 @@ paymentAllocation.sa.info                                       = This is money 
 paymentAllocation.earlyTaxYear.heading                          = Credit from an earlier tax year
 paymentAllocation.date                                          = Date
 paymentAllocation.amount                                        = Amount
-paymentAllocation.tableSection.heading                          = Allocations
-paymentAllocation.tableHead.allocation                          = Where your money went
+paymentAllocation.tableSection.heading                          = Where your money went
+paymentAllocation.tableHead.description                         = Description
+paymentAllocation.tableHead.tax-year                            = Tax year
 paymentAllocation.tableHead.allocated-date                      = Date
 paymentAllocation.tableHead.amount                              = Amount
-paymentAllocation.taxYear										= Tax year {0} to {1}
+paymentAllocation.taxYear										= {0} to {1}
+paymentAllocation.taxYearHidden			    					= Tax year {0} to {1}
 paymentAllocation.creditOnAccount                               = Credit on account
-paymentAllocation.na                                            = N/A
+paymentAllocation.noData                                        = No data
+paymentAllocation.not-applicable                                = Not applicable
 paymentAllocation.moneyOnAccount                                = Remaining amount (added to available credit)
 
 paymentAllocation.details.title                                 = How do we allocate your payments to charges?
@@ -2893,11 +2911,11 @@ optout.taxYearQuestion.inset2.currentYear.singleYearFollowedByAnnualWithUpdates 
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = Do you want to opt out for the {0} to {1} tax year?
 
-## opt out of CY+1 - CY Annual
-optout.taxYearQuestion.heading.nextYear.nextYearOptOutAnnual           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
-optout.taxYearQuestion.title.nextYear.nextYearOptOutAnnual             = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
-optout.taxYearQuestion.desc1.nextYear.nextYearOptOutAnnual             = In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
-optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutAnnual     = Do you want to opt out from the {0} to {1} tax year?
+## opt out of CY+1 - CY Default
+optout.taxYearQuestion.heading.nextYear.nextYearOptOutDefault           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
+optout.taxYearQuestion.title.nextYear.nextYearOptOutDefault             = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutDefault             = In future, you could be required to use Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutDefault     = Do you want to opt out from the {0} to {1} tax year?
 
 ## opt out of CY+1 - CY Mandated
 optout.taxYearQuestion.heading.nextYear.nextYearOptOutMandated           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards

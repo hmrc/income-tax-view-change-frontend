@@ -83,7 +83,7 @@ class EnterPoaAmountViewSpec extends TestSupport{
 
       document.getElementById("bulletPoints").text() shouldBe {msg("p1") + " " + msg("bullet1") + " " + msg("bullet2")}
 
-      document.getElementById("poa-amount").text shouldBe {msg("howMuch") + " " + msg("howMuchHint") + " £ " +
+      document.getElementById("poa-amount-form").text shouldBe {msg("howMuch") + " " + msg("howMuchHint") + " £ " +
         msgs("base.continue") + " " + msg("cancel")}
 
       document.getElementsByClass("govuk-input").size() shouldBe 1

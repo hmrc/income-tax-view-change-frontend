@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import views.html.partials.taxYearSummary.TaxCalculationOverview
 @import views.html.partials.taxYearSummary.TaxCalculationNotPresent
+@import models.liabilitycalculation.viewmodels.CalculationSummary
 
 @this(taxCalculationOverview: TaxCalculationOverview,
         taxCalculationNotPresent: TaxCalculationNotPresent)
 
-@(taxYear: Int, viewModel: TaxYearSummaryViewModel, isAgent: Boolean)(implicit request: Request[_], messages: Messages)
+@(taxYear: Int, calcSummary: Option[CalculationSummary], isAgent: Boolean, isLatest: Boolean = false, isPrevious: Boolean = false)(implicit request: Request[_], messages: Messages)
 
-@viewModel.calculationSummary.fold(ifEmpty = taxCalculationNotPresent())(calcOverview => taxCalculationOverview(calcOverview, isAgent,taxYear))
+@calcSummary.fold(ifEmpty = taxCalculationNotPresent())(calcOverview => taxCalculationOverview(calcOverview, isAgent, taxYear, isLatest, isPrevious))
 

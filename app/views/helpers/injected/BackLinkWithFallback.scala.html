@@ -20,15 +20,8 @@
 @this()
 @(href: String, gatewayPageOpt: Option[GatewayPage] = None)(implicit request: RequestHeader, messages: Messages)
 
-@getFallbackLinkText = @{
-  gatewayPageOpt match {
-    case Some(page) => messages(s"back.${page.name}")
-    case None => messages("base.back")
-  }
-}
-
 <noscript>
-    <a id="back-fallback" class="govuk-back-link" href="@href">@getFallbackLinkText</a>
+    <a id="back-fallback" class="govuk-back-link" href="@href">@messages("base.back")</a>
 </noscript>
 
 <div id="backlink-container"></div>
@@ -41,7 +34,7 @@
         backLink.id = "back-js";
         backLink.className = "govuk-back-link";
         backLink.href = "#";
-        backLink.textContent = "@getFallbackLinkText";
+        backLink.textContent = "@messages("base.back")";
 
         backLink.addEventListener("click", function(event) {
             event.preventDefault();

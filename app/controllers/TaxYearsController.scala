@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.admin.ITSASubmissionIntegration
+import models.admin.{ITSASubmissionIntegration, PostFinalisationAmendmentsR18}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -43,7 +43,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
                                   ) extends FrontendController(mcc)
   with I18nSupport with FeatureSwitching {
 
-  private val earliestSubmissionTaxYear = 2023
+
   def handleRequest(backUrl: String,
                     isAgent: Boolean,
                     origin: Option[String] = None)
@@ -55,7 +55,8 @@ class TaxYearsController @Inject()(taxYearsView: TaxYears,
         isAgent = isAgent,
         utr = user.saUtr,
         itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-        earliestSubmissionTaxYear = earliestSubmissionTaxYear,
+        isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
+        earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
         btaNavPartial = user.btaNavPartial,
         origin = origin)
     } match {
