@@ -2495,8 +2495,8 @@ manageBusinesses.check-answers.change                                    = Newid
 
 # manage business sole trader reporting frequency
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                     = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                    = Pa flwyddyn dreth ydych am gofrestru ar ei chyfer?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                     = Ar gyfer pa flwyddyn dreth neu flynyddoedd treth rydych chi am gyflwyno’n chwarterol?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                    = Ar gyfer pa flwyddyn dreth neu flynyddoedd treth rydych chi am gofrestru?
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading                   = Unig fasnachwr
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading                       = Eiddo yn y DU
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading                  = Eiddo tramor
@@ -3395,10 +3395,10 @@ income-sources.check-details-reporting-frequency.yes                            
 income-sources.check-details-reporting-frequency.no                             = Na
 income-sources.check-details-reporting-frequency.taxYear                        = {0} i {1}
 income-sources.check-details-reporting-frequency.change-rf-key                  = A ydych am newid i gyflwyno’n chwarterol?
-income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Pa flwyddyn dreth ydych chi am gyflwyno’n chwarterol ar ei chyfer?
+income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Ar gyfer pa flwyddyn dreth neu flynyddoedd treth rydych chi am gyflwyno’n chwarterol?
 
 income-sources.check-details-reporting-frequency.r17.change-rf-key              = A ydych am gofrestru’r busnes newydd hwn gyda’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm?
-income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Pa flynyddoedd treth ydych am gofrestru ar eu cyfer?
+income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Ar gyfer pa flwyddyn dreth neu flynyddoedd treth rydych chi am gofrestru?
 
 #######################################################################################################################
 ## Triggered Migration Journey ##
