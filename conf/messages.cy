@@ -1111,7 +1111,6 @@ chargeSummary.overdue                                           = Yn hwyr
 chargeSummary.noData                                                = Amh
 
 chargeSummary.allocation                                           = Ym mhle y cafodd y credyd ei roi
-chargeSummary.whereMoneyWent                                       = Ble aeth eich arian
 chargeSummary.date                                                 = Dyddiad
 chargeSummary.taxYear                                              = Blwyddyn dreth {0} i {1}
 chargeSummary.taxYear.text                                         = Blwyddyn dreth
