@@ -213,9 +213,11 @@
 }
 
 @creditAppliedFromText(date: String) = {
-@p(id = Some("rar-credit-date"), classes = "govuk-heading-s") {
-    @messages("chargeSummary.credit.date", date)
-}
+  @if(isPOAReconciliationCredit){
+      @p(id = Some("rar-credit-date"), classes = "govuk-heading-s") {
+          @messages("chargeSummary.credit.date", date)
+      }
+  }
 }
 @firstLatePaymentPenaltyExplanation = {
     @p(id = Some("first-payment-penalty-p1")) {
@@ -272,11 +274,11 @@
 }
 }
 @getCreditAmount(amount: String) = @{
-    viewModel.chargeItem.transactionType match {
-        case (PoaOneReconciliationCredit | PoaTwoReconciliationCredit) => creditAmountText(amount)
-        case _ =>
+  if(isPOAReconciliationCredit) {
+      creditAmountText(amount)
     }
 }
+
 @isPOAReconciliationCredit() = @{
     viewModel.chargeItem.transactionType match {
         case (PoaOneReconciliationCredit | PoaTwoReconciliationCredit) => true
