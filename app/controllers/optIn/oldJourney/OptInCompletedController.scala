@@ -58,7 +58,7 @@ class OptInCompletedController @Inject()(val view: OptInCompletedView,
   def show(isAgent: Boolean = false): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        withReportingObligationsFS {
+        withOptInRFChecks {
           withRecover(isAgent) {
             for {
               proposition: OptInProposition <- optInService.fetchOptInProposition()

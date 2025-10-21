@@ -20,7 +20,7 @@ import enums.MTDIndividual
 import forms.optIn.ChooseTaxYearForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.ReportingFrequencyPage
+import models.admin.{SignUpFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import play.api
 import play.api.Application
@@ -49,7 +49,7 @@ class ChooseYearControllerSpec extends MockAuthActions
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "render the check your answers page" in {
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
@@ -57,6 +57,23 @@ class ChooseYearControllerSpec extends MockAuthActions
 
           val result = action(fakeRequest)
           status(result) shouldBe Status.OK
+        }
+
+        "render the reporting obligations page when the sign up feature switch is disabled" in {
+          enable(ReportingFrequencyPage)
+          disable(SignUpFs)
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          val result = action(fakeRequest)
+
+          val redirectUrl = if (isAgent) {
+            "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+          } else {
+            "/report-quarterly/income-and-expenses/view/reporting-frequency"
+          }
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(redirectUrl)
         }
 
         "render the home page when the feature switch is disabled" in {
@@ -83,7 +100,7 @@ class ChooseYearControllerSpec extends MockAuthActions
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to Check Your Answers" in {
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
@@ -98,7 +115,7 @@ class ChooseYearControllerSpec extends MockAuthActions
 
         "return a BadRequest" when {
           "the form is invalid" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
@@ -113,7 +130,7 @@ class ChooseYearControllerSpec extends MockAuthActions
 
         s"render the error page" when {
           "failed save intent" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
@@ -123,6 +140,25 @@ class ChooseYearControllerSpec extends MockAuthActions
               ChooseTaxYearForm.choiceField -> taxYear2023.toString
             ))
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+
+        "render the reporting obligations page" when {
+          "the Sign Up feature switch is disabled" in {
+            enable(ReportingFrequencyPage)
+            disable(SignUpFs)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+            }
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
 

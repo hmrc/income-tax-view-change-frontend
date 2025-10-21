@@ -80,7 +80,7 @@ class OptInCancelledController @Inject()(val authActions: AuthActions,
 
   def show(): Action[AnyContent] = {
     authActions.asMTDIndividual.async { implicit user =>
-      withReportingObligationsFS {
+      withOptInRFChecks {
         pageRender()
       }
     }
@@ -88,7 +88,7 @@ class OptInCancelledController @Inject()(val authActions: AuthActions,
 
   def showAgent(): Action[AnyContent] =
     authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
-      withReportingObligationsFS {
+      withOptInRFChecks {
         pageRender(isAgent = true)
       }
     }

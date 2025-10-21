@@ -64,7 +64,7 @@ class BeforeYouStartController @Inject()(authActions: AuthActions,
 
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withReportingObligationsFS {
+      withOptInRFChecks {
         withRecover(isAgent) {
           optInService.availableOptInTaxYear().flatMap { availableYears =>
             Future.successful(Ok(beforeYouStart(isAgent, startButtonUrl(isAgent, availableYears).url)))
