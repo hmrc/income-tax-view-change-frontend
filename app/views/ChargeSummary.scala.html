@@ -467,7 +467,8 @@
                         content = HtmlContent(chargeHistoryItem.description)
                     ),
                     TableRow(
-                        content = HtmlContent(chargeHistoryItem.amount.toCurrency)
+                        content = HtmlContent(chargeHistoryItem.amount.toCurrency),
+                        format = Some("numeric")
                     )
                 )
             },
