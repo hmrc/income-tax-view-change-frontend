@@ -56,7 +56,7 @@ trait ReportingObligationsUtils extends FeatureSwitching {
     (isEnabled(SignUpFs), isEnabled(ReportingFrequencyPage)) match {
       case (true, true) => comeBlock
       case (false, true) => redirectReportingFrequency(user.userType)
-      case (false, _) => redirectHome(user.userType)
+      case _ => redirectHome(user.userType)
     }
   }
 
