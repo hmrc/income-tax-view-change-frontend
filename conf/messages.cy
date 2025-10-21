@@ -936,13 +936,6 @@ whatYouOwe.itsaReturnAmendment.text                                = Taliad mant
 whatYouOwe.lpi.itsaReturnAmendment.text                            = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 
 whatYouOwe.payments-due                                         = Taliadau treth incwm
-whatYouOwe.payments-made                                        = Ynglŷn ag unrhyw daliadau a wnaed gennych:
-whatYouOwe.payments-made-agent                                  = O ran unrhyw daliadau a wneir gan eich cleient:
-whatYouOwe.payments-made-bullet-1.1                             = gall gymryd hyd at 5 diwrnod gwaith i daliadau gael eu prosesu, yn dibynnu ar y
-whatYouOwe.payments-made-bullet-1.2                             = dull talu rydych yn ei ddefnyddio
-whatYouOwe.payments-made-bullet-agent-1.2                       = dull talu mae’n ei ddefnyddio
-whatYouOwe.payments-made-bullet-2                               = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog arnoch ac efallai y bydd yn rhaid i chi dalu cosb
-whatYouOwe.payments-made-bullet-agent-2                         = mae’n rhaid i daliadau ein cyrraedd erbyn y dyddiad cau – os bydd y taliad yn hwyr, codir llog ar eich cleient ac efallai y bydd yn rhaid iddo dalu cosb
 whatYouOwe.over-due                                             = Yn hwyr
 whatYouOwe.due-in-thirty-days-payments                          = Yn ddyledus cyn pen 30 diwrnod
 whatYouOwe.future-payments                                      = Taliadau yn y dyfodol
