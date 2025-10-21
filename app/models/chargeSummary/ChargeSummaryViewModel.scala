@@ -199,6 +199,7 @@ case class ChargeSummaryViewModel(
       paymentAllocationsFormattedList
   }.sortBy(_.date)
 
+  val getAmountSumFromChargeHistoryTable: BigDecimal = sortedChargeHistoryTableEntries.view.map(_.amount).sum.abs
 }
 
 

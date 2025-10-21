@@ -1110,10 +1110,11 @@ chargeSummary.remainingDue   									   = Still to pay
 chargeSummary.overdue                                              = Overdue
 chargeSummary.noData                                               = No data
 
-chargeSummary.allocation                                           = Allocation
-chargeSummary.whereMoneyWent                                       = Where your money went
+chargeSummary.allocation                                           = Where the credit was applied
+chargeSummary.description                                          = Description
 chargeSummary.date                                                 = Date
-chargeSummary.taxYear                                              = {0} to {1} tax year
+chargeSummary.taxYear                                              = {0} to {1}
+chargeSummary.taxYear.text                                         = Tax year
 
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed
@@ -1154,9 +1155,11 @@ chargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
 chargeSummary.lpi.penalties.p3                             = See guidance on the
 chargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
 
-chargeSummary.POA1Credit.p1                                        = HMRC has added a credit to your account because your tax return shows that your adjusted first payment on account was too high.
+chargeSummary.POA1Credit.p1                                        = HMRC has added a credit to your first payment on account because your tax return shows that your first payment on account was too high.
 
-chargeSummary.POA2Credit.p1                                        = HMRC has added a credit to your account because your tax return shows that your adjusted second payment on account was too high.
+chargeSummary.POA2Credit.p1                                        = HMRC has added a credit to your second payment on account because your tax return shows that your second payment on account was too high.
+chargeSummary.chargeAmount                                         = Credit amount: {0}
+chargeSummary.credit.date                                          = This credit was applied on {0}
 
 chargeSummary.definition.balancingcharge.p1                        = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
 chargeSummary.definition.balancingcharge.bullet1                   = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)

@@ -1110,10 +1110,12 @@ chargeSummary.remainingDue                                      = I’w dalu o h
 chargeSummary.overdue                                           = Yn hwyr
 chargeSummary.noData                                                = Amh
 
-chargeSummary.allocation                                           = Dyraniad
+chargeSummary.allocation                                           = Ym mhle y cafodd y credyd ei roi
 chargeSummary.whereMoneyWent                                       = Ble aeth eich arian
 chargeSummary.date                                                 = Dyddiad
 chargeSummary.taxYear                                              = Blwyddyn dreth {0} i {1}
+chargeSummary.taxYear.text                                         = Blwyddyn dreth
+chargeSummary.description                                          = Disgrifiad
 
 chargeSummary.dunning.locks.banner.title						   = Pwysig
 chargeSummary.dunning.locks.banner.linkText						   = Mae’r penderfyniad treth hwn yn cael ei adolygu
@@ -1154,9 +1156,11 @@ chargeSummary.lpi.penalties.textTwo                            = plws 2.5%.
 chargeSummary.lpi.penalties.p3                                 = Gweler yr arweiniad ynghylch y
 chargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
-chargeSummary.POA1Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif a gafodd ei addasu, yn rhy uchel.
+chargeSummary.POA1Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich taliad cyntaf ar gyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif yn rhy uchel.
 
-chargeSummary.POA2Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif a gafodd ei addasu, yn rhy uchel.
+chargeSummary.POA2Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich ail daliad ar gyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif yn rhy uchel.
+chargeSummary.chargeAmount                                          = Swm y credyd: {0}
+chargeSummary.credit.date                                           = Rhoddwyd y credyd hwn ar {0}
 
 chargeSummary.definition.balancingcharge.p1                        = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
 chargeSummary.definition.balancingcharge.bullet1                   = nid oedd gennych unrhyw dreth i’w thalu yn ystod y flwyddyn (er enghraifft, os oedd eich bil treth Hunanasesiad diwethaf o dan £1,000)

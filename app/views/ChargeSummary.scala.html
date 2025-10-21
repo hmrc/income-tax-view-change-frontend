@@ -206,7 +206,17 @@
         @messages(s"chargeSummary.${oneOrTwo.key}Credit.p1")
     }
 }
+@creditAmountText(amount: String) = {
+    @p(id = Some("rar-credit-amount"), classes = "govuk-heading-m") {
+        @messages("chargeSummary.chargeAmount", amount)
+    }
+}
 
+@creditAppliedFromText(date: String) = {
+@p(id = Some("rar-credit-date"), classes = "govuk-heading-s") {
+    @messages("chargeSummary.credit.date", date)
+}
+}
 @firstLatePaymentPenaltyExplanation = {
     @p(id = Some("first-payment-penalty-p1")) {
         @messages("chargeSummary.firstLatePaymentPenalty.p")
@@ -261,7 +271,18 @@
     case _                                                                                                  =>
 }
 }
-
+@getCreditAmount(amount: String) = @{
+    viewModel.chargeItem.transactionType match {
+        case (PoaOneReconciliationCredit | PoaTwoReconciliationCredit) => creditAmountText(amount)
+        case _ =>
+    }
+}
+@isPOAReconciliationCredit() = @{
+    viewModel.chargeItem.transactionType match {
+        case (PoaOneReconciliationCredit | PoaTwoReconciliationCredit) => true
+        case _ => false
+    }
+}
 @codingOutBCDMessage = {
     @p(id=Some("coding-out-message")){
         @messages("chargeSummary.codingOutBCDMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
@@ -324,6 +345,8 @@
         @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
     }
 
+    @getCreditAmount(viewModel.getAmountSumFromChargeHistoryTable.toCurrencyString)
+    @creditAppliedFromText(viewModel.chargeItem.dueDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort)
     @getExplanationContent
 
     @if(viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)){
@@ -350,7 +373,8 @@
         }
     }
 
-    @if(!viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
+    @if(!viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
+    && !isPOAReconciliationCredit) {
         @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
             viewModel.chargeItem,
             viewModel.latePaymentInterestCharge,
@@ -496,8 +520,8 @@
                 else viewModel.poaTwoChargeUrl
             },
             {
-                if (viewModel.chargeItem.transactionType == PoaOneReconciliationCredit) messages("chargeSummary.paymentOnAccount1.text")
-                else messages("chargeSummary.paymentOnAccount2.text")
+                if (viewModel.chargeItem.transactionType == PoaOneReconciliationCredit) "chargeSummary.paymentOnAccount1.text"
+                else "chargeSummary.paymentOnAccount2.text"
             }
         )
     }

@@ -19,42 +19,42 @@
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.HtmlFormatter.NbspString
-@import views.html.components.h2
+@import views.html.components._
 
 @this(govukTable: GovukTable,
         h2: h2,
+        link: link,
         implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(chargeItem: ChargeItem, link: String, linkText: String)(implicit messages: Messages)
+@(chargeItem: ChargeItem, linkPassedIn: String, linkMessageKey: String)(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate
 
-@h2(msg = "chargeSummary.allocation", classes = "govuk-heading-l", optId = Some("allocation"))
-
-<table class="govuk-table" id="allocation-table">
-    <thead class="govuk-table__head">
-        <tr class="govuk-table__row" id="heading-row">
-            <th scope="col" class="govuk-table__header">@messages("chargeSummary.whereMoneyWent")</th>
-            <th scope="col" class="govuk-table__header">@messages("chargeSummary.date")</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("chargeSummary.paymentAmount")</th>
-        </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-        <tr class="govuk-table__row" id="table-row-1">
-            <td class="govuk-table__cell">
-                <div>
-                    <a class="govuk-link" id="poa-allocation-link" href="@link">
-                    @linkText
-                    </a>
-                </div>
-                <div>
-                    <span class="govuk-body-s govuk-!-margin-bottom-1 govuk-!-margin-top-1">
-                        @messages("chargeSummary.taxYear", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString)
-                    </span>
-                </div>
-            </td>
-            <td class="govuk-table__cell">@chargeItem.dueDate.getOrElse(chargeItem.documentDate).toLongDateShort.toNonBreaking</td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.abs.toCurrencyString</td>
-        </tr>
-    </tbody>
-</table>
+    @govukTable(Table(
+  caption = Some(messages("chargeSummary.allocation")),
+  captionClasses = "govuk-table__caption govuk-table__caption--m",
+  head = Some(Seq(
+      HeadCell(
+          content = Text(messages("chargeSummary.date"))
+      ),
+      HeadCell(
+          content = Text(messages("chargeSummary.description"))
+      ),
+      HeadCell(
+          content = Text(messages("chargeSummary.taxYear.text"))
+      ),
+      HeadCell(
+          content = Text(messages("chargeSummary.paymentAmount"))
+      )
+  )),
+    rows = Seq(
+      Seq(
+        TableRow(content = Text(chargeItem.dueDate.getOrElse(chargeItem.documentDate).toLongDateShort)),
+        TableRow(content = HtmlContent(link(link = linkPassedIn, messageKey = linkMessageKey, id = Some("poa-allocation-link")))),
+        TableRow(content = Text(messages("chargeSummary.taxYear", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString))),
+        TableRow(content = Text(chargeItem.originalAmount.abs.toCurrencyString)
+      )
+    )),
+    attributes = Map("id" -> "allocation-table")
+)
+)
