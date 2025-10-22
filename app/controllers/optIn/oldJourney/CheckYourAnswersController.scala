@@ -59,24 +59,23 @@ class CheckYourAnswersController @Inject()(val view: CheckYourAnswersView,
 
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withReportingObligationsFS {
-      withRecover(isAgent) {
-
-        optInService.getMultiYearCheckYourAnswersViewModel(isAgent) map {
-          case Some(model) => Ok(view(MultiYearCheckYourAnswersViewModel(
-            model.intentTaxYear,
-            model.isAgent,
-            model.cancelURL,
-            model.intentIsNextYear)))
-          case None => errorHandler(isAgent).showInternalServerError()
+      withOptInRFChecks {
+        withRecover(isAgent) {
+          optInService.getMultiYearCheckYourAnswersViewModel(isAgent) map {
+            case Some(model) => Ok(view(MultiYearCheckYourAnswersViewModel(
+              model.intentTaxYear,
+              model.isAgent,
+              model.cancelURL,
+              model.intentIsNextYear)))
+            case None => errorHandler(isAgent).showInternalServerError()
+          }
         }
-      }
       }
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withReportingObligationsFS {
+      withOptInRFChecks {
         optInService.makeOptInCall() map {
           case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
           case _ => Redirect(OptInErrorController.show(isAgent))

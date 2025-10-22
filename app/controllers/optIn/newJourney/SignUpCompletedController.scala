@@ -56,7 +56,7 @@ extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Repo
 
   def show(isAgent: Boolean): Action[AnyContent] = {
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-      withRFAndOptInOptOutR17FS {
+      withSignUpRFChecks {
         withRecover(isAgent) {
           for {
             proposition <- optInService.fetchOptInProposition()

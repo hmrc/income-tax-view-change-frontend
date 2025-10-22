@@ -25,7 +25,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
 import helpers.servicemocks.AuditStub.verifyAudit
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{NavBarFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
@@ -83,7 +83,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           s"render opt-in check-your-answers page" in {
             disable(NavBarFs)
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -108,7 +108,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
           }
           s"render opt-in check-your-answers page 2" in {
             disable(NavBarFs)
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -142,7 +142,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "redirect to optIn complete page" in {
             disable(NavBarFs)
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -165,7 +165,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
           "redirect to the optIn error page" when {
             "no tax-year choice is made" in {
               disable(NavBarFs)
-              enable(ReportingFrequencyPage)
+              enable(ReportingFrequencyPage, SignUpFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 

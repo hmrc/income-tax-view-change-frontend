@@ -61,7 +61,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.getChangeLinkText("optOut.previousYear.single") shouldBe "optOut.link.text"
@@ -80,7 +82,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.getChangeLinkText("signUp.currentYear") shouldBe "signUp.link.text"
@@ -101,7 +105,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.getSecondDescText("optOut.previousYear.single") shouldBe "optOut.previousYear"
@@ -118,7 +124,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.getSecondDescText("optOut.nextYear") shouldBe "optOut.nextYear"
@@ -136,7 +144,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.getSecondDescText("optOut.currentYear.single") shouldBe "optOut.currentYear"
@@ -155,7 +165,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.getSecondDescText("optOut.currentYear.onwards") shouldBe "optOut.currentYear.withDate"
@@ -171,7 +183,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.getSecondDescText("signUp.currentYear.onwards") shouldBe "signUp.currentYear.withDate"
@@ -189,7 +203,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.getSecondDescText("signUp.currentYear.single") shouldBe "signUp.currentYear"
@@ -209,7 +225,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.taxYearFromSuffix("optOut.previousYear.single") shouldBe TaxYear(2024, 2025)
@@ -226,7 +244,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.taxYearFromSuffix("optOut.currentYear.single") shouldBe TaxYear(2025, 2026)
@@ -245,7 +265,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
             mtdThreshold = "",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )(mockDateService)
 
           model.taxYearFromSuffix("optOut.nextYear") shouldBe TaxYear(2026, 2027)
@@ -267,7 +289,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = false,
               mtdThreshold = "",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )(mockDateService)
 
             model.getOptOutSignUpLink(currentTaxYear, "optOut.previousYear.single") shouldBe "/report-quarterly/income-and-expenses/view/optout?taxYear=2025"
@@ -286,7 +310,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = false,
               mtdThreshold = "",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )(mockDateService)
 
             model.getOptOutSignUpLink(currentTaxYear, "signUp.currentYear") shouldBe "/report-quarterly/income-and-expenses/view/sign-up/start?taxYear=2025"
@@ -300,6 +326,157 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             s"the previous year crystallisation is $previousYearCrystallisation, the previous year status is $previousYearStatus, the current year status is $currentYearStatus and the next year status is $nextYearStatus" in {
               testSuffixes(previousYearCrystallisation, previousYearStatus, currentYearStatus, nextYearStatus, expectedResult)
             }
+        }
+      }
+
+      "return no cards" when {
+        "sign up and opt out are disabled" in {
+          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+          val optOutProposition = OptOutProposition.createOptOutProposition(
+            currentYear = TaxYear(2025, 2026),
+            previousYearCrystallised = false,
+            previousYearItsaStatus = Voluntary,
+            currentYearItsaStatus = Annual,
+            nextYearItsaStatus = Voluntary
+          )
+
+          val model = ReportingFrequencyViewModel(
+            isAgent = false,
+            optOutJourneyUrl = None,
+            optInTaxYears = Seq(TaxYear(2025, 2026)),
+            itsaStatusTable = Seq(),
+            displayCeasedBusinessWarning = false,
+            isAnyOfBusinessLatent = false,
+            mtdThreshold = "",
+            proposition = optOutProposition,
+            isSignUpEnabled = false,
+            isOptOutEnabled = false
+          )(mockDateService)
+
+          model.signUpExistsWhileEnabled shouldBe false
+          model.optOutExistsWhileEnabled shouldBe false
+          model.getSummaryCardSuffixes shouldBe List(None, None, None)
+        }
+
+        "sign up is disabled and there are no opt out years" in {
+          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+          val optOutProposition = OptOutProposition.createOptOutProposition(
+            currentYear = TaxYear(2025, 2026),
+            previousYearCrystallised = false,
+            previousYearItsaStatus = Annual,
+            currentYearItsaStatus = Annual,
+            nextYearItsaStatus = Annual
+          )
+
+          val model = ReportingFrequencyViewModel(
+            isAgent = false,
+            optOutJourneyUrl = None,
+            optInTaxYears = Seq(TaxYear(2025, 2026)),
+            itsaStatusTable = Seq(),
+            displayCeasedBusinessWarning = false,
+            isAnyOfBusinessLatent = false,
+            mtdThreshold = "",
+            proposition = optOutProposition,
+            isSignUpEnabled = false,
+            isOptOutEnabled = true
+          )(mockDateService)
+
+          model.signUpExistsWhileEnabled shouldBe false
+          model.optOutExistsWhileEnabled shouldBe false
+          model.getSummaryCardSuffixes shouldBe List(None, None, None)
+        }
+
+        "opt out is disabled and there are no sign up years" in {
+          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+          val optOutProposition = OptOutProposition.createOptOutProposition(
+            currentYear = TaxYear(2025, 2026),
+            previousYearCrystallised = false,
+            previousYearItsaStatus = Voluntary,
+            currentYearItsaStatus = Voluntary,
+            nextYearItsaStatus = Voluntary
+          )
+
+          val model = ReportingFrequencyViewModel(
+            isAgent = false,
+            optOutJourneyUrl = None,
+            optInTaxYears = Seq.empty,
+            itsaStatusTable = Seq(),
+            displayCeasedBusinessWarning = false,
+            isAnyOfBusinessLatent = false,
+            mtdThreshold = "",
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = false
+          )(mockDateService)
+
+          model.signUpExistsWhileEnabled shouldBe false
+          model.optOutExistsWhileEnabled shouldBe false
+          model.getSummaryCardSuffixes shouldBe List(None, None, None)
+        }
+      }
+
+      "return only sign up cards" when {
+        "opt out is disabled and there are sign up tax years" in {
+          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+          val optOutProposition = OptOutProposition.createOptOutProposition(
+            currentYear = TaxYear(2025, 2026),
+            previousYearCrystallised = false,
+            previousYearItsaStatus = Voluntary,
+            currentYearItsaStatus = Annual,
+            nextYearItsaStatus = Voluntary
+          )
+
+          val model = ReportingFrequencyViewModel(
+            isAgent = false,
+            optOutJourneyUrl = None,
+            optInTaxYears = Seq(TaxYear(2025, 2026)),
+            itsaStatusTable = Seq(),
+            displayCeasedBusinessWarning = false,
+            isAnyOfBusinessLatent = false,
+            mtdThreshold = "",
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = false
+          )(mockDateService)
+
+          model.signUpExistsWhileEnabled shouldBe true
+          model.optOutExistsWhileEnabled shouldBe false
+          model.getSummaryCardSuffixes shouldBe List(None, Some("signUp.currentYear.single"), None)
+        }
+      }
+
+      "return only opt out cards" when {
+        "sign up is disabled and there are opt out tax years" in {
+          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+          val optOutProposition = OptOutProposition.createOptOutProposition(
+            currentYear = TaxYear(2025, 2026),
+            previousYearCrystallised = false,
+            previousYearItsaStatus = Voluntary,
+            currentYearItsaStatus = Annual,
+            nextYearItsaStatus = Voluntary
+          )
+
+          val model = ReportingFrequencyViewModel(
+            isAgent = false,
+            optOutJourneyUrl = None,
+            optInTaxYears = Seq.empty,
+            itsaStatusTable = Seq(),
+            displayCeasedBusinessWarning = false,
+            isAnyOfBusinessLatent = false,
+            mtdThreshold = "",
+            proposition = optOutProposition,
+            isSignUpEnabled = false,
+            isOptOutEnabled = true
+          )(mockDateService)
+
+          model.signUpExistsWhileEnabled shouldBe false
+          model.optOutExistsWhileEnabled shouldBe true
+          model.getSummaryCardSuffixes shouldBe List(Some("optOut.previousYear.single"), None, Some("optOut.nextYear"))
         }
       }
     }
@@ -333,7 +510,9 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
       displayCeasedBusinessWarning = false,
       isAnyOfBusinessLatent = false,
       mtdThreshold = "",
-      proposition = optOutProposition
+      proposition = optOutProposition,
+      isSignUpEnabled = true,
+      isOptOutEnabled = true
     )(mockDateService)
 
     model.getSummaryCardSuffixes shouldBe expectedResult

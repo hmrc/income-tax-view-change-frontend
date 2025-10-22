@@ -18,7 +18,7 @@ package utils.reportingObligations
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import models.admin.{FeatureSwitchName, OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup
@@ -28,14 +28,6 @@ import scala.concurrent.Future
 
 trait ReportingObligationsUtils extends FeatureSwitching {
 
-  def withReportingObligationsFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    if (!isEnabled(ReportingFrequencyPage)) {
-      redirectHome(user.userType)
-    } else {
-      comeBlock
-    }
-  }
-
   def withOptOutFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (!isEnabled(OptOutFs)) {
       redirectHome(user.userType)
@@ -44,18 +36,26 @@ trait ReportingObligationsUtils extends FeatureSwitching {
     }
   }
 
-  def withRFAndOptInOptOutR17FS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
-      case (true, true) => codeBlock
-      case (true, false) => redirectReportingFrequency(user.userType)
-      case (false, _) => redirectHome(user.userType)
-    }
-  }
-
   def withOptOutRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     (isEnabled(OptOutFs), isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
       case (true, true, true) => codeBlock
       case (true, true, false) => redirectReportingFrequency(user.userType)
+      case _ => redirectHome(user.userType)
+    }
+  }
+
+  def withSignUpRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+    (isEnabled(SignUpFs), isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
+      case (true, true, true)  => codeBlock
+      case (true, true, false) | (false, true, _) => redirectReportingFrequency(user.userType)
+      case _ => redirectHome(user.userType)
+    }
+  }
+
+  def withOptInRFChecks(comeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+    (isEnabled(SignUpFs), isEnabled(ReportingFrequencyPage)) match {
+      case (true, true) => comeBlock
+      case (false, true) => redirectReportingFrequency(user.userType)
       case _ => redirectHome(user.userType)
     }
   }

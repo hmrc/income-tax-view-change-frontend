@@ -20,7 +20,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.optIn.SingleTaxYearOptInWarningForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.ReportingFrequencyPage
+import models.admin.{ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -73,7 +73,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
         "a there is a single available tax year" should {
 
           "render the SingleTaxYearWarningView" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
@@ -108,7 +108,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
         "no tax years are returned" should {
 
           "redirect to ChooseYear page - SEE_OTHER" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
@@ -139,7 +139,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
           "there is some unexpected error" should {
 
             "recover and return error template Internal Server Error - 500" in {
-              enable(ReportingFrequencyPage)
+              enable(ReportingFrequencyPage, SignUpFs)
 
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
               setupMockSuccess(mtdRole)
@@ -167,9 +167,9 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
         }
 
         "render the home page" when {
-
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
+            disable(SignUpFs)
             setupMockSuccess(mtdRole)
 
             when(
@@ -185,6 +185,31 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
               "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
             } else {
               "/report-quarterly/income-and-expenses/view"
+            }
+
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+        "render the reporting obligations page" when {
+          "the Sign Up feature switch is disabled" in {
+            enable(ReportingFrequencyPage)
+            disable(SignUpFs)
+            setupMockSuccess(mtdRole)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
+
+            val action = testController.show(isAgent)
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
             }
 
             status(result) shouldBe SEE_OTHER
@@ -207,7 +232,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
           "user answers Yes - true" should {
 
             "handle the submit request and redirect to the ConfirmTaxYear page" in {
-              enable(ReportingFrequencyPage)
+              enable(ReportingFrequencyPage, SignUpFs)
 
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
@@ -243,7 +268,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
           "user answers No - false" should {
 
             "handle the submit request and redirect to the Opt In Cancelled page"  in {
-              enable(ReportingFrequencyPage)
+              enable(ReportingFrequencyPage, SignUpFs)
 
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
@@ -283,7 +308,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
           "does not select an answer" should {
 
             "handle the submit request and return the page with an error summary" in {
-              enable(ReportingFrequencyPage)
+              enable(ReportingFrequencyPage, SignUpFs)
 
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
@@ -318,7 +343,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
         "no tax years are returned" should {
 
           "redirect to ChooseYear page - OK SEE_OTHER" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
@@ -350,7 +375,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
           "there is some unexpected error" should {
 
             "recover and return error template Internal Server Error - 500" in {
-              enable(ReportingFrequencyPage)
+              enable(ReportingFrequencyPage, SignUpFs)
 
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
               setupMockSuccess(mtdRole)
@@ -378,8 +403,32 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
           }
         }
 
-        "render the home page" when {
+        "render the reporting obligations page" when {
+          "the Sign Up feature switch is disabled" in {
+            enable(ReportingFrequencyPage)
+            disable(SignUpFs)
+            setupMockSuccess(mtdRole)
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
 
+            val action = testController.submit(isAgent)
+            val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+            }
+
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
+        "render the home page" when {
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)

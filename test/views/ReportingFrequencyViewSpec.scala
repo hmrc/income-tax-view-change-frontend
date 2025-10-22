@@ -164,7 +164,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -202,7 +204,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -268,7 +272,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = true,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -302,7 +308,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -343,7 +351,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = true,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -376,7 +386,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -410,7 +422,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -447,7 +461,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = true,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -489,7 +505,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
             isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = false,
             mtdThreshold = "£50,000",
-            proposition = optOutProposition
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
           )
 
         val pageDocument: Document =
@@ -561,7 +579,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), true, Annual, Voluntary, Annual)
+              proposition = OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), true, Annual, Voluntary, Annual),
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -607,7 +627,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = OptOutProposition.createOptOutProposition(TaxYear(2023, 2024), true, Annual, Voluntary, Annual)
+              proposition = OptOutProposition.createOptOutProposition(TaxYear(2023, 2024), true, Annual, Voluntary, Annual),
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -678,7 +700,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = true,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
 
@@ -731,7 +755,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = true,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -768,7 +794,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
             )
 
           val pageDocument: Document =
@@ -814,7 +842,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
                 isAnyOfBusinessLatent = false,
                 displayCeasedBusinessWarning = false,
                 mtdThreshold = "£50,000",
-                proposition = optOutProposition
+                proposition = optOutProposition,
+                isSignUpEnabled = true,
+                isOptOutEnabled = true
               )
 
             val pageDocument: Document =
@@ -846,7 +876,9 @@ class ReportingFrequencyViewSpec extends TestSupport {
                 isAnyOfBusinessLatent = false,
                 displayCeasedBusinessWarning = true,
                 mtdThreshold = "£50,000",
-                proposition = optOutProposition
+                proposition = optOutProposition,
+                isSignUpEnabled = true,
+                isOptOutEnabled = true
               )
 
             val pageDocument: Document =

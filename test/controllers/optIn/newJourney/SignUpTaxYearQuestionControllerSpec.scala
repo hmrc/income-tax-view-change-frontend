@@ -20,7 +20,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optin.OptInSessionData
@@ -87,7 +87,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -104,7 +104,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -118,6 +118,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
         "redirect the user to the home page when the feature switch is disabled" in {
           disable(OptInOptOutContentUpdateR17)
           disable(ReportingFrequencyPage)
+          disable(SignUpFs)
 
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
@@ -130,6 +131,23 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe homeLink(isAgent)
         }
+
+        "redirect the user to the reporting obligations page when the sign up feature switch is disabled" in {
+          enable(ReportingFrequencyPage)
+          enable(OptInOptOutContentUpdateR17)
+          disable(SignUpFs)
+
+          val action = testController.show(isAgent, currentYear)
+          val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe reportingObligationsLink(isAgent)
+        }
       }
     }
     s"submit(isAgent = $isAgent)" when {
@@ -138,7 +156,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -161,7 +179,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -184,7 +202,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -205,7 +223,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)

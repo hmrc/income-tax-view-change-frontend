@@ -23,13 +23,6 @@ base.fullstop                                                   = .
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
 
-# Fallback Back Links
-back.whatYouOwe     = Back to What You Owe
-back.yourSelfAssessmentChargeSummary  = Back to Your Self Assessment charges
-back.paymentHistory = Back to Payment History
-back.taxYearSummary = Back to Tax Year Summary
-back.nomatch        = Back
-
 # Agent Base
 agent.base.service_name                             = Your client’s Income Tax details
 
@@ -246,7 +239,7 @@ tax-year-summary.tax-calculation.unattended-calc                   = We’ve upd
 tax-year-summary.payments                                          = Payments
 tax-year-summary.charges                                           = Charges
 tax-year-summary.forecast                                          = Forecast
-tax-year-summary.updates                                           = Updates
+tax-year-summary.submissions                                       = Submissions
 tax-year-summary.income                                            = Income
 tax-year-summary.deductions                                        = Allowances and deductions
 tax-year-summary.taxable-income                                    = Total income on which tax is due
@@ -1436,19 +1429,19 @@ paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment i
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
 
 
-##Tax Years Overview Update Tab##
-updateTab.desc                                                  = A quarterly update covers income and expenses for the tax year so far.
-updateTab.due                                                   = Due {0}
-updateTab.updateType                                            = Update type
-updateTab.incomeSource                                          = Income source
-updateTab.dateSubmitted                                         = Date submitted
-updateTab.dateToDate                                            = {0} to {1}
-updateTab.updatePeriodDateToDate                                = The update period from {0} to {1}
-updateTab.obligationType.property                               = Property income
-updateTab.obligationType.business                               = Business
-updateTab.obligationType.crystallised                           = All income sources
-updateTab.updateType.quarterly                                  = Quarterly update
-updateTab.updateType.crystallised                               = Final declaration
+##Tax Years Overview Submissions Tab##
+submissionsTab.desc                                                  = This is a record of what you have submitted for the tax year.
+submissionsTab.due                                                   = Due {0}
+submissionsTab.submission                                            = Submission
+submissionsTab.incomeSource                                          = Income source
+submissionsTab.dateSubmitted                                         = Date submitted
+submissionsTab.dateToDate                                            = {0} to {1}
+submissionsTab.updatePeriodDateToDate                                = The update period from {0} to {1}
+submissionsTab.obligationType.property                               = Property income
+submissionsTab.obligationType.business                               = Business
+submissionsTab.obligationType.crystallised                           = All income sources
+submissionsTab.submission.quarterly                                  = Quarterly update
+submissionsTab.submission.crystallised                               = Tax return
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                           = Your final tax overview

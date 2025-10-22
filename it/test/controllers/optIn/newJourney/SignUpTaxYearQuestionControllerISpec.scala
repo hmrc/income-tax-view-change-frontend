@@ -22,7 +22,7 @@ import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
@@ -87,8 +87,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the sign up tax year question page - CY onwards following annual" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17)
-          enable(ReportingFrequencyPage)
+          enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -126,8 +125,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the sign up tax year question page - CY onwards if CY+1 voluntary" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17)
-          enable(ReportingFrequencyPage)
+          enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
+
 
           await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Voluntary, currentTaxYear))
 
@@ -165,8 +164,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the sign up tax year question page - CY onwards following mandated" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17)
-          enable(ReportingFrequencyPage)
+          enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
 
           await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Mandated, currentTaxYear))
 
@@ -204,8 +202,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the sign up tax year question page - CY+1 onwards if CY is annual" in {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17)
-          enable(ReportingFrequencyPage)
+          enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
 
           await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear.nextYear))
 
@@ -232,8 +229,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the sign up tax year question page - CY+1 onwards if CY is mandated" in {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17)
-          enable(ReportingFrequencyPage)
+          enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
 
           await(setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, currentTaxYear.nextYear))
 
@@ -260,8 +256,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the sign up tax year question page - CY+1 onwards if CY is voluntary" in {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17)
-          enable(ReportingFrequencyPage)
+          enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
 
           await(setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Annual, currentTaxYear.nextYear))
 
@@ -288,8 +283,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "redirect back to the reporting obligations page if the user has no annual CY or CY+1" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17)
-          enable(ReportingFrequencyPage)
+          enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
 
           await(setupOptInSessionData(currentTaxYear, currentYearStatus = Voluntary, nextYearStatus = Voluntary, currentTaxYear))
 
@@ -322,8 +316,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "submit the answer to the sign up tax year question" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-        enable(OptInOptOutContentUpdateR17)
-        enable(ReportingFrequencyPage)
+        enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
 
         stubAuthorised(mtdUserRole)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -352,8 +345,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "get an error message if the user incorrectly submits to the form" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-        enable(OptInOptOutContentUpdateR17)
-        enable(ReportingFrequencyPage)
+        enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
 
         stubAuthorised(mtdUserRole)
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)

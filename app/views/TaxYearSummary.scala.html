@@ -37,7 +37,7 @@
         getClaimToAdjustPoaSection: GetClaimToAdjustPoaSection,
         forecastContentTable: ForecastContentTable,
         paymentsContent: PaymentsContent,
-        updatesContent: UpdatesContent,
+        submissionsContent: SubmissionsContent,
         forecastContent: ForecastContent,
         govukSummaryList: GovukSummaryList
 )
@@ -136,7 +136,7 @@
 
             @getClaimToAdjustPoaSection(viewModel, ctaLink)
 
-            @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showUpdates, calculationContent, previousCalculationContent, paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), updatesContent(viewModel), viewModel.hasAmendments, viewModel.pfaEnabled)
+            @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showSubmissions, calculationContent, previousCalculationContent, paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), submissionsContent(viewModel), viewModel.hasAmendments, viewModel.pfaEnabled)
         </div>
     </div>
 }

@@ -21,7 +21,7 @@ import controllers.routes
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockOptInService}
-import models.admin.ReportingFrequencyPage
+import models.admin.{ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.optin.ConfirmTaxYearViewModel
 import org.mockito.ArgumentMatchers.any
@@ -60,7 +60,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "render the confirm tax year page for current tax year" in {
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -75,7 +75,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
         }
 
         "render the confirm tax year page for next tax year" in {
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -91,7 +91,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
 
         s"return result with $INTERNAL_SERVER_ERROR status" when {
           "getConfirmTaxYearViewModel fails" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -103,9 +103,30 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
           }
         }
 
+        "render the reporting obligations page" when {
+          "the sign up feature switch is disabled" in {
+            enable(ReportingFrequencyPage)
+            disable(SignUpFs)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
         "render the home page" when {
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
+            disable(SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -130,7 +151,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         "redirect to OptInCompletedController" in {
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -145,7 +166,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
 
         s"redirect to optInError page" when {
           "the optInCall fails" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -158,9 +179,30 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
           }
         }
 
+        "render the reporting obligations page" when {
+          "the sign up feature switch is disabled" in {
+            enable(ReportingFrequencyPage)
+            disable(SignUpFs)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
         "render the home page" when {
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
+            disable(SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
