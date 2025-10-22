@@ -58,7 +58,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
 
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withReportingObligationsFS {
+      withOptInRFChecks {
         withRecover(isAgent) {
 
           optInService.availableOptInTaxYear().flatMap { taxYears =>
@@ -81,7 +81,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withReportingObligationsFS {
+      withOptInRFChecks {
         optInService.availableOptInTaxYear().flatMap { taxYears =>
           ChooseTaxYearForm(taxYears.map(_.toString)).bindFromRequest().fold(
             formWithError => Future.successful(BadRequest(view(formWithError, viewModel(taxYears, isAgent)))),

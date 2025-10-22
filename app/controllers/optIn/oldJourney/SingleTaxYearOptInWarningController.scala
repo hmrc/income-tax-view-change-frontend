@@ -94,7 +94,7 @@ class SingleTaxYearOptInWarningController @Inject()(
   def show(isAgent: Boolean = false): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        withReportingObligationsFS {
+        withOptInRFChecks {
           withRecover(isAgent) {
             optInService.availableOptInTaxYear().map {
               case Seq(singleYear) =>
@@ -109,7 +109,7 @@ class SingleTaxYearOptInWarningController @Inject()(
   def submit(isAgent: Boolean): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit request =>
-        withReportingObligationsFS {
+        withOptInRFChecks {
           withRecover(isAgent) {
             optInService.availableOptInTaxYear().flatMap {
               case Seq(singleYear) =>

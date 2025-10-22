@@ -22,7 +22,7 @@ import enums.MTDIndividual
 import forms.optIn.SingleTaxYearOptInWarningForm
 import helpers.WiremockHelper
 import helpers.servicemocks.{IncomeTaxViewChangeStub, MTDIndividualAuthStub}
-import models.admin.{NavBarFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
@@ -87,7 +87,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
     "render SingleYearOptInWarning page" when {
 
       "user is authorised" in {
-        enable(ReportingFrequencyPage)
+        enable(ReportingFrequencyPage, SignUpFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -121,7 +121,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
     s"render SingleYearOptInWarning page with error summary - BAD_REQUEST (400)" when {
 
       "user answers with invalid data" in {
-        enable(ReportingFrequencyPage)
+        enable(ReportingFrequencyPage, SignUpFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -150,7 +150,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
     s"redirect to ConfirmTaxYear page with status - SEE_OTHER (303)" when {
 
       "user answers Yes" in {
-        enable(ReportingFrequencyPage)
+        enable(ReportingFrequencyPage, SignUpFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -179,7 +179,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
     s"redirect to Home page - with status - SEE_OTHER (303)" when {
 
       "user answers No" in {
-        enable(ReportingFrequencyPage)
+        enable(ReportingFrequencyPage, SignUpFs)
         disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 

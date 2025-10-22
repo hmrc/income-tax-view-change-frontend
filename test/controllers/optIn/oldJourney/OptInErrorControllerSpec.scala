@@ -18,7 +18,7 @@ package controllers.optIn.oldJourney
 
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import models.admin.ReportingFrequencyPage
+import models.admin.{ReportingFrequencyPage, SignUpFs}
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
@@ -38,7 +38,7 @@ class OptInErrorControllerSpec extends MockAuthActions {
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
         s"render the error page" in {
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -46,8 +46,26 @@ class OptInErrorControllerSpec extends MockAuthActions {
           status(result) shouldBe Status.OK
         }
 
+        "render the reporting obligations page when the sign up feature switch is disabled" in {
+          enable(ReportingFrequencyPage)
+          disable(SignUpFs)
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          val result = action(fakeRequest)
+
+          val redirectUrl = if (isAgent) {
+            "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+          } else {
+            "/report-quarterly/income-and-expenses/view/reporting-frequency"
+          }
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(redirectUrl)
+        }
+
         "render the home page when the feature switch is disabled" in {
           disable(ReportingFrequencyPage)
+          disable(SignUpFs)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 

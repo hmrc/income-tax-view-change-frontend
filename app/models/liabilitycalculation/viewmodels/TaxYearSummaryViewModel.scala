@@ -32,7 +32,7 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
                                    hasAmendments: Boolean
                                   ) {
 
-  def showUpdates: Boolean = {
+  def showSubmissions: Boolean = {
     obligations.obligations.exists(_.obligations.nonEmpty)
   }
 

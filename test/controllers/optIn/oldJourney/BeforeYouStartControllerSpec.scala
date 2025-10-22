@@ -19,7 +19,7 @@ package controllers.optIn.oldJourney
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.ReportingFrequencyPage
+import models.admin.{ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -57,6 +57,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
           "contains a button to redirect to choose tax year" when {
             "there are multiple optIn tax years" in {
               enable(ReportingFrequencyPage)
+              enable(SignUpFs)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -75,6 +76,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
           "contains a button to redirect to confirm tax year page" when {
             "there is one optIn tax year" in {
               enable(ReportingFrequencyPage)
+              enable(SignUpFs)
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -93,6 +95,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
         "render the error page" when {
           "the call to get available optInTaxYear fails" in {
             enable(ReportingFrequencyPage)
+            enable(SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -104,8 +107,9 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
           }
         }
         "render the home page" when {
-          "the ReportingFrequencyPage feature switch is disabled" in {
+          "the ReportingFrequencyPage feature switch and sign up FS is disabled" in {
             disable(ReportingFrequencyPage)
+            disable(SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -115,6 +119,26 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
               "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
             } else {
               "/report-quarterly/income-and-expenses/view"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
+        "render the reporting obligations page" when {
+          "the reporting frequency feature switch is enabled but the sign up feature switch is disabled" in {
+            enable(ReportingFrequencyPage)
+            disable(SignUpFs)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
             }
 
             status(result) shouldBe Status.SEE_OTHER

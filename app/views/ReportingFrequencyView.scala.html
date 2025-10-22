@@ -170,27 +170,25 @@
         }
 
         <ul class="govuk-list govuk-list--bullet">
-        @if(viewModel.isOptInLinkFirst) {
-            <li>
-            @optInLink
-            </li>
-            @viewModel.optOutJourneyUrl.map { url =>
-                <li>
-                    @optOutLink(url)
-                </li>
+            @if(viewModel.isOptInLinkFirst) {
+                @if(viewModel.isSignUpEnabled) {
+                    <li>@optInLink</li>
+                }
+                @if(viewModel.isOptOutEnabled) {
+                    @viewModel.optOutJourneyUrl.map { url =>
+                        <li>@optOutLink(url)</li>
+                    }
+                }
+            } else {
+                @if(viewModel.isOptOutEnabled) {
+                    @viewModel.optOutJourneyUrl.map { url =>
+                        <li>@optOutLink(url)</li>
+                    }
+                }
+                @if(viewModel.optInTaxYears.nonEmpty && viewModel.isSignUpEnabled) {
+                    <li>@optInLink</li>
+                }
             }
-        } else {
-            @viewModel.optOutJourneyUrl.map { url =>
-                <li>
-                    @optOutLink(url)
-                </li>
-            }
-            @if(viewModel.optInTaxYears.nonEmpty) {
-                <li>
-                @optInLink
-                </li>
-            }
-        }
         </ul>
     }
 }
@@ -411,9 +409,7 @@
     pageTitle = if(optInOptOutContentUpdateR17IsEnabled) messages("reporting.frequency.title.R17") else messages("reporting.frequency.title"),
     backUrl = Some("#"),
     isAgent = viewModel.isAgent,
-    btaNavPartial = user.btaNavPartial,
-    useFallbackBackLink = true
-) {
+    btaNavPartial = user.btaNavPartial) {
 
     @h1(
         msg = if(optInOptOutContentUpdateR17IsEnabled) messages("reporting.frequency.title.R17") else messages("reporting.frequency.title"),
@@ -431,7 +427,7 @@
         }
     }
 
-    @if(viewModel.displayManageYourReportingFrequencySection && viewModel.atLeastOneOfOptInOrOptOutExists) {
+    @if(viewModel.displayManageYourReportingFrequencySection && (viewModel.optOutExistsWhileEnabled || viewModel.signUpExistsWhileEnabled)) {
         @manageReportingFrequency
     }
 
