@@ -2501,8 +2501,8 @@ manageBusinesses.check-answers.change                                    = Chang
 
 # manage business choose reporting methods for years
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                  = Which tax year do you want to report quarterly for?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                 = Which tax year do you want to sign up for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                  = Which tax year(s) do you want to report quarterly for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                 = Which tax year(s) do you want to sign up for?
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading                = Sole trader
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading                    = UK property
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading               = Foreign property
@@ -3404,10 +3404,10 @@ income-sources.check-details-reporting-frequency.yes                            
 income-sources.check-details-reporting-frequency.no                             = No
 income-sources.check-details-reporting-frequency.taxYear                        = {0} to {1}
 income-sources.check-details-reporting-frequency.change-rf-key                  = Do you want to change to report quarterly?
-income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Which tax year do you want to report quarterly for?
+income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Which tax year(s) do you want to report quarterly for?
 
 income-sources.check-details-reporting-frequency.r17.change-rf-key              = Do you want to sign this new business up to Making Tax Digital for Income Tax?
-income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Which tax years do you want to sign up for?
+income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Which tax year(s) do you want to sign up for?
 
 #######################################################################################################################
 ## Triggered Migration Journey ##
