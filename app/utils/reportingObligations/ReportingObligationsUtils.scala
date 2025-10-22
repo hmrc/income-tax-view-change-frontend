@@ -35,7 +35,7 @@ trait ReportingObligationsUtils extends FeatureSwitching {
       comeBlock
     }
   }
-  
+
   def withOptOutRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     (isEnabled(OptOutFs), isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
       case (true, true, true) => codeBlock

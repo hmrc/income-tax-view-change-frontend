@@ -517,8 +517,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "redirect to the cannot go back page" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17)
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)

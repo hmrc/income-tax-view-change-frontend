@@ -151,8 +151,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
 
         "has already completed the sign-up journey (according to session data)" should {
           "redirect to the cannot go back page" in {
-            enable(ReportingFrequencyPage)
-            enable(OptInOptOutContentUpdateR17)
+            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
