@@ -418,9 +418,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val previousCalculationAmendSubheading: String = "Amending a submitted tax return"
     val previousCalculationBulletStart: String = "You can change your tax return after you have filed it. To do this online you must:"
     val previousCalculationBullet1: String = "use the software or HMRC online service used to submit the return"
-    val previousCalculationBullet2: String = "do it within 12 months of the Self Assessment deadline (opens in new tab)"
+    val previousCalculationBullet2: String = "do it within 12 months of the Self Assessment deadline"
     val previousCalculationExample: String = "For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."
-    val previousCalculationContactHmrc: String = "If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC (opens in new tab)."
+    val previousCalculationContactHmrc: String = "If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC."
     val previousCalculationBill: String = "Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund."
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
@@ -938,39 +938,39 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.selectHead("""a[href$="#taxCalculation"]""").text shouldBe taxCalculationTab
       }
 
-      "display no-amendment content when PFA is enabled, calculation is crystallised, and has no amendments" in new Setup(crystallisedNoAmendmentPfaEnabled(false)) {
+      "display amendment content when PFA is enabled and has no amendments" in new Setup(crystallisedNoAmendmentPfaEnabled(false)) {
 
-        val section = document.getElementById("no-amendment-guidance")
+        val section = document.getElementById("calculation-amend-guidance")
         section should not be null
 
-        section.select("h2").text shouldBe messagesLookUp("tax-year-summary.amendment-guidance.header")
+        section.select("h3").text shouldBe messagesLookUp("tax-year-summary.calculation-amend-subheading")
 
-        document.getElementById("no-amendment-intro").text should include(
-          messagesLookUp("tax-year-summary.amendment-guidance.intro")
+        document.getElementById("calculation-bullet-start").text should include(
+          messagesLookUp("tax-year-summary.calculation-bullet-start")
         )
 
-        document.getElementById("no-amendment-bullet-1").text should include(
-          messagesLookUp("tax-year-summary.amendment-guidance.bullet-1")
+        document.getElementById("calculation-bullet-1").text should include(
+          messagesLookUp("tax-year-summary.calculation-bullet-1")
         )
-        document.getElementById("no-amendment-bullet-2").text should include(
-          messagesLookUp("tax-year-summary.amendment-guidance.bullet-2")
+        document.getElementById("calculation-bullet-2").text should include(
+          messagesLookUp("tax-year-summary.calculation-bullet-2")
         )
 
-        val bulletLink = document.getElementById("no-amendment-bullet-2-link")
-        bulletLink.text shouldBe messagesLookUp("tax-year-summary.amendment-guidance.bullet-2-link")
+        val bulletLink = document.getElementById("calculation-bullet-2-link")
+        bulletLink.text shouldBe messagesLookUp("tax-year-summary.calculation-bullet-2-link")
         bulletLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saTaxReturnDeadlinesUrl
 
-        val exampleText = document.getElementById("no-amendment-example").text
+        val exampleText = document.getElementById("calculation-example").text
         exampleText should include((testYear - 1).toString)
         exampleText should include(testYear.toString)
         exampleText should include((testYear + 2).toString)
 
-        document.getElementById("no-amendment-contact-hmrc").text should startWith(messagesLookUp("tax-year-summary.amendment-guidance.contact.hmrc"))
-        val contactLink = document.getElementById("no-amendment-contact-hmrc-link")
+        document.getElementById("calculation-contact-hmrc").text should startWith(messagesLookUp("tax-year-summary.calculation-contact-hmrc"))
+        val contactLink = document.getElementById("calculation-contact-hmrc-link")
         contactLink.text shouldBe messagesLookUp("tax-year-summary.previous-calculation-contact-hmrc-link")
         contactLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saGeneralEnquiriesUrl
 
-        document.getElementById("no-amendment-bill").text should include(messagesLookUp("tax-year-summary.amendment-guidance.bill"))
+        document.getElementById("calculation-bill").text should include(messagesLookUp("tax-year-summary.calculation-bill"))
       }
 
     }

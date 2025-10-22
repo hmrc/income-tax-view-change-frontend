@@ -92,8 +92,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   elementTextByID("previous-calculation-note")("The tax return was filed then."),
                   elementTextByID("previous-calculation-bullet-start")("You can change your tax return after you have filed it. To do this online you must:"),
                   elementTextByID("previous-calculation-bullet-1")("use the software or HMRC online service used to submit the return"),
-                  elementTextByID("previous-calculation-bullet-2")("do it within 12 months of the Self Assessment deadline (opens in new tab)"),
-                  elementTextByID("previous-calculation-contact-hmrc")("If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC (opens in new tab)."),
+                  elementTextByID("previous-calculation-bullet-2")("do it within 12 months of the Self Assessment deadline"),
+                  elementTextByID("previous-calculation-contact-hmrc")("If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC."),
                   elementTextByID("previous-calculation-example")("For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."),
                   elementTextByID("previous-calculation-bill")("Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.")
                 )

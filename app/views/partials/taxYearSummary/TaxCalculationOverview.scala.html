@@ -52,26 +52,10 @@
         )))
     }
     @if(isPrevious) {
-        @h3(optId = Some("previous-calculation-amend-subheading"), msg = messages("tax-year-summary.previous-calculation-amend-subheading"), classes = "govuk-heading-m")
-
-        @p(id = Some("previous-calculation-bullet-start")) { @Html(messages("tax-year-summary.previous-calculation-bullet-start")) }
-
-        <ul class="govuk-list govuk-list--bullet" id="previous-calculation-bullets">
-            <li id="previous-calculation-bullet-1">@messages("tax-year-summary.previous-calculation-bullet-1")</li>
-            <li id="previous-calculation-bullet-2">@messages("tax-year-summary.previous-calculation-bullet-2")@link(id = Some("previous-calculation-self-assessment-deadline-link"), messageKey = "tax-year-summary.previous-calculation-bullet-2-link", link = ExternalUrlHelper.saTaxReturnDeadlinesUrl, target = Some("_blank"))</li>
-        </ul>
-
-        @p(id = Some("previous-calculation-example")) { @Html(messages("tax-year-summary.previous-calculation-example")) }
-
-        @p(id = Some("previous-calculation-contact-hmrc")) {
-            @messages("tax-year-summary.previous-calculation-contact-hmrc")
-            @link(id = Some("previous-calculation-contact-hmrc-link"), link = ExternalUrlHelper.saGeneralEnquiriesUrl, messageKey = "tax-year-summary.previous-calculation-contact-hmrc-link", target = Some("_blank"), additionalOpenTabMessage = Some(messages("base.fullstop")))
-        }
-
-        @p(id = Some("previous-calculation-bill")) { @Html(messages("tax-year-summary.previous-calculation-bill")) }
+        @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
     }
 
     @if(!isPrevious && !isLatest && pfaEnabled && !hasAmendments) {
-        @taxCalculationAmendmentGuidance(taxYear)
+        @taxCalculationAmendmentGuidance(taxYear, "calculation")
     }
 }

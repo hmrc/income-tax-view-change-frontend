@@ -14,56 +14,56 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{h2, p, link}
+@import views.html.components.{h3, p, link}
 @import viewUtils.ExternalUrlHelper
 
 @this(
-  h2: h2,
+  h3: h3,
   p: p,
   link: link
 )
 
-@(taxYear: Int)(implicit messages: Messages)
+@(taxYear: Int, prefix: String)(implicit messages: Messages)
 
-<section id="no-amendment-guidance" class="govuk-!-margin-top-6 govuk-!-margin-bottom-6">
+<section id="@prefix-amend-guidance" class="govuk-!-margin-top-6 govuk-!-margin-bottom-6">
 
-  @h2(msg = messages("tax-year-summary.amendment-guidance.header"), classes = "govuk-heading-l")
+  @h3(optId = Some("${prefix}-amend-subheading"), msg = messages(s"tax-year-summary.${prefix}-amend-subheading"), classes = "govuk-heading-m")
 
-  @p(id = Some("no-amendment-intro"))(Html(messages("tax-year-summary.amendment-guidance.intro")))
 
-  <ul class="govuk-list govuk-list--bullet">
-    <li id="no-amendment-bullet-1">
-      @messages("tax-year-summary.amendment-guidance.bullet-1")
-    </li>
-    <li id="no-amendment-bullet-2">
-      @messages("tax-year-summary.amendment-guidance.bullet-2")
+  @p(id = Some(s"${prefix}-bullet-start"))(Html(messages(s"tax-year-summary.${prefix}-bullet-start")))
+
+  <ul class="govuk-list govuk-list--bullet" id="@prefix-bullets">
+    <li id="@prefix-bullet-1">@messages(s"tax-year-summary.${prefix}-bullet-1")</li>
+    <li id="@prefix-bullet-2">
+      @messages(s"tax-year-summary.${prefix}-bullet-2")
       @link(
-        id = Some("no-amendment-bullet-2-link"),
+        id = Some(s"${prefix}-bullet-2-link"),
         link = ExternalUrlHelper.saTaxReturnDeadlinesUrl,
-        messageKey = "tax-year-summary.amendment-guidance.bullet-2-link",
+        messageKey = s"tax-year-summary.${prefix}-bullet-2-link"
       )
     </li>
   </ul>
 
-  @p(id = Some("no-amendment-example"))(
+  @p(id = Some(s"${prefix}-example"))(
     Html(messages(
-      "tax-year-summary.amendment-guidance.example",
+      s"tax-year-summary.${prefix}-example",
       (taxYear - 1).toString,
       taxYear.toString,
       (taxYear + 2).toString
     ))
   )
 
-  @p(id = Some("no-amendment-contact-hmrc")) {
-    @messages("tax-year-summary.amendment-guidance.contact.hmrc")
+  @p(id = Some(s"${prefix}-contact-hmrc")) {
+    @messages(s"tax-year-summary.${prefix}-contact-hmrc")
     @link(
-      id = Some("no-amendment-contact-hmrc-link"),
+      id = Some(s"${prefix}-contact-hmrc-link"),
       link = ExternalUrlHelper.saGeneralEnquiriesUrl,
-      messageKey = "tax-year-summary.previous-calculation-contact-hmrc-link",
+      messageKey = s"tax-year-summary.${prefix}-contact-hmrc-link",
+      outerMessage = ".",
     )
   }
 
-  @p(id = Some("no-amendment-bill"))(
-    Html(messages("tax-year-summary.amendment-guidance.bill"))
+  @p(id = Some(s"${prefix}-bill"))(
+    Html(messages(s"tax-year-summary.${prefix}-bill"))
   )
 </section>
