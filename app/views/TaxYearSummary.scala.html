@@ -100,7 +100,7 @@
 }
 
 @calculationContent = @{
-    if(viewModel.pfaEnabled && viewModel.hasAmendments) {
+    if(viewModel.pfaEnabled && viewModel.calculationSummary.exists(_.isAmended)) {
         Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, isLatest = true))
     } else {
         Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent))
@@ -136,7 +136,7 @@
 
             @getClaimToAdjustPoaSection(viewModel, ctaLink)
 
-            @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showSubmissions, calculationContent, previousCalculationContent, paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), submissionsContent(viewModel), viewModel.hasAmendments, viewModel.pfaEnabled)
+            @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showSubmissions, calculationContent, previousCalculationContent, paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), submissionsContent(viewModel), viewModel.calculationSummary.exists(_.isAmended), viewModel.pfaEnabled)
         </div>
     </div>
 }
