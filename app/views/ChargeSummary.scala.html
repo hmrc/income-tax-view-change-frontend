@@ -347,7 +347,7 @@
         @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
     }
 
-    @getCreditAmount(viewModel.getPoaReconciliationAmountChargeHistoryItems.toCurrencyString)
+    @getCreditAmount(viewModel.chargeItem.originalAmount.abs.toCurrencyString)
     @creditAppliedFromText(viewModel.chargeItem.dueDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate)
     @getExplanationContent
 
