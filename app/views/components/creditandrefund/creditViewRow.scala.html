@@ -24,7 +24,7 @@
 
 @(amount: BigDecimal, creditType: CreditType, taxYear: TaxYear)(implicit messages: Messages)
 
-@p(classes = "govuk-heading-s") {
+@p(classes = "govuk-body") {
   <span class="govuk-body">
   @messages(s"credit-and-refund.row.${creditType.key}-1")
   </span>
