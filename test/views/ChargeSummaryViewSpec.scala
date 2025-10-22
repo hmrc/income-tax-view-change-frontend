@@ -814,27 +814,27 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa1ReconciliationCreditHeading
 
-      document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your account because your tax return shows that your adjusted first payment on account was too high."
+      document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your first payment on account because your tax return shows that your first payment on account was too high."
 
-      document.selectById("allocation").text() shouldBe "Allocation"
+      val table = document.selectById("allocation-table")
+      table.select("caption").text() shouldBe "Where the credit was applied"
 
-      document.selectById("heading-row").text() shouldBe "Where your money went Date Amount"
-      document.selectById("table-row-1").text() shouldBe "First payment on account 2017 to 2018 tax year 15 May 2019 £100.00"
+      table.select("tr").get(1).text() shouldBe "15 May 2019 First payment on account 2017 to 2018 £100.00"
 
-      document.selectById("poa-allocation-link").attr("href") shouldBe "testUrl1"
+      table.select("tr").get(1).select("td").get(1).select("a").attr("href") shouldBe "testUrl1"
     }
     "charge is a POA 2 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationCredit, originalAmount = -100)) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa2ReconciliationCreditHeading
 
-      document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your account because your tax return shows that your adjusted second payment on account was too high."
+      document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your second payment on account because your tax return shows that your second payment on account was too high."
 
-      document.selectById("allocation").text() shouldBe "Allocation"
+      val table = document.selectById("allocation-table")
+      table.select("caption").text() shouldBe "Where the credit was applied"
 
-      document.selectById("heading-row").text() shouldBe "Where your money went Date Amount"
-      document.selectById("table-row-1").text() shouldBe "Second payment on account 2017 to 2018 tax year 15 May 2019 £100.00"
+      table.select("tr").get(1).text() shouldBe "15 May 2019 Second payment on account 2017 to 2018 £100.00"
 
-      document.selectById("poa-allocation-link").attr("href") shouldBe "testUrl2"
+      table.select("tr").get(1).select("td").get(1).select("a").attr("href") shouldBe "testUrl2"
     }
 
     "charge is a balancing payment" when {
