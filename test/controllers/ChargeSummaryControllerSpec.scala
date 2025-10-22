@@ -66,8 +66,70 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
           testSupportingAgentDeniedAccess(action(id1040000123))(fakeRequest)
         } else {
           "render the charge summary page" when {
-            "charge history & your self assessment charges feature switch is enabled and there is a user" that {
-              "provided with an id associated to a POA1 Debit" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1, adjustmentHistoryModel = codedOutAdjustmentHistory){
+            "charge history feature switch is enabled and there is a user" that {
+              "provided with an id associated to a POA1 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000125)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "First payment on account"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
+              }
+              "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo()) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000126)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Second payment on account"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
+              }
+              "provided with an id associated to a POA1 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid()) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action("1040000125")(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "First payment on account"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
+              }
+              "provided with an id associated to a POA2 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid()) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action("1040000126")(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Second payment on account"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
+                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
+              }
+              "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1, adjustmentHistoryModel = codedOutAdjustmentHistory){
                 enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -82,7 +144,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA2 Debit" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2, adjustmentHistoryModel = codedOutAdjustmentHistory){
+              "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2, adjustmentHistoryModel = codedOutAdjustmentHistory){
                 enable(YourSelfAssessmentCharges, ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -97,8 +159,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneWithLpi(), adjustmentHistoryModel = codedOutAdjustmentHistory){
-                enable(YourSelfAssessmentCharges, ChargeHistory)
+              "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneWithLpi()) {
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -116,8 +178,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
               }
-              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaTwoWithLpi(), adjustmentHistoryModel = codedOutAdjustmentHistory){
-                enable(YourSelfAssessmentCharges, ChargeHistory)
+              "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaTwoWithLpi()) {
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -136,7 +198,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge) {
-                enable(YourSelfAssessmentCharges, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -154,7 +216,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               }
               "provided with an id associated to a Balancing payment with accruing interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest) {
-                enable(YourSelfAssessmentCharges, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -176,7 +238,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a charge for Class 2 National Insurance" in new Setup(testFinancialDetailsModelWithCodingOutNics2()) {
-                enable(YourSelfAssessmentCharges, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -193,7 +255,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a coded out Balancing Payment" in new Setup(testFinancialDetailsModelWithPayeSACodingOut(), adjustmentHistoryModel = codedOutAdjustmentHistory){
-                enable(YourSelfAssessmentCharges, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -205,15 +267,15 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount due to be collected: £12.34"
                 Option(document.getElementById("due-date-text")) shouldBe None
-                document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2019 to 2020 tax year. It will be collected in the 2021 to 2022 tax year through your PAYE tax code."
+                document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2020 to 2021 tax year. It will be collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
-                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 March 2018 Amount to be collected through your PAYE tax code in 2021 to 2022 tax year. £2,500.00"
-                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 March 2019 Amount adjusted to be collected through your PAYE tax code in 2021 to 2022 tax year £2,000.00"
+                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 Mar 2018 Amount to be collected through your PAYE tax code in 2022 to 2023 tax year. £2,500.00"
+                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 Mar 2019 Amount adjusted to be collected through your PAYE tax code in 2022 to 2023 tax year £2,000.00"
               }
 
               "provided with an id associated to an ITSA Return Amendment charges" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment) {
-                enable(YourSelfAssessmentCharges, ChargeHistory)
+                enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
 
@@ -269,9 +331,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("first-payment-penalty-p1").text() shouldBe "You have received this penalty because you are late paying your Income Tax."
                 document.getElementById("charge-history-heading").text() shouldBe "First late payment penalty history"
               }
-            }
-            "charge history feature is enabled and there is a user" that {
-              "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
+
+              "provided with an id associated to a Review & Reconcile Debit Charge for POA1 (old view)" in new Setup(
                 testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -286,7 +347,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingForRAR1
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
                 document.getElementById("rar-poa1-explanation").text() shouldBe explanationTextForRAR1
@@ -302,7 +363,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .text() shouldBe descriptionTextForRAR1
               }
 
-              "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
+              "provided with an id associated to a Review & Reconcile Debit Charge for POA2 (old view)" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -316,7 +377,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   routes.ChargeSummaryController.show(testTaxYear, id1040000124).url
                 }
 
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingForRAR2
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
                 document.getElementById("rar-poa2-explanation").text() shouldBe explanationTextForRAR2
@@ -331,7 +392,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .text() shouldBe descriptionTextForRAR2
               }
 
-              "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest) {
+              "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA (old view)" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -344,12 +405,12 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingRAR1Interest
                 document.getElementById("poa1-extra-charge-p1").text() shouldBe descriptionTextRAR1Interest
               }
 
-              "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel()) {
+              "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(accruingInterestAmount = Some(0.0))) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -361,13 +422,13 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
                 document.select("h1").text() shouldBe successHeadingForPOA1
                 document.select("#dunningLocksBanner").size() shouldBe 1
-                document.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+                document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe s"$dunningLocksBannerHeading"
                 document.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
               }
 
 
-              "the late payment interest flag is enabled" in new Setup(
-                financialDetailsModel(lpiWithDunningLock = None)) {
+              "the late payment interest flag is enabled (old view)" in new Setup(
+                financialDetailsModel(lpiWithDunningLock = None, outstandingAmount = 0)) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -376,14 +437,14 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld("2017", "2018")
                 document.select("h1").text() shouldBe lateInterestSuccessHeading
                 document.select("#dunningLocksBanner").size() shouldBe 0
                 document.select("main h2").text() shouldBe lpiHistoryHeading
               }
             }
             "charge history feature is disabled and there is a user" that {
-              "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
+              "provided with dunning locks and late payment interest flag, not showing the locks banner (old view)" in new Setup(
                 financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear))) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -409,7 +470,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
 
                 document.select("#dunningLocksBanner h2").text() shouldBe dunningLocksBannerHeading
-                document.select("#heading-payment-breakdown").text() shouldBe paymentBreakdownHeading
               }
 
               "allocations present" in new Setup(
@@ -424,7 +484,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val doc = JsoupParse(result).toHtmlDocument
                 doc.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
                 doc.select("h1").text() shouldBe successHeadingForPOA1
-                doc.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+                doc.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe s"$dunningLocksBannerHeading"
                 doc.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
 
                 val allocationsUrl = if(isAgent) {
@@ -449,7 +509,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingForPOA1
-                document.select("main h2").text() shouldBe s"$dunningLocksBannerHeading $paymentBreakdownHeading"
+                document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe s"$dunningLocksBannerHeading"
                 document.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
               }
 
@@ -501,12 +561,12 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2022", "2023")
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld("2022", "2023")
                 document.select("h1").text() shouldBe successHeadingForRAR1
                 document.select("#payment-processing-bullets").isEmpty shouldBe true
               }
 
-              "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
+              "display the Review & Reconcile credit for POA1 when present in the user's financial details (old view)" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -521,25 +581,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("rar-charge-link").attr("href") shouldBe
                   RepaymentHistoryUtils.getChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
 
-                document
-                  .getElementById("payment-history-table")
-                  .getElementsByClass("govuk-table__body")
-                  .first()
-                  .getElementsByClass("govuk-table__cell")
-                  .get(2)
-                  .text() shouldBe "£1,000.00"
-
-                document
-                  .getElementById("payment-history-table")
-                  .getElementsByClass("govuk-table__body")
-                  .first()
-                  .getElementsByClass("govuk-table__cell")
-                  .get(0)
-                  .text() shouldBe "1 Jan 2018"
-
               }
 
-              "display the Review & Reconcile credit for POA2 when present in the user's financial details" in new Setup(
+              "display the Review & Reconcile credit for POA2 when present in the user's financial details (old view)" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarCredits()) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -554,22 +598,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
                 document.getElementById("rar-charge-link").attr("href") shouldBe
                   RepaymentHistoryUtils.getChargeLinkUrl(isAgent = isAgent, testTaxYear, "transactionId")
-
-                document
-                  .getElementById("payment-history-table")
-                  .getElementsByClass("govuk-table__body")
-                  .first()
-                  .getElementsByClass("govuk-table__cell")
-                  .get(2)
-                  .text() shouldBe "£1,000.00"
-
-                document
-                  .getElementById("payment-history-table")
-                  .getElementsByClass("govuk-table__body")
-                  .first()
-                  .getElementsByClass("govuk-table__cell")
-                  .get(0)
-                  .text() shouldBe "1 Jan 2018"
               }
 
               "the charge is an MFA Debit" in new Setup(

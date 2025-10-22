@@ -155,9 +155,9 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
         (previousOptOutTaxYear, Some(NextYearOptOut), 0, Mandated, Voluntary, "previousYear.nextYearOptOutMandated"),
         (currentOptOutTaxYear, Some(NextYearOptOut), 0, Mandated, Voluntary, "currentYear.nextYearOptOutMandated"),
         (nextOptOutTaxYear, Some(NextYearOptOut), 0, Mandated, Voluntary, "nextYear.nextYearOptOutMandated"),
-        (previousOptOutTaxYear, Some(NextYearOptOut), 0, Annual, Voluntary, "previousYear.nextYearOptOutAnnual"),
-        (currentOptOutTaxYear, Some(NextYearOptOut), 0, Annual, Voluntary, "currentYear.nextYearOptOutAnnual"),
-        (nextOptOutTaxYear, Some(NextYearOptOut), 0, Annual, Voluntary, "nextYear.nextYearOptOutAnnual"),
+        (previousOptOutTaxYear, Some(NextYearOptOut), 0, Annual, Voluntary, "previousYear.nextYearOptOutDefault"),
+        (currentOptOutTaxYear, Some(NextYearOptOut), 0, Annual, Voluntary, "currentYear.nextYearOptOutDefault"),
+        (nextOptOutTaxYear, Some(NextYearOptOut), 0, Annual, Voluntary, "nextYear.nextYearOptOutDefault"),
         (previousOptOutTaxYear, None, 0, NoStatus, NoStatus, "previousYear.noState"),
         (currentOptOutTaxYear, None, 0, NoStatus, NoStatus, "currentYear.noState"),
         (nextOptOutTaxYear, None, 0, NoStatus, NoStatus, "nextYear.noState")

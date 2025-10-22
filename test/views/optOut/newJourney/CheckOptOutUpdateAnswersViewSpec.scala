@@ -32,9 +32,9 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
   val checkOptOutUpdateAnswersView: CheckOptOutUpdateAnswers = app.injector.instanceOf[CheckOptOutUpdateAnswers]
 
   val confirmOptOutUpdateSubmitURL: (Boolean, String) => String = (isAgent: Boolean, taxYear: String) => controllers.optOut.newJourney.routes.ConfirmOptOutUpdateController.submit(isAgent, taxYear).url
-  val cancelLinkUrl: String = controllers.optOut.oldJourney.routes.OptOutCancelledController.show().url
 
   class Setup(isAgent: Boolean = true) {
+    val reportingObligationsURL: String = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
 
     val pageDocument: Document = {
       Jsoup.parse(
@@ -42,7 +42,7 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
           checkOptOutUpdateAnswersView(
             viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2025, 2026), 2),
             isAgent = isAgent,
-            cancelURL = cancelLinkUrl
+            reportingObligationsURL = reportingObligationsURL
           )
         )
       )
@@ -66,7 +66,7 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
         pageDocument.getElementById("confirm-button").attr("href") shouldBe ""
 
         pageDocument.getElementById("cancel-button").text() shouldBe viewMessages.cancelButton
-        pageDocument.getElementById("cancel-button").attr("href") shouldBe cancelLinkUrl
+        pageDocument.getElementById("cancel-button").attr("href") shouldBe reportingObligationsURL
 
       }
 
@@ -83,7 +83,7 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
         pageDocument.getElementById("confirm-button").attr("href") shouldBe ""
 
         pageDocument.getElementById("cancel-button").text() shouldBe viewMessages.cancelButton
-        pageDocument.getElementById("cancel-button").attr("href") shouldBe cancelLinkUrl
+        pageDocument.getElementById("cancel-button").attr("href") shouldBe reportingObligationsURL
 
       }
     }

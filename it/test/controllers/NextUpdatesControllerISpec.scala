@@ -407,7 +407,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         Then("the quarterly updates info sections")
         res should have(
           elementTextBySelector("#what-the-user-can-do")(expectedValue = "Depending on your circumstances, you may be able to view and change your reporting obligations."),
-          elementTextBySelector("#reporting-frequency-link")("you may be able to view and change your reporting obligations.")
+          elementTextBySelector("#reporting-frequency-link")("you may be able to view and change your reporting obligations")
         )
 
       }

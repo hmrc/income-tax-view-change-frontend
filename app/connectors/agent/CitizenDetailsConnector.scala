@@ -51,25 +51,25 @@ class CitizenDetailsConnector @Inject()(val http: HttpClientV2,
     updateHeaderCarrier(http.get(url"$url"), saUtr).execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
-          Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
+          Logger("application").debug(s"[FE Citizen Details Connector][getCitizenDetailsBySaUtr] RESPONSE status: ${response.status}, json: ${response.json}")
           response.json.validate[CitizenDetailsModel].fold(
             invalid => {
-              Logger("application").error(s"Json Validation Error. Parsing Citizen Details Response. Invalid=$invalid")
+              Logger("application").error(s"[FE Citizen Details Connector][getCitizenDetailsBySaUtr] Json Validation Error. Parsing Citizen Details Response. Invalid=$invalid")
               CitizenDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Citizen Details response")
             },
             valid => valid
           )
         case status =>
           if (status >= 500) {
-            Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").error(s"[FE Citizen Details Connector][getCitizenDetailsBySaUtr] RESPONSE status: ${response.status}, body: ${response.body}")
           } else {
-            Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
+            Logger("application").warn(s"[FE Citizen Details Connector][getCitizenDetailsBySaUtr] RESPONSE status: ${response.status}, body: ${response.body}")
           }
           CitizenDetailsErrorModel(response.status, response.body)
       }
     } recover {
       case ex =>
-        Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+        Logger("application").error(s"[FE Citizen Details Connector][getCitizenDetailsBySaUtr] Unexpected future failed error, ${ex.getMessage}")
         CitizenDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed, ${ex.getMessage}")
     }
   }

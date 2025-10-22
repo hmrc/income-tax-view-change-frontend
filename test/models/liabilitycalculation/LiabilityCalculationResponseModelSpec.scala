@@ -191,4 +191,51 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
       )
     }
   }
+
+  "hasAnAmendment" should {
+    "return true" when {
+      "calculationType is AM" in {
+        val successModelMinimal = LiabilityCalculationResponse(
+          inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+          messages = None,
+          calculation = None,
+          metadata = Metadata(
+            calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+            calculationType = "AM",
+            calculationReason = Some("customerRequest"))
+        )
+
+        successModelMinimal.metadata.hasAnAmendment shouldBe true
+      }
+      "calculationType is CA" in {
+        val successModelMinimal = LiabilityCalculationResponse(
+          inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+          messages = None,
+          calculation = None,
+          metadata = Metadata(
+            calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+            calculationType = "CA",
+            calculationReason = Some("customerRequest"))
+        )
+
+        successModelMinimal.metadata.hasAnAmendment shouldBe true
+      }
+    }
+
+    "return false" when {
+      "calculationType is not AM or CA" in {
+        val successModelMinimal = LiabilityCalculationResponse(
+          inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+          messages = None,
+          calculation = None,
+          metadata = Metadata(
+            calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+            calculationType = "DF",
+            calculationReason = Some("customerRequest"))
+        )
+
+        successModelMinimal.metadata.hasAnAmendment shouldBe false
+      }
+    }
+  }
 }

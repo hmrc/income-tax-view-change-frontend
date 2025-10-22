@@ -58,7 +58,7 @@ class IncomeSummaryControllerSpec extends MockAuthActions
           "render the income summary page" when {
             "the given tax year is present in ETMP" in {
               setupMockSuccess(mtdUserRole)
-              mockCalculationSuccessfulNew(testMtditid)
+              mockCalculationSuccessWithFlag(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
               val result = action(fakeRequest)
@@ -76,14 +76,14 @@ class IncomeSummaryControllerSpec extends MockAuthActions
           "render the error page" when {
             "given a tax year which can not be found in ETMP" in {
               setupMockSuccess(mtdUserRole)
-              mockCalculationNotFoundNew(testMtditid)
+              mockCalculationSuccessWithFlagNotFound(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
             "there is a downstream error which return NOT_FOUND" in {
               setupMockSuccess(mtdUserRole)
-              mockCalculationNotFoundNew(testMtditid)
+              mockCalculationSuccessWithFlagNotFound(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -91,7 +91,7 @@ class IncomeSummaryControllerSpec extends MockAuthActions
 
             "there is a downstream error which return INTERNAL_SERVER_ERROR" in {
               setupMockSuccess(mtdUserRole)
-              mockCalculationErrorNew(testMtditid)
+              mockCalculationSuccessWithFlagError(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR

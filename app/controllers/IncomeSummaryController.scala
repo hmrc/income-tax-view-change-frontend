@@ -54,9 +54,10 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
   def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
                     taxYear: Int,
-                    isAgent: Boolean)
+                    isAgent: Boolean,
+                    previousCalculation: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    calculationService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYear).map {
+    calculationService.getCalculationDetailsWithFlag(user.mtditid, user.nino, taxYear, isPrevious = previousCalculation).map {
       case liabilityCalc: LiabilityCalculationResponse =>
         val viewModel = IncomeBreakdownViewModel(liabilityCalc.calculation)
         val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent,
@@ -78,22 +79,24 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
     }
   }
 
-  def showIncomeSummary(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def showIncomeSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         origin = origin,
         itcvErrorHandler = itvcErrorHandler,
         taxYear = taxYear,
-        isAgent = false
+        isAgent = false,
+        previousCalculation = previousCalculation
       )
   }
 
-  def showIncomeSummaryAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showIncomeSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
     implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,
         taxYear = taxYear,
-        isAgent = true
+        isAgent = true,
+        previousCalculation = previousCalculation
       )
   }
 }

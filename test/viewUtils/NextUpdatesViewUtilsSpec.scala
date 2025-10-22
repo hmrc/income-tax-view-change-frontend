@@ -73,7 +73,8 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
                   linkComponent(
                     id = Some("reporting-frequency-link"),
                     link = reportingFrequencyLink,
-                    messageKey = "you may be able to view and change your reporting obligations."
+                    messageKey = "you may be able to view and change your reporting obligations",
+                    outerMessage = "."
                   )
                 )
               )
