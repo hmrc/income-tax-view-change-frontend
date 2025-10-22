@@ -56,17 +56,21 @@
     ))
 }
 
-@if(viewModel.utr.isDefined && !user.isAgent()) {
+@insetTextAndButton(amount: BigDecimal) = {
     @govukInsetText(InsetText(
         content = HtmlContent(overdueInsetText)
     ))
+    @govukButton(Button(
+        id = Some("payment-button"),
+        content = Text(getMessage("payNow")),
+        href = Some(viewModel.paymentHandOffUrl(amount.toPence))
+    ))
+}
+
+@if(viewModel.utr.isDefined && !user.isAgent()) {
     @(for {
         (_, amount) <- viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
     } yield {
-        govukButton(Button(
-            id = Some("payment-button"),
-            content = Text(getMessage("payNow")),
-            href = Some(viewModel.paymentHandOffUrl(amount.toPence))
-        ))
+        insetTextAndButton(amount)
     })
 }
