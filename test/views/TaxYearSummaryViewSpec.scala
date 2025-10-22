@@ -26,7 +26,7 @@ import models.liabilitycalculation.{Message, Messages}
 import models.obligations.{ObligationWithIncomeType, ObligationsModel}
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.nodes.Element
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
 import testConstants.NextUpdatesTestConstants._
@@ -324,6 +324,23 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def calculationWithNoAmendmentPfaEnabled(isAgent: Boolean) = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, hasAmendments = false), "testBackURL", isAgent, ctaLink = ctaLink
+  )
+
+  def crystallisedNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
+    testYear,
+    viewModel = TaxYearSummaryViewModel(
+      calculationSummary = Some(modelComplete(crystallised = true)),
+      previousCalculationSummary = None,
+      charges = List.empty,
+      obligations = testObligationsModel,
+      ctaViewModel = emptyCTAModel,
+      LPP2Url = "",
+      pfaEnabled = true,
+      hasAmendments = false
+    ),
+    backUrl = "testBackUrl",
+    isAgent = isAgent,
+    ctaLink = ctaLink
   )
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -920,6 +937,42 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display a regular calculations tab if pfa is enabled but the latest calculation has no amendments" in new Setup(calculationWithNoAmendmentPfaEnabled(false)) {
         layoutContent.selectHead("""a[href$="#taxCalculation"]""").text shouldBe taxCalculationTab
       }
+
+      "display no-amendment content when PFA is enabled, calculation is crystallised, and has no amendments" in new Setup(crystallisedNoAmendmentPfaEnabled(false)) {
+
+        val section = document.getElementById("no-amendment-guidance")
+        section should not be null
+
+        section.select("h2").text shouldBe messagesLookUp("tax-year-summary.amendment-guidance.header")
+
+        document.getElementById("no-amendment-intro").text should include(
+          messagesLookUp("tax-year-summary.amendment-guidance.intro")
+        )
+
+        document.getElementById("no-amendment-bullet-1").text should include(
+          messagesLookUp("tax-year-summary.amendment-guidance.bullet-1")
+        )
+        document.getElementById("no-amendment-bullet-2").text should include(
+          messagesLookUp("tax-year-summary.amendment-guidance.bullet-2")
+        )
+
+        val bulletLink = document.getElementById("no-amendment-bullet-2-link")
+        bulletLink.text shouldBe messagesLookUp("tax-year-summary.amendment-guidance.bullet-2-link")
+        bulletLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saTaxReturnDeadlinesUrl
+
+        val exampleText = document.getElementById("no-amendment-example").text
+        exampleText should include((testYear - 1).toString)
+        exampleText should include(testYear.toString)
+        exampleText should include((testYear + 2).toString)
+
+        document.getElementById("no-amendment-contact-hmrc").text should startWith(messagesLookUp("tax-year-summary.amendment-guidance.contact.hmrc"))
+        val contactLink = document.getElementById("no-amendment-contact-hmrc-link")
+        contactLink.text shouldBe messagesLookUp("tax-year-summary.previous-calculation-contact-hmrc-link")
+        contactLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saGeneralEnquiriesUrl
+
+        document.getElementById("no-amendment-bill").text should include(messagesLookUp("tax-year-summary.amendment-guidance.bill"))
+      }
+
     }
     "the user is an agent" should {
 

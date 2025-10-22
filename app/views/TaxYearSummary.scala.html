@@ -92,7 +92,16 @@
         if (viewModel.previousCalculationSummary.isEmpty) {
             None
         } else {
-            Some(taxCalculationContent(taxYear, viewModel.previousCalculationSummary, isAgent, isPrevious = true))
+            Some(
+                taxCalculationContent(
+                    taxYear,
+                    viewModel.previousCalculationSummary,
+                    isAgent,
+                    viewModel.pfaEnabled,
+                    viewModel.hasAmendments,
+                    isPrevious = true
+                )
+            )
         }
     } else {
         None
@@ -101,9 +110,9 @@
 
 @calculationContent = @{
     if(viewModel.pfaEnabled && viewModel.hasAmendments) {
-        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, isLatest = true))
+        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, viewModel.hasAmendments, isLatest = true))
     } else {
-        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent))
+        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, viewModel.hasAmendments))
     }
 }
 

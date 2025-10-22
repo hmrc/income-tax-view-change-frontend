@@ -21,7 +21,7 @@
 @this(taxCalculationOverview: TaxCalculationOverview,
         taxCalculationNotPresent: TaxCalculationNotPresent)
 
-@(taxYear: Int, calcSummary: Option[CalculationSummary], isAgent: Boolean, isLatest: Boolean = false, isPrevious: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(taxYear: Int, calcSummary: Option[CalculationSummary], isAgent: Boolean, pfaEnabled: Boolean, hasAmendments: Boolean, isLatest: Boolean = false, isPrevious: Boolean = false)(implicit request: Request[_], messages: Messages)
 
-@calcSummary.fold(ifEmpty = taxCalculationNotPresent())(calcOverview => taxCalculationOverview(calcOverview, isAgent, taxYear, isLatest, isPrevious))
+@calcSummary.fold(ifEmpty = taxCalculationNotPresent())(calcOverview => taxCalculationOverview(calcOverview, isAgent, taxYear, isLatest, isPrevious, pfaEnabled, hasAmendments))
 

@@ -24,6 +24,7 @@
 @import views.html.components.h3
 @import views.html.components.link
 @import viewUtils.ExternalUrlHelper
+@import views.html.partials.taxYearSummary.TaxCalculationAmendmentGuidance
 
 @this(
         p: p,
@@ -32,10 +33,11 @@
         insetText: GovukInsetText,
         errorMessage: ErrorMessage,
         h3: h3,
-        link: link
+        link: link,
+        taxCalculationAmendmentGuidance: TaxCalculationAmendmentGuidance
 )
 
-@(model: CalculationSummary, isAgent: Boolean, taxYear: Int, isLatest: Boolean, isPrevious: Boolean)(implicit messages: Messages)
+@(model: CalculationSummary, isAgent: Boolean, taxYear: Int, isLatest: Boolean, isPrevious: Boolean, pfaEnabled: Boolean, hasAmendments: Boolean)(implicit messages: Messages)
 
 @if(model.messages.exists(_.errorMessages.size > 0)) {
     @{
@@ -67,5 +69,9 @@
         }
 
         @p(id = Some("previous-calculation-bill")) { @Html(messages("tax-year-summary.previous-calculation-bill")) }
+    }
+
+    @if(!isPrevious && !isLatest && pfaEnabled && !hasAmendments) {
+        @taxCalculationAmendmentGuidance(taxYear)
     }
 }
