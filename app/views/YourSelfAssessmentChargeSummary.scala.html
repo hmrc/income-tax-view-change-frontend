@@ -147,8 +147,6 @@
       }
 
       @chargeDetails(viewModel)
-
-      @WYOorYSACLinkContent
   }
     @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
     <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
@@ -157,8 +155,6 @@
         }</h1>
 
      @whatIsPaymentOnAccount()
-
-    @WYOorYSACLinkContent
  }
 
 
@@ -179,6 +175,8 @@
             @interestOnYourChargeTable(viewModel)
         }
     }
+
+    @WYOorYSACLinkContent
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)

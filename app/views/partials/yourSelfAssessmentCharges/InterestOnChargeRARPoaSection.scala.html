@@ -73,7 +73,7 @@
      rows = Seq(
         Seq(
          TableRow(
-           content = Text(messages("selfAssessmentCharges.reviewAndReconcilePoa.table.overdue", viewModel.chargeItem.getInterestFromDate.toLongDate, viewModel.chargeItem.getInterestEndDate.toLongDate))
+           content = Text(messages("selfAssessmentCharges.reviewAndReconcilePoa.table.overdue", viewModel.chargeItem.getInterestFromDate.toLongDateShort, viewModel.chargeItem.getInterestEndDate.toLongDateShort))
          ),
          TableRow(
            content = Text(viewModel.chargeItem.getInterestRate.toPercentage)
