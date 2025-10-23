@@ -40,7 +40,8 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
           forecastIncomeTaxAndNics = None,
           forecastAllowancesAndDeductions = None,
           periodFrom = None,
-          periodTo = None
+          periodTo = None,
+          isAmended = false
         )
     }
 
@@ -65,7 +66,8 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
             info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
             warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
             errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
-          ))
+          )),
+          isAmended = false
         )
 
         CalculationSummary(liabilityCalculationModelSuccessful) shouldBe expectedCalculationSummary
@@ -91,7 +93,8 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
               info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
               errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
-            ))
+            )),
+            isAmended = false
           )
 
           val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
@@ -125,7 +128,8 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
               info = Some(Seq(Message(id = "C22211", text = "info msg text1"))),
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
               errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
-            ))
+            )),
+            isAmended = false
           )
 
           val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
@@ -161,7 +165,8 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
                 Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
                 Message("C55009", "updates cannot include gaps.")
               ))
-            ))
+            )),
+            isAmended = false
           )
       }
     }
@@ -175,7 +180,8 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
           taxDue = 0.0,
           income = 0,
           deductions = 0.0,
-          totalTaxableIncome = 0
+          totalTaxableIncome = 0,
+          isAmended = false
         )
     }
   }
