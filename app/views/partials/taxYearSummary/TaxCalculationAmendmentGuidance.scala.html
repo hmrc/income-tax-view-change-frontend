@@ -39,7 +39,9 @@
       @link(
         id = Some(s"${prefix}-bullet-2-link"),
         link = ExternalUrlHelper.saTaxReturnDeadlinesUrl,
-        messageKey = s"tax-year-summary.${prefix}-bullet-2-link"
+        messageKey = s"tax-year-summary.${prefix}-bullet-2-link",
+        target = Some("_blank"),
+        additionalOpenTabMessage = Some(messages("base.fullstop"))
       )
     </li>
   </ul>
@@ -59,7 +61,8 @@
       id = Some(s"${prefix}-contact-hmrc-link"),
       link = ExternalUrlHelper.saGeneralEnquiriesUrl,
       messageKey = s"tax-year-summary.${prefix}-contact-hmrc-link",
-      outerMessage = ".",
+      target = Some("_blank"),
+      additionalOpenTabMessage = Some(messages("base.fullstop"))
     )
   }
 

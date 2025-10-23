@@ -419,9 +419,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val previousCalculationAmendSubheading: String = "Amending a submitted tax return"
     val previousCalculationBulletStart: String = "You can change your tax return after you have filed it. To do this online you must:"
     val previousCalculationBullet1: String = "use the software or HMRC online service used to submit the return"
-    val previousCalculationBullet2: String = "do it within 12 months of the Self Assessment deadline"
+    val previousCalculationBullet2: String = "do it within 12 months of the Self Assessment deadline (opens in new tab)."
     val previousCalculationExample: String = "For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."
-    val previousCalculationContactHmrc: String = "If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC."
+    val previousCalculationContactHmrc: String = "If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC (opens in new tab)."
     val previousCalculationBill: String = "Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund."
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
@@ -958,8 +958,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         )
 
         val bulletLink = document.getElementById("calculation-bullet-2-link")
-        bulletLink.text shouldBe messagesLookUp("tax-year-summary.calculation-bullet-2-link")
+        bulletLink.text should include(messagesLookUp("tax-year-summary.calculation-bullet-2-link"))
+        bulletLink.text should include("(opens in new tab)")
         bulletLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saTaxReturnDeadlinesUrl
+        bulletLink.attr("target") shouldBe "_blank"
+
 
         val exampleText = document.getElementById("calculation-example").text
         exampleText should include((testYear - 1).toString)
@@ -968,8 +971,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
         document.getElementById("calculation-contact-hmrc").text should startWith(messagesLookUp("tax-year-summary.calculation-contact-hmrc"))
         val contactLink = document.getElementById("calculation-contact-hmrc-link")
-        contactLink.text shouldBe messagesLookUp("tax-year-summary.previous-calculation-contact-hmrc-link")
+        contactLink.text should include(messagesLookUp("tax-year-summary.previous-calculation-contact-hmrc-link"))
+        contactLink.text should include("(opens in new tab)")
         contactLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saGeneralEnquiriesUrl
+        contactLink.attr("target") shouldBe "_blank"
 
         document.getElementById("calculation-bill").text should include(messagesLookUp("tax-year-summary.calculation-bill"))
       }
