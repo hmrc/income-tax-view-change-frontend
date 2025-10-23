@@ -21,6 +21,7 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import controllers.routes.{ChargeSummaryController, CreditAndRefundController, PaymentController}
 import enums.CodingOutType._
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatter
 import models.financialDetails._
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -47,20 +48,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val whatYouOweAgentHeading: String = messages("whatYouOwe.heading-agent")
   val noPaymentsDue: String = messages("whatYouOwe.no-payments-due")
   val noPaymentsAgentDue: String = messages("whatYouOwe.no-payments-due-agent")
-  val saLink: String = s"${messages("whatYouOwe.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
-  val saNote: String = s"${messages("whatYouOwe.sa-note")} $saLink."
-  val saNoteAgent: String = s"${messages("whatYouOwe.sa-note-agent-1")}. ${messages("whatYouOwe.sa-note-agent-2")} ${messages("whatYouOwe.sa-link-agent")} ${messages("pagehelp.opensInNewTabText")}. ${messages("whatYouOwe.sa-note-agent-3")}"
+  val saNote1Heading: String = messages("whatYouOwe.sa-note-1-heading")
+  val saLink1_1: String = s"${messages("whatYouOwe.sa-link-1-body-1")} ${messages("pagehelp.opensInNewTabText")}"
+  val saNote1_1: String = s"${messages("whatYouOwe.sa-note-1-body-1")} $saLink1_1."
+  val saLink1_2: String = s"${messages("whatYouOwe.sa-link-1-body-2")} ${messages("pagehelp.opensInNewTabText")}"
+  val saNote1_2: String = s"${messages("whatYouOwe.sa-note-1-body-2")} $saLink1_2 ${messages("whatYouOwe.sa-note-1-body-3")}"
+  val saNote1_3: String = s"${messages("whatYouOwe.sa-note-1-body-4")} ${messages("whatYouOwe.sa-link-1-body-3", "2024", "2025")}."
+  val saNote2Heading: String = messages("whatYouOwe.sa-note-2-heading")
+  val saLink2: String = s"${messages("whatYouOwe.sa-link-2")} ${messages("pagehelp.opensInNewTabText")}"
+  val saNote2: String = s"${messages("whatYouOwe.sa-note-2-body")} $saLink2."
   val osChargesNote: String = messages("whatYouOwe.outstanding-charges-note")
   val paymentUnderReviewPara: String = s"${messages("whatYouOwe.dunningLock.text", s"${messages("whatYouOwe.dunningLock.link")} ${messages("pagehelp.opensInNewTabText")}")}."
   val chargeType: String = messages("tax-year-summary.payments.charge-type")
   val taxYear: String = messages("whatYouOwe.tableHead.tax-year")
   val amountDue: String = messages("whatYouOwe.tableHead.amount-due")
-  val paymentProcessingBullet1: String = s"${messages("whatYouOwe.payments-made-bullet-1.1")} ${messages("whatYouOwe.payments-made-bullet-1.2")} ${messages("pagehelp.opensInNewTabText")}"
-  val paymentProcessingBullet2: String = messages("whatYouOwe.payments-made-bullet-2")
-  val paymentProcessingBulletAgent1: String = s"${messages("whatYouOwe.payments-made-bullet-1.1")} ${messages("whatYouOwe.payments-made-bullet-agent-1.2")} ${messages("pagehelp.opensInNewTabText")}"
-  val paymentProcessingBulletAgent2: String = messages("whatYouOwe.payments-made-bullet-agent-2")
-  val paymentsMade: String = messages("whatYouOwe.payments-made")
-  val paymentsMadeAgent: String = messages("whatYouOwe.payments-made-agent")
+  val paymentsMadeHeading: String = messages("whatYouOwe.payments-made-heading")
   val poa1Text: String = messages("whatYouOwe.paymentOnAccount1.text")
   val latePoa1Text: String = messages("whatYouOwe.lpi.paymentOnAccount1.text")
   val poa2Text: String = messages("whatYouOwe.paymentOnAccount2.text")
@@ -104,6 +106,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
+
+  def  paymentsMadeBody(amount: String): String = s"${messages("whatYouOwe.payments-made-body-1", amount, currentYearMinusOne, currentYear)} ${messages("whatYouOwe.payments-made-link")} ${messages("whatYouOwe.payments-made-body-2")}"
 
   def ctaViewModel: WYOClaimToAdjustViewModel = {
       WYOClaimToAdjustViewModel(
@@ -169,8 +173,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     def verifySelfAssessmentLink(): Unit = {
       val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
-      anchor.text shouldBe saLink
-      anchor.attr("href") shouldBe "http://localhost:8930/self-assessment/ind/1234567890/account"
+      anchor.text shouldBe saLink1_1
+      anchor.attr("href") shouldBe "/self-serve-time-to-pay"
       anchor.attr("target") shouldBe "_blank"
     }
   }
@@ -250,7 +254,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def whatYouOweDataWithOverdueInterestData(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueInterestDataCi(accruingInterestAmount),
-    outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
+    outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
+    codedOutDetails = Some(balancingCodedOut)
   )
 
   def whatYouOweDataWithOverdueAccruedInterest(accruingInterestAmount: List[Option[BigDecimal]],
@@ -258,7 +263,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                                                outstandingAmount: List[BigDecimal] = List(50.0, 75.0)): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpi(accruingInterestAmount, dunningLock, outstandingAmount = outstandingAmount),
-    outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
+    outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
+    codedOutDetails = Some(balancingCodedOut)
   )
 
   def whatYouOweDataWithOverdueLpiDunningLock(accruingInterestAmount: Option[BigDecimal],
@@ -270,28 +276,31 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       List(None, None),
       List(lpiWithDunningLock, lpiWithDunningLock),
       outstandingAmount),
-    outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
+    outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
+    codedOutDetails = Some(balancingCodedOut)
   )
 
   def whatYouOweDataWithOverdueLpiDunningLockZero(accruingInterestAmount: Option[BigDecimal],
                                                   lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpiDunningLockZeroCi(TaxYear.forYearEnd(fixedDate.getYear), accruingInterestAmount, false, lpiWithDunningLock),
-    outstandingChargesModel = Some(outstandingChargesOverdueDataIt)
+    outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
+    codedOutDetails = Some(balancingCodedOut)
   )
 
   def whatYouOweDataWithOverdueMixedData2(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsOverdueWithLpi(accruingInterestAmount, noDunningLocks)(1))
       ++ List(financialDetailsWithMixedData3Ci.head),
-
+    codedOutDetails = Some(balancingCodedOut)
   )
 
   def whatYouOweDataTestActiveWithMixedData2(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsOverdueWithLpi(accruingInterestAmount, noDunningLocks)(1))
       ++ List(financialDetailsWithMixedData3Ci.head),
-    outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
+    outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue),
+    codedOutDetails = Some(balancingCodedOut)
   )
 
   val codingOutAmount = 444.23
@@ -403,7 +412,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     codedOutDetails = Some(codedOutDetails)
   )
 
-  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None))
+  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None), codedOutDetails = Some(balancingCodedOut))
 
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None),
@@ -534,41 +543,43 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           lpp2Row.select("td").last().text() shouldBe "£98.00"
         }
 
-        "should have payment processing bullets when payment due in more than 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
+        "should have payment made paragraph when payment due in more than 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days(codedOutDetails = Some(balancingCodedOut))) {
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-          pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
 
-        "display the paragraph about payments under review and bullet points when there is a dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks), dunningLock = true) {
+        "display the paragraph about payments under review and paragraph when there is a dunningLock" in new TestSetup(
+          charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut)), dunningLock = true) {
           val paymentUnderReviewParaLink: Element = pageDocument.getElementById("disagree-with-tax-appeal-link")
 
           pageDocument.getElementById("payment-under-review-info").text shouldBe paymentUnderReviewPara
           paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
           paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
         }
 
         "display bullets and not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueInMoreThan30Days(twoDunningLocks)) {
+          charges = whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
           findElementById("payment-under-review-info") shouldBe None
 
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
         }
 
         "money in your account section with available credits with totalCredit when ClaimARefundR18 FS is true" in
@@ -661,30 +672,37 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           paymentUnderReviewParaLink.attr("href") shouldBe "https://www.gov.uk/tax-appeals"
           paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
         }
-        "should have payment processing bullets when there is dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks), dunningLock = true) {
+        "should have payment made paragraph when there is dunningLock" in new TestSetup(
+          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut)), dunningLock = true) {
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-          pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
         "not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
+          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks)) {
           findElementById("payment-under-review-info") shouldBe None
         }
-        "should have payment processing bullets when there is no dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
+        "should have payment made paragraph when there is no dunningLock" in new TestSetup(
+          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-          pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
 
         }
 
@@ -697,16 +715,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2"
         }
 
-        "should have payment processing bullets when there is a single charge" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(oneDunningLock)) {
+        "should have payment made paragraph when there is a single charge" in new TestSetup(
+          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = oneDunningLock, codedOutDetails = Some(balancingCodedOut))) {
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-          pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
 
         s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new TestSetup(
@@ -718,21 +739,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           dueWithInThirtyDaysTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2 $paymentUnderReview"
         }
 
-        "should have payment processing bullets when there is multiple charge" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
+        "should have payment made paragraph when there is multiple charge" in new TestSetup(
+          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-          pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-
-        }
-
-        "display the payment plan content and link" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
-          val paymentPlan: Element = pageDocument.getElementById("payment-plan")
-          paymentPlan.text() shouldBe paymentPlanText
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
       }
 
@@ -764,12 +783,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe overdueTag
         }
-        "have payment type dropdown details and bullet point list" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        "have payment type dropdown details and payment made paragraph" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
         }
 
         "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
@@ -792,18 +810,22 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               fixedDate.getYear).url
           }
 
-        "should have payment processing bullets when there is POA1 charge and lpi on poa 1 of 2" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(Some(34.56), None))) {
+        "should have payment made paragraph when there is POA1 charge and lpi on poa 1 of 2" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(Some(34.56), None))) {
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-          pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
 
         }
 
-        "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
+        "have overdue payments header, paragraph and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - LPI Dunning Block" in
           new TestSetup(charges = whatYouOweDataWithOverdueLpiDunningLock(Some(34.56), Some(100.0), outstandingAmount = List(0.0,0.0))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
@@ -825,14 +847,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
 
-            pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-            val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-            paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-            paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-            pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+            pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+            val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+            pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+            pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
           }
 
-        "have overdue payments header, bullet points and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
+        "have overdue payments header, paragraph and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
           new TestSetup(charges = whatYouOweDataWithOverdueLpiDunningLockZero(Some(34.56), Some(0))) {
 
             val overdueTableHeader: Element = pageDocument.select("tr").get(0)
@@ -853,15 +874,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
 
-            pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-            val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-            paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-            paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-            pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-
+            pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+            val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+            pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+            pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
           }
 
-        "have overdue payments header, bullet points and data with POA1 charge type and No Late payment interest" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None))) {
+        "have overdue payments header, paragraph and data with POA1 charge type and No Late payment interest" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None))) {
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(0)
           overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -882,14 +901,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             fixedDate.getYear).url
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
         }
 
-        "have overdue payments header, bullet points and data with POA1 charge type" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None))) {
+        "have overdue payments header, paragraph and data with POA1 charge type" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None))) {
 
           val overdueTableHeader: Element = pageDocument.select("tr").get(0)
           overdueTableHeader.select("th").first().text() shouldBe dueDate
@@ -912,11 +930,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             fixedDate.getYear).url
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
         }
         "have overdue payments with POA2 charge type with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None))) {
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
@@ -937,15 +954,18 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("accrued-interest-charge-type-1").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
           pageDocument.getElementById("accrued-interest-amount-due-1").text() shouldBe "£24.05"
         }
-        "should have payment processing bullets when there is accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
+        "should have payment made paragraph when there is accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-          pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
 
         "only show interest for POA when there is no late Payment Interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
@@ -965,11 +985,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
 
-        }
-
-        "display the payment plan content and link" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
-          val paymentPlan: Element = pageDocument.getElementById("payment-plan")
-          paymentPlan.text() shouldBe paymentPlanText
         }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
@@ -1006,25 +1021,28 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "the user has charges and access viewer with mixed dates" should {
-        s"have the title $whatYouOweTitle and notes" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
+        s"have the title $whatYouOweTitle and notes" in new TestSetup(charges = whatYouOweDataWithMixedData1()) {
           pageDocument.title() shouldBe whatYouOweTitle
         }
-        s"not have MTD payments heading" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
+        s"not have MTD payments heading" in new TestSetup(charges = whatYouOweDataWithMixedData1()) {
           findElementById("pre-mtd-payments-heading") shouldBe None
         }
 
-        "should have payment processing bullets when there is mixed dates" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
+        "should have payment made paragraph when there is mixed dates" in new TestSetup(charges = whatYouOweDataWithMixedData1(Some(balancingCodedOut))) {
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-          pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
 
-        s"have overdue table header, bullet points and data with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueMixedData2(List(None, None, None))) {
+        s"have overdue table header, paragraph and data with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueMixedData2(List(None, None, None))) {
           val overdueTableHeader: Element = pageDocument.select("tr").first()
           overdueTableHeader.select("th").first().text() shouldBe dueDate
           overdueTableHeader.select("th").get(1).text() shouldBe chargeType
@@ -1055,15 +1073,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             fixedDate.getYear).url
 
-          pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-          val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-          paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-          paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-          pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+          pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+          val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+          pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
         }
 
       }
-      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithMixedData1) {
+      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithMixedData1()) {
 
         pageDocument.getElementById("payment-button").text shouldBe payNow
 
@@ -1122,11 +1139,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
           fixedDate.getYear).url
 
-        pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
+        pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+        val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+        pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+        pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
       }
 
       s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
@@ -1144,8 +1160,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"have the title $whatYouOweTitle and page header and notes" in new TestSetup(charges = noChargesModel) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
-        pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsDue
-        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote2)
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
 
       }
@@ -1157,39 +1175,20 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       "not have button Pay now" in new TestSetup(charges = noChargesModel) {
         findElementById("payment-button") shouldBe None
       }
-      "not have payment processing bullets" in new TestSetup(charges = noChargesModel) {
+      "not have payment made paragraph" in new TestSetup(charges = noChargesModel) {
         findElementById("payments-made") shouldBe None
         findElementById("payments-made-bullets") shouldBe None
         findElementById("sa-tax-bill") shouldBe None
-        pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-
+        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+        pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+        pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+        pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+        pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+        pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
       }
     }
 
     "AdjustPaymentsOnAccount is enabled" when {
-
-      "user has a POA that can be adjusted" when {
-
-        val poaModel = ctaViewModel
-
-        "POA is paid off fully should display link with additional content" in new TestSetup(
-          charges = whatYouOweDataWithPaidPOAs(),
-          adjustPaymentsOnAccountFSEnabled = true,
-          claimToAdjustViewModel = Some(poaModel) ) {
-            pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa.paid-2", "2024", "2025")
-            pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(false)
-            Option(pageDocument.getElementById("adjust-paid-poa-content")).isDefined shouldBe true
-        }
-
-        "POA is not paid off fully should display link" in new TestSetup(
-          charges = whatYouOweDataWithZeroMoneyInAccount(),
-          adjustPaymentsOnAccountFSEnabled = true,
-          claimToAdjustViewModel = Some(poaModel) ) {
-            pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
-            pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(false)
-            Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
-        }
-      }
 
       "user has no POA that can be adjusted should not display link" in new TestSetup(
         charges = whatYouOweDataNoCharges,
@@ -1201,55 +1200,40 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "codingOut is enabled" should {
-      "have coding out message displayed at the bottom of the page" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2, taxYear = whatYouOweDataWithCodingOutNics2.codedOutDetails.get.codingTaxYear.endYear) {
-        Option(pageDocument.getElementById("coding-out-summary-link")).isDefined shouldBe true
-        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
-          "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
-        pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
-      }
       "have a class 2 Nics overdue entry" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
         Option(pageDocument.getElementById("due-0")).isDefined shouldBe true
         pageDocument.getElementById("due-0").text().contains(CODING_OUT_CLASS2_NICS) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
       }
 
-      "should have payment processing bullets when there is coding out" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
+      "should have payment made paragraph when there is coding out" in new TestSetup(charges = whatYouOweDataWithCodingOutNics2) {
 
-        pageDocument.getElementById("payments-made").text shouldBe paymentsMade
-        val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-        paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBullet1
-        paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBullet2
-        pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-        pageDocument.getElementById("sa-note-migrated").text shouldBe saNote
-
+        pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+        val amount: String = codedOutDetails.amountCodedOut.toCurrencyString
+        pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+        pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+        pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+        pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+        pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+        pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+        pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
       }
 
       "have a cancelled paye self assessment entry" in new TestSetup(charges = whatYouOweDataWithCancelledPayeSa) {
         findElementById("coding-out-notice") shouldBe None
         pageDocument.getElementById("due-0").text().contains(cancelledPayeSelfAssessment) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-        findElementById("coding-out-summary-link") shouldBe None
       }
 
       "have a Payment on Account 1 entry" in new TestSetup(charges = whatYouOweWithPoaOneCollected, taxYear = whatYouOweWithPoaOneCollected.codedOutDetails.get.codingTaxYear.endYear) {
         pageDocument.getElementById("due-0").text().contains(poa1CollectedCodedOut) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
       }
 
       "have a Payment on Account 2 entry" in new TestSetup(charges = whatYouOweWithPoaTwoCollected, taxYear = whatYouOweWithPoaTwoCollected.codedOutDetails.get.codingTaxYear.endYear) {
         pageDocument.getElementById("due-0").text().contains(poa2CollectedCodedOut) shouldBe true
         pageDocument.select("#payments-due-table tbody > tr").size() shouldBe 1
-        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
-      }
-    }
-
-    "At crystallisation, the user has the coding out requested amount fully collected" should {
-      "only show coding out content under header" in new TestSetup(charges = whatYouOweDataWithCodingOutFullyCollected, taxYear = whatYouOweDataWithCodingOutFullyCollected.codedOutDetails.get.codingTaxYear.endYear) {
-        pageDocument.getElementById("coding-out-notice").text() shouldBe codingOutNoticeFullyCollected
-        pageDocument.getElementById("coding-out-summary-link").attr("href") shouldBe
-          "/report-quarterly/income-and-expenses/view/tax-year-summary/2021"
-        pageDocument.getElementById("coding-out-notice").text().contains(codingOutAmount.toString)
       }
     }
   }
@@ -1306,50 +1290,32 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "should have payment processing bullets when there is multiple charge" in new AgentTestSetup(
-      charges = whatYouOweDataWithDataDueIn30Days(twoDunningLocks)) {
+    "should have payment made paragraph when there is multiple charge" in new AgentTestSetup(
+      charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
 
-      pageDocument.getElementById("payments-made").text shouldBe paymentsMadeAgent
-      val paymentProcessingBullet: Element = pageDocument.getElementById("payments-made-bullets")
-      paymentProcessingBullet.select("li").get(0).text shouldBe paymentProcessingBulletAgent1
-      paymentProcessingBullet.select("li").get(1).text shouldBe paymentProcessingBulletAgent2
-      pageDocument.getElementById("sa-tax-bill").attr("href") shouldBe "https://www.gov.uk/pay-self-assessment-tax-bill"
-      pageDocument.getElementById("sa-note-migrated").text shouldBe saNoteAgent
-
+      pageDocument.getElementsByTag("h2").eq(1).text shouldBe paymentsMadeHeading
+      val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
+      pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
+      pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+      pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+      pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+      pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+      pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+      pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+      pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
     }
 
     "the user has no charges" should {
       s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading-agent"))} and page header and notes" in new AgentTestSetup(charges = noChargesModel) {
         pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
         pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
-        pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
-        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote2)
         pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
       }
     }
-
-      "user has a POA that can be adjusted" when {
-
-        val poaModel = ctaViewModel
-
-        "POA is paid off fully should display link with additional content" in new AgentTestSetup(
-          charges = whatYouOweDataWithPaidPOAs(),
-          adjustPaymentsOnAccountFSEnabled = true,
-          claimToAdjustViewModel = Some(poaModel) ) {
-          pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa.paid-2", "2024", "2025")
-          pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(true)
-          Option(pageDocument.getElementById("adjust-paid-poa-content")).isDefined shouldBe true
-        }
-
-        "POA is not paid off fully should display link" in new AgentTestSetup(
-          charges = whatYouOweDataWithZeroMoneyInAccount(),
-          adjustPaymentsOnAccountFSEnabled = true,
-          claimToAdjustViewModel = Some(poaModel) ) {
-          pageDocument.getElementById("adjust-poa-link").text() shouldBe messages("whatYouOwe.adjust-poa", "2024", "2025")
-          pageDocument.getElementById("adjust-poa-link").attr("href") shouldBe claimToAdjustLink(true)
-          Option(pageDocument.getElementById("adjust-paid-poa-content")) shouldBe None
-        }
-      }
 
       "user has no POA that can be adjusted should not display link" in new AgentTestSetup(
         charges = whatYouOweDataNoCharges,
@@ -1361,17 +1327,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
   "what you owe view" should {
-
-    val unallocatedCreditMsg = "You have £350.00 in your account. We’ll use this to pay the amount due on the next due date."
-    "show unallocated credits" when {
-      "user is an individual with the feature switch on" in new TestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
-      }
-
-      "user is an agent with the feature switch on" in new AgentTestSetup(charges = whatYouOweDataWithDataDueInMoreThan30Days()) {
-        pageDocument.getElementById("unallocated-credit-note").text() shouldBe unallocatedCreditMsg
-      }
-    }
 
     "not show unallocated credits" when {
       "user has no money in his account" in new TestSetup(charges = whatYouOweDataWithZeroMoneyInAccount()) {

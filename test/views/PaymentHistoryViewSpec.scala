@@ -89,7 +89,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     val paymentHeadingTaxYear: String = messages("paymentHistory.tableHead.taxYear")
     val paymentHeadingAmount: String = messages("paymentHistory.table.header.amount")
     val partialH2Heading = "payments"
-    val saLink: String = s"${messages("whatYouOwe.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
+    val saLink: String = s"${messages("selfAssessmentCharges.sa-link")} ${messages("pagehelp.opensInNewTabText")}"
   }
 
 
