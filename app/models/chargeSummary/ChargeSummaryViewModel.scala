@@ -198,7 +198,6 @@ case class ChargeSummaryViewModel(
       chargeItemList ++
       paymentAllocationsFormattedList
   }.sortBy(_.date)
-
 }
 
 

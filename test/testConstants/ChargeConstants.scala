@@ -715,10 +715,11 @@ trait ChargeConstants {
     outstandingChargesModel = Some(outstandingChargesDueIn30Days)
   )
 
-  def whatYouOweDataWithDataDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithDataDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks, codedOutDetails: Option[CodingOutDetails] = None)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(50.00, 0.00, 50.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
-    outstandingChargesModel = Some(outstandingChargesDueIn30Days)
+    outstandingChargesModel = Some(outstandingChargesDueIn30Days),
+    codedOutDetails = codedOutDetails
   )
 
   def whatYouOweDataWithDataDueIn30DaysAvailableCreditZero(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
@@ -884,7 +885,7 @@ trait ChargeConstants {
     interestRate = List(Some(10), Some(10))
   )
 
-  val whatYouOweDataWithMixedData1: WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithMixedData1(codedOutDetails: Option[CodingOutDetails] = None): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
       transactionId = List(id1040000123, id1040000124),
@@ -898,7 +899,8 @@ trait ChargeConstants {
       interestFromDate = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
       interestEndDate = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
       dunningLock = noDunningLocks, dueDateForFinancialDetail = List(LocalDate.parse("2024-01-19"), fixedDate.minusDays(1))).reverse,
-    outstandingChargesModel = Some(OutstandingChargesModel(List()))
+    outstandingChargesModel = Some(OutstandingChargesModel(List())),
+    codedOutDetails = codedOutDetails
   )
 
   val whatYouOweDataWithMixedData2: WhatYouOweChargesList = WhatYouOweChargesList(
@@ -1059,11 +1061,12 @@ trait ChargeConstants {
       interestRate = List(Some(1.0), Some(1.0)),
       dueDateForFinancialDetail = List( LocalDate.parse("2024-01-29"), LocalDate.parse("2024-02-03") )
     ),
-    outstandingChargesModel = Some(outstandingChargesOverdueData)
+    outstandingChargesModel = Some(outstandingChargesOverdueData),
+    codedOutDetails = Some(balancingCodedOut)
   )
 
 
-  def whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks, dueDates: List[Option[LocalDate]] = dueDateMoreThan30Days): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithDataDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks, dueDates: List[Option[LocalDate]] = dueDateMoreThan30Days, codedOutDetails: Option[CodingOutDetails] = None): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(BigDecimal(100.00)), None, None, Some(BigDecimal(350.00)), None, None, Some(BigDecimal(100.00))),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDates,
@@ -1072,7 +1075,8 @@ trait ChargeConstants {
       interestFromDate = List(None, None),
       dueDateForFinancialDetail = List( LocalDate.parse("2024-01-29"), LocalDate.parse("2024-02-03") )
     ),
-    outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
+    outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days),
+    codedOutDetails = codedOutDetails
   )
 
 

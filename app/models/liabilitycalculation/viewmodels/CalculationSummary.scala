@@ -34,7 +34,8 @@ case class CalculationSummary(timestamp: Option[LocalDate],
                               forecastTotalTaxableIncome: Option[Int] = None,
                               periodFrom: Option[LocalDate] = None,
                               periodTo: Option[LocalDate] = None,
-                              messages: Option[Messages] = None) {
+                              messages: Option[Messages] = None,
+                              isAmended: Boolean = false) {
 
   def errorPresent() = {
     messages.exists(_.errorMessages.nonEmpty)
@@ -79,7 +80,8 @@ object CalculationSummary extends ImplicitDateParser {
       forecastTotalTaxableIncome = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.totalTaxableIncome)),
       periodFrom = calc.metadata.periodFrom,
       periodTo = calc.metadata.periodTo,
-      messages = calc.messages
+      messages = calc.messages,
+      isAmended = calc.metadata.hasAnAmendment
     )
   }
 }

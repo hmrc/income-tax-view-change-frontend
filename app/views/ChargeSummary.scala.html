@@ -51,6 +51,7 @@
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
     govukInsetText : GovukInsetText,
+        govukDetails : GovukDetails,
     govukTable: GovukTable
 )
 
@@ -190,7 +191,7 @@
         @messages("chargeSummary.reviewAndReconcilePoa.p1")
         @link(id = Some("poa1-link"), link = viewModel.poaOneChargeUrl, messageKey = "chargeSummary.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
         @messages("chargeSummary.reviewAndReconcilePoa.p2")
-    }
+}
 }
 
 @reviewAndReconcilePoaTwoDebitExplanation = {
@@ -206,7 +207,19 @@
         @messages(s"chargeSummary.${oneOrTwo.key}Credit.p1")
     }
 }
+@creditAmountText(amount: String) = {
+    @p(id = Some("rar-credit-amount"), classes = "govuk-heading-m") {
+        @messages("chargeSummary.chargeAmount", amount)
+    }
+}
 
+@creditAppliedFromText(date: String) = {
+  @if(isPOAReconciliationCredit){
+      @p(id = Some("rar-credit-date"), classes = "govuk-heading-s") {
+          @messages("chargeSummary.credit.date", date)
+      }
+  }
+}
 @firstLatePaymentPenaltyExplanation = {
     @p(id = Some("first-payment-penalty-p1")) {
         @messages("chargeSummary.firstLatePaymentPenalty.p")
@@ -261,7 +274,18 @@
     case _                                                                                                  =>
 }
 }
+@getCreditAmount(amount: String) = @{
+  if(isPOAReconciliationCredit) {
+      creditAmountText(amount)
+    }
+}
 
+@isPOAReconciliationCredit() = @{
+    viewModel.chargeItem.transactionType match {
+        case (PoaOneReconciliationCredit | PoaTwoReconciliationCredit) => true
+        case _ => false
+    }
+}
 @codingOutBCDMessage = {
     @p(id=Some("coding-out-message")){
         @messages("chargeSummary.codingOutBCDMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
@@ -324,6 +348,8 @@
         @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
     }
 
+    @getCreditAmount(viewModel.chargeItem.originalAmount.abs.toCurrencyString)
+    @creditAppliedFromText(viewModel.chargeItem.dueDate.getOrElse(viewModel.chargeItem.documentDate).toLongDate)
     @getExplanationContent
 
     @if(viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)){
@@ -350,7 +376,8 @@
         }
     }
 
-    @if(!viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
+    @if(!viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
+    && !isPOAReconciliationCredit) {
         @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
             viewModel.chargeItem,
             viewModel.latePaymentInterestCharge,
@@ -391,62 +418,62 @@
         @if(!viewModel.isCredit) {
             @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
                 @p(id = Some("p-interest-locks-msg")) {
-            @if(viewModel.isAgent) {
-                @link(id = Some("SAChargesAgentInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
-                @messages("chargeSummary.interestLocks.text-agent")
-            } else {
-                @link(id = Some("SAChargesInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
-                @messages("chargeSummary.interestLocks.text")
-                }
+                    @if(viewModel.isAgent) {
+                        @link(id = Some("SAChargesAgentInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+                        @messages("chargeSummary.interestLocks.text-agent")
+                    } else {
+                        @link(id = Some("SAChargesInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+                        @messages("chargeSummary.interestLocks.text")
+                    }
 
-            }
-        } else {
-            @p() {
-            @if(viewModel.isAgent) {
-                @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
-                @messages("chargeSummary.selfAssessmentCharges.text-agent")
+                }
             } else {
-                @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
-                @messages("chargeSummary.selfAssessmentCharges.text")
+                @p() {
+                    @if(viewModel.isAgent) {
+                        @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
+                        @messages("chargeSummary.selfAssessmentCharges.text-agent")
+                    } else {
+                        @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
+                        @messages("chargeSummary.selfAssessmentCharges.text")
+                    }
                 }
             }
         }
-    }
     } else {
         @if(!viewModel.isCredit) {
             @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
                 @p(id = Some("p-interest-locks-msg")) {
                     @if(viewModel.isAgent) {
-                    @messages("chargeSummary.whatYouOwe.textOne-agent")
-                    @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                    @messages("chargeSummary.interestLocks.text-agent")
+                        @messages("chargeSummary.whatYouOwe.textOne-agent")
+                        @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                        @messages("chargeSummary.interestLocks.text-agent")
                     } else {
-                    @messages("chargeSummary.whatYouOwe.textOne")
-                    @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                    @messages("chargeSummary.interestLocks.text")
-                }
+                        @messages("chargeSummary.whatYouOwe.textOne")
+                        @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                        @messages("chargeSummary.interestLocks.text")
+                    }
 
-            }
-        } else {
-            @p() {
-            @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                @messages("chargeSummary.whatYouOwe.textTwo-agent")
-                } else {
-                @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                @messages("chargeSummary.whatYouOwe.textTwo")
+                }
+            } else {
+                @p() {
+                    @if(viewModel.isAgent) {
+                        @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                        @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                        @messages("chargeSummary.whatYouOwe.textTwo-agent")
+                    } else {
+                        @messages("chargeSummary.whatYouOwe.textOne")
+                        @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                        @messages("chargeSummary.whatYouOwe.textTwo")
+                    }
                 }
             }
         }
     }
-}
 
 
 
 
-@if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
+    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus == None) {
             @h3(
                 msg = chargeHistoryHeading,
@@ -467,7 +494,8 @@
                         content = HtmlContent(chargeHistoryItem.description)
                     ),
                     TableRow(
-                        content = HtmlContent(chargeHistoryItem.amount.toCurrency)
+                        content = HtmlContent(chargeHistoryItem.amount.toCurrency),
+                        format = Some("numeric")
                     )
                 )
             },
@@ -479,7 +507,8 @@
                     content = Text(messages("chargeSummary.chargeHistory.description"))
                 ),
                 HeadCell(
-                    content = Text(messages("chargeSummary.chargeHistory.amount"))
+                    content = Text(messages("chargeSummary.chargeHistory.amount")),
+                    format = Some("numeric")
                 )
             )),
             captionClasses = "govuk-table__caption--m",
@@ -496,8 +525,8 @@
                 else viewModel.poaTwoChargeUrl
             },
             {
-                if (viewModel.chargeItem.transactionType == PoaOneReconciliationCredit) messages("chargeSummary.paymentOnAccount1.text")
-                else messages("chargeSummary.paymentOnAccount2.text")
+                if (viewModel.chargeItem.transactionType == PoaOneReconciliationCredit) "chargeSummary.paymentOnAccount1.text"
+                else "chargeSummary.paymentOnAccount2.text"
             }
         )
     }

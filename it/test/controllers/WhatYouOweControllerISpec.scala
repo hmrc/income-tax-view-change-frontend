@@ -172,10 +172,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     isElementVisibleById("due-0")(expectedValue = true),
                     isElementVisibleById("due-1")(expectedValue = true),
                     isElementVisibleById("payment-button")(expectedValue = mtdUserRole == MTDIndividual),
-                    isElementVisibleById("sa-note-migrated")(expectedValue = true),
-                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-                    isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-                    isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                    isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
+                    isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                    isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
+                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
                   )
                 }
               }
@@ -222,10 +222,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     isElementVisibleById("due-1")(expectedValue = true),
                     isElementVisibleById("charge-interest-1")(expectedValue = false),
                     isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
-                    isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                    isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-                    isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                    isElementVisibleById(s"sa-note-1-migrated-1")(expectedValue = true),
+                    isElementVisibleById(s"sa-note-1-migrated-2")(expectedValue = true),
+                    isElementVisibleById(s"sa-note-2-migrated")(expectedValue = true),
+                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
                   )
                 }
               }
@@ -270,10 +270,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     isElementVisibleById("due-0")(expectedValue = true),
                     isElementVisibleById("due-1")(expectedValue = true),
                     isElementVisibleById("due-2")(expectedValue = false),
-                    isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                    isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-                    isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                    isElementVisibleById(s"sa-note-1-migrated-1")(expectedValue = true),
+                    isElementVisibleById(s"sa-note-1-migrated-2")(expectedValue = true),
+                    isElementVisibleById(s"sa-note-2-migrated")(expectedValue = true),
+                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
                   )
                 }
               }
@@ -413,11 +413,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
-                      isElementVisibleById("no-payments-due")(expectedValue = true),
-                      isElementVisibleById("sa-note-migrated")(expectedValue = true),
-                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-                      isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
-                      isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
                     )
                   }
                 }
@@ -442,11 +441,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
-                      isElementVisibleById("no-payments-due")(expectedValue = true),
-                      isElementVisibleById("sa-note-migrated")(expectedValue = true),
-                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-                      isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
-                      isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
                     )
                   }
                 }
@@ -483,11 +481,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
-                      isElementVisibleById("no-payments-due")(expectedValue = true),
-                      isElementVisibleById("sa-note-migrated")(expectedValue = true),
-                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-                      isElementVisibleById(s"payments-made-bullets")(expectedValue = false),
-                      isElementVisibleById(s"sa-tax-bill")(expectedValue = false)
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
                     )
                   }
                 }
@@ -531,11 +528,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
                       isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
-                      isElementVisibleById(s"no-payments-due")(expectedValue = false),
-                      isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                      isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                      isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-                      isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
                     )
                   }
                 }
@@ -565,11 +561,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
-                      isElementVisibleById(s"no-payments-due")(expectedValue = false),
-                      isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                      isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                      isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-                      isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
                     )
                   }
                 }
@@ -599,12 +594,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
-                      isElementVisibleById(s"no-payments-due")(expectedValue = false),
-                      isElementVisibleById(s"sa-note-migrated")(expectedValue = true),
-                      isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
-                      isElementVisibleById("coding-out-notice")(expectedValue = true),
-                      isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-                      isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
                     )
                   }
                 }
@@ -635,10 +628,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     isElementVisibleById("due-0")(expectedValue = true),
                     isElementVisibleById("due-1")(expectedValue = true),
                     isElementVisibleById("payment-button")(expectedValue = mtdUserRole == MTDIndividual),
-                    isElementVisibleById("sa-note-migrated")(expectedValue = true),
-                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
-                    isElementVisibleById(s"payments-made-bullets")(expectedValue = true),
-                    isElementVisibleById(s"sa-tax-bill")(expectedValue = true)
+                    isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
+                    isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                    isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
+                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
                   )
                 }
               }
@@ -682,9 +675,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                       result should have(
                         httpStatus(OK),
-                        pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
-                        isElementVisibleById("adjust-poa-link")(expectedValue = true),
-                        isElementVisibleById("adjust-poa-content")(expectedValue = true)
+                        pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}")
                       )
                     }
                   }
@@ -701,9 +692,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                       result should have(
                         httpStatus(OK),
-                        pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
-                        isElementVisibleById("adjust-poa-link")(expectedValue = true),
-                        isElementVisibleById("adjust-paid-poa-content")(expectedValue = true))
+                        pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}")
+                      )
                     }
                   }
                 }

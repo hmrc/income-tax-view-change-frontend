@@ -256,7 +256,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
 
                 val result = action(fakeRequest)
-                contentAsString(result).contains("Adjust payments on account for the 2017 to 2018 tax year") shouldBe true
+                println(contentAsString(result))
+                contentAsString(result).contains("adjust payments on account for the 2017 to 2018 tax year") shouldBe true
               }
               "there are no adjustable POAs" in {
                 setupMockSuccess(mtdUserRole)

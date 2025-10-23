@@ -1,0 +1,53 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Details
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
+@import viewUtils.ExternalUrlHelper
+@import models.financialDetails.PoaOneReconciliationDebit
+@import models.chargeSummary.ChargeSummaryViewModel
+@this(
+        p: p,
+        link: link,
+        govukDetails: GovukDetails,
+        appConfig: config.FrontendAppConfig
+)
+
+
+@(viewModel: ChargeSummaryViewModel)(
+        implicit request: Request[_],
+        messages: Messages
+)
+@if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit) {
+ @p(id = Some("rar-poa1-explanation-p1")) {
+  @messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p1")
+  @link(id = Some("poa1-link"), link = viewModel.poaOneChargeUrl, messageKey = "selfAssessmentCharges.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+  @messages("selfAssessmentCharges.reviewAndReconcilePoa.p.textTwo", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+ }
+} else {
+ @p(id = Some("rar-poa2-explanation-p1")) {
+  @messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p1")
+  @link(id = Some("poa2-link"), link = viewModel.poaTwoChargeUrl, messageKey = "selfAssessmentCharges.reviewAndReconcilePoa2.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+  @messages("selfAssessmentCharges.reviewAndReconcilePoa.p.textTwo", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+ }
+}
+@p(id = Some("rar-poa-explanation-p2")) {
+ @messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p2")
+}
+

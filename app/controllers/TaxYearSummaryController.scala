@@ -142,8 +142,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
       showForecastData = showForecast(calculationSummary),
       ctaViewModel = claimToAdjustViewModel,
       lpp2Url,
-      isEnabled(PostFinalisationAmendmentsR18),
-      latestCalc.metadata.hasAnAmendment
+      isEnabled(PostFinalisationAmendmentsR18)
     )
     lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
@@ -194,8 +193,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
         showForecastData = true,
         claimToAdjustViewModel,
         lpp2Url,
-        isEnabled(PostFinalisationAmendmentsR18),
-        hasAmendments = false
+        isEnabled(PostFinalisationAmendmentsR18)
       )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))

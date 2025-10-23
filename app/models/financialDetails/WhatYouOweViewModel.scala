@@ -50,4 +50,12 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
   val chargeIsNotDueAndChargesDefinedAndGreaterThanZero: Boolean = whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero &&
     whatYouOweChargesList.outstandingChargesModel.get.getAciChargeWithTieBreaker.isDefined &&
     whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)
+
+  def paymentHistoryControllerURL(isAgent: Boolean, origin: Option[String] = None) =
+    if(isAgent){
+      controllers.routes.PaymentHistoryController.showAgent().url
+    } else {
+      controllers.routes.PaymentHistoryController.show(origin).url
+    }
+
 }
