@@ -330,14 +330,13 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def crystallisedNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
     testYear,
     viewModel = TaxYearSummaryViewModel(
-      calculationSummary = Some(modelComplete(crystallised = true)),
+      calculationSummary = Some(modelComplete(crystallised = true, isAmended = false)),
       previousCalculationSummary = None,
       charges = List.empty,
       obligations = testObligationsModel,
       ctaViewModel = emptyCTAModel,
       LPP2Url = "",
-      pfaEnabled = true,
-      hasAmendments = false
+      pfaEnabled = true
     ),
     backUrl = "testBackUrl",
     isAgent = isAgent,

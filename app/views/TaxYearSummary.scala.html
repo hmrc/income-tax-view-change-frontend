@@ -88,6 +88,8 @@
 }
 
 @previousCalculationContent = @{
+    val isAmended = viewModel.calculationSummary.exists(_.isAmended)
+
     if (viewModel.pfaEnabled) {
         if (viewModel.previousCalculationSummary.isEmpty) {
             None
@@ -98,7 +100,7 @@
                     viewModel.previousCalculationSummary,
                     isAgent,
                     viewModel.pfaEnabled,
-                    viewModel.hasAmendments,
+                    isAmended,
                     isPrevious = true
                 )
             )
@@ -109,10 +111,12 @@
 }
 
 @calculationContent = @{
-    if(viewModel.pfaEnabled && viewModel.calculationSummary.exists(_.isAmended)) {
-        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, viewModel.hasAmendments, isLatest = true))
+    val isAmended = viewModel.calculationSummary.exists(_.isAmended)
+
+    if(viewModel.pfaEnabled && isAmended) {
+        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, isAmended, isLatest = true))
     } else {
-        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, viewModel.hasAmendments))
+        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, isAmended))
     }
 }
 

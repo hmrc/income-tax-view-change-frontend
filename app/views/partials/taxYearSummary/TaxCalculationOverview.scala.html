@@ -37,7 +37,7 @@
         taxCalculationAmendmentGuidance: TaxCalculationAmendmentGuidance
 )
 
-@(model: CalculationSummary, isAgent: Boolean, taxYear: Int, isLatest: Boolean, isPrevious: Boolean, pfaEnabled: Boolean, hasAmendments: Boolean)(implicit messages: Messages)
+@(model: CalculationSummary, isAgent: Boolean, taxYear: Int, isLatest: Boolean, isPrevious: Boolean, pfaEnabled: Boolean, isAmended: Boolean)(implicit messages: Messages)
 
 @if(model.messages.exists(_.errorMessages.size > 0)) {
     @{
@@ -55,7 +55,7 @@
         @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
     }
 
-    @if(!isPrevious && !isLatest && pfaEnabled && !hasAmendments) {
+    @if(!isPrevious && !isLatest && pfaEnabled && !isAmended) {
         @taxCalculationAmendmentGuidance(taxYear, "calculation")
     }
 }
