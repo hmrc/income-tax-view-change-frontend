@@ -1,0 +1,130 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
+@import viewUtils.ExternalUrlHelper
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Table
+@import uk.gov.hmrc.govukfrontend.views.Aliases.TableRow
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
+@import uk.gov.hmrc.govukfrontend.views.Aliases.HeadCell
+@import implicits.ImplicitDateFormatterImpl
+@import views.html.components.h2
+@import models.chargeSummary.ChargeSummaryViewModel
+@import views.html.partials.chargeSummary.ChargeSummaryPaymentAllocation
+@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import implicits.ImplicitPercentageFormatter.PercentageFormatterBigDecimal
+
+
+
+@this(
+        h2: h2,
+        p: p,
+        link: link,
+        govukDetails: GovukDetails,
+        appConfig: config.FrontendAppConfig,
+        govukTable: GovukTable,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
+)
+
+@(viewModel: ChargeSummaryViewModel)(
+        implicit request: Request[_],
+        messages: Messages
+)
+@import implicitDateFormatter.longDate
+@getMessage(key: String, args: String*) = @{
+ messages(s"yourSelfAssessmentChargeSummary.table.$key", args: _*)
+}
+
+      @h2(messages("selfAssessmentCharges.interestOnThisCharge.heading"))
+      @p(){@messages("selfAssessmentCharges.interestOnThisCharge.p1")}
+      @p(){@messages("selfAssessmentCharges.interestOnThisCharge.p2")}
+
+    @intrestOnChargeTable = {
+      @p() {
+        @messages("chargeSummary.interestOnThisCharge.guidanceText")
+         @link(
+            link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
+            target = Some("_blank"),
+            rel = Some("noreferrer noopener"),
+            messageKey = messages("chargeSummary.interestOnThisCharge.guidanceLinkText"),
+            outerMessage = messages("chargeSummary.interestOnThisCharge.guidanceLinkText.dot")
+         )
+      }
+    }
+
+  @govukTable(Table(
+     rows = Seq(
+        Seq(
+         TableRow(
+           content = Text(messages("selfAssessmentCharges.reviewAndReconcilePoa.table.overdue", viewModel.chargeItem.getInterestFromDate.toLongDateShort, viewModel.chargeItem.getInterestEndDate.toLongDateShort))
+         ),
+         TableRow(
+           content = Text(viewModel.chargeItem.getInterestRate.toPercentage)
+         ),
+         TableRow(
+           content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString),
+           format = Some("numeric")
+         )
+        ),
+        Seq(
+         TableRow(
+           content = Text(messages("selfAssessmentCharges.interestOnThisCharge.Table.totalText")),
+           attributes = Map("colspan" -> "2"),
+           classes = "govuk-table__header"
+          ),
+         TableRow(
+           content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString),
+           format = Some("numeric"),
+           attributes = Map("colspan" -> "2"),
+          classes = "govuk-table__header"
+          )
+        )
+     ),
+     head = Some(Seq(
+       HeadCell(
+         content = Text(messages("selfAssessmentCharges.interestOnThisCharge.Table.heading"))
+       ),
+       HeadCell(
+         content = HtmlContent(currentInterestRateHeader)
+       ),
+       HeadCell(
+         content = HtmlContent(estimatedAmountHeader),
+         format = Some("numeric")
+     )
+    ))
+  ))
+
+  @currentInterestRateHeader ={
+      <div>@messages("selfAssessmentCharges.interestOnThisCharge.Table.heading2")</div>
+  }
+  @estimatedAmountHeader ={
+       <div>@messages("selfAssessmentCharges.interestOnThisCharge.Table.heading3")</div>
+  }
+
+
+  @p(){@messages("selfAssessmentCharges.interestOnThisCharge.guidanceText")
+     @link(
+          link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
+          target = Some("_blank"),
+          rel= Some("noreferrer noopener"),
+          messageKey = messages("selfAssessmentCharges.interestOnThisCharge.guidanceLinkText"),
+          outerMessage = messages(".")
+     )
+}
