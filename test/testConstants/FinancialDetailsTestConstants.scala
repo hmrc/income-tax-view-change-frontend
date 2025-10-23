@@ -499,7 +499,8 @@ object FinancialDetailsTestConstants {
                       accruedInterest: Option[BigDecimal] = None,
                       additionalSubItems: Seq[SubItem] = Seq(),
                       dueDateValue: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
-                      transactionId: Option[String] = Some(id1040000123)
+                      transactionId: Option[String] = Some(id1040000123),
+                      codedOutStatus: Option[String] = None
                      ): FinancialDetail = FinancialDetail.apply(
     taxYear = taxYear.toString,
     mainType = Some(mainType),
@@ -522,7 +523,8 @@ object FinancialDetailsTestConstants {
           dunningLock = dunningLock,
           interestLock = interestLock,
           clearingDate = Some(LocalDate.parse("2019-07-23")),
-          clearingReason = Some("clearingReason")
+          clearingReason = Some("clearingReason"),
+          codedOutStatus = codedOutStatus
         )
       ) ++ additionalSubItems)
   )
@@ -1247,7 +1249,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
-          documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 12.34,
+          documentText = Some("documentText"), outstandingAmount = 12.34,
           originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -1257,7 +1259,7 @@ object FinancialDetailsTestConstants {
         )),
       financialDetails = List(
         FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100),
-          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25"))))))
+          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")),codedOutStatus = Some("I")))))
       )
     )
   def testFinancialDetailsModelWithPayeSACodingOutPOA1(): FinancialDetailsModel =
@@ -1265,7 +1267,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
-          documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 12.34,
+          documentText = Some("documentText"), outstandingAmount = 12.34,
           originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -1275,7 +1277,7 @@ object FinancialDetailsTestConstants {
         )),
       financialDetails = List(
         FinancialDetail("2021", Some("SA Payment on Account 1"), Some("4920"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100),
-          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25"))))))
+          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")),codedOutStatus = Some("I")))))
       )
     )
 
@@ -1284,7 +1286,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
-          documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 12.34,
+          documentText = Some("documentText"), outstandingAmount = 12.34,
           originalAmount = 11.22, documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = Some(BigDecimal(34.56)), interestRate = Some(BigDecimal(2)),
           latePaymentInterestId =  Some("latePaymentInterestId"), interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -1294,7 +1296,7 @@ object FinancialDetailsTestConstants {
         )),
       financialDetails = List(
         FinancialDetail("2021", Some("SA Payment on Account 1"), Some("4920"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100),
-          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25"))))))
+          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")),codedOutStatus = Some("I")))))
       )
     )
 
@@ -1303,7 +1305,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
-          documentText = Some(CODING_OUT_ACCEPTED), outstandingAmount = 12.34,
+          documentText = Some("documentText"), outstandingAmount = 12.34,
           originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -1313,7 +1315,7 @@ object FinancialDetailsTestConstants {
         )),
       financialDetails = List(
         FinancialDetail("2021", Some("SA Payment on Account 2"), Some("4930"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100),
-          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25"))))))
+          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")),codedOutStatus = Some("I")))))
       )
     )
 
@@ -1322,7 +1324,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear = 2021, transactionId = "CODINGOUT01", documentDescription = Some("TRM New Charge"),
-          documentText = Some(CODING_OUT_CANCELLED), outstandingAmount = 12.34,
+          documentText = Some("documentText"), outstandingAmount = 12.34,
           originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
           interestOutstandingAmount = None, interestRate = None,
           latePaymentInterestId = None, interestFromDate = None,
@@ -1332,7 +1334,7 @@ object FinancialDetailsTestConstants {
         )),
       financialDetails = List(
         FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some("CODINGOUT01"), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100),
-          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25"))))))
+          Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")),codedOutStatus = Some("C")))))
       )
     )
 
