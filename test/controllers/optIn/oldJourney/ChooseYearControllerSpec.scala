@@ -110,7 +110,7 @@ class ChooseYearControllerSpec extends MockAuthActions
           ))
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optIn.oldJourney.routes.CheckYourAnswersController.show(isAgent).url)
+          redirectLocation(result) shouldBe Some(controllers.optIn.oldJourney.routes.OptInCheckYourAnswersController.show(isAgent).url)
         }
 
         "return a BadRequest" when {

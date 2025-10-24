@@ -25,6 +25,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -36,9 +37,12 @@ import scala.concurrent.Future
 
 class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOutService {
 
+  lazy val mockOptOutSubmissionService: OptOutSubmissionService = mock(classOf[OptOutSubmissionService])
+
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[OptOutService].toInstance(mockOptOutService)
+      api.inject.bind[OptOutService].toInstance(mockOptOutService),
+      api.inject.bind[OptOutSubmissionService].toInstance(mockOptOutSubmissionService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[OptOutTaxYearQuestionController]
@@ -165,11 +169,11 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
-          mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
 
-          val formData = Map(
-            "opt-out-tax-year-question" -> "Yes",
-          )
+          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest(any())(any(), any(), any()))
+            .thenReturn(Future(List(ITSAStatusUpdateResponseSuccess())))
+
+          val formData = Map("opt-out-tax-year-question" -> "Yes")
 
           val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
 
@@ -207,7 +211,9 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
-          mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseFailure(List())))
+
+          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest(any())(any(), any(), any()))
+            .thenReturn(Future(List(ITSAStatusUpdateResponseFailure.defaultFailure())))
 
           val formData = Map(
             "opt-out-tax-year-question" -> "Yes",

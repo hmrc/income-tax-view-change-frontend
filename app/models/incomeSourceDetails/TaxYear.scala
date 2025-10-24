@@ -133,5 +133,12 @@ object TaxYear {
     TaxYear(startYear = endYear - 1, endYear = endYear)
   }
 
+  def `fromStringYYYY-YYYY`(year: String): Option[TaxYear] = {
+    year.split("-") match {
+      case Array(startYear, endYear) => Some(TaxYear(startYear.toInt, endYear.toInt))
+      case _ => None
+    }
+  }
+
 }
 

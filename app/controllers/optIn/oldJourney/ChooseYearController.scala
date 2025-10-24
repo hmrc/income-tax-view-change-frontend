@@ -101,7 +101,7 @@ class ChooseYearController @Inject()(val optInService: OptInService,
   }
 
   private def redirectToCheckpointPage(isAgent: Boolean): Result = {
-    val nextPage = controllers.optIn.oldJourney.routes.CheckYourAnswersController.show(isAgent)
+    val nextPage = controllers.optIn.oldJourney.routes.OptInCheckYourAnswersController.show(isAgent)
     Logger("application").info(s"redirecting to : $nextPage")
     Redirect(nextPage)
   }
