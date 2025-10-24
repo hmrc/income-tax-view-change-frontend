@@ -22,6 +22,8 @@ import mocks.services.MockOptInService
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -30,6 +32,8 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition.createOptInProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+
+import scala.concurrent.Future
 
 class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInService {
 
@@ -60,6 +64,9 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             mockFetchOptInProposition(Some(proposition))
             mockFetchSavedChosenTaxYear(Some(taxYear2023))
 
+            when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+              .thenReturn(Future.successful(true))
+
             val result = action(fakeRequest)
             status(result) shouldBe OK
           }
@@ -72,6 +79,9 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
             mockFetchOptInProposition(Some(proposition))
             mockFetchSavedChosenTaxYear(Some(taxYear2023.nextYear))
+
+            when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+              .thenReturn(Future.successful(true))
 
             val result = action(fakeRequest)
             status(result) shouldBe OK

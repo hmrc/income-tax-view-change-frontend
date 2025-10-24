@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{AnnualReportingMethod, QuarterlyReportingMethod}
+import enums.{AnnualReportingMethod, CannotGoBackPage, QuarterlyReportingMethod}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import models.admin.OptInOptOutContentUpdateR17

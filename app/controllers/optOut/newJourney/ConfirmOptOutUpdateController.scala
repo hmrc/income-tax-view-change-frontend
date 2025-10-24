@@ -50,18 +50,23 @@ class ConfirmOptOutUpdateController @Inject()(view: CheckOptOutUpdateAnswers,
   def show(isAgent: Boolean = false, taxYear: String): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withOptOutRFChecks {
-        withRecover(isAgent) {
-          withSessionData(false, TaxYear(taxYear.toInt, taxYear.toInt + 1)) {
-            for {
-              optOutProposition <- optOutService.fetchOptOutProposition()
-              quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
-            } yield {
-              val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
-              val reportingObligationsURL = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
-              Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, reportingObligationsURL))
+        optOutService.fetchJourneyCompleteStatus().flatMap(journeyIsComplete => {
+          if(!journeyIsComplete){
+            withRecover(isAgent) {
+              withSessionData(false, TaxYear(taxYear.toInt, taxYear.toInt + 1)) {
+                for {
+                  optOutProposition <- optOutService.fetchOptOutProposition()
+                  quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
+                } yield {
+                  val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
+                  val reportingObligationsURL = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+                  Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, reportingObligationsURL))
+                }
+              }
             }
           }
-        }
+          else Future.successful(Redirect(controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false))))
+        })
       }
   }
 

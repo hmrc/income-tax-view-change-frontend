@@ -20,7 +20,8 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType}
+import enums.AfterSubmissionPage
+import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import models.admin.OptInOptOutContentUpdateR17
