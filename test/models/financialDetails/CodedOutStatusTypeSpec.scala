@@ -25,18 +25,9 @@ class CodedOutStatusTypeSpec extends UnitSpec{
   "CodedOutStatusType.fromCodedOutStatusAndDocumentText" should {
     "correctly identify the coded out status" when {
       "documentText corresponds to a known type" in {
-        val resultAccepted = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Balancing payment collected through PAYE tax code"), None)
-        resultAccepted shouldBe Some(Accepted)
-        val resultCancelled = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Cancelled PAYE Self Assessment"), None)
-        resultCancelled shouldBe Some(Cancelled)
+
         val resultNics2 = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Class 2 National Insurance"), None)
         resultNics2 shouldBe Some(Nics2)
-        val resultFullyCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Fully Collected"), None)
-        resultFullyCollected shouldBe Some(FullyCollected)
-        val resultNotCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Not Collected"), None)
-        resultNotCollected shouldBe Some(Cancelled)
-        val resultPartlyCollected = CodedOutStatusType.fromCodedOutStatusAndDocumentText(Some("Partly Collected"), None)
-        resultPartlyCollected shouldBe Some(Cancelled)
       }
       "codedOutStatus corresponds to a known type" in {
         val resultAccepted = CodedOutStatusType.fromCodedOutStatusAndDocumentText(None, Some("I"))

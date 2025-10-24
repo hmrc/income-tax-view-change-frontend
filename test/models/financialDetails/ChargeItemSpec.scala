@@ -58,11 +58,9 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   val balancingNics2DocumentDetails = defaultDocDetails.copy(documentText = Some(CODING_OUT_CLASS2_NICS.name))
   val balancingNics2FinancialDetails = financialDetail(mainTransaction = "4910")
 
-  val balancingAcceptedDocumentDetails = defaultDocDetails.copy(documentText = Some(CODING_OUT_ACCEPTED.name))
-  val balancingAcceptedFinancialDetails = financialDetail(mainTransaction = "4910")
+  val balancingAcceptedFinancialDetails = financialDetail(mainTransaction = "4910", codedOutStatus = Some("I"))
 
-  val balancingCancelledDocumentDetails = defaultDocDetails.copy(documentText = Some(CODING_OUT_CANCELLED.name))
-  val balancingCancelledFinancialDetails = financialDetail(mainTransaction = "4910")
+  val balancingCancelledFinancialDetails = financialDetail(mainTransaction = "4910",codedOutStatus = Some("C"))
 
   val mfaFinancialDetails = financialDetail(mainTransaction = "4003")
 
@@ -421,7 +419,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "from Balancing Payment Accepted" in {
 
         val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingAcceptedDocumentDetails,
+          documentDetail = defaultDocDetails,
           financialDetails = List(balancingAcceptedFinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge
@@ -431,7 +429,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "from Balancing Payment Cancelled" in {
 
         val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = balancingCancelledDocumentDetails,
+          documentDetail = defaultDocDetails,
           financialDetails = List(balancingCancelledFinancialDetails))
 
         chargeItem.transactionType shouldBe BalancingCharge

@@ -119,7 +119,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends MockAuthActions with M
 
               status(result) shouldBe Status.OK
               document.title shouldBe getTitle(incomeSourceType, isAgent)
-              document.select("legend").text shouldBe getHeading(incomeSourceType)
+              document.getElementById("accounting-method-heading").text shouldBe getHeading(incomeSourceType)
             }
           }
           if (incomeSourceType == SelfEmployment) {
@@ -220,7 +220,7 @@ class IncomeSourcesAccountingMethodControllerSpec extends MockAuthActions with M
               status(result) shouldBe Status.OK
               document.title shouldBe getTitle(incomeSourceType, isAgent)
               document.select("input").select("[checked]").`val`() shouldBe (if (cashOrAccrualsFlag.getOrElse("") == "cash") "cash" else "traditional")
-              document.select("legend").text shouldBe getHeading(incomeSourceType)
+              document.getElementById("accounting-method-heading").text shouldBe getHeading(incomeSourceType)
             }
           }
         }

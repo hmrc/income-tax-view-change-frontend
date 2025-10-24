@@ -563,7 +563,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockFinancialDetailsSuccess(
                   financialDetailsModelResponse = financialDetails(
                     documentDetails = documentDetailPaye.documentDetail,
-                    financialDetails = financialDetail(mainTransaction = "4910")
+                    financialDetails = financialDetail(mainTransaction = "4910",codedOutStatus = Some("I"))
                   )
                 )
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
