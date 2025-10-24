@@ -44,10 +44,21 @@
 
 @collectionTaxYear = @{chargeItem.taxYear.addYears(2)}
 
-@p(id=Some("codedOutBCDExplanation")) {
-    @getMessage("codingOutBCDMessage", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
-        collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
-}
+@{chargeItem.transactionType match {
+    case BalancingCharge             => {
+        p(id=Some("codedOutBCDExplanation")) {
+            Html(getMessage("codingOutBCDMessage", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
+                collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString))
+        }
+    }
+    case PoaOneDebit | PoaTwoDebit   => {
+        p(id=Some("codedOutExplanation")) {
+            Html(getMessage("codingOutMessage", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
+                collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString))
+        }
+    }
+    case _                           =>
+}}
 
 @{chargeItem.transactionType match {
     case BalancingCharge             => whatIsABalancingPayment()

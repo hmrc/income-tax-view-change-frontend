@@ -3387,6 +3387,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = weld y
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = a dysgu sut i apelio.
 
 yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = Dyma’r dreth sy’n weddill y mae angen i chi ei thalu ar gyfer blwyddyn dreth {0} i {1}.
+yourSelfAssessmentChargeSummary.codingOutMessage                        = Dyma’r dreth sydd arnoch ar gyfer blwyddyn dreth {0} i {1}.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
 
