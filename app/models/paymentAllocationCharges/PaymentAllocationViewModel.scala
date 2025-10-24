@@ -36,6 +36,9 @@ case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDet
                                       latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
                                       isLpiPayment: Boolean = false) {
 
+  val outstandingAmount: Option[BigDecimal] = paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
+  val dueDate: Option[LocalDate] = paymentAllocationChargeModel.financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
+
   def hasDocumentDetailWithCredit: Boolean =
     paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined)
 

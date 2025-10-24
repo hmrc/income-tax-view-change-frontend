@@ -30,6 +30,10 @@
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
+@import views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
+@import views.html.partials.paymentAllocations.PaymentAllocationsForLpi
+@import views.html.partials.paymentAllocations.PaymentAllocationsForNonLpi
+@import models.paymentAllocationCharges.PaymentAllocationViewModel
 @import _root_.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
 
@@ -53,11 +57,15 @@
         interestOnYourChargeTable: InterestOnYourChargeTable,
         paymentHistoryTable: PaymentHistoryTable,
         chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
-        whatIsPaymentOnAccount: WhatIsPaymentOnAccount
+        whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
+        paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
+        paymentAllocationsForLpi: PaymentAllocationsForLpi,
+        paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount
 )
 
 @(
     viewModel: ChargeSummaryViewModel,
+    paymentAllocations: Option[PaymentAllocationViewModel] = None,
     whatYouOweUrl: String,
     saChargesUrl: String,
     yourSelfAssessmentChargesFS: Boolean
@@ -203,7 +211,26 @@
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)
     }
-    @if(viewModel.isCredit) {
+    @if(viewModel.isCredit && paymentAllocations.isDefined) {
+
         @h2(getMessage("allocation.heading"))
+
+        <table class="govuk-table" id="payment-allocation-table">
+            <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocated-date")</th>
+                    <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.description")</th>
+                    <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.tax-year")</th>
+                    <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("paymentAllocation.tableHead.amount")</th>
+                </tr>
+            </thead>
+            @if(paymentAllocations.get.isLpiPayment) {
+            @paymentAllocationsForLpi(paymentAllocations.get, viewModel.isAgent)
+            } else {
+            @paymentAllocationsForNonLpi(paymentAllocations.get, viewModel.isAgent)
+            }
+            @paymentAllocationsCreditAmount(paymentAllocations.get.outstandingAmount, paymentAllocations.get.dueDate, true, viewModel.isAgent)
+        </table>
     }
 }
