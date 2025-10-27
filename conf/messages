@@ -225,7 +225,7 @@ taxYears.r18.amendment.text                                    = You can view th
 
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                           = Tax year summary
-tax-year-summary.heading-secondary                                 = 6 April {0} to 5 April {1}
+tax-year-summary.heading-secondary                                 = {0} to {1} tax year
 tax-year-summary.calculation-date                                  = Calculation date
 tax-year-summary.calc-from-last-time                               = This is not your final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.agent.calc-from-last-time                         = This is not your client’s final tax bill, it’s only based on figures we’ve already received.
