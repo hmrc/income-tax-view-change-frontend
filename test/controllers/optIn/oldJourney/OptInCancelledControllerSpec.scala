@@ -19,7 +19,7 @@ package controllers.optIn.oldJourney
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.ReportingFrequencyPage
+import models.admin.{ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import org.mockito.ArgumentMatchers
@@ -64,7 +64,7 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         s"render the opt in cancelled page" in {
-          enable(ReportingFrequencyPage)
+          enable(ReportingFrequencyPage, SignUpFs)
           val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
           setupMockSuccess(mtdRole)
           when(
@@ -94,7 +94,7 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
 
         "show the Error Template view" when {
           "and return Internal Server Error - 500" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             setupMockSuccess(mtdRole)
@@ -116,6 +116,28 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
 
             status(result) shouldBe INTERNAL_SERVER_ERROR
             contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
+          }
+        }
+
+        "render the reporting obligations page" when {
+          "the sign up feature switch is disabled" in {
+            enable(ReportingFrequencyPage)
+            disable(SignUpFs)
+            setupMockSuccess(mtdRole)
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+            }
+
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
 

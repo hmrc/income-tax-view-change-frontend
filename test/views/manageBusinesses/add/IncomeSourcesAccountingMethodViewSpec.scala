@@ -80,7 +80,7 @@ class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
 
   def incomeSourcesAccountingMethodTest(prefix: String, isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
     "render the heading for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {
-      document.getElementsByClass("govuk-fieldset__legend").text() shouldBe messages(s"$prefix.heading")
+      document.getElementById("accounting-method-heading").text() shouldBe messages(s"$prefix.heading")
       document.getElementById(s"$prefix-caption").text() shouldBe messages("accessibility.this-section-is") + " " + messages(s"incomeSources.add.${incomeSourceType.messagesSuffix}")
     }
     "render the dropdown for " + incomeSourceType in new Setup(isAgent, prefix, incomeSourceType) {

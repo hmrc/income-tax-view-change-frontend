@@ -77,7 +77,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
@@ -93,7 +93,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Second payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
@@ -169,7 +169,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00 (not including estimated interest)"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your first payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
@@ -188,7 +188,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Second payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £1,400.00 (not including estimated interest)"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your second payment on account"
                 document.getElementById("interestOnCharge.p1").text() shouldBe "The amount of interest you have to pay will increase every day until you pay the overdue charge."
@@ -208,7 +208,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Balancing payment"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £10.33"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £10.33 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
@@ -226,7 +226,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £100.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £100.00 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on your balancing payment"
@@ -285,7 +285,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Balancing payment: extra amount due to amended return"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33"
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementById("itsa-return-amendment-p1").text() shouldBe "You owe this extra tax because of a change you made to your return."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
@@ -304,7 +304,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Late submission penalty"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
-                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33"
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementById("LSP-content-1").text() shouldBe "You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return."
                 document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
@@ -326,13 +326,13 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First late payment penalty"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £200.33"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £200.33 (not including estimated interest)"
                 document.getElementById("due-date-text").text() shouldBe "Due 29 March 2020"
                 document.getElementById("first-payment-penalty-p1").text() shouldBe "You have received this penalty because you are late paying your Income Tax."
                 document.getElementById("charge-history-heading").text() shouldBe "First late payment penalty history"
               }
 
-              "provided with an id associated to a Review & Reconcile Debit Charge for POA1 (old view)" in new Setup(
+              "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
                 testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -347,11 +347,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingForRAR1
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
-                document.getElementById("rar-poa1-explanation").text() shouldBe explanationTextForRAR1
-                document.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
+                document.getElementById("rar-poa1-explanation-p1").text() + document.getElementById("rar-poa-explanation-p2").text() shouldBe explanationTextForRAR1
+                document.getElementById("charge-history-heading").text() shouldBe paymentHistoryHeadingForRARCharge
                 document.getElementById("poa1-link").attr("href") shouldBe chargeSummaryUrl
 
                 document
@@ -359,11 +359,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .getElementsByClass("govuk-table__body")
                   .first()
                   .getElementsByClass("govuk-table__cell")
-                  .get(4)
+                  .get(1)
                   .text() shouldBe descriptionTextForRAR1
               }
 
-              "provided with an id associated to a Review & Reconcile Debit Charge for POA2 (old view)" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
+              "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -377,18 +377,18 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   routes.ChargeSummaryController.show(testTaxYear, id1040000124).url
                 }
 
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingForRAR2
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
-                document.getElementById("rar-poa2-explanation").text() shouldBe explanationTextForRAR2
-                document.getElementById("charge-history-h3").text() shouldBe paymentHistoryHeadingForRARCharge
+                document.getElementById("rar-poa2-explanation-p1").text() + document.getElementById("rar-poa-explanation-p2").text() shouldBe explanationTextForRAR2
+                document.getElementById("charge-history-heading").text() shouldBe paymentHistoryHeadingForRARCharge
                 document.getElementById("poa2-link").attr("href") shouldBe chargeSummaryUrl
                 document
                   .getElementById("payment-history-table")
                   .getElementsByClass("govuk-table__body")
                   .first()
                   .getElementsByClass("govuk-table__cell")
-                  .get(4)
+                  .get(1)
                   .text() shouldBe descriptionTextForRAR2
               }
 
@@ -561,7 +561,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld("2022", "2023")
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2022", "2023")
                 document.select("h1").text() shouldBe successHeadingForRAR1
                 document.select("#payment-processing-bullets").isEmpty shouldBe true
               }

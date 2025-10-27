@@ -19,7 +19,7 @@ package controllers.optIn.newJourney
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import play.api
@@ -51,7 +51,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
       s"the user is authenticated as a $mtdRole" should {
         s"render the signUpCompleted page" that {
           "is for the current year" in {
-            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -64,7 +64,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             status(result) shouldBe OK
           }
           "is for next year" in {
-            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -79,7 +79,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
         }
         "render the error page" when {
           "no proposition returned" in {
-            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -91,7 +91,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
           "FetchSavedChosenTaxYear fails" in {
-            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -103,6 +103,27 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
         }
+        "render the reporting obligations page" when {
+          "the sign up feature switch is disabled" in {
+            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            disable(SignUpFs)
+
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
         "render the home page" when {
           "the reporting frequency and opt in opt out content R17 feature switches are disabled" in {
             disable(ReportingFrequencyPage)

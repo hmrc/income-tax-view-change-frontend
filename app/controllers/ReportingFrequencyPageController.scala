@@ -20,7 +20,7 @@ import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.ReportingFrequencyViewModel
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
 import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -81,7 +81,9 @@ class ReportingFrequencyPageController @Inject()(
               isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
               displayManageYourReportingFrequencySection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased),
               mtdThreshold = getMtdThreshold,
-              proposition = optOutProposition
+              proposition = optOutProposition,
+              isSignUpEnabled = isEnabled(SignUpFs),
+              isOptOutEnabled = isEnabled(OptOutFs)
             ),
             optInOptOutContentUpdateR17IsEnabled = isEnabled(OptInOptOutContentUpdateR17),
             nextUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url

@@ -74,11 +74,11 @@ class ManageBusinessesChooseTaxYearViewSpec extends TestSupport {
       "isOptInOptOutContentUpdateR17 is ON" should {
 
         "have the correct title" in new Setup(chooseTaxYearForm(true), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = true) {
-          pageDocument.title() shouldBe "Which tax year do you want to sign up for? - Manage your Self Assessment - GOV.UK"
+          pageDocument.title() shouldBe "Which tax year(s) do you want to sign up for? - Manage your Self Assessment - GOV.UK"
         }
 
         "have the correct heading" in new Setup(chooseTaxYearForm(true), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = true) {
-          pageDocument.select("h1").text() shouldBe s"$subHeadingText Which tax year do you want to sign up for?"
+          pageDocument.select("h1").text() shouldBe s"$subHeadingText Which tax year(s) do you want to sign up for?"
         }
 
         "have the correct sub-heading" in new Setup(chooseTaxYearForm(true), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = true) {
@@ -106,11 +106,11 @@ class ManageBusinessesChooseTaxYearViewSpec extends TestSupport {
       "isOptInOptOutContentUpdateR17 is OFF" should {
 
         "have the correct title" in new Setup(chooseTaxYearForm(false), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = false) {
-          pageDocument.title() shouldBe "Which tax year do you want to report quarterly for? - Manage your Self Assessment - GOV.UK"
+          pageDocument.title() shouldBe "Which tax year(s) do you want to report quarterly for? - Manage your Self Assessment - GOV.UK"
         }
 
         "have the correct heading" in new Setup(chooseTaxYearForm(false), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = false) {
-          pageDocument.select("h1").text() shouldBe s"$subHeadingText Which tax year do you want to report quarterly for?"
+          pageDocument.select("h1").text() shouldBe s"$subHeadingText Which tax year(s) do you want to report quarterly for?"
         }
 
         "have the correct sub-heading" in new Setup(chooseTaxYearForm(false), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = false) {

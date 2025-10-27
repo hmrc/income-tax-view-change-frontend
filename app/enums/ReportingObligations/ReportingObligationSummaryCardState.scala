@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,14 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
-@(updateType: String)(implicit messages: Messages)
-@{
-    updateType match {
-        case "Quarterly" => messages("submissionsTab.submission.quarterly")
-        case "Crystallisation" => messages("submissionsTab.submission.crystallised")
-        case _ => updateType
-    }
-}
+package enums.ReportingObligations
+
+sealed trait ReportingObligationSummaryCardState
+
+case object SingleYearCard extends ReportingObligationSummaryCardState
+
+case object MultiYearCard extends ReportingObligationSummaryCardState
+
+case object NoCard extends ReportingObligationSummaryCardState

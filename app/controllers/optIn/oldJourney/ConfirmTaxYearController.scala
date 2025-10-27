@@ -59,7 +59,7 @@ class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
 
   def show(isAgent: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withReportingObligationsFS {
+      withOptInRFChecks {
         withRecover(isAgent) {
           optInService.getConfirmTaxYearViewModel(isAgent) map {
             case Some(model) => Ok(view(ConfirmTaxYearViewModel(
@@ -75,7 +75,7 @@ class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withReportingObligationsFS {
+      withOptInRFChecks {
         optInService.makeOptInCall() map {
           case ITSAStatusUpdateResponseSuccess(_) => redirectToCheckpointPage(isAgent)
           case _ => Redirect(OptInErrorController.show(isAgent))

@@ -54,7 +54,7 @@ class SignUpTaxYearQuestionController @Inject()(val optInService: OptInService,
 
   def show(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withRFAndOptInOptOutR17FS {
+      withSignUpRFChecks {
         optInService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
             withSessionData(isStart = false, viewModel.signUpTaxYear.taxYear) {
@@ -75,7 +75,7 @@ class SignUpTaxYearQuestionController @Inject()(val optInService: OptInService,
 
   def submit(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      withRFAndOptInOptOutR17FS {
+      withSignUpRFChecks {
         optInService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
             SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY).bindFromRequest().fold(

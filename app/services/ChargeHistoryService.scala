@@ -72,7 +72,6 @@ class ChargeHistoryService @Inject()(chargeHistoryConnector: ChargeHistoryConnec
     }
   }
 
-  // TODO-[1]: move feature switch check up the calling stack
   // TODO-[2]: we might need to move this function on the TransactionItem/ChargeItem level
   def getReviewAndReconcileCredit(targetChargeItem: ChargeItem,
                                   chargeDetailsForTaxYear: FinancialDetailsModel): Option[ChargeItem] = {

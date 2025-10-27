@@ -22,7 +22,7 @@
 @import views.html.components.h3
 @import views.html.components.p
 @import models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.{BalancingCharge, PoaOneDebit, PoaTwoDebit, ITSAReturnAmendment}
+@import models.financialDetails.{BalancingCharge, PoaOneDebit, PoaTwoDebit, ITSAReturnAmendment, PoaOneReconciliationDebit,PoaTwoReconciliationDebit}
 @import views.html.partials.yourSelfAssessmentCharges.LatePaymentInterestChargeMessage
 @import models.repaymentHistory.RepaymentHistoryUtils
 @import models.financialDetails.ChargeItem
@@ -48,7 +48,7 @@
 }
 
 @chargeHistoryCaption = {
-    @if(viewModel.chargeItem.transactionType == PoaOneDebit || viewModel.chargeItem.transactionType == PoaTwoDebit) {
+    @if(viewModel.chargeItem.transactionType == PoaOneDebit || viewModel.chargeItem.transactionType == PoaTwoDebit||viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
         @p(id = Some("charge-history-caption")) {
             @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.${viewModel.chargeItem.getChargeTypeKey}.heading",
                 viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)

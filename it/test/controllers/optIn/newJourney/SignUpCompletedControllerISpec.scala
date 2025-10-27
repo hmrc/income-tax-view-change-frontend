@@ -20,7 +20,7 @@ import controllers.ControllerISpecHelper
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated}
@@ -112,7 +112,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the completed page" that {
             "is for the current tax year (CY+1 not mandated)" in {
-              enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+              enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
@@ -145,7 +145,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
               )
             }
             "is for the current tax year (CY+1 mandated)" in {
-              enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+              enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
@@ -181,7 +181,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
               )
             }
             "is for the next tax year" in {
-              enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+              enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
@@ -213,7 +213,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
               )
             }
             "is for the next tax year (CY is not annual)" in {
-              enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+              enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)

@@ -28,11 +28,10 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
                                    showForecastData: Boolean = false,
                                    ctaViewModel: TYSClaimToAdjustViewModel,
                                    LPP2Url: String,
-                                   pfaEnabled: Boolean,
-                                   hasAmendments: Boolean
+                                   pfaEnabled: Boolean
                                   ) {
 
-  def showUpdates: Boolean = {
+  def showSubmissions: Boolean = {
     obligations.obligations.exists(_.obligations.nonEmpty)
   }
 

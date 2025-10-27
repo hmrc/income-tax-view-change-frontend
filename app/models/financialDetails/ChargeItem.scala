@@ -69,6 +69,8 @@ case class ChargeItem (
   def hasAccruingInterest: Boolean =
     interestOutstandingAmount.getOrElse[BigDecimal](0) != 0 && accruingInterestAmount.getOrElse[BigDecimal](0) <= 0
 
+  def hasInterest: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != 0
+
   def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
   }
@@ -150,6 +152,8 @@ case class ChargeItem (
       case (PoaTwoDebit, Some(Accepted)           ) => true
       case (PoaOneDebit, None           ) => true
       case (PoaTwoDebit, None           ) => true
+      case (PoaOneReconciliationDebit,     _) => true
+      case (PoaTwoReconciliationDebit,     _) => true
       case (LateSubmissionPenalty,     _) => true
       case (FirstLatePaymentPenalty,   _) => true
       case (ITSAReturnAmendment,       _) => true

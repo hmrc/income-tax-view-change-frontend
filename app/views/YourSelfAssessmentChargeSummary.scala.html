@@ -28,7 +28,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.InterestOnYourChargeSection
 @import views.helpers.ChargeNameLangHelper
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
-@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
+@import views.html.partials.yourSelfAssessmentCharges.{WhatIsPaymentOnAccount, InterestOnChargeRARPoaSection}
 @import views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
 @import views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
 @import views.html.partials.paymentAllocations.PaymentAllocationsForLpi
@@ -36,6 +36,7 @@
 @import models.paymentAllocationCharges.PaymentAllocationViewModel
 @import _root_.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
+@import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
 
 @this(
         mainTemplate: unifiedLayout,
@@ -60,12 +61,12 @@
         whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
         paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
         paymentAllocationsForLpi: PaymentAllocationsForLpi,
-        paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount
+        paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
+        interestOnChargeRARPoaSection: InterestOnChargeRARPoaSection
 )
 
 @(
     viewModel: ChargeSummaryViewModel,
-    paymentAllocations: Option[PaymentAllocationViewModel] = None,
     whatYouOweUrl: String,
     saChargesUrl: String,
     yourSelfAssessmentChargesFS: Boolean
@@ -139,7 +140,12 @@
                   if(viewModel.chargeItem.isOverdue()) "overDueCharge"
                   else "charge"
               )
-          }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}"
+          }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}${
+              if(viewModel.chargeItem.interestOutstandingAmount)
+                  s"\t${
+                      messages("yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe")
+                  }" else ""
+          }"
       }</h2>
 
       @if(!viewModel.chargeItem.isCodingOut) {
@@ -148,17 +154,7 @@
           }
       }
 
-      @chargeDetails(
-          viewModel.chargeItem,
-          viewModel.taxYearFrom.toString,
-          viewModel.taxYearTo.toString,
-          viewModel.isAgent,
-          viewModel.LSPUrl,
-          viewModel.LPPUrl,
-          if (yourSelfAssessmentChargesFS) saChargesUrl else whatYouOweUrl
-      )
-
-      @WYOorYSACLinkContent
+      @chargeDetails(viewModel)
   }
     @if(viewModel.chargeItem.isCreditDrilldownPage) {
         <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
@@ -169,17 +165,7 @@
             <b>@getMessage("creditCreated", viewModel.chargeItem.documentDate.toLongDate)</b>
         }
 
-        @chargeDetails(
-            viewModel.chargeItem,
-            viewModel.taxYearFrom.toString,
-            viewModel.taxYearTo.toString,
-            viewModel.isAgent,
-            viewModel.LSPUrl,
-            viewModel.LPPUrl,
-            if (yourSelfAssessmentChargesFS) saChargesUrl else whatYouOweUrl
-        )
-
-        @WYOorYSACLinkContent
+        @chargeDetails(viewModel)
     }
     @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
     <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
@@ -188,8 +174,6 @@
         }</h1>
 
      @whatIsPaymentOnAccount()
-
-    @WYOorYSACLinkContent
  }
 
 
@@ -201,12 +185,17 @@
         }
     }
 
-    @if(viewModel.chargeItem.isAccruingInterest) {
+    @if(viewModel.chargeItem.hasInterest) {
+        @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
+            @interestOnChargeRARPoaSection(viewModel)
+        } else {
+            @interestOnYourChargeSection(viewModel.chargeItem)
 
-        @interestOnYourChargeSection(viewModel.chargeItem)
-
-        @interestOnYourChargeTable(viewModel)
+            @interestOnYourChargeTable(viewModel)
+        }
     }
+
+    @WYOorYSACLinkContent
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)

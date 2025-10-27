@@ -79,6 +79,7 @@ object ExternalUrlHelper {
 
   val saUnderstandYourTaxBillUrl = "https://www.gov.uk/understand-self-assessment-bill/payments-on-account"
 
+  val budgetPaymentPlanURL = "https://www.gov.uk/difficulties-paying-hmrc"
   val saTaxReturnDeadlinesUrl = "https://www.gov.uk/self-assessment-tax-returns/deadlines"
   val saGeneralEnquiriesUrl = "https://www.gov.uk/find-hmrc-contacts/self-assessment-general-enquiries"
 }

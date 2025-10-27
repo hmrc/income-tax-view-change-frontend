@@ -72,9 +72,9 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
       if (changeReportingFrequency) {
         pageDocument.getElementsByClass("govuk-summary-list__value").first().text() shouldBe "Yes"
         if(displayR17Content) {
-          pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax years do you want to sign up for?"
+          pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax year(s) do you want to sign up for?"
         } else {
-          pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax year do you want to report quarterly for?"
+          pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax year(s) do you want to report quarterly for?"
         }
 
         (isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) match {

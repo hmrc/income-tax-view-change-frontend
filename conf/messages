@@ -23,13 +23,6 @@ base.fullstop                                                   = .
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
 
-# Fallback Back Links
-back.whatYouOwe     = Back to What You Owe
-back.yourSelfAssessmentChargeSummary  = Back to Your Self Assessment charges
-back.paymentHistory = Back to Payment History
-back.taxYearSummary = Back to Tax Year Summary
-back.nomatch        = Back
-
 # Agent Base
 agent.base.service_name                             = Your client’s Income Tax details
 
@@ -246,7 +239,7 @@ tax-year-summary.tax-calculation.unattended-calc                   = We’ve upd
 tax-year-summary.payments                                          = Payments
 tax-year-summary.charges                                           = Charges
 tax-year-summary.forecast                                          = Forecast
-tax-year-summary.updates                                           = Updates
+tax-year-summary.submissions                                       = Submissions
 tax-year-summary.income                                            = Income
 tax-year-summary.deductions                                        = Allowances and deductions
 tax-year-summary.taxable-income                                    = Total income on which tax is due
@@ -454,7 +447,8 @@ tax-year-summary.latest-calculation-desc                           = Your tax re
 tax-year-summary.previous-calculation                              = Previous calculation
 tax-year-summary.previous-calculation-desc                         = When your tax return is amended it changes your tax calculation. If this happens, this page shows any previous tax calculations you may have.
 tax-year-summary.previous-calculation-subheading                   = Calculation made on {0}
-tax-year-summary.previous-calculation-note                         = The tax return was filed then.
+tax-year-summary.previous-calculation-note-finalised               = The tax return was filed then.
+tax-year-summary.previous-calculation-note-amended                 = The tax return was amended then.
 tax-year-summary.previous-calculation-amend-subheading             = Amending a submitted tax return
 tax-year-summary.previous-calculation-bullet-start                 = You can change your tax return after you have filed it. To do this online you must:
 tax-year-summary.previous-calculation-bullet-1                     = use the software or HMRC online service used to submit the return
@@ -912,19 +906,25 @@ whatYouOwe.heading                                                 = What you ow
 whatYouOwe.heading-agent                                           = What your client owes
 whatYouOwe.no-payments-due                                         = You have no payments due.
 whatYouOwe.no-payments-due-agent                                   = Your client has no payments due.
-whatYouOwe.payments-made                                           = Any payments you make:
-whatYouOwe.payments-made-agent                                     = Any payments your client makes:
-whatYouOwe.payments-made-bullet-1.1                                = may take up to 5 working days to process, depending on the
-whatYouOwe.payments-made-bullet-1.2                                = payment method you use
-whatYouOwe.payments-made-bullet-agent-1.2                          = payment method they use
-whatYouOwe.payments-made-bullet-2                                  = must reach us by the due date - you’ll be charged interest and may have to pay a penalty if the payment is late
-whatYouOwe.payments-made-bullet-agent-2                            = must reach us by the due date - they’ll be charged interest and may have to pay a penalty if the payment is late
-whatYouOwe.sa-note                                                 = You may still have payments due for your earlier Self Assessment tax years. To view these outstanding payments you need to visit your previous
-whatYouOwe.sa-note-agent-1                                         = Your client may still have payments due for earlier Self Assessment tax years
-whatYouOwe.sa-note-agent-2                                         = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
-whatYouOwe.sa-note-agent-3                                         = This will be a different Government Gateway ID and password to your Agent Services account.
-whatYouOwe.sa-link                                                 = Self Assessment online account
-whatYouOwe.sa-link-agent                                           = Self Assessment for Agents account
+whatYouOwe.payments-made-heading                                   = Payments being made through your PAYE tax code
+whatYouOwe.payments-made-body-1                                    = You’re paying {0} through your PAYE tax code for the {1} to {2} tax year. You can
+whatYouOwe.payments-made-link                                      = view your payment history
+whatYouOwe.payments-made-body-2                                    = to find out more information about these charges.
+whatYouOwe.sa-note-1-heading                                       = If you need help paying your Self Assessment charges
+whatYouOwe.sa-note-1-body-1                                        = If you’ve missed a payment deadline or you cannot pay the amount you owe, you might be able
+whatYouOwe.sa-note-1-body-2                                        = If you’re up to date with your payments, you can
+whatYouOwe.sa-note-1-body-3                                        = which is a regular Direct Debit for Self Assessment.
+whatYouOwe.sa-note-1-body-4                                        = If you’re confident the tax you owe is going to be lower than last year, you can
+whatYouOwe.sa-link-1-body-1                                        = set up a Self Assessment payment plan
+whatYouOwe.sa-link-1-body-2                                        = set up a Budget Payment plan
+whatYouOwe.sa-link-1-body-3                                        = adjust payments on account for the {0} to {1} tax year
+whatYouOwe.sa-note-2-heading                                       = You may still have payments due for your earlier Self Assessment tax years
+whatYouOwe.sa-note-2-body                                          = To view these outstanding payments you need to
+whatYouOwe.sa-note-2-agent-1                                       = Your client may still have payments due for earlier Self Assessment tax years
+whatYouOwe.sa-note-2-agent-2                                       = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
+whatYouOwe.sa-note-2-agent-3                                       = This will be a different Government Gateway ID and password to your Agent Services account.
+whatYouOwe.sa-link-2                                               = visit your previous Self Assessment online account
+whatYouOwe.sa-link-2-agent                                         = Self Assessment for Agents account
 whatYouOwe.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
 whatYouOwe.payNow                                                  = Make a payment
 whatYouOwe.pay-now-aria                                            = Pay now for Tax year {0} to {1}
@@ -1027,6 +1027,32 @@ selfAssessmentCharges.paymentOnAccount1.text							      = First payment on acco
 selfAssessmentCharges.paymentOnAccount2.text							      = Second payment on account
 selfAssessmentCharges.reviewAndReconcilePoa1.text                             = First payment on account: extra amount from your tax return
 selfAssessmentCharges.reviewAndReconcilePoa2.text                             = Second payment on account: extra amount from your tax return
+selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p1               = HMRC has created this charge because your
+selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p2               = This may be because you changed your previous year’s tax return, or reduced your payments on account to less than what your tax return shows you should have paid.
+selfAssessmentCharges.reviewAndReconcilePoa1.linkText                         = first payment on account
+selfAssessmentCharges.reviewAndReconcilePoa2.linkText                         = second payment on account
+selfAssessmentCharges.reviewAndReconcilePoa.p.textTwo                         = for the {0} to {1} tax year was too low.
+selfAssessmentCharges.whatIsPaymentOnAccount.linkText                         = What is payment on account?
+selfAssessmentCharges.whatIsPaymentOnAccount.p1                               = ’Payments on account’ are two advance payments made towards your next tax bill.
+selfAssessmentCharges.whatIsPaymentOnAccount.p2                               = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+selfAssessmentCharges.whatIsPaymentOnAccount.p3                               = If you make an amendment to the tax return and the tax bill changes, then each payment on account will be updated to half of the new total.
+selfAssessmentCharges.whatIsPaymentOnAccount.p4.linkText                      = Help with understanding your Self Assessment tax bill
+selfAssessmentCharges.reviewAndReconcilePoa.warning.p1                        = Pay this charge to stop interest from increasing daily.
+selfAssessmentCharges.reviewAndReconcilePoa.warning.p2                        = If you pay later than the due date of {0} you may get a late payment penalty.
+selfAssessmentCharges.interestOnThisCharge.heading                            = Interest on this charge
+selfAssessmentCharges.interestOnThisCharge.p1                                 = Interest is charged from the date your first payment on account was originally due.
+selfAssessmentCharges.interestOnThisCharge.p2                                 = Interest will be estimated until the charge it is related to is paid in full.
+yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa1.text.heading               = History of this charge
+yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa1.text.heading       = This charge goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.heading               = History of this charge
+yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa2.text.heading       = This charge goes towards your {0} to {1} tax bill.
+selfAssessmentCharges.reviewAndReconcilePoa.table.overdue                             = {0} to {1}
+selfAssessmentCharges.interestOnThisCharge.Table.heading                              = Interest period
+selfAssessmentCharges.interestOnThisCharge.Table.heading2                             = Current interest rate
+selfAssessmentCharges.interestOnThisCharge.Table.heading3                             = Estimated amount
+selfAssessmentCharges.interestOnThisCharge.Table.totalText                            = Total interest on this charge:
+selfAssessmentCharges.interestOnThisCharge.guidanceText                               = The interest on a charge you owe can go up and down. See guidance on the
+selfAssessmentCharges.interestOnThisCharge.guidanceLinkText                           = interest rate set by HMRC
 selfAssessmentCharges.lpi.reviewAndReconcilePoa1.text                         = Interest for first payment on account: extra amount
 selfAssessmentCharges.lpi.reviewAndReconcilePoa2.text                         = Interest for second payment on account: extra amount
 selfAssessmentCharges.hmrcAdjustment.text                                     = HMRC adjustment
@@ -1117,10 +1143,11 @@ chargeSummary.remainingDue   									   = Still to pay
 chargeSummary.overdue                                              = Overdue
 chargeSummary.noData                                               = No data
 
-chargeSummary.allocation                                           = Allocation
-chargeSummary.whereMoneyWent                                       = Where your money went
+chargeSummary.allocation                                           = Where the credit was applied
+chargeSummary.description                                          = Description
 chargeSummary.date                                                 = Date
-chargeSummary.taxYear                                              = {0} to {1} tax year
+chargeSummary.taxYear                                              = {0} to {1}
+chargeSummary.taxYear.text                                         = Tax year
 
 chargeSummary.dunning.locks.banner.title						   = Important
 chargeSummary.dunning.locks.banner.linkText						   = This tax decision is being reviewed
@@ -1161,9 +1188,11 @@ chargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
 chargeSummary.lpi.penalties.p3                             = See guidance on the
 chargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
 
-chargeSummary.POA1Credit.p1                                        = HMRC has added a credit to your account because your tax return shows that your adjusted first payment on account was too high.
+chargeSummary.POA1Credit.p1                                        = HMRC has added a credit to your first payment on account because your tax return shows that your first payment on account was too high.
 
-chargeSummary.POA2Credit.p1                                        = HMRC has added a credit to your account because your tax return shows that your adjusted second payment on account was too high.
+chargeSummary.POA2Credit.p1                                        = HMRC has added a credit to your second payment on account because your tax return shows that your second payment on account was too high.
+chargeSummary.chargeAmount                                         = Credit amount: {0}
+chargeSummary.credit.date                                          = This credit was applied on {0}
 
 chargeSummary.definition.balancingcharge.p1                        = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
 chargeSummary.definition.balancingcharge.bullet1                   = did not have any tax to pay during the year (for example, if your last Self Assessment tax bill was under £1,000)
@@ -1207,6 +1236,8 @@ chargeSummary.whatYouOwe.textOne								   = View
 chargeSummary.whatYouOwe.textTwo								   = to check if you have any other charges to pay.
 chargeSummary.whatYouOwe.textOne-agent							   = View
 chargeSummary.whatYouOwe.textTwo-agent							   = to check if they have any other charges to pay.
+chargeSummary.whatYouOwe.linkText.concatenated				       = View what you owe
+chargeSummary.whatYouOwe.linkText-agent.concatenated			   = View what your client owes
 chargeSummary.whatYouOwe.linkText								   = what you owe
 chargeSummary.whatYouOwe.linkText-agent							   = what your client owes
 
@@ -1274,13 +1305,11 @@ chargeSummary.lpi.balancingCharge.linkText                         = Bank of Eng
 chargeSummary.lpi.balancingCharge.textTwo                          = plus 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = See guidance on the
 chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab).
-
-chargeSummary.reviewAndReconcilePoa.warning                           = This charge will be accruing interest until it is paid.
-chargeSummary.reviewAndReconcilePoa.p1                                = HMRC has created this charge because your tax return shows that your adjusted
-chargeSummary.reviewAndReconcilePoa1.linkText                         = first payment on account
-chargeSummary.reviewAndReconcilePoa2.linkText                         = second payment on account
-chargeSummary.reviewAndReconcilePoa.comma                             =
-chargeSummary.reviewAndReconcilePoa.p2                                = was too low.
+chargeSummary.reviewAndReconcilePoa.p1                             = HMRC has created this charge because your tax return shows that your adjusted
+chargeSummary.reviewAndReconcilePoa1.linkText                      = first payment on account
+chargeSummary.reviewAndReconcilePoa2.linkText                      = second payment on account
+chargeSummary.reviewAndReconcilePoa.comma                          =
+chargeSummary.reviewAndReconcilePoa.p2                             = was too low.
 
 chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
 chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
@@ -1411,19 +1440,19 @@ paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment i
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
 
 
-##Tax Years Overview Update Tab##
-updateTab.desc                                                  = A quarterly update covers income and expenses for the tax year so far.
-updateTab.due                                                   = Due {0}
-updateTab.updateType                                            = Update type
-updateTab.incomeSource                                          = Income source
-updateTab.dateSubmitted                                         = Date submitted
-updateTab.dateToDate                                            = {0} to {1}
-updateTab.updatePeriodDateToDate                                = The update period from {0} to {1}
-updateTab.obligationType.property                               = Property income
-updateTab.obligationType.business                               = Business
-updateTab.obligationType.crystallised                           = All income sources
-updateTab.updateType.quarterly                                  = Quarterly update
-updateTab.updateType.crystallised                               = Final declaration
+##Tax Years Overview Submissions Tab##
+submissionsTab.desc                                                  = This is a record of what you have submitted for the tax year.
+submissionsTab.due                                                   = Due {0}
+submissionsTab.submission                                            = Submission
+submissionsTab.incomeSource                                          = Income source
+submissionsTab.dateSubmitted                                         = Date submitted
+submissionsTab.dateToDate                                            = {0} to {1}
+submissionsTab.updatePeriodDateToDate                                = The update period from {0} to {1}
+submissionsTab.obligationType.property                               = Property income
+submissionsTab.obligationType.business                               = Business
+submissionsTab.obligationType.crystallised                           = All income sources
+submissionsTab.submission.quarterly                                  = Quarterly update
+submissionsTab.submission.crystallised                               = Tax return
 
 ## Final Tax Overview (Individual/Common Content)
 final-tax-overview.individual.heading                           = Your final tax overview
@@ -2509,8 +2538,8 @@ manageBusinesses.check-answers.change                                    = Chang
 
 # manage business choose reporting methods for years
 
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                  = Which tax year do you want to report quarterly for?
-manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                 = Which tax year do you want to sign up for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading                                  = Which tax year(s) do you want to report quarterly for?
+manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched                 = Which tax year(s) do you want to sign up for?
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.SelfEmployment.subHeading                = Sole trader
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.UkProperty.subHeading                    = UK property
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.ForeignProperty.subHeading               = Foreign property
@@ -3324,7 +3353,9 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = did not ha
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = owe more than what you paid during the year (for example, through payments on account or PAYE)
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = have changed your tax return and it resulted in you owing more
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = You’ll also need to make a balancing payment if you owe anything for Capital Gains Tax or student loans.
-
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.text.heading     = First payment on account: extra amount from your tax return
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.text.heading     = Second payment on account: extra amount from your tax return
+yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe      = (not including estimated interest)
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
 yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of interest you have to pay will increase every day until you pay the overdue charge.
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
@@ -3422,10 +3453,10 @@ income-sources.check-details-reporting-frequency.yes                            
 income-sources.check-details-reporting-frequency.no                             = No
 income-sources.check-details-reporting-frequency.taxYear                        = {0} to {1}
 income-sources.check-details-reporting-frequency.change-rf-key                  = Do you want to change to report quarterly?
-income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Which tax year do you want to report quarterly for?
+income-sources.check-details-reporting-frequency.change-choose-tax-year-key     = Which tax year(s) do you want to report quarterly for?
 
 income-sources.check-details-reporting-frequency.r17.change-rf-key              = Do you want to sign this new business up to Making Tax Digital for Income Tax?
-income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Which tax years do you want to sign up for?
+income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key = Which tax year(s) do you want to sign up for?
 
 #######################################################################################################################
 ## Triggered Migration Journey ##

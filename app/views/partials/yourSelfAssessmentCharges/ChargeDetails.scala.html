@@ -34,6 +34,9 @@
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
 @import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
+@import models.financialDetails.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit}
+@import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccountReconciliationPoaDebits
+@import models.chargeSummary.ChargeSummaryViewModel
 
 @this(
     p: p,
@@ -47,30 +50,24 @@
     classTwoNICSContent: ClassTwoNICSContent,
     itsaReturnAmendmentContent: ItsaReturnAmendmentContent,
     itsaReturnAmendmentCreditContent: ItsaReturnAmendmentCreditContent,
+    whatIsPaymentOnAccountReconciliationPoaDebits: WhatIsPaymentOnAccountReconciliationPoaDebits,
     govukDetails: GovukDetails
 )
 
-@(
-    chargeItem: ChargeItem,
-    taxYearFrom: String,
-    taxYearTo: String,
-    isAgent: Boolean,
-    LSPUrl: String,
-    LPPUrl: String,
-    wyoUrl: String
-)(
+@(viewModel: ChargeSummaryViewModel)(
     implicit request: Request[_],
     messages: Messages
 )
 
-@{(chargeItem.transactionType, chargeItem.codedOutStatus) match {
-    case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(taxYearFrom, taxYearTo, isAgent)
-    case (BalancingCharge, Some(Accepted)) => codedOutExplanationContent(chargeItem)
+@{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codedOutStatus) match {
+    case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString, viewModel.isAgent)
+    case (BalancingCharge, Some(Accepted)) => codedOutExplanationContent(viewModel.chargeItem)
     case (BalancingCharge, None)        => whatIsABalancingPayment()
     case (PoaOneDebit | PoaTwoDebit, None) => whatIsPaymentOnAccount()
-    case (PoaOneDebit | PoaTwoDebit, Some(Accepted)) => codedOutExplanationContent(chargeItem)
-    case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(LSPUrl)
-    case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(LPPUrl)
+    case (PoaOneDebit | PoaTwoDebit, Some(Accepted)) => codedOutExplanationContent(viewModel.chargeItem)
+    case(PoaOneReconciliationDebit | PoaTwoReconciliationDebit, _) => whatIsPaymentOnAccountReconciliationPoaDebits(viewModel)
+    case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(viewModel.LSPUrl)
+    case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
     case (ITSAReturnAmendment, _)       => itsaReturnAmendmentContent()
     case (ITSAReturnAmendmentCredit, _) => itsaReturnAmendmentCreditContent(chargeItem.taxYear, wyoUrl)
     case _                              =>

@@ -19,7 +19,7 @@ package controllers.optIn.oldJourney
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.ReportingFrequencyPage
+import models.admin.{ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import play.api
@@ -51,7 +51,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         s"render the optInCompleted page" that {
           "is for the current year" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -64,7 +64,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
           }
 
           "is for next year" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -78,7 +78,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
         }
         "render the error page" when {
           "no proposition returned" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -90,7 +90,7 @@ class OptInCompletedControllerSpec extends MockAuthActions
           }
 
           "FetchSavedChosenTaxYear fails" in {
-            enable(ReportingFrequencyPage)
+            enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -100,6 +100,26 @@ class OptInCompletedControllerSpec extends MockAuthActions
 
             val result = action(fakeRequest)
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+          }
+        }
+
+        "render the reporting obligations page" when {
+          "the Sign Up feature switch is disabled" in {
+            disable(SignUpFs)
+            enable(ReportingFrequencyPage)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+            val result = action(fakeRequest)
+
+            val redirectUrl = if (isAgent) {
+              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            } else {
+              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+            }
+
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
 

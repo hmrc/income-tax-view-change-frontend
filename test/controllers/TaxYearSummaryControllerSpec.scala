@@ -136,7 +136,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   testObligtionsModel,
                   showForecastData = true,
                   ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                  pfaEnabled = true, hasAmendments = false
+                  pfaEnabled = true
                 )
 
                 val result = action(fakeRequest)
@@ -164,7 +164,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   testObligtionsModel,
                   showForecastData = true,
                   ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                  pfaEnabled = true, hasAmendments = true
+                  pfaEnabled = true
                 )
 
                 val result = action(fakeRequest)
@@ -192,7 +192,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   testObligtionsModel,
                   showForecastData = true,
                   ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                  pfaEnabled = true, hasAmendments = false
+                  pfaEnabled = true
                 )
 
                 val result = action(fakeRequest)
@@ -221,7 +221,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   testObligtionsModel,
                   showForecastData = true,
                   ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                  pfaEnabled = false, hasAmendments = false
+                  pfaEnabled = false
                 )
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, taxYearSummary,
@@ -257,7 +257,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     testChargesList,
                     testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, hasAmendments = false
+                    pfaEnabled = false
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
@@ -289,7 +289,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     testObligtionsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, hasAmendments = false
+                    pfaEnabled = false
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
@@ -504,7 +504,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   testChargesList,
                   testObligtionsModel,
                   ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                  pfaEnabled = false, hasAmendments = false),
+                  pfaEnabled = false),
                 homeBackLink(isAgent),
                 ctaLink = ctaLink(isAgent),
                 isAgent = isAgent).toString
@@ -544,7 +544,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     class2NicsChargesList,
                     testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, hasAmendments = false),
+                    pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent).toString
@@ -563,7 +563,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockFinancialDetailsSuccess(
                   financialDetailsModelResponse = financialDetails(
                     documentDetails = documentDetailPaye.documentDetail,
-                    financialDetails = financialDetail(mainTransaction = "4910")
+                    financialDetails = financialDetail(mainTransaction = "4910",codedOutStatus = Some("I"))
                   )
                 )
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -580,7 +580,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     payeChargesList,
                     testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, hasAmendments = false),
+                    pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent).toString
@@ -619,7 +619,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     charges,
                     testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, hasAmendments = false
+                    pfaEnabled = false
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
@@ -652,7 +652,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     testEmptyChargesList,
                     testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, hasAmendments = false),
+                    pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent
@@ -687,7 +687,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     testObligtionsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, hasAmendments = false),
+                    pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent
@@ -724,7 +724,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     testChargesList,
                     testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false, hasAmendments = false),
+                    pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent).toString

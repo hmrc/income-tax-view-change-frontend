@@ -15,30 +15,62 @@
  *@
 
 @import views.html.components._
-@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import auth.MtdItUser
-@import viewUtils.ExternalUrlHelper
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+@import models.financialDetails.WhatYouOweViewModel
+@import _root_.implicits.ImplicitCurrencyFormatter._
 
 @this(
-    p: p,
-    link: link
+        h2: h2,
+        p: p,
+        link: link,
+        govukInsetText: GovukInsetText,
+        govukButton: GovukButton
 )
-@()(
+
+@(
+        isAgent: Boolean,
+        origin: Option[String],
+        viewModel: WhatYouOweViewModel
+)(
     implicit messages: Messages,
     user: MtdItUser[_]
 )
 
-@p(id = Some("payments-made"))(Html(getPaymentsMadeText))
+@overdueInsetText = {
+    @p(id = Some("overdue-inset-migrated-1"))(content = Html(messages("selfAssessmentCharges.overdue-inset-text-1")))
+    @p(id = Some("overdue-inset-migrated-2"))(content = Html(messages("selfAssessmentCharges.overdue-inset-text-2")))
+}
 
-<ul class="govuk-list govuk-list--bullet" id="payments-made-bullets">
-    <li>@messages("whatYouOwe.payments-made-bullet-1.1")
-        @link(
-            link = ExternalUrlHelper.saPayTaxBillUrl,
-            id = Some("sa-tax-bill"),
-            messageKey = getPaymentsMadeBulletLinkText,
-            target = Some("_blank"),
-            rel = Some("noreferrer noopener")
-        )
-    </li>
-    <li>@getPaymentsMadeBulletText</li>
-</ul>
+@viewModel.whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
+    @h2(getMessage("payments-made-heading"))
+    @p(id = Some("payments-made-migrated"))(Html(
+        getMessage("payments-made-body-1", codedOutDetails.amountCodedOut.toCurrencyString, (viewModel.currentTaxYear - 1).toString, viewModel.currentTaxYear.toString) +
+                link(link = viewModel.paymentHistoryControllerURL(isAgent, origin),
+                    messageKey = getMessage("payments-made-link"),
+                    id = Some("payments-made-migrated-link"),
+                    rel = Some("noreferrer noopener")).toString() +
+                getMessage("payments-made-body-2")
+    ))
+}
+
+@insetTextAndButton(amount: BigDecimal) = {
+    @govukInsetText(InsetText(
+        content = HtmlContent(overdueInsetText)
+    ))
+    @govukButton(Button(
+        id = Some("payment-button"),
+        content = Text(getMessage("payNow")),
+        href = Some(viewModel.paymentHandOffUrl(amount.toPence))
+    ))
+}
+
+@if(viewModel.utr.isDefined && !user.isAgent()) {
+    @(for {
+        (_, amount) <- viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
+    } yield {
+        insetTextAndButton(amount)
+    })
+}

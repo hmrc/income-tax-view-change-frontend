@@ -53,6 +53,8 @@
                 Html(messages("tax-year-summary.latest-calculation-desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
             }
         case (false, true) =>
+            val noteText = if(overview.isAmended) "tax-year-summary.previous-calculation-note-amended" else "tax-year-summary.previous-calculation-note-finalised"
+
             HtmlFormat.fill(
                 Seq(
                     p(id = Some("previous-calculation-overview-description")) {
@@ -60,7 +62,7 @@
                     },
                     h3(optId = Some("previous-calculation-subheading"), msg = messages("tax-year-summary.previous-calculation-subheading", overview.timestamp.map(_.toLongDate).getOrElse("")), classes = "govuk-heading-m"),
                     p(id = Some("previous-calculation-note")) {
-                        Html(messages("tax-year-summary.previous-calculation-note"))
+                        Html(messages(noteText))
                     }
                 )
             )

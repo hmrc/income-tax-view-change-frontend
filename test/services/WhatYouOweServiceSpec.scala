@@ -120,7 +120,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter,
-            claimARefundR18Enabled = true).futureValue shouldBe whatYouOweDataWithMixedData1
+            claimARefundR18Enabled = true).futureValue shouldBe whatYouOweDataWithMixedData1()
         }
       }
       "when both financial details and outstanding charges return success response and valid data of mixed due dates of overdue and dueInThirtyDays" should {
@@ -260,14 +260,14 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             effectiveDateOfPayment = Some(LocalDate.parse("2021-08-24")),
             documentDueDate = Some(LocalDate.parse("2021-08-24")))
           val dd2 = DocumentDetail(taxYear = 2021, transactionId = id1040000125, documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_CANCELLED), outstandingAmount = 43.21,
+            documentText = Some("Document Text"), outstandingAmount = 43.21,
             originalAmount = 43.21, documentDate = LocalDate.of(2018, 3, 29),
             interestOutstandingAmount = None, interestRate = None,
             latePaymentInterestId = None, interestFromDate = Some(LocalDate.parse("2019-05-25")),
             interestEndDate = Some(LocalDate.parse("2019-06-25")), accruingInterestAmount = None,
             effectiveDateOfPayment = Some(LocalDate.parse("2021-08-25")),
             documentDueDate = Some(LocalDate.parse("2021-08-25")))
-          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some(CODING_OUT_ACCEPTED), amountCodedOut = Some(2500.00))
+          val dd3 = dd1.copy(transactionId = id1040000126, documentText = Some("Document Text"), amountCodedOut = Some(2500.00))
           when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -279,9 +279,9 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000124), None, Some("ABCD1234"), Some("type"), Some(100), Some(100),
                   Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")))))),
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000125), None, Some("ABCD1234"), Some("type"), Some(100), Some(100),
-                  Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"))))),
+                  Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-25")), dunningLock = Some("Coding out"),codedOutStatus = Some("C"))))),
                 FinancialDetail("2021", Some("SA Balancing Charge"), Some("4910"), Some(id1040000126), None, Some("ABCD1234"), Some("type"), Some(100), Some(100),
-                  Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")), dunningLock = Some("Coding out")))))
+                  Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = Some(LocalDate.parse("2021-08-24")), dunningLock = Some("Coding out"), codedOutStatus = Some("I")))))
               )
             ))))
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
@@ -341,7 +341,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
       "return MFA Debits and non-MFA debits" in {
         testGetWhatYouOweChargesList(financialDetails = financialDetailsMFADebits, expectedResult = whatYouOweDataWithMFADebitsData)
-        testGetWhatYouOweChargesList(financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1)
+        testGetWhatYouOweChargesList(financialDetails = financialDetailsWithMixedData1, expectedResult = whatYouOweDataWithMixedData1())
       }
     }
 
