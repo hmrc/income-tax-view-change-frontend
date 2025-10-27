@@ -85,8 +85,8 @@ case class ReportingFrequencyViewModel(
 
   def taxYearFromSuffix(suffix: String): TaxYear = suffix match {
     case s if s.contains("previousYear") => previousTaxYear
-    case s if s.contains("currentYear")  => currentTaxYear
-    case s if s.contains("nextYear")     => nextTaxYear
+    case s if s.contains("currentYear") => currentTaxYear
+    case s if s.contains("nextYear") => nextTaxYear
     case _ => throw new RuntimeException("Invalid suffix passed to taxYearFromSuffix")
   }
 
@@ -103,40 +103,40 @@ case class ReportingFrequencyViewModel(
     val nextYearStatus = proposition.nextTaxYear.status
 
     val previousYearCheck = (proposition.previousTaxYear.canOptOut, currentYearStatus) match {
-      case (false, _)                            => NoCard
-      case (true, _) if !isOptOutEnabled         => NoCard
-      case (true, Voluntary)                     => MultiYearCard
-      case (true, _)                             => SingleYearCard
+      case (false, _) => NoCard
+      case (true, _) if !isOptOutEnabled => NoCard
+      case (true, Voluntary) => MultiYearCard
+      case (true, _) => SingleYearCard
     }
 
     val currentYearCheck = (currentYearStatus, nextYearStatus) match {
-      case (Annual, _) if !isSignUpEnabled    => NoCard
+      case (Annual, _) if !isSignUpEnabled => NoCard
       case (Voluntary, _) if !isOptOutEnabled => NoCard
-      case (Voluntary, Voluntary)             => MultiYearCard
-      case (Annual, Annual)                   => MultiYearCard
-      case (Voluntary | Annual, _)            => SingleYearCard
-      case _                                  => NoCard
+      case (Voluntary, Voluntary) => MultiYearCard
+      case (Annual, Annual) => MultiYearCard
+      case (Voluntary | Annual, _) => SingleYearCard
+      case _ => NoCard
     }
 
     val nextYearCheck = nextYearStatus match {
       case Voluntary if !isOptOutEnabled => NoCard
-      case Annual if !isSignUpEnabled    => NoCard
-      case Voluntary | Annual            => MultiYearCard
-      case _                             => NoCard
+      case Annual if !isSignUpEnabled => NoCard
+      case Voluntary | Annual => MultiYearCard
+      case _ => NoCard
     }
 
     List(previousYearCheck, currentYearCheck, nextYearCheck)
   }
 
   val getSummaryCardSuffixes: List[Option[String]] = {
-    val test = checkIfOnwards.zipWithIndex.map {
-      case (MultiYearCard, 0)  => Some("optOut.previousYear.onwards")
+    checkIfOnwards.zipWithIndex.map {
+      case (MultiYearCard, 0) => Some("optOut.previousYear.onwards")
       case (SingleYearCard, 0) => Some("optOut.previousYear.single")
-      case (MultiYearCard, 1)  => currentYearSuffix.map(_ + ".onwards")
+      case (MultiYearCard, 1) => currentYearSuffix.map(_ + ".onwards")
       case (SingleYearCard, 1) => currentYearSuffix.map(_ + ".single")
-      case (MultiYearCard, 2)  => nextYearSuffix
+      case (MultiYearCard, 2) => nextYearSuffix
       case _ => None
     }
-    test
   }
+
 }

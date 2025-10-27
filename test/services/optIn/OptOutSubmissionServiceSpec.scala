@@ -774,8 +774,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))
 
-              val desiredStatus = Voluntary
-              val actual = service.updateTaxYearsITSAStatusRequest(desiredStatus)
+              val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
                 result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204))
@@ -818,8 +817,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))
 
-              val desiredStatus = Voluntary
-              val actual = service.updateTaxYearsITSAStatusRequest(desiredStatus)
+              val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
                 result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204))
@@ -862,8 +860,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))
 
-              val desiredStatus = Voluntary
-              val actual = service.updateTaxYearsITSAStatusRequest(desiredStatus)
+              val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
                 result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204))
@@ -909,8 +906,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))
 
-              val desiredStatus = Voluntary
-              val actual = service.updateTaxYearsITSAStatusRequest(desiredStatus)
+              val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
                 result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204))
@@ -956,8 +952,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
                 .thenReturn(Future(()))
 
-              val desiredStatus = Voluntary
-              val actual = service.updateTaxYearsITSAStatusRequest(desiredStatus)
+              val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
                 result shouldBe List(ITSAStatusUpdateResponseSuccess(204))

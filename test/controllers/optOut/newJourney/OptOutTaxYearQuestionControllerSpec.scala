@@ -170,7 +170,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
 
-          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest(any())(any(), any(), any()))
+          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
             .thenReturn(Future(List(ITSAStatusUpdateResponseSuccess())))
 
           val formData = Map("opt-out-tax-year-question" -> "Yes")
@@ -212,7 +212,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
 
-          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest(any())(any(), any(), any()))
+          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
             .thenReturn(Future(List(ITSAStatusUpdateResponseFailure.defaultFailure())))
 
           val formData = Map(

@@ -91,7 +91,7 @@ class OptOutTaxYearQuestionController @Inject()(
         if (redirectToConfirmUpdatesPage) {
           Future(Redirect(controllers.optOut.newJourney.routes.ConfirmOptOutUpdateController.show(isAgent, taxYear.getOrElse(""))))
         } else {
-          optOutSubmissionService.updateTaxYearsITSAStatusRequest(ITSAStatus.Voluntary).map {
+          optOutSubmissionService.updateTaxYearsITSAStatusRequest().map {
             case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) || listOfUpdateRequestsMade == List.empty =>
               Redirect(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent))
             case _ =>

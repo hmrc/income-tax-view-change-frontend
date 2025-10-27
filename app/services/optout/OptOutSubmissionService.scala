@@ -26,7 +26,7 @@ import enums.JourneyType.{Opt, OptOutJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, UnknownStatus, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, UnknownStatus, Voluntary}
 import models.optout.{OptOutSessionData, OptOutYearToUpdate}
 import play.api.Logging
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
@@ -105,6 +105,8 @@ class OptOutSubmissionService @Inject()(
     yearsToUpdate match {
       case taxYears@List(OptOutYearToUpdate(_, Voluntary), OptOutYearToUpdate(_, cyStatus), OptOutYearToUpdate(_, Voluntary)) if cyStatus != Voluntary =>
         List(taxYears.head)
+      case taxYears@List(OptOutYearToUpdate(_, Voluntary), OptOutYearToUpdate(_, Mandated), OptOutYearToUpdate(_, _)) =>
+        List(taxYears.head)
       case allTaxYears =>
         allTaxYears
     }
@@ -153,7 +155,7 @@ class OptOutSubmissionService @Inject()(
 
 
   // This possibly makes multiple api calls to update each valid "MTD Voluntary" tax year
-  def updateTaxYearsITSAStatusRequest(itsaStatusToSendUpdatesFor: ITSAStatus)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusUpdateResponse]] = {
+  def updateTaxYearsITSAStatusRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusUpdateResponse]] = {
     for {
       maybeSessionData: Option[OptOutSessionData] <- getOptOutSessionData()
       maybeSelectedTaxYear: Option[String] = maybeSessionData.flatMap(_.selectedOptOutYear)
@@ -161,7 +163,7 @@ class OptOutSubmissionService @Inject()(
       allItsaStatusYears: List[OptOutYearToUpdate] = getOptOutYearsToUpdateWithStatuses(maybeOptOutContextData)
       yearsToUpdateBasedOnUserSelection: List[OptOutYearToUpdate] = correctYearsToUpdateBasedOnUserSelection(maybeSessionData, allItsaStatusYears)
       optOutForSubsequentYearsValidatedList = blockOptOutForSubsequentYearsValidation(yearsToUpdateBasedOnUserSelection)
-      filteredTaxYearsForDesiredItsaStatus: List[OptOutYearToUpdate] = optOutForSubsequentYearsValidatedList.filter { yearsToUpdate => yearsToUpdate.itsaStatus == itsaStatusToSendUpdatesFor }
+      filteredTaxYearsForDesiredItsaStatus: List[OptOutYearToUpdate] = optOutForSubsequentYearsValidatedList.filter { yearsToUpdate => yearsToUpdate.itsaStatus == Voluntary }
       taxYearsToUpdate = filteredTaxYearsForDesiredItsaStatus.map(_.taxYear)
       _ = logger.debug(s"[OptOutSubmissionService][updateTaxYearsITSAStatusRequest] Making update requests for tax years: $taxYearsToUpdate")
       makeUpdateRequestsForEachYear: List[ITSAStatusUpdateResponse] <- Future.sequence(taxYearsToUpdate.map(taxYear => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear, user.nino, optOutUpdateReason)))

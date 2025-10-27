@@ -75,7 +75,7 @@ class SignUpSubmissionService @Inject()(
     }
   }
 
-  def makeSignUpAuditEventRequest(
+  private[services] def makeSignUpAuditEventRequest(
                                    selectedSignUpYear: Option[TaxYear],
                                    currentYearItsaStatus: Option[ITSAStatus],
                                    nextYearItsaStatus: Option[ITSAStatus],

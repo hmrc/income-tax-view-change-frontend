@@ -133,7 +133,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
           }
         }
 
-        "only CY is Annual - single tax year scenario, user is unable to select a yax year" should {
+        "only CY is Annual - single tax year scenario, user is unable to select atax year" should {
 
           "return success response with No Content - 204" in {
 
@@ -156,7 +156,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
           }
         }
 
-        "only CY+1 is Annual - single tax year scenario, user is unable to select a yax year" should {
+        "only CY+1 is Annual - single tax year scenario, user is unable to select atax year" should {
 
           "return success response with No Content - 204" in {
 
