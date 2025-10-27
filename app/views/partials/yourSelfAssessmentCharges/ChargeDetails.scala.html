@@ -69,7 +69,7 @@
     case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(viewModel.LSPUrl)
     case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
     case (ITSAReturnAmendment, _)       => itsaReturnAmendmentContent()
-    case (ITSAReturnAmendmentCredit, _) => itsaReturnAmendmentCreditContent(chargeItem.taxYear, wyoUrl)
+    case (ITSAReturnAmendmentCredit, _) => itsaReturnAmendmentCreditContent(viewModel.chargeItem.taxYear)
     case _                              =>
 }}
 
