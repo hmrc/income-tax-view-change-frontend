@@ -45,6 +45,8 @@ object FinancialDetailsTestConstants {
   val id1040000124 = "1040000124"
   val id1040000125 = "1040000125"
   val id1040000126 = "1040000126"
+  val id1040000127 = "1040000127"
+  val codingout = "CODINGOUT01"
 
   val testValidFinancialDetailsModelJsonWrites: JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
@@ -596,20 +598,22 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  def financialDetailsModelWithPoaOneAndTwoWithRarCredits() =
+  def financialDetailsModelWithPoaOneAndTwoWithRarAndAmendmentCredits() =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
         documentDetailModel(transactionId = id1040000126, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
         documentDetailModel(transactionId = id1040000125, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
         documentDetailModel(transactionId = id1040000124, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
-        documentDetailModel(transactionId = id1040000123, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)))
+        documentDetailModel(transactionId = id1040000123, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1))),
+        documentDetailModel(transactionId = id1040000127, taxYear = testTaxYear, paymentLot = None, paymentLotItem = None, accruingInterestAmount = None, documentDueDate = Some(LocalDate.of(2020,1,1)), interestOutstandingAmount = None, originalAmount = -100)
       ),
       financialDetails = List(
         financialDetail(transactionId = Some(id1040000125), taxYear = testTaxYear, mainTransaction = "4920"),
         financialDetail(transactionId = Some(id1040000126), taxYear = testTaxYear, mainTransaction = "4930"),
         financialDetail(transactionId = Some(id1040000124), taxYear = testTaxYear, mainTransaction = "4914"),
-        financialDetail(transactionId = Some(id1040000123), taxYear = testTaxYear, mainTransaction = "4912")
+        financialDetail(transactionId = Some(id1040000123), taxYear = testTaxYear, mainTransaction = "4912"),
+        financialDetail(transactionId = Some(id1040000127), taxYear = testTaxYear, mainTransaction = "4916")
       )
     )
 

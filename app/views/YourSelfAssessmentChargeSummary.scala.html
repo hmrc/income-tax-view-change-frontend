@@ -136,7 +136,6 @@
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
-                  if(viewModel.chargeItem.isCreditDrilldownPage) "creditAmount" else
                   if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
                   if(viewModel.chargeItem.isOverdue()) "overDueCharge"
                   else "charge"
@@ -203,7 +202,7 @@
     }
     @if(viewModel.isCredit && paymentAllocations.isDefined) {
 
-        @h2(getMessage("allocation.heading"))
+        @h2(optId = Some("allocation-section"), msg = getMessage("allocation.heading"))
 
         <table class="govuk-table" id="payment-allocation-table">
             <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
