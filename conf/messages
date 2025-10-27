@@ -3441,8 +3441,6 @@ yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                     
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p3Link                    = View what you owe
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p3                        = to check if you have any other charges to pay.
 
 income-sources.check-details-reporting-frequency.heading                        = Sole trader
 income-sources.check-details-reporting-frequency-uk.heading                     = UK property
