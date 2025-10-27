@@ -140,6 +140,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First payment on account collected through PAYE tax code"
                 document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
+                document.getElementById("codedOutPOAExplanation").text() shouldBe "This is the tax you owe for the 2020 to 2021 tax year. It will be collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2020 to 2021 tax bill."
@@ -155,6 +156,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Second payment on account collected through PAYE tax code"
                 document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
+                document.getElementById("codedOutPOAExplanation").text() shouldBe "This is the tax you owe for the 2020 to 2021 tax year. It will be collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2020 to 2021 tax bill."
