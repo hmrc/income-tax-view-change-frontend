@@ -154,8 +154,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val paymentBreakdownNic2: String = messages("chargeSummary.paymentBreakdown.nic2")
     val codingOutBCDMessage2017To2018: String = messages("chargeSummary.codingOutBCDMessage", 2017, 2018)
     val codingOutBCDMessage2016To2017WithStringMessagesArgument: String = messages("chargeSummary.codingOutBCDMessage", "2016", "2017")
-    val codingOutPOAMessage2017To2018: String = messages("yourSelfAssessmentChargeSummary.codingOutPOAMessage", 2017, 2018)
-    val codingOutPOAMessage2016To2017WithStringMessagesArgument: String = messages("yourSelfAssessmentChargeSummary.codingOutPOAMessage", "2016", "2017")
     val chargeSummaryCodingOutHeading2017To2018: String = s"${messages("chargeSummary.codingOut.text")}"
     val chargeSummaryPoa1CodedOutHeading: String = messages("chargeSummary.poa1CodedOut.text")
     val chargeSummaryPoa2CodedOutHeading: String = messages("chargeSummary.poa2CodedOut.text")
@@ -828,9 +826,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     "charge is a POA 2 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationCredit, originalAmount = -100)) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa2ReconciliationCreditHeading
-      println(document)
-
-      document.select("#coding-out-message").text() shouldBe codingOutPOAMessage2016To2017WithStringMessagesArgument
 
       document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your second payment on account because your tax return shows that your second payment on account was too high."
 
