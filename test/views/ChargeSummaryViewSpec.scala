@@ -152,8 +152,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val taxYearHeading: String = messages("taxYears.table.taxYear.heading")
     val balancingCharge: String = messages("chargeSummary.balancingCharge.text")
     val paymentBreakdownNic2: String = messages("chargeSummary.paymentBreakdown.nic2")
-    val codingOutMessage2017To2018: String = messages("chargeSummary.codingOutBCDMessage", 2017, 2018)
-    val codingOutMessage2016To2017WithStringMessagesArgument: String = messages("chargeSummary.codingOutBCDMessage", "2016", "2017")
+    val codingOutBCDMessage2017To2018: String = messages("chargeSummary.codingOutBCDMessage", 2017, 2018)
+    val codingOutBCDMessage2016To2017WithStringMessagesArgument: String = messages("chargeSummary.codingOutBCDMessage", "2016", "2017")
+    val codingOutPOAMessage2017To2018: String = messages("yourSelfAssessmentChargeSummary.codingOutPOAMessage", 2017, 2018)
+    val codingOutPOAMessage2016To2017WithStringMessagesArgument: String = messages("yourSelfAssessmentChargeSummary.codingOutPOAMessage", "2016", "2017")
     val chargeSummaryCodingOutHeading2017To2018: String = s"${messages("chargeSummary.codingOut.text")}"
     val chargeSummaryPoa1CodedOutHeading: String = messages("chargeSummary.poa1CodedOut.text")
     val chargeSummaryPoa2CodedOutHeading: String = messages("chargeSummary.poa2CodedOut.text")
@@ -826,6 +828,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     "charge is a POA 2 reconciliation credit" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationCredit, originalAmount = -100)) {
       document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
       document.select("h1").text() shouldBe poa2ReconciliationCreditHeading
+      println(document)
+
+      document.select("#coding-out-message").text() shouldBe codingOutPOAMessage2016To2017WithStringMessagesArgument
 
       document.selectById("rar-credit-explanation").text shouldBe "HMRC has added a credit to your second payment on account because your tax return shows that your second payment on account was too high."
 
@@ -882,11 +887,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
         "display the coded out details" when {
 
-          "Coding Out is Enabled" in new TestSetup(creditItemCodingOut, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
+          "Coding Out BCD is Enabled" in new TestSetup(creditItemCodingOut, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
             document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
             document.select("#coding-out-notice").text() shouldBe insetPara
-            document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
+            document.select("#coding-out-message").text() shouldBe codingOutBCDMessage2016To2017WithStringMessagesArgument
             document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
             document.select(".govuk-table").size() shouldBe 1
             document.select(".govuk-table tbody tr").size() shouldBe 1
@@ -902,7 +907,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
             document.select("h1").text() shouldBe chargeSummaryCodingOutHeading2017To2018
             document.select("#coding-out-notice").text() shouldBe insetPara
-            document.select("#coding-out-message").text() shouldBe codingOutMessage2016To2017WithStringMessagesArgument
+            document.select("#coding-out-message").text() shouldBe codingOutBCDMessage2016To2017WithStringMessagesArgument
             document.select("#coding-out-notice-link").attr("href") shouldBe cancelledPayeTaxCodeInsetLink
             document.selectById("paymentAmount").text() shouldBe "Payment amount £2,500.00"
             document.selectById("codingOutRemainingToPay").text() shouldBe messages("chargeSummary.codingOutRemainingToPay", "2019", "2020")

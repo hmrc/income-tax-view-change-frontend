@@ -3396,7 +3396,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view t
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
 
 yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = This is the remaining tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code.
-yourSelfAssessmentChargeSummary.codingOutMessage                        = This is the tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code.
+yourSelfAssessmentChargeSummary.codingOutPOAMessage                        = This is the tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
