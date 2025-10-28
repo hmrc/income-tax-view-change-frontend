@@ -167,7 +167,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
             .thenReturn(
-              Future(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess()))
+              Future(Right(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess())))
             )
 
           val result = action(fakeRequest)
@@ -183,7 +183,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
             .thenReturn(
-              Future(List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure()))
+              Future(Right(List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure())))
             )
 
           val result = action(fakeRequest)

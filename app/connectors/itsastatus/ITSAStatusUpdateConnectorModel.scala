@@ -32,11 +32,15 @@ object ITSAStatusUpdateConnectorModel {
 
   sealed trait ITSAStatusUpdateResponse
 
+  sealed trait ITSAStatusUpdateError
+
   case class ErrorItem(code: String, reason: String)
 
   case class ITSAStatusUpdateResponseSuccess(statusCode: Int = NO_CONTENT) extends ITSAStatusUpdateResponse
 
   case class ITSAStatusUpdateResponseFailure(failures: List[ErrorItem]) extends ITSAStatusUpdateResponse
+
+  case object NoOptOutRequestsMade extends ITSAStatusUpdateError
 
   object ITSAStatusUpdateResponseFailure {
 

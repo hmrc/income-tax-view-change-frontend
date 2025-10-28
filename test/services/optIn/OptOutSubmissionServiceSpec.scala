@@ -777,7 +777,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
-                result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204))
+                result shouldBe Right(List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204)))
               }
 
             }
@@ -820,7 +820,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
-                result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204))
+                result shouldBe Right(List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204)))
               }
 
             }
@@ -863,7 +863,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
-                result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204))
+                result shouldBe Right(List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204)))
               }
 
             }
@@ -909,7 +909,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
-                result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204))
+                result shouldBe Right(List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204)))
               }
 
             }
@@ -955,7 +955,7 @@ class OptOutSubmissionServiceSpec extends UnitSpec
               val actual = service.updateTaxYearsITSAStatusRequest()
 
               whenReady(actual) { result =>
-                result shouldBe List(ITSAStatusUpdateResponseSuccess(204))
+                result shouldBe Right(List(ITSAStatusUpdateResponseSuccess(204)))
               }
 
             }

@@ -155,7 +155,7 @@ class OptOutSubmissionService @Inject()(
 
 
   // This possibly makes multiple api calls to update each valid "MTD Voluntary" tax year
-  def updateTaxYearsITSAStatusRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusUpdateResponse]] = {
+  def updateTaxYearsITSAStatusRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Either[ITSAStatusUpdateError, List[ITSAStatusUpdateResponse]]] = {
     for {
       maybeSessionData: Option[OptOutSessionData] <- getOptOutSessionData()
       maybeSelectedTaxYear: Option[String] = maybeSessionData.flatMap(_.selectedOptOutYear)
@@ -171,8 +171,14 @@ class OptOutSubmissionService @Inject()(
       auditEvents: List[OptOutAuditModel] = makeUpdateRequestsForEachYear.map(response => createAuditEvent(maybeSelectedTaxYear, maybeOptOutContextData, filteredTaxYearsForDesiredItsaStatus, response))
       _ <- Future.sequence(auditEvents.map((event: OptOutAuditModel) => auditingService.extendedAudit(event)))
     } yield {
-      makeUpdateRequestsForEachYear
+      if (makeUpdateRequestsForEachYear == List.empty) {
+        Left(NoOptOutRequestsMade)
+      } else {
+        Right(makeUpdateRequestsForEachYear)
+      }
     }
+
+
   }
 
 }
