@@ -37,7 +37,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.FallBackBackLinks
 import views.html.PaymentAllocation
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

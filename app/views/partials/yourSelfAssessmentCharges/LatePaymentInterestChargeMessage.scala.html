@@ -26,26 +26,23 @@
 
 @(viewModel: ChargeSummaryViewModel, allocation: PaymentHistoryAllocations, payment: PaymentHistoryAllocation)(implicit messages: Messages)
 
-@allocationLinkHTML(link: String, linkText: String) = {
-    <a class="govuk-link" href="@link">
-        @linkText
-        <span class="govuk-visually-hidden"> @viewModel.taxYearToCodingOut</span>
-    </a>
+@allocationLinkHTML(link: Option[String], linkText: String) = {
+    @if(link.isDefined) {
+        <a class="govuk-link" href="@link">
+            @linkText
+            <span class="govuk-visually-hidden"> @viewModel.taxYearToCodingOut</span>
+        </a>
+    }
 }
 
 @{
     val matchingPayment = payment.clearingId
 
     if(matchingPayment.isDefined) {
-        val link = if(viewModel.isAgent) {
-            controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
-        } else {
-            controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, None).url
-        }
         val linkText = if(viewModel.chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
             messages(allocation.getPaymentAllocationTextInChargeSummary, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
 
-        allocationLinkHTML(link, linkText)
+        allocationLinkHTML(payment.link, linkText)
     } else {
          messages(allocation.getPaymentAllocationTextInChargeSummary, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
     }

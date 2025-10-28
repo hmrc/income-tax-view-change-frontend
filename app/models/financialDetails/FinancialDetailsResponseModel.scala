@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import models.financialDetails.CreditType.{itsaReturnAmendmentCredit, poaOneReconciliationCredit, poaTwoReconciliationCredit}
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
@@ -107,7 +108,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   // TODO: Update to support allocated credits
-  def getAllocationsToCharge(charge: FinancialDetail): Option[PaymentHistoryAllocations] = {
+  def getAllocationsToCharge(charge: FinancialDetail, isAgent: Boolean): Option[PaymentHistoryAllocations] = {
 
     def hasDocumentDetailForPayment(transactionId: String): Boolean = {
 
@@ -132,11 +133,14 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       .map { subItems =>
         subItems.collect {
             case subItem if subItem.clearingSAPDocument.isDefined =>
-              PaymentHistoryAllocation(
+              val x = PaymentHistoryAllocation(
                 dueDate = subItem.dueDate,
                 amount = subItem.amount,
                 clearingSAPDocument = subItem.clearingSAPDocument,
-                clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument))
+                clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument),
+                link = linkFromMainTransaction(charge, isAgent, findIdOfClearingPayment(subItem.clearingSAPDocument)))
+              println("BEEP "+ x)
+            x
           }
           // only return payments for now
           .filter(_.clearingId.exists(id => hasDocumentDetailForPayment(id)))
@@ -144,6 +148,21 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       .collect {
         case payments if payments.nonEmpty => PaymentHistoryAllocations(payments, charge.mainType, charge.chargeType)
       }
+  }
+
+  def linkFromMainTransaction(charge: FinancialDetail, isAgent: Boolean, clearingId: Option[String]): Option[String] = {
+    //the charge is the POA, not the credit
+    val creditMainTransactions = List(poaOneReconciliationCredit, poaTwoReconciliationCredit, itsaReturnAmendmentCredit)
+       if(creditMainTransactions.contains(charge.mainTransaction)) {
+         if (isAgent) Some(controllers.routes.ChargeSummaryController.showAgent(charge.taxYear.toInt, charge.transactionId.get).url)
+         else Some(controllers.routes.ChargeSummaryController.show(charge.taxYear.toInt, charge.transactionId.get).url)
+       } else {
+         (clearingId, isAgent) match {
+           case (Some(id), false) => Some(controllers.routes.PaymentAllocationsController.viewPaymentAllocation(id, None).url)
+           case (Some(id), true) => Some(controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(id).url)
+           case _ => None
+         }
+       }
   }
 
   def mergeLists(financialDetailsModel: FinancialDetailsModel): FinancialDetailsModel = {

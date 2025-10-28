@@ -150,7 +150,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       val paymentAllocations: List[PaymentHistoryAllocations] =
         financialDetailsForCharge
           .filter(_.messageKeyByTypes.isDefined)
-          .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
+          .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail, isAgent))
 
 
       chargeHistoryService.chargeHistoryResponse(isInterestCharge, chargeReference, isEnabled(ChargeHistory)).flatMap {
@@ -213,7 +213,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                 LPPUrl = LPPUrl
               )
 
-              getPaymentAllocation(chargeItem).map { allocationData =>
+              getPaymentAllocationForCredit(chargeItem).map { allocationData =>
 
                 mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
                   case Right(_) => Ok {
@@ -300,7 +300,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
     ))
   }
 
-  private def getPaymentAllocation(chargeItem: ChargeItem)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[PaymentAllocationViewModel]] = {
+  private def getPaymentAllocationForCredit(chargeItem: ChargeItem)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[PaymentAllocationViewModel]] = {
     paymentAllocations.getPaymentAllocation(Nino(user.nino), chargeItem.transactionId) map {
       case Right(paymentAllocations: PaymentAllocationViewModel) => Some(paymentAllocations)
       case _ => None
