@@ -74,6 +74,33 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
           }
         }
         testAuthFailures(path, mtdUserRole)
+
+        "has already completed the journey (according to session data)" should {
+          s"redirect to the cannot go back page" in {
+            enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            disable(NavBarFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+            helper.stubOptOutInitialState(currentTaxYear(dateService),
+              previousYearCrystallised = false,
+              previousYearStatus = Annual,
+              currentYearStatus = Voluntary,
+              nextYearStatus = Annual,
+              Some(currentTaxYear(dateService).toString),
+              journeyIsComplete = true
+            )
+
+            val redirectUrl: String = controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)).url
+            val result = buildGETMTDClient(path, additionalCookies).futureValue
+            IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+            result should have(
+              httpStatus(SEE_OTHER),
+              redirectURI(redirectUrl)
+            )
+          }
+        }
       }
     }
 

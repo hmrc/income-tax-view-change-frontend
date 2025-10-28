@@ -3514,3 +3514,11 @@ triggered-migration.checkComplete.submitUpdates.p1                              
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = create a digital record of your property and sole trader income and expenses
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send your quarterly update(s) to HMRC
 triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest updates and deadlines
+
+#sign-up/opt-out you can not go back page
+signUpOptOut.cannotGoBack.heading       = You cannot go back
+signUpOptOut.cannotGoBack.h2.optOut     = You have opted out of Making Tax Digital for Income Tax
+signUpOptOut.cannotGoBack.h2.signUp     = You have signed up to Making Tax Digital for Income Tax
+signUpOptOut.cannotGoBack.ul.heading    = You can:
+signUpOptOut.cannotGoBack.linkText1     = view your upcoming deadlines
+signUpOptOut.cannotGoBack.linkText2     = go back to the home page

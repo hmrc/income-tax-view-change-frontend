@@ -57,15 +57,21 @@ class SignUpTaxYearQuestionController @Inject()(val optInService: OptInService,
       withSignUpRFChecks {
         optInService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
-            withSessionData(isStart = false, viewModel.signUpTaxYear.taxYear) {
-              Future.successful(Ok(
-                view(
-                  isAgent,
-                  viewModel,
-                  SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY),
-                  routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
-                )
-              ))
+            retrieveIsJourneyComplete.flatMap { journeyIsComplete =>
+              if (!journeyIsComplete) {
+                withSessionData(isStart = false, viewModel.signUpTaxYear.taxYear, None) {
+                  Future.successful(Ok(
+                    view(
+                      isAgent,
+                      viewModel,
+                      SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY),
+                      routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
+                    )
+                  ))
+                }
+              } else {
+                Future.successful(Redirect(controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(true))))
+              }
             }
           case None =>
             Future.successful(Redirect(reportingObligationsRedirectUrl(isAgent)))
