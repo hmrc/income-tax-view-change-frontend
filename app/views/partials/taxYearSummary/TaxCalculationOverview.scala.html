@@ -55,7 +55,7 @@
         @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
     }
 
-    @if(!isPrevious && !isLatest && pfaEnabled && !isAmended) {
+    @if(model.crystallised && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
         @taxCalculationAmendmentGuidance(taxYear, "calculation")
     }
 }
