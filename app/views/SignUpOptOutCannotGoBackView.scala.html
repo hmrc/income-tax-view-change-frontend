@@ -76,8 +76,8 @@
             @link(
                 id=Some("links-section-home-page-link"),
                 link =
-                    if(isAgent) s"${controllers.routes.HomeController.show()}"
-                    else s"${controllers.routes.HomeController.showAgent()}"
+                    if(isAgent) s"${controllers.routes.HomeController.showAgent()}"
+                    else s"${controllers.routes.HomeController.show()}"
                 ,
                 messageKey = getMessages("linkText2")
             )

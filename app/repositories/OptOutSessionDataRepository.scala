@@ -70,15 +70,15 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
   }
 
   def fetchJourneyCompleteStatus()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    repository.get(hc.sessionId.get.value, Opt(OptOutJourney)) map { sessionData =>
-      sessionData.exists(_.journeyIsComplete)
+    repository.get(hc.sessionId.get.value, Opt(OptOutJourney)) map { optSessionData =>
+      optSessionData.exists(_.journeyIsComplete.getOrElse(false))
     }
   }
 
   def setJourneyCompleteStatus(journeyComplete: Boolean)
                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     OptionT(repository.get(hc.sessionId.get.value, Opt(OptOutJourney))).
-      map(journeySd => journeySd.copy(journeyIsComplete = journeyComplete)).
+      map(journeySd => journeySd.copy(journeyIsComplete = Some(journeyComplete))).
       flatMap(journeySd => OptionT.liftF(repository.set(journeySd))).
       getOrElse(false)
   }

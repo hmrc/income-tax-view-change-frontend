@@ -65,6 +65,12 @@ class OptInService @Inject()(
       .map(journeySd => journeySd.copy(optInSessionData = journeySd.optInSessionData.map(_.copy(journeyIsComplete = Some(journeyComplete)))))
       .flatMap(journeySd => OptionT.liftF(repository.set(journeySd)))
       .getOrElse(false)
+      .map {
+        case false =>
+          Logger("application").error(s"[OptInService][updateJourneyStatusInSessionData] Failed to set journeyIsComplete flag")
+          false
+        case x => x
+      }
   }
 
   def availableOptInTaxYear()(implicit user: MtdItUser[_],

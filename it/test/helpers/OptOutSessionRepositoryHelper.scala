@@ -48,7 +48,7 @@ class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) 
               nextYearITSAStatus = nextYearStatus.toString)),
             selectedOptOutYear = selectedOptOutYear
           )),
-        journeyIsComplete = journeyIsComplete
+        journeyIsComplete = Some(journeyIsComplete)
       )
     ).futureValue
   }
