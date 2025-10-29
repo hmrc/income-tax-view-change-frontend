@@ -22,7 +22,6 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus._
 import models.optout.newJourney.CheckOptOutUpdateAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -88,6 +87,8 @@ class ConfirmOptOutUpdateController @Inject()(
           for {
             updateTaxYearsITSAStatusRequest: Either[ITSAStatusUpdateError, List[ITSAStatusUpdateResponse]] <- optOutSubmissionService.updateTaxYearsITSAStatusRequest()
             result = updateTaxYearsITSAStatusRequest match {
+              case Right(List()) =>
+                Redirect(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent))
               case Right(listOfUpdateRequestsMade) if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure])  =>
                 Redirect(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent))
               case Right(listOfUpdateRequestsMade) if listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>

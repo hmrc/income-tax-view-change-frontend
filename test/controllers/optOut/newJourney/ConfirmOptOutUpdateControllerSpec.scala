@@ -158,7 +158,9 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
     s"post(isAgent = $isAgent)" when {
       val action = testController.submit(isAgent, taxYear.startYear.toString)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
       s"the user is authenticated as a $mtdRole" should {
+
         "redirect to the completion page if the opt out update request succeeds" in {
 
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
@@ -175,6 +177,22 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           status(result) shouldBe Status.SEE_OTHER
           redirectLocation(result) shouldBe Some(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url)
         }
+
+        "redirect to the OptOutError page if the updateTaxYearsITSAStatusRequest makes no updates" in {
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(Future(Right(List())))
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+        }
+
 
         "redirect to the opt out error page if the opt out update request fails" in {
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)

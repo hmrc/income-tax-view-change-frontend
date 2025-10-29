@@ -202,6 +202,28 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           redirectLocation(result) shouldBe Some(controllers.optOut.newJourney.routes.ConfirmOptOutUpdateController.show(isAgent, currentYear.getOrElse("")).url)
         }
 
+        "redirect the user to the opt out error page when they select 'Yes' and no itsa status update requests were made " in {
+
+          val action = testController.submit(isAgent, currentYear)
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+
+          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(Future(Right(List())))
+
+          val formData = Map("opt-out-tax-year-question" -> "Yes")
+
+          val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+        }
+
         "redirect the user to the opt out error page when they select 'Yes' and the submit fails " in {
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
