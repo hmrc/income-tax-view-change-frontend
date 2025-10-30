@@ -145,3 +145,7 @@ case object OptInQuarterlyReportingRequest extends AuditType {
 case object AccessDeniedForSupportingAgent extends AuditType {
   val name = "AccessDeniedForSupportingAgent"
 }
+
+case object SignUpTaxYearsPage extends AuditType {
+  val name = "SignUpTaxYearsPage"
+}
