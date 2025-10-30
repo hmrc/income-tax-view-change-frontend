@@ -37,7 +37,7 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
         padding-right: 0;
         text-align: right;
         &:last-child {
-          //border: 0;
+          border-bottom: black solid 1px;
           margin-bottom: 20px;
         }
         &::before {
