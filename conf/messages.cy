@@ -3371,7 +3371,7 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i dde
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet1      = Treth Incwm
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet2      = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
 yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part1 = Bwrw golwg dros
-yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part2 = your Self Assessment charges
+yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part2 = eich taliadau Hunanasesiad
 yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part1 = Bwrw golwg dros
 yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part2 = your client’s Self Assessment charges
 yourSelfAssessmentChargeSummary.chargeHistory.caption.poa1CodedOut.text.heading = Mae’r taliad ar gyfrif cyntaf hwn yn mynd tuag at eich bil treth {0} i {1}.
@@ -3390,6 +3390,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = weld y
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = a dysgu sut i apelio.
 
 yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = Dyma’r dreth sy’n weddill y mae angen i chi ei thalu ar gyfer blwyddyn dreth {0} i {1}.
+yourSelfAssessmentChargeSummary.codingOutPOAMessage                        = Dyma’r dreth sydd arnoch ar gyfer blwyddyn dreth {0} i {1}.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
 
