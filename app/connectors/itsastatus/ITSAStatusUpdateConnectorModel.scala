@@ -40,8 +40,6 @@ object ITSAStatusUpdateConnectorModel {
 
   case class ITSAStatusUpdateResponseFailure(failures: List[ErrorItem]) extends ITSAStatusUpdateResponse
 
-  case object NoOptOutRequestsMade extends ITSAStatusUpdateError
-
   object ITSAStatusUpdateResponseFailure {
 
     def defaultFailure(message: String = "unknown reason"): ITSAStatusUpdateResponseFailure =
