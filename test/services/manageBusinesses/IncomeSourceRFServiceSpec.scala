@@ -21,7 +21,8 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import enums.IncomeSourceJourney.{AfterSubmissionPage, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import mocks.services.{MockCalculationListService, MockITSAStatusService, MockSessionService}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, NoStatus}
 import models.itsaStatus.{StatusDetail, StatusReason}
 import org.mockito.ArgumentMatchers.any

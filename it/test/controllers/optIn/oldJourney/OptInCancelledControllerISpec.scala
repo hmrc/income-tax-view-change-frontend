@@ -21,14 +21,14 @@ import controllers.ControllerISpecHelper
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import models.UIJourneySessionData
 import models.admin.{ReportingFrequencyPage, SignUpFs}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import testConstants.CalculationListIntegrationTestConstants
@@ -58,9 +58,9 @@ class OptInCancelledControllerISpec extends ControllerISpecHelper with FeatureSw
           Some(OptInSessionData(
             Some(OptInContextData(
               currentTaxYear.toString,
-              statusToString(currentYearStatus),
-              statusToString(nextYearStatus))), None))))
-          )
+              currentYearStatus.toString,
+              nextYearStatus.toString)), None))))
+    )
   }
 
   mtdAllRoles.foreach { mtdUserRole =>

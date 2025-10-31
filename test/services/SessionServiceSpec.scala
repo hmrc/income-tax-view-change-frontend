@@ -19,7 +19,8 @@ package services
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import mocks.repositories.MockUIJourneySessionDataRepository
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.AddIncomeSourceData
 import org.mockito.Mockito.when
 import testUtils.TestSupport
 

@@ -25,23 +25,25 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optout.{MultiYearOptOutCheckpointViewModel, OneYearOptOutCheckpointViewModel, OptOutCheckpointViewModel}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.SessionService
-import services.optout.{CurrentOptOutTaxYear, OneYearOptOutFollowedByAnnual, OptOutProposition, OptOutService}
+import services.optout._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 
 
-class ConfirmOptOutUpdateControllerSpec extends MockAuthActions
-  with MockOptOutService with MockSessionService {
+class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutService with MockSessionService {
+
+  lazy val mockConfirmOptOutUpdateService: OptOutSubmissionService = mock(classOf[OptOutSubmissionService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
+      api.inject.bind[OptOutSubmissionService].toInstance(mockConfirmOptOutUpdateService),
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
@@ -156,12 +158,19 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions
     s"post(isAgent = $isAgent)" when {
       val action = testController.submit(isAgent, taxYear.startYear.toString)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
       s"the user is authenticated as a $mtdRole" should {
+
         "redirect to the completion page if the opt out update request succeeds" in {
+
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          mockMakeOptOutUpdateRequest(optOutUpdateResponseSuccess)
+
+          when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(
+              Future(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseSuccess()))
+            )
 
           val result = action(fakeRequest)
 
@@ -169,11 +178,31 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions
           redirectLocation(result) shouldBe Some(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url)
         }
 
+        "redirect to the OptOutError page if the updateTaxYearsITSAStatusRequest makes no updates" in {
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(Future(List()))
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+        }
+
+
         "redirect to the opt out error page if the opt out update request fails" in {
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseFailure(List())))
+
+          when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(
+              Future(List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure()))
+            )
 
           val result = action(fakeRequest)
 

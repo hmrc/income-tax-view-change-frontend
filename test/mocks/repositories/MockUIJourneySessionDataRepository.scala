@@ -18,7 +18,7 @@ package mocks.repositories
 
 import config.FrontendAppConfig
 import enums.JourneyType.Operation
-import models.incomeSourceDetails.UIJourneySessionData
+import models.UIJourneySessionData
 import org.bson.BsonValue
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, anyString}

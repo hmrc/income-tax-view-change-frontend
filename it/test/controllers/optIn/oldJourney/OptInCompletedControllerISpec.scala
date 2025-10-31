@@ -20,13 +20,12 @@ import controllers.ControllerISpecHelper
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.UIJourneySessionData
 import models.admin.{NavBarFs, ReportingFrequencyPage, SignUpFs}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.Annual
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
-import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
@@ -47,7 +46,7 @@ class OptInCompletedControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/opt-in/completed"
   }
 
@@ -106,9 +105,12 @@ class OptInCompletedControllerISpec extends ControllerISpecHelper {
   }
 
 
-
-  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
-                                    nextYearStatus: ITSAStatus.Value, intent: TaxYear): Future[Boolean] = {
+  private def setupOptInSessionData(
+                                     currentTaxYear: TaxYear,
+                                     currentYearStatus: ITSAStatus,
+                                     nextYearStatus: ITSAStatus,
+                                     intent: TaxYear
+                                   ): Future[Boolean] = {
     repository.set(
       UIJourneySessionData(testSessionId,
         Opt(OptInJourney).toString,
@@ -116,9 +118,9 @@ class OptInCompletedControllerISpec extends ControllerISpecHelper {
           Some(OptInSessionData(
             Some(OptInContextData(
               currentTaxYear.toString,
-              statusToString(status = currentYearStatus),
-              statusToString(status = nextYearStatus)
-            )),Some(intent.toString))
+              currentYearStatus.toString,
+              nextYearStatus.toString
+            )), Some(intent.toString))
           )))
   }
 }
