@@ -7,6 +7,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 
 case class SignUpAuditModel(signUpTaxYear: TaxYear,
+                            signUpType: String,
                             currentYearItsaStatus: ITSAStatus,
                             nextYearItsaStatus: ITSAStatus)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
   override val transactionName: String = enums.TransactionName.SignUpTaxYearsPage
@@ -16,6 +17,7 @@ case class SignUpAuditModel(signUpTaxYear: TaxYear,
     Utilities.userAuditDetails(user) ++
       Json.obj(
         "signUpTaxYear" -> signUpTaxYear,
+        "signUpType" -> signUpType,
         "currentTaxYearItsaStatus" -> currentYearItsaStatus,
         "nextTaxYearItsaStatus" -> nextYearItsaStatus
       )
