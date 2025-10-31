@@ -42,7 +42,7 @@ class CreditServiceSpec extends TestSupport {
 
   //Remove once deprecated method removed
   "CreditService.getAllCredits method" should {
-    "return a list of financial details credit charges" when {
+    "return a list of financial details credit charges, with no duplicate transactions" when {
 
       "a successful response is received in all tax year calls" in {
 
@@ -52,6 +52,7 @@ class CreditServiceSpec extends TestSupport {
               .withFirstRefund(10)
               .withSecondRefund(20)
               .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0, "balancing01")
+              .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0, "balancing02")
               .get())))
 
         when(mockFinancialDetailsConnector.getCreditsAndRefund(ArgumentMatchers.eq(TaxYear.forYearEnd(2024)), any())(any(), any()))
