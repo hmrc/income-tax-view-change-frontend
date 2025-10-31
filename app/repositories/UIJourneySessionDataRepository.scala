@@ -18,7 +18,7 @@ package repositories
 
 import config.FrontendAppConfig
 import enums.JourneyType.{JourneyType, Operation}
-import models.incomeSourceDetails.UIJourneySessionData
+import models.UIJourneySessionData
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal
@@ -88,7 +88,7 @@ class UIJourneySessionDataRepository @Inject()(
       .map(_.wasAcknowledged())
 
   def get(sessionId: String, journeyType: JourneyType): Future[Option[UIJourneySessionData]] = {
-    val data = UIJourneySessionData(sessionId, journeyType.toString)
+    val data = UIJourneySessionData(sessionId = sessionId, journeyType = journeyType.toString)
     keepAlive(data).flatMap {
       _ =>
         collection

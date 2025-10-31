@@ -18,7 +18,6 @@
 @import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import views.html.components._
-@import views.html.helpers.injected.ErrorSummary
 @import views.html.layouts.unifiedLayout
 
 @this(mainTemplate: unifiedLayout,
@@ -31,7 +30,8 @@
         govukRadios: GovukRadios,
         govukErrorSummary: GovukErrorSummary,
         inputRadios: input_radios,
-        detailsDropdown: detailsDropdown)
+        detailsDropdown: detailsDropdown,
+        h1: h1)
 
 @(cashOrAccrualsFlag: Option[String] = None, incomeSourceType: IncomeSourceType, form: Form[_], postAction: Call, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
 
@@ -89,13 +89,9 @@
 
         <span class="govuk-caption-xl hmrc-caption-xl" id="@captionId"><span class="govuk-visually-hidden">@messages("accessibility.this-section-is") </span>@incomeSourceTypeCaption</span>
 
+        @h1(msg = getMessage("heading"), size = "l", id = Some("accounting-method-heading"))
+
         @govukRadios(Radios(
-            fieldset = Some(Fieldset(
-                legend = Some(Legend(
-                    content = Text(getMessage("heading")),
-                    classes = "govuk-fieldset__legend--l"
-                ))
-            )),
             hint = Some(Hint(
                 id = Some(s"$prefix-hint"),
                 classes = "!",

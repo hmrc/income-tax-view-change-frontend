@@ -18,15 +18,14 @@ package models.optin
 
 import play.api.libs.json.{Json, OFormat}
 
-case class OptInSessionData(optInContextData: Option[OptInContextData],
-                            selectedOptInYear: Option[String]) {
-
-  val selectedOptInYearField: String = "SelectedOptInYear"
+case class OptInSessionData(
+                             optInContextData: Option[OptInContextData],
+                             selectedOptInYear: Option[String]
+                           ) {
 
 }
 
 object OptInSessionData {
-  implicit val format: OFormat[OptInSessionData] = Json.format[OptInSessionData]
 
-  def getJSONKeyPath(name: String): String = s"optInSessionData.$name"
+  implicit val format: OFormat[OptInSessionData] = Json.format[OptInSessionData]
 }

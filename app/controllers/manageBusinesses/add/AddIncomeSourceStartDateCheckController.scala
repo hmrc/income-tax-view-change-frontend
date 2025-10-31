@@ -23,9 +23,9 @@ import enums.IncomeSourceJourney.{BeforeSubmissionPage, IncomeSourceType, SelfEm
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.{AddIncomeSourceStartDateCheckForm => form}
 import implicits.ImplicitDateFormatter
+import models.UIJourneySessionData
 import models.core.{Mode, NormalMode}
 import models.admin.AccountingMethodJourney
-import models.incomeSourceDetails.UIJourneySessionData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

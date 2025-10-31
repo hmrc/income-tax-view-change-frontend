@@ -22,6 +22,7 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import models.UIJourneySessionData
 import models.admin.ReportingFrequencyPage
 import models.core.IncomeSourceId
 import models.incomeSourceDetails._

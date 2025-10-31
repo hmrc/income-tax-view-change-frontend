@@ -18,7 +18,7 @@ package testOnly.controllers
 
 import config.FrontendAppConfig
 import enums.JourneyType.{Opt, OptOutJourney}
-import models.incomeSourceDetails.UIJourneySessionData
+import models.UIJourneySessionData
 import models.optout.OptOutSessionData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -18,7 +18,8 @@ package testConstants
 
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, UIJourneySessionData}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.{AddIncomeSourceData, Address}
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
 
 import java.time.LocalDate
