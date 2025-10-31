@@ -26,7 +26,7 @@ import models.liabilitycalculation.{Message, Messages}
 import models.obligations.{ObligationWithIncomeType, ObligationsModel}
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.nodes.Element
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
 import testConstants.NextUpdatesTestConstants._
@@ -325,6 +325,22 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def calculationWithNoAmendmentPfaEnabled(isAgent: Boolean) = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true), "testBackURL", isAgent, ctaLink = ctaLink
+  )
+
+  def crystallisedNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
+    testYear,
+    viewModel = TaxYearSummaryViewModel(
+      calculationSummary = Some(modelComplete(crystallised = true, isAmended = false)),
+      previousCalculationSummary = None,
+      charges = List.empty,
+      obligations = testObligationsModel,
+      ctaViewModel = emptyCTAModel,
+      LPP2Url = "",
+      pfaEnabled = true
+    ),
+    backUrl = "testBackUrl",
+    isAgent = isAgent,
+    ctaLink = ctaLink
   )
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -922,6 +938,47 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display a regular calculations tab if pfa is enabled but the latest calculation has no amendments" in new Setup(calculationWithNoAmendmentPfaEnabled(false)) {
         layoutContent.selectHead("""a[href$="#taxCalculation"]""").text shouldBe taxCalculationTab
       }
+
+      "display amendment content when PFA is enabled and has no amendments" in new Setup(crystallisedNoAmendmentPfaEnabled(false)) {
+
+        val section = document.getElementById("calculation-amend-guidance")
+        section should not be null
+
+        section.select("h3").text shouldBe messagesLookUp("tax-year-summary.calculation-amend-subheading")
+
+        document.getElementById("calculation-bullet-start").text should include(
+          messagesLookUp("tax-year-summary.calculation-bullet-start")
+        )
+
+        document.getElementById("calculation-bullet-1").text should include(
+          messagesLookUp("tax-year-summary.calculation-bullet-1")
+        )
+        document.getElementById("calculation-bullet-2").text should include(
+          messagesLookUp("tax-year-summary.calculation-bullet-2")
+        )
+
+        val bulletLink = document.getElementById("calculation-bullet-2-link")
+        bulletLink.text should include(messagesLookUp("tax-year-summary.calculation-bullet-2-link"))
+        bulletLink.text should include("(opens in new tab)")
+        bulletLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saTaxReturnDeadlinesUrl
+        bulletLink.attr("target") shouldBe "_blank"
+
+
+        val exampleText = document.getElementById("calculation-example").text
+        exampleText should include((testYear - 1).toString)
+        exampleText should include(testYear.toString)
+        exampleText should include((testYear + 2).toString)
+
+        document.getElementById("calculation-contact-hmrc").text should startWith(messagesLookUp("tax-year-summary.calculation-contact-hmrc"))
+        val contactLink = document.getElementById("calculation-contact-hmrc-link")
+        contactLink.text should include(messagesLookUp("tax-year-summary.previous-calculation-contact-hmrc-link"))
+        contactLink.text should include("(opens in new tab)")
+        contactLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saGeneralEnquiriesUrl
+        contactLink.attr("target") shouldBe "_blank"
+
+        document.getElementById("calculation-bill").text should include(messagesLookUp("tax-year-summary.calculation-bill"))
+      }
+
     }
     "the user is an agent" should {
 

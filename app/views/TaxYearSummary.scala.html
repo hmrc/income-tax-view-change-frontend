@@ -88,11 +88,22 @@
 }
 
 @previousCalculationContent = @{
+    val isAmended = viewModel.calculationSummary.exists(_.isAmended)
+
     if (viewModel.pfaEnabled) {
         if (viewModel.previousCalculationSummary.isEmpty) {
             None
         } else {
-            Some(taxCalculationContent(taxYear, viewModel.previousCalculationSummary, isAgent, isPrevious = true))
+            Some(
+                taxCalculationContent(
+                    taxYear,
+                    viewModel.previousCalculationSummary,
+                    isAgent,
+                    viewModel.pfaEnabled,
+                    isAmended,
+                    isPrevious = true
+                )
+            )
         }
     } else {
         None
@@ -100,10 +111,12 @@
 }
 
 @calculationContent = @{
-    if(viewModel.pfaEnabled && viewModel.calculationSummary.exists(_.isAmended)) {
-        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, isLatest = true))
+    val isAmended = viewModel.calculationSummary.exists(_.isAmended)
+
+    if(viewModel.pfaEnabled && isAmended) {
+        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, isAmended, isLatest = true))
     } else {
-        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent))
+        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, isAmended))
     }
 }
 
@@ -112,9 +125,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             @h1WithCaption(
-                heading = messages("tax-year-summary.heading"),
-                captionMsg = messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString),
-                headingId = Some("heading")
+              heading = messages("tax-year-summary.heading"),
+              captionMsg = {
+                if(viewModel.pfaEnabled)
+                  messages("tax-year-summary.pfa.heading-secondary", (taxYear - 1).toString, taxYear.toString)
+                else
+                  messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString)
+              },
+              headingId = Some("heading")
             )
 
             @viewModel.calculationSummary.map { model =>
