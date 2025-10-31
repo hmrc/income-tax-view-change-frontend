@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.ChargeSummaryAudit
+import audit.models.{ChargeSummaryAudit, PaymentAllocationsResponseAuditModel}
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
@@ -28,12 +28,14 @@ import forms.utils.SessionKeys.gatewayPage
 import models.admin._
 import models.chargeHistory._
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
+import models.core.Nino
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
+import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService}
+import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -54,7 +56,8 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         val chargeSummaryView: ChargeSummary,
                                         val yourSelfAssessmentChargeSummary: YourSelfAssessmentChargeSummary,
-                                        val chargeHistoryService: ChargeHistoryService)
+                                        val chargeHistoryService: ChargeHistoryService,
+                                        val paymentAllocations: PaymentAllocationsService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         dateService: DateServiceInterface,
                                         val languageUtils: LanguageUtils,
@@ -150,7 +153,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
 
 
-      chargeHistoryService.chargeHistoryResponse(isInterestCharge, chargeReference, isEnabled(ChargeHistory)).map {
+      chargeHistoryService.chargeHistoryResponse(isInterestCharge, chargeReference, isEnabled(ChargeHistory)).flatMap {
         case Right(chargeHistory) =>
           auditChargeSummary(chargeItem, paymentBreakdown,
             chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
@@ -197,6 +200,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                 paymentAllocations = paymentAllocations,
                 payments = paymentsForAllYears,
                 chargeHistoryEnabled = isEnabled(ChargeHistory),
+                creditsRefundRepayEnabled = isEnabled(CreditsRefundsRepay),
                 latePaymentInterestCharge = isInterestCharge,
                 penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
                 reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsforTaxYear),
@@ -210,19 +214,22 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                 LPPUrl = LPPUrl
               )
 
-              mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
-                case Right(_) => Ok {
-                  if (chargeItem.isIncludedInSACSummary(isInterestCharge)) {
-                    yourSelfAssessmentChargeSummary(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
-                  } else
-                    chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
+              getPaymentAllocation(chargeItem).map { allocationData =>
+
+                mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
+                  case Right(_) => Ok {
+                    if (chargeItem.isIncludedInSACSummary(isInterestCharge)) {
+                      yourSelfAssessmentChargeSummary(viewModel, allocationData, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
+                    } else
+                      chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
+                  }
+                  case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
                 }
-                case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
               }
-            case None => onError("No chargeReference found", isAgent, showInternalServerError = true)
+            case None => Future.successful(onError("No chargeReference found", isAgent, showInternalServerError = true))
           }
         case _ =>
-          onError("Invalid response from charge history", isAgent, showInternalServerError = true)
+          Future.successful(onError("Invalid response from charge history", isAgent, showInternalServerError = true))
       }
     }
   }
@@ -293,4 +300,12 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       taxYear = TaxYear.makeTaxYearWithEndYear(taxYear)
     ))
   }
+
+  private def getPaymentAllocation(chargeItem: ChargeItem)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[PaymentAllocationViewModel]] = {
+    paymentAllocations.getPaymentAllocation(Nino(user.nino), chargeItem.transactionId) map {
+      case Right(paymentAllocations: PaymentAllocationViewModel) => Some(paymentAllocations)
+      case _ => None
+    }
+  }
+
 }

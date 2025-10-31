@@ -1,0 +1,56 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.paymentAllocationCharges.PaymentAllocationViewModel
+@import views.html.components._
+@import views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
+@import views.html.partials.paymentAllocations.PaymentAllocationsForLpi
+@import views.html.partials.paymentAllocations.PaymentAllocationsForNonLpi
+
+@this(
+    h2: h2,
+    paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
+    paymentAllocationsForLpi: PaymentAllocationsForLpi,
+    paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
+)
+
+@(paymentAllocations: PaymentAllocationViewModel, isAgent: Boolean, creditsRefundRepayEnabled: Boolean)(
+        implicit messages: Messages
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
+}
+
+@h2(optId = Some("allocation-section"), msg = getMessage("allocation.heading"))
+
+<table class="govuk-table" id="payment-allocation-table">
+    <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocated-date")</th>
+            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.description")</th>
+            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.tax-year")</th>
+            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("paymentAllocation.tableHead.amount")</th>
+        </tr>
+    </thead>
+    @if(paymentAllocations.isLpiPayment) {
+        @paymentAllocationsForLpi(paymentAllocations, isAgent)
+    } else {
+        @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
+    }
+    @paymentAllocationsCreditAmount(paymentAllocations.outstandingAmount, paymentAllocations.dueDate, creditsRefundRepayEnabled, isAgent)
+</table>

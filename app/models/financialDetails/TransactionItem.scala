@@ -71,6 +71,7 @@ trait TransactionItem {
       case (FirstLatePaymentPenalty, _)         => "firstLatePaymentPenalty.text"
       case (SecondLatePaymentPenalty, _)        => "secondLatePaymentPenalty.text"
       case (ITSAReturnAmendment, _)             => "itsaReturnAmendment.text"
+      case (ITSAReturnAmendmentCredit, _)       => "itsaReturnAmendmentCredit.text"
       case error =>
         Logger("application").error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"

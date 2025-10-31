@@ -157,6 +157,7 @@ case class ChargeItem (
       case (LateSubmissionPenalty,     _) => true
       case (FirstLatePaymentPenalty,   _) => true
       case (ITSAReturnAmendment,       _) => true
+      case (ITSAReturnAmendmentCredit, _) => true
       case _                              => false
     }
 
@@ -169,6 +170,8 @@ case class ChargeItem (
 
   val isPoaReconciliationCredit: Boolean = transactionType == PoaOneReconciliationCredit ||
     transactionType == PoaTwoReconciliationCredit
+
+  val isCreditDrilldownPage: Boolean = isPoaReconciliationCredit || transactionType == ITSAReturnAmendmentCredit
 
   val isPoaReconciliationDebit: Boolean = transactionType == PoaOneReconciliationDebit ||
     transactionType == PoaTwoReconciliationDebit
