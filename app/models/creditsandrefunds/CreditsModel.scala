@@ -44,7 +44,8 @@ object CreditsModel {
 case class Transaction(transactionType: CreditType,
                        amount: BigDecimal,
                        taxYear: Option[TaxYear],
-                       dueDate: Option[LocalDate])
+                       dueDate: Option[LocalDate],
+                       transactionId: String)
 
 object Transaction {
   implicit val format: OFormat[Transaction] = Json.format[Transaction]
