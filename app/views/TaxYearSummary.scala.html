@@ -125,9 +125,14 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             @h1WithCaption(
-                heading = messages("tax-year-summary.heading"),
-                captionMsg = messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString),
-                headingId = Some("heading")
+              heading = messages("tax-year-summary.heading"),
+              captionMsg = {
+                if(viewModel.pfaEnabled)
+                  messages("tax-year-summary.pfa.heading-secondary", (taxYear - 1).toString, taxYear.toString)
+                else
+                  messages("tax-year-summary.heading-secondary", (taxYear - 1).toString, taxYear.toString)
+              },
+              headingId = Some("heading")
             )
 
             @viewModel.calculationSummary.map { model =>

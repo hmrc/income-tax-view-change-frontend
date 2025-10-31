@@ -226,7 +226,7 @@ taxYears.r18.amendment.text                                    = Gallwch fwrw go
 
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                       = Crynodeb o’r flwyddyn dreth
-tax-year-summary.heading-secondary                             = Blwyddyn dreth {0} i {1}
+tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
@@ -442,6 +442,8 @@ tax-year-summary.adjust-poa-paragraph                          = Gallwch ostwng 
 tax-year-summary.adjust-poa                                    = Addasu taliadau ar gyfrif
 
 # Tax Year Summary - PFA #
+tax-year-summary.pfa.heading-secondary                             = Blwyddyn dreth {0} i {1}
+
 tax-year-summary.latest-calculation                                = Cyfrifiad Diweddaraf
 tax-year-summary.latest-calculation-desc                           = Cafodd eich Ffurflen Dreth ei ddiwygio ar {0} ac o ganlyniad dyma’ch cyfrifiad mwyaf diweddar.
 
