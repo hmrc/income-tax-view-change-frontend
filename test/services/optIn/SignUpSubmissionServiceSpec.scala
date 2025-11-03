@@ -106,55 +106,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
       }
     }
 
-    ".makeUpdateRequest()" when {
-
-      "selected tax year == CY" when {
-
-        "selected tax year is present" should {
-
-          "return success response with No Content - 204" in {
-
-            val currentTaxYear = TaxYear(2025, 2026)
-
-            when(mockDateService.getCurrentTaxYear)
-              .thenReturn(currentTaxYear)
-
-            when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
-              .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess(NO_CONTENT)))
-
-            val request: Future[ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse] =
-              service.makeUpdateRequest(
-                selectedSignUpYear = Some(currentTaxYear)
-              )
-
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseSuccess(204) } // 204 No Content
-          }
-        }
-
-        "Selected tax year isn't present" should {
-
-          "return failure response with No Content - 204" in {
-
-            val currentTaxYear = TaxYear(2025, 2026)
-
-            when(mockDateService.getCurrentTaxYear)
-              .thenReturn(currentTaxYear)
-
-            when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
-              .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess(NO_CONTENT)))
-
-            val request: Future[ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse] =
-              service.makeUpdateRequest(
-                selectedSignUpYear = None
-              )
-
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseFailure.defaultFailure() }
-          }
-        }
-      }
-    }
-
-    ".triggerOptInRequest()" when {
+    ".triggerSignUpRequest()" when {
 
       "single tax year - CY" when {
 
@@ -207,7 +159,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val request = service.triggerSignUpRequest()
 
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseSuccess(204) }
+            whenReady(request) { result => result shouldBe Seq(ITSAStatusUpdateResponseSuccess(204)) }
           }
         }
       }
@@ -263,7 +215,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val request = service.triggerSignUpRequest()
 
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseSuccess(204) } // 204 No Content
+            whenReady(request) { result => result shouldBe Seq(ITSAStatusUpdateResponseSuccess(204)) }
           }
         }
       }
@@ -284,7 +236,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val currentTaxYear = TaxYear(2025, 2026)
 
-            val selectedOptInYear = Some("2025-2026") // user did not pick a tax year but should have
+            val selectedOptInYear = Some("2025-2026")
             val optInSessionData = OptInSessionData(Some(optInContextData), selectedOptInYear = selectedOptInYear)
 
             val retrievedUiSessionData =
@@ -310,7 +262,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
               .thenReturn(Future(Some(retrievedUiSessionData)))
 
             when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
-              .thenReturn(Future(ITSAStatusUpdateResponseFailure.defaultFailure()))
+              .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
             when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
               .thenReturn(Future(optInProposition))
@@ -320,7 +272,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val request = service.triggerSignUpRequest()
 
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to unknown reason"))) }
+            whenReady(request) { result => result shouldBe Seq(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseSuccess(204)) }
           }
         }
 
@@ -373,7 +325,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val request = service.triggerSignUpRequest()
 
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to unknown reason"))) }
+            whenReady(request) { result => result shouldBe Seq(ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to unknown reason")))) }
           }
         }
 
@@ -426,7 +378,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val request = service.triggerSignUpRequest()
 
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to unknown reason"))) }
+            whenReady(request) { result => result shouldBe Seq.empty }
           }
         }
       }
