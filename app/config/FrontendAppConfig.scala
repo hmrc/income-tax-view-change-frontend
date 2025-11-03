@@ -124,6 +124,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/what-you-owe"
   //Payment Redirect route
   lazy val agentPaymentRedirectUrl: String = s"$itvcFrontendEnvironment/$agentBaseUrl/payments-owed"
+  lazy val paymentSARedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/your-self-assessment-charges"
+  lazy val agentPaymentSARedirectUrl: String = s"$itvcFrontendEnvironment/$agentBaseUrl/your-self-assessment-charges"
 
   //Calculation Polling config
   lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
