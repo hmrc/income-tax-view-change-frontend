@@ -17,13 +17,12 @@
 package services.optIn
 
 import audit.AuditingService
-import audit.models.{OptInAuditModel, SignUpAuditModel, SignUpMultipleYears, SignUpSingleYear}
+import audit.models.{SignUpAuditModel, SignUpMultipleYears, SignUpSingleYear}
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import enums.JourneyType.{Opt, OptInJourney}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus._
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.Logging
@@ -55,7 +54,6 @@ class SignUpSubmissionService @Inject()(
   def makeUpdateRequest(
                          selectedSignUpYear: Option[TaxYear]
                        )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
-
     selectedSignUpYear match {
       case Some(year) => itsaStatusUpdateConnector.optIn(taxYear = year, taxableEntityId = user.nino)
       case _ => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
@@ -71,12 +69,11 @@ class SignUpSubmissionService @Inject()(
     val nextTaxYear = currentTaxYear.nextYear
 
     (selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus) match {
-      case (Some(selectedTaxYear), Annual, Annual) if selectedTaxYear == currentTaxYear =>
-        auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, SignUpMultipleYears, currentYearItsaStatus, nextYearItsaStatus))
+      case (Some(selectedTaxYear), Annual, nyStatus) if selectedTaxYear == currentTaxYear =>
+        val signUpYearType = if (nyStatus == Annual) SignUpMultipleYears else SignUpSingleYear
+        auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, signUpYearType, currentYearItsaStatus, nextYearItsaStatus))
       case (Some(selectedTaxYear), _, Annual) if selectedTaxYear == nextTaxYear =>
         auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, SignUpMultipleYears, currentYearItsaStatus, nextYearItsaStatus))
-      case (Some(selectedTaxYear), Annual, nyStatus) if (selectedTaxYear == currentTaxYear) && (nyStatus != Annual) =>
-        auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, SignUpSingleYear, currentYearItsaStatus, nextYearItsaStatus))
       case _ => Future(())
     }
   }
@@ -99,11 +96,9 @@ class SignUpSubmissionService @Inject()(
       _ = logger.info(
         s"\n[SignUpSubmissionService][triggerSignUpRequest] Sign Up update response: $updateResponse"
       )
-      _ <- makeSignUpAuditEventRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus, optInProposition)
+      _ <- makeSignUpAuditEventRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus)
     } yield {
       updateResponse
     }
   }
-
-
 }

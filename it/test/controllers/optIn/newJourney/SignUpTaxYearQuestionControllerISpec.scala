@@ -16,12 +16,14 @@
 
 package controllers.optIn.newJourney
 
+import audit.models.{SignUpAuditModel, SignUpMultipleYears, SignUpSingleYear}
+import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import controllers.optIn.oldJourney.ConfirmTaxYearControllerISpec.emptyBodyString
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
@@ -33,7 +35,7 @@ import play.mvc.Http.Status
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
 
 class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
@@ -52,6 +54,9 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
   val forCurrentYearEnd: Int = dateService.getCurrentTaxYear.endYear
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(forCurrentYearEnd)
 
+  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = {
+    getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)
+  }
 
   object SignUpTaxYearQuestionMessages {
     val currentYearHeading = "Voluntarily signing up for the current tax year"
@@ -442,7 +447,59 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         testAuthFailures(path, mtdUserRole)
       }
 
-      "submit the answer to the sign up tax year question" in {
+      "submit the answer to the sign up tax year question - SingleYear" in {
+
+        enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
+
+        stubAuthorised(mtdUserRole)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        val currentYear = "2022"
+        val currentTaxYear = TaxYear(2022, 2023)
+
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+          taxYear = currentTaxYear,
+          `itsaStatusCY-1` = ITSAStatus.Annual,
+          itsaStatusCY = ITSAStatus.Annual,
+          `itsaStatusCY+1` = ITSAStatus.Voluntary
+        )
+        CalculationListStub.stubGetLegacyCalculationList(testNino, currentTaxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+
+        ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.nino, Status.NO_CONTENT, emptyBodyString)
+
+        await(
+          repository.set(
+            UIJourneySessionData(
+              sessionId = testSessionId,
+              journeyType = Opt(OptInJourney).toString,
+              optInSessionData =
+                Some(OptInSessionData(
+                  optInContextData =
+                    Some(OptInContextData(
+                      currentTaxYear = "2022-2023",
+                      currentYearITSAStatus = "Annual",
+                      nextYearITSAStatus = "MTD Voluntary"
+                    )),
+                  selectedOptInYear = Some("2022-2023")
+                ))
+            )
+          )
+        )
+
+        whenReady(buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("sign-up-tax-year-question" -> Seq("Yes")))) { result => {
+          AuditStub.verifyAuditEvent(
+            SignUpAuditModel(TaxYear(2022, 2023), SignUpSingleYear, ITSAStatus.Annual, ITSAStatus.Voluntary)(testUser(mtdUserRole))
+          )
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(s"/report-quarterly/income-and-expenses/view$path/completed")
+          )
+        }
+        }
+      }
+
+      "submit the answer to the sign up tax year question - MultiYear" in {
 
         enable(OptInOptOutContentUpdateR17, SignUpFs, ReportingFrequencyPage)
 
@@ -481,12 +538,17 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           )
         )
 
-        val result = buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("sign-up-tax-year-question" -> Seq("Yes"))).futureValue
+        whenReady(buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("sign-up-tax-year-question" -> Seq("Yes")))) { result => {
+            AuditStub.verifyAuditEvent(
+              SignUpAuditModel(TaxYear(2022, 2023), SignUpMultipleYears, ITSAStatus.Annual, ITSAStatus.Annual)(testUser(mtdUserRole))
+            )
 
-        result should have(
-          httpStatus(SEE_OTHER),
-          redirectURI(s"/report-quarterly/income-and-expenses/view$path/completed")
-        )
+            result should have(
+              httpStatus(SEE_OTHER),
+              redirectURI(s"/report-quarterly/income-and-expenses/view$path/completed")
+            )
+          }
+        }
       }
 
       "get an error message if the user incorrectly submits to the form" in {

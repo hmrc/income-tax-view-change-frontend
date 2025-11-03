@@ -110,7 +110,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
       "selected tax year == CY" when {
 
-        "both CY & CY+1 are Annual" should {
+        "selected tax year is present" should {
 
           "return success response with No Content - 204" in {
 
@@ -124,41 +124,16 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val request: Future[ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse] =
               service.makeUpdateRequest(
-                selectedSignUpYear = Some(currentTaxYear),
-                currentYearItsaStatus = Some(Annual),
-                nextYearItsaStatus = Some(Annual)
+                selectedSignUpYear = Some(currentTaxYear)
               )
 
             whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseSuccess(204) } // 204 No Content
           }
         }
 
-        "only CY is Annual - single tax year scenario, user is unable to select atax year" should {
+        "Selected tax year isn't present" should {
 
-          "return success response with No Content - 204" in {
-
-            val currentTaxYear = TaxYear(2025, 2026)
-
-            when(mockDateService.getCurrentTaxYear)
-              .thenReturn(currentTaxYear)
-
-            when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
-              .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess(NO_CONTENT)))
-
-            val request: Future[ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse] =
-              service.makeUpdateRequest(
-                selectedSignUpYear = None,
-                currentYearItsaStatus = Some(Annual),
-                nextYearItsaStatus = Some(Voluntary)
-              )
-
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseSuccess(204) } // 204 No Content
-          }
-        }
-
-        "only CY+1 is Annual - single tax year scenario, user is unable to select atax year" should {
-
-          "return success response with No Content - 204" in {
+          "return failure response with No Content - 204" in {
 
             val currentTaxYear = TaxYear(2025, 2026)
 
@@ -170,32 +145,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val request: Future[ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse] =
               service.makeUpdateRequest(
-                selectedSignUpYear = None,
-                currentYearItsaStatus = Some(Voluntary),
-                nextYearItsaStatus = Some(Annual)
-              )
-
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseSuccess(204) } // 204 No Content
-          }
-        }
-
-        "Neither CY or CY+1 are Annual - invalid sign up scenario" should {
-
-          "return success response with No Content - 204" in {
-
-            val currentTaxYear = TaxYear(2025, 2026)
-
-            when(mockDateService.getCurrentTaxYear)
-              .thenReturn(currentTaxYear)
-
-            when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
-              .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess(NO_CONTENT)))
-
-            val request: Future[ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse] =
-              service.makeUpdateRequest(
-                selectedSignUpYear = None,
-                currentYearItsaStatus = Some(Voluntary),
-                nextYearItsaStatus = Some(Voluntary)
+                selectedSignUpYear = None
               )
 
             whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseFailure.defaultFailure() }
@@ -221,7 +171,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val currentTaxYear = TaxYear(2025, 2026)
 
-            val selectedOptInYear = None // user cannot select tax year for a single tax year scenario
+            val selectedOptInYear = Some("2025-2026")
             val optInSessionData = OptInSessionData(Some(optInContextData), selectedOptInYear = selectedOptInYear)
 
             val retrievedUiSessionData =
@@ -257,7 +207,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val request = service.triggerSignUpRequest()
 
-            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseSuccess(204) } // 204 No Content
+            whenReady(request) { result => result shouldBe ITSAStatusUpdateResponseSuccess(204) }
           }
         }
       }
@@ -277,7 +227,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
             val currentTaxYear = TaxYear(2025, 2026)
 
-            val selectedOptInYear = None // user cannot select tax year for a single tax year scenario
+            val selectedOptInYear = Some("2026-2027")
             val optInSessionData = OptInSessionData(Some(optInContextData), selectedOptInYear = selectedOptInYear)
 
             val retrievedUiSessionData =
