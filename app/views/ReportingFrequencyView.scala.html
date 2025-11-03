@@ -307,21 +307,76 @@
     }
 }
 
+@yourReportingObligations = {
+    @h2(msg = "reporting.frequency.your.obligations.heading", optId = Some("your-obligations-heading"))
+    @p(id = Some("your-obligations-p1")){
+        @messages("reporting.frequency.your.obligations.p1")
+    }
+
+    @p(id = Some("your-obligations-updates-and-deadlines")){
+        @messages("reporting.frequency.your.obligations.p2")
+        @linkComponent(nextUpdatesLink,
+            message = messages("reporting.frequency.your.obligations.link.text"),
+            rel=Some("noreferrer noopener"),
+            id = Some("your-obligations-updates-and-deadlines-link")
+        )
+        @messages("reporting.frequency.your.obligations.link.text.additional.english")
+    }
+}
+
+@mandatoryReportingOnlyExempt = {
+    @h2(msg = "reporting.frequency.mandatoryReporting.heading.R17", optId = Some("mandatory-reporting-heading"))
+
+    @p(id = Some("mandatory-reporting-text-1")){
+        @messages("reporting.frequency.mandatoryReporting.onlyExempt.p1")
+    }
+
+    @p(id = Some("mandatory-reporting-text-2")) {
+        @messages("reporting.frequency.mandatoryReporting.onlyExempt.p2")
+        @linkComponent(ExternalUrlHelper.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.onlyExempt.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"), additionalMessage = Some(messages("base.fullstop")))
+    }
+}
+
+@mandatoryReportingHasExempt = {
+    @h2(msg = "reporting.frequency.mandatoryReporting.heading.R17", optId = Some("mandatory-reporting-heading"))
+
+    @p(id = Some("mandatory-reporting-text-1")){
+        @messages("reporting.frequency.mandatoryReporting.hasExempt.p1")
+    }
+
+    @govukInsetText(InsetText(id = Some("mandatory-reporting-inset"), content = HtmlContent(messages("reporting.frequency.mandatoryReporting.inset.R17"))))
+
+    @p(id = Some("mandatory-reporting-text-2")){
+        @messages("reporting.frequency.mandatoryReporting.hasExempt.p2")
+    }
+
+    @p(id = Some("mandatory-reporting-text-3")) {
+        @messages("reporting.frequency.mandatoryReporting.hasExempt.p3")
+        @linkComponent(ExternalUrlHelper.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.hasExempt.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"), additionalMessage = Some(messages("base.fullstop")))
+    }
+}
+
 @mandatoryReporting = {
     @if(optInOptOutContentUpdateR17IsEnabled){
-        @h2(msg = "reporting.frequency.mandatoryReporting.heading.R17", optId = Some("mandatory-reporting-heading"))
-        @govukInsetText(InsetText(id = Some("mandatory-reporting-inset"), content = HtmlContent(messages("reporting.frequency.mandatoryReporting.inset.R17"))))
-        @p(id = Some("mandatory-reporting-text")){
-            @messages("reporting.frequency.mandatoryReporting.p1",
-                s"${dateService.getCurrentTaxYear.startYear - 1}",
-                s"${dateService.getCurrentTaxYear.endYear - 1}",
-                s"${dateService.getCurrentTaxYear.startYear + 1}",
-                s"${dateService.getCurrentTaxYear.endYear + 1}"
-            )
-        }
-        @p(id = Some("mandatory-reporting-text-2")) {
-            @messages("reporting.frequency.mandatoryReporting.p2")
-            @linkComponent(ExternalUrlHelper.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"), additionalMessage = Some(messages("base.fullstop")))
+        @if(viewModel.showYourReportingObligations){
+            @mandatoryReportingOnlyExempt
+        } else if (viewModel.hasExemptStatuses) {
+            @mandatoryReportingHasExempt
+        } else {
+            @h2(msg = "reporting.frequency.mandatoryReporting.heading.R17", optId = Some("mandatory-reporting-heading"))
+            @govukInsetText(InsetText(id = Some("mandatory-reporting-inset"), content = HtmlContent(messages("reporting.frequency.mandatoryReporting.inset.R17"))))
+            @p(id = Some("mandatory-reporting-text")){
+                @messages("reporting.frequency.mandatoryReporting.p1",
+                    s"${dateService.getCurrentTaxYear.startYear - 1}",
+                    s"${dateService.getCurrentTaxYear.endYear - 1}",
+                    s"${dateService.getCurrentTaxYear.startYear + 1}",
+                    s"${dateService.getCurrentTaxYear.endYear + 1}"
+                )
+            }
+            @p(id = Some("mandatory-reporting-text-2")) {
+                @messages("reporting.frequency.mandatoryReporting.p2")
+                @linkComponent(ExternalUrlHelper.saWhoNeedsToSignUpUrl, message = s"${messages("reporting.frequency.mandatoryReporting.link.text")} ", rel = Some("noreferrer noopener"), target = Some("_blank"), id = Some("mandatory-reporting-link"), additionalMessage = Some(messages("base.fullstop")))
+            }
         }
     } else {
         @h2(msg = "reporting.frequency.mandatoryReporting.heading", optId = Some("mandatory-reporting-heading"))
@@ -419,7 +474,7 @@
 
     @itsaStatusTable
 
-    @if(viewModel.isAnyOfBusinessLatent) {
+    @if(viewModel.isAnyOfBusinessLatent && !viewModel.hasExemptStatuses) {
         @if(optInOptOutContentUpdateR17IsEnabled) {
             @detailsDropdown("reporting.frequency.latency.details.section.header.updateR17", dropDownContentOptInOptOutContentUpdateR17, Some("latency-details-dropdown"))
         } else {
@@ -431,11 +486,17 @@
         @manageReportingFrequency
     }
 
-    @if(!viewModel.displayCeasedBusinessWarning) {
+    @if(!viewModel.displayCeasedBusinessWarning && !viewModel.showYourReportingObligations) {
         @differentObligations
+    }
+
+    @if(viewModel.showYourReportingObligations) {
+        @yourReportingObligations
     }
 
     @mandatoryReporting
 
-    @compatibleSoftware
+    @if(!viewModel.hideCompatibleSoftware) {
+        @compatibleSoftware
+    }
 }
