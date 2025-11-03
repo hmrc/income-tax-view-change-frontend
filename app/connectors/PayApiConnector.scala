@@ -33,18 +33,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PayApiConnector @Inject()(http: HttpClientV2,
                                 auditingService: AuditingService,
-                                val appConfig: FrontendAppConfig,
-                                config: FrontendAppConfig)(implicit ec: ExecutionContext) extends FeatureSwitching {
+                                val appConfig: FrontendAppConfig)(implicit ec: ExecutionContext) extends FeatureSwitching {
 
-  val startUrlJourney: String = config.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
+  val startUrlJourney: String = appConfig.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
 
   def startPaymentJourney(saUtr: String, amountInPence: BigDecimal, isAgent: Boolean)(implicit headerCarrier: HeaderCarrier): Future[PaymentJourneyResponse] = {
 
     val yourSAChargesEnabled = isEnabledFromConfig(YourSelfAssessmentCharges)
     def paymentRedirectUrl: String = if(yourSAChargesEnabled) {
-      if (isAgent) config.agentPaymentSARedirectUrl else config.paymentSARedirectUrl
+      if (isAgent) appConfig.agentPaymentSARedirectUrl else appConfig.paymentSARedirectUrl
     } else {
-      if (isAgent) config.agentPaymentRedirectUrl else config.paymentRedirectUrl
+      if (isAgent) appConfig.agentPaymentRedirectUrl else appConfig.paymentRedirectUrl
     }
 
 
