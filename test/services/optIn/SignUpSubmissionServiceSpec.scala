@@ -106,6 +106,53 @@ class SignUpSubmissionServiceSpec extends UnitSpec
       }
     }
 
+    "filterTaxYearsForSignUp()" when {
+      "the user has selected CY as the sign up tax year and both years are Annual" should {
+
+        "return both tax years" in {
+
+          val currentTaxYear = TaxYear(2025, 2026)
+
+          when(mockDateService.getCurrentTaxYear)
+            .thenReturn(currentTaxYear)
+
+          val result = service.filterTaxYearsForSignUp(Annual, Annual, Some(currentTaxYear))
+
+          result shouldBe Seq(TaxYear(2025, 2026), TaxYear(2026, 2027))
+        }
+      }
+
+      "the user has selected CY as the sign up tax year and only current year is Annual" should {
+
+        "return only current tax year" in {
+
+          val currentTaxYear = TaxYear(2025, 2026)
+
+          when(mockDateService.getCurrentTaxYear)
+            .thenReturn(currentTaxYear)
+
+          val result = service.filterTaxYearsForSignUp(Annual, Voluntary, Some(currentTaxYear))
+
+          result shouldBe Seq(TaxYear(2025, 2026))
+        }
+      }
+
+      "the user has selected CY+1 as the sign up tax year and only next year is Annual" should {
+
+        "return only next tax year" in {
+
+          val currentTaxYear = TaxYear(2025, 2026)
+
+          when(mockDateService.getCurrentTaxYear)
+            .thenReturn(currentTaxYear)
+
+          val result = service.filterTaxYearsForSignUp(Voluntary, Annual, Some(currentTaxYear.nextYear))
+
+          result shouldBe Seq(TaxYear(2026, 2027))
+        }
+      }
+    }
+
     ".triggerSignUpRequest()" when {
 
       "single tax year - CY" when {
