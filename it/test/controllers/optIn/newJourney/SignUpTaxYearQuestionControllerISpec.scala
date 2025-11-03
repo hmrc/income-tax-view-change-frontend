@@ -35,6 +35,8 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSe
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
+import scala.concurrent.Future
+
 class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
@@ -529,7 +531,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
-          await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, currentTaxYear, journeyComplete = true))
+          await(setupOptInSessionData(currentTaxYear, currentYearStatus = ITSAStatus.Annual, nextYearStatus = ITSAStatus.Annual, currentTaxYear, journeyComplete = true))
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
           val redirectUrl = {
