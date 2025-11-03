@@ -442,6 +442,8 @@ tax-year-summary.adjust-poa-paragraph                          = Gallwch ostwng 
 tax-year-summary.adjust-poa                                    = Addasu taliadau ar gyfrif
 
 # Tax Year Summary - PFA #
+tax-year-summary.pfa.heading-secondary                             = Blwyddyn dreth {0} i {1}
+
 tax-year-summary.latest-calculation                                = Cyfrifiad Diweddaraf
 tax-year-summary.latest-calculation-desc                           = Cafodd eich Ffurflen Dreth ei ddiwygio ar {0} ac o ganlyniad dyma’ch cyfrifiad mwyaf diweddar.
 
@@ -459,6 +461,16 @@ tax-year-summary.previous-calculation-example                      = Er enghraif
 tax-year-summary.previous-calculation-contact-hmrc                 = Os yw’r dyddiad hwnnw wedi mynd heibio neu os na allwch ddiwygio’ch Ffurflen Dreth am reswm arall,
 tax-year-summary.previous-calculation-contact-hmrc-link            = bydd angen i chi gysylltu â CThEF
 tax-year-summary.previous-calculation-bill                         = Caiff eich cyfrifiad yn ogystal â’ch bil ei ddiweddaru yn seiliedig ar yr hyn yr ydych yn rhoi gwybod amdano. Gallai hyn olygu y bydd yn rhaid i chi dalu mwy o dreth, neu gallwch hawlio ad-daliad.
+
+tax-year-summary.calculation-amend-subheading                      = Diwygio Ffurflen Dreth sydd wedi’i chyflwyno
+tax-year-summary.calculation-bullet-start                          = Gallwch newid eich Ffurflen Dreth ar ôl i chi ei chyflwyno. I wneud hyn ar-lein, mae’n rhaid i chi wneud y canlynol:
+tax-year-summary.calculation-bullet-1                              = defnyddio’r meddalwedd neu wasanaethau ar-lein CThEF a ddefnyddiwyd i gyflwyno’r Ffurflen Dreth
+tax-year-summary.calculation-bullet-2                              = gwneud hynny cyn pen 12 mis o’r
+tax-year-summary.calculation-bullet-2-link                         = dyddiad cau Hunanasesiad
+tax-year-summary.calculation-example                               = Er enghraifft, ar gyfer blwyddyn dreth {0} i {1}, fel arfer bydd angen i chi gwneud y newid ar-lein erbyn 31 Ionawr {2}.
+tax-year-summary.calculation-contact-hmrc                          = Os yw’r dyddiad hwnnw wedi mynd heibio neu os na allwch ddiwygio’ch Ffurflen Dreth am reswm arall,
+tax-year-summary.calculation-contact-hmrc-link                     = bydd angen i chi gysylltu â CThEF
+tax-year-summary.calculation-bill                                  = Caiff eich cyfrifiad yn ogystal â’ch bil ei ddiweddaru yn seiliedig ar yr hyn yr ydych yn rhoi gwybod amdano. Gallai hyn olygu y bydd yn rhaid i chi dalu mwy o dreth, neu gallwch hawlio ad-daliad.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
@@ -3504,3 +3516,11 @@ triggered-migration.checkComplete.submitUpdates.p1                              
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = creu cofnod digidol o’ch incwm o eiddo a’ch incwm o fod yn unig fasnachwr, a’r treuliau cysylltiedig
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = anfon eich diweddariad(au) chwarterol at CThEF
 triggered-migration.checkComplete.submitUpdates.linkText                                = Gwiriwch eich diweddariadau diweddaraf a’r dyddiadau cau
+
+#sign-up/opt-out you can not go back page
+signUpOptOut.cannotGoBack.heading       = Ni allwch fynd yn ôl
+signUpOptOut.cannotGoBack.h2.optOut     = Rydych wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+signUpOptOut.cannotGoBack.h2.signUp     = Rydych wedi cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+signUpOptOut.cannotGoBack.ul.heading    = Gallwch wneud y canlynol:
+signUpOptOut.cannotGoBack.linkText1     = bwrw golwg dros eich dyddiadau cau sydd ar ddod
+signUpOptOut.cannotGoBack.linkText2     = mynd yn ôl i’r hafan

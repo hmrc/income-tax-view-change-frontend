@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package enums.IncomeSourceJourney
+package enums
 
 trait JourneyState {
   val key: String
@@ -43,4 +43,9 @@ case object AfterSubmissionPage extends JourneyState {
 case object ReportingFrequencyPages extends JourneyState {
   //for any page after the first (or only) submission of data to an API
   override val key: String = "ReportingFrequencyPages"
+}
+
+case object JourneyCompleted extends JourneyState {
+  //any You Cannot Go Back page, to prevent infinite redirects
+  override val key: String = "JourneyCompleted"
 }

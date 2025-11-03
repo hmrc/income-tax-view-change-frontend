@@ -22,7 +22,10 @@ import mocks.services.MockOptInService
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Voluntary
+import models.optin.OptInSessionData
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -54,6 +57,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockOptInService {
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentOptInTaxYear(Voluntary, TaxYear(2025, 2026))))))
 
+          when(mockOptInService.fetchSavedOptInSessionData()(any(), any(), any()))
+            .thenReturn(Future.successful(Some(OptInSessionData(None, None, None))))
+
           mockSaveIntent(TaxYear(2025, 2026))
           mockFetchSavedChosenTaxYear(Some(TaxYear(2025, 2026)))
 
@@ -66,6 +72,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockOptInService {
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(None))
+
+          when(mockOptInService.fetchSavedOptInSessionData()(any(), any(), any()))
+            .thenReturn(Future.successful(Some(OptInSessionData(None, None, None))))
 
           mockSaveIntent(TaxYear(2025, 2026))
           mockFetchSavedChosenTaxYear(None)
@@ -89,6 +98,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockOptInService {
             controllers.routes.HomeController.show().url
           }
 
+          when(mockOptInService.fetchSavedOptInSessionData()(any(), any(), any()))
+            .thenReturn(Future.successful(Some(OptInSessionData(None, None, None))))
+
           val result = action(fakeRequest)
 
           status(result) shouldBe SEE_OTHER
@@ -102,7 +114,11 @@ class SignUpStartControllerSpec extends MockAuthActions with MockOptInService {
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentOptInTaxYear(Voluntary, TaxYear(2025, 2026))))))
 
+          when(mockOptInService.fetchSavedOptInSessionData()(any(), any(), any()))
+            .thenReturn(Future.successful(Some(OptInSessionData(None, None, None))))
+
           val result = action(fakeRequest)
+
 
           val redirectUrl = if (isAgent) {
             controllers.routes.ReportingFrequencyPageController.show(true).url

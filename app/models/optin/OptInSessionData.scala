@@ -18,11 +18,12 @@ package models.optin
 
 import play.api.libs.json.{Json, OFormat}
 
-case class OptInSessionData(
-                             optInContextData: Option[OptInContextData],
-                             selectedOptInYear: Option[String]
+case class OptInSessionData(optInContextData: Option[OptInContextData],
+                            selectedOptInYear: Option[String],
+                            journeyIsComplete: Option[Boolean] = Some(false)
                            ) {
 
+  val selectedOptInYearField: String = "SelectedOptInYear"
 }
 
 object OptInSessionData {

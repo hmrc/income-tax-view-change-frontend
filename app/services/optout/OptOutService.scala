@@ -90,6 +90,15 @@ class OptOutService @Inject()(
     }
   }
 
+  def fetchJourneyCompleteStatus()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    optOutRepository.fetchJourneyCompleteStatus()
+  }
+
+  def updateJourneyStatusInSessionData(journeyComplete: Boolean)
+                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    optOutRepository.setJourneyCompleteStatus(journeyComplete)
+  }
+
   private def getITSAStatusesFrom(previousYear: TaxYear)(implicit user: MtdItUser[_],
                                                          hc: HeaderCarrier,
                                                          ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] =

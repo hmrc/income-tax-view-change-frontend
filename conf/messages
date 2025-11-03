@@ -441,6 +441,8 @@ tax-year-summary.adjust-poa-paragraph                              = You can red
 tax-year-summary.adjust-poa                                        = Adjust payments on account
 
 # Tax Year Summary - PFA #
+tax-year-summary.pfa.heading-secondary                             = {0} to {1} tax year
+
 tax-year-summary.latest-calculation                                = Latest calculation
 tax-year-summary.latest-calculation-desc                           = Your tax return was amended on {0} and as a result this is your most up-to-date calculation.
 
@@ -458,6 +460,16 @@ tax-year-summary.previous-calculation-example                      = For example
 tax-year-summary.previous-calculation-contact-hmrc                 = If that date has passed, or you cannot amend your return for another reason,
 tax-year-summary.previous-calculation-contact-hmrc-link            = you’ll need to contact HMRC
 tax-year-summary.previous-calculation-bill                         = Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.
+
+tax-year-summary.calculation-amend-subheading                      = Amending a submitted tax return
+tax-year-summary.calculation-bullet-start                          = You can change your tax return after you have filed it. To do this online you must:
+tax-year-summary.calculation-bullet-1                              = use the software or HMRC online service used to submit the return
+tax-year-summary.calculation-bullet-2                              = do it within 12 months of the
+tax-year-summary.calculation-bullet-2-link                         = Self Assessment deadline
+tax-year-summary.calculation-example                               = For example, for the {0} to {1} tax year, you’ll usually need to make the change online by 31 January {2}.
+tax-year-summary.calculation-contact-hmrc                          = If that date has passed, or you cannot amend your return for another reason,
+tax-year-summary.calculation-contact-hmrc-link                     = you’ll need to contact HMRC
+tax-year-summary.calculation-bill                                  = Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income
@@ -3514,3 +3526,11 @@ triggered-migration.checkComplete.submitUpdates.p1                              
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = create a digital record of your property and sole trader income and expenses
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send your quarterly update(s) to HMRC
 triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest updates and deadlines
+
+#sign-up/opt-out you can not go back page
+signUpOptOut.cannotGoBack.heading       = You cannot go back
+signUpOptOut.cannotGoBack.h2.optOut     = You have opted out of Making Tax Digital for Income Tax
+signUpOptOut.cannotGoBack.h2.signUp     = You have signed up to Making Tax Digital for Income Tax
+signUpOptOut.cannotGoBack.ul.heading    = You can:
+signUpOptOut.cannotGoBack.linkText1     = view your upcoming deadlines
+signUpOptOut.cannotGoBack.linkText2     = go back to the home page

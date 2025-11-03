@@ -32,7 +32,8 @@ class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) 
                               previousYearStatus: ITSAStatus,
                               currentYearStatus: ITSAStatus,
                               nextYearStatus: ITSAStatus,
-                              selectedOptOutYear: Option[String] = None
+                              selectedOptOutYear: Option[String] = None,
+                              journeyIsComplete: Boolean = false
                             ): Boolean = {
     repository.set(
       UIJourneySessionData(
@@ -47,7 +48,8 @@ class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) 
               currentYearITSAStatus = currentYearStatus.toString,
               nextYearITSAStatus = nextYearStatus.toString)),
             selectedOptOutYear = selectedOptOutYear
-          ))
+          )),
+        journeyIsComplete = Some(journeyIsComplete)
       )
     ).futureValue
   }

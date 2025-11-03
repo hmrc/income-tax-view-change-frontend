@@ -104,27 +104,28 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
       withOptOutFS {
         withRecover(isAgent) {
           val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
-            for {
-              viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
-              viewScenarioContent: Either[ConfirmedOptOutViewScenariosError, ConfirmedOptOutViewScenarios] <- viewScenarioHandler()
-            } yield {
-              (viewScenarioContent, viewModel) match {
-                case (Left(error), _) =>
-                  Logger("application").error(s"[ConfirmedOptOutController][show] Error, invalid Opt-out journey, error: $error")
-                  errorHandler(isAgent).showInternalServerError()
-                case (Right(viewScenario), Some(viewModel)) =>
-                  Logger("application").debug(s"[ConfirmedOptOutController][show] Success, showing ConfirmedOptOutView for scenario: $viewScenario")
-                  Ok(view(
-                    viewModel = viewModel,
-                    isAgent = isAgent,
-                    showReportingFrequencyContent = showReportingFrequencyContent,
-                    confirmedOptOutViewScenarios = viewScenario,
-                    selfAssessmentTaxReturnLink = appConfig.selfAssessmentTaxReturnLink,
-                    compatibleSoftwareLink = appConfig.compatibleSoftwareLink
-                  ))
-              }
+          for {
+            viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
+            viewScenarioContent: Either[ConfirmedOptOutViewScenariosError, ConfirmedOptOutViewScenarios] <- viewScenarioHandler()
+            _ <- optOutService.updateJourneyStatusInSessionData(true)
+          } yield {
+            (viewScenarioContent, viewModel) match {
+              case (Left(error), _) =>
+                Logger("application").error(s"[ConfirmedOptOutController][show] Error, invalid Opt-out journey, error: $error")
+                errorHandler(isAgent).showInternalServerError()
+              case (Right(viewScenario), Some(viewModel)) =>
+                Logger("application").debug(s"[ConfirmedOptOutController][show] Success, showing ConfirmedOptOutView for scenario: $viewScenario")
+                Ok(view(
+                  viewModel = viewModel,
+                  isAgent = isAgent,
+                  showReportingFrequencyContent = showReportingFrequencyContent,
+                  confirmedOptOutViewScenarios = viewScenario,
+                  selfAssessmentTaxReturnLink = appConfig.selfAssessmentTaxReturnLink,
+                  compatibleSoftwareLink = appConfig.compatibleSoftwareLink
+                ))
             }
           }
         }
+      }
     }
 }
