@@ -148,16 +148,40 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
             )
           }
         }
+
+        "has already completed the sign-up journey (according to session data)" should {
+          "redirect to the cannot go back page" in {
+            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+            stubAuthorised(mtdUserRole)
+            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+            setupOptInSessionData(currentTaxYear, journeyComplete = true)
+
+            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+              taxYear = currentTaxYear,
+              `itsaStatusCY-1` = ITSAStatus.Annual,
+              itsaStatusCY = ITSAStatus.Annual,
+              `itsaStatusCY+1` = ITSAStatus.Mandated
+            )
+            val result = buildGETMTDClient(s"$path?taxYear=2022", additionalCookies).futureValue
+            val redirectUrl: String = controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(true)).url
+
+            result should have(
+              httpStatus(SEE_OTHER),
+              redirectURI(redirectUrl)
+            )
+          }
+        }
       }
     }
   }
 
-  private def setupOptInSessionData(currentTaxYear: TaxYear): Unit = {
+  private def setupOptInSessionData(currentTaxYear: TaxYear, journeyComplete: Boolean = false): Unit = {
     await(repository.set(
       UIJourneySessionData(testSessionId,
         Opt(OptInJourney).toString,
         optInSessionData =
-          Some(OptInSessionData(None, Some(currentTaxYear.toString))))))
+          Some(OptInSessionData(None, Some(currentTaxYear.toString), journeyIsComplete = Some(journeyComplete))))))
   }
 }
 

@@ -89,6 +89,9 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
               Future(CurrentTaxYear)
             )
 
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.OK
