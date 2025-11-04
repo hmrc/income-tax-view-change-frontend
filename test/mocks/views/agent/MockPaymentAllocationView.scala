@@ -43,8 +43,6 @@ trait MockPaymentAllocationView extends BeforeAndAfterEach {
       any(),
       any(),
       any(),
-      any(),
-      any(),
       any()
     )(any(), any()))
       .thenReturn(response)
