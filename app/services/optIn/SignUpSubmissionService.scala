@@ -71,9 +71,9 @@ class SignUpSubmissionService @Inject()(
     (selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus) match {
       case (Some(selectedTaxYear), Annual, nyStatus) if selectedTaxYear == currentTaxYear =>
         val signUpYearType = if (nyStatus == Annual) SignUpMultipleYears else SignUpSingleYear
-        auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, signUpYearType, currentYearItsaStatus, nextYearItsaStatus))
+        auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, currentYearItsaStatus, signUpYearType))
       case (Some(selectedTaxYear), _, Annual) if selectedTaxYear == nextTaxYear =>
-        auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, SignUpMultipleYears, currentYearItsaStatus, nextYearItsaStatus))
+        auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, nextYearItsaStatus, SignUpMultipleYears))
       case _ => Future(())
     }
   }
