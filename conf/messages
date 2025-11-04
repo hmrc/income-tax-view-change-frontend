@@ -3372,14 +3372,17 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = You’ll a
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.text.heading     = First payment on account: extra amount from your tax return
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.text.heading     = Second payment on account: extra amount from your tax return
 yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe      = (not including estimated interest)
-yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on your {0}
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = The amount of interest you have to pay will increase every day until you pay the overdue charge.
+yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on this charge
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Interest is charged from the date your balancing payment was originally due.
+yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Interest will be estimated until the charge it is related to is paid in full.
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
-yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest to date
+yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest on this charge:
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Amount interest is applied to
-yourSelfAssessmentChargeSummary.table.head.daysOverdue                  = Days overdue
-yourSelfAssessmentChargeSummary.table.head.interestRate                 = Interest rate
+yourSelfAssessmentChargeSummary.table.head.interestPeriod               = Interest period
+yourSelfAssessmentChargeSummary.table.head.interestRate                 = Current Interest rate
 yourSelfAssessmentChargeSummary.table.head.amount                       = Amount
+yourSelfAssessmentChargeSummary.warningText                             = Pay this charge to stop this interest from increasing daily.
+
 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = How is interest calculated?
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p1          = Multiply the amount the interest is applied to by the number of days overdue (period).
@@ -3454,7 +3457,8 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p                       
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                        = View how your penalty was calculated.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = You owe this extra tax because of a change you made to your return.
-yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = This charge will have a daily interest until it is paid. The interest is backdated to the original due date.
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Pay this charge to stop this interest from increasing daily.
+
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
