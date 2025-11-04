@@ -32,7 +32,7 @@ case class SignUpAuditModel(signUpTaxYear: TaxYear,
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++
       Json.obj(
-        "signUpTaxYear" -> signUpTaxYear,
+        "signUpTaxYear" -> signUpTaxYear.toString,
         "signUpType" -> signUpType.toString,
         "currentTaxYearItsaStatus" -> currentYearItsaStatus,
         "nextTaxYearItsaStatus" -> nextYearItsaStatus
