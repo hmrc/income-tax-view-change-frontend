@@ -19,7 +19,7 @@ package utils.claimToAdjust
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
+import enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.incomeSourceDetails.IncomeSourceDetailsModel

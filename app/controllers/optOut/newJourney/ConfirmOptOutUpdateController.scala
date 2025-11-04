@@ -20,61 +20,34 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
 import models.optout.newJourney.CheckOptOutUpdateAnswersViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.optout.OptOutService
+import services.optout.{OptOutService, OptOutSubmissionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerOptOut
 import views.html.optOut.newJourney.CheckOptOutUpdateAnswers
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-class ConfirmOptOutUpdateController @Inject()(view: CheckOptOutUpdateAnswers,
-                                              val optOutService: OptOutService,
-                                              authActions: AuthActions,
-                                              val itvcErrorHandler: ItvcErrorHandler,
-                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                             (implicit val appConfig: FrontendAppConfig,
-                                        val ec: ExecutionContext,
-                                        val mcc: MessagesControllerComponents)
+class ConfirmOptOutUpdateController @Inject()(
+                                               authActions: AuthActions,
+                                               optOutSubmissionService: OptOutSubmissionService,
+                                               view: CheckOptOutUpdateAnswers,
+                                               val optOutService: OptOutService,
+                                               val itvcErrorHandler: ItvcErrorHandler,
+                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                             )(
+                                               implicit val appConfig: FrontendAppConfig,
+                                               val ec: ExecutionContext,
+                                               val mcc: MessagesControllerComponents
+                                             )
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with JourneyCheckerOptOut {
-
-
-  def show(isAgent: Boolean = false, taxYear: String): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      withOptOutRFChecks {
-        withRecover(isAgent) {
-          withSessionData(false, TaxYear(taxYear.toInt, taxYear.toInt + 1)) {
-            for {
-              optOutProposition <- optOutService.fetchOptOutProposition()
-              quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
-            } yield {
-              val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
-              val reportingObligationsURL = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
-              Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, reportingObligationsURL))
-            }
-          }
-        }
-      }
-  }
-
-  def submit(isAgent: Boolean, @unused taxYear: String): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        withOptOutRFChecks {
-          optOutService.makeOptOutUpdateRequest().map {
-            case ITSAStatusUpdateResponseSuccess(_) => Redirect(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent))
-            case _ => Redirect(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent))
-          }
-        }
-    }
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
@@ -89,4 +62,48 @@ class ConfirmOptOutUpdateController @Inject()(view: CheckOptOutUpdateAnswers,
     errorHandler(isAgent).showInternalServerError()
   }
 
+  def show(isAgent: Boolean = false, taxYear: String): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      withOptOutRFChecks {
+        optOutService.fetchJourneyCompleteStatus().flatMap(journeyIsComplete => {
+          if(!journeyIsComplete){
+            withRecover(isAgent) {
+              withSessionData(isStart = false, TaxYear(taxYear.toInt, taxYear.toInt + 1)) {
+                for {
+                  optOutProposition <- optOutService.fetchOptOutProposition()
+                  quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
+                } yield {
+                  val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
+                  val reportingObligationsURL = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+                  Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, reportingObligationsURL))
+                }
+              }
+            }
+          }
+          else Future.successful(Redirect(controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false))))
+        })
+      }
+  }
+
+  def submit(isAgent: Boolean, @unused taxYear: String): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        withOptOutRFChecks {
+          for {
+            updateTaxYearsITSAStatusRequest: List[ITSAStatusUpdateResponse] <- optOutSubmissionService.updateTaxYearsITSAStatusRequest()
+            result = updateTaxYearsITSAStatusRequest match {
+              case List() =>
+                Redirect(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent))
+              case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
+                Redirect(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent))
+              case listOfUpdateRequestsMade if listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
+                Redirect(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent))
+              case _ =>
+                itvcErrorHandler.showInternalServerError()
+            }
+          } yield {
+            result
+          }
+        }
+    }
 }

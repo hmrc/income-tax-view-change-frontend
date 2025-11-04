@@ -23,10 +23,11 @@ import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
 import services.optIn.core.OptInProposition
 
-case class OptInAuditModel(optInProposition: OptInProposition,
+case class OptInAuditModel(
+                            optInProposition: OptInProposition,
                             intentTaxYear: TaxYear,
                             resolvedOutcome: ITSAStatusUpdateResponse
-                           )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
+                          )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.OptInQuarterlyReportingRequest
 

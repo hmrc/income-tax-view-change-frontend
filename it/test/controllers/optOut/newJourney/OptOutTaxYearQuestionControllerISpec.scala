@@ -24,12 +24,12 @@ import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeT
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
 import models.obligations._
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
@@ -43,6 +43,10 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
   private val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   private val helper = new OptOutSessionRepositoryHelper(repository)
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    repository.clearSession(testSessionId).futureValue shouldBe true
+  }
 
   object optOutTaxYearQuestionMessages {
     // Multi
@@ -135,6 +139,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Voluntary
           )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Annual,
+            nextYearStatus = Annual
+          )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
@@ -163,6 +174,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             `itsaStatusCY-1` = ITSAStatus.Voluntary,
             itsaStatusCY = ITSAStatus.Annual,
             `itsaStatusCY+1` = ITSAStatus.Voluntary
+          )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Annual,
+            nextYearStatus = Annual
           )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
@@ -193,6 +211,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Annual
           )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Annual,
+            nextYearStatus = Annual
+          )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
@@ -221,6 +246,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             `itsaStatusCY-1` = ITSAStatus.Voluntary,
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Voluntary
+          )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Voluntary,
+            nextYearStatus = Voluntary
           )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
@@ -251,6 +283,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Annual
           )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Voluntary,
+            nextYearStatus = Annual
+          )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
@@ -278,6 +317,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             `itsaStatusCY-1` = ITSAStatus.Voluntary,
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Voluntary
+          )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Annual,
+            nextYearStatus = Annual
           )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
@@ -308,6 +354,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Mandated,
             `itsaStatusCY+1` = ITSAStatus.Mandated
           )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Mandated,
+            nextYearStatus = Mandated
+          )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.previousYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
@@ -336,6 +389,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Mandated
           )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Annual,
+            nextYearStatus = Annual
+          )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
@@ -362,6 +422,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             `itsaStatusCY-1` = ITSAStatus.NoStatus,
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Mandated
+          )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = NoStatus,
+            currentYearStatus = Voluntary,
+            nextYearStatus = Mandated
           )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
@@ -391,6 +458,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Annual,
             `itsaStatusCY+1` = ITSAStatus.Annual
           )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Annual,
+            nextYearStatus = Annual
+          )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
@@ -419,6 +493,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Annual
           )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = NoStatus,
+            currentYearStatus = Voluntary,
+            nextYearStatus = Annual
+          )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
@@ -445,6 +526,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             `itsaStatusCY-1` = ITSAStatus.NoStatus,
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Annual
+          )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = NoStatus,
+            currentYearStatus = Voluntary,
+            nextYearStatus = Annual
           )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
@@ -474,6 +562,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Annual,
             `itsaStatusCY+1` = ITSAStatus.Voluntary
           )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = NoStatus,
+            currentYearStatus = Annual,
+            nextYearStatus = Voluntary
+          )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
@@ -499,6 +594,13 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             `itsaStatusCY-1` = ITSAStatus.NoStatus,
             itsaStatusCY = ITSAStatus.Mandated,
             `itsaStatusCY+1` = ITSAStatus.Voluntary
+          )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = NoStatus,
+            currentYearStatus = Mandated,
+            nextYearStatus = Voluntary
           )
           CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
@@ -581,6 +683,42 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           elementTextByClass("govuk-error-summary__title")("There is a problem"),
           elementTextByClass("govuk-error-summary__body")("Select yes to opt out for the 2022 to 2023 tax year")
         )
+      }
+
+      "has already completed the journey (according to session data)" should {
+        "redirect to the cannot go back page" in {
+          val currentYear = "2021"
+          val taxYear = TaxYear(2022, 2023)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+            taxYear = taxYear,
+            `itsaStatusCY-1` = ITSAStatus.Voluntary,
+            itsaStatusCY = ITSAStatus.Voluntary,
+            `itsaStatusCY+1` = ITSAStatus.Voluntary
+          )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Annual,
+            nextYearStatus = Annual,
+            journeyIsComplete = true
+          )
+          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+
+          val redirectUrl: String =
+            if(mtdUserRole != MTDIndividual) controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent = true, isSignUpJourney = Some(false)).url
+            else controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent = false, isSignUpJourney = Some(false)).url
+          val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(redirectUrl)
+          )
+        }
       }
     }
   }

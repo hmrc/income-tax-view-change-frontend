@@ -23,10 +23,11 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.UIJourneySessionData
 import models.admin.{NavBarFs, AccountingMethodJourney}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService

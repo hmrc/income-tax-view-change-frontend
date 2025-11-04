@@ -21,6 +21,7 @@ import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockNextUpdatesService, MockSessionService}
+import models.UIJourneySessionData
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.obligations._

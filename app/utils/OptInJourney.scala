@@ -17,7 +17,7 @@
 package utils
 
 import enums.JourneyType.{Opt, OptInJourney, OptOutJourney}
-import models.incomeSourceDetails.UIJourneySessionData
+import models.UIJourneySessionData
 import play.api.mvc.Result
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier

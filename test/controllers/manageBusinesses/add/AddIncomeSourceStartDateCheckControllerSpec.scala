@@ -23,10 +23,11 @@ import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
+import models.UIJourneySessionData
 import models.core.{CheckMode, NormalMode}
 import models.admin.AccountingMethodJourney
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor

@@ -20,13 +20,15 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.routes
+import enums.CannotGoBackPage
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import models.UIJourneySessionData
 import models.admin.ReportingFrequencyPage
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
-import models.incomeSourceDetails.{CeaseIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

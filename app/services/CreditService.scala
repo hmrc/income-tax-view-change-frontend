@@ -38,7 +38,7 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
                     hc: HeaderCarrier): Future[CreditsModel] = {
 
     val mergeCreditAndRefundModels = (x: CreditsModel, y: CreditsModel) =>
-      x.copy(transactions = x.transactions :++ y.transactions.filterNot(_.transactionType == Repayment))
+      x.copy(transactions = x.transactions :++ y.transactions.filterNot(item => item.transactionType == Repayment || x.transactions.map(_.transactionId).contains(item.transactionId)))
 
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")

@@ -20,11 +20,13 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType}
+import enums.AfterSubmissionPage
+import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import models.UIJourneySessionData
 import models.admin.OptInOptOutContentUpdateR17
-import models.incomeSourceDetails.{AddIncomeSourceData, UIJourneySessionData}
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport

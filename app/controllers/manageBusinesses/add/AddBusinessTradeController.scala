@@ -20,7 +20,8 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.{BeforeSubmissionPage, SelfEmployment}
+import enums.BeforeSubmissionPage
+import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
 import models.core.{Mode, NormalMode}

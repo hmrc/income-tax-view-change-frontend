@@ -441,6 +441,8 @@ tax-year-summary.adjust-poa-paragraph                              = You can red
 tax-year-summary.adjust-poa                                        = Adjust payments on account
 
 # Tax Year Summary - PFA #
+tax-year-summary.pfa.heading-secondary                             = {0} to {1} tax year
+
 tax-year-summary.latest-calculation                                = Latest calculation
 tax-year-summary.latest-calculation-desc                           = Your tax return was amended on {0} and as a result this is your most up-to-date calculation.
 
@@ -458,6 +460,16 @@ tax-year-summary.previous-calculation-example                      = For example
 tax-year-summary.previous-calculation-contact-hmrc                 = If that date has passed, or you cannot amend your return for another reason,
 tax-year-summary.previous-calculation-contact-hmrc-link            = you’ll need to contact HMRC
 tax-year-summary.previous-calculation-bill                         = Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.
+
+tax-year-summary.calculation-amend-subheading                      = Amending a submitted tax return
+tax-year-summary.calculation-bullet-start                          = You can change your tax return after you have filed it. To do this online you must:
+tax-year-summary.calculation-bullet-1                              = use the software or HMRC online service used to submit the return
+tax-year-summary.calculation-bullet-2                              = do it within 12 months of the
+tax-year-summary.calculation-bullet-2-link                         = Self Assessment deadline
+tax-year-summary.calculation-example                               = For example, for the {0} to {1} tax year, you’ll usually need to make the change online by 31 January {2}.
+tax-year-summary.calculation-contact-hmrc                          = If that date has passed, or you cannot amend your return for another reason,
+tax-year-summary.calculation-contact-hmrc-link                     = you’ll need to contact HMRC
+tax-year-summary.calculation-bill                                  = Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income
@@ -1372,6 +1384,7 @@ paymentHistory.balancingCharge                                  = Credit from ov
 paymentHistory.repaymentInterest                                = Credit from repayment interest
 paymentHistory.POA1RR-credit                                    = First payment on account: credit from your tax return
 paymentHistory.POA2RR-credit                                    = Second payment on account: credit from your tax return
+paymentHistory.IRA-credit                                       = Credit from your amended tax return
 paymentHistory.activity                                         = {0} activity
 
 paymentHistory.POA1                                             = First payment on account collected through your PAYE tax code
@@ -3341,8 +3354,10 @@ yourSelfAssessmentChargeSummary.overDueCharge                       = You owe:
 yourSelfAssessmentChargeSummary.youOwe                              = You owe:
 yourSelfAssessmentChargeSummary.charge                              = Charge:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Amount due to be collected:
+yourSelfAssessmentChargeSummary.creditAmount                        = Total credit amount:
 yourSelfAssessmentChargeSummary.due                                 = Due {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
+yourSelfAssessmentChargeSummary.creditCreated                       = This credit was created on {0}
 
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = What is a balancing payment?
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = A balancing payment is the tax you still need to pay for a tax year. This happens if you:
@@ -3407,6 +3422,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading              
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.text.heading                    = Balancing payment: extra amount due to amended return
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Class 2 National Insurance
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credit from your amended tax return
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
@@ -3424,6 +3440,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading              
 yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount1.text.heading = This first payment on account goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount2.text.heading = This second payment on account goes towards your {0} to {1} tax bill.
 
+yourSelfAssessmentChargeSummary.allocation.heading                                  = Where the credit was applied
+
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = This balancing payment goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = This payment on account goes towards your {0} to {1} tax bill.
 
@@ -3433,6 +3451,9 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                    
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = You owe this extra tax because of a change you made to your return.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = This charge will have a daily interest until it is paid. The interest is backdated to the original due date.
+
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
 
 income-sources.check-details-reporting-frequency.heading                        = Sole trader
 income-sources.check-details-reporting-frequency-uk.heading                     = UK property
@@ -3514,3 +3535,11 @@ triggered-migration.checkComplete.submitUpdates.p1                              
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = create a digital record of your property and sole trader income and expenses
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send your quarterly update(s) to HMRC
 triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest updates and deadlines
+
+#sign-up/opt-out you can not go back page
+signUpOptOut.cannotGoBack.heading       = You cannot go back
+signUpOptOut.cannotGoBack.h2.optOut     = You have opted out of Making Tax Digital for Income Tax
+signUpOptOut.cannotGoBack.h2.signUp     = You have signed up to Making Tax Digital for Income Tax
+signUpOptOut.cannotGoBack.ul.heading    = You can:
+signUpOptOut.cannotGoBack.linkText1     = view your upcoming deadlines
+signUpOptOut.cannotGoBack.linkText2     = go back to the home page
