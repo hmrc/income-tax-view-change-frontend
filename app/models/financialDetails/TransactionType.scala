@@ -184,9 +184,6 @@ object ChargeType {
   lazy val poaOneReconciliationCredit = "4912"
   lazy val poaTwoReconciliationCredit = "4914"
 
-  lazy val returnAmendmentCredit = "4914"
-
-
   val poaOneDebit = "4920"
   val poaTwoDebit = "4930"
 
