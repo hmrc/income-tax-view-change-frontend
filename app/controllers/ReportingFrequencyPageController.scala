@@ -26,7 +26,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateServiceInterface
 import services.optIn.OptInService
+import services.optIn.core.OptInProposition
 import services.optout.OptOutService
+import services.reporting_frequency.ReportingObligationsAuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.MtdConstants
 import viewUtils.ReportingFrequencyViewUtils
@@ -41,6 +43,7 @@ class ReportingFrequencyPageController @Inject()(
                                                   optInService: OptInService,
                                                   val auth: AuthActions,
                                                   errorTemplate: ErrorTemplate,
+                                                  reportingObligationsAuditService: ReportingObligationsAuditService,
                                                   reportingFrequencyViewUtils: ReportingFrequencyViewUtils,
                                                   view: ReportingFrequencyView
                                                 )(
@@ -49,7 +52,6 @@ class ReportingFrequencyPageController @Inject()(
                                                   mcc: MessagesControllerComponents,
                                                   val ec: ExecutionContext
                                                 )
-
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with MtdConstants {
 
   def show(isAgent: Boolean): Action[AnyContent] =
@@ -57,10 +59,11 @@ class ReportingFrequencyPageController @Inject()(
 
       for {
         (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()
+        optInProposition: OptInProposition <- optInService.fetchOptInProposition()
         optInTaxYears <- optInService.availableOptInTaxYear()
         _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
         _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
-
+        _ <- reportingObligationsAuditService.sendAuditEvent(optOutProposition, optInProposition)
       } yield {
         if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
 

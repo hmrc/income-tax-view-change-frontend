@@ -14,27 +14,13 @@
  * limitations under the License.
  */
 
-package utils
+package audit.reporting_obligations
 
-import config.FrontendAppConfig
-import services.DateServiceInterface
+sealed trait UserType
 
-import java.time.LocalDate
+case object Individual extends UserType
 
-trait MtdConstants {
+case object Agent extends UserType
 
-  val dateService: DateServiceInterface
+case object SupportingAgent extends UserType
 
-  def getMtdThreshold()(implicit appConfig: FrontendAppConfig): String = {
-    val dateThreshold2027 = LocalDate.of(2027, 4, 6)
-    val dateThreshold2028 = LocalDate.of(2028, 4, 6)
-
-    if (dateService.getCurrentDate.isBefore(dateThreshold2027)) {
-      appConfig.preThreshold2027
-    } else if (dateService.getCurrentDate.isBefore(dateThreshold2028)) {
-      appConfig.threshold2027
-    } else {
-      appConfig.threshold2028
-    }
-  }
-}

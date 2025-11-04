@@ -36,7 +36,7 @@ import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
 import services.optout.OptOutTestSupport._
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
 
