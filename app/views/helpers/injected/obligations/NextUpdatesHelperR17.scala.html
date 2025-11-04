@@ -23,6 +23,7 @@
 @import services.optout.OptOutProposition
 @import play.twirl.api.HtmlFormat
 @import config.FrontendAppConfig
+@import models.itsaStatus.ITSAStatus.ITSAStatus
 @import models.itsaStatus.ITSAStatus
 
 @this(
@@ -38,7 +39,7 @@
         appConfig: config.FrontendAppConfig
 )
 
-@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: Tuple2[ITSAStatus, ITSAStatus])(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
     
@@ -58,8 +59,8 @@
 @currentYearTab = @{ if(!isCurrentYearQuarterly) currentYearTabContentAnnual else quarterlyTabCYOrNY(currentTaxYearStart, currentTaxYearEnd, nextTaxYearEnd, true) }
 @nextYearTab = @{ if(!isNextYearQuarterly) nextYearTabContentAnnual else nextYearTabContentQuarterly }
 
-@currentTaxYearStatus = @{ optOutProposition.currentTaxYear.status.toString }
-@nextTaxYearStatus = @{ optOutProposition.nextTaxYear.status.toString }
+@currentTaxYearStatus = @{ taxYearStatusesCyNy._1 }
+@nextTaxYearStatus = @{ taxYearStatusesCyNy._2 }
 
 @govukTabs(Tabs(
     id = Some("updates-and-deadlines-tabs"),
@@ -126,13 +127,6 @@
 
 }
 
-@annualTextDynamicMessage = @{
-    if(Seq(ITSAStatus.Exempt, ITSAStatus.DigitallyExempt).map(_.toString).contains(currentTaxYearStatus)){
-        getMessage("annual.text2.exempt")
-    } else {
-        getMessage("annual.text2")
-    }
-}
 
 @currentYearTabContentAnnual = {
     @h2(getMessage("annual.heading", currentTaxYearStart, currentTaxYearEnd), classes = "govuk-heading-l", optId = Some("current-year-heading"))
@@ -140,7 +134,11 @@
     @h2(getMessage("annual.subHeading"), optId = Some("current-year-subheading"))
     @p(id = Some("current-year-compatible-software-desc")) {
         @HtmlFormat.fill(Seq(
-            Html(annualTextDynamicMessage),
+            Html(if(currentTaxYearStatus == ITSAStatus.Exempt) {
+                getMessage("annual.text2.exempt")
+            } else {
+                getMessage("annual.text2")
+            }),
             link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"), outerMessage = ".")
         ))
     }
@@ -172,7 +170,11 @@
     @h2(getMessage("annual.ny.heading", currentTaxYearEnd, nextTaxYearEnd), classes = "govuk-heading-l", optId = Some("next-year-heading"))
     @p(id = Some("next-year-desc")) {
         @HtmlFormat.fill(Seq(
-            Html(annualTextDynamicMessage),
+            Html(if(nextTaxYearStatus == ITSAStatus.Exempt) {
+                getMessage("annual.text2.exempt")
+            } else {
+                getMessage("annual.text2")
+            }),
             link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link-ny"), outerMessage = ".")
         ))
     }

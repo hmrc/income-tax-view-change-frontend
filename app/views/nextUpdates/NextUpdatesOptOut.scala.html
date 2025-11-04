@@ -22,6 +22,8 @@
 @import services.optout.OptOutProposition
 @import config.FrontendAppConfig
 @import viewUtils.ExternalUrlHelper
+@import models.itsaStatus.ITSAStatus.ITSAStatus
+
 
 @this(
 	mainTemplate: unifiedLayout,
@@ -35,18 +37,20 @@
 	nextUpdatesHelperR17: NextUpdatesHelperR17,
     appConfig: config.FrontendAppConfig
 )
-
 @(
 	viewModel: NextUpdatesViewModel,
-	checks:NextUpdatesQuarterlyReportingContentChecks,
+	checks: NextUpdatesQuarterlyReportingContentChecks,
 	optOutProposition: OptOutProposition,
 	backUrl: String,
 	isAgent: Boolean = false,
 	isSupportingAgent: Boolean = false,
 	origin: Option[String] = None,
 	whatTheUserCanDo: Option[Html],
-	optInOptOutContentR17Enabled: Boolean
+	optInOptOutContentR17Enabled: Boolean,
+	taxYearStatusesCyNy: Tuple2[ITSAStatus, ITSAStatus]
 )(implicit messages: Messages, user: auth.MtdItUser[_])
+
+
 
 @mainTemplate(
 	pageTitle = messages("nextUpdates.heading"),
@@ -68,7 +72,7 @@
 	}
 
 	@if(optInOptOutContentR17Enabled) {
-		@nextUpdatesHelperR17(isAgent, viewModel, optOutProposition, isSupportingAgent)
+		@nextUpdatesHelperR17(isAgent, viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: Tuple2[ITSAStatus, ITSAStatus])
 	} else {
 		@h2(msg = "nextUpdates.sub-heading")
 		@nextUpdatesHelper(viewModel)
@@ -99,6 +103,7 @@
 	}
 }
 
+@import models.itsaStatus.ITSAStatus
 @detailsContent = {
 	<div id="details-content-0" class="govuk-!-margin-bottom-4">
 		@h2(msg = "obligations.quarterlyUpdates", optId = Some("quarterlyReturns-heading"))
