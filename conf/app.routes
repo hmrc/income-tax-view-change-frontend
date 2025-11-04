@@ -105,6 +105,10 @@ POST        /agents/sign-up                                               contro
 GET         /sign-up/completed                                            controllers.optIn.newJourney.SignUpCompletedController.show(isAgent: Boolean = false)
 GET         /agents/sign-up/completed                                     controllers.optIn.newJourney.SignUpCompletedController.show(isAgent: Boolean = true)
 
+#Sign-up/Opt-out Cannot Go Back
+GET         /signup/cannot-go-back                                        controllers.SignUpOptOutCannotGoBackController.show(isAgent: Boolean = false, isSignUpJourney: Option[Boolean] ?= None)
+GET         /agents/signup/cannot-go-back                                 controllers.SignUpOptOutCannotGoBackController.show(isAgent: Boolean = true, isSignUpJourney: Option[Boolean] ?= None)
+
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/tax-year-summary/:taxYear                             controllers.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear: Int)

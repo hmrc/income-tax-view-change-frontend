@@ -30,6 +30,8 @@
 @import views.html.partials.yourSelfAssessmentCharges.ChargeDetails
 @import views.html.partials.yourSelfAssessmentCharges.{WhatIsPaymentOnAccount, InterestOnChargeRARPoaSection}
 @import views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
+@import views.html.partials.yourSelfAssessmentCharges.PaymentAllocationTable
+@import models.paymentAllocationCharges.PaymentAllocationViewModel
 @import _root_.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
 @import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
@@ -53,6 +55,7 @@
         interestOnYourChargeSection: InterestOnYourChargeSection,
         interestOnYourChargeTable: InterestOnYourChargeTable,
         paymentHistoryTable: PaymentHistoryTable,
+        paymentAllocationTable: PaymentAllocationTable,
         chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
         whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
         interestOnChargeRARPoaSection: InterestOnChargeRARPoaSection
@@ -60,6 +63,7 @@
 
 @(
     viewModel: ChargeSummaryViewModel,
+    paymentAllocations: Option[PaymentAllocationViewModel] = None,
     whatYouOweUrl: String,
     saChargesUrl: String,
     yourSelfAssessmentChargesFS: Boolean
@@ -124,21 +128,21 @@
         captionClasses = Some("govuk-caption-xl")
     ))
 
-    @if(!viewModel.chargeItem.isPaid) {
-        <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
-            s"${
-                getMessage(
-                    if(viewModel.chargeItem.isCodingOut) "toBeCollected" else if(viewModel.chargeItem.isOverdue()) "overDueCharge"
-                    else "charge"
-                )
-            }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}${
-                if(viewModel.chargeItem.interestOutstandingAmount)
-                    s"\t${
-                        messages("yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe")
-                    }" else ""
-            }"
-        }
-         </h2>
+  @if(!viewModel.chargeItem.isPaid && !viewModel.chargeItem.isCredit) {
+      <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
+          s"${
+              getMessage(
+                  if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
+                  if(viewModel.chargeItem.isOverdue()) "overDueCharge"
+                  else "charge"
+              )
+          }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}${
+              if(viewModel.chargeItem.interestOutstandingAmount)
+                  s"\t${
+                      messages("yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe")
+                  }" else ""
+          }"
+      }</h2>
 
       @if(!viewModel.chargeItem.isCodingOut) {
           @p(id = Some("due-date-text")) {
@@ -148,6 +152,17 @@
 
       @chargeDetails(viewModel)
   }
+    @if(viewModel.chargeItem.isCreditDrilldownPage) {
+        <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
+            s"${getMessage("creditAmount")
+            }\t${viewModel.chargeItem.originalAmount.abs.toCurrencyString}"
+        }</h2>
+        @p(id = Some("credit-created-text")) {
+            <b>@getMessage("creditCreated", viewModel.chargeItem.documentDate.toLongDate)</b>
+        }
+
+        @chargeDetails(viewModel)
+    }
     @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
     <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
         s"${ getMessage("youOwe")
@@ -180,5 +195,8 @@
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)
+    }
+    @if(viewModel.isCredit && paymentAllocations.isDefined) {
+        @paymentAllocationTable(paymentAllocations.get, viewModel.isAgent, viewModel.creditsRefundRepayEnabled)
     }
 }

@@ -1386,6 +1386,7 @@ paymentHistory.balancingCharge                                  = Credyd o ordal
 paymentHistory.repaymentInterest                                = Credyd o log ar ad-daliadau
 paymentHistory.POA1RR-credit                                    = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 paymentHistory.POA2RR-credit                                    = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
+paymentHistory.IRA-credit                                       = Credyd o’ch Ffurfln Dreth ddiwygiedig
 paymentHistory.activity                                         = Gweithgarwch {0}
 
 paymentHistory.POA1                                             = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy’ch cod treth TWE
@@ -3344,8 +3345,10 @@ yourSelfAssessmentChargeSummary.overDueCharge                       = Mae arnoch
 yourSelfAssessmentChargeSummary.youOwe                              = Mae arnoch:
 yourSelfAssessmentChargeSummary.charge                              = Tâl:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Swm dyledus i’w gasglu:
+yourSelfAssessmentChargeSummary.creditAmount                        = Cyfanswm y credyd:
 yourSelfAssessmentChargeSummary.due                                 = Yn ddyledus {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
+yourSelfAssessmentChargeSummary.creditCreated                       = Cafodd y credyd hwn ei greu ar {0}
 
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.linkText    = Beth yw taliad mantoli?
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p1          = Taliad mantoli yw’r dreth sydd dal gennych i’w thalu ar gyfer blwyddyn dreth. Mae hyn yn digwydd os yw’r canlynol yn wir:
@@ -3413,6 +3416,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.text.heading              
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.text.heading                    = Taliad mantoli: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 yourSelfAssessmentChargeSummary.class2Nic.text.heading                              = Yswiriant Gwladol Dosbarth 2
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Taliad mantoli a gesglir drwy’r cod treth TWE
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credyd o’ch Ffurfln Dreth ddiwygiedig
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Anhysbys
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = Taliad cyntaf ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
@@ -3428,6 +3432,8 @@ yourSelfAssessmentChargeSummary.chargeHistory.itsaReturnAmendment.text.heading  
 yourSelfAssessmentChargeSummary.chargeHistory.codingOut.text.heading                = Hanes eich taliad mantoli
 yourSelfAssessmentChargeSummary.chargeHistory.unknown.text.heading                  = Hanes y tâl hwn
 
+yourSelfAssessmentChargeSummary.allocation.heading                                  = Ble cafodd y credyd ei roi
+
 yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption         = Mae’r taliad mantoli hwn yn mynd tuag at eich bil treth ar gyfer {0} i {0}.
 yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption        = Mae’r taliad ar gyfrif hwn yn mynd tuag at eich bil treth {0} i {1}.
 
@@ -3437,6 +3443,9 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfri
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = Mae arnoch y dreth ychwanegol hon oherwydd y newid gwnaethoch i’ch Ffurflen Dreth.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Bydd gan y tâl hwn log dyddiol hyd nes y bydd wedi’i dalu. Mae’r llog wedi’i ôl-ddyddio i’r dyddiad dyledus gwreiddiol.
+
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
 
 
 income-sources.check-details-reporting-frequency.heading                        = Unig fasnachwr
@@ -3519,3 +3528,11 @@ triggered-migration.checkComplete.submitUpdates.p1                              
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = creu cofnod digidol o’ch incwm o eiddo a’ch incwm o fod yn unig fasnachwr, a’r treuliau cysylltiedig
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = anfon eich diweddariad(au) chwarterol at CThEF
 triggered-migration.checkComplete.submitUpdates.linkText                                = Gwiriwch eich diweddariadau diweddaraf a’r dyddiadau cau
+
+#sign-up/opt-out you can not go back page
+signUpOptOut.cannotGoBack.heading       = Ni allwch fynd yn ôl
+signUpOptOut.cannotGoBack.h2.optOut     = Rydych wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+signUpOptOut.cannotGoBack.h2.signUp     = Rydych wedi cofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+signUpOptOut.cannotGoBack.ul.heading    = Gallwch wneud y canlynol:
+signUpOptOut.cannotGoBack.linkText1     = bwrw golwg dros eich dyddiadau cau sydd ar ddod
+signUpOptOut.cannotGoBack.linkText2     = mynd yn ôl i’r hafan

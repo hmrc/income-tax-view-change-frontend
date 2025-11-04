@@ -75,6 +75,8 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
+            mockUpdateOptOutJourneyStatusInSessionData()
+            mockFetchOptOutJourneyCompleteStatus()
 
             when(mockOptOutService.fetchOptOutProposition()(any(), any(), any()))
               .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2025, 2026), true, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated)))
