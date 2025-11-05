@@ -2288,6 +2288,20 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
       Transaction(PaymentType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), "payment")))
   }
 
+  def withPoaOneReconciliationCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(PoaOneReconciliationCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), "POA1RR-credit")))
+  }
+
+  def withPoaTwoReconciliationCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(PoaTwoReconciliationCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), "POA2RR-credit")))
+  }
+
+  def withITSAReturnAmendmentCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
+    ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
+      Transaction(ITSAReturnAmendmentCredit, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), "IRA-credit")))
+  }
   def get(): CreditsModel = model
 }
 
