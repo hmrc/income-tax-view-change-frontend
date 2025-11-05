@@ -122,10 +122,12 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
       def hasMatchingSapCode(subItem: SubItem): Boolean = clearingSAPDocument.exists(id => subItem.clearingSAPDocument.contains(id))
 
-      financialDetails
+      val x =financialDetails
         .filter(_.transactionId.exists(id => hasDocumentDetailForPayment(id)))
-        .find(_.items.exists(_.exists(hasMatchingSapCode)))
-        .flatMap(_.transactionId)
+        val y = x.findLast(_.items.exists(_.exists(hasMatchingSapCode)))
+        val z = y.flatMap(_.transactionId)
+      println("BEEP X "+x+" + Y + "+y+" + z + "+z)
+      z
     }
 
     charge.items
