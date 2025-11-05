@@ -891,6 +891,7 @@ nextUpdates.r17.tab.annual.heading                                 = Up to {0} t
 nextUpdates.r17.tab.annual.text1                                   = This page shows your upcoming due dates and any missed deadlines.
 nextUpdates.r17.tab.annual.subHeading                              = Tax return due
 nextUpdates.r17.tab.annual.text2                                   = As you are opted out of Making Tax Digital for Income Tax, you can find out here how you
+nextUpdates.r17.tab.annual.text2.exempt                            = As you are exempt from Making Tax Digital for Income Tax, you can find out here how you
 nextUpdates.r17.tab.annual.link                                    = file your Self Assessment tax return
 nextUpdates.r17.tab.annual.text3                                   = Your return for the {0} to {1} tax year is due by
 nextUpdates.r17.tab.annual.text4                                   = 31 January {0}.
