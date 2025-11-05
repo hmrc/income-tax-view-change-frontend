@@ -47,7 +47,7 @@
 	origin: Option[String] = None,
 	whatTheUserCanDo: Option[Html],
 	optInOptOutContentR17Enabled: Boolean,
-	taxYearStatusesCyNy: Tuple2[ITSAStatus, ITSAStatus]
+	taxYearStatusesCyNy: (ITSAStatus, ITSAStatus)
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 
@@ -72,7 +72,7 @@
 	}
 
 	@if(optInOptOutContentR17Enabled) {
-		@nextUpdatesHelperR17(isAgent, viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: Tuple2[ITSAStatus, ITSAStatus])
+		@nextUpdatesHelperR17(isAgent, viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))
 	} else {
 		@h2(msg = "nextUpdates.sub-heading")
 		@nextUpdatesHelper(viewModel)

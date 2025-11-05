@@ -105,7 +105,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
           isSupportingAgent = isSupportingAgent,
           whatTheUserCanDo = whatTheUserCanDoContentMulti,
           optInOptOutContentR17Enabled = optInOptOutContentR17Enabled,
-          taxYearStatusesCyNy = Tuple2(optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status)
+          taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status)
         )(implicitly, user)
       ))
 

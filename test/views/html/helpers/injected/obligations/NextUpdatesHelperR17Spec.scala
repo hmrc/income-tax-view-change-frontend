@@ -44,7 +44,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       nextYearItsaStatus = nextYearStatus
     )
 
-    val html: HtmlFormat.Appendable = nextUpdatesHelper(isAgent, currentObligations, optOutProposition, false, taxYearStatusesCyNy = Tuple2(currentYearStatus, nextYearStatus))(implicitly, getIndividualUser(FakeRequest()))
+    val html: HtmlFormat.Appendable = nextUpdatesHelper(isAgent, currentObligations, optOutProposition, false, taxYearStatusesCyNy = (currentYearStatus, nextYearStatus))(implicitly, getIndividualUser(FakeRequest()))
 
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
