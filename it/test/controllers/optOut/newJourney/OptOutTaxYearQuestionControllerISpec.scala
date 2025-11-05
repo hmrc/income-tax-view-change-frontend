@@ -19,12 +19,12 @@ package controllers.optOut.newJourney
 import controllers.ControllerISpecHelper
 import controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, Dormant, Mandated, NoStatus, Voluntary}
 import models.obligations._
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -231,6 +231,90 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousYearDesc2Multi),
             elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.previousYearDesc3Multi),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousYearQuestionMulti),
+          )
+        }
+
+        "render the opt out tax year question page - CY-1 Onwards (V, M, V)" in {
+          val currentYear = "2021"
+          val taxYear = TaxYear(2022, 2023)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
+
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+            taxYear = taxYear,
+            `itsaStatusCY-1` = ITSAStatus.Voluntary,
+            itsaStatusCY = ITSAStatus.Mandated,
+            `itsaStatusCY+1` = ITSAStatus.Voluntary
+          )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Mandated,
+            nextYearStatus = Voluntary
+          )
+          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(
+            CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+          )
+          IncomeTaxViewChangeStub.stubGetAllObligations(
+            testNino,
+            taxYear.toFinancialYearStart,
+            taxYear.toFinancialYearEnd,
+            allObligations
+          )
+
+          val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
+
+          result should have(
+            httpStatus(OK),
+            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
+            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousSingleYearInset),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
+            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
+          )
+        }
+
+        "render the opt out tax year question page - CY-1 Onwards (V, D, V)" in {
+          val currentYear = "2021"
+          val taxYear = TaxYear(2022, 2023)
+          enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
+
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+            taxYear = taxYear,
+            `itsaStatusCY-1` = ITSAStatus.Voluntary,
+            itsaStatusCY = ITSAStatus.Dormant,
+            `itsaStatusCY+1` = ITSAStatus.Voluntary
+          )
+          helper.stubOptOutInitialState(
+            currentTaxYear(dateService),
+            previousYearCrystallised = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Dormant,
+            nextYearStatus = Voluntary
+          )
+          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(
+            CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+          )
+          IncomeTaxViewChangeStub.stubGetAllObligations(
+            testNino,
+            taxYear.toFinancialYearStart,
+            taxYear.toFinancialYearEnd,
+            allObligations
+          )
+
+          val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
+
+          result should have(
+            httpStatus(OK),
+            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
+            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousSingleYearInset),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
+            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
         }
 
