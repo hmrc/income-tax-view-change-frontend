@@ -37,7 +37,7 @@
     val matchingPayment = payment.clearingId
 
     if(matchingPayment.isDefined) {
-        val link = if(viewModel.isAgent && allocation.chargeType.get != "Balancing Charge debit") {
+        val link = if(viewModel.isAgent) {
             controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
         } else {
             controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, None).url
