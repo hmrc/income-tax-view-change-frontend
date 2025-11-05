@@ -16,21 +16,23 @@
 
 package services.optout
 
-import models.itsaStatus.ITSAStatus.{Annual, Mandated}
+import models.itsaStatus.ITSAStatus.{Annual, Dormant, Mandated, Voluntary}
 
 sealed trait OptOutPropositionTypes {
   val proposition: OptOutProposition
 
-  def state(): Option[OptOutState]
+  def state(intent: OptOutTaxYear): Option[OptOutState]
 }
 
 case class OneYearOptOutProposition private(proposition: OptOutProposition) extends OptOutPropositionTypes {
   val intent: OptOutTaxYear = proposition.availableOptOutYears.head
 
-  override def state(): Option[OneYearOptOutState] = {
+  def state(): Option[OneYearOptOutState] = state(intent)
+
+  override def state(providedIntent: OptOutTaxYear): Option[OneYearOptOutState] = {
     proposition match {
-      case OptOutProposition(previousTaxYear, currentTaxYear, _) if previousTaxYear == intent && currentTaxYear.status == Mandated => Some(OneYearOptOutFollowedByMandated)
-      case OptOutProposition(_, currentTaxYear, nextTaxYear) if currentTaxYear == intent && nextTaxYear.status == Mandated => Some(OneYearOptOutFollowedByMandated)
+      case OptOutProposition(previousTaxYear, currentTaxYear, _) if previousTaxYear == intent && (currentTaxYear.status == Mandated || currentTaxYear.status == Dormant) => Some(OneYearOptOutFollowedByMandated)
+      case OptOutProposition(_, currentTaxYear, nextTaxYear) if currentTaxYear == intent && (nextTaxYear.status == Mandated || nextTaxYear.status == Dormant) => Some(OneYearOptOutFollowedByMandated)
       case OptOutProposition(previousTaxYear, currentTaxYear, _) if previousTaxYear == intent && currentTaxYear.status == Annual => Some(OneYearOptOutFollowedByAnnual)
       case OptOutProposition(_, currentTaxYear, nextTaxYear) if currentTaxYear == intent && nextTaxYear.status == Annual => Some(OneYearOptOutFollowedByAnnual)
       case OptOutProposition(_, _, nextTaxYear) if nextTaxYear == intent => Some(NextYearOptOut)
@@ -40,5 +42,12 @@ case class OneYearOptOutProposition private(proposition: OptOutProposition) exte
 }
 
 case class MultiYearOptOutProposition private(proposition: OptOutProposition) extends OptOutPropositionTypes {
-  override def state(): Option[OptOutState] = Some(MultiYearOptOutDefault)
+  override def state(intent: OptOutTaxYear): Option[OptOutState] = {
+    proposition match {
+      case OptOutProposition(previousTaxYear, currentTaxYear, _) if previousTaxYear == intent && (currentTaxYear.status == Mandated || currentTaxYear.status == Dormant) => Some(OneYearOptOutFollowedByMandated)
+      case OptOutProposition(_, currentTaxYear, nextTaxYear) if currentTaxYear == intent && (nextTaxYear.status == Mandated || nextTaxYear.status == Dormant) =>  Some(OneYearOptOutFollowedByMandated)
+      case OptOutProposition(_, currentTaxYear, nextTaxYear) if nextTaxYear == intent && currentTaxYear.status != Voluntary => Some(NextYearOptOut)
+      case _ => Some(MultiYearOptOutDefault)
+    }
+  }
 }

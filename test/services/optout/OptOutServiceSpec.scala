@@ -656,6 +656,9 @@ class OptOutServiceSpec
           nino = testNino
         )
 
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear.nextYear))(any(), any()))
+          .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear.nextYear, 0)))
+
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
         result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026))), Some(MultiYearOptOutDefault), 0, Voluntary, Voluntary))
@@ -866,6 +869,38 @@ class OptOutServiceSpec
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
         result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false), Some(OneYearOptOutFollowedByMandated), 0, Mandated, Mandated))
+      }
+
+      "the previous tax year is submitted that has a state of OneYearOptOutFollowedByMandated when CY is Dormant" in {
+        val currentTaxYear = TaxYear(2025, 2026)
+        val queryTaxYear   = "2024"
+
+        stubOptOut(
+          currentTaxYear = currentTaxYear,
+          previousYearCrystallisedStatus = false,
+          previousYearStatus = Voluntary,
+          currentYearStatus  = Dormant,
+          nextYearStatus     = Voluntary,
+          nino = testNino
+        )
+
+        when(mockNextUpdatesService.getQuarterlyUpdatesCounts(
+          ArgumentMatchers.eq(currentTaxYear.previousYear))(any(), any()))
+          .thenReturn(Future.successful(
+            QuarterlyUpdatesCountForTaxYear(currentTaxYear.previousYear, 0)
+          ))
+
+        val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
+
+        result.futureValue shouldBe Some(
+          OptOutTaxYearQuestionViewModel(
+            PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false),
+            Some(OneYearOptOutFollowedByMandated),
+            0,
+            Dormant,
+            Voluntary
+          )
+        )
       }
     }
     "return None" when {
