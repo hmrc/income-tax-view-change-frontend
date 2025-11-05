@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.OptInOptOutContentUpdateR17
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, ITSAStatus, Mandated, Voluntary}
 import play.api.i18n.Messages
 import services.DateServiceInterface
 import services.optout.OptOutProposition
@@ -43,6 +43,7 @@ class ReportingFrequencyViewUtils @Inject()()(
         case Voluntary => Some(messages("reporting.frequency.table.voluntary.r17"))
         case Annual => Some(messages("reporting.frequency.table.annual.r17"))
         case Exempt => Some(messages("reporting.frequency.table.exempt.r17"))
+        case DigitallyExempt => Some(messages("reporting.frequency.table.exempt.r17"))
         case _ => None
       }
     } else {
@@ -51,6 +52,7 @@ class ReportingFrequencyViewUtils @Inject()()(
         case Voluntary => Some(messages("reporting.frequency.table.voluntary"))
         case Annual => Some(messages("reporting.frequency.table.annual"))
         case Exempt => Some(messages("reporting.frequency.table.exempt"))
+        case DigitallyExempt => Some(messages("reporting.frequency.table.exempt"))
         case _ => None
       }
     }
@@ -62,6 +64,7 @@ class ReportingFrequencyViewUtils @Inject()()(
       case Voluntary => Some(messages("reporting.frequency.table.MTD.isUsingMTD"))
       case Annual => Some(messages("reporting.frequency.table.MTD.isNotUsingMTD"))
       case Exempt => Some(messages("reporting.frequency.table.MTD.isNotUsingMTD"))
+      case DigitallyExempt => Some(messages("reporting.frequency.table.MTD.isNotUsingMTD"))
       case _ => None
     }
   }

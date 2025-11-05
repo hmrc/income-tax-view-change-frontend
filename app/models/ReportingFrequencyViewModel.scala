@@ -19,7 +19,7 @@ package models
 import enums.ReportingObligations.{MultiYearCard, NoCard, ReportingObligationSummaryCardState, SingleYearCard}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary}
+import models.itsaStatus.ITSAStatus._
 import services.DateServiceInterface
 import services.optout.OptOutProposition
 
@@ -107,8 +107,8 @@ case class ReportingFrequencyViewModel(
     val statusList = List(previousYearStatus, currentYearStatus, nextYearStatus)
 
     (
-      statusList.count(_ == ITSAStatus.Exempt),
-      statusList.count(status => status != ITSAStatus.Exempt && status != ITSAStatus.NoStatus)
+      statusList.count(status => status == Exempt || status == DigitallyExempt),
+      statusList.count(status => status != Exempt && status != DigitallyExempt && status != NoStatus)
     )
   }
 
