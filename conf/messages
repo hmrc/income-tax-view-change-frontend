@@ -1202,6 +1202,9 @@ chargeSummary.lpi.penalties.p3                             = See guidance on the
 chargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
 
 chargeSummary.POA1Credit.p1                                        = HMRC has added a credit to your first payment on account because your tax return shows that your first payment on account was too high.
+credit-and-refund.row.POA1RR-credit                         = credit from first payment on account -
+credit-and-refund.row.POA2RR-credit                         = credit from second payment on account -
+credit-and-refund.row.IRA-credit                            = credit from amended tax return -
 
 chargeSummary.POA2Credit.p1                                        = HMRC has added a credit to your second payment on account because your tax return shows that your second payment on account was too high.
 chargeSummary.chargeAmount                                         = Credit amount: {0}

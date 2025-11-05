@@ -1202,6 +1202,9 @@ chargeSummary.lpi.penalties.p3                                 = Gweler yr arwei
 chargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
 chargeSummary.POA1Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich taliad cyntaf ar gyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif yn rhy uchel.
+credit-and-refund.row.POA1RR-credit                         = o gredyd o’r taliad cyntaf ar gyfrif - blwyddyn dreth
+credit-and-refund.row.POA2RR-credit                         = o gredyd o’r ail daliad ar gyfrif - blwyddyn dreth
+credit-and-refund.row.IRA-credit                            = o gredyd o Ffurflen Dreth ddiwygiedig - blwyddyn dreth
 
 chargeSummary.POA2Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich ail daliad ar gyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif yn rhy uchel.
 chargeSummary.chargeAmount                                          = Swm y credyd: {0}
