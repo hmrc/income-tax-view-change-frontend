@@ -130,6 +130,7 @@ object TransactionType {
     case PoaTwoDebit.key => PoaTwoDebit
     case PoaOneReconciliationDebit.key => PoaOneReconciliationDebit
     case PoaTwoReconciliationDebit.key => PoaTwoReconciliationDebit
+    case ITSAReturnAmendmentCredit.key => ITSAReturnAmendmentCredit
     case BalancingCharge.key => BalancingCharge
     case LateSubmissionPenalty.key => LateSubmissionPenalty
     case FirstLatePaymentPenalty.key => FirstLatePaymentPenalty
@@ -148,12 +149,12 @@ object TransactionType {
       ChargeType.poaOneReconciliationDebit  -> PoaOneReconciliationDebit,
       ChargeType.poaTwoReconciliationDebit  -> PoaTwoReconciliationDebit,
       ChargeType.lateSubmissionPenalty      -> LateSubmissionPenalty,
+      ChargeType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
+      ChargeType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit,
       ChargeType.itsaReturnAmendment        -> ITSAReturnAmendment,
       CreditType.cutOver                    -> CutOverCreditType,
       CreditType.balancingCharge            -> BalancingChargeCreditType,
       CreditType.repaymentInterest          -> RepaymentInterest,
-      CreditType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
-      CreditType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit,
       CreditType.itsaReturnAmendmentCredit  -> ITSAReturnAmendmentCredit
     )
     val penalties1 = ChargeType.firstLatePaymentPenalty.map(_ -> FirstLatePaymentPenalty)
@@ -177,6 +178,9 @@ object ChargeType {
 
   lazy val poaOneReconciliationDebit = "4911"
   lazy val poaTwoReconciliationDebit = "4913"
+
+  lazy val poaOneReconciliationCredit = "4912"
+  lazy val poaTwoReconciliationCredit = "4914"
 
   val poaOneDebit = "4920"
   val poaTwoDebit = "4930"
@@ -251,6 +255,7 @@ object CreditType {
     case RepaymentInterest.key => RepaymentInterest
     case PoaOneReconciliationCredit.key => PoaOneReconciliationCredit
     case PoaTwoReconciliationCredit.key => PoaTwoReconciliationCredit
+    case ITSAReturnAmendmentCredit.key => ITSAReturnAmendmentCredit
     case PaymentType.key => PaymentType
     case Repayment.key => Repayment
   }

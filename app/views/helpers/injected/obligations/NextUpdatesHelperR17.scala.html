@@ -23,6 +23,8 @@
 @import services.optout.OptOutProposition
 @import play.twirl.api.HtmlFormat
 @import config.FrontendAppConfig
+@import models.itsaStatus.ITSAStatus.ITSAStatus
+@import models.itsaStatus.ITSAStatus
 
 @this(
         govukTabs: GovukTabs,
@@ -37,7 +39,7 @@
         appConfig: config.FrontendAppConfig
 )
 
-@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
     
@@ -56,6 +58,9 @@
 @nextYearLabel = @{ if(!isNextYearQuarterly) getMessage("annual.ny.label", currentTaxYearEnd, nextTaxYearEnd) else getMessage("quarterly.ny.label", currentTaxYearEnd, nextTaxYearEnd) }
 @currentYearTab = @{ if(!isCurrentYearQuarterly) currentYearTabContentAnnual else quarterlyTabCYOrNY(currentTaxYearStart, currentTaxYearEnd, nextTaxYearEnd, true) }
 @nextYearTab = @{ if(!isNextYearQuarterly) nextYearTabContentAnnual else nextYearTabContentQuarterly }
+
+@currentTaxYearStatus = @{ taxYearStatusesCyNy._1 }
+@nextTaxYearStatus = @{ taxYearStatusesCyNy._2 }
 
 @govukTabs(Tabs(
     id = Some("updates-and-deadlines-tabs"),
@@ -122,19 +127,27 @@
 
 }
 
+
 @currentYearTabContentAnnual = {
     @h2(getMessage("annual.heading", currentTaxYearStart, currentTaxYearEnd), classes = "govuk-heading-l", optId = Some("current-year-heading"))
     @p(id = Some("current-year-desc")){@getMessage("annual.text1")}
     @h2(getMessage("annual.subHeading"), optId = Some("current-year-subheading"))
     @p(id = Some("current-year-compatible-software-desc")) {
-        @getMessage("annual.text2")
-        @link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"), outerMessage = ".")
+        @HtmlFormat.fill(Seq(
+            Html(if(Set(ITSAStatus.Exempt, ITSAStatus.DigitallyExempt).contains(currentTaxYearStatus)) {
+                getMessage("annual.text2.exempt")
+            } else {
+                getMessage("annual.text2")
+            }),
+            link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link"), outerMessage = ".")
+        ))
     }
     @p(id = Some("current-year-return-due-date")) {
         @getMessage("annual.text3", currentTaxYearStart, currentTaxYearEnd)
         <strong class="govuk-!-font-weight-bold">@getMessage("annual.text4", nextTaxYearEnd)</strong>
     }
 }
+
 
 @nextYearTabContentQuarterly = @{
     if (isCurrentYearQuarterly) {
@@ -155,9 +168,15 @@
 
 @nextYearTabContentAnnual = {
     @h2(getMessage("annual.ny.heading", currentTaxYearEnd, nextTaxYearEnd), classes = "govuk-heading-l", optId = Some("next-year-heading"))
-    @p(id = Some("next-year-desc")){
-        @getMessage("annual.text2")
-        @link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link-ny"), outerMessage = ".")
+    @p(id = Some("next-year-desc")) {
+        @HtmlFormat.fill(Seq(
+            Html(if(Set(ITSAStatus.Exempt, ITSAStatus.DigitallyExempt).contains(nextTaxYearStatus)) {
+                getMessage("annual.text2.exempt")
+            } else {
+                getMessage("annual.text2")
+            }),
+            link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("annual.link"), id = Some("annual-compatible-software-link-ny"), outerMessage = ".")
+        ))
     }
     @p(id = Some("next-year-desc2")){ @getMessage("annual.ny.text1") }
 }
