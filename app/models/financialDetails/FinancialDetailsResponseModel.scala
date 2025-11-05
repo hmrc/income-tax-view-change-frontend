@@ -99,12 +99,11 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   def filterPayments(): FinancialDetailsModel = {
-    val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
     FinancialDetailsModel(
       balanceDetails,
       codingDetails,
-      filteredDocuments,
-      financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
+      documentDetails,
+      financialDetails.filter(financial => documentDetails.map(_.transactionId).contains(financial.transactionId.get))
     )
   }
 
@@ -114,10 +113,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     def hasDocumentDetailForPayment(transactionId: String): Boolean = {
 
       documentDetails
-        .find(_.transactionId == transactionId)
-        .exists(documentDetail => {
-          documentDetail.paymentLot.isDefined && documentDetail.paymentLotItem.isDefined
-        })
+        .exists(_.transactionId == transactionId)
     }
 
     def findIdOfClearingPayment(clearingSAPDocument: Option[String]): Option[String] = {
