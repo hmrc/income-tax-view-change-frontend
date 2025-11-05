@@ -134,7 +134,7 @@
     @h2(getMessage("annual.subHeading"), optId = Some("current-year-subheading"))
     @p(id = Some("current-year-compatible-software-desc")) {
         @HtmlFormat.fill(Seq(
-            Html(if(currentTaxYearStatus == ITSAStatus.Exempt) {
+            Html(if(Set(ITSAStatus.Exempt, ITSAStatus.DigitallyExempt).contains(currentTaxYearStatus)) {
                 getMessage("annual.text2.exempt")
             } else {
                 getMessage("annual.text2")
@@ -170,7 +170,7 @@
     @h2(getMessage("annual.ny.heading", currentTaxYearEnd, nextTaxYearEnd), classes = "govuk-heading-l", optId = Some("next-year-heading"))
     @p(id = Some("next-year-desc")) {
         @HtmlFormat.fill(Seq(
-            Html(if(nextTaxYearStatus == ITSAStatus.Exempt) {
+            Html(if(Set(ITSAStatus.Exempt, ITSAStatus.DigitallyExempt).contains(nextTaxYearStatus)) {
                 getMessage("annual.text2.exempt")
             } else {
                 getMessage("annual.text2")
