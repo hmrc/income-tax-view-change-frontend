@@ -20,23 +20,26 @@ import enums.AmendedReturnReversalReason
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
-import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService}
+import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService, MockPaymentAllocationsService}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError, PaymentAllocationViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers.INTERNAL_SERVER_ERROR
-import testConstants.ChargeConstants
+import testConstants.{ChargeConstants, PaymentAllocationsTestConstants}
 import testConstants.FinancialDetailsTestConstants.financialDetail
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 trait ChargeSummaryControllerHelper  extends MockAuthActions
   with ImplicitDateFormatter
   with ChargeConstants
   with MockFinancialDetailsService
-  with MockChargeHistoryService {
+  with MockChargeHistoryService
+  with MockPaymentAllocationsService {
 
   def financialDetailsWithLocks(taxYear: Int): List[FinancialDetail] = List(
     financialDetail(taxYear = taxYear, chargeType = ITSA_ENGLAND_AND_NI),
@@ -67,6 +70,16 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
           chargeReference = Some("chargeRef")
         )
       ))
+
+  val paymentAllocationResponse: PaymentAllocationViewModel = PaymentAllocationViewModel(
+    FinancialDetailsWithDocumentDetailsModel(
+      List(PaymentAllocationsTestConstants.documentDetail),
+      List(PaymentAllocationsTestConstants.financialDetail)
+    ),
+    Seq(),
+    None,
+    false
+  )
 
   def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
 
@@ -102,6 +115,8 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   class Setup(financialDetails: FinancialDetailsResponseModel,
               chargeHistoryHasError: Boolean = false,
               adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,
+              paymentAllocations: Either[PaymentAllocationError, PaymentAllocationViewModel] = Left(PaymentAllocationError(None)),
+              docId: String
               ) {
     mockGetAllFinancialDetails(List((2018, financialDetails)))
 
@@ -110,6 +125,8 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
     } else {
       setupMockChargeHistorySuccessResp(List())
     }
+
+    setupMockGetPaymentAllocation(docId)(Future(paymentAllocations))
 
     setupMockGetAdjustmentHistory(adjustmentHistoryModel)
     mockGetReviewAndReconcileCredit(PoaOneReconciliationCredit)

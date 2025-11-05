@@ -94,6 +94,10 @@ case object PoaTwoReconciliationCredit extends CreditType {
   override val key = "POA2RR-credit"
 }
 
+case object ITSAReturnAmendmentCredit extends CreditType {
+  override val key = "IRA-credit"
+}
+
 case object RepaymentInterest extends CreditType {
   override val key = "repaymentInterest"
 }
@@ -144,14 +148,13 @@ object TransactionType {
       ChargeType.poaOneReconciliationDebit  -> PoaOneReconciliationDebit,
       ChargeType.poaTwoReconciliationDebit  -> PoaTwoReconciliationDebit,
       ChargeType.lateSubmissionPenalty      -> LateSubmissionPenalty,
-      ChargeType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
-      ChargeType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit,
       ChargeType.itsaReturnAmendment        -> ITSAReturnAmendment,
       CreditType.cutOver                    -> CutOverCreditType,
       CreditType.balancingCharge            -> BalancingChargeCreditType,
       CreditType.repaymentInterest          -> RepaymentInterest,
       CreditType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
-      CreditType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit
+      CreditType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit,
+      CreditType.itsaReturnAmendmentCredit  -> ITSAReturnAmendmentCredit
     )
     val penalties1 = ChargeType.firstLatePaymentPenalty.map(_ -> FirstLatePaymentPenalty)
     val penalties2 = ChargeType.secondLatePaymentPenalty.map(_ -> SecondLatePaymentPenalty)
@@ -174,9 +177,6 @@ object ChargeType {
 
   lazy val poaOneReconciliationDebit = "4911"
   lazy val poaTwoReconciliationDebit = "4913"
-
-  lazy val poaOneReconciliationCredit = "4912"
-  lazy val poaTwoReconciliationCredit = "4914"
 
   val poaOneDebit = "4920"
   val poaTwoDebit = "4930"
@@ -228,6 +228,8 @@ object CreditType {
     .toList
   val poaOneReconciliationCredit = "4912"
   val poaTwoReconciliationCredit = "4914"
+
+  val itsaReturnAmendmentCredit = "4916"
 
   val payment = List("0060")
 

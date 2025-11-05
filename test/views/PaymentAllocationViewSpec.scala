@@ -25,6 +25,7 @@ import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.select.Elements
+import org.mockito.Mockito.when
 import testConstants.PaymentAllocationsTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.ViewSpec
@@ -81,35 +82,16 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentAllocationTaxYearFrom2019to2020Hidden: String = messages("paymentAllocation.taxYearHidden", "2019", "2020")
   val paymentAllocationTaxYearFrom2021to2022Hidden: String = messages("paymentAllocation.taxYearHidden", "2021", "2022")
   val paymentAllocationsHmrcAdjustment: String = messages("paymentAllocation.paymentAllocations.hmrcAdjustment.text")
-  val paymentAllocationViewModelDueDate: Option[LocalDate] = paymentAllocationViewModel.paymentAllocationChargeModel
-    .financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
-  val paymentAllocationViewModelOutstandingAmount: Option[BigDecimal] = paymentAllocationViewModel
-    .paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
-  val paymentAllocationViewModelWithCreditZeroOutstandingDueDate: Option[LocalDate] =
-    paymentAllocationViewModelWithCreditZeroOutstanding.paymentAllocationChargeModel
-      .financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
-  val paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount: Option[BigDecimal] =
-    paymentAllocationViewModelWithCreditZeroOutstanding
-      .paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
 
   class PaymentAllocationSetup(viewModel: PaymentAllocationViewModel = paymentAllocationViewModel, saUtr: Option[String] = None,
-                               creditsRefundsRepayEnabled: Boolean = true,
-                               dueDate: Option[LocalDate] = paymentAllocationViewModelDueDate,
-                               outstandingAmount: Option[BigDecimal] = paymentAllocationViewModelOutstandingAmount) extends Setup(
+                               creditsRefundsRepayEnabled: Boolean = true) extends Setup(
     paymentAllocationView(viewModel, backUrl, saUtr = saUtr,
-      creditsRefundsRepayEnabled = creditsRefundsRepayEnabled, dueDate = dueDate,
-      outstandingAmount = outstandingAmount)) {
+      creditsRefundsRepayEnabled = creditsRefundsRepayEnabled)) {
     paymentAllocationViewModel.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
-  class PaymentAllocationSetupCreditZeroOutstanding(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithCreditZeroOutstanding,
-                                                    dueDate: Option[LocalDate] =
-                                                    paymentAllocationViewModelWithCreditZeroOutstandingDueDate,
-                                                    outstandingAmount: Option[BigDecimal] =
-                                                    paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount) extends Setup(
-    paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"),
-      dueDate = dueDate,
-      outstandingAmount = outstandingAmount)) {
+  class PaymentAllocationSetupCreditZeroOutstanding(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithCreditZeroOutstanding) extends Setup(
+    paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"))) {
     paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
@@ -198,8 +180,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           allTableData.get(3).text() shouldBe moneyOnAccountAmount
         }
 
-      "should not have Credit on account row within payment details" in new PaymentAllocationSetup(outstandingAmount =
-        paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount) {
+      "should not have Credit on account row within payment details" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelNoOutstandingAmount) {
         findElementById("money-on-account") shouldBe None
       }
 
@@ -461,16 +442,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
     }
 
-    "not have Credit on account row within payment details" in new PaymentAllocationSetup(outstandingAmount =
-      paymentAllocationViewModelWithCreditZeroOutstandingOutstandingAmount) {
+    "not have Credit on account row within payment details" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelNoOutstandingAmount) {
       findElementById("money-on-account") shouldBe None
     }
 
     "The payments allocation view has Allocation Detail but no clearing date" should {
       "throw a MissingFieldException" in {
         val thrownException = intercept[MissingFieldException] {
-          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl, saUtr = None, dueDate = None,
-            outstandingAmount = None)
+          paymentAllocationView(paymentAllocationViewModelWithNoClearingAmount, backUrl, saUtr = None)
         }
         thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Payment Clearing Date"
       }
