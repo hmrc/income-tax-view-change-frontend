@@ -162,7 +162,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         }
         "is empty except for the title" when {
           "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-            getElementById("updates-tile").map(_.text()) shouldBe Some(messages("home.updates.heading"))
+            getElementById("updates-tile").map(_.text()) shouldBe Some("Next updates due View update deadlines")
           }
         }
         "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {
