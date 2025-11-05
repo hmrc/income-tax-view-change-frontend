@@ -18,6 +18,7 @@ package models.financialDetails
 
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ChargeType.allChargeMainTransactions
+import models.financialDetails.CreditType.creditsWithSummaryPages
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
@@ -134,11 +135,19 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       .map { subItems =>
         subItems.collect {
             case subItem if subItem.clearingSAPDocument.isDefined =>
+              val clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument)
+              val finDetailOfSource = financialDetails.find(_.transactionId == clearingId)
+              val (taxYear, isCredit) = finDetailOfSource match {
+                case Some(financialDetail: FinancialDetail) => (Some(financialDetail.taxYear), financialDetail.mainTransaction.exists(cr => creditsWithSummaryPages.contains(cr)))
+                case None => (None ,false)
+              }
               PaymentHistoryAllocation(
                 dueDate = subItem.dueDate,
                 amount = subItem.amount,
                 clearingSAPDocument = subItem.clearingSAPDocument,
-                clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument))
+                clearingId = clearingId,
+                taxYear = taxYear,
+                isCredit = isCredit)
           }
           // only return payments for now
           .filter(_.clearingId.exists(id => hasDocumentDetailForPayment(id)))

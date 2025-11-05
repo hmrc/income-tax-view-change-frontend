@@ -234,6 +234,8 @@ object CreditType {
 
   val itsaReturnAmendmentCredit = "4916"
 
+  val creditsWithSummaryPages = List(poaOneReconciliationCredit, poaTwoReconciliationCredit, itsaReturnAmendmentCredit)
+
   val payment = List("0060")
 
   implicit val write: Writes[CreditType] = new Writes[CreditType] {
