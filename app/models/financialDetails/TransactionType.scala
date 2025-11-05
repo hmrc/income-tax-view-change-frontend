@@ -192,6 +192,9 @@ object ChargeType {
   val mfaDebit = Range.inclusive(4000, 4003)
     .map(_.toString).toList
 
+  val allChargeMainTransactions = List(balancingCharge, poaOneDebit, poaTwoDebit, poaOneReconciliationDebit, poaTwoReconciliationDebit, itsaReturnAmendment)++
+    List(penaltyMainTransactions) ++ List(mfaDebit)
+
 
 
   implicit val write: Writes[ChargeType] = new Writes[ChargeType] {

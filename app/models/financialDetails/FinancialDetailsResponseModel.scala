@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import models.financialDetails.ChargeType.allChargeMainTransactions
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
@@ -122,12 +123,11 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
       def hasMatchingSapCode(subItem: SubItem): Boolean = clearingSAPDocument.exists(id => subItem.clearingSAPDocument.contains(id))
 
-      val x =financialDetails
+      financialDetails
         .filter(_.transactionId.exists(id => hasDocumentDetailForPayment(id)))
-        val y = x.findLast(_.items.exists(_.exists(hasMatchingSapCode)))
-        val z = y.flatMap(_.transactionId)
-      println("BEEP X "+x+" + Y + "+y+" + z + "+z)
-      z
+        .filter(_.mainTransaction.exists(k => !allChargeMainTransactions.contains(k))) //this will filter out other charges that also have this payment/credit allocated to them
+        .find(_.items.exists(_.exists(hasMatchingSapCode)))
+        .flatMap(_.transactionId)
     }
 
     charge.items
