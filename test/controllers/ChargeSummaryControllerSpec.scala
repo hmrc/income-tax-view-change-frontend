@@ -180,6 +180,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "First payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
+                document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
               }
               "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaTwoWithLpi(), docId = codingout) {
@@ -200,6 +201,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "Second payment on account history"
                 document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
+                document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge, docId = id1040000123) {
@@ -240,6 +242,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "Balancing payment history"
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2018 to 2019 tax bill."
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
+                document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
               }
 
@@ -342,6 +345,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-heading-m").get(1).text() shouldBe "Interest on this charge"
                 document.getElementById("charge-history-heading").text() shouldBe "Late submission penalty history"
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
+                document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
               }
 
