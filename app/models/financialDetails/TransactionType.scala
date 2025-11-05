@@ -155,8 +155,6 @@ object TransactionType {
       CreditType.cutOver                    -> CutOverCreditType,
       CreditType.balancingCharge            -> BalancingChargeCreditType,
       CreditType.repaymentInterest          -> RepaymentInterest,
-      CreditType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
-      CreditType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit,
       CreditType.itsaReturnAmendmentCredit  -> ITSAReturnAmendmentCredit
     )
     val penalties1 = ChargeType.firstLatePaymentPenalty.map(_ -> FirstLatePaymentPenalty)
