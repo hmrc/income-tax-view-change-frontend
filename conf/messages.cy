@@ -3359,7 +3359,7 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = rydych wed
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = Hefyd, mae angen i chi wneud taliad mantoli os oes gennych unrhyw ddyledion Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar y tâl hwn
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Bydd swm y llog sy’n ddyledus yn cynyddu hyd nes y bydd y swm gorddyledus yn cael ei dalu.
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad mantoli.
 yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} i {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Cyfanswm y llog ar y tâl hwn
