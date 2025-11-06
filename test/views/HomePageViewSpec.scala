@@ -215,7 +215,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "is empty except for the title" when {
         "user has no open obligations" in new Setup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-          getElementById("updates-tile").map(_.text()) shouldBe Some("Next updates due")
+          getElementById("updates-tile").map(_.text()) shouldBe Some("Next updates due View update deadlines")
         }
       }
       "has a link to view and manage updates - Opt Out" in new Setup(nextUpdatesTileViewModel = viewModelOptOut) {
@@ -374,7 +374,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       ) {
         val tile: Element = getElementById("updates-tile").get
 
-        tile.text().trim shouldBe "Your updates and deadlines"
+        tile.text().trim shouldBe "Your updates and deadlines View deadlines and manage how you report"
         tile.select("span.govuk-tag--red") shouldBe empty
         tile.select("p.govuk-body") shouldBe empty
       }
