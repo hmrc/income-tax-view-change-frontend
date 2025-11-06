@@ -42,21 +42,12 @@ class SignUpSubmissionService @Inject()(
                                          uiJourneySessionDataRepository: UIJourneySessionDataRepository
                                        ) extends Logging {
 
-  def getOptInSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptInSessionData]] = {
+  private[services] def getOptInSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptInSessionData]] = {
     for {
       uiSessionData <- uiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney))
       optInSessionData: Option[OptInSessionData] = uiSessionData.flatMap(_.optInSessionData)
     } yield {
       optInSessionData
-    }
-  }
-
-  def makeUpdateRequest(
-                         selectedSignUpYear: Option[TaxYear]
-                       )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
-    selectedSignUpYear match {
-      case Some(year) => itsaStatusUpdateConnector.optIn(taxYear = year, taxableEntityId = user.nino)
-      case _ => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
   }
 
@@ -78,7 +69,22 @@ class SignUpSubmissionService @Inject()(
     }
   }
 
-  def triggerSignUpRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
+  private[services] def filterTaxYearsForSignUp(
+                                                    currentYearItsaStatus: ITSAStatus,
+                                                    nextYearItsaStatus: ITSAStatus,
+                                                    intentTaxYear: Option[TaxYear]
+                                                  ): Seq[TaxYear] = {
+    val currentTaxYear = dateService.getCurrentTaxYear
+
+    (intentTaxYear, currentYearItsaStatus, nextYearItsaStatus) match {
+      case (Some(year), Annual, Annual) if year == currentTaxYear     => Seq(currentTaxYear, currentTaxYear.nextYear)
+      case (Some(year), Annual, _) if year == currentTaxYear          => Seq(currentTaxYear)
+      case (Some(year), _, Annual) if year == currentTaxYear.nextYear => Seq(currentTaxYear.nextYear)
+      case _ => Seq.empty
+    }
+  }
+
+  def triggerSignUpRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ITSAStatusUpdateResponse]] = {
     for {
       optInSessionData: Option[OptInSessionData] <- getOptInSessionData()
       selectedSignUpYear: Option[TaxYear] = optInSessionData.flatMap(_.selectedOptInYear).flatMap(TaxYear.`fromStringYYYY-YYYY`)
@@ -92,10 +98,10 @@ class SignUpSubmissionService @Inject()(
           s"[SignUpSubmissionService][triggerSignUpRequest] selectedSignUpYear: $selectedSignUpYear \n" +
           s"[SignUpSubmissionService][triggerSignUpRequest] optInProposition: $optInProposition"
       )
-      updateResponse <- makeUpdateRequest(selectedSignUpYear)
-      _ = logger.info(
-        s"\n[SignUpSubmissionService][triggerSignUpRequest] Sign Up update response: $updateResponse"
-      )
+      taxYearsToSignUp = filterTaxYearsForSignUp(currentYearItsaStatus, nextYearItsaStatus, selectedSignUpYear)
+      _ = logger.info(s"\n[SignUpSubmissionService][triggerSignUpRequest] taxYearsToSignUp: $taxYearsToSignUp")
+      updateResponse: Seq[ITSAStatusUpdateResponse] <- Future.sequence(taxYearsToSignUp.map(taxYear => itsaStatusUpdateConnector.optIn(taxYear = taxYear, taxableEntityId = user.nino)))
+      _ = logger.info(s"\n[SignUpSubmissionService][triggerSignUpRequest] Sign Up update response: $updateResponse")
       _ <- makeSignUpAuditEventRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus)
     } yield {
       updateResponse
