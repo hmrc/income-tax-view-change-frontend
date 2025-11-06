@@ -46,6 +46,8 @@ case class MultiYearOptOutProposition private(proposition: OptOutProposition) ex
     proposition match {
       case OptOutProposition(previousTaxYear, currentTaxYear, _) if previousTaxYear == intent && (currentTaxYear.status == Mandated || currentTaxYear.status == Dormant) => Some(OneYearOptOutFollowedByMandated)
       case OptOutProposition(_, currentTaxYear, nextTaxYear) if currentTaxYear == intent && (nextTaxYear.status == Mandated || nextTaxYear.status == Dormant) =>  Some(OneYearOptOutFollowedByMandated)
+      case OptOutProposition(previousTaxYear, currentTaxYear, _) if previousTaxYear == intent && currentTaxYear.status == Annual => Some(OneYearOptOutFollowedByAnnual)
+      case OptOutProposition(_, currentTaxYear, nextTaxYear) if currentTaxYear == intent && nextTaxYear.status == Annual => Some(OneYearOptOutFollowedByAnnual)
       case OptOutProposition(_, currentTaxYear, nextTaxYear) if nextTaxYear == intent && currentTaxYear.status != Voluntary => Some(NextYearOptOut)
       case _ => Some(MultiYearOptOutDefault)
     }
