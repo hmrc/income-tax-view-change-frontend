@@ -122,7 +122,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
       financialDetails
         .filter(_.transactionId.exists(id => hasDocumentDetailForPayment(id)))
-        .filter(_.mainTransaction.exists(k => !allChargeMainTransactions.contains(k))) //this will filter out other charges that also have this payment/credit allocated to them
+        .filter(x => x.mainTransaction.isEmpty || x.mainTransaction.exists(k => !allChargeMainTransactions.contains(k))) //this will filter out other charges that also have this payment/credit allocated to them
         .find(_.items.exists(_.exists(hasMatchingSapCode)))
         .flatMap(_.transactionId)
     }
