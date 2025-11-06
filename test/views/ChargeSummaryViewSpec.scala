@@ -136,7 +136,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         dueDate = Some(LocalDate.parse(date)),
         amount = Some(amount),
         clearingSAPDocument = clearingSAPDocument,
-        clearingId = clearingId)),
+        clearingId = clearingId,
+        taxYear = None)),
       chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   def codedOutEmptyAdjustmentHistory(originalAmount: BigDecimal): AdjustmentHistoryModel =

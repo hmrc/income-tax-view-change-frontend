@@ -166,7 +166,8 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
           amount = Some(amount),
           dueDate = Some(LocalDate.parse(date)),
           clearingSAPDocument = None,
-          clearingId = None
+          clearingId = None,
+          taxYear = None
         )), chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
 
