@@ -39,8 +39,7 @@
 )
 @(viewModel: CreditAndRefundViewModel,
         isAgent: Boolean = false,
-        backUrl: String,
-        yourSelfAssessmentChargesFS: Boolean)(implicit request: Request[_],
+        backUrl: String)(implicit request: Request[_],
         user: MtdItUser[_],
         messages: Messages)
 
@@ -58,7 +57,7 @@
 
         @if(viewModel.hasAvailableCredit) {
             @if(viewModel.hasAllocatedCredit) {
-                @reservedContent(viewModel, yourSelfAssessmentChargesFS, isAgent)
+                @reservedContent(viewModel, isAgent)
             }
             @howMuchCanIClaim(viewModel)
         }

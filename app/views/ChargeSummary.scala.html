@@ -55,7 +55,7 @@
     govukTable: GovukTable
 )
 
-@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String, saChargesUrl: String, yourSelfAssessmentChargesFS: Boolean)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
+@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
 
 @import implicitDateFormatter.longDate
 
@@ -414,61 +414,36 @@
     }
 
 
-    @if(yourSelfAssessmentChargesFS) {
-        @if(!viewModel.isCredit) {
-            @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
-                @p(id = Some("p-interest-locks-msg")) {
-                    @if(viewModel.isAgent) {
-                        @link(id = Some("SAChargesAgentInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
-                        @messages("chargeSummary.interestLocks.text-agent")
-                    } else {
-                        @link(id = Some("SAChargesInterestLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
-                        @messages("chargeSummary.interestLocks.text")
-                    }
 
+    @if(!viewModel.isCredit) {
+        @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
+            @p(id = Some("p-interest-locks-msg")) {
+                @if(viewModel.isAgent) {
+                    @messages("chargeSummary.whatYouOwe.textOne-agent")
+                    @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                    @messages("chargeSummary.interestLocks.text-agent")
+                } else {
+                    @messages("chargeSummary.whatYouOwe.textOne")
+                    @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                    @messages("chargeSummary.interestLocks.text")
                 }
-            } else {
-                @p() {
-                    @if(viewModel.isAgent) {
-                        @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText-agent")
-                        @messages("chargeSummary.selfAssessmentCharges.text-agent")
-                    } else {
-                        @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "chargeSummary.selfAssessmentCharges.linkText")
-                        @messages("chargeSummary.selfAssessmentCharges.text")
-                    }
-                }
+
             }
-        }
-    } else {
-        @if(!viewModel.isCredit) {
-            @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
-                @p(id = Some("p-interest-locks-msg")) {
-                    @if(viewModel.isAgent) {
-                        @messages("chargeSummary.whatYouOwe.textOne-agent")
-                        @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                        @messages("chargeSummary.interestLocks.text-agent")
-                    } else {
-                        @messages("chargeSummary.whatYouOwe.textOne")
-                        @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                        @messages("chargeSummary.interestLocks.text")
-                    }
-
-                }
-            } else {
-                @p() {
-                    @if(viewModel.isAgent) {
-                        @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                        @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                        @messages("chargeSummary.whatYouOwe.textTwo-agent")
-                    } else {
-                        @messages("chargeSummary.whatYouOwe.textOne")
-                        @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                        @messages("chargeSummary.whatYouOwe.textTwo")
-                    }
+        } else {
+            @p() {
+                @if(viewModel.isAgent) {
+                    @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                    @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                    @messages("chargeSummary.whatYouOwe.textTwo-agent")
+                } else {
+                    @messages("chargeSummary.whatYouOwe.textOne")
+                    @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                    @messages("chargeSummary.whatYouOwe.textTwo")
                 }
             }
         }
     }
+
 
 
 

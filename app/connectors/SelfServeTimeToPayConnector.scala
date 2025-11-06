@@ -52,10 +52,9 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
       """.stripMargin
   )
 
-  def startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled: Boolean)
-                                    (implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
+  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
 
-    val body = if (yourSelfAssessmentChargesEnabled) bodyYSAC else bodyWYO
+    val body = bodyWYO
 
     http
       .post(url"$journeyStartUrl")

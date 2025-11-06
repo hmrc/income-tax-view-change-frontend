@@ -181,10 +181,6 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
             if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
             else controllers.routes.WhatYouOweController.show(origin).url
           }
-          val saChargesUrl: String = {
-            if (isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent().url
-            else controllers.routes.YourSelfAssessmentChargesController.show(origin).url
-          }
 
           chargeReference match {
             case Some(chargeRef) =>
@@ -219,9 +215,9 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                 mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
                   case Right(_) => Ok {
                     if (chargeItem.isIncludedInSACSummary(isInterestCharge)) {
-                      yourSelfAssessmentChargeSummary(viewModel, allocationData, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
+                      yourSelfAssessmentChargeSummary(viewModel, allocationData, whatYouOweUrl)
                     } else
-                      chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
+                      chargeSummaryView(viewModel, whatYouOweUrl)
                   }
                   case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
                 }
