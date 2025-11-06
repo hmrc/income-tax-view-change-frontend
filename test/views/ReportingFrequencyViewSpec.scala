@@ -18,7 +18,8 @@ package views
 
 import models.ReportingFrequencyViewModel
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Voluntary, Annual}
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
@@ -26,6 +27,8 @@ import services.optout.{OptOutProposition, OptOutTestSupport}
 import testUtils.TestSupport
 import views.html.ReportingFrequencyView
 import views.messages.ReportingFrequencyViewMessages._
+
+import scala.util.Try
 
 class ReportingFrequencyViewSpec extends TestSupport {
 
@@ -79,10 +82,15 @@ class ReportingFrequencyViewSpec extends TestSupport {
     val differentObligationsP2 = "different-obligations-p2"
     val differentObligationsP3 = "different-obligations-updates-and-deadlines"
 
+    val yourObligationsH2 = "your-obligations-heading"
+    val yourObligationsP1 = "your-obligations-p1"
+    val yourObligationsP2 = "your-obligations-updates-and-deadlines"
+
     val mandatoryReportingH2 = "mandatory-reporting-heading"
     val mandatoryReportingInset = "mandatory-reporting-inset"
     val mandatoryReportingText = "mandatory-reporting-text"
     val mandatoryReportingText2 = "mandatory-reporting-text-2"
+    val mandatoryReportingText3 = "mandatory-reporting-text-3"
 
     val compatibleSoftwareH2 = "compatible-software-heading"
     val compatibleSoftwareText = "compatible-software-text"
@@ -91,11 +99,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
     val govGuidance = "#compatible-software-link"
   }
 
-  def testContentByIds(pageDocument: Document, R17ContentEnabled: Boolean, additionalIdsAndContent: Seq[(String, String)] = Seq(), ceasedBusinesses: Boolean = false): Unit = {
+  def testContentByIds(pageDocument: Document, R17ContentEnabled: Boolean, additionalIdsAndContent: Seq[(String, String)] = Seq(), ceasedBusinesses: Boolean = false, exemptStatus: Boolean = false, noNonExemptStatus: Boolean = false): Unit = {
     val expectedContent: Seq[(String, String)] = {
       if(R17ContentEnabled) {
 
-        val differentObligationsContent = if(ceasedBusinesses) Seq.empty else
+        val differentObligationsContent = if(ceasedBusinesses || noNonExemptStatus) Seq.empty else
           Seq(
             Selectors.differentObligationsH2 -> differentObligationsHeading,
             Selectors.differentObligationsP1 -> differentObligationsText,
@@ -105,21 +113,44 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Selectors.differentObligationsP3 -> differentObligationsTextThree
           )
 
-        Seq(
-          Selectors.h1 -> pageHeadingContentNew,
+        val yourObligationsContent = if (noNonExemptStatus) Seq(
+          Selectors.yourObligationsH2 -> yourObligationsHeading,
+          Selectors.yourObligationsP1 -> yourObligationsText,
+          Selectors.yourObligationsP2 -> yourObligationsTextTwo
+        ) else Seq.empty
+
+        val cardContent: Seq[(String, String)] = if (!exemptStatus && !noNonExemptStatus) Seq(
           Selectors.manageReportingObligationsHeading -> manageReportingObligationsHeading,
           Selectors.manageReportingObligationsCardHeading -> manageReportingObligationsCardHeading,
           Selectors.manageReportingObligationsCardLink -> manageReportingObligationsCardLink,
           Selectors.manageReportingObligationsCardDesc -> manageReportingObligationsCardDesc,
-          Selectors.manageReportingObligationsCardText -> manageReportingObligationsCardText,
-          Selectors.mandatoryReportingH2 -> mandatoryReportingHeadingR17,
-          Selectors.mandatoryReportingInset -> mandatoryReportingInsetR17,
-          Selectors.mandatoryReportingText -> mandatoryReportingTextR17,
-          Selectors.mandatoryReportingText2 -> mandatoryReportingTextTwoR17,
+          Selectors.manageReportingObligationsCardText -> manageReportingObligationsCardText
+        ) else Seq.empty
+
+        val compatSoftware: Seq[(String, String)] = if (!noNonExemptStatus) Seq(
           Selectors.compatibleSoftwareH2 -> compatibleSoftwareHeadingR17,
           Selectors.compatibleSoftwareText -> compatibleSoftwareTextR17,
-          Selectors.compatibleSoftwareText2 -> compatibleSoftwareTextThreeR17,
-        ) ++ additionalIdsAndContent ++ differentObligationsContent
+          Selectors.compatibleSoftwareText2 -> compatibleSoftwareTextThreeR17
+        ) else Seq.empty
+
+        val mandatoryReportingContent: Seq[(String, String)] = if (noNonExemptStatus) Seq (
+          Selectors.mandatoryReportingText -> mandatoryReportingTextR17OnlyExempt,
+          Selectors.mandatoryReportingText2 -> mandatoryReportingTextThreeR17Exempt
+        ) else if (exemptStatus) Seq(
+          Selectors.mandatoryReportingText -> mandatoryReportingTextR17HasExempt,
+          Selectors.mandatoryReportingInset -> mandatoryReportingInsetR17,
+          Selectors.mandatoryReportingText2 -> mandatoryReportingTextTwoR17HasExempt,
+          Selectors.mandatoryReportingText3 -> mandatoryReportingTextThreeR17Exempt
+        ) else Seq(
+          Selectors.mandatoryReportingInset -> mandatoryReportingInsetR17,
+          Selectors.mandatoryReportingText -> mandatoryReportingTextR17,
+          Selectors.mandatoryReportingText2 -> mandatoryReportingTextTwoR17
+        )
+
+        Seq(
+          Selectors.h1 -> pageHeadingContentNew,
+          Selectors.mandatoryReportingH2 -> mandatoryReportingHeadingR17
+        ) ++ cardContent ++ mandatoryReportingContent ++ additionalIdsAndContent ++ differentObligationsContent ++ yourObligationsContent ++ compatSoftware
 
 
       } else {
@@ -328,10 +359,94 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
           testContentByIds(pageDocument, R17ContentEnabled = true)
 
-          testContentByIds(pageDocument, R17ContentEnabled = true)
-
           pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
 
+        }
+
+        "return the correct content when there is an exempt tax year" in {
+
+          val isAgentFlag = true
+
+          val optOutProposition = OptOutProposition.createOptOutProposition(
+            currentYear = TaxYear(2025, 2026),
+            previousYearCrystallised = true,
+            previousYearItsaStatus = Voluntary,
+            currentYearItsaStatus = Exempt,
+            nextYearItsaStatus = Voluntary
+          )
+
+          val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+            ReportingFrequencyViewModel(
+              isAgent = isAgentFlag,
+              optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
+              optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
+              isAnyOfBusinessLatent = false,
+              displayCeasedBusinessWarning = false,
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
+            )
+
+          val pageDocument: Document =
+            Jsoup.parse(
+              contentAsString(
+                view.apply(
+                  viewModel = reportingFrequencyViewModel,
+                  optInOptOutContentUpdateR17IsEnabled = true,
+                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                )
+              )
+            )
+
+          pageDocument.title() shouldBe titleNew
+
+          testContentByIds(pageDocument, R17ContentEnabled = true, exemptStatus = true)
+
+          pageDocument.select(Selectors.govGuidance).attr("href") shouldBe govGuidanceUrl
+        }
+
+        "return the correct content when there is only exempt tax years" in {
+
+          val isAgentFlag = true
+
+          val optOutProposition = OptOutProposition.createOptOutProposition(
+            currentYear = TaxYear(2025, 2026),
+            previousYearCrystallised = true,
+            previousYearItsaStatus = Exempt,
+            currentYearItsaStatus = Exempt,
+            nextYearItsaStatus = NoStatus
+          )
+
+          val reportingFrequencyViewModel: ReportingFrequencyViewModel =
+            ReportingFrequencyViewModel(
+              isAgent = isAgentFlag,
+              optOutJourneyUrl = Some(optOutChooseTaxYearUrl(isAgentFlag)),
+              optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
+              isAnyOfBusinessLatent = false,
+              displayCeasedBusinessWarning = false,
+              mtdThreshold = "£50,000",
+              proposition = optOutProposition,
+              isSignUpEnabled = true,
+              isOptOutEnabled = true
+            )
+
+          val pageDocument: Document =
+            Jsoup.parse(
+              contentAsString(
+                view.apply(
+                  viewModel = reportingFrequencyViewModel,
+                  optInOptOutContentUpdateR17IsEnabled = true,
+                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
+                )
+              )
+            )
+
+          pageDocument.title() shouldBe titleNew
+
+          testContentByIds(pageDocument, R17ContentEnabled = true, noNonExemptStatus = true)
         }
       }
 

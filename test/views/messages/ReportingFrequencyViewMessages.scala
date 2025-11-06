@@ -46,6 +46,10 @@ object ReportingFrequencyViewMessages {
   val differentObligationsTextTwo = "For tax years you are opted out of, you only need to file a tax return."
   val differentObligationsTextThree = "You can see what is due on the updates and deadlines page."
 
+  val yourObligationsHeading = "What your reporting obligations are"
+  val yourObligationsText = "For tax years you are exempt, you only need to file a tax return."
+  val yourObligationsTextTwo = "Find out what is due and when on the updates and deadlines page."
+
   val mandatoryReportingHeadingR17 = "When Making Tax Digital for Income Tax is required"
   val mandatoryReportingHeading = "When reporting quarterly is mandatory"
   val mandatoryReportingInsetR17 =  "You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold."
@@ -53,6 +57,11 @@ object ReportingFrequencyViewMessages {
   val mandatoryReportingTextR17 = "If this happens in the 2022 to 2023 tax year, you would be required to use Making Tax Digital for Income Tax for the 2024 to 2025 tax year."
   val mandatoryReportingText = "You can check the threshold for when reporting quarterly is mandatory in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
   val mandatoryReportingTextTwoR17 = "Find out more about the threshold in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
+
+  val mandatoryReportingTextR17HasExempt = "For tax years you are exempt, you cannot be required to use Making Tax Digital for Income Tax. For any tax years you are not exempt, you could be required to use it."
+  val mandatoryReportingTextR17OnlyExempt = "For tax years you are exempt, you cannot be required to use Making Tax Digital for Income Tax."
+  val mandatoryReportingTextTwoR17HasExempt = "You would then have to use Making Tax Digital for Income Tax until this type of income is below the threshold for 3 tax years in a row. After that, you could voluntarily continue to report this way or choose to opt out."
+  val mandatoryReportingTextThreeR17Exempt = "Find out more about if and when you need to use Making Tax Digital for Income Tax (opens in new tab)."
 
   val compatibleSoftwareHeadingR17 = "When you need compatible software"
   val compatibleSoftwareHeading = "When compatible software is required"

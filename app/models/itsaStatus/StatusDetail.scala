@@ -69,6 +69,12 @@ object ITSAStatus extends Enumeration {
   val Dormant = Value("Dormant")
   val Exempt = Value("MTD Exempt")
 
+  def isExemptionStatus(status: ITSAStatus): Boolean =
+    Set(Exempt, DigitallyExempt).contains(status)
+
+  def isNonExemptStatus(status: ITSAStatus): Boolean =
+    Set(Mandated, Voluntary, Annual, Dormant).contains(status)
+
   implicit val itsaStatusReads: Reads[ITSAStatus] = Reads.enumNameReads(ITSAStatus)
   implicit val itsaStatusWrite: Writes[ITSAStatus] = Writes.enumNameWrites
 }

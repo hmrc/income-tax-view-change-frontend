@@ -18,7 +18,8 @@ package models
 
 import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus, Voluntary, Annual}
+import models.itsaStatus.ITSAStatus._
+import org.scalatest.Assertion
 import services.optout.{OptOutProposition, OptOutTestSupport}
 import testUtils.{TestSupport, UnitSpec}
 
@@ -416,6 +417,35 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
           model.optOutExistsWhileEnabled shouldBe false
           model.getSummaryCardSuffixes shouldBe List(None, None, None)
         }
+
+        "there is an exempt status" in {
+          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+          val optOutProposition = OptOutProposition.createOptOutProposition(
+            currentYear = TaxYear(2025, 2026),
+            previousYearCrystallised = false,
+            previousYearItsaStatus = Voluntary,
+            currentYearItsaStatus = Exempt,
+            nextYearItsaStatus = Annual
+          )
+
+          val model = ReportingFrequencyViewModel(
+            isAgent = false,
+            optOutJourneyUrl = None,
+            optInTaxYears = Seq.empty,
+            itsaStatusTable = Seq(),
+            displayCeasedBusinessWarning = false,
+            isAnyOfBusinessLatent = false,
+            mtdThreshold = "",
+            proposition = optOutProposition,
+            isSignUpEnabled = true,
+            isOptOutEnabled = true
+          )(mockDateService)
+
+          model.signUpExistsWhileEnabled shouldBe false
+          model.optOutExistsWhileEnabled shouldBe true
+          model.getSummaryCardSuffixes shouldBe List()
+        }
       }
 
       "return only sign up cards" when {
@@ -480,13 +510,96 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
         }
       }
     }
+
+    "exemptStatusCount" should {
+      "handle no exempt status" in {
+        setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+        val optOutProposition = OptOutProposition.createOptOutProposition(
+          currentYear = TaxYear(2025, 2026),
+          previousYearCrystallised = true,
+          previousYearItsaStatus = Voluntary,
+          currentYearItsaStatus = Annual,
+          nextYearItsaStatus = Voluntary
+        )
+
+        val model = ReportingFrequencyViewModel(
+          isAgent = false,
+          optOutJourneyUrl = None,
+          optInTaxYears = Seq(TaxYear(2025, 2026)),
+          itsaStatusTable = Seq(),
+          displayCeasedBusinessWarning = false,
+          isAnyOfBusinessLatent = false,
+          mtdThreshold = "",
+          proposition = optOutProposition,
+          isSignUpEnabled = true,
+          isOptOutEnabled = true
+        )(mockDateService)
+
+        model.exemptStatusCount shouldBe(0, 3)
+      }
+
+      "handle one exempt status" in {
+        setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+        val optOutProposition = OptOutProposition.createOptOutProposition(
+          currentYear = TaxYear(2025, 2026),
+          previousYearCrystallised = true,
+          previousYearItsaStatus = Voluntary,
+          currentYearItsaStatus = Exempt,
+          nextYearItsaStatus = Voluntary
+        )
+
+        val model = ReportingFrequencyViewModel(
+          isAgent = false,
+          optOutJourneyUrl = None,
+          optInTaxYears = Seq(TaxYear(2025, 2026)),
+          itsaStatusTable = Seq(),
+          displayCeasedBusinessWarning = false,
+          isAnyOfBusinessLatent = false,
+          mtdThreshold = "",
+          proposition = optOutProposition,
+          isSignUpEnabled = true,
+          isOptOutEnabled = true
+        )(mockDateService)
+
+        model.exemptStatusCount shouldBe(1, 2)
+      }
+
+      "handle multiple exempt status" in {
+        setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+        val optOutProposition = OptOutProposition.createOptOutProposition(
+          currentYear = TaxYear(2025, 2026),
+          previousYearCrystallised = true,
+          previousYearItsaStatus = Mandated,
+          currentYearItsaStatus = Exempt,
+          nextYearItsaStatus = Exempt
+        )
+
+        val model = ReportingFrequencyViewModel(
+          isAgent = false,
+          optOutJourneyUrl = None,
+          optInTaxYears = Seq(TaxYear(2025, 2026)),
+          itsaStatusTable = Seq(),
+          displayCeasedBusinessWarning = false,
+          isAnyOfBusinessLatent = false,
+          mtdThreshold = "",
+          proposition = optOutProposition,
+          isSignUpEnabled = true,
+          isOptOutEnabled = true
+        )(mockDateService)
+
+        model.exemptStatusCount shouldBe(2, 1)
+      }
+    }
   }
 
   def testSuffixes(previousYearCrystallisation: Boolean,
                    previousYearStatus: ITSAStatus,
                    currentYearStatus: ITSAStatus,
                    nextYearStatus: ITSAStatus,
-                   expectedResult: List[Option[String]])
+                   expectedResult: List[Option[String]]): Assertion
   = {
     setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
     val optOutProposition = OptOutProposition.createOptOutProposition(

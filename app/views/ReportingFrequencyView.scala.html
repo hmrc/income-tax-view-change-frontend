@@ -121,7 +121,9 @@
 
 @manageReportingFrequency = {
     @if(optInOptOutContentUpdateR17IsEnabled) {
-        @h2(msg = "reporting.obligations.changing.h2", optId = Some("manage-reporting-obligations-heading"))
+        @if(viewModel.getSummaryCardSuffixes.nonEmpty) {
+            @h2(msg = "reporting.obligations.changing.h2", optId = Some("manage-reporting-obligations-heading"))
+        }
         @viewModel.getSummaryCardSuffixes.zipWithIndex.map { case (suffix, index) =>
             @suffix.map { endMessage =>
                 <div class="govuk-summary-card">
@@ -327,7 +329,7 @@
 @mandatoryReportingOnlyExempt = {
     @h2(msg = "reporting.frequency.mandatoryReporting.heading.R17", optId = Some("mandatory-reporting-heading"))
 
-    @p(id = Some("mandatory-reporting-text-1")){
+    @p(id = Some("mandatory-reporting-text")){
         @messages("reporting.frequency.mandatoryReporting.onlyExempt.p1")
     }
 
@@ -340,7 +342,7 @@
 @mandatoryReportingHasExempt = {
     @h2(msg = "reporting.frequency.mandatoryReporting.heading.R17", optId = Some("mandatory-reporting-heading"))
 
-    @p(id = Some("mandatory-reporting-text-1")){
+    @p(id = Some("mandatory-reporting-text")){
         @messages("reporting.frequency.mandatoryReporting.hasExempt.p1")
     }
 

@@ -99,7 +99,7 @@ case class ReportingFrequencyViewModel(
     }
   }
 
-  val exemptStatusCount: (Int, Int) = {
+  private[models] val exemptStatusCount: (Int, Int) = {
     val previousYearStatus: ITSAStatus = proposition.previousTaxYear.status
     val currentYearStatus: ITSAStatus = proposition.currentTaxYear.status
     val nextYearStatus: ITSAStatus = proposition.nextTaxYear.status
@@ -107,8 +107,8 @@ case class ReportingFrequencyViewModel(
     val statusList = List(previousYearStatus, currentYearStatus, nextYearStatus)
 
     (
-      statusList.count(status => status == Exempt || status == DigitallyExempt),
-      statusList.count(status => status != Exempt && status != DigitallyExempt && status != NoStatus)
+      statusList.count(isExemptionStatus),
+      statusList.count(isNonExemptStatus)
     )
   }
 
