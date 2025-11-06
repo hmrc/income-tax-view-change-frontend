@@ -75,7 +75,7 @@ class SelectYourReasonViewSpec extends TestSupport {
       document.getElementsByClass("govuk-heading-l").first().text() shouldBe heading
     }
 
-    val paragraphs = document.getElementsByClass("govuk-body-m")
+    val paragraphs = document.getElementsByClass("govuk-body")
 
     "render the correct first paragraph" in {
       paragraphs.first().text() shouldBe paragraph1
@@ -90,7 +90,7 @@ class SelectYourReasonViewSpec extends TestSupport {
     }
 
     "renders the correct subheading" in {
-      document.select("#select-your-reason-form h2").first().text() shouldBe subheading
+      document.select("#select-your-reason-form > div.govuk-form-group > fieldset > legend").first().text() shouldBe subheading
     }
 
     "renders the correct first bullet point text" in {
