@@ -174,7 +174,6 @@ class ReportingObligationsAuditService @Inject()(
     }
 
   def tableContentToItsaStatus(content: Option[String])(implicit messages: Messages, user: MtdItUser[_]): ITSAStatus = {
-    //    println(messages("reporting.frequency.table.mandated.r17"))
     if (isEnabled(OptInOptOutContentUpdateR17)) {
       content match {
         case Some(tableContent) if tableContent == messages("reporting.frequency.table.mandated.r17") => Mandated
