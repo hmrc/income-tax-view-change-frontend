@@ -43,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReportingObligationsAuditService @Inject()(
                                                   auditConnector: AuditConnector,
-                                                  reportingFrequencyViewUtils: ReportingFrequencyViewUtils,
+                                                  reportingFrequencyViewUtils: ReportingFrequencyViewUtils
                                                 )(implicit val appConfig: FrontendAppConfig, val dateService: DateServiceInterface) extends Logging with MtdConstants with FeatureSwitching {
 
   def buildOptOutCards(optOutProposition: OptOutProposition): Seq[ReportingObligationCard] =
@@ -67,7 +67,7 @@ class ReportingObligationsAuditService @Inject()(
             journeyType = OptOut,
             taxYear = nextTaxYear.startYear.toString,
             singleYearOrOnwards = SingleTaxYear
-          ),
+          )
         )
       case Seq(PreviousOptOutTaxYear(Voluntary, prevTaxYear, false), CurrentOptOutTaxYear(Voluntary, currentTaxYear), NextOptOutTaxYear(Voluntary, nextTaxYear, _)) =>
         Seq(
@@ -85,7 +85,7 @@ class ReportingObligationsAuditService @Inject()(
             journeyType = OptOut,
             taxYear = nextTaxYear.startYear.toString,
             singleYearOrOnwards = SingleTaxYear
-          ),
+          )
         )
       case Seq(PreviousOptOutTaxYear(Voluntary, prevTaxYear, false), NextOptOutTaxYear(Voluntary, nextTaxYear, _)) =>
         Seq(
@@ -98,7 +98,7 @@ class ReportingObligationsAuditService @Inject()(
             journeyType = OptOut,
             taxYear = nextTaxYear.startYear.toString,
             singleYearOrOnwards = SingleTaxYear
-          ),
+          )
         )
       case Seq(PreviousOptOutTaxYear(Voluntary, prevTaxYear, false), CurrentOptOutTaxYear(Voluntary, currentTaxYear)) =>
         Seq(
@@ -111,7 +111,7 @@ class ReportingObligationsAuditService @Inject()(
             journeyType = OptOut,
             taxYear = currentTaxYear.startYear.toString,
             singleYearOrOnwards = SingleTaxYear
-          ),
+          )
         )
       case Seq(CurrentOptOutTaxYear(Voluntary, currentTaxYear), NextOptOutTaxYear(Voluntary, nextTaxYear, _)) =>
         Seq(
@@ -124,7 +124,7 @@ class ReportingObligationsAuditService @Inject()(
             journeyType = OptOut,
             taxYear = nextTaxYear.startYear.toString,
             singleYearOrOnwards = SingleTaxYear
-          ),
+          )
         )
       case Seq(NextOptOutTaxYear(Voluntary, nextTaxYear, _)) =>
         Seq(
@@ -132,7 +132,7 @@ class ReportingObligationsAuditService @Inject()(
             journeyType = OptOut,
             taxYear = nextTaxYear.startYear.toString,
             singleYearOrOnwards = SingleTaxYear
-          ),
+          )
         )
       case _ =>
         List.empty
@@ -221,7 +221,7 @@ class ReportingObligationsAuditService @Inject()(
 
   def createAuditEvent(
                         optOutProposition: OptOutProposition,
-                        optInProposition: OptInProposition,
+                        optInProposition: OptInProposition
                       )(implicit messages: Messages, mtdItUser: MtdItUser[_]): ReportingObligationsAuditModel = {
 
     val links: List[String] =
