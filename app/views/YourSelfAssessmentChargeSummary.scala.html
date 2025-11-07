@@ -80,7 +80,7 @@
 
 @pageHeading = @{ ChargeNameLangHelper.getHeading(viewModel.chargeItem) }
 
-@WYOorYSACLinkContent = {
+@WYOLinkContent = {
     @p() {
         @if(viewModel.isAgent) {
             @messages("chargeSummary.whatYouOwe.textOne-agent"),
@@ -175,7 +175,7 @@
         }
     }
 
-    @WYOorYSACLinkContent
+    @WYOLinkContent
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)
