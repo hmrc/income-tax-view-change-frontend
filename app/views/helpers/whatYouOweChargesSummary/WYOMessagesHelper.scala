@@ -26,30 +26,6 @@ object WYOMessagesHelper {
 
   def getPrefix(key: String): String = s"whatYouOwe.$key"
 
-  def getPaymentsMadeBulletLinkText(implicit user: MtdItUser[_], messages: Messages): String =
-    getMessage(
-      if (user.isAgent()) "payments-made-bullet-agent-1.2"
-      else                "payments-made-bullet-1.2"
-    )
-
-  def getPaymentsMadeBulletText(implicit user: MtdItUser[_], messages: Messages): String =
-    getMessage(
-      if (user.isAgent()) "payments-made-bullet-agent-2"
-      else                "payments-made-bullet-2"
-    )
-
-  def getNoPaymentsDueText(implicit user: MtdItUser[_], messages: Messages): String =
-    getMessage(
-      if (user.isAgent()) "no-payments-due-agent"
-      else                "no-payments-due"
-    )
-
-  def getPaymentsMadeText(implicit user: MtdItUser[_], messages: Messages): String =
-    getMessage(
-      if (user.isAgent()) "payments-made-agent"
-      else                "payments-made"
-    )
-
   def getHeading(implicit user: MtdItUser[_], messages: Messages): String =
     getMessage(
       if(user.isAgent()) "heading-agent"
