@@ -17,7 +17,6 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import models.admin.YourSelfAssessmentCharges
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR}

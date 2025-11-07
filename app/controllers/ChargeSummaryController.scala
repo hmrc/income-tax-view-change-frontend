@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.{ChargeSummaryAudit, PaymentAllocationsResponseAuditModel}
+import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
@@ -31,7 +31,7 @@ import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.core.Nino
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
+import models.paymentAllocationCharges.PaymentAllocationViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
