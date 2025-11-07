@@ -149,3 +149,7 @@ case object AccessDeniedForSupportingAgent extends AuditType {
 case object SignUpTaxYearsPage extends AuditType {
   val name = "SignUpTaxYearsPage"
 }
+
+case object OptOutTaxYearsPage extends AuditType {
+  val name = "OptOutTaxYearsPage"
+}

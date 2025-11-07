@@ -891,6 +891,7 @@ nextUpdates.r17.tab.annual.heading                                 = Hyd at flwy
 nextUpdates.r17.tab.annual.text1                                   = Mae’r dudalen hon yn dangos y dyddiadau cau sydd ar y gweill ar eich cyfer ac unrhyw ddyddiadau cau a fethwyd.
 nextUpdates.r17.tab.annual.subHeading                              = Ffurflen Dreth i’w chyflwyno
 nextUpdates.r17.tab.annual.text2                                   = Gan eich bod yn optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch gael rhagor o wybodaeth yn y fan hon am sut rydych chi’n
+nextUpdates.r17.tab.annual.text2.exempt                            = Gan eich bod wedi’ch esemptio rhag y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddysgu yma sut i
 nextUpdates.r17.tab.annual.link                                    = cyflwyno’ch Ffurflen Dreth Hunanasesiad
 nextUpdates.r17.tab.annual.text3                                   = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn
 nextUpdates.r17.tab.annual.text4                                   = 31 Ionawr {0}.
@@ -1201,6 +1202,9 @@ chargeSummary.lpi.penalties.p3                                 = Gweler yr arwei
 chargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
 chargeSummary.POA1Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich taliad cyntaf ar gyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif yn rhy uchel.
+credit-and-refund.row.POA1RR-credit                         = o gredyd o’r taliad cyntaf ar gyfrif - blwyddyn dreth
+credit-and-refund.row.POA2RR-credit                         = o gredyd o’r ail daliad ar gyfrif - blwyddyn dreth
+credit-and-refund.row.IRA-credit                            = o gredyd o Ffurflen Dreth ddiwygiedig - blwyddyn dreth
 
 chargeSummary.POA2Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich ail daliad ar gyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif yn rhy uchel.
 chargeSummary.chargeAmount                                          = Swm y credyd: {0}

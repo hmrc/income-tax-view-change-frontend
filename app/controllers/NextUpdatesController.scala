@@ -100,7 +100,8 @@ class NextUpdatesController @Inject()(
                   isSupportingAgent = user.isSupportingAgent,
                   origin = origin,
                   whatTheUserCanDo = whatTheUserCanDoContent,
-                  optInOptOutContentR17Enabled = isR17ContentEnabled
+                  optInOptOutContentR17Enabled = isR17ContentEnabled,
+                  taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status)
                 )
               )
               }
