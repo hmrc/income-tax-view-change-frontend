@@ -305,7 +305,9 @@ class OptOutService @Inject()(
     }
   }
 
-  def isOptOutTaxYearValid(taxYear: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptOutTaxYearQuestionViewModel]] = {
+  def isOptOutTaxYearValid(taxYear: Option[String])(implicit user: MtdItUser[_],
+                                                    hc: HeaderCarrier,
+                                                    ec: ExecutionContext): Future[Option[OptOutTaxYearQuestionViewModel]] = {
     taxYear match {
       case Some(year) =>
         fetchOptOutProposition().flatMap { proposition =>
@@ -322,7 +324,12 @@ class OptOutService @Inject()(
           (checkOptOutStatus, proposition.optOutPropositionType) match {
             case (Some((true, propositionTaxYear)), Some(propositionType)) if propositionType.state(propositionTaxYear).isDefined =>
               nextUpdatesService.getQuarterlyUpdatesCounts(propositionTaxYear.taxYear).map { quarterlyUpdatesCount =>
-                Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(propositionTaxYear), quarterlyUpdatesCount.count, currentYearStatus, nextYearStatus))
+                Some(OptOutTaxYearQuestionViewModel(propositionTaxYear,
+                  propositionType.state(propositionTaxYear),
+                  quarterlyUpdatesCount.count,
+                  None,
+                  currentYearStatus,
+                  nextYearStatus))
               }
             case (Some((true, _)), Some(_)) =>
               Logger("application").warn("[OptOutService] Unknown scenario for opt out tax year, redirecting to Reporting Obligations Page")

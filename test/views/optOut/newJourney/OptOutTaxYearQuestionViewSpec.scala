@@ -44,13 +44,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       case _          => throw new IllegalArgumentException(s"Invalid opt-out year: $submittedOptOutYear")
     }
 
-    val viewModel = OptOutTaxYearQuestionViewModel(
-      taxYear = optOutYear,
-      optOutState = Some(state),
-      numberOfQuarterlyUpdates = numberOfQuarterlyUpdates,
-      currentYearStatus = currentYearItsaStatus,
-      nextYearStatus = nextYearItsaStatus
-    )
+    val viewModel = OptOutTaxYearQuestionViewModel(taxYear = optOutYear, optOutState = Some(state), numberOfQuarterlyUpdates = numberOfQuarterlyUpdates, None, currentYearStatus = currentYearItsaStatus, nextYearStatus = nextYearItsaStatus)
 
     val form = if (withError) {
       OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear).withError("opt-out-tax-year-question", "optout.taxYearQuestion.error", viewModel.taxYear.taxYear.startYear.toString, viewModel.taxYear.taxYear.endYear.toString)
