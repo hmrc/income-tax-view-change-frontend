@@ -269,10 +269,6 @@ class ReportingObligationsAuditService @Inject()(
         detail = createJsonAuditBody(auditEventModel)
       )
 
-    println(auditEventModel)
-    println(createJsonAuditBody(auditEventModel))
-    println(extendedDataEvent)
-
     auditConnector.sendExtendedEvent(extendedDataEvent)
   }
 
