@@ -1013,13 +1013,6 @@ whatYouOwe.adjust-poa.paid-4                                       = 31 January 
 whatYouOwe.adjust-poa.paid-5                                       =
 whatYouOwe.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
 
-## Your Self Assessment Charges
-
-classicSA.sa-link                                                 = Self Assessment online account
-classicSA.sa-link-agent                                           = Self Assessment for Agents account
-
-
-
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
 chargeSummary.paymentOnAccount2.text							   = Second payment on account

@@ -1013,12 +1013,6 @@ whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 whatYouOwe.interestChargesWarning                               = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
 
-## Your Self Assessment Charges
-
-
-classicSA.sa-link                                                 = cyfrif Hunanasesiad ar-lein blaenorol
-classicSA.sa-link-agent                                           = cyfrif Hunanasesiad ar gyfer Asiantau
-
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
 chargeSummary.paymentOnAccount2.text                            = Ail daliad ar gyfrif
