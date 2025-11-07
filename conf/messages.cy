@@ -1015,33 +1015,6 @@ whatYouOwe.interestChargesWarning                               = Bydd taliadau 
 
 ## Your Self Assessment Charges
 
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1               = Mae CThEF wedi creu’r tâl hwn oherwydd bod eich
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p2               = Efallai fod hyn oherwydd eich bod wedi addasu eich Ffurflen Dreth yn y flwyddyn flaenorol. Efallai fod hyn hefyd oherwydd eich bod wedi gostwng eich taliadau ar gyfrif i swm sy’n llai na’r hyn mae’ch Ffurflen Dreth yn nodi y dylech fod wedi’i dalu.
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.linkText                         = taliad cyntaf ar gyfrif
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.linkText                         = ail daliad ar gyfrif
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.p.textTwo                         = ar gyfer blwyddyn dreth {0} i {1} yn rhy isel.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1                               = Mae ‘taliadau ar gyfrif’ yn dau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2                               = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3                               = Os byddwch chi’n gwneud diwygiad i’r Ffurflen Dreth ac mae’r bil treth yn newid, yna bydd pob taliad ar gyfrif yn cael ei ddiweddaru i hanner y cyfanswm newydd.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4.linkText                      = Help i ddeall eich bil treth Hunanasesiad
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText                         = Beth yw taliad ar gyfrif?
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p1                        = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p2                        = Os byddwch yn talu yn hwyrach na’r dyddiad dyledus {0} mae’n bosibl y cewch gosb am dalu’n hwyr.
-yourSelfAssessmentChargeSummary.interestOnThisCharge.heading                            = Llog ar y tâl hwn
-yourSelfAssessmentChargeSummary.interestOnThisCharge.p1                                 = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad cyntaf ar gyfrif.
-yourSelfAssessmentChargeSummary.interestOnThisCharge.p2                                 = Bydd llog yn cael ei amcangyfrif hyd nes caiff y tâl cysylltiedig ei dalu’n llawn.
-yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa1.text.heading              = Hanes y tâl hwn
-yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa1.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
-yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.heading               = Hanes y tâl hwn
-yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa2.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.table.overdue                     = {0} i {1}
-yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading                      = Cyfnod y llog
-yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading2                     = Cyfradd log bresennol
-yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading3                     = Swm amcangyfrifedig
-yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText                    = Cyfanswm y llog ar y tâl hwn
-yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText                       = Gall llog ar dâl sydd arnoch fynd i fyny neu i lawr. Gweler yr arweiniad ar y gyfradd log a bennir gan CThEF
-yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText                   = y gyfradd llog a bennir gan CThEF
-
 
 classicSA.sa-link                                                 = cyfrif Hunanasesiad ar-lein blaenorol
 classicSA.sa-link-agent                                           = cyfrif Hunanasesiad ar gyfer Asiantau
@@ -3272,6 +3245,35 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p2          = nid oedd g
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = mae arnoch fwy na’r swm y gwnaethoch ei dalu yn ystod y flwyddyn (er enghraifft, drwy daliadau ar gyfrif neu TWE)
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = rydych wedi newid eich Ffurflen Dreth a’r canlyniad yw bod arnoch ragor i’w dalu
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = Hefyd, mae angen i chi wneud taliad mantoli os oes gennych unrhyw ddyledion Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
+
+yourSelfAssessmentChargeSummary.overdue-inset-text-1                                    = Gall taliadau a wnewch gymryd hyd at 3 diwrnod gwaith i’w prosesu, yn dibynnu ar y dull talu rydych yn ei ddefnyddio. Mae’n rhaid i daliadau ddod i law CThEF erbyn y dyddiad dyledus er mwyn osgoi unrhyw log neu gosbau am dalu’n hwyr.
+yourSelfAssessmentChargeSummary.overdue-inset-text-2                                    = Bydd unrhyw daliadau a wnewch yn mynd tuag at dalu taliadau gorddyledus yn y drefn yr oeddent yn ddyledus.
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1               = Mae CThEF wedi creu’r tâl hwn oherwydd bod eich
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p2               = Efallai fod hyn oherwydd eich bod wedi addasu eich Ffurflen Dreth yn y flwyddyn flaenorol. Efallai fod hyn hefyd oherwydd eich bod wedi gostwng eich taliadau ar gyfrif i swm sy’n llai na’r hyn mae’ch Ffurflen Dreth yn nodi y dylech fod wedi’i dalu.
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.linkText                         = taliad cyntaf ar gyfrif
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.linkText                         = ail daliad ar gyfrif
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.p.textTwo                         = ar gyfer blwyddyn dreth {0} i {1} yn rhy isel.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1                               = Mae ‘taliadau ar gyfrif’ yn dau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2                               = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3                               = Os byddwch chi’n gwneud diwygiad i’r Ffurflen Dreth ac mae’r bil treth yn newid, yna bydd pob taliad ar gyfrif yn cael ei ddiweddaru i hanner y cyfanswm newydd.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4.linkText                      = Help i ddeall eich bil treth Hunanasesiad
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText                         = Beth yw taliad ar gyfrif?
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p1                        = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p2                        = Os byddwch yn talu yn hwyrach na’r dyddiad dyledus {0} mae’n bosibl y cewch gosb am dalu’n hwyr.
+yourSelfAssessmentChargeSummary.interestOnThisCharge.heading                            = Llog ar y tâl hwn
+yourSelfAssessmentChargeSummary.interestOnThisCharge.p1                                 = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad cyntaf ar gyfrif.
+yourSelfAssessmentChargeSummary.interestOnThisCharge.p2                                 = Bydd llog yn cael ei amcangyfrif hyd nes caiff y tâl cysylltiedig ei dalu’n llawn.
+yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa1.text.heading              = Hanes y tâl hwn
+yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa1.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
+yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.heading               = Hanes y tâl hwn
+yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa2.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.table.overdue                     = {0} i {1}
+yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading                      = Cyfnod y llog
+yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading2                     = Cyfradd log bresennol
+yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading3                     = Swm amcangyfrifedig
+yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText                    = Cyfanswm y llog ar y tâl hwn
+yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText                       = Gall llog ar dâl sydd arnoch fynd i fyny neu i lawr. Gweler yr arweiniad ar y gyfradd log a bennir gan CThEF
+yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText                   = y gyfradd llog a bennir gan CThEF
 
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar eich {0}
 yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Bydd swm y llog sy’n ddyledus yn cynyddu hyd nes y bydd y swm gorddyledus yn cael ei dalu.

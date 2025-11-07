@@ -1015,34 +1015,6 @@ whatYouOwe.interestChargesWarning                                  = Interest ch
 
 ## Your Self Assessment Charges
 
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1               = HMRC has created this charge because your
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p2               = This may be because you changed your previous year’s tax return, or reduced your payments on account to less than what your tax return shows you should have paid.
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.linkText                         = first payment on account
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.linkText                         = second payment on account
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.p.textTwo                         = for the {0} to {1} tax year was too low.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText                         = What is payment on account?
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1                               = ’Payments on account’ are two advance payments made towards your next tax bill.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2                               = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3                               = If you make an amendment to the tax return and the tax bill changes, then each payment on account will be updated to half of the new total.
-yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4.linkText                      = Help with understanding your Self Assessment tax bill
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p1                        = Pay this charge to stop interest from increasing daily.
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p2                        = If you pay later than the due date of {0} you may get a late payment penalty.
-yourSelfAssessmentChargeSummary.interestOnThisCharge.heading                            = Interest on this charge
-yourSelfAssessmentChargeSummary.interestOnThisCharge.p1                                 = Interest is charged from the date your first payment on account was originally due.
-yourSelfAssessmentChargeSummary.interestOnThisCharge.p2                                 = Interest will be estimated until the charge it is related to is paid in full.
-yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa1.text.heading               = History of this charge
-yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa1.text.heading       = This charge goes towards your {0} to {1} tax bill.
-yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.heading               = History of this charge
-yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa2.text.heading       = This charge goes towards your {0} to {1} tax bill.
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.table.overdue                             = {0} to {1}
-yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading                              = Interest period
-yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading2                             = Current interest rate
-yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading3                             = Estimated amount
-yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText                            = Total interest on this charge:
-yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText                               = The interest on a charge you owe can go up and down. See guidance on the
-yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText                           = interest rate set by HMRC
-
-
 classicSA.sa-link                                                 = Self Assessment online account
 classicSA.sa-link-agent                                           = Self Assessment for Agents account
 
@@ -3297,6 +3269,35 @@ yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Amount
 yourSelfAssessmentChargeSummary.table.head.daysOverdue                  = Days overdue
 yourSelfAssessmentChargeSummary.table.head.interestRate                 = Interest rate
 yourSelfAssessmentChargeSummary.table.head.amount                       = Amount
+
+yourSelfAssessmentChargeSummary.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
+yourSelfAssessmentChargeSummary.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1               = HMRC has created this charge because your
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p2               = This may be because you changed your previous year’s tax return, or reduced your payments on account to less than what your tax return shows you should have paid.
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.linkText                         = first payment on account
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.linkText                         = second payment on account
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.p.textTwo                         = for the {0} to {1} tax year was too low.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText                         = What is payment on account?
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1                               = ’Payments on account’ are two advance payments made towards your next tax bill.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2                               = HMRC estimates the total amount based on your previous year’s tax bill. Each payment is half of that amount.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3                               = If you make an amendment to the tax return and the tax bill changes, then each payment on account will be updated to half of the new total.
+yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4.linkText                      = Help with understanding your Self Assessment tax bill
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p1                        = Pay this charge to stop interest from increasing daily.
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p2                        = If you pay later than the due date of {0} you may get a late payment penalty.
+yourSelfAssessmentChargeSummary.interestOnThisCharge.heading                            = Interest on this charge
+yourSelfAssessmentChargeSummary.interestOnThisCharge.p1                                 = Interest is charged from the date your first payment on account was originally due.
+yourSelfAssessmentChargeSummary.interestOnThisCharge.p2                                 = Interest will be estimated until the charge it is related to is paid in full.
+yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa1.text.heading               = History of this charge
+yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa1.text.heading       = This charge goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.heading               = History of this charge
+yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa2.text.heading       = This charge goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.table.overdue                             = {0} to {1}
+yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading                              = Interest period
+yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading2                             = Current interest rate
+yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading3                             = Estimated amount
+yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText                            = Total interest on this charge:
+yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText                               = The interest on a charge you owe can go up and down. See guidance on the
+yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText                           = interest rate set by HMRC
 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = How is interest calculated?
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p1          = Multiply the amount the interest is applied to by the number of days overdue (period).
