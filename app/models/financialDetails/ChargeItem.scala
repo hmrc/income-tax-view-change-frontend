@@ -139,8 +139,7 @@ case class ChargeItem (
     else false
   }
 
-  // this method is used to filter charges down to those currently allowed for the
-  // new Your Self Assessment Charge Summary feature
+  // this method is used to filter charges down to those which have new designs
   def isIncludedInSACSummary(isInterestCharge: Boolean): Boolean = {
 
     val validCharge = (transactionType, codedOutStatus) match {

@@ -33,7 +33,7 @@
 )
 
 @getMessage(key: String, args: String*) = {
-    @messages(s"selfAssessmentCharges.$key", args: _*)
+    @messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
 @p(id = Some("coding-out-notice"), classes = "govuk-body coding-out-notice") {
