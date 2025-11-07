@@ -3379,8 +3379,8 @@ yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest on this charge:
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Amount interest is applied to
 yourSelfAssessmentChargeSummary.table.head.interestPeriod               = Interest period
-yourSelfAssessmentChargeSummary.table.head.interestRate                 = Current Interest rate
-yourSelfAssessmentChargeSummary.table.head.amount                       = Amount
+yourSelfAssessmentChargeSummary.table.head.interestRate                 = Current interest rate
+yourSelfAssessmentChargeSummary.table.head.amount                       = Estimated amount
 yourSelfAssessmentChargeSummary.warningText                             = Pay this charge to stop this interest from increasing daily.
 
 

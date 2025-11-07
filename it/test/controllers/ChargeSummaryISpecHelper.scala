@@ -45,7 +45,6 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
   val important: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
-  val lpiHistory: String = messagesAPI("chargeSummary.chargeHistory.lateInterestPayment")
 
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentHistoryAllocations =
     PaymentHistoryAllocations(
