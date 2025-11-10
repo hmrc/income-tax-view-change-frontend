@@ -1256,6 +1256,10 @@ chargeSummary.whatYouOwe.linkText.concatenated				       = View what you owe
 chargeSummary.whatYouOwe.linkText-agent.concatenated			   = View what your client owes
 chargeSummary.whatYouOwe.linkText								   = what you owe
 chargeSummary.whatYouOwe.linkText-agent							   = what your client owes
+chargeSummary.whatYouOwe.adjustment.heading.youOwe                 = You owe:
+chargeSummary.whatYouOwe.adjustment.heading.due                    = Due
+chargeSummary.chargeHistory.caption.MFA.text.heading               = This charge goes towards your {0} to {1} tax bill.
+
 
 chargeSummary.selfAssessmentCharges.text							= to check if you have any other payments due.
 chargeSummary.selfAssessmentCharges.text-agent					    = to check if they have any other payments due.
