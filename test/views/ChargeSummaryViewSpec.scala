@@ -1044,9 +1044,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
-        document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")
-        // remaining to pay should be the same as payment amount
-        document.select(".govuk-summary-list").text() shouldBe summaryListText
+        document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text") + " " + messages("chargeSummary.whatYouOwe.adjustment.heading.youOwe") + " £1,400.00"
         // payment history should show only "HMRC adjustment created"
         document.select("#payment-history-table tr").size shouldBe 2
         document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
@@ -1064,9 +1062,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val allocationLinkHref = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=PAYID01"
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
-        document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")
-        // remaining to pay should be zero
-        document.select(".govuk-summary-list").text() shouldBe summaryListText
+        document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text") + " " + messages("chargeSummary.whatYouOwe.adjustment.heading.youOwe") + " £1,400.00"
         // payment history should show two rows "HMRC adjustment created" and "payment put towards HMRC Adjustment"
         document.select("#payment-history-table tr").size shouldBe 4
         document.select("#payment-history-table tr:nth-child(1)").text() shouldBe paymentHistoryText
@@ -1634,9 +1630,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
-        document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")
-        // remaining to pay should be the same as payment amount
-        document.select(".govuk-summary-list").text() shouldBe summaryListText
+        document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text") + " " + messages("chargeSummary.whatYouOwe.adjustment.heading.youOwe") + " £1,400.00"
         // payment history should show only "HMRC adjustment created"
         document.select("#payment-history-table tr").size shouldBe 2
         document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
@@ -1653,9 +1647,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val allocationLinkHref = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=PAYID01"
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
-        document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")
-        // remaining to pay should be zero
-        document.select(".govuk-summary-list").text() shouldBe summaryListText
+        document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text") + " " + messages("chargeSummary.whatYouOwe.adjustment.heading.youOwe") + " £1,400.00"
         // payment history should show two rows "HMRC adjustment created" and "payment put towards HMRC Adjustment"
         document.select("#payment-history-table tr").size shouldBe 4
 
