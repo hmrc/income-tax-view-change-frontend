@@ -31,6 +31,7 @@
 
 @import java.time.LocalDate
 @import viewUtils.ExternalUrlHelper
+@import models.financialDetails.MfaCreditType
 
 
 @this(
@@ -47,6 +48,7 @@
     chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,
     chargeSummaryHasPaymentBreakdown: ChargeSummaryHasPaymentBreakdown,
     chargeSummaryCodingOut: ChargeSummaryCodingOut,
+    chargeSummaryCancelledCodingOut: ChargeSummaryCancelledCodingOut,
     chargeSummaryHasDunningLocksOrLpiWithDunningLock: ChargeSummaryHasDunningLocksOrLpiWithDunningLock,
     chargeSummaryNotCodingOutAndNotPayeSelfAssessment: ChargeSummaryNotCodingOutAndNotPayeSelfAssessment,
     chargeSummaryPaymentAllocationTable: ChargeSummaryPaymentAllocationTable,
@@ -111,6 +113,12 @@
 }
 
 @hmrcAdjustmentExplanation = {
+@chargeSummaryCancelledCodingOut(
+    viewModel.chargeItem,
+    viewModel.taxYearFromCodingOut,
+    viewModel.taxYearToCodingOut,
+    viewModel.latePaymentInterestCharge
+)
     <div id="charge-explanation">
         @p(){@messages("chargeSummary.definition.hmrcadjustment")}
     </div>
@@ -377,7 +385,7 @@
     }
 
     @if(!viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
-    && !isPOAReconciliationCredit) {
+    && !isPOAReconciliationCredit && !(viewModel.chargeItem.transactionType == MfaDebitCharge)) {
         @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
             viewModel.chargeItem,
             viewModel.latePaymentInterestCharge,
@@ -482,6 +490,11 @@
             )
         } else {
             @h2(msg = chargeHistoryHeading, optId = Some("charge-history-h2"))
+        }
+        @if(viewModel.chargeItem.transactionType == MfaDebitCharge) {
+            @p() {
+                @messages("chargeSummary.chargeHistory.caption.MFA.text.heading", viewModel.taxYearFromCodingOut,viewModel.taxYearToCodingOut )
+            }
         }
 
         @govukTable(Table(
