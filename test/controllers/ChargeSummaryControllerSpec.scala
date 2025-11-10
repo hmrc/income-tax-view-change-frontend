@@ -632,7 +632,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
 
                 status(result) shouldBe Status.OK
-                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")
+                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text") + " " + messages("chargeSummary.whatYouOwe.adjustment.heading.youOwe") + " £1,400.00"
               }
             }
           }
