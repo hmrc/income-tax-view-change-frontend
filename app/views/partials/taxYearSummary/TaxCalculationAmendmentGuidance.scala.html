@@ -1,0 +1,71 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components.{h3, p, link}
+@import viewUtils.ExternalUrlHelper
+
+@this(
+  h3: h3,
+  p: p,
+  link: link
+)
+
+@(taxYear: Int, prefix: String)(implicit messages: Messages)
+
+<section id="@prefix-amend-guidance" class="govuk-!-margin-top-6 govuk-!-margin-bottom-6">
+
+  @h3(optId = Some("${prefix}-amend-subheading"), msg = messages(s"tax-year-summary.${prefix}-amend-subheading"), classes = "govuk-heading-m")
+
+
+  @p(id = Some(s"${prefix}-bullet-start"))(Html(messages(s"tax-year-summary.${prefix}-bullet-start")))
+
+  <ul class="govuk-list govuk-list--bullet" id="@prefix-bullets">
+    <li id="@prefix-bullet-1">@messages(s"tax-year-summary.${prefix}-bullet-1")</li>
+    <li id="@prefix-bullet-2">
+      @messages(s"tax-year-summary.${prefix}-bullet-2")
+      @link(
+        id = Some(s"${prefix}-bullet-2-link"),
+        link = ExternalUrlHelper.saTaxReturnDeadlinesUrl,
+        messageKey = s"tax-year-summary.${prefix}-bullet-2-link",
+        target = Some("_blank")
+      )
+    </li>
+  </ul>
+
+  @p(id = Some(s"${prefix}-example"))(
+    Html(messages(
+      s"tax-year-summary.${prefix}-example",
+      (taxYear - 1).toString,
+      taxYear.toString,
+      (taxYear + 2).toString
+    ))
+  )
+
+  @p(id = Some(s"${prefix}-contact-hmrc")) {
+    @messages(s"tax-year-summary.${prefix}-contact-hmrc")
+    @link(
+      id = Some(s"${prefix}-contact-hmrc-link"),
+      link = ExternalUrlHelper.saGeneralEnquiriesUrl,
+      messageKey = s"tax-year-summary.${prefix}-contact-hmrc-link",
+      target = Some("_blank"),
+      outerMessage = "."
+    )
+  }
+
+  @p(id = Some(s"${prefix}-bill"))(
+    Html(messages(s"tax-year-summary.${prefix}-bill"))
+  )
+</section>

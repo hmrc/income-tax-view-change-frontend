@@ -23,7 +23,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
+import enums.{AnnualReportingMethod, BeforeSubmissionPage, QuarterlyReportingMethod, ReportingMethod}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel

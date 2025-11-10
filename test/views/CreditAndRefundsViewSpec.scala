@@ -88,9 +88,11 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
 
       "there are multiple credits or payments" in new TestSetup(
         creditAndRefundModel = ANewCreditAndRefundModel()
-          .withAvailableCredit(2800.0)
+          .withAvailableCredit(4000.0)
           .withMfaCredit(LocalDate.of(2019, 5, 15), -1400.0)
           .withPayment(LocalDate.of(2019, 5, 15), -1400.0)
+          .withPoaOneReconciliationCredit(LocalDate.of(2019, 5, 15), -1100)
+          .withPoaTwoReconciliationCredit(LocalDate.of(2019, 5, 15), -1100)
           .get()) {
         document.select("ul#credits-list").isDefined shouldBe true
       }
@@ -466,7 +468,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       "language is English" in
         new TestSetup(
           creditAndRefundModel = ANewCreditAndRefundModel()
-            .withAvailableCredit(1200.0)
+            .withAvailableCredit(3700.0)
             .withAllocatedFutureCredit(10.0)
             .withFirstRefund(20.0)
             .withSecondRefund(40.0)
@@ -474,6 +476,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withBalancingChargeCredit(LocalDate.of(2022, 1, 1), 200.0)
             .withRepaymentInterest(LocalDate.of(2020, 1, 1), 400.0)
             .withMfaCredit(LocalDate.of(2019, 1, 1), 500.0)
+            .withPoaOneReconciliationCredit(LocalDate.of(2019, 5, 15), 1100)
+            .withPoaTwoReconciliationCredit(LocalDate.of(2019, 5, 15), 1100)
+            .withITSAReturnAmendmentCredit(LocalDate.of(2019, 5, 15), 300)
             .get()
         ) {
           document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
@@ -485,9 +490,15 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.select("ul#credits-list li:nth-child(3)").text() shouldBe
             "£400.00 credit from repayment interest - 2019 to 2020 tax year"
           document.select("ul#credits-list li:nth-child(4)").text() shouldBe
+            "£1,100.00 credit from first payment on account - 2019 to 2020 tax year"
+          document.select("ul#credits-list li:nth-child(5)").text() shouldBe
+            "£1,100.00 credit from second payment on account - 2019 to 2020 tax year"
+          document.select("ul#credits-list li:nth-child(6)").text() shouldBe
+            "£300.00 credit from amended tax return - 2019 to 2020 tax year"
+          document.select("ul#credits-list li:nth-child(7)").text() shouldBe
             "£500.00 credit from HMRC adjustment - 2018 to 2019 tax year"
-          document.select("ul#credits-list li:nth-child(5)").text() shouldBe "£40.00 is a refund currently in progress"
-          document.select("ul#credits-list li:nth-child(6)").text() shouldBe "£20.00 is a refund currently in progress"
+          document.select("ul#credits-list li:nth-child(8)").text() shouldBe "£40.00 is a refund currently in progress"
+          document.select("ul#credits-list li:nth-child(9)").text() shouldBe "£20.00 is a refund currently in progress"
         }
 
       "language is Welsh" in
@@ -498,6 +509,9 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             .withBalancingChargeCredit(LocalDate.of(2022, 1, 1), 200.0)
             .withRepaymentInterest(LocalDate.of(2020, 1, 1), 400.0)
             .withMfaCredit(LocalDate.of(2019, 1, 1), 500.0)
+            .withPoaOneReconciliationCredit(LocalDate.of(2019, 5, 15), 1100)
+            .withPoaTwoReconciliationCredit(LocalDate.of(2019, 5, 15), 1100)
+            .withITSAReturnAmendmentCredit(LocalDate.of(2019, 5, 15), 300)
             .get(),
           welshLang = true
         ) {
@@ -510,6 +524,12 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
           document.select("ul#credits-list li:nth-child(3)").text() shouldBe
             "Credyd o £400.00 o log ar ad-daliadau - blwyddyn dreth 2019 i 2020"
           document.select("ul#credits-list li:nth-child(4)").text() shouldBe
+            "£1,100.00 o gredyd o’r taliad cyntaf ar gyfrif - blwyddyn dreth blwyddyn dreth 2019 i 2020"
+          document.select("ul#credits-list li:nth-child(5)").text() shouldBe
+            "£1,100.00 o gredyd o’r ail daliad ar gyfrif - blwyddyn dreth blwyddyn dreth 2019 i 2020"
+          document.select("ul#credits-list li:nth-child(6)").text() shouldBe
+            "£300.00 o gredyd o Ffurflen Dreth ddiwygiedig - blwyddyn dreth blwyddyn dreth 2019 i 2020"
+          document.select("ul#credits-list li:nth-child(7)").text() shouldBe
             "Credyd o £500.00 o ganlyniad i addasiad gan CThEF - blwyddyn dreth 2018 i 2019"
         }
     }

@@ -23,12 +23,13 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.ReportingMethod
+import enums.{AfterSubmissionPage, BeforeSubmissionPage, ReportingMethod}
 import forms.manageBusinesses.manage.ChangeReportingMethodForm
+import models.UIJourneySessionData
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
-import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.i18n.I18nSupport

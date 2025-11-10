@@ -20,14 +20,14 @@ import controllers.ControllerISpecHelper
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.UIJourneySessionData
 import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
-import models.incomeSourceDetails.{TaxYear, UIJourneySessionData}
+import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.ITSAStatusRepositorySupport.statusToString
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -47,7 +47,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/sign-up/completed"
   }
 
@@ -253,6 +253,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
       }
     }
   }
+
   private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
                                     nextYearStatus: ITSAStatus.Value, intent: TaxYear): Future[Boolean] = {
     repository.set(
@@ -261,7 +262,8 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
         optInSessionData =
           Some(OptInSessionData(
             Some(OptInContextData(
-              currentTaxYear.toString, statusToString(currentYearStatus),
-              statusToString(nextYearStatus))), Some(intent.toString)))))
+              currentTaxYear.toString,
+              currentYearStatus.toString,
+              nextYearStatus.toString)), Some(intent.toString)))))
   }
 }

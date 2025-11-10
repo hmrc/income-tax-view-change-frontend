@@ -94,6 +94,10 @@ case object PoaTwoReconciliationCredit extends CreditType {
   override val key = "POA2RR-credit"
 }
 
+case object ITSAReturnAmendmentCredit extends CreditType {
+  override val key = "IRA-credit"
+}
+
 case object RepaymentInterest extends CreditType {
   override val key = "repaymentInterest"
 }
@@ -126,6 +130,7 @@ object TransactionType {
     case PoaTwoDebit.key => PoaTwoDebit
     case PoaOneReconciliationDebit.key => PoaOneReconciliationDebit
     case PoaTwoReconciliationDebit.key => PoaTwoReconciliationDebit
+    case ITSAReturnAmendmentCredit.key => ITSAReturnAmendmentCredit
     case BalancingCharge.key => BalancingCharge
     case LateSubmissionPenalty.key => LateSubmissionPenalty
     case FirstLatePaymentPenalty.key => FirstLatePaymentPenalty
@@ -150,8 +155,7 @@ object TransactionType {
       CreditType.cutOver                    -> CutOverCreditType,
       CreditType.balancingCharge            -> BalancingChargeCreditType,
       CreditType.repaymentInterest          -> RepaymentInterest,
-      CreditType.poaOneReconciliationCredit -> PoaOneReconciliationCredit,
-      CreditType.poaTwoReconciliationCredit -> PoaTwoReconciliationCredit
+      CreditType.itsaReturnAmendmentCredit  -> ITSAReturnAmendmentCredit
     )
     val penalties1 = ChargeType.firstLatePaymentPenalty.map(_ -> FirstLatePaymentPenalty)
     val penalties2 = ChargeType.secondLatePaymentPenalty.map(_ -> SecondLatePaymentPenalty)
@@ -229,6 +233,8 @@ object CreditType {
   val poaOneReconciliationCredit = "4912"
   val poaTwoReconciliationCredit = "4914"
 
+  val itsaReturnAmendmentCredit = "4916"
+
   val payment = List("0060")
 
   implicit val write: Writes[CreditType] = new Writes[CreditType] {
@@ -244,6 +250,7 @@ object CreditType {
     case RepaymentInterest.key => RepaymentInterest
     case PoaOneReconciliationCredit.key => PoaOneReconciliationCredit
     case PoaTwoReconciliationCredit.key => PoaTwoReconciliationCredit
+    case ITSAReturnAmendmentCredit.key => ITSAReturnAmendmentCredit
     case PaymentType.key => PaymentType
     case Repayment.key => Repayment
   }

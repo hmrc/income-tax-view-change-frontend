@@ -17,6 +17,7 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
+import models.admin.YourSelfAssessmentCharges
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR}
@@ -33,7 +34,7 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
       "CREATED - 201" should {
 
-        "return a successful response with valid json" in {
+        "return a successful response with valid json when FS is off and user is not an agent" in {
 
           val utr = "saUtr"
           val amountInPence = 10000
@@ -59,6 +60,104 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, json)
 
           val result: PaymentJourneyResponse = connector.startPaymentJourney(utr, amountInPence, isAgent = false).futureValue
+
+          result shouldBe expectedResponse
+
+          WiremockHelper.verifyPost(
+            uri = s"/pay-api/mtd-income-tax/sa/journey/start"
+          )
+        }
+        "return a successful response with valid json when FS is on and user is not an agent" in {
+          enable(YourSelfAssessmentCharges)
+          val utr = "saUtr"
+          val amountInPence = 10000
+
+          val url = s"/pay-api/mtd-income-tax/sa/journey/start"
+
+          val json = Json.toJson(PaymentJourneyModel("id", "redirect-url")).toString()
+          val requestBody = Json.parse(
+            """
+              |{
+              | "utr": "saUtr",
+              | "amountInPence": 10000,
+              | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/your-self-assessment-charges" ,
+              | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
+              |}
+              """.stripMargin
+          )
+
+          val expectedResponse: PaymentJourneyResponse =
+            PaymentJourneyModel("id", "redirect-url")
+
+          WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, json)
+
+          val result: PaymentJourneyResponse = connector.startPaymentJourney(utr, amountInPence, isAgent = false).futureValue
+
+          result shouldBe expectedResponse
+
+          WiremockHelper.verifyPost(
+            uri = s"/pay-api/mtd-income-tax/sa/journey/start"
+          )
+        }
+        "return a successful response with valid json when FS is off and user is an agent" in {
+
+          val utr = "saUtr"
+          val amountInPence = 10000
+
+          val url = s"/pay-api/mtd-income-tax/sa/journey/start"
+
+          val json = Json.toJson(PaymentJourneyModel("id", "redirect-url")).toString()
+
+          val requestBody = Json.parse(
+            """
+              |{
+              | "utr": "saUtr",
+              | "amountInPence": 10000,
+              | "returnUrl":"http://localhost:9081/report-quarterly/income-and-expenses/view/agents/payments-owed",
+              | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/payments-owed"
+              |}
+              """.stripMargin
+          )
+
+          val expectedResponse: PaymentJourneyResponse =
+            PaymentJourneyModel("id", "redirect-url")
+
+          WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, json)
+
+          val result: PaymentJourneyResponse = connector.startPaymentJourney(utr, amountInPence, isAgent = true).futureValue
+
+          result shouldBe expectedResponse
+
+          WiremockHelper.verifyPost(
+            uri = s"/pay-api/mtd-income-tax/sa/journey/start"
+          )
+        }
+        "return a successful response with valid json when FS is on and user is an agent" in {
+          enable(YourSelfAssessmentCharges)
+          val utr = "saUtr"
+          val amountInPence = 10000
+
+          val url = s"/pay-api/mtd-income-tax/sa/journey/start"
+
+          val json = Json.toJson(PaymentJourneyModel("id", "redirect-url")).toString()
+
+          val requestBody = Json.parse(
+            """
+              |{
+              | "utr": "saUtr",
+              | "amountInPence": 10000,
+              | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/your-self-assessment-charges",
+              | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/your-self-assessment-charges"
+              |}
+              """.stripMargin
+          )
+
+          val expectedResponse: PaymentJourneyResponse =
+            PaymentJourneyModel("id", "redirect-url")
+
+          WiremockHelper.stubPostWithRequest(url, requestBody, CREATED, json)
+
+          val result: PaymentJourneyResponse = connector.startPaymentJourney(utr, amountInPence, isAgent = true).futureValue
 
           result shouldBe expectedResponse
 
