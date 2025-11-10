@@ -563,7 +563,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "display the payment processing info if the charge is not Review & Reconcile" in new Setup(
-                financialDetailsModel(documentDescription = Some("ITSA BCD"), mainTransaction = "4910"), docId = id1040000123) {
+                financialDetailsModel(mainTransaction = "4910"), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()

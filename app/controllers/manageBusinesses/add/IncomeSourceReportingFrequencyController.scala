@@ -35,7 +35,6 @@ import services._
 import services.manageBusinesses.IncomeSourceRFService
 import services.optIn.OptInService
 import services.optout.OptOutService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{JourneyCheckerManageBusinesses, MtdConstants}
 import viewUtils.ReportingFrequencyViewUtils
@@ -82,7 +81,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                    isChange: Boolean,
                                                    isR17ContentEnabled: Boolean
                                                   )
-                                                  (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+                                                  (implicit user: MtdItUser[_]): Future[Result] = {
     updateIncomeSourceAsAdded(sessionData).flatMap {
       case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
@@ -125,7 +124,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(_) => IncomeSourceReportingFrequencyForm(isR17ContentEnabled).bindFromRequest().fold(
           _ => handleInvalidForm(isAgent, isChange, incomeSourceType, isR17ContentEnabled),
-          valid => handleValidForm(isAgent, isChange, valid, incomeSourceType, sessionData)
+          valid => handleValidForm(isAgent, valid, incomeSourceType, sessionData)
         )
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
@@ -173,12 +172,10 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   }
 
   private def handleValidForm(isAgent: Boolean,
-                              isChange: Boolean,
                               form: IncomeSourceReportingFrequencyForm,
                               incomeSourceType: IncomeSourceType,
                               sessionData: UIJourneySessionData
-                             )
-                             (implicit user: MtdItUser[_]): Future[Result] = {
+                             ): Future[Result] = {
     val yesOrNo = form.yesNo.exists(_.toBoolean)
     if (yesOrNo) {
       val updatedSessionData = sessionData.copy(

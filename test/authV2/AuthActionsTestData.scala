@@ -178,7 +178,7 @@ object AuthActionsTestData {
     )
   )(request)
 
-  def getSessionCookieData(isSupportingAgent: Boolean, confirmed: Boolean) = {
+  def getSessionCookieData(confirmed: Boolean) = {
     val cookieData = SessionCookieData(
       testMtditid, testNino, testSaUtr, Some(testFirstName), Some(testSecondName)).toSessionCookieSeq
     if(confirmed) cookieData ++ Seq(SessionKeys.confirmedClient -> "true") else cookieData

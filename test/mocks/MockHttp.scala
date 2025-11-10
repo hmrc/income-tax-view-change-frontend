@@ -68,7 +68,7 @@ trait MockHttp extends UnitSpec with BeforeAndAfterEach {
     when(httpClientMock.GET[HttpResponse](matches(url), ArgumentMatchers.any(), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.failed(new Exception("unknown error")))
 
-  def setupMockFailedHttpGetWithParams(url: String, params: Seq[(String, String)])(response: HttpResponse): OngoingStubbing[Future[HttpResponse]] =
+  def setupMockFailedHttpGetWithParams(url: String, params: Seq[(String, String)])(): OngoingStubbing[Future[HttpResponse]] =
     when(httpClientMock.GET[HttpResponse](matches(url), ArgumentMatchers.eq(params), ArgumentMatchers.any())
       (ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Future.failed(new Exception("unknown error")))
 

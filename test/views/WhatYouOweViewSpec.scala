@@ -227,7 +227,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   }
 
 
-  def financialDetailsOverdueWithLpiDunningLock(accruingInterestAmount: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
+  def financialDetailsOverdueWithLpiDunningLock(accruingInterestAmount: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLPIDunningLock(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     mainTransaction = List(Some("4920"), Some("4930")),
@@ -235,11 +235,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
-    accruingInterestAmount = accruingInterestAmount,
-    lpiWithDunningLock = lpiWithDunningLock
+    accruingInterestAmount = accruingInterestAmount
   )
 
-  def financialDetailsOverdueWithLpiDunningLockZero(accruingInterestAmount: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
+  def financialDetailsOverdueWithLpiDunningLockZero(accruingInterestAmount: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
     documentDescription = List(Some(itsaPOA1), Some(itsaPOA2)),
     mainType = List(Some(saPaymentOnAccount1), Some(saPaymentOnAccount2)),
     mainTransaction = List(Some("4920"), Some("4930")),
@@ -247,8 +246,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
-    accruingInterestAmount = accruingInterestAmount,
-    lpiWithDunningLock = lpiWithDunningLock
+    accruingInterestAmount = accruingInterestAmount
   )
 
   def whatYouOweDataWithOverdueInterestData(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(

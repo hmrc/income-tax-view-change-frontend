@@ -25,7 +25,6 @@ import com.google.inject.Singleton
 import config.FrontendAppConfig
 import controllers.agent.AuthUtils.mtdEnrolmentName
 import enums.MTDIndividual
-import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
@@ -74,8 +73,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded
   def ivUpliftRedirectUrl[A](implicit request: Request[A]):String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.itvcFrontendEnvironment
-    val origin = request.getQueryString(SessionKeys.origin)
-    val completionUrl: String = s"$host${controllers.routes.UpliftSuccessController.success(origin).url}"
+    val completionUrl: String = s"$host${controllers.routes.UpliftSuccessController.success.url}"
     val failureUrl: String = s"$host${controllers.errors.routes.UpliftFailedController.show().url}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
   }

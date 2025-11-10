@@ -68,17 +68,6 @@ object ExternalUrlHelper {
 
   val mtdForIncomeTaxUrl = "https://www.gov.uk/government/collections/making-tax-digital-for-income-tax"
 
-  val saPayTaxBillUrl = "https://www.gov.uk/pay-self-assessment-tax-bill"
-
-  def checkPayeTaxCodeUrl(implicit messages: Messages): String =
-    messages.lang.code match {
-      case "en" => "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
-      case "cy" => "https://www.access.service.gov.uk/login/signin/creds?lang=cy"
-      case _ => "https://www.tax.service.gov.uk/check-income-tax/tax-codes"
-    }
-
-  val saUnderstandYourTaxBillUrl = "https://www.gov.uk/understand-self-assessment-bill/payments-on-account"
-
   val budgetPaymentPlanURL = "https://www.gov.uk/difficulties-paying-hmrc"
   val saTaxReturnDeadlinesUrl = "https://www.gov.uk/self-assessment-tax-returns/deadlines"
   val saGeneralEnquiriesUrl = "https://www.gov.uk/find-hmrc-contacts/self-assessment-general-enquiries"

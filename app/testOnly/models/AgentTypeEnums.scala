@@ -18,7 +18,7 @@ package testOnly.models
 
 object AgentTypeEnums extends Enumeration {
   type AgentEnum = Value
-  val PRIMARYAGENT, SUPPORTINGAGENT = Value
+  val _, SUPPORTINGAGENT = Value
 
   def apply(optAgent: Option[String]): Option[AgentEnum] = optAgent.flatMap(agent => values.find(agent.toUpperCase == _.toString))
 

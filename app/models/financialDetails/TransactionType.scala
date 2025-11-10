@@ -191,8 +191,6 @@ object ChargeType {
 
   val itsaReturnAmendment = "4915"
 
-  lazy val penaltyMainTransactions = List(lateSubmissionPenalty) ++ firstLatePaymentPenalty ++ secondLatePaymentPenalty
-
   val mfaDebit = Range.inclusive(4000, 4003)
     .map(_.toString).toList
 
@@ -230,8 +228,6 @@ object CreditType {
   val mfaCredit = Range.inclusive(4004, 4025)
     .filterNot(_ == 4010).filterNot(_ == 4020).map(_.toString)
     .toList
-  val poaOneReconciliationCredit = "4912"
-  val poaTwoReconciliationCredit = "4914"
 
   val itsaReturnAmendmentCredit = "4916"
 

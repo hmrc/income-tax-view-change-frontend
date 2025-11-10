@@ -79,7 +79,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
 
               val result: Future[Result] = action(fakeRequest)
@@ -92,7 +92,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             "no location returned" in {
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any()))
                 .thenReturn(Future(Right(None)))
 
               val result: Future[Result] = action(fakeRequest)
@@ -102,7 +102,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             "failure returned" in {
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any()))
                 .thenReturn(Future(Left(AddressError("Test status"))))
 
               val result: Future[Result] = action(fakeRequest)

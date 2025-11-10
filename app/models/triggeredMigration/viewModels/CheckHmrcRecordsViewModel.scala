@@ -18,9 +18,7 @@ package models.triggeredMigration.viewModels
 
 case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecordsSoleTraderDetails],
                                      hasActiveUkProperty: Boolean,
-                                     hasActiveForeignProperty: Boolean) {
-  val hasSoleTraderBusinesses: Boolean = soleTraderBusinesses.nonEmpty
-}
+                                     hasActiveForeignProperty: Boolean) {}
 
 case class CheckHmrcRecordsSoleTraderDetails(incomeSource: Option[String],
                                              businessName: Option[String])

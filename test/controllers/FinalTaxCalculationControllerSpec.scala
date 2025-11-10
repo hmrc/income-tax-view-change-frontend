@@ -96,7 +96,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
     }
 
     s"submit${if (isAgent) "Agent"}" when {
-      val action = if (isAgent) testController.agentSubmit(testTaxYear) else testController.submit(testTaxYear, None)
+      val action = if (isAgent) testController.agentSubmit(testTaxYear) else testController.submit(testTaxYear)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdUserRole)
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {

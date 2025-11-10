@@ -76,7 +76,7 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
 
   private def constructAuthorisedUser[A]()(
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
-    case enrolments ~ name ~ credentials ~ affinityGroup ~ confidenceLevel =>
+    case enrolments ~ name ~ credentials ~ affinityGroup ~ _ =>
       val authUserDetails = AuthUserDetails(
         enrolments = enrolments,
         affinityGroup = affinityGroup,

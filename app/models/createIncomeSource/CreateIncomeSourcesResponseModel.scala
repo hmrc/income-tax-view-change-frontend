@@ -30,9 +30,3 @@ final case class CreateIncomeSourceErrorResponse(status: Int, reason: String)
 object CreateIncomeSourceErrorResponse {
   implicit val format: Format[CreateIncomeSourceErrorResponse] = Json.format
 }
-
-case class CreateIncomeSourceListResponseError(failures: Seq[CreateIncomeSourceErrorResponse])
-
-object CreateIncomeSourceListResponseError {
-  implicit val format: Format[CreateIncomeSourceListResponseError] = Json.format
-}

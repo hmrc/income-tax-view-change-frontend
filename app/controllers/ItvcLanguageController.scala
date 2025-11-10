@@ -16,7 +16,6 @@
 
 package controllers
 
-import config.FrontendAppConfig
 import play.api.i18n.Lang
 import play.api.mvc._
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
@@ -26,7 +25,6 @@ import scala.concurrent.Future
 
 @Singleton
 class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
-                                       appConfig: FrontendAppConfig,
                                        languageUtils: LanguageUtils) extends LanguageController(languageUtils, mcc) {
 
 

@@ -58,11 +58,11 @@ trait JourneyCheckerOptOut extends ReportingObligationsUtils {
     Future.successful(errorHandler(isAgent).showInternalServerError())
   }
 
-  def retrieveIsJourneyComplete(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def retrieveIsJourneyComplete(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     optOutService.fetchJourneyCompleteStatus()
   }
 
-  def setJourneyComplete(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+  def setJourneyComplete(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     optOutService.updateJourneyStatusInSessionData(journeyComplete = true)
   }
 

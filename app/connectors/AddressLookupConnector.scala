@@ -16,7 +16,6 @@
 
 package connectors
 
-import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.core.Mode
@@ -45,7 +44,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"$baseUrl/api/v2/confirmed?id=$id"
   }
 
-  def continueUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = {
+  def continueUrl(isAgent: Boolean, mode: Mode): String = {
     if(isAgent) controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode).url
     else controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = mode).url
   }
@@ -160,7 +159,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
 
-  def initialiseAddressLookup(isAgent: Boolean, mode: Mode)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
+  def initialiseAddressLookup(isAgent: Boolean, mode: Mode)(implicit hc: HeaderCarrier): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
     val payload = if (isAgent) {
       addressJson(continueUrl(isAgent, mode), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)

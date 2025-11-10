@@ -294,7 +294,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
           document.getElementById("payment-1").child(0).ownText() shouldBe "Second payment on account: credit from your tax return"
       }
 
-      s"have the title '${PaymentHistoryMessages.agentTitle}'" in new PaymentHistorySetupWhenAgentView(paymentEntriesMFA) {
+      s"have the title '${PaymentHistoryMessages.agentTitle}'" in new PaymentHistorySetupWhenAgentView() {
         document.title() shouldBe PaymentHistoryMessages.agentTitle
       }
 
@@ -324,7 +324,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
     }
   }
 
-  class PaymentHistorySetupWhenAgentView(testPayments: List[(Int, List[PaymentHistoryEntry])], saUtr: Option[String] = Some("1234567890")) extends Setup(
+  class PaymentHistorySetupWhenAgentView(saUtr: Option[String] = Some("1234567890")) extends Setup(
     paymentHistoryView(paymentEntriesMFA, PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false), paymentHistoryAndRefundsEnabled = false, "testBackURL", saUtr, isAgent = true)(FakeRequest(), implicitly)
   )
 

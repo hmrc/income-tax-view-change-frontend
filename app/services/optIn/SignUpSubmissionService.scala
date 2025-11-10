@@ -53,7 +53,7 @@ class SignUpSubmissionService @Inject()(
 
   def makeUpdateRequest(
                          selectedSignUpYear: Option[TaxYear]
-                       )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
+                       )(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
     selectedSignUpYear match {
       case Some(year) => itsaStatusUpdateConnector.optIn(taxYear = year, taxableEntityId = user.nino)
       case _ => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
