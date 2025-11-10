@@ -446,7 +446,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("h1").text() shouldBe successHeadingForPOA1
                 document.select("#dunningLocksBanner").size() shouldBe 1
                 document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe s"$dunningLocksBannerHeading"
-                document.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
+                document.getElementById("charge-history-heading").text() shouldBe paymentHistoryHeadingForPOA1Charge
               }
 
 
@@ -508,7 +508,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 doc.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
                 doc.select("h1").text() shouldBe successHeadingForPOA1
                 doc.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe s"$dunningLocksBannerHeading"
-                doc.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
+                doc.getElementById("charge-history-heading").text() shouldBe paymentHistoryHeadingForPOA1Charge
 
                 val allocationsUrl = if(isAgent) {
                   routes.PaymentAllocationsController.viewPaymentAllocationAgent(id1040000124).url
@@ -533,7 +533,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingForPOA1
                 document.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe s"$dunningLocksBannerHeading"
-                document.select("main h3").text() shouldBe paymentHistoryHeadingForPOA1Charge
+                document.getElementById("charge-history-heading").text() shouldBe paymentHistoryHeadingForPOA1Charge
               }
 
               "displays link to poa extra charge on poa page when reconciliation charge exists" in new Setup(financialDetailsModelWithPoaExtraCharge(), docId = id1040000123) {
