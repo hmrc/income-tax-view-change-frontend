@@ -297,5 +297,71 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2026 to 2027 tax year"
       }
     }
+
+    "opting out from CY-1 in V-M-V scenario with MultiYearOptOutDefault should transform to OneYearOptOutFollowedByMandated display" should {
+      "have the correct title" in new Setup("previous", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Voluntary) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
+      }
+      "have the correct heading" in new Setup("previous", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Voluntary) {
+        pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearHeading
+      }
+      "have the correct description with quarterly updates inset" in new Setup("previous", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Voluntary) {
+        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
+        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearInset
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc2
+      }
+      "have the correct radio question" in new Setup("previous", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Voluntary) {
+        pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearQuestion
+      }
+    }
+
+    "opting out from CY-1 in V-D-V scenario with MultiYearOptOutDefault should transform to OneYearOptOutFollowedByMandated display" should {
+      "have the correct title" in new Setup("previous", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Dormant, ITSAStatus.Voluntary) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
+      }
+      "have the correct heading" in new Setup("previous", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Dormant, ITSAStatus.Voluntary) {
+        pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearHeading
+      }
+      "have the correct description with quarterly updates inset" in new Setup("previous", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Dormant, ITSAStatus.Voluntary) {
+        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
+        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearInset
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc2
+      }
+      "have the correct radio question" in new Setup("previous", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Dormant, ITSAStatus.Voluntary) {
+        pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearQuestion
+      }
+    }
+
+    "opting out from CY in V-V-M scenario - CY with MultiYearOptOutDefault should transform to OneYearOptOutFollowedByMandated display" should {
+      "have the correct title" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedTitle
+      }
+      "have the correct heading" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedHeading
+      }
+      "have the correct description" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedDesc1
+        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedInset
+      }
+      "have the correct radio question" in new Setup("current", MultiYearOptOutDefault, 0, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedQuestion
+      }
+    }
+
+    "opting out from CY in V-V-M scenario with updates and MultiYearOptOutDefault should display WithUpdates" should {
+      "have the correct title" in new Setup("current", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesTitle
+      }
+      "have the correct heading" in new Setup("current", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesHeading
+      }
+      "have the correct description with quarterly updates inset" in new Setup("current", MultiYearOptOutDefault, 3, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesDesc1
+        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesInset
+      }
+      "have the correct radio question" in new Setup("current", MultiYearOptOutDefault, 2, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated) {
+        pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesQuestion
+      }
+    }
   }
 }
