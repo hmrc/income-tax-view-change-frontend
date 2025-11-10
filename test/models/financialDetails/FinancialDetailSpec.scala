@@ -165,7 +165,7 @@ class FinancialDetailSpec extends UnitSpec {
       }
 
       "return None for an unknown or absent chargeType" in {
-        getMessageKeyForChargeType(Some("rubbish")) shouldBe Some("invalid")
+        getMessageKeyForChargeType(Some("rubbish")) shouldBe None
         getMessageKeyForChargeType(None) shouldBe None
       }
     }
