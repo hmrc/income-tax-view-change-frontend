@@ -130,12 +130,11 @@ object FinancialDetail {
     val CTypeCGT = "CGT"
     val CTypeCancelled = "Cancelled"
     val CTypeAccepted = "Balancing payment collected through PAYE tax code"
-    val CTypeBalancing = "Balancing Charge debit"
 
     val supportedPOA1CTypeParts, supportedPOA2CTypeParts = Set(CTypePartITSA, CTypePartNIC4)
 
     val supportedBCDCTypeParts = Set(CTypePartITSA, CTypePartNIC4, CTypePartNIC2, CTypePartVoluntaryNIC2, CTypeCGT,
-      CTypeSL, CTypeCancelled, CTypeAccepted, CTypeBalancing)
+      CTypeSL, CTypeCancelled, CTypeAccepted)
 
     val supportedCTypePartsByMainType = Map(
       MTypePOA1 -> supportedPOA1CTypeParts,
