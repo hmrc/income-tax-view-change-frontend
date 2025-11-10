@@ -1322,9 +1322,9 @@ chargeSummary.paymentAllocations.bcd.vcnic2                     = Taliad wedi’
 chargeSummary.paymentAllocations.bcd.nic4                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y Taliad Mantoli
-chargeSummary.paymentAllocations.poa1.invalid                   = Payment allocated for first payment on account
-chargeSummary.paymentAllocations.poa2.invalid                   = Payment allocated for second payment on account
-chargeSummary.paymentAllocations.bcd.invalid                    = Payment allocated for Balancing payment
+chargeSummary.paymentAllocations.poa1.invalid                   = Taliad wedi’i ddyrannu ar gyfer taliad cyntaf ar gyfrif
+chargeSummary.paymentAllocations.poa2.invalid                   = Taliad wedi’i ddyrannu ar gyfer ail daliad ar gyfrif
+chargeSummary.paymentAllocations.bcd.invalid                    = Taliad wedi’i ddyrannu ar gyfer Taliad Mantoli
 chargeSummary.paymentAllocations.mfaDebit                       = Taliad wedi’i roi tuag at addasiad CThEF
 
 chargeSummary.codingOutHeader                                      = Taliad Hunanasesiad (drwy’ch cod treth TWE)
