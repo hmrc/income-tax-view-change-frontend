@@ -1256,6 +1256,9 @@ chargeSummary.whatYouOwe.linkText.concatenated                  = Bwrw golwg dro
 chargeSummary.whatYouOwe.linkText-agent.concatenated            = Bwrw golwg dros yr hyn sydd ar eich cleient
 chargeSummary.whatYouOwe.linkText                               = yr hyn sydd arnoch
 chargeSummary.whatYouOwe.linkText-agent							= yr hyn sydd ar eich cleient
+chargeSummary.whatYouOwe.adjustment.heading.youOwe              = Mae arnoch:
+chargeSummary.whatYouOwe.adjustment.heading.due                 = Yn ddyledus erbyn
+chargeSummary.chargeHistory.caption.MFA.text.heading            = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
 
 chargeSummary.selfAssessmentCharges.text                        = sydd arnoch i wirio a oes gennych unrhyw daliadau eraill sy’n ddyledus.
 chargeSummary.selfAssessmentCharges.text-agent				    = sydd ar eich cleient i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
