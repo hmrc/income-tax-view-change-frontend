@@ -72,7 +72,6 @@ class OptOutSessionDataRepositorySpec extends UnitSpec
   val apiError: String = "some api error"
 
   ".initialiseOptOutJourney()" should {
-
     "write the opt out data and no customer intent to the journey repository" in {
 
       val forYearEnd = 2024
