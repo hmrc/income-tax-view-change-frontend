@@ -24,11 +24,6 @@ import scala.collection.immutable
 
 case class FeatureSwitch(name: FeatureSwitchName, isEnabled: Boolean)
 
-object FeatureSwitchMongoFormats {
-  implicit val formats: Format[FeatureSwitch] =
-    Json.format[FeatureSwitch]
-}
-
 object FeatureSwitch {
   implicit val format: OFormat[FeatureSwitch] = Json.format[FeatureSwitch]
 }

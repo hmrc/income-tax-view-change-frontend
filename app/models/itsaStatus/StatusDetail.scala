@@ -77,16 +77,8 @@ object StatusReason extends Enumeration {
   type StatusReason = Value
   val SignupReturnAvailable = Value("Sign up - return available")
   val SignupNoReturnAvailable = Value("Sign up - no return available")
-  val ItsaFinalDeclaration = Value("ITSA final declaration")
-  val ItsaQ4lDeclaration = Value("ITSA Q4 declaration")
-  val CesaSaReturn = Value("CESA SA return")
-  val Complex = Value("Complex")
-  val CeasedIncomeSource = Value("Ceased income source")
-  val ReinstatedIncomeSource = Value("Reinstated income source")
   val IncomeSourceLatencyChanges = Value("Income Source Latency Changes")
   val Rollover = Value("Rollover")
-  val MtdItsaOptOut = Value("MTD ITSA Opt-Out")
-  val MtdItsaOptIn = Value("MTD ITSA Opt-In")
   val DigitallyExempt = Value("Digitally Exempt")
 
   implicit val statusReasonReads: Reads[StatusReason] = Reads.enumNameReads(StatusReason)

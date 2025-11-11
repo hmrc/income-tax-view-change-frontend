@@ -17,7 +17,6 @@
 import play.api.libs.json._
 
 package object models {
-  val defaultZero: JsPath => Reads[BigDecimal] = _.read[BigDecimal].orElse(Reads.pure[BigDecimal](0.00))
 
   def readNullable[T](path: JsPath)(implicit reads: Reads[T]): Reads[Option[T]] = path.readNullable[T] orElse Reads.pure[Option[T]](None)
 

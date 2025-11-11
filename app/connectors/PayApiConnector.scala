@@ -16,7 +16,6 @@
 
 package connectors
 
-import audit.AuditingService
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.YourSelfAssessmentCharges
@@ -32,7 +31,6 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class PayApiConnector @Inject()(http: HttpClientV2,
-                                auditingService: AuditingService,
                                 val appConfig: FrontendAppConfig)(implicit ec: ExecutionContext) extends FeatureSwitching {
 
   val startUrlJourney: String = appConfig.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"

@@ -18,7 +18,7 @@ package models.financialDetails
 
 import enums.CodingOutType._
 import enums.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
-import testConstants.FinancialDetailsTestConstants.{dateService, documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailModel, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
+import testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -310,13 +310,13 @@ class DocumentDetailSpec extends UnitSpec {
     "getBalancingChargeDueDate" should {
       "return LocalDate" when {
         "the originalAmount is not zero" in {
-          documentDetailBalancingCharge.documentDetail.getBalancingChargeDueDate() shouldBe Some(LocalDate.of(2019, 5, 15))
+          documentDetailBalancingCharge.documentDetail.getBalancingChargeDueDate shouldBe Some(LocalDate.of(2019, 5, 15))
         }
       }
       "return None" when {
         "the originalAmount is zero" in {
           documentDetailBalancingCharge.documentDetail
-            .copy(originalAmount = BigDecimal(0)).getBalancingChargeDueDate() shouldBe None
+            .copy(originalAmount = BigDecimal(0)).getBalancingChargeDueDate shouldBe None
         }
       }
     }

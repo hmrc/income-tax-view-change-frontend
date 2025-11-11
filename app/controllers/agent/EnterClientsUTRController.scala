@@ -110,7 +110,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       .authorised(Enrolment(mtdEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
         .withDelegatedAuthRule(primaryAgentAuthRule)) {
         Future.successful(MTDPrimaryAgent)
-      }.recoverWith { case e =>
+      }.recoverWith { case _ =>
         authorisedFunctions
           .authorised(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
             .withDelegatedAuthRule(secondaryAgentAuthRule)){Future.successful(MTDSupportingAgent)

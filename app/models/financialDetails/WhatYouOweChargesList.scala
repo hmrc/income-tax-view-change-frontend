@@ -58,11 +58,6 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
       && overdueChargeList.exists(_.lpiWithDunningLock.getOrElse[BigDecimal](0) > 0)) true
     else false
 
-  def interestOnOverdueCharges: Boolean =
-    if (overdueChargeList.exists(_.interestOutstandingAmount.isDefined)
-      && overdueChargeList.exists(_.accruingInterestAmount.getOrElse[BigDecimal](0) <= 0)) true
-    else false
-
   def getRelevantDueDate: LocalDate = {
     try {
       outstandingChargesModel.get.bcdChargeType.get.relevantDueDate

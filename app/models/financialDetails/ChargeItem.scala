@@ -173,12 +173,7 @@ case class ChargeItem (
 
   val isCreditDrilldownPage: Boolean = isPoaReconciliationCredit || transactionType == ITSAReturnAmendmentCredit
 
-  val isPoaReconciliationDebit: Boolean = transactionType == PoaOneReconciliationDebit ||
-    transactionType == PoaTwoReconciliationDebit
-
   val isPoaDebit: Boolean = transactionType == PoaOneDebit || transactionType == PoaTwoDebit
-
-  val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
 
   val isBalancingCharge: Boolean = transactionType == BalancingCharge
 
@@ -205,11 +200,6 @@ case class ChargeItem (
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
     else interestOutstandingAmount.getOrElse(accruingInterestAmount.getOrElse(0))
-  }
-
-  def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (isAccruingInterest) interestRemainingToPay > 0
-    else remainingToPay > 0
   }
 
   def poaLinkForDrilldownPage: String = transactionType match {

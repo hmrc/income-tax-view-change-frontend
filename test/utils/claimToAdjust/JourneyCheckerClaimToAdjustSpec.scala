@@ -44,7 +44,6 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val TestJourneyCheckerClaimToAdjust: JourneyCheckerClaimToAdjust = new JourneyCheckerClaimToAdjust {
-    val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
     override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
     override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
@@ -52,7 +51,6 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   }
 
   val TestJourneyCheckerClaimToAdjustSpy: JourneyCheckerClaimToAdjust = spy(new JourneyCheckerClaimToAdjust {
-    val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
     override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
     override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]

@@ -16,16 +16,6 @@
 
 package testOnly.models
 
-import play.api.libs.json.{Json, Reads}
-
 case class Identifier(key: String, value: String)
 
 case class Enrolment(service: String, friendlyName: String, state: String, identifiers: List[Identifier], enrolmentDate: String, activationDate: String)
-
-case class EnrolmentsResponse(startRecord: Int, enrolments: List[Enrolment])
-
-object EnrolmentsResponse {
-  implicit val identifierReads: Reads[Identifier] = Json.reads[Identifier]
-  implicit val enrolmentReads: Reads[Enrolment] = Json.reads[Enrolment]
-  implicit val enrolmentsResponseReads: Reads[EnrolmentsResponse] = Json.reads[EnrolmentsResponse]
-}

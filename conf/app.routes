@@ -188,7 +188,7 @@ GET         /cannot-access-service                                        contro
 GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show()
 
 #Uplift Success
-GET         /uplift-success                                               controllers.UpliftSuccessController.success(origin: Option[String])
+GET         /uplift-success                                               controllers.UpliftSuccessController.success
 
 #BTA Partial
 GET         /partial                                                      controllers.bta.BTAPartialController.setupPartial()
@@ -212,7 +212,7 @@ GET         /agents/tax-overview                                          contro
 
 #Final Tax URLs
 GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int, origin: Option[String] ?= None)
-POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int, origin: Option[String] ?= None)
+POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
 GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 GET         /agents/:taxYear/final-tax-overview/calculate                 controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 

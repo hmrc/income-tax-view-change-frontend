@@ -23,7 +23,7 @@ object NewCalcDataIntegrationTestConstants {
 
   def getLiabilityCalcResponse(json: String): LiabilityCalculationResponse = {
     Json.fromJson[LiabilityCalculationResponse](Json.parse(json)) match {
-      case JsSuccess(value, path) => value
+      case JsSuccess(value, _) => value
       case _ =>
         throw new Exception("invalid json, parse error")
     }

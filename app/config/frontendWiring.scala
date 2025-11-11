@@ -17,11 +17,9 @@
 package config
 
 import uk.gov.hmrc.auth.core.PlayAuthConnector
-import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
-import uk.gov.hmrc.play.partials.{FormPartialRetriever, HeaderCarrierForPartialsConverter}
+import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
 
 import javax.inject.{Inject, Singleton}
 
@@ -34,12 +32,4 @@ class FrontendAuthConnector @Inject()(config: ServicesConfig,
 }
 
 @Singleton
-class ItvcHeaderCarrierForPartialsConverter @Inject()(val sessionCookieCrypto: SessionCookieCrypto) extends HeaderCarrierForPartialsConverter {}
-
-@Singleton
-class FormPartialProvider @Inject()(override val httpGet: HttpClient,
-                                    override val headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
-                                   ) extends FormPartialRetriever { }
-
-
-
+class ItvcHeaderCarrierForPartialsConverter @Inject() extends HeaderCarrierForPartialsConverter {}

@@ -126,7 +126,7 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
-  def getBalancingChargeDueDate(codedOutEnabled: Boolean = false): Option[LocalDate] = {
+  def getBalancingChargeDueDate: Option[LocalDate] = {
     isBalancingChargeZero match {
       case true => None
       case _ => documentDueDate

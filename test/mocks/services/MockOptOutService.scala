@@ -79,12 +79,12 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
     when(mockOptOutService.saveIntent(any())(any(), any())).thenReturn(out)
   }
 
-  def mockUpdateOptOutJourneyStatusInSessionData(isJourneyComplete: Boolean = false): Unit = {
+  def mockUpdateOptOutJourneyStatusInSessionData(): Unit = {
     when(mockOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
       .thenReturn(Future.successful(false))
   }
 
-  def mockFetchOptOutJourneyCompleteStatus(isJourneyComplete: Boolean = false): Unit = {
+  def mockFetchOptOutJourneyCompleteStatus(): Unit = {
     when(mockOptOutService.fetchJourneyCompleteStatus()(any(), any()))
       .thenReturn(Future.successful(false))
   }

@@ -125,7 +125,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
 
 
   class TestSetup(charges: WhatYouOweChargesList,
-                  currentTaxYear: Int = fixedDate.getYear,
                   hasLpiWithDunningLock: Boolean = false,
                   dunningLock: Boolean = false,
                   migrationYear: Int = fixedDate.getYear - 1,
@@ -172,7 +171,6 @@ class YourSelfAssessmentChargesViewSpec extends TestSupport with FeatureSwitchin
   }
 
   class AgentTestSetup(charges: WhatYouOweChargesList,
-                       currentTaxYear: Int = fixedDate.getYear,
                        migrationYear: Int = fixedDate.getYear - 1,
                        dunningLock: Boolean = false,
                        hasLpiWithDunningLock: Boolean = false,

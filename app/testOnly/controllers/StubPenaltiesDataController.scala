@@ -23,14 +23,12 @@ import play.api.libs.json.JsValue
 import play.api.mvc._
 import testOnly.connectors.PenaltiesStubConnector
 import testOnly.models.PenaltiesDataModel
-import testOnly.views.html.StubDataView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class StubPenaltiesDataController @Inject()(stubDataView: StubDataView)
-                                           (implicit val appConfig: FrontendAppConfig,
+class StubPenaltiesDataController @Inject()(implicit val appConfig: FrontendAppConfig,
                                    implicit val mcc: MessagesControllerComponents,
                                    implicit val executionContext: ExecutionContext,
                                    val penaltiesStubConnector: PenaltiesStubConnector
