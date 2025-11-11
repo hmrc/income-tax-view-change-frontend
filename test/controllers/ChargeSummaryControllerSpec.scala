@@ -110,7 +110,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "First payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
@@ -125,7 +125,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
                 document.select("h1").first().text() shouldBe "Second payment on account"
-                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
