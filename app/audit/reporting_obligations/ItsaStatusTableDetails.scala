@@ -23,7 +23,7 @@ case class ItsaStatusTableDetails(
                                    taxYearPeriod: String,
                                    taxYear: String,
                                    usingMakingTaxDigitalForIncomeTax: Option[String],
-                                   yourStatus: String
+                                   userCurrentItsaStatus: String
                                  )
 
 

@@ -213,7 +213,7 @@ class ReportingObligationsAuditService @Inject()(
         taxYearPeriod = determineTaxYear,
         taxYear = taxYearContent,
         usingMakingTaxDigitalForIncomeTax = isUsingMTD,
-        yourStatus = tableContentToItsaStatus(yourStatus).toString
+        userCurrentItsaStatus = tableContentToItsaStatus(yourStatus).toString
       )
     }.toList
   }
