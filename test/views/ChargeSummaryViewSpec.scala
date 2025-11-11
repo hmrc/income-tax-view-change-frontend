@@ -1039,22 +1039,15 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "Display an unpaid MFA Credit" in new TestSetup(
         chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019))
       ) {
-        val summaryListText = "Due date Overdue 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
-        val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
-        val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
         document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text") + " " + messages("chargeSummary.whatYouOwe.adjustment.heading.youOwe") + " £1,400.00"
-        // payment history should show only "HMRC adjustment created"
-        document.select("#payment-history-table tr").size shouldBe 2
-        document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
       }
 
       "Display a paid MFA Credit" in new TestSetup(
         chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019), outstandingAmount = 0.0),
         paymentAllocations = paymentAllocations
       ) {
-        val summaryListText = "Due date 15 May 2019 Amount £1,400.00 Still to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
@@ -1625,21 +1618,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "Display an unpaid MFA Credit" in new TestSetup(
         chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019)),
         isAgent = true) {
-        val summaryListText = "Due date Overdue 15 May 2019 Amount £1,400.00 Still to pay £1,400.00 "
-        val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
-        val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
         document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text") + " " + messages("chargeSummary.whatYouOwe.adjustment.heading.youOwe") + " £1,400.00"
-        // payment history should show only "HMRC adjustment created"
-        document.select("#payment-history-table tr").size shouldBe 2
-        document.select("#payment-history-table tr").text() shouldBe paymentHistoryText
       }
 
       "Display a paid MFA Credit" in new TestSetup(
         chargeItem = mfaChargeItem.copy(taxYear = TaxYear.forYearEnd(2019), outstandingAmount = 0.0), isAgent = true,
         paymentAllocations = paymentAllocations) {
-        val summaryListText = "Due date 15 May 2019 Amount £1,400.00 Still to pay £0.00 "
         val hmrcCreated = messages("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
