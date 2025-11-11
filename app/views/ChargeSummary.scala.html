@@ -321,17 +321,6 @@
     }
 }
 
-@chargeHistoryHeading = @{
-    viewModel.chargeItem.transactionType match {
-        case _ if viewModel.latePaymentInterestCharge => messages("chargeSummary.chargeHistory.lateInterestPayment")
-        case PoaOneDebit => messages("chargeSummary.chargeHistory.Poa1heading")
-        case PoaTwoDebit => messages("chargeSummary.chargeHistory.Poa2heading")
-        case LateSubmissionPenalty => messages("chargeSummary.chargeHistory.LSPHeading")
-        case FirstLatePaymentPenalty => messages("chargeSummary.chargeHistory.LPPHeading")
-        case _ => messages("chargeSummary.chargeHistory.heading")
-    }
-}
-
 @mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
     useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage) {
 
@@ -451,12 +440,12 @@
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus == None) {
             @h3(
-                msg = chargeHistoryHeading,
+                msg = messages("chargeSummary.chargeHistory.heading"),
                 classes = "govuk-heading-m",
                 optId = Some("charge-history-h3")
             )
         } else {
-            @h2(msg = chargeHistoryHeading, optId = Some("charge-history-h2"))
+            @h2(msg = messages("chargeSummary.chargeHistory.heading"), optId = Some("charge-history-h2"))
         }
 
         @govukTable(Table(
