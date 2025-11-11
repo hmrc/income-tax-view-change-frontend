@@ -26,7 +26,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.DateServiceInterface
 import services.optIn.OptInService
-import services.optIn.core.OptInProposition
 import services.optout.OptOutService
 import services.reporting_frequency.ReportingObligationsAuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -36,7 +35,7 @@ import views.html.ReportingFrequencyView
 import views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class ReportingFrequencyPageController @Inject()(
                                                   optOutService: OptOutService,
@@ -56,53 +55,62 @@ class ReportingFrequencyPageController @Inject()(
 
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-
       for {
         (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()
-        optInProposition: OptInProposition <- optInService.fetchOptInProposition()
+        optInProposition <- optInService.fetchOptInProposition()
         optInTaxYears <- optInService.availableOptInTaxYear()
         _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
         _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
-        _ <- reportingObligationsAuditService.sendAuditEvent(optOutProposition, optInProposition)
-      } yield {
-        if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
-
-          val optOutUrl: Option[String] = {
-            optOutJourneyType.map {
-              case _: OptOutOneYearViewModel =>
-                controllers.optOut.oldJourney.routes.ConfirmOptOutController.show(user.isAgent()).url
-              case _: OptOutMultiYearViewModel =>
-                controllers.optOut.oldJourney.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
-            }
-          }
-
-          Ok(view(
-            ReportingFrequencyViewModel(
-              isAgent = user.isAgent(),
-              optOutJourneyUrl = optOutUrl,
-              optInTaxYears = optInTaxYears,
-              itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
-              displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
-              isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
-              displayManageYourReportingFrequencySection = !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased),
-              mtdThreshold = getMtdThreshold,
-              proposition = optOutProposition,
-              isSignUpEnabled = isEnabled(SignUpFs),
-              isOptOutEnabled = isEnabled(OptOutFs)
-            ),
-            optInOptOutContentUpdateR17IsEnabled = isEnabled(OptInOptOutContentUpdateR17),
-            nextUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
-          ))
-        } else {
-          InternalServerError(
-            errorTemplate(
-              pageTitle = "standardError.heading",
-              heading = "standardError.heading",
-              message = "standardError.message",
-              isAgent = user.isAgent()
-            )
-          )
+        optOutUrl = optOutJourneyType.map {
+          case _: OptOutOneYearViewModel =>
+            controllers.optOut.oldJourney.routes.ConfirmOptOutController.show(user.isAgent()).url
+          case _: OptOutMultiYearViewModel =>
+            controllers.optOut.oldJourney.routes.OptOutChooseTaxYearController.show(user.isAgent()).url
         }
-      }
+        viewModel =
+          ReportingFrequencyViewModel(
+            isAgent = user.isAgent(),
+            optOutJourneyUrl = optOutUrl,
+            optInTaxYears = optInTaxYears,
+            itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
+            displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
+            isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
+            displayManageYourReportingFrequencySection =
+              !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased),
+            mtdThreshold = getMtdThreshold,
+            proposition = optOutProposition,
+            isSignUpEnabled = isEnabled(SignUpFs),
+            isOptOutEnabled = isEnabled(OptOutFs)
+          )
+        nextUpdatesLink =
+          if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
+          else controllers.routes.NextUpdatesController.show().url
+        result <-
+          if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
+            reportingObligationsAuditService
+              .sendAuditEvent(optOutProposition, optInProposition)
+              .map { _ =>
+                Ok(
+                  view(
+                    viewModel,
+                    isEnabled(OptInOptOutContentUpdateR17),
+                    nextUpdatesLink
+                  )
+                )
+              }
+          } else {
+            Future.successful(
+              InternalServerError(
+                errorTemplate(
+                  pageTitle = "standardError.heading",
+                  heading = "standardError.heading",
+                  message = "standardError.message",
+                  isAgent = user.isAgent()
+                )
+              )
+            )
+          }
+      } yield result
     }
+
 }
