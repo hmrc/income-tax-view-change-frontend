@@ -51,7 +51,8 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
       allocations = List(PaymentHistoryAllocation(
         amount = Some(amount),
         dueDate = Some(LocalDate.parse(date)),
-        clearingSAPDocument = Some("012345678901"), clearingId = Some("012345678901"))),
+        clearingSAPDocument = Some("012345678901"), clearingId = Some("012345678901"),
+        taxYear = None)),
       chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   val financialDetailsUnpaidMFA = Json.obj(

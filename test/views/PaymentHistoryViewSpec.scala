@@ -242,8 +242,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
               case (payment, index) =>
                 val row = tbody.selectNth("tr", index + 1)
                 row.selectNth("td", 1).text shouldBe payment.date.toLongDateShort
-                row.selectNth("td", 2).text shouldBe s"Credit from HMRC adjustment hidden-text1 Item " +
-                  s"${index + 1} ${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear} tax year"
+                row.selectNth("td", 2).text shouldBe s"Credit from HMRC adjustment hidden-text1 Item " + (index+1)
                 row.selectNth("td", 2).select("a").attr("href") shouldBe s"link1"
                 row.selectNth("td", 3).text shouldBe s"${payment.getTaxYear.startYear} to ${payment.getTaxYear.endYear}"
                 row.selectNth("td", 4).text shouldBe payment.amount.get.abs.toCurrencyString
