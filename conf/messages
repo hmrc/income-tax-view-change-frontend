@@ -3384,7 +3384,7 @@ yourSelfAssessmentChargeSummary.table.head.amount                       = Estima
 yourSelfAssessmentChargeSummary.warningText                             = Pay this charge to stop this interest from increasing daily.
 yourSelfAssessmentChargeSummary.hmrcAdjustment.text.heading             = HMRC adjustment
 yourSelfAssessmentChargeSummary.chargeHistory.caption.hmrcAdjustment.text.heading = This charge goes towards your {0} to {1} tax bill.
-
+yourSelfAssessmentChargeSummary.definition.hmrcadjustment               = HMRC has added this charge after an adjustment to your tax return.
 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = How is interest calculated?
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p1          = Multiply the amount the interest is applied to by the number of days overdue (period).

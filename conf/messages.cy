@@ -3381,6 +3381,7 @@ yourSelfAssessmentChargeSummary.howIsInterestCalculated.p6          = £250,000 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.p7          = £684.93 x 0.115 = £78.77
 yourSelfAssessmentChargeSummary.hmrcAdjustment.text.heading                             = Addasiad CThEF
 yourSelfAssessmentChargeSummary.chargeHistory.caption.hmrcAdjustment.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
+yourSelfAssessmentChargeSummary.definition.hmrcadjustment                               = Mae CThEF wedi ychwanegu’r tâl hwn ar ôl addasiad i’ch Ffurflen Dreth.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText     = Beth yw taliad ar gyfrif?
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae ‘taliadau ar gyfrif’ yn dau daliad ymlaen llaw a wneir tuag at eich bil treth nesaf.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
