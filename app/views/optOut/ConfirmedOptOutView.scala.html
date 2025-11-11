@@ -356,34 +356,34 @@
 @submitTaxReturnParagraph1 = {
     @p(id = Some("now-you-have-opted-out")) {
         @messages("optout.confirmedOptOut.submitTax.confirmed.p1")
-        @link(link = selfAssessmentTaxReturnLink, id = Some("self-assessment-tax-return-link"), messageKey = "optout.confirmedOptOut.submitTax.confirmed.p1.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+
     }
-}
+     <ul class="govuk-list govuk-list--bullet">
+        <li id="submit-tax-return-bullet-1">@messages("optout.confirmedOptOut.submitTax.confirmed.bullet1")</li>
+        <li id="submit-tax-return-bullet-2">@messages("optout.confirmedOptOut.submitTax.confirmed.bullet2")</li>
+     </ul>
+    }
 
-@submitTaxReturnParagraph2 = {
-    <p class="govuk-body" id="tax-year-reporting-quarterly">
-        @messages("optout.confirmedOptOut.submitTax.confirmed.p2")
-        <a href="@compatibleSoftwareLink" class="govuk-link govuk-body" id="compatible-software-link" target="_blank">
-            @messages("optout.confirmedOptOut.submitTax.confirmed.p2.link.a") @messages("pagehelp.opensInNewTabText")@messages("optout.confirmedOptOut.submitTax.confirmed.p2.link.b")
-        </a>
-        @messages("optout.confirmedOptOut.submitTax.confirmed.p2.link.c")
-    </p>
-
-}
 
 @submitTaxReturnScenario4Paragraph1 = {
     @p(id = Some("now-you-have-opted-out")) {
         @messages("optout.confirmedOptOut.scenario4.submitTax.confirmed.p1")
-        @link(link = selfAssessmentTaxReturnLink, id = Some("self-assessment-tax-return-link"), messageKey = "optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
     }
-}
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="submit-tax-return-bullet-1">@messages("optout.confirmedOptOut.submitTax.confirmed.bullet1")</li>
+        <li id="submit-tax-return-bullet-2">@messages("optout.confirmedOptOut.submitTax.confirmed.bullet2")</li>
+    </ul>
+    }
 
 @submitTaxReturnScenario5Paragraph1 = {
     @p(id = Some("now-you-have-opted-out")) {
-    @messages("optout.confirmedOptOut.scenario5.submitTax.confirmed.p1")
-    @link(link = selfAssessmentTaxReturnLink, id = Some("self-assessment-tax-return-link"), messageKey = "optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link", target = Some("_blank"), additionalOpenTabMessage = Some("."))
+    @messages("optout.confirmedOptOut.submitTax.confirmed.p1")
     }
-}
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="submit-tax-return-bullet-1">@messages("optout.confirmedOptOut.submitTax.confirmed.bullet1")</li>
+        <li id="submit-tax-return-bullet-2"> @messages("optout.confirmedOptOut.submitTax.confirmed.bullet2")</li>
+    </ul>
+    }
 
 @mainTemplate(
     pageTitle = messages("optout.confirmedOptOut.heading"),
@@ -407,7 +407,7 @@
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
             @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
             @submitTaxReturnParagraph1
-            @submitTaxReturnParagraph2
+
         </div>
         @scenario2ReportingObligationsSection
     }
@@ -418,7 +418,7 @@
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
             @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
             @submitTaxReturnParagraph1
-            @submitTaxReturnParagraph2
+
         </div>
         @scenario3ReportingObligationsSection
     }
