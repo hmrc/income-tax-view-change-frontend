@@ -92,7 +92,13 @@ object FinancialDetail {
         mainTypeValue <- mainType
         chargeTypeValue <- chargeType
         chargeTypeParts <- supportedCTypePartsByMainType.get(mainTypeValue)
-        if chargeTypeParts.exists(supportedCTypePart => chargeTypeValue.startsWith(supportedCTypePart))
+        if chargeTypeParts.exists{
+          supportedCTypePart => {
+            println(supportedCTypePart)
+            chargeTypeValue.startsWith(supportedCTypePart)
+          }
+
+        }
         mainTypeKey <- getMessageKeyForMainType(mainType)
         chargeTypeKey <- getMessageKeyForChargeType(chargeType)
       } yield s"$mainTypeKey.$chargeTypeKey"
@@ -114,7 +120,7 @@ object FinancialDetail {
     case ct if ct.startsWith(CTypeSL) => "sl"
     case ct if ct.startsWith(CTypeAccepted) => "accepted"
     case ct if ct.startsWith(CTypeCancelled) => "cancelled"
-    case _ => "invalid"
+    case ct if ct.startsWith(CTypeInvalid) => "invalid"
   }
 
   object Types {
@@ -129,12 +135,13 @@ object FinancialDetail {
     val CTypeSL = "SL"
     val CTypeCGT = "CGT"
     val CTypeCancelled = "Cancelled"
-    val CTypeAccepted = "Balancing payment collected through PAYE tax code"
+    val CTypeAccepted = "Balancing for payment collected through PAYE tax code"
+    val CTypeInvalid = ""
 
     val supportedPOA1CTypeParts, supportedPOA2CTypeParts = Set(CTypePartITSA, CTypePartNIC4)
 
     val supportedBCDCTypeParts = Set(CTypePartITSA, CTypePartNIC4, CTypePartNIC2, CTypePartVoluntaryNIC2, CTypeCGT,
-      CTypeSL, CTypeCancelled, CTypeAccepted)
+      CTypeSL, CTypeCancelled, CTypeAccepted, CTypeInvalid)
 
     val supportedCTypePartsByMainType = Map(
       MTypePOA1 -> supportedPOA1CTypeParts,
