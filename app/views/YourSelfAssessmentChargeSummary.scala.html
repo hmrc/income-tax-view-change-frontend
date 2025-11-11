@@ -130,7 +130,7 @@
         captionClasses = Some("govuk-caption-xl")
     ))
 
-  @if(!viewModel.chargeItem.isPaid && !viewModel.chargeItem.isCredit) {
+  @if(!viewModel.chargeItem.isCredit) {
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
