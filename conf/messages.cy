@@ -3358,14 +3358,16 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p3          = mae arnoch
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p4          = rydych wedi newid eich Ffurflen Dreth a’r canlyniad yw bod arnoch ragor i’w dalu
 yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = Hefyd, mae angen i chi wneud taliad mantoli os oes gennych unrhyw ddyledion Treth Enillion Cyfalaf neu fenthyciadau myfyrwyr.
 
-yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar eich {0}
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Bydd swm y llog sy’n ddyledus yn cynyddu hyd nes y bydd y swm gorddyledus yn cael ei dalu.
+yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar y tâl hwn
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad mantoli.
+yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} i {1}
-yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Cyfanswm y llog hyd yma
+yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Cyfanswm y llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Swm y mae’r llog yn berthnasol iddo
-yourSelfAssessmentChargeSummary.table.head.daysOverdue                  = Dyddiau gorddyledus
-yourSelfAssessmentChargeSummary.table.head.interestRate                 = Cyfradd llog
-yourSelfAssessmentChargeSummary.table.head.amount                       = Swm
+yourSelfAssessmentChargeSummary.table.head.interestPeriod               = Cyfnod y llog
+yourSelfAssessmentChargeSummary.table.head.interestRate                 = Y gyfradd log bresennol
+yourSelfAssessmentChargeSummary.table.head.amount                       = Swm amcangyfrifedig
+yourSelfAssessmentChargeSummary.warningText                             = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.text.heading     = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.text.heading     = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe      = (heb gynnwys llog wedi’i amcangyfrif)
@@ -3443,7 +3445,7 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y g
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = Mae arnoch y dreth ychwanegol hon oherwydd y newid gwnaethoch i’ch Ffurflen Dreth.
-yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Bydd gan y tâl hwn log dyddiol hyd nes y bydd wedi’i dalu. Mae’r llog wedi’i ôl-ddyddio i’r dyddiad dyledus gwreiddiol.
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
