@@ -94,7 +94,6 @@ object FinancialDetail {
         chargeTypeParts <- supportedCTypePartsByMainType.get(mainTypeValue)
         if chargeTypeParts.exists{
           supportedCTypePart => {
-            println(supportedCTypePart)
             chargeTypeValue.startsWith(supportedCTypePart)
           }
 
