@@ -3382,6 +3382,8 @@ yourSelfAssessmentChargeSummary.table.head.interestPeriod               = Intere
 yourSelfAssessmentChargeSummary.table.head.interestRate                 = Current interest rate
 yourSelfAssessmentChargeSummary.table.head.amount                       = Estimated amount
 yourSelfAssessmentChargeSummary.warningText                             = Pay this charge to stop this interest from increasing daily.
+yourSelfAssessmentChargeSummary.hmrcAdjustment.text.heading             = HMRC adjustment
+yourSelfAssessmentChargeSummary.chargeHistory.caption.hmrcAdjustment.text.heading = This charge goes towards your {0} to {1} tax bill.
 
 
 yourSelfAssessmentChargeSummary.howIsInterestCalculated.linkText    = How is interest calculated?
