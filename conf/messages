@@ -1341,7 +1341,7 @@ chargeSummary.paymentAllocations.bcd.sl                            = Payment all
 chargeSummary.paymentAllocations.bcd.cgt                           = Payment allocated to Capital Gains Tax for Balancing payment
 chargeSummary.paymentAllocations.poa1.invalid                      = Payment allocated for first payment on account
 chargeSummary.paymentAllocations.poa2.invalid                      = Payment allocated for second payment on account
-chargeSummary.paymentAllocations.bcd.invalid                       = Payment allocated for Balancing payment
+chargeSummary.paymentAllocations.bcd.invalid                       = Payment allocated for balancing payment
 chargeSummary.paymentAllocations.mfaDebit                          = Payment put towards HMRC adjustment
 
 chargeSummary.codingOutHeader                                      = Self Assessment payment (through your PAYE tax code)

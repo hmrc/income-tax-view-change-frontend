@@ -1340,7 +1340,7 @@ chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’
 chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.poa1.invalid                   = Taliad wedi’i ddyrannu ar gyfer taliad cyntaf ar gyfrif
 chargeSummary.paymentAllocations.poa2.invalid                   = Taliad wedi’i ddyrannu ar gyfer ail daliad ar gyfrif
-chargeSummary.paymentAllocations.bcd.invalid                    = Taliad wedi’i ddyrannu ar gyfer Taliad Mantoli
+chargeSummary.paymentAllocations.bcd.invalid                    = Taliad wedi’i ddyrannu ar gyfer taliad mantoli
 chargeSummary.paymentAllocations.mfaDebit                       = Taliad wedi’i roi tuag at addasiad CThEF
 
 chargeSummary.codingOutHeader                                      = Taliad Hunanasesiad (drwy’ch cod treth TWE)
