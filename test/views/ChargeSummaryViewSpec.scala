@@ -251,8 +251,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val remainingToPay: String = messages("chargeSummary.remainingDue")
     val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
     val chargeHistoryHeadingGeneric: String = messages("chargeSummary.chargeHistory.heading")
-    val chargeHistoryHeadingPoa1: String = messages("chargeSummary.chargeHistory.Poa1heading")
-    val chargeHistoryHeadingPoa2: String = messages("chargeSummary.chargeHistory.Poa2heading")
     val historyRowPOA1Created: String = s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
     val codingOutHeader: String = "2017 to 2018 tax year PAYE self assessment"
     val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")}"
@@ -1349,28 +1347,28 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       "display a charge history heading as an h2 when there is no Payment Breakdown" in new TestSetup(
         chargeItem = chargeItemModel().copy(outstandingAmount = 0, lpiWithDunningLock = None)
       ) {
-        document.select("main h2").text shouldBe chargeHistoryHeadingPoa1
+        document.select("main h2").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display a charge history heading as an h3 when there is a Payment Breakdown" in new TestSetup(
         chargeItem = chargeItemModel(),
         paymentBreakdown = paymentBreakdown
       ) {
-        document.select("main h3").text shouldBe chargeHistoryHeadingPoa1
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display charge history heading as poa1 heading when charge is a poa1" in new TestSetup(
         chargeItem = chargeItemModel(),
         paymentBreakdown = paymentBreakdown
       ){
-        document.select("main h3").text shouldBe chargeHistoryHeadingPoa1
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display charge history heading as poa2 heading when charge is a poa2" in new TestSetup(
         chargeItem = chargeItemModel(transactionType = PoaTwoDebit),
         paymentBreakdown = paymentBreakdown
       ){
-        document.select("main h3").text shouldBe chargeHistoryHeadingPoa2
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display charge history heading as non-poa heading when charge is not a poa" in new TestSetup(
@@ -1385,7 +1383,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         paymentBreakdown = paymentBreakdown,
         latePaymentInterestCharge = true
       ){
-        document.select("main h3").text shouldBe "Late payment interest history"
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "show payment allocations in history table" when {

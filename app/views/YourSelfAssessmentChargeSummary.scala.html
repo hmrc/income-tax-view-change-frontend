@@ -35,6 +35,8 @@
 @import _root_.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
 @import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
+@import viewUtils.ExternalUrlHelper
+
 
 @this(
         mainTemplate: unifiedLayout,
@@ -188,6 +190,16 @@
             @interestOnYourChargeSection(viewModel.chargeItem)
 
             @interestOnYourChargeTable(viewModel)
+
+@p(id=Some("guidance.p1")){@messages("selfAssessmentCharges.interestOnThisCharge.guidanceText")
+@link(
+link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
+target = Some("_blank"),
+rel= Some("noreferrer noopener"),
+messageKey = messages("selfAssessmentCharges.interestOnThisCharge.guidanceLinkText"),
+outerMessage = messages(".")
+)
+}
         }
     }
 

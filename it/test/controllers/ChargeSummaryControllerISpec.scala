@@ -174,7 +174,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("main h2")(lpiHistory),
+                                  elementTextBySelector("main h2")(paymentHistory),
                                   elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
                                 )
                               }
@@ -191,7 +191,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("main h2")(lpiHistory),
+                                  elementTextBySelector("main h2")(paymentHistory),
                                   elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
                                 )
                               }
