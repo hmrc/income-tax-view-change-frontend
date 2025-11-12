@@ -360,7 +360,7 @@
 
 @mandatoryReporting = {
     @if(optInOptOutContentUpdateR17IsEnabled){
-        @if(viewModel.showYourReportingObligations){
+        @if(viewModel.showYourReportingObligationsExempt){
             @mandatoryReportingOnlyExempt
         } else if (viewModel.hasExemptStatuses) {
             @mandatoryReportingHasExempt
@@ -488,11 +488,11 @@
         @manageReportingFrequency
     }
 
-    @if(!viewModel.displayCeasedBusinessWarning && !viewModel.showYourReportingObligations) {
+    @if(!viewModel.displayCeasedBusinessWarning && !viewModel.showYourReportingObligationsExempt) {
         @differentObligations
     }
 
-    @if(viewModel.showYourReportingObligations) {
+    @if(viewModel.showYourReportingObligationsExempt) {
         @yourReportingObligations
     }
 

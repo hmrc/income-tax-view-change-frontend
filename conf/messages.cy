@@ -3139,7 +3139,7 @@ reporting.frequency.mandatoryReporting.onlyExempt.p1    = Ar gyfer blynyddoedd r
 reporting.frequency.mandatoryReporting.onlyExempt.p2    = Dysgwch ragor am
 reporting.frequency.mandatoryReporting.onlyExempt.link.text  = a oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, a phryd y mae angen i chi wneud hynny.
 
-reporting.frequency.mandatoryReporting.hasExempt.p1    = Ar gyfer blynyddoedd rydych chi’n esempt, ni all fod yn ofynnol arnoch i ddefnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ar gyfer unrhyw flynyddoedd treth pan nad ydych yn esempt, mae’n bosibl y byddwn yn gofyn i chi ddefnyddio’r cynllun.	
+reporting.frequency.mandatoryReporting.hasExempt.p1    = Ar gyfer blynyddoedd rydych chi’n esempt, ni all fod yn ofynnol arnoch i ddefnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ar gyfer unrhyw flynyddoedd treth pan nad ydych yn esempt, mae’n bosibl y byddwn yn gofyn i chi ddefnyddio’r cynllun.
 reporting.frequency.mandatoryReporting.hasExempt.p2    = Yna, bydd angen i chi ddefnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm hyd nes y bydd y math hwn o incwm yn is na’r trothwy am 3 blwyddyn dreth yn olynol. Ar ôl hynny, gallwch wirfoddoli i barhau i adrodd drwy’r dull hwn, neu ddewis i optio allan.
 reporting.frequency.mandatoryReporting.hasExempt.p3    = Dysgwch ragor am
 reporting.frequency.mandatoryReporting.hasExempt.link.text  = a oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, a phryd y mae angen i chi wneud hynny.
