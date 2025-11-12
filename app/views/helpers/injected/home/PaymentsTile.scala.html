@@ -69,28 +69,10 @@
     }
 }
 
-@checkYourSelfAssessmentChargesLink = @{
-    if(isAgent) {
-        link(
-            link = controllers.routes.YourSelfAssessmentChargesController.showAgent().url,
-            messageKey = "home.agent.payments.selfAssessment.view"
-        )
-    } else {
-        link(
-            link = controllers.routes.YourSelfAssessmentChargesController.show(viewModel.origin).url,
-            messageKey = "home.payments.selfAssessment.view"
-        )
-    }
-}
-
 
 @home_tile("payments-tile", messages("home.payments.heading")) {
     @getNextPaymentsTag
     @p(classes = "govuk-!-margin-bottom-4"){
-        @if(viewModel.nextPaymentsTileViewModel.yourSelfAssessmentChargesEnabled){
-            @checkYourSelfAssessmentChargesLink
-        } else {
-            @checkWhatYouOweLink
-        }
+        @checkWhatYouOweLink
     }
 }

@@ -17,7 +17,7 @@
 package models.financialDetails
 
 import config.FrontendAppConfig
-import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
+import enums.CodingOutType.CODING_OUT_CLASS2_NICS
 import exceptions.MissingFieldException
 import models.financialDetails.ChargeItem.filterAllowedCharges
 import services.{DateService, DateServiceInterface}

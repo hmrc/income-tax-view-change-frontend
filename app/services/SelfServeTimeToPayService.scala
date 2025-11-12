@@ -30,9 +30,8 @@ class SelfServeTimeToPayService @Inject()(
                                            selfServeTimeToPayConnector: SelfServeTimeToPayConnector
                                          )(implicit ec: ExecutionContext) {
 
-  def startSelfServeTimeToPayJourney(isYourSelfAssessmentChargesEnabled: Boolean)
-                                    (implicit hc: HeaderCarrier): Future[Either[Throwable, String]] = {
-    selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(isYourSelfAssessmentChargesEnabled)
+  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier): Future[Either[Throwable, String]] = {
+    selfServeTimeToPayConnector.startSelfServeTimeToPayJourney
       .map {
         case SelfServeTimeToPayJourneyResponseModel(_, nextUrl) =>
           Right(nextUrl)

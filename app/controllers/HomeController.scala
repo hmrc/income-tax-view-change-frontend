@@ -163,7 +163,7 @@ class HomeController @Inject()(val homeView: views.html.Home,
 
       val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
-      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount, isEnabled(YourSelfAssessmentCharges)).verify match {
+      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount).verify match {
 
         case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
           utr = user.saUtr,

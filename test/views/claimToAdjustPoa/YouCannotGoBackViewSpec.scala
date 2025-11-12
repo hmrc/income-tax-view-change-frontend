@@ -25,7 +25,7 @@ import views.html.claimToAdjustPoa.YouCannotGoBackView
 
 class YouCannotGoBackViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean, yourSelfAssessmentChargesFS: Boolean = false) {
+  class Setup(isAgent: Boolean) {
 
     val view: YouCannotGoBackView = app.injector.instanceOf[YouCannotGoBackView]
 
@@ -34,8 +34,7 @@ class YouCannotGoBackViewSpec extends TestSupport {
         contentAsString(
           view(
             isAgent = isAgent,
-            poaTaxYear = TaxYear(2023, 2024),
-            yourSelfAssessmentChargesFS
+            poaTaxYear = TaxYear(2023, 2024)
           )
         )
       )
@@ -56,10 +55,6 @@ class YouCannotGoBackViewSpec extends TestSupport {
     else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2024).url
   }
 
-  def getSaChargesUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent().url
-    else controllers.routes.YourSelfAssessmentChargesController.show().url
-  }
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {
       "render the heading" in new Setup(isAgent) {
@@ -84,12 +79,7 @@ class YouCannotGoBackViewSpec extends TestSupport {
         document.getElementById("link-2").attr("href") shouldBe
           getWhatYouOweControllerLink(isAgent)
       }
-      "render the second bullet point with the correct link when yourSelfAssessmentChargesFS is true" in new Setup(isAgent, yourSelfAssessmentChargesFS = true) {
-        document.getElementsByClass("govuk-!-margin-bottom-4").get(1).text() shouldBe
-          messages("claimToAdjustPoa.youCannotGoBack.bullet2Text") + " " + messages("claimToAdjustPoa.youCannotGoBack.sa.bullet2Link")
-        document.getElementById("link-2").attr("href") shouldBe
-          getSaChargesUrl(isAgent)
-      }
+
       "render the third bullet point with the correct link" in new Setup(isAgent) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(2).text() shouldBe
           messages("claimToAdjustPoa.youCannotGoBack.bullet3Text") + " " + messages("claimToAdjustPoa.youCannotGoBack.bullet3Link")
