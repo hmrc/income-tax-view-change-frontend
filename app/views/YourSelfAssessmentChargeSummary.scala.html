@@ -36,6 +36,7 @@
 @import java.time.LocalDate
 @import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
 @import viewUtils.ExternalUrlHelper
+@import models.financialDetails.MfaDebitCharge
 
 
 @this(
@@ -149,6 +150,11 @@
 
         @chargeDetails(viewModel)
     }
+    @if(viewModel.chargeItem.transactionType == MfaDebitCharge){
+       @p(id = Some("credit-created-text")){ @messages("yourSelfAssessmentChargeSummary.definition.hmrcadjustment")
+    }
+        }
+
     @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
     <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
         s"${ getMessage("youOwe")

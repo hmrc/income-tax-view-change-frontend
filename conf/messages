@@ -3266,7 +3266,9 @@ yourSelfAssessmentChargeSummary.table.head.interestPeriod               = Intere
 yourSelfAssessmentChargeSummary.table.head.interestRate                 = Current interest rate
 yourSelfAssessmentChargeSummary.table.head.amount                       = Estimated amount
 yourSelfAssessmentChargeSummary.warningText                             = Pay this charge to stop this interest from increasing daily.
-
+yourSelfAssessmentChargeSummary.hmrcAdjustment.text.heading             = HMRC adjustment
+yourSelfAssessmentChargeSummary.chargeHistory.caption.hmrcAdjustment.text.heading = This charge goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.definition.hmrcadjustment               = HMRC has added this charge after an adjustment to your tax return.
 
 yourSelfAssessmentChargeSummary.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
 yourSelfAssessmentChargeSummary.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
