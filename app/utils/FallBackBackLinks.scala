@@ -17,7 +17,7 @@
 package utils
 
 import controllers.routes._
-import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage, YourSelfAssessmentChargeSummaryPage}
+import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 
 trait FallBackBackLinks {
 
@@ -30,7 +30,6 @@ trait FallBackBackLinks {
       case (Some(TaxYearSummaryPage), Some(taxYear)) => TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
       case (Some(TaxYearSummaryPage), None) => HomeController.show(origin)
       case (Some(WhatYouOwePage), _) => WhatYouOweController.show(origin)
-      case (Some(YourSelfAssessmentChargeSummaryPage), _) => YourSelfAssessmentChargesController.show(origin)
       case (Some(PaymentHistoryPage), _) => PaymentHistoryController.show(origin)
       case _ => HomeController.show(origin)
     }).path
@@ -40,7 +39,6 @@ trait FallBackBackLinks {
       case (Some(TaxYearSummaryPage), Some(taxYear)) => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
       case (Some(TaxYearSummaryPage), None) => HomeController.showAgent()
       case (Some(WhatYouOwePage), _) => WhatYouOweController.showAgent()
-      case (Some(YourSelfAssessmentChargeSummaryPage), _) => YourSelfAssessmentChargesController.showAgent()
       case (Some(PaymentHistoryPage), _) => PaymentHistoryController.showAgent()
       case _ => HomeController.showAgent()
     }).path
@@ -53,7 +51,6 @@ trait FallBackBackLinks {
     (gatewayPageOpt match {
       case Some(TaxYearSummaryPage) => TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).withFragment("payments")
       case Some(WhatYouOwePage) => WhatYouOweController.showAgent()
-      case Some(YourSelfAssessmentChargeSummaryPage) => YourSelfAssessmentChargesController.showAgent()
       case Some(PaymentHistoryPage) => PaymentHistoryController.showAgent()
       case _ => HomeController.showAgent()
     }).path
@@ -62,7 +59,6 @@ trait FallBackBackLinks {
     (gatewayPageOpt match {
       case Some(TaxYearSummaryPage) => TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin).withFragment("payments")
       case Some(WhatYouOwePage) => WhatYouOweController.show(origin)
-      case Some(YourSelfAssessmentChargeSummaryPage) => YourSelfAssessmentChargesController.show(origin)
       case Some(PaymentHistoryPage) => PaymentHistoryController.show(origin)
       case _ => HomeController.show(origin)
     }).path

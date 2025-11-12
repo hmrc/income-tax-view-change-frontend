@@ -19,7 +19,7 @@ package controllers.claimToAdjustPoa
 import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.InitialPage
+import enums.InitialPage
 import implicits.ImplicitCurrencyFormatter
 import models.core.Nino
 import play.api.Logger

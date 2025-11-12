@@ -1,5 +1,5 @@
-@*
- * Copyright 2023 HM Revenue & Customs
+/*
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,29 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.components._
-@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
+package models.optout
 
-@this(
-    p: p,
-    link: link
-)
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.ITSAStatus
 
-@(
-    selfServeTimeToPayStartUrl: String
-)(
-    implicit messages: Messages
-)
-
-@p(id = Some("payment-plan")) {
-    @getMessage("payment-plan-1")
-    @link(
-        link = selfServeTimeToPayStartUrl,
-        messageKey = getMessage("payment-plan-link-text"),
-        id = Some("payment-plan-link"),
-        target = Some("_blank"),
-        outerMessage = "."
-    )
-}
+case class OptOutYearToUpdate(taxYear: TaxYear, itsaStatus: ITSAStatus)

@@ -58,6 +58,8 @@ class ReportingFrequencyPageController @Inject()(
       for {
         (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()
         optInTaxYears <- optInService.availableOptInTaxYear()
+        _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
+        _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
 
       } yield {
         if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {

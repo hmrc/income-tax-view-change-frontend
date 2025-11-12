@@ -35,6 +35,7 @@ case class ChargeSummaryViewModel(
                                    paymentAllocations: List[PaymentHistoryAllocations],
                                    payments: FinancialDetailsModel,
                                    chargeHistoryEnabled: Boolean,
+                                   creditsRefundRepayEnabled: Boolean = true,
                                    latePaymentInterestCharge: Boolean,
                                    penaltiesEnabled: Boolean,
                                    reviewAndReconcileCredit: Option[ChargeItem],

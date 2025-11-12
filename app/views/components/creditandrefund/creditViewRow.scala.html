@@ -19,18 +19,30 @@
 @import views.html.components._
 @import models.incomeSourceDetails.TaxYear
 @import _root_.implicits.ImplicitCurrencyFormatter._
+@import models.financialDetails._
 
 @this(p:p)
 
 @(amount: BigDecimal, creditType: CreditType, taxYear: TaxYear)(implicit messages: Messages)
 
 @p(classes = "govuk-body") {
-  <span class="govuk-body">
-  @messages(s"credit-and-refund.row.${creditType.key}-1")
-  </span>
-  @amount.toCurrencyString
-  <span class="govuk-body">
-   @messages(s"credit-and-refund.row.${creditType.key}-2")
-   @messages("credit-and-refund.tax-year", s"${taxYear.startYear}", s"${taxYear.endYear}")
-  </span>
+  @creditType match {
+    case PoaOneReconciliationCredit | PoaTwoReconciliationCredit |ITSAReturnAmendmentCredit =>{
+        @amount.toCurrencyString
+        <span class="govuk-body">
+        @messages(s"credit-and-refund.row.${creditType.key}")
+        @messages("credit-and-refund.tax-year", s"${taxYear.startYear}", s"${taxYear.endYear}")
+        </span>
+    }
+    case _ =>{
+        <span class="govuk-body">
+        @messages(s"credit-and-refund.row.${creditType.key}-1")
+        </span>
+        @amount.toCurrencyString
+        <span class="govuk-body">
+        @messages(s"credit-and-refund.row.${creditType.key}-2")
+        @messages("credit-and-refund.tax-year", s"${taxYear.startYear}", s"${taxYear.endYear}")
+        </span>
+    }
+  }
 }

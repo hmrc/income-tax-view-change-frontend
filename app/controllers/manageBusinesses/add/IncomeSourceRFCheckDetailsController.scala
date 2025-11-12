@@ -21,7 +21,8 @@ import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{AfterSubmissionPage, IncomeSourceType, ReportingFrequencyPages}
+import enums.{AfterSubmissionPage, ReportingFrequencyPages}
+import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId

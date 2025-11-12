@@ -19,12 +19,13 @@ package models.optin
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Json, OFormat}
 
-case class OptInContextData(currentTaxYear: String,
-                            currentYearITSAStatus: String,
-                            nextYearITSAStatus: String) {
+case class OptInContextData(
+                             currentTaxYear: String,
+                             currentYearITSAStatus: String,
+                             nextYearITSAStatus: String
+                           ) {
 
   def currentYearAsTaxYear(): Option[TaxYear] = asTaxYear(currentTaxYear)
-  def nextTaxYearAsTaxYear(): Option[TaxYear] = currentYearAsTaxYear().map(_.nextYear)
 
   private def asTaxYear(taxYearValue: String): Option[TaxYear] = {
     TaxYear.getTaxYearModel(taxYearValue)

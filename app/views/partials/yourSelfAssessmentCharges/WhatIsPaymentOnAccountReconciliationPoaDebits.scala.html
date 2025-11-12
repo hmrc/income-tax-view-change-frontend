@@ -56,15 +56,15 @@
     @warningRARPoa(viewModel.dueDate.map(_.toLongDate).getOrElse(""))
 
 @html= {
-@p(){@messages("selfAssessmentCharges.whatIsPaymentOnAccount.p1")}
-@p(){@messages("selfAssessmentCharges.whatIsPaymentOnAccount.p2")}
-@p(){@messages("selfAssessmentCharges.whatIsPaymentOnAccount.p3")}
+@p(){@messages("yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1")}
+@p(){@messages("yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2")}
+@p(){@messages("yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3")}
 @p(){
     @link(
         link = ExternalUrlHelper.saThroughYourTaxCodeUrl,
         target = Some("_blank"),
         rel= Some("noreferrer noopener"),
-        messageKey = "selfAssessmentCharges.whatIsPaymentOnAccount.p4.linkText",
+        messageKey = "yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4.linkText",
         outerMessage = "."
     )
 }

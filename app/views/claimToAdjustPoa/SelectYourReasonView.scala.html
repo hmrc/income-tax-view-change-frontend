@@ -14,16 +14,13 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import helper._
-@import views.html.helpers.injected.ErrorSummary
-@import views.html.helpers.injected.InputHelper
 @import models.claimToAdjustPoa.SelectYourReason
-@import models.incomeSourceDetails.TaxYear
 @import models.core.Mode
+@import models.incomeSourceDetails.TaxYear
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import views.html.components._
+@import views.html.helpers.injected.{ErrorSummary, InputHelper}
+@import views.html.layouts.unifiedLayout
 
 @this(
         mainTemplate: unifiedLayout,
@@ -48,16 +45,15 @@
     useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @formContent = {
-    @p(classes = "govuk-body-m"){
+    @p(){
         @messages("claimToAdjustPoa.selectYourReason.p1")
     }
 
-    @p(classes = "govuk-body-m"){
+    @p(){
         @messages("claimToAdjustPoa.selectYourReason.p2.a")
         <a class="govuk-link" target="_blank" href="https://www.gov.uk/difficulties-paying-hmrc">@messages("claimToAdjustPoa.selectYourReason.p2.link")</a>@messages("claimToAdjustPoa.selectYourReason.p2.b")
     }
 
-    @h2(msg = "claimToAdjustPoa.selectYourReason.h2")
 }
 
 @getHomePageUrl = @{
@@ -77,18 +73,20 @@
 
     <h2 class="govuk-caption-l hmrc-caption-l"><span class="govuk-visually-hidden">@messages("claimToAdjustPoa.selectYourReason.h2.caption.hidden") </span>@messages("claimToAdjustPoa.selectYourReason.h2.caption", taxYear.startYear.toString, taxYear.endYear.toString)</h2>
 
-    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.SelectYourReasonController.submit(isAgent, mode), Symbol("id") -> "select-your-reason-form") {        @govukRadios(
+    <h1 class="govuk-heading-l" id="select-your-reason-h1">@messages("claimToAdjustPoa.selectYourReason.h1")</h1>
+
+    @formContent
+
+    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.SelectYourReasonController.submit(isAgent, mode), Symbol("id") -> "select-your-reason-form") {
+        @govukRadios(
             Radios(
                 fieldset = Some(Fieldset(
                     legend = Some(Legend(
-                        content = HtmlContent(s"""<h1 class="govuk-heading-l">${messages("claimToAdjustPoa.selectYourReason.h1")}</h1>"""),
-                    isPageHeading = true
+                        content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.h2")}"""),
+                        classes = "govuk-fieldset__legend--m",
+                        isPageHeading = false
                 ))),
             ),
-            hint = Some(Hint(
-                id = Some("hint-text"),
-                content = HtmlContent(formContent)
-            )),
             items = Seq(
                 RadioItem(
                     content = HtmlContent(s"""${messages("claimToAdjustPoa.selectYourReason.radios.main-lower")} <span class="govuk-caption-m">${messages("claimToAdjustPoa.selectYourReason.radios.main-lower.hint")}</span>"""),

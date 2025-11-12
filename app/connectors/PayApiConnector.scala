@@ -18,6 +18,7 @@ package connectors
 
 import audit.AuditingService
 import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
 import play.api.http.Status._
@@ -31,13 +32,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class PayApiConnector @Inject()(http: HttpClientV2,
                                 auditingService: AuditingService,
-                                config: FrontendAppConfig)(implicit ec: ExecutionContext) {
+                                val appConfig: FrontendAppConfig)(implicit ec: ExecutionContext) extends FeatureSwitching {
 
-  val journeyStartUrl: String = config.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
+  val startUrlJourney: String = appConfig.paymentsUrl + "/pay-api/mtd-income-tax/sa/journey/start"
 
   def startPaymentJourney(saUtr: String, amountInPence: BigDecimal, isAgent: Boolean)(implicit headerCarrier: HeaderCarrier): Future[PaymentJourneyResponse] = {
 
-    val paymentRedirectUrl: String = if (isAgent) config.agentPaymentRedirectUrl else config.paymentRedirectUrl
+    def paymentRedirectUrl: String = if (isAgent) appConfig.agentPaymentRedirectUrl else appConfig.paymentRedirectUrl
+
 
     val body = Json.parse(
       s"""
@@ -51,7 +53,7 @@ class PayApiConnector @Inject()(http: HttpClientV2,
     )
 
     http
-      .post(url"$journeyStartUrl")
+      .post(url"$startUrlJourney")
       .withBody(body)
       .execute[HttpResponse]
       .map {

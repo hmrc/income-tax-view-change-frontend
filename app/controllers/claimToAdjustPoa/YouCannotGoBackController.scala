@@ -20,8 +20,7 @@ import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.CannotGoBackPage
-import models.admin.YourSelfAssessmentCharges
+import enums.CannotGoBackPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.claimToAdjustPoa.RecalculatePoaHelper
@@ -49,8 +48,7 @@ class YouCannotGoBackController @Inject()(val authActions: AuthActions,
       withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
         EitherT.rightT(Ok(view(
           isAgent = user.isAgent(),
-          poaTaxYear = poa.taxYear,
-          isEnabled(YourSelfAssessmentCharges)
+          poaTaxYear = poa.taxYear
         )))
       } recover logAndRedirect
   }

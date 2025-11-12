@@ -21,8 +21,7 @@ import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.AfterSubmissionPage
-import models.admin.YourSelfAssessmentCharges
+import enums.AfterSubmissionPage
 import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoaAmendmentData, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
@@ -70,7 +69,7 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
   private def handleView(poa: PaymentOnAccountViewModel, session: PoaAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
       case Right(_) => Future.successful(
-        Ok(view(user.isAgent(), poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason), isEnabled(YourSelfAssessmentCharges))))
+        Ok(view(user.isAgent(), poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
       case Left(ex) =>
         Future.successful(logAndRedirect(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}"))
     }

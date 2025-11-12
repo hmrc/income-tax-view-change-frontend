@@ -110,8 +110,9 @@ object RepaymentHistoryUtils {
     (hasCredit,  hasLot, payment.creditType) match {
       case (true, _, Some(MfaCreditType))                                   => Right(mfaCreditEntry(payment, isAgent))
       case (true, _, Some(CutOverCreditType))                               => creditEntry(payment, isAgent)
-      case (true, _, Some(PoaOneReconciliationCredit))  => creditEntry(payment, isAgent, true)
-      case (true, _, Some(PoaTwoReconciliationCredit))  => creditEntry(payment, isAgent, true)
+      case (true, _, Some(PoaOneReconciliationCredit))                      => creditEntry(payment, isAgent, true)
+      case (true, _, Some(PoaTwoReconciliationCredit))                      => creditEntry(payment, isAgent, true)
+      case (true, _ ,Some(ITSAReturnAmendmentCredit))                       => creditEntry(payment, isAgent, true)
       case (true, _, Some(BalancingChargeCreditType))                       => creditEntry(payment, isAgent)
       case (true, _, Some(RepaymentInterest))                               => creditEntry(payment, isAgent)
       case (false, true, Some(PaymentType))                                 => Right(paymentToHMRCEntry(payment, isAgent))
@@ -142,19 +143,19 @@ object RepaymentHistoryUtils {
     )
   }
 
-  private def creditEntry(payment: Payment, isAgent: Boolean, isPoaReconciliationCredit: Boolean = false)
+  private def creditEntry(payment: Payment, isAgent: Boolean, hasCreditDrilldown: Boolean = false)
                          (implicit dateServiceInterface: DateServiceInterface): Either[Throwable, PaymentHistoryEntry] = {
     for {
       creditType <- payment.creditType.toRight(MissingFieldException("Credit type"))
       dueDate <- payment.dueDate.toRight(MissingFieldException(s"Payment Due Date - ${creditType.getClass.getSimpleName}"))
       amount = payment.amount
       transactionId <- payment.transactionId.toRight(MissingFieldException(
-        if (isPoaReconciliationCredit) "Transaction ID" else "Document ID"))
+        if (hasCreditDrilldown) "Transaction ID" else "Document ID"))
     } yield PaymentHistoryEntry(
       date = dueDate,
       creditType = creditType,
       amount = amount,
-      linkUrl = if (isPoaReconciliationCredit)
+      linkUrl = if (hasCreditDrilldown)
         getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
       else
         getCreditsLinkUrl(dueDate, isAgent),

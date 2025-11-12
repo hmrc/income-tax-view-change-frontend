@@ -20,23 +20,26 @@ import enums.AmendedReturnReversalReason
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
-import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService}
+import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService, MockPaymentAllocationsService}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
+import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError, PaymentAllocationViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers.INTERNAL_SERVER_ERROR
-import testConstants.ChargeConstants
+import testConstants.{ChargeConstants, PaymentAllocationsTestConstants}
 import testConstants.FinancialDetailsTestConstants.financialDetail
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 trait ChargeSummaryControllerHelper  extends MockAuthActions
   with ImplicitDateFormatter
   with ChargeConstants
   with MockFinancialDetailsService
-  with MockChargeHistoryService {
+  with MockChargeHistoryService
+  with MockPaymentAllocationsService {
 
   def financialDetailsWithLocks(taxYear: Int): List[FinancialDetail] = List(
     financialDetail(taxYear = taxYear, chargeType = ITSA_ENGLAND_AND_NI),
@@ -68,6 +71,16 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
         )
       ))
 
+  val paymentAllocationResponse: PaymentAllocationViewModel = PaymentAllocationViewModel(
+    FinancialDetailsWithDocumentDetailsModel(
+      List(PaymentAllocationsTestConstants.documentDetail),
+      List(PaymentAllocationsTestConstants.financialDetail)
+    ),
+    Seq(),
+    None,
+    false
+  )
+
   def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
 
   def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, AmendedReturnReversalReason), List())
@@ -92,9 +105,9 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   val lateInterestSuccessHeading = s"${messages("chargeSummary.lpi.paymentOnAccount1.text")}"
   val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2")}"
   val paymentprocessingbullet1Agent: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2-agent")} ${messages("pagehelp.opensInNewTabText")} ${messages("chargeSummary.payments-bullet2-agent")}"
-  val warningText: String = "Warning " + messages("selfAssessmentCharges.reviewAndReconcilePoa.warning.p1") + " " + messages("selfAssessmentCharges.reviewAndReconcilePoa.warning.p2", "14 January 2019")
-  val explanationTextForRAR1: String = messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p1") + " " + messages("selfAssessmentCharges.reviewAndReconcilePoa1.linkText") + " " + messages("selfAssessmentCharges.reviewAndReconcilePoa.p.textTwo", "2017", "2018") + messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p2")
-  val explanationTextForRAR2: String = messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p1") + " " + messages("selfAssessmentCharges.reviewAndReconcilePoa2.linkText") + " " + messages("selfAssessmentCharges.reviewAndReconcilePoa.p.textTwo", "2017", "2018") + messages("selfAssessmentCharges.reviewAndReconcilePoa1and2.explanation.p2")
+  val warningText: String = "Warning " + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p1") + " " + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p2", "14 January 2019")
+  val explanationTextForRAR1: String = messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1") + " " + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.linkText") + " " + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.p.textTwo", "2017", "2018") + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p2")
+  val explanationTextForRAR2: String = messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1") + " " + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.linkText") + " " + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.p.textTwo", "2017", "2018") + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p2")
   val descriptionTextForRAR1: String = messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text")
   val descriptionTextForRAR2: String = messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text")
   val descriptionTextRAR1Interest: String = messages("chargeSummary.poa1ExtraAmountInterest.p1")
@@ -102,6 +115,8 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   class Setup(financialDetails: FinancialDetailsResponseModel,
               chargeHistoryHasError: Boolean = false,
               adjustmentHistoryModel: AdjustmentHistoryModel = emptyAdjustmentHistoryModel,
+              paymentAllocations: Either[PaymentAllocationError, PaymentAllocationViewModel] = Left(PaymentAllocationError(None)),
+              docId: String
               ) {
     mockGetAllFinancialDetails(List((2018, financialDetails)))
 
@@ -110,6 +125,8 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
     } else {
       setupMockChargeHistorySuccessResp(List())
     }
+
+    setupMockGetPaymentAllocation(docId)(Future(paymentAllocations))
 
     setupMockGetAdjustmentHistory(adjustmentHistoryModel)
     mockGetReviewAndReconcileCredit(PoaOneReconciliationCredit)

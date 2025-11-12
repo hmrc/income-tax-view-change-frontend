@@ -37,7 +37,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.FallBackBackLinks
 import views.html.PaymentAllocation
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -82,14 +81,10 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         val taxYearOpt = paymentAllocations.originalPaymentAllocationWithClearingDate.headOption.flatMap(_.allocationDetail.flatMap(_.getTaxYearOpt))
         val backUrl = getPaymentAllocationBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
         auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
-        val dueDate: Option[LocalDate] = paymentAllocations.paymentAllocationChargeModel.financialDetails.headOption
-          .flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
-        val outstandingAmount: Option[BigDecimal] = paymentAllocations.paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
         Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
           btaNavPartial = user.btaNavPartial,
           isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
-          creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay), dueDate = dueDate,
-          outstandingAmount = outstandingAmount)(implicitly, messages))
+          creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages))
 
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
         Redirect(redirectUrl)

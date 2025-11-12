@@ -52,9 +52,9 @@
  messages(s"yourSelfAssessmentChargeSummary.table.$key", args: _*)
 }
 
-      @h2(messages("selfAssessmentCharges.interestOnThisCharge.heading"))
-      @p(){@messages("selfAssessmentCharges.interestOnThisCharge.p1")}
-      @p(){@messages("selfAssessmentCharges.interestOnThisCharge.p2")}
+      @h2(messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.heading"))
+      @p(){@messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.p1")}
+      @p(){@messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.p2")}
 
     @intrestOnChargeTable = {
       @p() {
@@ -73,7 +73,7 @@
      rows = Seq(
         Seq(
          TableRow(
-           content = Text(messages("selfAssessmentCharges.reviewAndReconcilePoa.table.overdue", viewModel.chargeItem.getInterestFromDate.toLongDateShort, viewModel.chargeItem.getInterestEndDate.toLongDateShort))
+           content = Text(messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.table.overdue", viewModel.chargeItem.getInterestFromDate.toLongDateShort, viewModel.chargeItem.getInterestEndDate.toLongDateShort))
          ),
          TableRow(
            content = Text(viewModel.chargeItem.getInterestRate.toPercentage)
@@ -85,7 +85,7 @@
         ),
         Seq(
          TableRow(
-           content = Text(messages("selfAssessmentCharges.interestOnThisCharge.Table.totalText")),
+           content = Text(messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText")),
            attributes = Map("colspan" -> "2"),
            classes = "govuk-table__header"
           ),
@@ -99,7 +99,7 @@
      ),
      head = Some(Seq(
        HeadCell(
-         content = Text(messages("selfAssessmentCharges.interestOnThisCharge.Table.heading"))
+         content = Text(messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading"))
        ),
        HeadCell(
          content = HtmlContent(currentInterestRateHeader)
@@ -112,19 +112,19 @@
   ))
 
   @currentInterestRateHeader ={
-      <div>@messages("selfAssessmentCharges.interestOnThisCharge.Table.heading2")</div>
+      <div>@messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading2")</div>
   }
   @estimatedAmountHeader ={
-       <div>@messages("selfAssessmentCharges.interestOnThisCharge.Table.heading3")</div>
+       <div>@messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading3")</div>
   }
 
 
-  @p(){@messages("selfAssessmentCharges.interestOnThisCharge.guidanceText")
+  @p(){@messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText")
      @link(
           link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
           target = Some("_blank"),
           rel= Some("noreferrer noopener"),
-          messageKey = messages("selfAssessmentCharges.interestOnThisCharge.guidanceLinkText"),
+          messageKey = messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText"),
           outerMessage = messages(".")
      )
 }

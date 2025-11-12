@@ -32,8 +32,3 @@
         @{if (yearPayments.size > 1) s" Item ${(index + 1)} " else ""}
     </span></div>
 </a>
-@{if(payment.isCredit)
-    <a class="govuk-body-s">
-        {messages("paymentHistory.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString)}
-    </a>
-}

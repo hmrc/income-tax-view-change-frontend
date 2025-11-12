@@ -23,10 +23,11 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import models.UIJourneySessionData
 import models.core.{IncomeSourceId, Mode, NormalMode}
 import models.admin.AccountingMethodJourney
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel, UIJourneySessionData}
+import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

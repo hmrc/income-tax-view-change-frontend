@@ -25,15 +25,7 @@
         link: link,
         govukInsetText: GovukInsetText
 )
-@(viewModel: CreditAndRefundViewModel, yourSelfAssessmentChargesFS: Boolean, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
-
-@checkSACharges(isAgent: Boolean) = @{
-    if(isAgent) {
-        controllers.routes.YourSelfAssessmentChargesController.showAgent().url
-    } else {
-        controllers.routes.YourSelfAssessmentChargesController.show().url
-    }
-}
+@(viewModel: CreditAndRefundViewModel, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
@@ -49,19 +41,12 @@
     } else {
         @messages("credit-and-refund.upcoming-allocated-credit-1-all", viewModel.allocatedCredit.toCurrencyString)
     }
-    @if(yourSelfAssessmentChargesFS) {
-        @link(
-            link = checkSACharges(isAgent),
-            messageKey = "credit-and-refund.selfAssessment.upcoming-allocated-credit-2"
-        )
-        @messages("credit-and-refund.selfAssessment.upcoming-allocated-credit-3")
-    } else {
-        @link(
-            link = getWhatYouOwe(isAgent),
-            messageKey = "credit-and-refund.upcoming-allocated-credit-2"
-        )
-        @messages("credit-and-refund.upcoming-allocated-credit-3")
-    }
+    @link(
+        link = getWhatYouOwe(isAgent),
+        messageKey = "credit-and-refund.upcoming-allocated-credit-2"
+    )
+    @messages("credit-and-refund.upcoming-allocated-credit-3")
+
 
 
 }
