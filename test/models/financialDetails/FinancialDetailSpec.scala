@@ -164,8 +164,11 @@ class FinancialDetailSpec extends UnitSpec {
         getMessageKeyForChargeType(Some(SL)) shouldBe Some("sl")
       }
 
-      "return None for an unknown or absent chargeType" in {
-        getMessageKeyForChargeType(Some("rubbish")) shouldBe None
+      "return invalid for an unknown chargeType" in {
+        getMessageKeyForChargeType(Some("rubbish")) shouldBe Some("invalid")
+      }
+
+      "return None for an absent chargeType" in {
         getMessageKeyForChargeType(None) shouldBe None
       }
     }
@@ -204,7 +207,7 @@ class FinancialDetailSpec extends UnitSpec {
 
         getMessageKeyByTypes(Some("SA Payment on Account 1"), Some("rubbish")) shouldBe None
         getMessageKeyByTypes(Some("SA Payment on Account 2"), Some("rubbish")) shouldBe None
-        getMessageKeyByTypes(Some("SA Balancing Charge"), Some("rubbish")) shouldBe None
+        getMessageKeyByTypes(Some("SA Balancing Charge"), Some("rubbish")) shouldBe Some("bcd.invalid")
 
         getMessageKeyByTypes(Some("SA Payment on Account 1"), None) shouldBe None
         getMessageKeyByTypes(Some("SA Payment on Account 2"), None) shouldBe None

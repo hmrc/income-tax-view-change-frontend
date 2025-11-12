@@ -1159,7 +1159,6 @@ chargeSummary.chargeHistory.amount								        = Swm
 chargeSummary.chargeHistory.created.paymentOnAccount1.text		        = Gwnaeth CThEF greu eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.created.paymentOnAccount2.text		        = Gwnaeth CThEF greu eich ail daliad ar gyfrif
 chargeSummary.chargeHistory.created.balancingCharge.text		        = Gwnaeth CThEF greu eich taliad mantoli
-chargeSummary.paymentAllocations.bcd.accepted                           = Gwnaeth CThEF greu eich taliad mantoli
 chargeSummary.chargeHistory.created.class2Nic.text                      = Yswiriant Gwladol Dosbarth 2 wedi’i greu
 chargeSummary.chargeHistory.created.codingOut.text                      = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
@@ -1224,6 +1223,9 @@ chargeSummary.paymentAllocations.bcd.vcnic2                     = Taliad wedi’
 chargeSummary.paymentAllocations.bcd.nic4                       = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.sl                         = Taliad wedi’i ddyrannu i Fenthyciadau Myfyrwyr ar gyfer y Taliad Mantoli
 chargeSummary.paymentAllocations.bcd.cgt                        = Taliad wedi’i ddyrannu i Dreth Enillion Cyfalaf ar gyfer y Taliad Mantoli
+chargeSummary.paymentAllocations.poa1.invalid                   = Taliad wedi’i ddyrannu ar gyfer taliad cyntaf ar gyfrif
+chargeSummary.paymentAllocations.poa2.invalid                   = Taliad wedi’i ddyrannu ar gyfer ail daliad ar gyfrif
+chargeSummary.paymentAllocations.bcd.invalid                    = Taliad wedi’i ddyrannu ar gyfer taliad mantoli
 chargeSummary.paymentAllocations.mfaDebit                       = Taliad wedi’i roi tuag at addasiad CThEF
 
 chargeSummary.codingOutHeader                                      = Taliad Hunanasesiad (drwy’ch cod treth TWE)
