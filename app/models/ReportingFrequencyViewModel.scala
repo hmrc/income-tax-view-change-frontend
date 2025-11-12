@@ -18,7 +18,6 @@ package models
 
 import enums.ReportingObligations.{MultiYearCard, NoCard, ReportingObligationSummaryCardState, SingleYearCard}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus._
 import services.DateServiceInterface
 import services.optout.OptOutProposition
@@ -120,7 +119,7 @@ case class ReportingFrequencyViewModel(
 
   val hideCompatibleSoftware: Boolean = onlyExemptStatuses
 
-  val showYourReportingObligations: Boolean = onlyExemptStatuses
+  val showYourReportingObligationsExempt: Boolean = onlyExemptStatuses
 
   val hasExemptStatuses: Boolean =
     exemptStatusCount._1 > 0
