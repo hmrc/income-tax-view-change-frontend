@@ -1648,7 +1648,7 @@ incomeSources.cease.endDate.selfEmployment.heading                              
 incomeSources.cease.endDate.selfEmployment.error.invalid                         = Mae’n rhaid i’r dyddiad y gwnaeth eich busnes hunangyflogedig roi’r gorau i fasnachu fod yn ddyddiad go iawn
 incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
 
-incomeSources.cease.endDate.ukProperty.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
+incomeSources.cease.endDate.ukProperty.heading                    = Pryd y gwnaeth y busnes eiddo yn y DU ddod i ben?
 incomeSources.cease.endDate.ukProperty.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
 
 incomeSources.cease.SE.heading                            = Cadarnhau eich bod am ddod â’ch busnes hunangyflogedig i ben
@@ -1676,7 +1676,7 @@ incomeSources.cease.FP.checkboxError                      = Dewiswch eich bod yn
 incomeSources.cease.FP.continue                           = Cadarnhau ac yn eich blaen
 incomeSources.cease.FP.p1                                 = Trwy barhau, rwy’n cadarnhau fy mod am ddod â’r busnes hwn i ben.
 
-incomeSources.cease.endDate.foreignProperty.heading                      = Y dyddiad pan wnaeth eich busnes eiddo tramor stopio
+incomeSources.cease.endDate.foreignProperty.heading                      = Pryd y gwnaeth eich busnes eiddo tramor ddod i ben?
 incomeSources.cease.endDate.foreignProperty.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
 
 incomeSources.cease.endDate.selfEmployment.future                  = Mae’n rhaid i’r dyddiad y daeth eich busnes unig fasnachwr i ben fod heddiw neu yn y gorffennol

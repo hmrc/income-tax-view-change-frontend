@@ -74,11 +74,11 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe "This section is: Sole trader"
     }
     "render the heading - Foreign property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your foreign property business stopped"
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "When did your Foreign property business stop?"
       document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe "This section is: Foreign property"
     }
     "render the heading - Uk Property " in new Setup(isAgent = false, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your UK property business stopped"
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "When did your UK property business stop?"
       document.getElementById(s"$prefixUKProperty-caption").text() shouldBe "This section is: UK property"
     }
     "render the hint - Self Employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
@@ -116,11 +116,11 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
       document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe "This section is: Sole trader"
     }
     "render the heading - Foreign property" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your foreign property business stopped"
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "When did your Foreign property business stop?"
       document.getElementById(s"$prefixForeignProperty-caption").text() shouldBe "This section is: Foreign property"
     }
     "render the heading - Uk Property " in new Setup(isAgent = true, incomeSourceType = UkProperty) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your UK property business stopped"
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "When did your UK property business stop?"
       document.getElementById(s"$prefixUKProperty-caption").text() shouldBe "This section is: UK property"
     }
     "render the hint - Self Employment" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {

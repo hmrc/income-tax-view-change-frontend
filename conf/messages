@@ -1649,7 +1649,7 @@ incomeSources.cease.endDate.selfEmployment.heading                              
 incomeSources.cease.endDate.selfEmployment.error.invalid                         = The date your self-employed business stopped trading must be a real date
 incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
 
-incomeSources.cease.endDate.ukProperty.heading                    = Date your UK property business stopped
+incomeSources.cease.endDate.ukProperty.heading                    = When did your UK property business stop?
 incomeSources.cease.endDate.ukProperty.error.invalid              = The date your UK property business stopped must be a real date
 
 incomeSources.cease.SE.heading                            = Confirm you want to cease your self-employed business
@@ -1677,7 +1677,7 @@ incomeSources.cease.FP.checkboxError                      = Select that you decl
 incomeSources.cease.FP.continue                           = Confirm and continue
 incomeSources.cease.FP.p1                                 = By continuing I confirm I want to cease this business.
 
-incomeSources.cease.endDate.foreignProperty.heading                = Date your foreign property business stopped
+incomeSources.cease.endDate.foreignProperty.heading                = When did your Foreign property business stop?
 incomeSources.cease.endDate.foreignProperty.error.invalid          = The date your foreign property business stopped must be a real date
 
 incomeSources.cease.endDate.selfEmployment.future                  = The date your sole trader business stopped must be today or in the past
