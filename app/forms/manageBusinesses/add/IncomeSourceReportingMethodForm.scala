@@ -42,18 +42,6 @@ object IncomeSourceReportingMethodForm extends CustomConstraints {
       taxYear2ReportingMethod -> optional(text)
     )(IncomeSourceReportingMethodForm.apply)(IncomeSourceReportingMethodForm.unapply)
   )
-
-  def updateErrorMessagesWithValues(form: Form[IncomeSourceReportingMethodForm]): Form[IncomeSourceReportingMethodForm] = {
-    form.errors.foldLeft[Form[IncomeSourceReportingMethodForm]](form.discardingErrors)((reportingMethodFormValues, formError) => {
-      reportingMethodFormValues.data.get(formError.message + "_tax_year") match {
-        case Some(year) =>
-          val taxYearTo = year.toInt
-          val taxYearFrom = taxYearTo - 1
-          reportingMethodFormValues.withError(formError.message, radioMustBeSelectedMessageKey, taxYearFrom.toString, taxYearTo.toString)
-        case _ => reportingMethodFormValues
-      }
-    })
-  }
 }
 
 case class IncomeSourceReportingMethodForm(newTaxYear1ReportingMethod: Option[String],
