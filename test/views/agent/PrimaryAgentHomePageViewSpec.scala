@@ -80,7 +80,6 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   overduePaymentExists: Boolean = true,
                   overDuePaymentsCount: Int = 0,
                   paymentsAccruingInterestCount: Int = 0,
-                  yourSelfAssessmentChargesEnabled: Boolean = false,
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   utr: Option[String] = None,
                   paymentHistoryEnabled: Boolean = true,
@@ -105,7 +104,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
-    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount, yourSelfAssessmentChargesEnabled)
+    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount)
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 

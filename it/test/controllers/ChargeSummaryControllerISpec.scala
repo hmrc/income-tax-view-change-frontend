@@ -357,14 +357,13 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                               val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
                               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                              val summaryListText = "Due date Overdue 30 March 2018 Amount £1,200.00 Still to pay £1,200.00"
                               val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
                               val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
 
                               res should have(
                                 httpStatus(OK),
                                 pageTitle(mtdUserRole, "chargeSummary.hmrcAdjustment.text"),
-                                elementTextBySelector(".govuk-summary-list")(summaryListText),
+                                elementTextBySelector("#credit-created-text")("HMRC has added this charge after an adjustment to your tax return."),
                                 elementCountBySelector("#payment-history-table tr")(2),
                                 elementTextBySelector("#payment-history-table tr")(paymentHistoryText)
                               )
@@ -394,15 +393,13 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                              val summaryListText = "Due date 30 March 2018 Amount £1,200.00 Still to pay £0.00"
                               val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
                               val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
-                              val paymentHistoryText2 = "28 Jul 2022 Payment put towards HMRC adjustment 2018 £1,200.00"
+                              val paymentHistoryText2 = "28 Jul 2022 Payment put towards HMRC adjustment 2020 £1,200.00"
 
                               res should have(
                                 httpStatus(OK),
                                 pageTitle(mtdUserRole, "chargeSummary.hmrcAdjustment.text"),
-                                elementTextBySelector(".govuk-summary-list")(summaryListText),
                                 elementCountBySelector(s"#payment-link-$testTaxYear")(0),
                                 elementCountBySelector("#payment-history-table tr")(3),
                                 elementTextBySelector("#payment-history-table tr:nth-child(1)")(paymentHistoryText),

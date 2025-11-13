@@ -36,6 +36,7 @@
 @import java.time.LocalDate
 @import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
 @import viewUtils.ExternalUrlHelper
+@import models.financialDetails.MfaDebitCharge
 
 
 @this(
@@ -66,9 +67,7 @@
 @(
     viewModel: ChargeSummaryViewModel,
     paymentAllocations: Option[PaymentAllocationViewModel] = None,
-    whatYouOweUrl: String,
-    saChargesUrl: String,
-    yourSelfAssessmentChargesFS: Boolean
+    whatYouOweUrl: String
 )(
     implicit request: Request[_],
     messages: Messages,
@@ -84,30 +83,16 @@
 
 @pageHeading = @{ ChargeNameLangHelper.getHeading(viewModel.chargeItem) }
 
-@WYOorYSACLinkContent = {
-    @if(yourSelfAssessmentChargesFS) {
-        @p() {
-            @if(viewModel.isAgent) {
-                @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part1")
-                @link(id = Some("SAChargesAgentLink"), link = saChargesUrl, messageKey = "yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText-agent.part2")
-                @messages("chargeSummary.selfAssessmentCharges.text-agent")
-            } else {
-                @messages("yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part1")
-                @link(id = Some("SAChargesLink"), link = saChargesUrl, messageKey = "yourSelfAssessmentChargeSummary.selfAssessmentCharges.linkText.part2")
-                @messages("chargeSummary.selfAssessmentCharges.text")
-            }
-        }
-    } else {
-        @p() {
-            @if(viewModel.isAgent) {
-                @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                @messages("chargeSummary.whatYouOwe.textTwo-agent")
-            } else {
-                @messages("chargeSummary.whatYouOwe.textOne")
-                @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                @messages("chargeSummary.whatYouOwe.textTwo")
-            }
+@WYOLinkContent = {
+    @p() {
+        @if(viewModel.isAgent) {
+            @messages("chargeSummary.whatYouOwe.textOne-agent"),
+            @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+            @messages("chargeSummary.whatYouOwe.textTwo-agent")
+        } else {
+            @messages("chargeSummary.whatYouOwe.textOne")
+            @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+            @messages("chargeSummary.whatYouOwe.textTwo")
         }
     }
 }
@@ -130,7 +115,7 @@
         captionClasses = Some("govuk-caption-xl")
     ))
 
-  @if(!viewModel.chargeItem.isPaid && !viewModel.chargeItem.isCredit) {
+  @if(!viewModel.chargeItem.isCredit) {
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
@@ -165,6 +150,11 @@
 
         @chargeDetails(viewModel)
     }
+    @if(viewModel.chargeItem.transactionType == MfaDebitCharge){
+       @p(id = Some("credit-created-text")){ @messages("yourSelfAssessmentChargeSummary.definition.hmrcadjustment")
+    }
+        }
+
     @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
     <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
         s"${ getMessage("youOwe")
@@ -191,19 +181,19 @@
 
             @interestOnYourChargeTable(viewModel)
 
-@p(id=Some("guidance.p1")){@messages("selfAssessmentCharges.interestOnThisCharge.guidanceText")
+@p(id=Some("guidance.p1")){@messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText")
 @link(
 link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
 target = Some("_blank"),
 rel= Some("noreferrer noopener"),
-messageKey = messages("selfAssessmentCharges.interestOnThisCharge.guidanceLinkText"),
+messageKey = messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText"),
 outerMessage = messages(".")
 )
 }
         }
     }
 
-    @WYOorYSACLinkContent
+    @WYOLinkContent
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit) {
         @paymentHistoryTable(viewModel)

@@ -19,7 +19,6 @@ package connectors
 import audit.AuditingService
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.admin.YourSelfAssessmentCharges
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
 import play.api.http.Status._
@@ -39,12 +38,7 @@ class PayApiConnector @Inject()(http: HttpClientV2,
 
   def startPaymentJourney(saUtr: String, amountInPence: BigDecimal, isAgent: Boolean)(implicit headerCarrier: HeaderCarrier): Future[PaymentJourneyResponse] = {
 
-    val yourSAChargesEnabled = isEnabledFromConfig(YourSelfAssessmentCharges)
-    def paymentRedirectUrl: String = if(yourSAChargesEnabled) {
-      if (isAgent) appConfig.agentPaymentSARedirectUrl else appConfig.paymentSARedirectUrl
-    } else {
-      if (isAgent) appConfig.agentPaymentRedirectUrl else appConfig.paymentRedirectUrl
-    }
+    def paymentRedirectUrl: String = if (isAgent) appConfig.agentPaymentRedirectUrl else appConfig.paymentRedirectUrl
 
 
     val body = Json.parse(

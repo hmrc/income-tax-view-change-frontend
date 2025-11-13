@@ -17,6 +17,8 @@
 package models.financialDetails
 
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import models.financialDetails.ChargeType.allChargeMainTransactions
+import models.financialDetails.CreditType.creditsWithSummaryPages
 import models.financialDetails.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
@@ -97,12 +99,11 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   }
 
   def filterPayments(): FinancialDetailsModel = {
-    val filteredDocuments = documentDetails.filter(document => document.paymentLot.isDefined && document.paymentLotItem.isDefined)
     FinancialDetailsModel(
       balanceDetails,
       codingDetails,
-      filteredDocuments,
-      financialDetails.filter(financial => filteredDocuments.map(_.transactionId).contains(financial.transactionId.get))
+      documentDetails,
+      financialDetails.filter(financial => documentDetails.map(_.transactionId).contains(financial.transactionId.get))
     )
   }
 
@@ -112,10 +113,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     def hasDocumentDetailForPayment(transactionId: String): Boolean = {
 
       documentDetails
-        .find(_.transactionId == transactionId)
-        .exists(documentDetail => {
-          documentDetail.paymentLot.isDefined && documentDetail.paymentLotItem.isDefined
-        })
+        .exists(_.transactionId == transactionId)
     }
 
     def findIdOfClearingPayment(clearingSAPDocument: Option[String]): Option[String] = {
@@ -124,6 +122,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
       financialDetails
         .filter(_.transactionId.exists(id => hasDocumentDetailForPayment(id)))
+        .filter(x => x.mainTransaction.isEmpty || x.mainTransaction.exists(k => !allChargeMainTransactions.contains(k))) //this will filter out other charges that also have this payment/credit allocated to them
         .find(_.items.exists(_.exists(hasMatchingSapCode)))
         .flatMap(_.transactionId)
     }
@@ -132,11 +131,19 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       .map { subItems =>
         subItems.collect {
             case subItem if subItem.clearingSAPDocument.isDefined =>
+              val clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument)
+              val finDetailOfSource = financialDetails.find(_.transactionId == clearingId)
+              val (taxYear, isCredit) = finDetailOfSource match {
+                case Some(financialDetail: FinancialDetail) => (Some(financialDetail.taxYear), financialDetail.mainTransaction.exists(cr => creditsWithSummaryPages.contains(cr)))
+                case None => (None ,false)
+              }
               PaymentHistoryAllocation(
                 dueDate = subItem.dueDate,
                 amount = subItem.amount,
                 clearingSAPDocument = subItem.clearingSAPDocument,
-                clearingId = findIdOfClearingPayment(subItem.clearingSAPDocument))
+                clearingId = clearingId,
+                taxYear = taxYear,
+                isCredit = isCredit)
           }
           // only return payments for now
           .filter(_.clearingId.exists(id => hasDocumentDetailForPayment(id)))

@@ -28,7 +28,7 @@
         link: link,
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear, poaTotalAmount: BigDecimal, showOverdueCharges: Boolean, yourSelfAssessmentChargesFS: Boolean)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, poaTaxYear: TaxYear, poaTotalAmount: BigDecimal, showOverdueCharges: Boolean)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"claimToAdjustPoa.success.$key", args: _*)
@@ -39,14 +39,6 @@
         controllers.routes.WhatYouOweController.showAgent().url
     } else {
         controllers.routes.WhatYouOweController.show().url
-    }
-}
-
-@saChargesUrl = @{
-    if(isAgent) {
-        controllers.routes.YourSelfAssessmentChargesController.showAgent().url
-    } else {
-        controllers.routes.YourSelfAssessmentChargesController.show().url
     }
 }
 
@@ -62,20 +54,6 @@
         @getMessage("p2", poaTaxYear.startYear.toString, poaTaxYear.endYear.toString, (poaTaxYear.nextYear.endYear).toString)
     }
 
-@if(yourSelfAssessmentChargesFS) {
-    @if(showOverdueCharges){
-        @h2(optId = Some("overdueTitle"), msg = getMessage("overdueTitle"))
-        @p(id = Some("p4"))(Html(getMessage("overdueText1") + link(link = saChargesUrl,
-        outerMessage = " " + getMessage("overdueText2"),
-        messageKey = getMessage("yourSelfAssessmentCharges"),
-        id = Some("SAChargesLink")).toString()))
-        } else {
-        @p(id = Some("p4"))(Html(getMessage("check") + link(link = saChargesUrl,
-        outerMessage = " " + getMessage("forUpcomingPaymentDue"),
-        messageKey = getMessage("yourSelfAssessmentCharges"),
-        id = Some("SAChargesLink")).toString()))
-    }
-} else {
     @if(showOverdueCharges){
         @h2(optId = Some("overdueTitle"), msg = getMessage("overdueTitle"))
         @p(id = Some("p4"))(Html(getMessage("overdueText1") + link(link = whatYouOweUrl,
@@ -88,7 +66,6 @@
         messageKey = getMessage("whatYouOwe"),
         id = Some("WYOLink")).toString()))
     }
-}
 }
 
 
