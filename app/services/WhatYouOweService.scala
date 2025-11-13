@@ -159,7 +159,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       lpp2Url                       = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent())
       hasOverdueCharges             = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       hasAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
-      startUrl                     <- selfServeTimeToPayService.startSelfServeTimeToPayJourney(isEnabled(YourSelfAssessmentCharges))
+      startUrl                     <- selfServeTimeToPayService.startSelfServeTimeToPayJourney
     } yield (startUrl, lpp2Url) match {
       case (Left(ex), _) =>
         Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")

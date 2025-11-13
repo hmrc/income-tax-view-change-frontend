@@ -41,7 +41,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
   lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
   val whatYouOweAgentUrl: String = controllers.routes.WhatYouOweController.showAgent().url
-  val SAChargesAgentUrl: String = controllers.routes.YourSelfAssessmentChargesController.showAgent().url
 
   import Messages._
 
@@ -58,9 +57,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   isAgent: Boolean = false,
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory,
                   poaExtraChargeLink: Option[String] = None,
-                  whatYouOweUrl: String = "/report-quarterly/income-and-expenses/view/what-you-owe",
-                  saChargesUrl: String = "/report-quarterly/income-and-expenses/view/your-self-assessment-charges",
-                  yourSelfAssessmentChargesFS: Boolean = false) {
+                  whatYouOweUrl: String = "/report-quarterly/income-and-expenses/view/what-you-owe") {
 
     val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
       currentDate = dateService.getCurrentDate,
@@ -83,7 +80,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       LSPUrl = "testLSPUrl",
       LPPUrl = "testLPPUrl")
 
-    val view: Html = chargeSummary(viewModel, whatYouOweUrl, saChargesUrl, yourSelfAssessmentChargesFS )
+    val view: Html = chargeSummary(viewModel, whatYouOweUrl)
     val document: Document = Jsoup.parse(view.toString())
     def verifySummaryListRowNumeric(rowNumber: Int, expectedKeyText: String, expectedValueText: String): Assertion = {
       val summaryListRow = document.select(s".govuk-summary-list:nth-of-type(1) .govuk-summary-list__row:nth-of-type($rowNumber)")
@@ -136,7 +133,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         dueDate = Some(LocalDate.parse(date)),
         amount = Some(amount),
         clearingSAPDocument = clearingSAPDocument,
-        clearingId = clearingId)),
+        clearingId = clearingId,
+        taxYear = None)),
       chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   def codedOutEmptyAdjustmentHistory(originalAmount: BigDecimal): AdjustmentHistoryModel =
@@ -251,8 +249,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val remainingToPay: String = messages("chargeSummary.remainingDue")
     val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
     val chargeHistoryHeadingGeneric: String = messages("chargeSummary.chargeHistory.heading")
-    val chargeHistoryHeadingPoa1: String = messages("chargeSummary.chargeHistory.Poa1heading")
-    val chargeHistoryHeadingPoa2: String = messages("chargeSummary.chargeHistory.Poa2heading")
     val historyRowPOA1Created: String = s"29 Mar 2018 ${messages("chargeSummary.chargeHistory.created.paymentOnAccount1.text")} £1,400.00"
     val codingOutHeader: String = "2017 to 2018 tax year PAYE self assessment"
     val paymentprocessingbullet1: String = s"${messages("chargeSummary.payments-bullet1-1")} ${messages("chargeSummary.payments-bullet1-2")} ${messages("pagehelp.opensInNewTabText")}"
@@ -668,13 +664,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         }
 
         "have a link to extra charge if it is a poa with an extra charge" in new TestSetup(chargeItem = basePoaTwoDebit, poaExtraChargeLink = Some("testLink")) {
-          document.select("#poa-extra-charge-content").text() shouldBe s"$poaExtraChargeText1 $poaExtraChargeTextLink $poaExtraChargeText2"
-          document.select("#poa-extra-charge-link").attr("href") shouldBe "testLink"
-          document.select("#poa-extra-charge-link").text() shouldBe poaExtraChargeTextLink
-        }
-
-        "have a link to extra charge if it is a poa with an extra charge and YourSelfAssessmentCharges FS is 'true'" in new TestSetup(
-          chargeItem = basePoaTwoDebit, poaExtraChargeLink = Some("testLink"), yourSelfAssessmentChargesFS = true) {
           document.select("#poa-extra-charge-content").text() shouldBe s"$poaExtraChargeText1 $poaExtraChargeTextLink $poaExtraChargeText2"
           document.select("#poa-extra-charge-link").attr("href") shouldBe "testLink"
           document.select("#poa-extra-charge-link").text() shouldBe poaExtraChargeTextLink
@@ -1307,70 +1296,32 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
     }
 
-    "have a interest lock payment link when the interest is accruing and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-      chargeItem = chargeItemModel(lpiWithDunningLock = None),
-      paymentBreakdown = paymentBreakdownWhenInterestAccrues,
-      yourSelfAssessmentChargesFS = true
-    ) {
-      document.select("#SAChargesInterestLink").text() shouldBe interestSALinkText
-      document.select("#SAChargesInterestLink").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
-      document.select("#p-interest-locks-msg").text().contains(s"$interestSALinkText $interestLinkFullText") shouldBe true
-    }
-
-    "have a interest lock payment link when the interest has previously and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-      chargeItem = chargeItemModel(lpiWithDunningLock = None),
-      paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest,
-      yourSelfAssessmentChargesFS = true
-    ) {
-      document.select("#SAChargesInterestLink").text() shouldBe interestSALinkText
-      document.select("#SAChargesInterestLink").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
-      document.select("#p-interest-locks-msg").text() shouldBe s"$interestSALinkText $interestLinkFullText"
-    }
-
-    "have no interest lock payment link when there is no accrued interest and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-      chargeItem = chargeItemModel(lpiWithDunningLock = None),
-      paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest,
-      yourSelfAssessmentChargesFS = true
-    ) {
-      document.select("#SAChargesLink").text() shouldBe interestSALinkText
-      document.select("#SAChargesLink").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
-    }
-
-    "have no interest lock payment link when there is an intererst lock but no accrued interest and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-      chargeItem = chargeItemModel(lpiWithDunningLock = None),
-      paymentBreakdown = paymentBreakdownWithOnlyInterestLock,
-      yourSelfAssessmentChargesFS = true
-    ) {
-      document.select("#SAChargesLink").text() shouldBe interestSALinkText
-      document.select("#SAChargesLink").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
-    }
-
     "charge history" should {
       "display a charge history heading as an h2 when there is no Payment Breakdown" in new TestSetup(
         chargeItem = chargeItemModel().copy(outstandingAmount = 0, lpiWithDunningLock = None)
       ) {
-        document.select("main h2").text shouldBe chargeHistoryHeadingPoa1
+        document.select("main h2").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display a charge history heading as an h3 when there is a Payment Breakdown" in new TestSetup(
         chargeItem = chargeItemModel(),
         paymentBreakdown = paymentBreakdown
       ) {
-        document.select("main h3").text shouldBe chargeHistoryHeadingPoa1
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display charge history heading as poa1 heading when charge is a poa1" in new TestSetup(
         chargeItem = chargeItemModel(),
         paymentBreakdown = paymentBreakdown
       ){
-        document.select("main h3").text shouldBe chargeHistoryHeadingPoa1
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display charge history heading as poa2 heading when charge is a poa2" in new TestSetup(
         chargeItem = chargeItemModel(transactionType = PoaTwoDebit),
         paymentBreakdown = paymentBreakdown
       ){
-        document.select("main h3").text shouldBe chargeHistoryHeadingPoa2
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "display charge history heading as non-poa heading when charge is not a poa" in new TestSetup(
@@ -1385,7 +1336,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         paymentBreakdown = paymentBreakdown,
         latePaymentInterestCharge = true
       ){
-        document.select("main h3").text shouldBe "Late payment interest history"
+        document.select("main h3").text shouldBe chargeHistoryHeadingGeneric
       }
 
       "show payment allocations in history table" when {
@@ -1454,11 +1405,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     }
 
     "on the YourSelfAssessmentChargeSummaryPage" should {
-      "display the notification banner when there is a dunning lock present and the yourSelfAssessmentChargesFS is set to 'true'" in new TestSetup(
+      "display the notification banner when there is a dunning lock present" in new TestSetup(
         isAgent = false,
         chargeItem = chargeItemModel(),
-        paymentBreakdown = paymentBreakdownWithDunningLocks,
-        yourSelfAssessmentChargesFS = true
+        paymentBreakdown = paymentBreakdownWithDunningLocks
       ) {
         document.selectById("dunningLocksBanner")
           .select(Selectors.h2).text() shouldBe dunningLockBannerHeader
@@ -1488,7 +1438,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         LPPUrl = "")
       val thrownException = intercept[MissingFieldException] {
 
-        chargeSummary(exceptionViewModel, "/report-quarterly/income-and-expenses/view/what-you-owe", "/report-quarterly/income-and-expenses/view/your-self-assessment-charges", false)
+        chargeSummary(exceptionViewModel, "/report-quarterly/income-and-expenses/view/what-you-owe")
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
@@ -1573,32 +1523,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.select("#what-you-owe-link-agent").attr("href") shouldBe whatYouOweAgentUrl
       }
 
-      "have a interest lock payment link when the interest is accruing and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true,
-        saChargesUrl = "/report-quarterly/income-and-expenses/view/agents/your-self-assessment-charges", yourSelfAssessmentChargesFS = true) {
-        document.select("#SAChargesAgentInterestLink").text() shouldBe interestSALinkTextAgent
-        document.select("#SAChargesAgentInterestLink").attr("href") shouldBe SAChargesAgentUrl
-        document.select("#p-interest-locks-msg").text() shouldBe s"${interestSALinkTextAgent} ${interestLinkFullTextAgent}"
-      }
-
-      "have a interest lock payment link when the interest has previously and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true,
-        saChargesUrl = "/report-quarterly/income-and-expenses/view/agents/your-self-assessment-charges", yourSelfAssessmentChargesFS = true) {
-        document.select("#SAChargesAgentInterestLink").text() shouldBe interestSALinkTextAgent
-        document.select("#SAChargesAgentInterestLink").attr("href") shouldBe SAChargesAgentUrl
-        document.select("#p-interest-locks-msg").text() shouldBe s"${interestSALinkTextAgent} ${interestLinkFullTextAgent}"
-      }
-
-      "have no interest lock payment link when there is no accrued interest and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true,
-        saChargesUrl = "/report-quarterly/income-and-expenses/view/agents/your-self-assessment-charges", yourSelfAssessmentChargesFS = true) {
-        document.select("#SAChargesAgentLink").text() shouldBe interestSALinkTextAgent
-        document.select("#SAChargesAgentLink").attr("href") shouldBe SAChargesAgentUrl
-      }
-
-      "have no interest lock payment link when there is an intererst lock but no accrued interest and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true,
-        saChargesUrl = "/report-quarterly/income-and-expenses/view/agents/your-self-assessment-charges", yourSelfAssessmentChargesFS = true) {
-        document.select("#SAChargesAgentLink").text() shouldBe interestSALinkTextAgent
-        document.select("#SAChargesAgentLink").attr("href") shouldBe SAChargesAgentUrl
-      }
-
       "does not have any payment lock notes or link when there is no interest locks on the page " in new TestSetup(chargeItem = chargeItemModel(), paymentBreakdown = paymentBreakdown, isAgent = true) {
         document.select("div#payment-link-2018").text() shouldBe ""
       }
@@ -1668,11 +1592,10 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     }
 
     "on the YourSelfAssessmentChargeSummary page" should {
-      "display the notification banner when there is a dunning lock present and the yourSelfAssessmentChargesFS is set to 'true'" in new TestSetup(
+      "display the notification banner when there is a dunning lock present" in new TestSetup(
         isAgent = true,
         chargeItem = chargeItemModel(),
-        paymentBreakdown = paymentBreakdownWithDunningLocks,
-        yourSelfAssessmentChargesFS = true
+        paymentBreakdown = paymentBreakdownWithDunningLocks
       ) {
         document.selectById("dunningLocksBanner")
           .select(Selectors.h2).text() shouldBe dunningLockBannerHeader

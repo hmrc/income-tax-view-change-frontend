@@ -18,6 +18,9 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import views.html.components.{h2, p}
 @import views.html.components.creditandrefund.{paymentViewRow, creditViewRow, refundViewRow}
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.details.Details
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, HtmlContent}
 
 
 @this(
@@ -26,7 +29,8 @@
         govukInsetText: GovukInsetText,
         paymentViewRow: paymentViewRow,
         creditViewRow: creditViewRow,
-        refundViewRow: refundViewRow
+        refundViewRow: refundViewRow,
+        govukDetails: GovukDetails
 )
 @(viewModel: CreditAndRefundViewModel)(implicit request: Request[_], messages: Messages)
 
@@ -44,25 +48,24 @@
 }
 }
 
-<details class="govuk-details">
-    <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text">
-        @messages("credit-and-refund.subHeading-source")
-        </span>
-    </summary>
-    <div class="govuk-details__text">
-    @if(viewModel.creditRows.size == 1) {
-        <div id="credits-list">
-        @renderCreditRow(viewModel.creditRows.head)
-        </div>
-    } else {
-        <ul class="govuk-list govuk-list--bullet" id="credits-list">
-        @for(credit <- viewModel.creditRows) {
-            <li>
-            @renderCreditRow(credit)
-            </li>
-        }
-        </ul>
-    }
+@detailsContent = {
+@if(viewModel.creditRows.size == 1) {
+    <div id="credits-list">
+    @renderCreditRow(viewModel.creditRows.head)
     </div>
-</details>
+} else {
+    <ul class="govuk-list govuk-list--bullet" id="credits-list">
+    @for(credit <- viewModel.creditRows) {
+        <li>
+        @renderCreditRow(credit)
+        </li>
+    }
+    </ul>
+}
+}
+
+@govukDetails(Details(
+    summary = Text(messages("credit-and-refund.subHeading-source")),
+    content = HtmlContent(detailsContent),
+    classes = "govuk-details"
+))

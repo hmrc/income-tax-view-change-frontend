@@ -18,7 +18,6 @@ package models.financialDetails
 
 import exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
 import models.financialDetails.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
-import models.financialDetails.YourSelfAssessmentChargesViewModel.getDisplayDueDate
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
@@ -140,8 +139,7 @@ case class ChargeItem (
     else false
   }
 
-  // this method is used to filter charges down to those currently allowed for the
-  // new Your Self Assessment Charge Summary feature
+  // this method is used to filter charges down to those which have new designs
   def isIncludedInSACSummary(isInterestCharge: Boolean): Boolean = {
 
     val validCharge = (transactionType, codedOutStatus) match {
@@ -154,6 +152,7 @@ case class ChargeItem (
       case (PoaTwoDebit, None           ) => true
       case (PoaOneReconciliationDebit,     _) => true
       case (PoaTwoReconciliationDebit,     _) => true
+      case (MfaDebitCharge,     _) => true
       case (LateSubmissionPenalty,     _) => true
       case (FirstLatePaymentPenalty,   _) => true
       case (ITSAReturnAmendment,       _) => true
@@ -185,6 +184,8 @@ case class ChargeItem (
   val isPenalty: Boolean = List(LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty).contains(this.transactionType)
 
   val isLPP2: Boolean = transactionType == SecondLatePaymentPenalty
+
+   val isMFADebitCharge: Boolean = transactionType == MfaDebitCharge
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
@@ -230,17 +231,6 @@ object ChargeItem {
       case _ => true
     }
   }
-
-  def overdueOrAccruingInterestChargeList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateServiceInterface: DateServiceInterface): List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => x.isOverdue() || x.hasAccruingInterest)
-
-  def chargesDueWithin30DaysList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateService: DateServiceInterface): List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
-
-  def chargesDueAfter30DaysList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateService: DateServiceInterface): List[ChargeItem] = whatYouOweChargesList.chargesList.filter(x => !x.isOverdue() && !x.hasAccruingInterest && !dateService.isWithin30Days(x.dueDate.getOrElse(LocalDate.MAX)))
-
-
-  def sortedOverdueOrAccruingInterestChargeList(whatYouOweChargesList: WhatYouOweChargesList)(implicit dateServiceInterface: DateServiceInterface): List[ChargeItem] = overdueOrAccruingInterestChargeList(whatYouOweChargesList).sortWith((charge1, charge2) =>
-    getDisplayDueDate(charge2).isAfter(getDisplayDueDate(charge1))
-  )
 
   private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
     BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, ITSAReturnAmendment, MfaDebitCharge)

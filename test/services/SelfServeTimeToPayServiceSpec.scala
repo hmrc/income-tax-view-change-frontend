@@ -37,31 +37,31 @@ class SelfServeTimeToPayServiceSpec extends TestSupport with MockHttp {
     "startSelfServeTimeToPayJourney" when {
       "return Right when connector returns successful response" in {
 
-        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(any())(any()))
+        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(any()))
           .thenReturn(Future {
             SelfServeTimeToPayJourneyResponseModel(expectedJourneyId, testSetUpPaymentPlanUrl)
           })
-        selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any())
+        selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())
           .futureValue shouldBe Right(testSetUpPaymentPlanUrl)
       }
     }
     "return a Left" when {
       "startSelfServeTimeToPayJourney failed to start" in {
 
-        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(any())(any()))
+        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(any()))
           .thenReturn(Future {
             SelfServeTimeToPayJourneyErrorResponse(INTERNAL_SERVER_ERROR, "Error message")
           })
-        selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any())
+        selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())
           .futureValue shouldBe Left(SelfServeTimeToPayJourneyException(INTERNAL_SERVER_ERROR, "Error message"))
       }
     }
     "return a Left" when {
       "startSelfServeTimeToPayJourney future failed" in {
 
-        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(any())(any()))
+        when(selfServeTimeToPayConnector.startSelfServeTimeToPayJourney(any()))
           .thenReturn(Future.failed(new Exception("Error message")))
-        selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())(any())
+        selfServeTimeToPayService.startSelfServeTimeToPayJourney(any())
           .futureValue.toString shouldBe Left(new Exception("Error message")).toString
       }
     }

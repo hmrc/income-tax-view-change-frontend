@@ -34,8 +34,8 @@ class PoaAdjustedViewSpec extends TestSupport{
   val taxYear: TaxYear = TaxYear(2023, 2024)
   val poaTotalAmount: BigDecimal = 2000.00
 
-  class Setup(isAgent: Boolean, showOverDue: Boolean = false, yourSelfAssessmentChargesFS: Boolean = false) {
-    val view: Html = poaAdjustedView(isAgent = isAgent, poaTaxYear = taxYear, poaTotalAmount = poaTotalAmount, showOverDue, yourSelfAssessmentChargesFS)
+  class Setup(isAgent: Boolean, showOverDue: Boolean = false) {
+    val view: Html = poaAdjustedView(isAgent = isAgent, poaTaxYear = taxYear, poaTotalAmount = poaTotalAmount, showOverDue)
     val document: Document = Jsoup.parse(view.toString())
   }
 
@@ -52,14 +52,6 @@ class PoaAdjustedViewSpec extends TestSupport{
       controllers.routes.WhatYouOweController.showAgent().url
     } else {
       controllers.routes.WhatYouOweController.show().url
-    }
-  }
-
-  def saChargesUrl(isAgent: Boolean): String = {
-    if(isAgent) {
-      controllers.routes.YourSelfAssessmentChargesController.showAgent().url
-    } else {
-      controllers.routes.YourSelfAssessmentChargesController.show().url
     }
   }
 
@@ -87,18 +79,6 @@ class PoaAdjustedViewSpec extends TestSupport{
         document.getElementById("p4").text shouldBe
           msgs("claimToAdjustPoa.success.overdueText1") + " " + msgs("claimToAdjustPoa.success.whatYouOwe") + " " + msgs("claimToAdjustPoa.success.overdueText2")
         document.getElementById("p4").getElementById("WYOLink").attr("href") shouldBe whatYouOweUrl(false)
-      }
-      "render the final paragraph when no overdue charges without extra heading and have SACharges links when yourSelfAssessmentChargesFS is true" in new Setup(isAgent = false, yourSelfAssessmentChargesFS = true) {
-        Option(document.getElementById("overdueTitle")) shouldBe None
-        document.getElementById("p4").text shouldBe
-          msgs("claimToAdjustPoa.success.check") + " " + msgs("claimToAdjustPoa.success.yourSelfAssessmentCharges") + " " + msgs("claimToAdjustPoa.success.forUpcomingPaymentDue")
-        document.getElementById("p4").getElementById("SAChargesLink").attr("href") shouldBe saChargesUrl(false)
-      }
-      "render overdue charges section when overdue charges and have SACharges links when yourSelfAssessmentChargesFS is true" in new Setup(isAgent = false, showOverDue = true, yourSelfAssessmentChargesFS = true) {
-        document.getElementById("overdueTitle").text shouldBe msgs("claimToAdjustPoa.success.overdueTitle")
-        document.getElementById("p4").text shouldBe
-          msgs("claimToAdjustPoa.success.overdueText1") + " " + msgs("claimToAdjustPoa.success.yourSelfAssessmentCharges") + " " + msgs("claimToAdjustPoa.success.overdueText2")
-        document.getElementById("p4").getElementById("SAChargesLink").attr("href") shouldBe saChargesUrl(false)
       }
 
       "Not display a back button" in new Setup(isAgent = false) {

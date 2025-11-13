@@ -149,3 +149,7 @@ case object AccessDeniedForSupportingAgent extends  TransactionName {
 case object SignUpTaxYearsPage extends TransactionName {
   val name = "sign-up-tax-years-page"
 }
+
+case object OptOutTaxYearsPage extends TransactionName {
+  val name = "opt-out-tax-years-page"
+}

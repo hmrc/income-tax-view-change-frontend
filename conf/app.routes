@@ -143,10 +143,6 @@ GET         /agents/payment-made-to-hmrc                                  contro
 GET         /what-you-owe                                                 controllers.WhatYouOweController.show(origin: Option[String] ?= None)
 GET         /agents/what-your-client-owes                                 controllers.WhatYouOweController.showAgent()
 
-#Your Self Assessment Charges
-GET         /your-self-assessment-charges                                 controllers.YourSelfAssessmentChargesController.show(origin: Option[String] ?= None)
-GET         /agents/your-self-assessment-charges                          controllers.YourSelfAssessmentChargesController.showAgent()
-
 #Charge summary
 GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, isInterestCharge: Boolean ?= false, origin: Option[String] ?= None)
 GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, isInterestCharge: Boolean ?= false)

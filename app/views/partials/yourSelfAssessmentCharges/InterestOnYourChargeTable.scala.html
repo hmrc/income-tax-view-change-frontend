@@ -44,50 +44,42 @@
     rows = Seq(
         Seq(
             TableRow(
-                content = Text(viewModel.chargeItem.outstandingAmount.toCurrencyString)
-            ),
-            TableRow(
-                content = Text(getMessage("daysOverdue", viewModel.chargeItem.getInterestFromDate.toLongDate, viewModel.chargeItem.getInterestEndDate.toLongDate))
+                content = Text(getMessage("daysOverdue", viewModel.chargeItem.getInterestFromDate.toLongDateShort, viewModel.chargeItem.getInterestEndDate.toLongDateShort))
             ),
             TableRow(
                 content = Text(viewModel.chargeItem.getInterestRate.toPercentage),
-                format = Some("numeric")
             ),
             TableRow(
-                content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString)
+                content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString),
+format = Some("numeric")
             )
         ),
         Seq(
             TableRow(
-                content = HtmlContent(s"<b>${getMessage("totalInterestToDate")}</b>")
+                content = HtmlContent(s"<b>${getMessage("totalInterestToDate")}</b>"),
+attributes = Map("colspan" -> "2"),
+classes = "govuk-table__header"
             ),
             TableRow(
-                content = Empty,
-            ),
-            TableRow(
-                content = Empty,
-            ),
-            TableRow(
-                content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString)
+                content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString),
+format = Some("numeric"),
+attributes = Map("colspan" -> "2"),
+classes = "govuk-table__header"
             )
         )
     ),
     head = Some(Seq(
         HeadCell(
-            content = Text(getMessage("head.amountInterestIsAppliedTo"))
-        ),
-        HeadCell(
-            content = Text(getMessage("head.daysOverdue"))
+            content = Text(getMessage("head.interestPeriod"))
         ),
         HeadCell(
             content = Text(getMessage("head.interestRate")),
-            format = Some("numeric")
         ),
         HeadCell(
             content = Text(getMessage("head.amount")),
             format = Some("numeric")
         )
     )),
-    classes = "govuk-!-margin-bottom-9",
+    classes = "govuk-!-margin-bottom-6",
     attributes = Map("id" -> "interest-on-your-charge-table")
 ))
