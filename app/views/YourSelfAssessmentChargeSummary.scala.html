@@ -120,7 +120,7 @@
           s"${
               getMessage(
                   if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
-                  if(viewModel.chargeItem.isOverdue()) "overDueCharge"
+                  if(viewModel.chargeItem.isOverdue() || viewModel.chargeItem.isPaid) "overDueCharge"
                   else "charge"
               )
           }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}${
@@ -150,20 +150,6 @@
 
         @chargeDetails(viewModel)
     }
-    @if(viewModel.chargeItem.transactionType == MfaDebitCharge){
-       @p(id = Some("credit-created-text")){ @messages("yourSelfAssessmentChargeSummary.definition.hmrcadjustment")
-    }
-        }
-
-    @if(viewModel.chargeItem.isPaid && viewModel.chargeItem.isPoaDebit) {
-    <h1 class="govuk-heading-m" id="charge-amount-heading"> @{
-        s"${ getMessage("youOwe")
-        }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}".toEmsp
-        }</h1>
-
-     @whatIsPaymentOnAccount()
- }
-
 
     @if(viewModel.poaExtraChargeLink.isDefined){
         @p(id = Some("poa-extra-charge-content")) {
