@@ -35,9 +35,9 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
     case _: NextOptOutTaxYear     => "nextYear"
   }
 
-  private val effectiveOptOutState: Option[OptOutState] = optOutState match {
-    case Some(MultiYearOptOutDefault) if isPreviousYear && (currentYearStatus == Mandated | currentYearStatus == ITSAStatus.Dormant) => Some(OneYearOptOutFollowedByMandated)
-    case Some(MultiYearOptOutDefault) if isCurrentYear && (nextYearStatus == Mandated | nextYearStatus == ITSAStatus.Dormant) => Some(OneYearOptOutFollowedByMandated)
+  private val effectiveOptOutState: Option[OptOutState] = (optOutState, currentYearStatus, nextYearStatus) match {
+    case (Some(MultiYearOptOutDefault), Mandated | Dormant, _) if isPreviousYear => Some(OneYearOptOutFollowedByMandated)
+    case (Some(MultiYearOptOutDefault), _, Mandated | Dormant) if isCurrentYear => Some(OneYearOptOutFollowedByMandated)
     case _ => optOutState
   }
 
