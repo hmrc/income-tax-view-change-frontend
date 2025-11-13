@@ -103,7 +103,13 @@ case class ReportingFrequencyViewModel(
     val currentYearStatus: ITSAStatus = proposition.currentTaxYear.status
     val nextYearStatus: ITSAStatus = proposition.nextTaxYear.status
 
-    val statusList = List(previousYearStatus, currentYearStatus, nextYearStatus)
+    val previousYearSeq = if (proposition.previousTaxYear.crystallised) {
+      List()
+    } else {
+      List(previousYearStatus)
+    }
+
+    val statusList = previousYearSeq ++ List(currentYearStatus, nextYearStatus)
 
     (
       statusList.count(isExemptionStatus),

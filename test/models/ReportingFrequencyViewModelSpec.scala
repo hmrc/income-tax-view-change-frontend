@@ -517,7 +517,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
         val optOutProposition = OptOutProposition.createOptOutProposition(
           currentYear = TaxYear(2025, 2026),
-          previousYearCrystallised = true,
+          previousYearCrystallised = false,
           previousYearItsaStatus = Voluntary,
           currentYearItsaStatus = Annual,
           nextYearItsaStatus = Voluntary
@@ -539,12 +539,39 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
         model.exemptStatusCount shouldBe(0, 3)
       }
 
-      "handle one exempt status" in {
+      "handle no exempt status with crystallisation" in {
         setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
 
         val optOutProposition = OptOutProposition.createOptOutProposition(
           currentYear = TaxYear(2025, 2026),
           previousYearCrystallised = true,
+          previousYearItsaStatus = Voluntary,
+          currentYearItsaStatus = Annual,
+          nextYearItsaStatus = Voluntary
+        )
+
+        val model = ReportingFrequencyViewModel(
+          isAgent = false,
+          optOutJourneyUrl = None,
+          optInTaxYears = Seq(TaxYear(2025, 2026)),
+          itsaStatusTable = Seq(),
+          displayCeasedBusinessWarning = false,
+          isAnyOfBusinessLatent = false,
+          mtdThreshold = "",
+          proposition = optOutProposition,
+          isSignUpEnabled = true,
+          isOptOutEnabled = true
+        )(mockDateService)
+
+        model.exemptStatusCount shouldBe(0, 2)
+      }
+
+      "handle one exempt status" in {
+        setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+
+        val optOutProposition = OptOutProposition.createOptOutProposition(
+          currentYear = TaxYear(2025, 2026),
+          previousYearCrystallised = false,
           previousYearItsaStatus = Voluntary,
           currentYearItsaStatus = Exempt,
           nextYearItsaStatus = Voluntary
@@ -571,7 +598,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
         val optOutProposition = OptOutProposition.createOptOutProposition(
           currentYear = TaxYear(2025, 2026),
-          previousYearCrystallised = true,
+          previousYearCrystallised = false,
           previousYearItsaStatus = Mandated,
           currentYearItsaStatus = Exempt,
           nextYearItsaStatus = Exempt
