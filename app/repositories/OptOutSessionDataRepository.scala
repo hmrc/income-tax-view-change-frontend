@@ -100,12 +100,12 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
       journeyType = OptOutJourney.toString,
       optOutSessionData = Some(OptOutSessionData(Some(buildOptOutContextData(oop)), selectedOptOutYear = None))
     )
-    if(shouldResetIntent){
+    if(shouldResetIntent) {
       val dataWithResetIntent = data.copy(
         optOutSessionData = data.optOutSessionData.map(_.copy(selectedOptOutYear = None))
       )
       repository.set(dataWithResetIntent)
-    }else {
+    } else {
       fetchSavedIntent().flatMap {
         case Some(taxYear) =>
           val dataWithPreservedIntent = data.copy(
