@@ -36,7 +36,7 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
   val auditType: String = "ItsaHomePage"
   lazy val fixedDate : LocalDate = LocalDate.of(2022, 1, 7)
 
-  def homeAuditFull(userType: Option[AffinityGroup] = Some(Agent), agentReferenceNumber: Option[String] = Some("agentReferenceNumber"),
+  def homeAuditFull(userType: Option[AffinityGroup] = Some(Agent),
                     nextPaymentOrOverdue: Either[(LocalDate, Boolean), Int],
                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]): HomeAudit = HomeAudit(
     defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),

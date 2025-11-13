@@ -125,7 +125,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(_) => IncomeSourceReportingFrequencyForm(isR17ContentEnabled).bindFromRequest().fold(
           _ => handleInvalidForm(isAgent, isChange, incomeSourceType, isR17ContentEnabled),
-          valid => handleValidForm(isAgent, isChange, valid, incomeSourceType, sessionData)
+          valid => handleValidForm(isAgent, valid, incomeSourceType, sessionData)
         )
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
@@ -173,7 +173,6 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   }
 
   private def handleValidForm(isAgent: Boolean,
-                              isChange: Boolean,
                               form: IncomeSourceReportingFrequencyForm,
                               incomeSourceType: IncomeSourceType,
                               sessionData: UIJourneySessionData

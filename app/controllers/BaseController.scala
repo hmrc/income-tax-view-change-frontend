@@ -34,6 +34,4 @@ abstract class BaseController @Inject()(implicit mcc: MessagesControllerComponen
       case _ => super.hc
     }
   }
-
-  def redirectToHome: Result = Redirect(controllers.routes.HomeController.show())
 }

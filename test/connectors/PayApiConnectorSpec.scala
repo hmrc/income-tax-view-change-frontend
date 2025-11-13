@@ -34,7 +34,7 @@ class PayApiConnectorSpec extends BaseConnectorSpec {
   val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
   lazy val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
-  object TestPayApiConnector extends PayApiConnector(mockHttpClientV2, mockAuditingService, appConfig)
+  object TestPayApiConnector extends PayApiConnector(mockHttpClientV2, appConfig)
 
   "Calling .startPaymentJourney as an individual user" should {
 

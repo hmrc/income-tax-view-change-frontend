@@ -581,7 +581,6 @@ object FinancialDetailsTestConstants {
 
   def financialDetailsModel(
                              taxYear: Int = 2018,
-                             documentDescription: Option[String] = Some("ITSA- POA 1"),
                              mainTransaction:String = "4920",
                              outstandingAmount: BigDecimal = 1400.0,
                              dunningLock: Option[String] = None,
@@ -1397,8 +1396,7 @@ object FinancialDetailsTestConstants {
                                                   outstandingAmount: List[BigDecimal],
                                                   taxYear: String,
                                                   interestRate: List[Option[BigDecimal]],
-                                                  accruingInterestAmount: Option[BigDecimal],
-                                                  lpiWithDunningLock: Option[BigDecimal]
+                                                  accruingInterestAmount: Option[BigDecimal]
                                                  ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
@@ -1419,8 +1417,7 @@ object FinancialDetailsTestConstants {
                                                       outstandingAmount: List[BigDecimal],
                                                       taxYear: String,
                                                       interestRate: List[Option[BigDecimal]],
-                                                      accruingInterestAmount: Option[BigDecimal],
-                                                      lpiWithDunningLock: Option[BigDecimal]
+                                                      accruingInterestAmount: Option[BigDecimal]
                                                      ): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),

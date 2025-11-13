@@ -42,9 +42,3 @@ case class UpdateIncomeSourceRequestModel(nino: String,
 object UpdateIncomeSourceRequestModel {
   implicit val format: Format[UpdateIncomeSourceRequestModel] = Json.format
 }
-
-case class UpdateIncomeSourceRequestError(reason: String) extends UpdateIncomeSourceRequest
-
-object UpdateIncomeSourceRequestError {
-  implicit val format: Format[UpdateIncomeSourceRequestError] = Json.format
-}

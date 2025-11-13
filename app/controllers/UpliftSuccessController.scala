@@ -33,7 +33,7 @@ class UpliftSuccessController @Inject()(authActions: AuthActions,
                                        )(implicit val appConfig: FrontendAppConfig,
                                          executionContext: ExecutionContext) extends FrontendController(mcc) with FeatureSwitching {
 
-  def success(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def success(): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       auditingService.audit(IvOutcomeSuccessAuditModel(user.nino))
       Future.successful(Redirect(controllers.routes.HomeController.show().url))

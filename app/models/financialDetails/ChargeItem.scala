@@ -172,9 +172,6 @@ case class ChargeItem (
 
   val isCreditDrilldownPage: Boolean = isPoaReconciliationCredit || transactionType == ITSAReturnAmendmentCredit
 
-  val isPoaReconciliationDebit: Boolean = transactionType == PoaOneReconciliationDebit ||
-    transactionType == PoaTwoReconciliationDebit
-
   val isPoaDebit: Boolean = transactionType == PoaOneDebit || transactionType == PoaTwoDebit
 
   val isBalancingCharge: Boolean = transactionType == BalancingCharge

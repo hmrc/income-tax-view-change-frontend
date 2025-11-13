@@ -174,7 +174,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     }
   }
 
-  def checkCommonContent(activeSoleTrader: Boolean, activeUkProperty: Boolean, activeForeignProperty: Boolean, isUnknown: Boolean = false): Unit = {
+  def checkCommonContent(activeSoleTrader: Boolean, activeUkProperty: Boolean, activeForeignProperty: Boolean): Unit = {
     "have the correct title" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
       pageDocument.title() shouldBe CheckHmrcRecordsMessages.title
     }

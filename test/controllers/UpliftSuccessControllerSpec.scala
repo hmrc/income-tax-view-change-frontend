@@ -31,7 +31,7 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
 
   lazy val testController = app.injector.instanceOf[UpliftSuccessController]
 
-  val action = testController.success(Some("PTA"))
+  val action = testController.success()
   val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
   s"success()" when {
     s"the user is an authenticated individual" should {
