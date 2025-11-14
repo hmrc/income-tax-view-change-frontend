@@ -26,5 +26,3 @@ case class PaymentDetails(paymentDetails: Seq[PaymentAllocations]) extends Payme
 object PaymentDetails {
   implicit val format: Format[PaymentDetails] = Json.format[PaymentDetails]
 }
-
-case class PaymentDetailsError(code: Int, message: String) extends PaymentDetailsResponse

@@ -32,11 +32,7 @@ import javax.inject.{Inject, Singleton}
 import scala.collection.Seq
 import scala.concurrent.{ExecutionContext, Future}
 
-case class EnrolmentData(name: String, state: String, taxIdentifier: scala.Seq[TaxIdentifierData])
-
 case class TaxIdentifierData(key: String, value: String)
-
-case class DelegatedEnrolmentData(key: String, taxIdentifier: Seq[TaxIdentifierData], delegatedAuthRule: String)
 
 case class GovernmentGatewayToken(gatewayToken: String)
 

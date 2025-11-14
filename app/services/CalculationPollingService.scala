@@ -51,7 +51,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     //Acquire Mongo lock and call Calculation service
     //To avoid wait time for first call, calling getCalculationResponse with end time as current time
     lockService.withLock {
-      getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
+      getCalculationResponse(endTimeInMillis, calcId, nino, taxYear, mtditid)
     } flatMap {
       case Some(statusCode) =>
         Logger("application").debug(s"[CalculationPollingService] - Response received from Calculation service: $statusCode")
@@ -76,8 +76,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
     }
   }
 
-  private def getCalculationResponse(endTimeForEachInterval: Long,
-                                     endTimeInMillis: Long,
+  private def getCalculationResponse(endTimeInMillis: Long,
                                      calcId: String,
                                      nino: String,
                                      taxYear: Int,
@@ -104,7 +103,7 @@ class CalculationPollingService @Inject()(val frontendAppConfig: FrontendAppConf
                                   endTimeInMillis: Long)
                                  (implicit hc: HeaderCarrier): Future[Int] = {
     for {
-      statusCode <- getCalculationResponse(System.currentTimeMillis(), endTimeInMillis, calcId, nino, taxYear, mtditid)
+      statusCode <- getCalculationResponse(endTimeInMillis, calcId, nino, taxYear, mtditid)
       resultFuture <- {
         if (!retryableStatusCodes.contains(statusCode))
           Future.successful {

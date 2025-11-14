@@ -72,7 +72,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   class SelfEmploymentUnknownsSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
-    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
     }
 
@@ -94,7 +94,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   class SelfEmploymentCrystallisedSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
-    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
     }
 
@@ -176,7 +176,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   class UkCrystallisedSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
-    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
     }
 
@@ -258,7 +258,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   class ForeignCrystallisedSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
-    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
       controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
     }
 
