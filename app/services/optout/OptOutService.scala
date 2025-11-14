@@ -299,15 +299,18 @@ class OptOutService @Inject()(
       case Some(year) =>
         for {
           proposition <- fetchOptOutProposition()
-          numberOfQuarterlyUpdates <- getQuarterlyUpdatesCount(proposition.optOutPropositionType)
-        } yield {
-          val checkOptOutStatus = year match {
+          checkOptOutStatus = year match {
             case ty if ty == proposition.previousTaxYear.taxYear.startYear.toString => Some((proposition.previousTaxYear.canOptOut, proposition.previousTaxYear))
             case ty if ty == proposition.currentTaxYear.taxYear.startYear.toString => Some((proposition.currentTaxYear.canOptOut, proposition.currentTaxYear))
             case ty if ty == proposition.nextTaxYear.taxYear.startYear.toString => Some((proposition.nextTaxYear.canOptOut, proposition.nextTaxYear))
             case _ => None
           }
 
+          numberOfQuarterlyUpdates <- checkOptOutStatus match {
+            case Some((true, propositionTaxYear)) => nextUpdatesService.getQuarterlyUpdatesCounts(propositionTaxYear.taxYear).map(_.count)
+            case _ => Future.successful(noQuarterlyUpdates)
+          }
+        } yield {
           val currentYearStatus = proposition.currentTaxYear.status
           val nextYearStatus = proposition.nextTaxYear.status
 
