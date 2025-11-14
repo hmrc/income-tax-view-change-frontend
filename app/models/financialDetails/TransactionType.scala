@@ -197,7 +197,7 @@ object ChargeType {
     .map(_.toString).toList
 
   val allChargeMainTransactions = List(balancingCharge, poaOneDebit, poaTwoDebit, poaOneReconciliationDebit, poaTwoReconciliationDebit, itsaReturnAmendment)++
-    List(penaltyMainTransactions) ++ List(mfaDebit)
+    penaltyMainTransactions ++ mfaDebit
 
 
 
