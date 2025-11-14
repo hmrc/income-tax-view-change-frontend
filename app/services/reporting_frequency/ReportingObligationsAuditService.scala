@@ -79,6 +79,12 @@ class ReportingObligationsAuditService @Inject()(
             taxYear = dateService.getCurrentTaxYear.startYear.toString,
             singleYearOrOnwards = Onwards
           )
+        case "signUp.currentYear.single" =>
+          ReportingObligationCard(
+            journeyType = SignUp,
+            taxYear = dateService.getCurrentTaxYear.startYear.toString,
+            singleYearOrOnwards = SingleTaxYear
+          )
         case "optOut.nextYear" =>
           ReportingObligationCard(
             journeyType = OptOut,
