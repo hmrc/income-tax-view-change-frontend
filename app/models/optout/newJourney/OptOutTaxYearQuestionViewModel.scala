@@ -21,11 +21,7 @@ import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout.OneYearOptOutCheckpointViewModel
 import services.optout._
 
-case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
-                                          optOutState: Option[OptOutState],
-                                          numberOfQuarterlyUpdates: Int,
-                                          currentYearStatus: ITSAStatus,
-                                          nextYearStatus: ITSAStatus) {
+case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear, optOutState: Option[OptOutState], numberOfQuarterlyUpdates: Int, previousYearStatus: Option[ITSAStatus], currentYearStatus: ITSAStatus, nextYearStatus: ITSAStatus) {
 
   private val hasNoQuarterlyUpdatesSubmitted: Boolean = numberOfQuarterlyUpdates == OneYearOptOutCheckpointViewModel.noQuarterlyUpdates
 
@@ -92,5 +88,12 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
 
   val messageSuffix = s"$taxYearMessageSuffix.$optOutStateMessageSuffix"
 
-  val redirectToConfirmUpdatesPage: Boolean = optOutState.contains(OneYearOptOutFollowedByMandated) && !hasNoQuarterlyUpdatesSubmitted
+  val redirectToConfirmUpdatesPage: Boolean = {
+    optOutState.contains(OneYearOptOutFollowedByMandated) &&
+      !hasNoQuarterlyUpdatesSubmitted &&
+      isCurrentYear &&
+      previousYearStatus.forall(_ != ITSAStatus.Voluntary) &&
+      currentYearStatus == ITSAStatus.Voluntary &&
+      nextYearStatus == ITSAStatus.Mandated
+  }
 }

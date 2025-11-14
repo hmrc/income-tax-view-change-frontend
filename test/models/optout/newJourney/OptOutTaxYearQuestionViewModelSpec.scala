@@ -24,7 +24,7 @@ import testUtils.UnitSpec
 
 class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
 
-  val previousOptOutTaxYear: PreviousOptOutTaxYear = PreviousOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2025, 2026), false)
+  val previousOptOutTaxYear: PreviousOptOutTaxYear = PreviousOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2025, 2026), crystallised = false)
   val currentOptOutTaxYear: CurrentOptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2025, 2026))
   val nextOptOutTaxYear: NextOptOutTaxYear = NextOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2026, 2027), currentOptOutTaxYear)
 
@@ -33,25 +33,25 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
     ".showInset" should {
       "return true" when {
         "the optOutState is MultiYearOptOutDefault and the tax year is current with CY+1 being annual" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(MultiYearOptOutDefault), 0, Voluntary, Annual)
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(MultiYearOptOutDefault), 0, None, Voluntary, Annual)
           model.showInset shouldBe false
         }
         "the optOutState is MultiYearOptOutDefault and the tax year is current with CY+1 being voluntary" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(MultiYearOptOutDefault), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(MultiYearOptOutDefault), 0, None, Voluntary, Voluntary)
           model.showInset shouldBe true
         }
         "the optOutState is MultiYearOptOutDefault and the tax year is previous" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(MultiYearOptOutDefault), 0, Voluntary, Mandated)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(MultiYearOptOutDefault), 0, None, Voluntary, Mandated)
           model.showInset shouldBe true
         }
         "the optOutState is OneYearOptOutFollowedByMandated and the tax year isn't previous" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 0, None, Voluntary, Voluntary)
           model.showInset shouldBe true
         }
       }
       "return false" when {
         "the optOutState is None" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, None, 0, NoStatus, NoStatus)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, None, 0, None, NoStatus, NoStatus)
           model.showInset shouldBe false
         }
       }
@@ -60,25 +60,25 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
     ".showQuarterlyUpdatesInset" should {
       "return true" when {
         "the optOutState is OneYearOptOutFollowedByAnnual and there are updates submitted" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 1, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 1, None, Voluntary, Voluntary)
           model.showQuarterlyUpdatesInset shouldBe true
         }
         "the optOutState is OneYearOptOutFollowedByMandated and the tax year is previous" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, None, Voluntary, Voluntary)
           model.showQuarterlyUpdatesInset shouldBe true
         }
         "the optOutState is OneYearOptOutFollowedByAnnual and the tax year is previous" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, None, Voluntary, Voluntary)
           model.showQuarterlyUpdatesInset shouldBe true
         }
       }
       "return false" when {
         "the optOutState is None" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, None, 0, NoStatus, NoStatus)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, None, 0, None, NoStatus, NoStatus)
           model.showQuarterlyUpdatesInset shouldBe false
         }
         "the optOutState is OneYearOptOutFollowedByAnnual and there are no updates submitted" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, None, Voluntary, Voluntary)
           model.showQuarterlyUpdatesInset shouldBe false
         }
       }
@@ -87,33 +87,33 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
     ".showSecondParagraph" should {
       "return true" when {
         "the optOutState is MultiYearOptOutDefault" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(MultiYearOptOutDefault), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(MultiYearOptOutDefault), 0, None, Voluntary, Voluntary)
           model.showSecondParagraph shouldBe true
         }
         "the optOutState is OneYearOptOutFollowedByAnnual" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, None, Voluntary, Voluntary)
           model.showSecondParagraph shouldBe true
         }
         "the optOutState is NextYearOptOut and the current year status is Mandated" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(NextYearOptOut), 0, Mandated, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(NextYearOptOut), 0, None, Mandated, Voluntary)
           model.showSecondParagraph shouldBe true
         }
         "the optOutState is OneYearOptOutFollowedByMandated and is the previous tax year" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, None, Voluntary, Voluntary)
           model.showSecondParagraph shouldBe true
         }
       }
       "return false" when {
         "the optOutState is None" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, None, 0, NoStatus, NoStatus)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, None, 0, None, NoStatus, NoStatus)
           model.showSecondParagraph shouldBe false
         }
         "the optOutState is OneYearOptOutFollowedByMandated and is the current tax year" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, None, Voluntary, Voluntary)
           model.showSecondParagraph shouldBe true
         }
         "the optOutState is NextYearOptOut and the current year status is Voluntary" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(NextYearOptOut), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(NextYearOptOut), 0, None, Voluntary, Voluntary)
           model.showSecondParagraph shouldBe false
         }
       }
@@ -122,13 +122,13 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
     ".showThirdParagraph" should {
       "return true" when {
         "the optOutState is MultiYearOptOutDefault" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(MultiYearOptOutDefault), 0, Voluntary, Voluntary)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(MultiYearOptOutDefault), 0, None, Voluntary, Voluntary)
           model.showThirdParagraph shouldBe true
         }
       }
       "return false" when {
         "the optOutState is None" in {
-          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, None, 0, NoStatus, NoStatus)
+          val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, None, 0, None, NoStatus, NoStatus)
           model.showThirdParagraph shouldBe false
         }
       }
@@ -164,7 +164,7 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
       )
       for ((taxYear, optOutState, amountOfQuarterlyUpdates, cyItsaStatus, nyItsaStatus, expectedSuffix) <- cases) {
         s"return $expectedSuffix for ${taxYear.getClass.getSimpleName} with $optOutState with $amountOfQuarterlyUpdates quarterly updates and a CY ITSA status of $cyItsaStatus" in {
-          val model = OptOutTaxYearQuestionViewModel(taxYear, optOutState, amountOfQuarterlyUpdates, cyItsaStatus, nyItsaStatus)
+          val model = OptOutTaxYearQuestionViewModel(taxYear, optOutState, amountOfQuarterlyUpdates, None, cyItsaStatus, nyItsaStatus)
           model.messageSuffix shouldBe expectedSuffix
         }
       }

@@ -60,6 +60,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
     taxYear = optOutTaxYear,
     optOutState = optOutState,
     numberOfQuarterlyUpdates = 0,
+    previousYearStatus = None,
     currentYearStatus = ITSAStatus.Voluntary,
     nextYearStatus = ITSAStatus.Voluntary
   )
@@ -192,7 +193,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           redirectLocation(result) shouldBe Some(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url)
         }
 
-        "redirect the user when they select 'Yes' - opt out single year followed by mandated with updates" in {
+        "redirect the user when they select 'Yes' - opt out single year followed by mandated with updates (previous year not voluntary)" in {
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
@@ -200,7 +201,16 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(numberOfQuarterlyUpdates = 2, optOutState = Some(OneYearOptOutFollowedByMandated)))))
+
+          val explicitViewModel = viewModel.copy(
+            numberOfQuarterlyUpdates = 2,
+            optOutState = Some(OneYearOptOutFollowedByMandated),
+            previousYearStatus = Some(ITSAStatus.Mandated),
+            currentYearStatus = ITSAStatus.Voluntary,
+            nextYearStatus = ITSAStatus.Mandated
+          )
+
+          mockIsOptOutTaxYearValid(Future.successful(Some(explicitViewModel)))
           mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
           mockUpdateOptOutJourneyStatusInSessionData()
           mockFetchOptOutJourneyCompleteStatus()
