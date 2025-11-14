@@ -72,10 +72,11 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
+  def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel)(implicit user: MtdItUser[_]): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
       CreateBusinessIncomeSourceRequest(
-        List(
+        mtdbsa = user.mtditid,
+        businessDetails = List(
           BusinessDetails(
             accountingPeriodStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
             accountingPeriodEndDate = viewModel.accountingPeriodEndDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
@@ -112,10 +113,11 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  private def createForeignPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel): Either[Throwable, CreateForeignPropertyIncomeSourceRequest] = {
+  private def createForeignPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel)(implicit user: MtdItUser[_]): Either[Throwable, CreateForeignPropertyIncomeSourceRequest] = {
     Try(
       CreateForeignPropertyIncomeSourceRequest(
-        PropertyDetails(
+        mtdbsa = user.mtditid,
+        foreignPropertyDetails = PropertyDetails(
           tradingStartDate = viewModel.tradingStartDate.toString,
           cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase),
           startDate = viewModel.tradingStartDate.toString
@@ -137,10 +139,11 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     }
   }
 
-  private def createUKPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel): Either[Throwable, CreateUKPropertyIncomeSourceRequest] = {
+  private def createUKPropertyIncomeSourceRequest(viewModel: CheckPropertyViewModel)(implicit user: MtdItUser[_]): Either[Throwable, CreateUKPropertyIncomeSourceRequest] = {
     Try(
       CreateUKPropertyIncomeSourceRequest(
-        PropertyDetails(
+        mtdbsa = user.mtditid,
+        ukPropertyDetails = PropertyDetails(
           tradingStartDate = viewModel.tradingStartDate.toString,
           cashOrAccrualsFlag = viewModel.cashOrAccrualsFlag.map(_.toUpperCase),
           startDate = viewModel.tradingStartDate.toString

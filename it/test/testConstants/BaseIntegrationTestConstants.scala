@@ -43,7 +43,7 @@ object BaseIntegrationTestConstants {
 
   val testMtditidEnrolmentKey = "HMRC-MTD-IT"
   val testMtditidEnrolmentIdentifier = "MTDITID"
-  val testMtditid = "XAITSA123456"
+  val testMtditid = "XAIT00001234567"
   val testUserName = "Albert Einstein"
   val testClientFirstName = "Issac"
   val testClientSurname = "Newton"

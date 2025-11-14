@@ -37,54 +37,53 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   }
 
   val businessRequestBody: JsValue = Json.parse(
-    """
-      |{
-      |  "businessDetails": [
-      |    {
-      |      "accountingPeriodStartDate": "01-02-2023",
-      |      "accountingPeriodEndDate": "",
-      |      "tradingName": "",
-      |      "addressDetails": {
-      |        "addressLine1": "tests test",
-      |        "addressLine2": "",
-      |        "countryCode": "UK",
-      |        "postalCode": ""
-      |      },
-      |      "tradingStartDate": "",
-      |      "cashOrAccrualsFlag": "CASH",
-      |      "cessationDate": ""
-      |    }
-      |  ]
+    """{
+      |  "mtdbsa" : "XAIT00001234567",
+      |  "businessDetails" : [ {
+      |    "accountingPeriodStartDate" : "01-02-2023",
+      |    "accountingPeriodEndDate" : "",
+      |    "tradingName" : "",
+      |    "addressDetails" : {
+      |      "addressLine1" : "tests test",
+      |      "addressLine2" : "",
+      |      "countryCode" : "UK",
+      |      "postalCode" : ""
+      |    },
+      |    "tradingStartDate" : "",
+      |    "cashOrAccrualsFlag" : "CASH",
+      |    "cessationDate" : ""
+      |  } ]
       |}
       |""".stripMargin
   )
 
   val foreignPropertyRequestBody: JsValue = Json.parse(
-    """
-      |{
-      |   "foreignPropertyDetails" : {
-      |       "tradingStartDate" : "01-02-2023",
-      |       "cashOrAccrualsFlag" : "CASH",
-      |       "startDate" : "01-02-2023"
-      |   }
+    """{
+      |  "mtdbsa" : "XAIT00001234567",
+      |  "foreignPropertyDetails" : {
+      |    "tradingStartDate" : "01-02-2023",
+      |    "cashOrAccrualsFlag" : "CASH",
+      |    "startDate" : "01-02-2023"
+      |  }
       |}
       |""".stripMargin
   )
 
   val ukPropertyRequestBody: JsValue = Json.parse(
-    """
-      |{
-      |  "ukPropertyDetails": {
-      |    "tradingStartDate": "01-02-2023",
-      |    "cashOrAccrualsFlag": "CASH",
-      |    "startDate": "01-02-2023"
+    """{
+      |  "mtdbsa" : "XAIT00001234567",
+      |  "ukPropertyDetails" : {
+      |    "tradingStartDate" : "01-02-2023",
+      |    "cashOrAccrualsFlag" : "CASH",
+      |    "startDate" : "01-02-2023"
       |  }
       |}
       |""".stripMargin
   )
 
   val createBusinessDetailsRequest: CreateBusinessIncomeSourceRequest = CreateBusinessIncomeSourceRequest(
-    List(
+    mtdbsa = "XAIT00001234567",
+    businessDetails = List(
       BusinessDetails(accountingPeriodStartDate = "01-02-2023",
         accountingPeriodEndDate = "",
         tradingName = "",
@@ -106,7 +105,8 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   )
 
   val createForeignPropertyRequest: CreateForeignPropertyIncomeSourceRequest = CreateForeignPropertyIncomeSourceRequest(
-    PropertyDetails(
+    mtdbsa = "XAIT00001234567",
+    foreignPropertyDetails = PropertyDetails(
       "01-02-2023",
       Some("CASH"),
       "01-02-2023"
@@ -114,7 +114,8 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   )
 
   val createUKPropertyRequest: CreateUKPropertyIncomeSourceRequest = CreateUKPropertyIncomeSourceRequest(
-    PropertyDetails(
+    mtdbsa = "XAIT00001234567",
+    ukPropertyDetails = PropertyDetails(
       "01-02-2023",
       Some("CASH"),
       "01-02-2023"
@@ -164,7 +165,6 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
       "sending a request" should {
         "return a successful response" in {
           WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", foreignPropertyRequestBody, OK, successfulApiResponse)
-
           val result = connector.createForeignProperty(mtdId, createForeignPropertyRequest).futureValue
 
           result shouldBe Right(List(CreateIncomeSourceResponse(mtdId)))
