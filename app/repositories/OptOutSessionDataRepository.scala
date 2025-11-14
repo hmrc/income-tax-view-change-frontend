@@ -94,13 +94,29 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
     }
   }
 
-  def initialiseOptOutJourney(oop: OptOutProposition)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def initialiseOptOutJourney(oop: OptOutProposition, shouldResetIntent: Boolean = true)(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[Boolean] = {
     val data = UIJourneySessionData(
       sessionId = hc.sessionId.get.value,
       journeyType = OptOutJourney.toString,
       optOutSessionData = Some(OptOutSessionData(Some(buildOptOutContextData(oop)), selectedOptOutYear = None))
     )
-    repository.set(data)
+    if(shouldResetIntent) {
+      val dataWithResetIntent = data.copy(
+        optOutSessionData = data.optOutSessionData.map(_.copy(selectedOptOutYear = None))
+      )
+      repository.set(dataWithResetIntent)
+    } else {
+      fetchSavedIntent().flatMap {
+        case Some(taxYear) =>
+          val dataWithPreservedIntent = data.copy(
+            optOutSessionData = data.optOutSessionData.map(_.copy(selectedOptOutYear = Some(taxYear.toString)))
+          )
+          repository.set(dataWithPreservedIntent)
+        case None =>
+          repository.set(data)
+      }
+    }
+
   }
 
   private def buildOptOutContextData(oop: OptOutProposition): OptOutContextData = {

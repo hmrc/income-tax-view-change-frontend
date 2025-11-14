@@ -132,7 +132,7 @@ class OptOutServiceSpec
   }
 
   private def allowWriteOfOptOutDataToMongoToSucceed(): Unit = {
-    when(mockRepository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
+    when(mockRepository.initialiseOptOutJourney(any(), any())(any(), any())).thenReturn(Future.successful(true))
   }
 
   ".getSubmissionCountForTaxYear" when {
