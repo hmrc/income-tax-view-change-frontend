@@ -3127,6 +3127,13 @@ reporting.frequency.different.obligations.p3                                = Yo
 reporting.frequency.different.obligations.link.text                         = updates and deadlines
 reporting.frequency.different.obligations.link.text.additional.english      = page.
 
+#your obligations (exempt)
+reporting.frequency.your.obligations.heading                           = What your reporting obligations are
+reporting.frequency.your.obligations.p1                                = For tax years you are exempt, you only need to file a tax return.
+reporting.frequency.your.obligations.p2                                = Find out what is due and when on the
+reporting.frequency.your.obligations.link.text                         = updates and deadlines
+reporting.frequency.your.obligations.link.text.additional.english      = page.
+
 reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is mandatory
 reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
 reporting.frequency.mandatoryReporting.text       = You can check the threshold for when reporting quarterly is mandatory in the
@@ -3137,6 +3144,15 @@ reporting.frequency.mandatoryReporting.heading.R17      = When Making Tax Digita
 reporting.frequency.mandatoryReporting.inset.R17        = You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold.
 reporting.frequency.mandatoryReporting.p1               = If this happens in the {0} to {1} tax year, you would be required to use Making Tax Digital for Income Tax for the {2} to {3} tax year.
 reporting.frequency.mandatoryReporting.p2               = Find out more about the threshold in the
+
+reporting.frequency.mandatoryReporting.onlyExempt.p1    = For tax years you are exempt, you cannot be required to use Making Tax Digital for Income Tax.
+reporting.frequency.mandatoryReporting.onlyExempt.p2    = Find out more about
+reporting.frequency.mandatoryReporting.onlyExempt.link.text  = if and when you need to use Making Tax Digital for Income Tax
+
+reporting.frequency.mandatoryReporting.hasExempt.p1    = For tax years you are exempt, you cannot be required to use Making Tax Digital for Income Tax. For any tax years you are not exempt, you could be required to use it.
+reporting.frequency.mandatoryReporting.hasExempt.p2    = You would then have to use Making Tax Digital for Income Tax until this type of income is below the threshold for 3 tax years in a row. After that, you could voluntarily continue to report this way or choose to opt out.
+reporting.frequency.mandatoryReporting.hasExempt.p3    = Find out more about
+reporting.frequency.mandatoryReporting.hasExempt.link.text  = if and when you need to use Making Tax Digital for Income Tax
 
 reporting.frequency.compatibleSoftware.heading   = When compatible software is required
 reporting.frequency.compatibleSoftware.p1        = If you are reporting quarterly, you will need to use
@@ -3162,6 +3178,7 @@ reporting.frequency.table.taxYear                                   = {0} to {1}
 reporting.frequency.table.mandated                                  = Quarterly (mandatory)
 reporting.frequency.table.voluntary                                 = Quarterly
 reporting.frequency.table.annual                                    = Annual
+reporting.frequency.table.exempt                                    = Exempt
 
 #new table messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.table.heading.usingMTD                          = Using Making Tax Digital for Income Tax
@@ -3171,6 +3188,8 @@ reporting.frequency.table.MTD.isNotUsingMTD                         = No
 reporting.frequency.table.mandated.r17                              = Required
 reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
 reporting.frequency.table.annual.r17                                = Opted out
+reporting.frequency.table.exempt.r17                                = Exempt
+
 
 #changing reporting obligations section - R17
 reporting.obligations.changing.h2                                   = Changing your reporting obligations

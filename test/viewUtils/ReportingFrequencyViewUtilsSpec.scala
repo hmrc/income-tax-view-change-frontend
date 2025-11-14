@@ -24,7 +24,7 @@ import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, Mandated, Voluntary}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -106,6 +106,26 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
 
           val actual = reportingFrequencyViewUtils.itsaStatusString(Annual)
           val expected = Some("Annual")
+          actual shouldBe expected
+        }
+      }
+
+      "the ITSAStatus == Exempt" should {
+
+        "return 'Exempt'" in {
+
+          val actual = reportingFrequencyViewUtils.itsaStatusString(Exempt)
+          val expected = Some("Exempt")
+          actual shouldBe expected
+        }
+      }
+
+      "the ITSAStatus == DigitallyExempt" should {
+
+        "return 'Exempt'" in {
+
+          val actual = reportingFrequencyViewUtils.itsaStatusString(DigitallyExempt)
+          val expected = Some("Exempt")
           actual shouldBe expected
         }
       }
@@ -226,6 +246,30 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
               ("2023 to 2024", Some("Yes"), Some("Required")),
               ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
               ("2025 to 2026", Some("No"), Some("Opted out"))
+            )
+          actual shouldBe expected
+        }
+      }
+      "(new content) the CY-1 == Exempt , CY == Voluntary, CY+1 == Digitally Exempt" should {
+
+        "return the correct content" in {
+          enable(OptInOptOutContentUpdateR17)
+
+          val optOutProposition: OptOutProposition =
+            OptOutProposition.createOptOutProposition(
+              currentYear = TaxYear(2024, 2025),
+              previousYearCrystallised = false,
+              previousYearItsaStatus = Exempt,
+              currentYearItsaStatus = Voluntary,
+              nextYearItsaStatus = DigitallyExempt
+            )
+
+          val actual = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition)
+          val expected =
+            List(
+              ("2023 to 2024", Some("No"), Some("Exempt")),
+              ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
+              ("2025 to 2026", Some("No"), Some("Exempt"))
             )
           actual shouldBe expected
         }
