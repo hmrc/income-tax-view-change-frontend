@@ -28,9 +28,10 @@ object CreateIncomeSourceRequest {
 // *                                                   Self-employment                                                 *
 // *********************************************************************************************************************
 
-final case class CreateBusinessIncomeSourceRequest(businessDetails: List[BusinessDetails]) extends CreateIncomeSourceRequest {
+final case class CreateBusinessIncomeSourceRequest(mtdbsa: String, businessDetails: List[BusinessDetails]) extends CreateIncomeSourceRequest {
   require(businessDetails.length == 1, "Only single business can be created at a time")
   require(businessDetails.head.cashOrAccrualsFlag.forall(_.matches("^[A-Z]+$")), "Accounting method must be capitalised")
+  require(mtdbsa.matches("^[A-Z]{4}[0-9]{11}$"), "MTDBSA ID should be of 11 characters and a specific format")
 }
 
 case class BusinessDetails(accountingPeriodStartDate: String,
@@ -76,9 +77,13 @@ final case class PropertyDetails(tradingStartDate: String, cashOrAccrualsFlag: O
   require(tradingStartDate == startDate, "Trading start date and start date must be the same")
 }
 
-final case class CreateForeignPropertyIncomeSourceRequest(foreignPropertyDetails: PropertyDetails) extends CreateIncomeSourceRequest
+final case class CreateForeignPropertyIncomeSourceRequest(mtdbsa: String, foreignPropertyDetails: PropertyDetails) extends CreateIncomeSourceRequest {
+  require(mtdbsa.matches("^[A-Z]{4}[0-9]{11}$"), "MTDBSA ID should be of 11 characters and a specific format")
+}
 
-final case class CreateUKPropertyIncomeSourceRequest(ukPropertyDetails: PropertyDetails) extends CreateIncomeSourceRequest
+final case class CreateUKPropertyIncomeSourceRequest(mtdbsa: String, ukPropertyDetails: PropertyDetails) extends CreateIncomeSourceRequest {
+  require(mtdbsa.matches("^[A-Z]{4}[0-9]{11}$"), "MTDBSA ID should be of 11 characters and a specific format")
+}
 
 object PropertyDetails {
   implicit val format: Format[PropertyDetails] = Json.format[PropertyDetails]
