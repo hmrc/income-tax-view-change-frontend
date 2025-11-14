@@ -170,7 +170,7 @@ class ReportingObligationsAuditService @Inject()(
 
   def sendAuditEvent(
                       optOutProposition: OptOutProposition,
-                      summaryCardSuffixes: List[Option[String]],
+                      summaryCardSuffixes: List[Option[String]]
                     )(implicit headerCarrier: HeaderCarrier,
                       messages: Messages,
                       ec: ExecutionContext,
