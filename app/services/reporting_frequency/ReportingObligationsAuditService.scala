@@ -46,132 +46,54 @@ class ReportingObligationsAuditService @Inject()(
                                                   reportingFrequencyViewUtils: ReportingFrequencyViewUtils
                                                 )(implicit val appConfig: FrontendAppConfig, val dateService: DateServiceInterface) extends Logging with MtdConstants with FeatureSwitching {
 
-  def buildOptOutCards(optOutProposition: OptOutProposition): Seq[ReportingObligationCard] =
-    optOutProposition.availableOptOutYears match {
-      case optOutTaxYears if optOutTaxYears.size == 1 =>
-        optOutTaxYears.map(optOutTaxYear =>
+  def buildCards(summaryCardSuffixes: List[Option[String]]): List[ReportingObligationCard] = {
+    summaryCardSuffixes.flatMap { suffix =>
+      suffix.map {
+        case "optOut.previousYear.onwards" =>
           ReportingObligationCard(
             journeyType = OptOut,
-            taxYear = optOutTaxYear.taxYear.startYear.toString,
-            singleYearOrOnwards = SingleTaxYear
-          )
-        )
-      case Seq(PreviousOptOutTaxYear(Voluntary, _, true), CurrentOptOutTaxYear(Voluntary, currentTaxYear), NextOptOutTaxYear(Voluntary, nextTaxYear, _)) =>
-        Seq(
-          ReportingObligationCard(
-            journeyType = OptOut,
-            taxYear = currentTaxYear.startYear.toString,
+            taxYear = dateService.getCurrentTaxYear.previousYear.startYear.toString,
             singleYearOrOnwards = Onwards
-          ),
+          )
+        case "optOut.previousYear.single" =>
           ReportingObligationCard(
             journeyType = OptOut,
-            taxYear = nextTaxYear.startYear.toString,
+            taxYear = dateService.getCurrentTaxYear.previousYear.startYear.toString,
             singleYearOrOnwards = SingleTaxYear
           )
-        )
-      case Seq(PreviousOptOutTaxYear(Voluntary, prevTaxYear, false), CurrentOptOutTaxYear(Voluntary, currentTaxYear), NextOptOutTaxYear(Voluntary, nextTaxYear, _)) =>
-        Seq(
+        case "optOut.currentYear.onwards" =>
           ReportingObligationCard(
             journeyType = OptOut,
-            taxYear = prevTaxYear.startYear.toString,
+            taxYear = dateService.getCurrentTaxYear.startYear.toString,
             singleYearOrOnwards = Onwards
-          ),
+          )
+        case "optOut.currentYear.single" =>
           ReportingObligationCard(
             journeyType = OptOut,
-            taxYear = currentTaxYear.startYear.toString,
+            taxYear = dateService.getCurrentTaxYear.startYear.toString,
+            singleYearOrOnwards = SingleTaxYear
+          )
+        case "signUp.currentYear.onwards" =>
+          ReportingObligationCard(
+            journeyType = SignUp,
+            taxYear = dateService.getCurrentTaxYear.startYear.toString,
             singleYearOrOnwards = Onwards
-          ),
+          )
+        case "optOut.nextYear" =>
           ReportingObligationCard(
             journeyType = OptOut,
-            taxYear = nextTaxYear.startYear.toString,
+            taxYear = dateService.getCurrentTaxYear.nextYear.startYear.toString,
             singleYearOrOnwards = SingleTaxYear
           )
-        )
-      case Seq(PreviousOptOutTaxYear(Voluntary, prevTaxYear, false), NextOptOutTaxYear(Voluntary, nextTaxYear, _)) =>
-        Seq(
+        case "signUp.nextYear" =>
           ReportingObligationCard(
-            journeyType = OptOut,
-            taxYear = prevTaxYear.startYear.toString,
-            singleYearOrOnwards = Onwards
-          ),
-          ReportingObligationCard(
-            journeyType = OptOut,
-            taxYear = nextTaxYear.startYear.toString,
+            journeyType = SignUp,
+            taxYear = dateService.getCurrentTaxYear.nextYear.startYear.toString,
             singleYearOrOnwards = SingleTaxYear
           )
-        )
-      case Seq(PreviousOptOutTaxYear(Voluntary, prevTaxYear, false), CurrentOptOutTaxYear(Voluntary, currentTaxYear)) =>
-        Seq(
-          ReportingObligationCard(
-            journeyType = OptOut,
-            taxYear = prevTaxYear.startYear.toString,
-            singleYearOrOnwards = Onwards
-          ),
-          ReportingObligationCard(
-            journeyType = OptOut,
-            taxYear = currentTaxYear.startYear.toString,
-            singleYearOrOnwards = SingleTaxYear
-          )
-        )
-      case Seq(CurrentOptOutTaxYear(Voluntary, currentTaxYear), NextOptOutTaxYear(Voluntary, nextTaxYear, _)) =>
-        Seq(
-          ReportingObligationCard(
-            journeyType = OptOut,
-            taxYear = currentTaxYear.startYear.toString,
-            singleYearOrOnwards = Onwards
-          ),
-          ReportingObligationCard(
-            journeyType = OptOut,
-            taxYear = nextTaxYear.startYear.toString,
-            singleYearOrOnwards = SingleTaxYear
-          )
-        )
-      case Seq(NextOptOutTaxYear(Voluntary, nextTaxYear, _)) =>
-        Seq(
-          ReportingObligationCard(
-            journeyType = OptOut,
-            taxYear = nextTaxYear.startYear.toString,
-            singleYearOrOnwards = SingleTaxYear
-          )
-        )
-      case _ =>
-        List.empty
+      }
     }
-
-  def buildSignUpCards(optInProposition: OptInProposition): Seq[ReportingObligationCard] =
-    optInProposition match {
-      case OptInProposition(CurrentOptInTaxYear(Annual, currentTaxYear), NextOptInTaxYear(Annual, nextTaxYear, _)) =>
-        Seq(
-          ReportingObligationCard(
-            journeyType = SignUp,
-            taxYear = currentTaxYear.startYear.toString,
-            singleYearOrOnwards = Onwards
-          ),
-          ReportingObligationCard(
-            journeyType = SignUp,
-            taxYear = nextTaxYear.startYear.toString,
-            singleYearOrOnwards = SingleTaxYear
-          )
-        )
-      case OptInProposition(CurrentOptInTaxYear(Annual, currentTaxYear), NextOptInTaxYear(_, _, _)) =>
-        Seq(
-          ReportingObligationCard(
-            journeyType = SignUp,
-            taxYear = currentTaxYear.startYear.toString,
-            singleYearOrOnwards = SingleTaxYear
-          )
-        )
-      case OptInProposition(CurrentOptInTaxYear(_, _), NextOptInTaxYear(Annual, nextTaxYear, _)) =>
-        Seq(
-          ReportingObligationCard(
-            journeyType = SignUp,
-            taxYear = nextTaxYear.startYear.toString,
-            singleYearOrOnwards = SingleTaxYear
-          )
-        )
-      case _ =>
-        List.empty
-    }
+  }
 
   def tableContentToItsaStatus(content: Option[String])(implicit messages: Messages, user: MtdItUser[_]): ITSAStatus = {
     if (isEnabled(OptInOptOutContentUpdateR17)) {
@@ -221,11 +143,11 @@ class ReportingObligationsAuditService @Inject()(
 
   def createAuditEvent(
                         optOutProposition: OptOutProposition,
-                        optInProposition: OptInProposition
+                        summaryCardSuffixes: List[Option[String]]
                       )(implicit messages: Messages, mtdItUser: MtdItUser[_]): ReportingObligationsAuditModel = {
 
     val links: List[String] =
-      (buildOptOutCards(optOutProposition) ++ buildSignUpCards(optInProposition)).map(_.auditModelToString()).toList
+      buildCards(summaryCardSuffixes).map(_.auditModelToString())
 
     ReportingObligationsAuditModel(
       agentReferenceNumber = mtdItUser.arn,
@@ -248,14 +170,14 @@ class ReportingObligationsAuditService @Inject()(
 
   def sendAuditEvent(
                       optOutProposition: OptOutProposition,
-                      optInProposition: OptInProposition
+                      summaryCardSuffixes: List[Option[String]],
                     )(implicit headerCarrier: HeaderCarrier,
                       messages: Messages,
                       ec: ExecutionContext,
                       mtdItUser: MtdItUser[_]
                     ): Future[AuditResult] = {
 
-    val auditEventModel = createAuditEvent(optOutProposition, optInProposition)
+    val auditEventModel = createAuditEvent(optOutProposition, summaryCardSuffixes)
 
     val transactionName: String =
       TransactionName.ReportingObligationsPage.name

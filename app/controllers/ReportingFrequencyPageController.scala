@@ -88,7 +88,7 @@ class ReportingFrequencyPageController @Inject()(
         result <-
           if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
             reportingObligationsAuditService
-              .sendAuditEvent(optOutProposition, optInProposition)
+              .sendAuditEvent(optOutProposition, viewModel.getSummaryCardSuffixes)
               .map { _ =>
                 Ok(
                   view(
