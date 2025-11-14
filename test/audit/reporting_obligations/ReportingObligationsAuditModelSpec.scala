@@ -27,157 +27,224 @@ class ReportingObligationsAuditModelSpec extends TestSupport {
 
   "ReportingObligationsAuditModel" when {
 
-    "is MTDIndividual and agent fields are None" should {
+    ".details()" when {
 
-      ".details()" in {
+      "is MTDIndividual and agent fields are None" should {
 
-        val details =
-          ReportingObligationsAuditModel(
-            agentReferenceNumber = None,
-            auditType = "fakeAuditType",
-            credId = Some("fakeCredId"),
-            mtditid = "fakeMtditid",
-            nino = "fakeNino",
-            saUtr = None,
-            userType = MTDIndividual,
-            grossIncomeThreshold = "£50,000",
-            crystallisationStatusForPreviousTaxYear = true,
-            itsaStatusTable =
-              List(
-                ItsaStatusTableDetails(
-                  taxYearPeriod = "CurrentTaxYear",
-                  taxYear = "2025",
-                  usingMakingTaxDigitalForIncomeTax = Some("Yes"),
-                  userCurrentItsaStatus = "Voluntary",
-                )
-              ),
-            links = List("OptOut2025Single")
-          ).detail
+        "return the correct json" in {
 
-        val expected = Json.obj(
-          "auditType" -> "fakeAuditType",
-          "credId" -> "fakeCredId",
-          "mtditid" -> "fakeMtditid",
-          "nino" -> "fakeNino",
-          "userType" -> "MTDIndividual",
-          "grossIncomeThreshold" -> "£50,000",
-          "crystallisationStatusForPreviousTaxYear" -> true,
-          "itsaStatusTable" -> Json.arr(
-            Json.obj(
-              "taxYearPeriod" -> "CurrentTaxYear",
-              "taxYear" -> "2025",
-              "usingMakingTaxDigitalForIncomeTax" -> "Yes",
-              "userCurrentItsaStatus" -> "Voluntary"
-            )
-          ),
-          "links" -> Json.arr("OptOut2025Single")
-        )
+          val details =
+            ReportingObligationsAuditModel(
+              agentReferenceNumber = None,
+              auditType = "fakeAuditType",
+              credId = Some("fakeCredId"),
+              mtditid = "fakeMtditid",
+              nino = "fakeNino",
+              saUtr = None,
+              userType = MTDIndividual,
+              grossIncomeThreshold = "£50,000",
+              crystallisationStatusForPreviousTaxYear = true,
+              itsaStatusTable =
+                List(
+                  ItsaStatusTableDetails(
+                    taxYearPeriod = "CurrentTaxYear",
+                    taxYear = "2025",
+                    usingMakingTaxDigitalForIncomeTax = Some("Yes"),
+                    userCurrentItsaStatus = "Voluntary",
+                  )
+                ),
+              links = List("OptOut2025Single")
+            ).detail
 
-        details shouldBe expected
+          val expected = Json.obj(
+            "auditType" -> "fakeAuditType",
+            "credId" -> "fakeCredId",
+            "mtditid" -> "fakeMtditid",
+            "nino" -> "fakeNino",
+            "userType" -> "MTDIndividual",
+            "grossIncomeThreshold" -> "£50,000",
+            "crystallisationStatusForPreviousTaxYear" -> true,
+            "itsaStatusTable" -> Json.arr(
+              Json.obj(
+                "taxYearPeriod" -> "CurrentTaxYear",
+                "taxYear" -> "2025",
+                "usingMakingTaxDigitalForIncomeTax" -> "Yes",
+                "userCurrentItsaStatus" -> "Voluntary"
+              )
+            ),
+            "links" -> Json.arr("OptOut2025Single")
+          )
+
+          details shouldBe expected
+        }
       }
-    }
 
-    "is an MTDPrimaryAgent and agent fields are present" should {
+      "is an MTDPrimaryAgent and agent fields are present" should {
 
-      ".details()" in {
+        "return the correct json" in {
 
-        val details =
-          ReportingObligationsAuditModel(
-            agentReferenceNumber = Some("fakeagentReferenceNumber"),
-            auditType = "fakeAuditType",
-            credId = Some("fakeCredId"),
-            mtditid = "fakeMtditid",
-            nino = "fakeNino",
-            saUtr = Some("fakeSAUTR"),
-            userType = MTDPrimaryAgent,
-            grossIncomeThreshold = "£50,000",
-            crystallisationStatusForPreviousTaxYear = true,
-            itsaStatusTable =
-              List(
-                ItsaStatusTableDetails(
-                  taxYearPeriod = "CurrentTaxYear",
-                  taxYear = "2025",
-                  usingMakingTaxDigitalForIncomeTax = Some("Yes"),
-                  userCurrentItsaStatus = "Voluntary",
-                )
-              ),
-            links = List("OptOut2025Single")
-          ).detail
+          val details =
+            ReportingObligationsAuditModel(
+              agentReferenceNumber = Some("fakeagentReferenceNumber"),
+              auditType = "fakeAuditType",
+              credId = Some("fakeCredId"),
+              mtditid = "fakeMtditid",
+              nino = "fakeNino",
+              saUtr = Some("fakeSAUTR"),
+              userType = MTDPrimaryAgent,
+              grossIncomeThreshold = "£50,000",
+              crystallisationStatusForPreviousTaxYear = true,
+              itsaStatusTable =
+                List(
+                  ItsaStatusTableDetails(
+                    taxYearPeriod = "CurrentTaxYear",
+                    taxYear = "2025",
+                    usingMakingTaxDigitalForIncomeTax = Some("Yes"),
+                    userCurrentItsaStatus = "Voluntary",
+                  )
+                ),
+              links = List("OptOut2025Single")
+            ).detail
 
-        val expected = Json.obj(
-          "agentReferenceNumber" -> "fakeagentReferenceNumber",
-          "auditType" -> "fakeAuditType",
-          "credId" -> "fakeCredId",
-          "mtditid" -> "fakeMtditid",
-          "nino" -> "fakeNino",
-          "saUtr" -> "fakeSAUTR",
-          "userType" -> "MTDPrimaryAgent",
-          "grossIncomeThreshold" -> "£50,000",
-          "crystallisationStatusForPreviousTaxYear" -> true,
-          "itsaStatusTable" -> Json.arr(
-            Json.obj(
-              "taxYearPeriod" -> "CurrentTaxYear",
-              "taxYear" -> "2025",
-              "usingMakingTaxDigitalForIncomeTax" -> "Yes",
-              "userCurrentItsaStatus" -> "Voluntary"
-            )
-          ),
-          "links" -> Json.arr("OptOut2025Single")
-        )
+          val expected = Json.obj(
+            "agentReferenceNumber" -> "fakeagentReferenceNumber",
+            "auditType" -> "fakeAuditType",
+            "credId" -> "fakeCredId",
+            "mtditid" -> "fakeMtditid",
+            "nino" -> "fakeNino",
+            "saUtr" -> "fakeSAUTR",
+            "userType" -> "MTDPrimaryAgent",
+            "grossIncomeThreshold" -> "£50,000",
+            "crystallisationStatusForPreviousTaxYear" -> true,
+            "itsaStatusTable" -> Json.arr(
+              Json.obj(
+                "taxYearPeriod" -> "CurrentTaxYear",
+                "taxYear" -> "2025",
+                "usingMakingTaxDigitalForIncomeTax" -> "Yes",
+                "userCurrentItsaStatus" -> "Voluntary"
+              )
+            ),
+            "links" -> Json.arr("OptOut2025Single")
+          )
 
-        details shouldBe expected
+          details shouldBe expected
+        }
       }
-    }
 
-    "is an MTDSupportingAgent and agent fields are present" should {
+      "is an MTDSupportingAgent and agent fields are present" should {
 
-      ".details()" in {
+        "return the correct json" in {
 
-        val details =
-          ReportingObligationsAuditModel(
-            agentReferenceNumber = Some("fakeagentReferenceNumber"),
-            auditType = "fakeAuditType",
-            credId = Some("fakeCredId"),
-            mtditid = "fakeMtditid",
-            nino = "fakeNino",
-            saUtr = Some("fakeSAUTR"),
-            userType = MTDSupportingAgent,
-            grossIncomeThreshold = "£50,000",
-            crystallisationStatusForPreviousTaxYear = true,
-            itsaStatusTable =
-              List(
-                ItsaStatusTableDetails(
-                  taxYearPeriod = "CurrentTaxYear",
-                  taxYear = "2025",
-                  usingMakingTaxDigitalForIncomeTax = Some("Yes"),
-                  userCurrentItsaStatus = "Voluntary",
-                )
+          val details =
+            ReportingObligationsAuditModel(
+              agentReferenceNumber = Some("fakeagentReferenceNumber"),
+              auditType = "fakeAuditType",
+              credId = Some("fakeCredId"),
+              mtditid = "fakeMtditid",
+              nino = "fakeNino",
+              saUtr = Some("fakeSAUTR"),
+              userType = MTDSupportingAgent,
+              grossIncomeThreshold = "£50,000",
+              crystallisationStatusForPreviousTaxYear = true,
+              itsaStatusTable =
+                List(
+                  ItsaStatusTableDetails(
+                    taxYearPeriod = "CurrentTaxYear",
+                    taxYear = "2025",
+                    usingMakingTaxDigitalForIncomeTax = Some("Yes"),
+                    userCurrentItsaStatus = "Voluntary",
+                  )
+                ),
+              links = List("OptOut2025Single")
+            ).detail
+
+          val expected = Json.obj(
+            "agentReferenceNumber" -> "fakeagentReferenceNumber",
+            "auditType" -> "fakeAuditType",
+            "credId" -> "fakeCredId",
+            "mtditid" -> "fakeMtditid",
+            "nino" -> "fakeNino",
+            "saUtr" -> "fakeSAUTR",
+            "userType" -> "MTDSupportingAgent",
+            "grossIncomeThreshold" -> "£50,000",
+            "crystallisationStatusForPreviousTaxYear" -> true,
+            "itsaStatusTable" -> Json.arr(
+              Json.obj(
+                "taxYearPeriod" -> "CurrentTaxYear",
+                "taxYear" -> "2025",
+                "usingMakingTaxDigitalForIncomeTax" -> "Yes",
+                "userCurrentItsaStatus" -> "Voluntary"
+              )
+            ),
+            "links" -> Json.arr("OptOut2025Single")
+          )
+
+          details shouldBe expected
+        }
+      }
+
+      "there are multiple table rows and links" should {
+
+        "return the correct json" in {
+
+          val details =
+            ReportingObligationsAuditModel(
+              agentReferenceNumber = Some("fakeagentReferenceNumber"),
+              auditType = "fakeAuditType",
+              credId = Some("fakeCredId"),
+              mtditid = "fakeMtditid",
+              nino = "fakeNino",
+              saUtr = Some("fakeSAUTR"),
+              userType = MTDSupportingAgent,
+              grossIncomeThreshold = "£50,000",
+              crystallisationStatusForPreviousTaxYear = true,
+              itsaStatusTable =
+                List(
+                  ItsaStatusTableDetails(
+                    taxYearPeriod = "CurrentTaxYear",
+                    taxYear = "2025",
+                    usingMakingTaxDigitalForIncomeTax = Some("Yes"),
+                    userCurrentItsaStatus = "Voluntary",
+                  ),
+                  ItsaStatusTableDetails(
+                    taxYearPeriod = "NextTaxYear",
+                    taxYear = "2026",
+                    usingMakingTaxDigitalForIncomeTax = Some("Yes"),
+                    userCurrentItsaStatus = "Voluntary",
+                  )
+                ),
+              links = List("OptOut2025Onwards", "OptOut2026SingleTaxYear")
+            ).detail
+
+          val expected = Json.obj(
+            "agentReferenceNumber" -> "fakeagentReferenceNumber",
+            "auditType" -> "fakeAuditType",
+            "credId" -> "fakeCredId",
+            "mtditid" -> "fakeMtditid",
+            "nino" -> "fakeNino",
+            "saUtr" -> "fakeSAUTR",
+            "userType" -> "MTDSupportingAgent",
+            "grossIncomeThreshold" -> "£50,000",
+            "crystallisationStatusForPreviousTaxYear" -> true,
+            "itsaStatusTable" -> Json.arr(
+              Json.obj(
+                "taxYearPeriod" -> "CurrentTaxYear",
+                "taxYear" -> "2025",
+                "usingMakingTaxDigitalForIncomeTax" -> "Yes",
+                "userCurrentItsaStatus" -> "Voluntary"
               ),
-            links = List("OptOut2025Single")
-          ).detail
+              Json.obj(
+                "taxYearPeriod" -> "NextTaxYear",
+                "taxYear" -> "2026",
+                "usingMakingTaxDigitalForIncomeTax" -> "Yes",
+                "userCurrentItsaStatus" -> "Voluntary"
+              )
+            ),
+            "links" -> Json.arr("OptOut2025Onwards", "OptOut2026SingleTaxYear")
+          )
 
-        val expected = Json.obj(
-          "agentReferenceNumber" -> "fakeagentReferenceNumber",
-          "auditType" -> "fakeAuditType",
-          "credId" -> "fakeCredId",
-          "mtditid" -> "fakeMtditid",
-          "nino" -> "fakeNino",
-          "saUtr" -> "fakeSAUTR",
-          "userType" -> "MTDSupportingAgent",
-          "grossIncomeThreshold" -> "£50,000",
-          "crystallisationStatusForPreviousTaxYear" -> true,
-          "itsaStatusTable" -> Json.arr(
-            Json.obj(
-              "taxYearPeriod" -> "CurrentTaxYear",
-              "taxYear" -> "2025",
-              "usingMakingTaxDigitalForIncomeTax" -> "Yes",
-              "userCurrentItsaStatus" -> "Voluntary"
-            )
-          ),
-          "links" -> Json.arr("OptOut2025Single")
-        )
-
-        details shouldBe expected
+          details shouldBe expected
+        }
       }
     }
   }
