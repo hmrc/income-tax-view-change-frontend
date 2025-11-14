@@ -17,7 +17,7 @@
 package services.optout
 
 import audit.AuditingService
-import audit.models.{OptOutMultipleYears, OptOutNewAuditModel, OptOutSingleYear}
+import audit.models.OptOutNewAuditModel
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
@@ -111,24 +111,6 @@ class OptOutSubmissionService @Inject()(
     }
   }
 
-  private[services] def createAuditEvent(
-                                          intentTaxYear: Option[String],
-                                          taxYearsToUpdate: List[TaxYear]
-                                        )(implicit user: MtdItUser[_], headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-
-    intentTaxYear match {
-      case Some(taxYear) =>
-        val optOutType = if (taxYearsToUpdate.size > 1) {
-          OptOutMultipleYears
-        } else {
-          OptOutSingleYear
-        }
-
-        auditingService.extendedAudit(OptOutNewAuditModel(taxYear, optOutType))
-      case _ => Future.unit
-    }
-  }
-
   def updateTaxYearsITSAStatusRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusUpdateResponse]] = {
     for {
       maybeSessionData: Option[OptOutSessionData] <- getOptOutSessionData()
@@ -142,7 +124,7 @@ class OptOutSubmissionService @Inject()(
       _ = logger.debug(s"[OptOutSubmissionService][updateTaxYearsITSAStatusRequest] Making update requests for tax years: $taxYearsToUpdate")
       makeUpdateRequestsForEachYear: List[ITSAStatusUpdateResponse] <- Future.sequence(taxYearsToUpdate.map(taxYear => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear, user.nino, optOutUpdateReason)))
       _ = logger.debug(s"[OptOutSubmissionService][updateTaxYearsITSAStatusRequest] ITSA Status Update Responses: $makeUpdateRequestsForEachYear")
-      _ = createAuditEvent(maybeSelectedTaxYear, taxYearsToUpdate)
+      _ = auditingService.extendedAudit(OptOutNewAuditModel(taxYearsToUpdate.map(_.toString)))
     } yield {
       makeUpdateRequestsForEachYear
     }

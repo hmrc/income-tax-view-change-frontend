@@ -22,25 +22,14 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.libs.json.{JsValue, Json}
 
-case class OptOutNewAuditModel(optOutTaxYear: String,
-                               optOutType: OptOutType)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
+case class OptOutNewAuditModel(optOutTaxYear: Seq[String])(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
   override val transactionName: String = enums.TransactionName.OptOutTaxYearsPage
   override val auditType: String = enums.AuditType.OptOutTaxYearsPage
 
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++
       Json.obj(
-        "optOutTaxYear" -> optOutTaxYear,
-        "optOutType" -> optOutType.toString
+        "optOutTaxYears" -> Json.toJson(optOutTaxYear)
       )
 }
 
-sealed trait OptOutType
-
-case object OptOutSingleYear extends OptOutType {
-  override def toString: String = "SingleYear"
-}
-
-case object OptOutMultipleYears extends OptOutType {
-  override def toString: String = "MultiYear"
-}

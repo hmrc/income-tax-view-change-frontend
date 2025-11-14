@@ -16,7 +16,7 @@
 
 package controllers.optOut.newJourney
 
-import audit.models.{OptOutMultipleYears, OptOutNewAuditModel, OptOutSingleYear}
+import audit.models.OptOutNewAuditModel
 import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
@@ -686,7 +686,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
         whenReady(buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("opt-out-tax-year-question" -> Seq("Yes")))) { result => {
           AuditStub.verifyAuditEvent(
-            OptOutNewAuditModel("2022-2023", OptOutSingleYear)(testUser(mtdUserRole))
+            OptOutNewAuditModel(Seq("2022-2023"))(testUser(mtdUserRole))
           )
 
           result should have(
@@ -755,7 +755,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
         whenReady(buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("opt-out-tax-year-question" -> Seq("Yes")))) { result => {
           AuditStub.verifyAuditEvent(
-            OptOutNewAuditModel("2022-2023", OptOutMultipleYears)(testUser(mtdUserRole))
+            OptOutNewAuditModel(Seq("2022-2023", "2023-2024"))(testUser(mtdUserRole))
           )
 
           result should have(

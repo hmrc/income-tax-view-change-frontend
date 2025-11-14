@@ -17,7 +17,7 @@
 package services.optIn
 
 import audit.AuditingService
-import audit.models.{SignUpAuditModel, SignUpMultipleYears, SignUpSingleYear}
+import audit.models.SignUpAuditModel
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
@@ -61,10 +61,13 @@ class SignUpSubmissionService @Inject()(
 
     (selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus) match {
       case (Some(selectedTaxYear), Annual, nyStatus) if selectedTaxYear == currentTaxYear =>
-        val signUpYearType = if (nyStatus == Annual) SignUpMultipleYears else SignUpSingleYear
-        auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, currentYearItsaStatus, signUpYearType))
+        if(nyStatus == Annual) {
+          auditingService.extendedAudit(SignUpAuditModel(Seq(selectedTaxYear.toString, nextTaxYear.toString), currentYearItsaStatus))
+        }else {
+          auditingService.extendedAudit(SignUpAuditModel(Seq(selectedTaxYear.toString), currentYearItsaStatus))
+        }
       case (Some(selectedTaxYear), _, Annual) if selectedTaxYear == nextTaxYear =>
-        auditingService.extendedAudit(SignUpAuditModel(selectedTaxYear, nextYearItsaStatus, SignUpMultipleYears))
+        auditingService.extendedAudit(SignUpAuditModel(Seq(selectedTaxYear.toString), nextYearItsaStatus))
       case _ => Future(())
     }
   }
