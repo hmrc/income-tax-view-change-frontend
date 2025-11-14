@@ -33,19 +33,21 @@ case class ReportingObligationsAuditModel(
                                            links: List[String]
                                          ) {
 
-  def detail: JsObject =
+  def detail: JsObject = {
     Json.obj(
-      "agentReferenceNumber" -> agentReferenceNumber,
-      "credId" -> credId,
+      "auditType" -> auditType,
       "mtditid" -> mtditid,
       "nino" -> nino,
-      "saUtr" -> saUtr,
       "userType" -> userType.toString,
       "grossIncomeThreshold" -> grossIncomeThreshold,
       "crystallisationStatusForPreviousTaxYear" -> crystallisationStatusForPreviousTaxYear,
       "itsaStatusTable" -> Json.toJson(itsaStatusTable),
       "links" -> links
-    )
+    ) ++
+      agentReferenceNumber.fold(Json.obj())(value => Json.obj("agentReferenceNumber" -> value)) ++
+      credId.fold(Json.obj())(value => Json.obj("credId" -> value)) ++
+      saUtr.fold(Json.obj())(value => Json.obj("saUtr" -> value))
+  }
 
 }
 

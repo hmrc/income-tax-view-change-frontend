@@ -759,12 +759,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
                 nextTaxYear = NextOptOutTaxYear(Annual, TaxYear(2026, 2027), CurrentOptOutTaxYear(Annual, TaxYear(2025, 2026)))
               )
 
-            val optInProposition =
-              OptInProposition(
-                currentTaxYear = CurrentOptInTaxYear(Annual, TaxYear(2025, 2026)),
-                nextTaxYear = NextOptInTaxYear(Annual, TaxYear(2026, 2027), CurrentOptInTaxYear(Annual, TaxYear(2025, 2026)))
-              )
-
             val mockContentToReturn =
               Seq(
                 ("2025 to 2026", Some("No"), Some(messages("reporting.frequency.table.annual.r17"))),
@@ -842,7 +836,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         }
       }
 
-      "Audit failed" should {
+      "Audit failed" when {
 
         "all years are Voluntary" should {
 
@@ -855,12 +849,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
                 previousTaxYear = PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), true),
                 currentTaxYear = CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)),
                 nextTaxYear = NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Voluntary, TaxYear(2025, 2026)))
-              )
-
-            val optInProposition =
-              OptInProposition(
-                currentTaxYear = CurrentOptInTaxYear(Voluntary, TaxYear(2025, 2026)),
-                nextTaxYear = NextOptInTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptInTaxYear(Voluntary, TaxYear(2025, 2026)))
               )
 
             val mockContentToReturn =
