@@ -96,7 +96,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     "render the page correctly" when {
       def runPageContenttest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
         "render the heading" in new Setup(false, incomeSourceType, true) {
-          document.getElementsByClass("govuk-heading-l").text() shouldBe "Confirm this information is correct"
+          document.getElementsByClass("govuk-heading-xl").text() shouldBe "Confirm this information is correct"
         }
 
         if (incomeSourceType == SelfEmployment) {
@@ -167,7 +167,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     "render the page without the accounting method" when {
       def runPageContentTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
         "render the heading" in new Setup(false, incomeSourceType, true) {
-          document.getElementsByClass("govuk-heading-l").text() shouldBe "Confirm this information is correct"
+          document.getElementsByClass("govuk-heading-xl").text() shouldBe "Confirm this information is correct"
         }
 
         "obfuscate the accounting method" in new Setup(isAgent, incomeSourceType, false) {

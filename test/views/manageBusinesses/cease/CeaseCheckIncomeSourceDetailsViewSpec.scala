@@ -72,17 +72,17 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
   "CeaseCheckIncomeSourceDetailsView - Individual" should {
     "render the heading - Self employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment, viewModelSE) {
       document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages(s"cease-check-answers.caption"))
-      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
+      document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("cease-check-answers.title")
 
     }
     "render the heading - Foreign property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty, viewModelFP) {
       document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-fp.caption"))
-      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
+      document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("cease-check-answers.title")
 
     }
     "render the heading - Uk Property " in new Setup(isAgent = false, incomeSourceType = UkProperty, viewModelUK) {
       document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-uk.caption"))
-      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
+      document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("cease-check-answers.title")
     }
 
     "render the back link with the correct URL" in new Setup(isAgent = false, incomeSourceType = SelfEmployment, viewModelSE) {
@@ -140,17 +140,17 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
   "CeaseCheckIncomeSourceDetailsView - Agent" should {
     "render the heading - Self employment" in new Setup(isAgent = true, incomeSourceType = SelfEmployment, viewModelSE) {
       document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages(s"cease-check-answers.heading"))
-      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
+      document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("cease-check-answers.title")
 
     }
     "render the heading - Foreign property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty, viewModelFP) {
       document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-fp.caption"))
-      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
+      document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("cease-check-answers.title")
 
     }
     "render the heading - Uk Property " in new Setup(isAgent = false, incomeSourceType = UkProperty, viewModelUK) {
       document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(messages("cease-check-answers-uk.caption"))
-      document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("cease-check-answers.title")
+      document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("cease-check-answers.title")
     }
 
     "render the back link with the correct URL" in new Setup(isAgent = true, incomeSourceType = SelfEmployment, viewModelSE) {
