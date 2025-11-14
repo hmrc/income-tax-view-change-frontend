@@ -17,7 +17,7 @@
 package controllers
 
 import audit.AuditingService
-import audit.models.{ChargeSummaryAudit, PaymentAllocationsResponseAuditModel}
+import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
@@ -31,7 +31,7 @@ import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.core.Nino
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
+import models.paymentAllocationCharges.PaymentAllocationViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -181,10 +181,6 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
             if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
             else controllers.routes.WhatYouOweController.show(origin).url
           }
-          val saChargesUrl: String = {
-            if (isAgent) controllers.routes.YourSelfAssessmentChargesController.showAgent().url
-            else controllers.routes.YourSelfAssessmentChargesController.show(origin).url
-          }
 
           chargeReference match {
             case Some(chargeRef) =>
@@ -219,9 +215,9 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                 mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
                   case Right(_) => Ok {
                     if (chargeItem.isIncludedInSACSummary(isInterestCharge)) {
-                      yourSelfAssessmentChargeSummary(viewModel, allocationData, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
+                      yourSelfAssessmentChargeSummary(viewModel, allocationData, whatYouOweUrl)
                     } else
-                      chargeSummaryView(viewModel, whatYouOweUrl, saChargesUrl, isEnabled(YourSelfAssessmentCharges))
+                      chargeSummaryView(viewModel, whatYouOweUrl)
                   }
                   case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
                 }

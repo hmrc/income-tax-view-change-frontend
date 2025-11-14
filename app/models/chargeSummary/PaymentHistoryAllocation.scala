@@ -33,7 +33,7 @@ case class PaymentHistoryAllocations (allocations: Seq[PaymentHistoryAllocation]
   }
 }
 
-case class PaymentHistoryAllocation (dueDate: Option[LocalDate], amount: Option[BigDecimal], clearingSAPDocument: Option[String], clearingId: Option[String]) {
+case class PaymentHistoryAllocation (dueDate: Option[LocalDate], amount: Option[BigDecimal], clearingSAPDocument: Option[String], clearingId: Option[String], taxYear: Option[String], isCredit: Boolean = false) {
 
   def getDueDateOrThrow = {
     dueDate.getOrElse(throw MissingFieldException("Payment Date"))

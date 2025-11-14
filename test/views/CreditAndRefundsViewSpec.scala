@@ -62,7 +62,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
                    isAgent: Boolean = false,
                    backUrl: String = "testString",
                    welshLang: Boolean  = false,
-                   yourSelfAssessmentChargesFS: Boolean = false,
                    claimARefundR18Enabled: Boolean = true) {
 
     val testMessages: Messages = if(welshLang) {
@@ -75,9 +74,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       creditAndRefundView(
         viewModel,
         isAgent = isAgent,
-        backUrl,
-        yourSelfAssessmentChargesFS
-      )(FakeRequest(), implicitly, testMessages)
+        backUrl)(FakeRequest(), implicitly, testMessages)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
@@ -242,63 +239,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
               "If you claim any of this money, you will need to pay it back to HMRC to settle your upcoming tax bill."
             document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
           }
-
-          "is more than available credit and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-            creditAndRefundModel = ANewCreditAndRefundModel()
-              .withAvailableCredit(500.0)
-              .withAllocatedFutureCredit(600.0)
-              .withTotalCredit(500.0)
-              .withAllocatedOverdueCredit(250.0)
-              .get(),
-            yourSelfAssessmentChargesFS = true
-          ) {
-            document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-            layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-            layoutContent.selectFirst("p").text shouldBe "£500.00 is in your account"
-            layoutContent.select("p").get(1).text shouldBe
-              "HMRC has reserved £600.00 of this to cover your upcoming tax bill. Check your Self Assessment charges for more information."
-            layoutContent.selectFirst(".govuk-inset-text").text shouldBe
-              "If you claim any of this money, you will need to pay it back to HMRC to settle your upcoming tax bill."
-            document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
-          }
-
-          "is less than available credit and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-            creditAndRefundModel = ANewCreditAndRefundModel()
-              .withAvailableCredit(500.0)
-              .withTotalCredit(500.0)
-              .withAllocatedFutureCredit(100.0)
-              .withUnallocatedCredit(400.0)
-              .withAllocatedOverdueCredit(250.0)
-              .get(),
-            yourSelfAssessmentChargesFS = true) {
-            document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-            layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-            layoutContent.selectFirst("p").text shouldBe "£500.00 is in your account"
-            layoutContent.select("p").get(1).text shouldBe
-              "HMRC has reserved £100.00 of this to cover your upcoming tax bill. Check your Self Assessment charges for more information."
-            layoutContent.selectFirst(".govuk-inset-text").text shouldBe
-              "If you claim back more than £400.00, you will need to make another payment to HMRC to settle your upcoming tax bill."
-            document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
-          }
-
-          "is equal to available credit and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-            creditAndRefundModel = ANewCreditAndRefundModel()
-              .withAvailableCredit(500.0)
-              .withTotalCredit(500.0)
-              .withAllocatedFutureCredit(500.0)
-              .withAllocatedOverdueCredit(250.0)
-              .get(),
-            yourSelfAssessmentChargesFS = true
-          ) {
-            document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-            layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-            layoutContent.selectFirst("p").text shouldBe "£500.00 is in your account"
-            layoutContent.select("p").get(1).text shouldBe
-              "HMRC has reserved all £500.00 to cover your upcoming tax bill. Check your Self Assessment charges for more information."
-            layoutContent.selectFirst(".govuk-inset-text").text shouldBe
-              "If you claim any of this money, you will need to pay it back to HMRC to settle your upcoming tax bill."
-            document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
-          }
         }
       }
 
@@ -357,66 +297,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             layoutContent.selectFirst("p").text shouldBe "£500.00 is in your account"
             layoutContent.select("p").get(1).text shouldBe
               "HMRC has reserved all £500.00 to cover your upcoming tax bill. Check what you owe for further information."
-            layoutContent.selectFirst(".govuk-inset-text").text shouldBe
-              "If you claim any of this money, you will need to pay it back to HMRC to settle your upcoming tax bill."
-            document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
-          }
-
-          "is more than available credit and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-            creditAndRefundModel = ANewCreditAndRefundModel()
-              .withAvailableCredit(500.0)
-              .withAllocatedFutureCredit(600.0)
-              .withTotalCredit(700.0)
-              .withAllocatedOverdueCredit(1250.0)
-              .get(),
-            yourSelfAssessmentChargesFS = true,
-            claimARefundR18Enabled = false
-          ) {
-            document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-            layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-            layoutContent.selectFirst("p").text shouldBe "£500.00 is in your account"
-            layoutContent.select("p").get(1).text shouldBe
-              "HMRC has reserved £1,250.00 of this to cover your upcoming tax bill. Check your Self Assessment charges for more information."
-            layoutContent.selectFirst(".govuk-inset-text").text shouldBe
-              "If you claim any of this money, you will need to pay it back to HMRC to settle your upcoming tax bill."
-            document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
-          }
-
-          "is less than available credit and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-            creditAndRefundModel = ANewCreditAndRefundModel()
-              .withAvailableCredit(500.0)
-              .withTotalCredit(600.0)
-              .withAllocatedFutureCredit(150.0)
-              .withUnallocatedCredit(300.0)
-              .withAllocatedOverdueCredit(100.0)
-              .get(),
-            yourSelfAssessmentChargesFS = true,
-            claimARefundR18Enabled = false) {
-            document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-            layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-            layoutContent.selectFirst("p").text shouldBe "£500.00 is in your account"
-            layoutContent.select("p").get(1).text shouldBe
-              "HMRC has reserved £100.00 of this to cover your upcoming tax bill. Check your Self Assessment charges for more information."
-            layoutContent.selectFirst(".govuk-inset-text").text shouldBe
-              "If you claim back more than £400.00, you will need to make another payment to HMRC to settle your upcoming tax bill."
-            document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
-          }
-
-          "is equal to available credit and have SACharges links when yourSelfAssessmentChargesFS is true" in new TestSetup(
-            creditAndRefundModel = ANewCreditAndRefundModel()
-              .withAvailableCredit(500.0)
-              .withTotalCredit(600.0)
-              .withAllocatedFutureCredit(250.0)
-              .withAllocatedOverdueCredit(500.0)
-              .get(),
-            yourSelfAssessmentChargesFS = true,
-            claimARefundR18Enabled = false
-          ) {
-            document.title() shouldBe creditAndRefundHeadingWithTitleServiceNameGovUk
-            layoutContent.selectHead("h1").text shouldBe creditAndRefundHeading
-            layoutContent.selectFirst("p").text shouldBe "£500.00 is in your account"
-            layoutContent.select("p").get(1).text shouldBe
-              "HMRC has reserved all £500.00 to cover your upcoming tax bill. Check your Self Assessment charges for more information."
             layoutContent.selectFirst(".govuk-inset-text").text shouldBe
               "If you claim any of this money, you will need to pay it back to HMRC to settle your upcoming tax bill."
             document.select("#main-content .govuk-button").first().text() shouldBe claimBtn

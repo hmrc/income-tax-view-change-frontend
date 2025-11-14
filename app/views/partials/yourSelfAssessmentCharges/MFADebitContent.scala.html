@@ -15,26 +15,23 @@
  *@
 
 @import views.html.components._
-@import views.helpers.yourSelfAssessmentChargesSummary.YSACSummaryLangHelper._
 
 @this(
-    p: p,
-    link: link
+        p: p,
+        link: link,
+        bulletPointList: bulletPointList,
 )
 
 @(
-    selfServeTimeToPayStartUrl: String
+
 )(
-    implicit messages: Messages
+        implicit request: Request[_],
+        messages: Messages
 )
 
-@p(id = Some("payment-plan")) {
-    @getMessage("payment-plan-1")
-    @link(
-        link = selfServeTimeToPayStartUrl,
-        messageKey = getMessage("payment-plan-link-text"),
-        id = Some("payment-plan-link"),
-        target = Some("_blank"),
-        outerMessage = "."
-    )
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
+
+@p(id = Some("credit-created-text")){ @getMessage("definition.hmrcadjustment")}
+

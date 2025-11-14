@@ -102,7 +102,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
   val poa1CollectedCodedOut = messages("whatYouOwe.poa1CodedOut.text")
   val poa2CollectedCodedOut = messages("whatYouOwe.poa2CodedOut.text")
-  val paymentPlanText: String = s"${messages("selfAssessmentCharges.payment-plan-1")} ${messages("selfAssessmentCharges.payment-plan-link-text")} (opens in new tab)."
 
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)

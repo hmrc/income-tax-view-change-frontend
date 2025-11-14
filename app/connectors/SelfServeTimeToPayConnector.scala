@@ -34,15 +34,6 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
                                            )(implicit ec: ExecutionContext) {
   val journeyStartUrl: String = config.setUpAPaymentPlanUrl + "/essttp-backend/sa/itsa/journey/start"
 
-  private val bodyYSAC: JsValue = Json.parse(
-    s"""
-       {
-        "returnUrl": "/report-quarterly/income-and-expenses/view",
-        "backUrl": "/report-quarterly/income-and-expenses/view/your-self-assessment-charges"
-       }
-      """.stripMargin
-  )
-
   private val bodyWYO: JsValue = Json.parse(
     s"""
        {
@@ -52,10 +43,9 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
       """.stripMargin
   )
 
-  def startSelfServeTimeToPayJourney(yourSelfAssessmentChargesEnabled: Boolean)
-                                    (implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
+  def startSelfServeTimeToPayJourney(implicit hc: HeaderCarrier): Future[SelfServeTimeToPayJourneyResponse] = {
 
-    val body = if (yourSelfAssessmentChargesEnabled) bodyYSAC else bodyWYO
+    val body = bodyWYO
 
     http
       .post(url"$journeyStartUrl")
