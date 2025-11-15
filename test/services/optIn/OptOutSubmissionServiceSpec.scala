@@ -18,11 +18,13 @@ package services.optIn
 
 import audit.AuditingService
 import audit.models.{OptOutAuditModel, Outcome}
+import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import enums.JourneyType.{Opt, OptOutJourney}
 import models.UIJourneySessionData
-import models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus._
 import models.optout.{OptOutSessionData, OptOutYearToUpdate}
 import org.mockito.ArgumentMatchers.any
@@ -30,7 +32,7 @@ import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import services.optout.OptOutSubmissionService
-import testConstants.BaseTestConstants.testSessionId
+import testConstants.BaseTestConstants.{testNino, testSessionId, testUserTypeIndividual}
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

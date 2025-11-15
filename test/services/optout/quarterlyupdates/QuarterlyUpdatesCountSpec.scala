@@ -30,7 +30,7 @@ import play.mvc.Http.Status
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.{OptOutService, OptOutTestSupport}
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.{DateService, NextUpdatesService}
 import testConstants.BaseTestConstants.testNino
 import testConstants.NextUpdatesTestConstants.obligationsDataFromJson

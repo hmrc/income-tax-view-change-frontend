@@ -29,20 +29,28 @@ class MtdConstantsSpec extends TestSupport with MockDateService {
     override val dateService: DateService = mockDateService
   }
 
-  class setup(date: LocalDate) {
-    when(mockDateService.getCurrentDate).thenReturn(date)
-  }
-
   "mtdConstants" when {
+
     "getMtdThreshold is called" should {
-      "return the base threshold before 6 April 2027" in new setup(LocalDate.of(2027, 4, 5)) {
-        mtdConstants.getMtdThreshold shouldBe "£50,000"
+
+      "return the base threshold before 6 April 2027" in {
+
+        val fakeDate = LocalDate.of(2027, 4, 5)
+        when(mockDateService.getCurrentDate).thenReturn(fakeDate)
+
+        mtdConstants.getMtdThreshold() shouldBe "£50,000"
       }
-      "return the threshold from 6 April 2027 to 5 April 2028" in new setup(LocalDate.of(2027, 4, 6)) {
-        mtdConstants.getMtdThreshold shouldBe "£30,000"
+      "return the threshold from 6 April 2027 to 5 April 2028" in {
+        val fakeDate = LocalDate.of(2027, 4, 6)
+        when(mockDateService.getCurrentDate).thenReturn(fakeDate)
+
+        mtdConstants.getMtdThreshold() shouldBe "£30,000"
       }
-      "return the threshold from 6 April 2028 onwards" in new setup(LocalDate.of(2028, 4, 6)) {
-        mtdConstants.getMtdThreshold shouldBe "£20,000"
+      "return the threshold from 6 April 2028 onwards" in {
+        val fakeDate = LocalDate.of(2028, 4, 6)
+        when(mockDateService.getCurrentDate).thenReturn(fakeDate)
+
+        mtdConstants.getMtdThreshold() shouldBe "£20,000"
       }
     }
   }

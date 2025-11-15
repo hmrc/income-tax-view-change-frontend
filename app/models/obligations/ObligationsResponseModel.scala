@@ -26,6 +26,7 @@ import java.time.LocalDate
 sealed trait ObligationsResponseModel
 
 case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends ObligationsResponseModel {
+
   def allDeadlinesWithSource(previous: Boolean = false, r17ContentEnabled: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] = {
     val deadlines = obligations.flatMap { groupedObligationsModel =>
       (mtdItUser.incomeSources.properties.find(_.incomeSourceId == groupedObligationsModel.identification), r17ContentEnabled) match {

@@ -35,11 +35,12 @@ object Utilities {
   def userAuditDetails(user: MtdItUser[_]): JsObject =
     Json.obj("nino" -> user.nino) ++ getBaseDetails(user)
 
-  def userType(userType: Option[AffinityGroup], isSupportingAgent: Boolean = false): JsObject = userType match {
-    case Some(Agent) => Json.obj("userType" -> "Agent", "isSupportingAgent" -> isSupportingAgent)
-    case Some(_) => Json.obj("userType" -> "Individual")
-    case None => Json.obj()
-  }
+  def userType(userType: Option[AffinityGroup], isSupportingAgent: Boolean = false): JsObject =
+    userType match {
+      case Some(Agent) => Json.obj("userType" -> "Agent", "isSupportingAgent" -> isSupportingAgent)
+      case Some(_) => Json.obj("userType" -> "Individual")
+      case None => Json.obj()
+    }
 
   def ratePctString(rate: BigDecimal): String = s"$rate%"
 }
