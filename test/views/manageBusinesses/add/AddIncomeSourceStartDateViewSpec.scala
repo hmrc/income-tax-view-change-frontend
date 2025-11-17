@@ -70,7 +70,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
       "render the heading" in new Setup(isAgent, "Standard", incomeSourceType) {
         val heading = "Business start date"
 
-        document.getElementsByClass("govuk-heading-l").first().text() shouldBe heading
+        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe heading
       }
 
       "render the description for the business start date" in new Setup(isAgent, "Standard", incomeSourceType) {
