@@ -47,7 +47,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
 
     "return success response with incomeSourceId" in {
-      when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
+      when(mockIncomeSourceConnector.createBusiness(any())(any()))
         .thenReturn(Future {
           Right(List(CreateIncomeSourceResponse("XAIT00000000000")))
         })
@@ -58,7 +58,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     }
 
     "return failure response with error" in {
-      when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
+      when(mockIncomeSourceConnector.createBusiness(any())(any()))
         .thenReturn(Future {
           Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
@@ -70,7 +70,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     }
 
     "return failure: wrong data" in {
-      when(mockIncomeSourceConnector.createBusiness(any(), any())(any()))
+      when(mockIncomeSourceConnector.createBusiness(any())(any()))
         .thenReturn(Future {
           Right(List(CreateIncomeSourceResponse("561")))
         })
@@ -99,7 +99,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
   "CreateBusinessDetailsService call create foreign property " when {
 
     "return success response with incomeSourceId" in {
-      when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
+      when(mockIncomeSourceConnector.createForeignProperty(any())(any()))
         .thenReturn(Future {
           Right(List(CreateIncomeSourceResponse("XIAT00000000000")))
         })
@@ -115,7 +115,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     }
 
     "return failure response with error" in {
-      when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
+      when(mockIncomeSourceConnector.createForeignProperty(any())(any()))
         .thenReturn(Future {
           Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
@@ -127,7 +127,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     }
 
     "return failure: wrong data" in {
-      when(mockIncomeSourceConnector.createForeignProperty(any(), any())(any()))
+      when(mockIncomeSourceConnector.createForeignProperty(any())(any()))
         .thenReturn(Future {
           Right(List(CreateIncomeSourceResponse("561")))
         })
@@ -150,7 +150,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
   "CreateBusinessDetailsService call create UK property " when {
 
     "return success response with incomeSourceId" in {
-      when(mockIncomeSourceConnector.createUKProperty(any(), any())(any()))
+      when(mockIncomeSourceConnector.createUKProperty(any())(any()))
         .thenReturn(Future {
           Right(List(CreateIncomeSourceResponse("XIAT00000000000")))
         })
@@ -166,7 +166,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     }
 
     "return failure response with error" in {
-      when(mockIncomeSourceConnector.createUKProperty(any(), any())(any()))
+      when(mockIncomeSourceConnector.createUKProperty(any())(any()))
         .thenReturn(Future {
           Left(CreateIncomeSourceErrorResponse(Status.INTERNAL_SERVER_ERROR, s"Error creating incomeSource"))
         })
@@ -183,7 +183,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
     }
 
     "return failure: wrong data" in {
-      when(mockIncomeSourceConnector.createUKProperty(any(), any())(any()))
+      when(mockIncomeSourceConnector.createUKProperty(any())(any()))
         .thenReturn(Future {
           Right(List(CreateIncomeSourceResponse("561")))
         })

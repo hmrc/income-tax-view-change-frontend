@@ -34,18 +34,18 @@ import scala.util.Try
 class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: CreateIncomeSourceConnector) {
 
   private def createBusiness(requestObject: CreateBusinessIncomeSourceRequest)
-                            (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
-    createIncomeSourceConnector.createBusiness(user.mtditid, requestObject).flatMap(response => handleResponse(response))
+                            (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    createIncomeSourceConnector.createBusiness(requestObject).flatMap(response => handleResponse(response))
   }
 
   private def createUKProperty(requestObject: CreateUKPropertyIncomeSourceRequest)
-                              (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
-    createIncomeSourceConnector.createUKProperty(user.mtditid, requestObject).flatMap(response => handleResponse(response))
+                              (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    createIncomeSourceConnector.createUKProperty(requestObject).flatMap(response => handleResponse(response))
   }
 
   private def createForeignProperty(requestObject: CreateForeignPropertyIncomeSourceRequest)
-                                   (implicit ec: ExecutionContext, user: MtdItUser[_], hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
-    createIncomeSourceConnector.createForeignProperty(user.mtditid, requestObject).flatMap(response => handleResponse(response))
+                                   (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
+    createIncomeSourceConnector.createForeignProperty(requestObject).flatMap(response => handleResponse(response))
   }
 
   def handleResponse(response: Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]): Future[Either[Error, CreateIncomeSourceResponse]] = {
@@ -81,7 +81,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
             accountingPeriodStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
             accountingPeriodEndDate = viewModel.accountingPeriodEndDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
             tradingName = viewModel.businessName.get,
-            addressDetails = AddressDetails(
+            address = AddressDetails(
               addressLine1 = viewModel.businessAddressLine1,
               addressLine2 = viewModel.businessAddressLine2.trim(),
               addressLine3 = viewModel.businessAddressLine3.trim(),

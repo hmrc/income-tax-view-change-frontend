@@ -37,7 +37,7 @@ final case class CreateBusinessIncomeSourceRequest(mtdbsa: String, businessDetai
 case class BusinessDetails(accountingPeriodStartDate: String,
                            accountingPeriodEndDate: String,
                            tradingName: String,
-                           addressDetails: AddressDetails,
+                           address: AddressDetails,
                            typeOfBusiness: Option[String],
                            tradingStartDate: String,
                            cashOrAccrualsFlag: Option[String],

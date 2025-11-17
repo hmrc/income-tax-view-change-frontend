@@ -26,10 +26,11 @@ import java.time.LocalDate
 trait IncomeSourcesDataHelper {
 
 
-  val businessDetails: BusinessDetails = BusinessDetails(accountingPeriodStartDate = "01-02-2023",
+  val businessDetails: BusinessDetails = BusinessDetails(
+    accountingPeriodStartDate = "01-02-2023",
     accountingPeriodEndDate = "",
     tradingName = "",
-    addressDetails = AddressDetails(
+    address = AddressDetails(
       addressLine1 = "tests test",
       addressLine2 = Some(""),
       addressLine3 = None,
@@ -56,7 +57,7 @@ trait IncomeSourcesDataHelper {
       |    "accountingPeriodStartDate" : "01-02-2023",
       |    "accountingPeriodEndDate" : "",
       |    "tradingName" : "",
-      |    "addressDetails" : {
+      |    "address" : {
       |      "addressLine1" : "tests test",
       |      "addressLine2" : "",
       |      "countryCode" : "UK",
