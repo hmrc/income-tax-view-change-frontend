@@ -130,7 +130,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - ADD - Individual" when {
     "there is no error on the add page" should {
       "have the correct title heading" in new TestSetup(false, false, false) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe AddBusinessNameMessages.soleTrader
+        document.getElementsByClass("govuk-caption-xl").text() shouldBe AddBusinessNameMessages.soleTrader
         document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(false, false, false) {
@@ -172,7 +172,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - CHANGE - Individual" when {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(false, false, true) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe AddBusinessNameMessages.soleTrader
+        document.getElementsByClass("govuk-caption-xl").text() shouldBe AddBusinessNameMessages.soleTrader
         document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(false, false, true) {
@@ -207,7 +207,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - ADD - Agent" when {
     "there is no error on the add page" should {
       "have the correct heading" in new TestSetup(true, false, false) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe AddBusinessNameMessages.soleTrader
+        document.getElementsByClass("govuk-caption-xl").text() shouldBe AddBusinessNameMessages.soleTrader
         document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(true, false, false) {
@@ -243,7 +243,7 @@ class AddBusinessNameViewSpec extends ViewSpec {
   "AddBusinessNameView - CHANGE - Agent" when {
     "there is no error on the change page" should {
       "have the correct heading" in new TestSetup(true, false, true) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe AddBusinessNameMessages.soleTrader
+        document.getElementsByClass("govuk-caption-xl").text() shouldBe AddBusinessNameMessages.soleTrader
         document hasPageHeading AddBusinessNameMessages.heading1
       }
       "have a form with the correct attributes" in new TestSetup(true, false, true) {
