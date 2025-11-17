@@ -3270,6 +3270,8 @@ yourSelfAssessmentChargeSummary.hmrcAdjustment.text.heading             = HMRC a
 yourSelfAssessmentChargeSummary.chargeHistory.caption.hmrcAdjustment.text.heading = This charge goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.definition.hmrcadjustment               = HMRC has added this charge after an adjustment to your tax return.
 
+yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading = This charge goes towards your {0} to {1} tax bill.
+
 yourSelfAssessmentChargeSummary.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
 yourSelfAssessmentChargeSummary.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1               = HMRC has created this charge because your
@@ -3342,6 +3344,12 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credit from your amended tax return
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
+
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					= Late payment interest on first payment on account
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading					= Late payment interest on second payment on account
+yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading					= Late payment interest on balancing payment
+yourSelfAssessmentChargeSummary.lpi.interestPeriod								    = Interest period:
+yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates						    = {0} to {1}
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
 yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through PAYE tax code

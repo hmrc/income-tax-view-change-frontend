@@ -140,7 +140,7 @@ case class ChargeItem (
   }
 
   // this method is used to filter charges down to those which have new designs
-  def isIncludedInSACSummary(isInterestCharge: Boolean): Boolean = {
+  def isIncludedInSACSummary: Boolean = {
 
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
@@ -160,7 +160,7 @@ case class ChargeItem (
       case _                              => false
     }
 
-    validCharge && !isInterestCharge
+    validCharge
   }
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount

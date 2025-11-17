@@ -3271,9 +3271,12 @@ yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText            
 yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText                       = Gall llog ar dâl sydd arnoch fynd i fyny neu i lawr. Gweler yr arweiniad ar y gyfradd log a bennir gan CThEF
 yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText                   = y gyfradd llog a bennir gan CThEF
 
-yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar y tâl hwn
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad mantoli.
-yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					    = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading				        = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
+yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading	    		        = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+yourSelfAssessmentChargeSummary.lpi.interestPeriod								        = Cyfnod llog:
+yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates							    = {0} i {1}
+
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} i {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Cyfanswm y llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Swm y mae’r llog yn berthnasol iddo
@@ -3300,6 +3303,9 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae ‘tal
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Os byddwch chi’n gwneud diwygiad i’r Ffurflen Dreth ac mae’r bil treth yn newid, yna bydd pob taliad ar gyfrif yn cael ei ddiweddaru i hanner y cyfanswm newydd.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i ddeall eich bil treth Hunanasesiad
+
+yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
+
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet1      = Treth Incwm
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet2      = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)

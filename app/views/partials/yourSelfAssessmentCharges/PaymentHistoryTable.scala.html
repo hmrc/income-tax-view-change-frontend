@@ -48,16 +48,23 @@
 }
 
 @chargeHistoryCaption = {
-    @if(viewModel.chargeItem.transactionType == PoaOneDebit || viewModel.chargeItem.transactionType == PoaTwoDebit||viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit || viewModel.chargeItem.transactionType == MfaDebitCharge) {
+    @if(viewModel.latePaymentInterestCharge) {
         @p(id = Some("charge-history-caption")) {
-            @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.${viewModel.chargeItem.getChargeTypeKey}.heading",
+            @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading",
                 viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
         }
     } else {
-        @if(viewModel.chargeItem.transactionType == BalancingCharge || viewModel.chargeItem.transactionType == ITSAReturnAmendment) {
+        @if(viewModel.chargeItem.transactionType == PoaOneDebit || viewModel.chargeItem.transactionType == PoaTwoDebit || viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit || viewModel.chargeItem.transactionType == MfaDebitCharge) {
             @p(id = Some("charge-history-caption")) {
-                @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption",
+                @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.${viewModel.chargeItem.getChargeTypeKey}.heading",
                     viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+            }
+        } else {
+            @if(viewModel.chargeItem.transactionType == BalancingCharge || viewModel.chargeItem.transactionType == ITSAReturnAmendment) {
+                @p(id = Some("charge-history-caption")) {
+                    @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption",
+                        viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+                }
             }
         }
     }
@@ -123,7 +130,7 @@
                 )
             ) else Nil,
 
-        if(viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
+        if(!viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
             Seq(
                 TableRow(
                     content = HtmlContent(viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking)
@@ -157,7 +164,7 @@
         }
 
         ++ viewModel.adjustmentHistory.adjustments.collect {
-            case charge if viewModel.chargeHistoryEnabled =>
+            case charge if viewModel.chargeHistoryEnabled && !viewModel.latePaymentInterestCharge =>
                 Seq(
                     TableRow(
                         content = HtmlContent(charge.adjustmentDate.getOrElse(viewModel.chargeItem.documentDate).toLongDateShort.toNonBreaking)

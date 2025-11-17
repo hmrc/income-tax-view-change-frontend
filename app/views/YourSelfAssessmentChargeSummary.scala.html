@@ -36,8 +36,7 @@
 @import java.time.LocalDate
 @import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
 @import viewUtils.ExternalUrlHelper
-@import models.financialDetails.MfaDebitCharge
-
+@import exceptions.MissingFieldException
 
 @this(
         mainTemplate: unifiedLayout,
@@ -115,7 +114,7 @@
         captionClasses = Some("govuk-caption-xl")
     ))
 
-  @if(!viewModel.chargeItem.isCredit) {
+  @if(!viewModel.chargeItem.isCredit && !viewModel.latePaymentInterestCharge) {
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
@@ -138,7 +137,62 @@
       }
 
       @chargeDetails(viewModel)
+
+      @if(viewModel.poaExtraChargeLink.isDefined){
+          @p(id = Some("poa-extra-charge-content")) {
+              @messages("chargeSummary.extraCharge.text1")
+              @link(id = Some("poa-extra-charge-link"), link = viewModel.poaExtraChargeLink.getOrElse(""), messageKey = "chargeSummary.extraCharge.linkText")
+              @messages("chargeSummary.extraCharge.text2")
+          }
+      }
+
+      @if(viewModel.chargeItem.hasInterest) {
+          @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
+              @interestOnChargeRARPoaSection(viewModel)
+          } else {
+              @interestOnYourChargeSection(viewModel.chargeItem)
+
+              @interestOnYourChargeTable(viewModel)
+
+              @p(id=Some("guidance.p1")){
+                  @messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText")
+                  @link(
+                      link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
+                      target = Some("_blank"),
+                      rel= Some("noreferrer noopener"),
+                      messageKey = messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText"),
+                      outerMessage = messages(".")
+                  )
+              }
+          }
+      }
   }
+    @if(viewModel.latePaymentInterestCharge) {
+        <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
+            s"${
+                getMessage(
+                    if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
+                        if(viewModel.chargeItem.isOverdue() || viewModel.chargeItem.isPaid) "overDueCharge"
+                        else "charge"
+                )
+            }\t${viewModel.chargeItem.interestRemainingToPay.toCurrencyString}"
+        }</h2>
+
+        @if(viewModel.chargeItem.interestRemainingToPay > 0) {
+            @p(id = Some("due-date-text")) {
+                <b>@getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)</b>
+            }
+        }
+
+        @p(id = Some("interest-period")) {
+            <b>@getMessage("lpi.interestPeriod") @getMessage("lpi.interestPeriod.dates",
+                viewModel.chargeItem.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDate,
+                viewModel.chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate)
+            </b>
+        }
+
+        @chargeDetails(viewModel)
+    }
     @if(viewModel.chargeItem.isCreditDrilldownPage) {
         <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
             s"${getMessage("creditAmount")
@@ -149,34 +203,6 @@
         }
 
         @chargeDetails(viewModel)
-    }
-
-    @if(viewModel.poaExtraChargeLink.isDefined){
-        @p(id = Some("poa-extra-charge-content")) {
-            @messages("chargeSummary.extraCharge.text1")
-            @link(id = Some("poa-extra-charge-link"), link = viewModel.poaExtraChargeLink.getOrElse(""), messageKey = "chargeSummary.extraCharge.linkText")
-            @messages("chargeSummary.extraCharge.text2")
-        }
-    }
-
-    @if(viewModel.chargeItem.hasInterest) {
-        @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
-            @interestOnChargeRARPoaSection(viewModel)
-        } else {
-            @interestOnYourChargeSection(viewModel.chargeItem)
-
-            @interestOnYourChargeTable(viewModel)
-
-@p(id=Some("guidance.p1")){@messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText")
-@link(
-link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
-target = Some("_blank"),
-rel= Some("noreferrer noopener"),
-messageKey = messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText"),
-outerMessage = messages(".")
-)
-}
-        }
     }
 
     @WYOLinkContent
