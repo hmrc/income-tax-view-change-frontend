@@ -85,7 +85,7 @@
             text = getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
             headingClasses = Some("govuk-heading-xl"),
             section = Some(getMessage(s"subHeading.$incomeSourceType")),
-            captionClasses = Some("govuk-caption-l")
+            captionClasses = Some("govuk-caption-xl")
         ))
 
         @if(newReportingMethod == "quarterly") {
@@ -156,7 +156,7 @@
                 text = getMessage(s"heading.$newReportingMethod", taxYearStartYear, taxYearEndYear),
                 headingClasses = Some("govuk-heading-xl"),
                 section = Some(getMessage(s"subHeading.$incomeSourceType")),
-                captionClasses = Some("govuk-caption-l")
+                captionClasses = Some("govuk-caption-xl")
             ))
 
             @p(id = Some("change-reporting-method-description")) {
