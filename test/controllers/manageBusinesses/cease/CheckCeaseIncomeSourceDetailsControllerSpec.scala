@@ -105,7 +105,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
 
               val document: Document = Jsoup.parse(contentAsString(result))
               status(result) shouldBe Status.OK
-              document.getElementsByClass("hmrc-caption govuk-caption-l").text().contains(
+              document.getElementsByClass("hmrc-caption govuk-caption-xl").text().contains(
                 heading(incomeSourceType))
               document.select("h1").text shouldBe checkDetailsHeading
             }
