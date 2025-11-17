@@ -490,7 +490,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
         whenReady(buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("sign-up-tax-year-question" -> Seq("Yes")))) { result => {
           AuditStub.verifyAuditEvent(
-            SignUpAuditModel(Seq(TaxYear(2022, 2023).toString),  ITSAStatus.Annual)(testUser(mtdUserRole))
+            SignUpAuditModel(Seq(TaxYear(2022, 2023).toString))(testUser(mtdUserRole))
           )
 
           result should have(
@@ -542,7 +542,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
         whenReady(buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("sign-up-tax-year-question" -> Seq("Yes")))) { result => {
             AuditStub.verifyAuditEvent(
-              SignUpAuditModel(Seq(TaxYear(2022, 2023).toString), ITSAStatus.Annual)(testUser(mtdUserRole))
+              SignUpAuditModel(Seq(TaxYear(2022, 2023).toString))(testUser(mtdUserRole))
             )
 
             result should have(

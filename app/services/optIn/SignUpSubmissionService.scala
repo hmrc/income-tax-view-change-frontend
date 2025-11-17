@@ -51,26 +51,6 @@ class SignUpSubmissionService @Inject()(
     }
   }
 
-  private[services] def makeSignUpAuditEventRequest(
-                                                     selectedSignUpYear: Option[TaxYear],
-                                                     currentYearItsaStatus: ITSAStatus,
-                                                     nextYearItsaStatus: ITSAStatus
-                                                   )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val currentTaxYear = dateService.getCurrentTaxYear
-    val nextTaxYear = currentTaxYear.nextYear
-
-    (selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus) match {
-      case (Some(selectedTaxYear), Annual, nyStatus) if selectedTaxYear == currentTaxYear =>
-        if(nyStatus == Annual) {
-          auditingService.extendedAudit(SignUpAuditModel(Seq(selectedTaxYear.toString, nextTaxYear.toString), currentYearItsaStatus))
-        }else {
-          auditingService.extendedAudit(SignUpAuditModel(Seq(selectedTaxYear.toString), currentYearItsaStatus))
-        }
-      case (Some(selectedTaxYear), _, Annual) if selectedTaxYear == nextTaxYear =>
-        auditingService.extendedAudit(SignUpAuditModel(Seq(selectedTaxYear.toString), nextYearItsaStatus))
-      case _ => Future(())
-    }
-  }
 
   private[services] def filterTaxYearsForSignUp(
                                                     currentYearItsaStatus: ITSAStatus,
@@ -105,7 +85,7 @@ class SignUpSubmissionService @Inject()(
       _ = logger.info(s"\n[SignUpSubmissionService][triggerSignUpRequest] taxYearsToSignUp: $taxYearsToSignUp")
       updateResponse: Seq[ITSAStatusUpdateResponse] <- Future.sequence(taxYearsToSignUp.map(taxYear => itsaStatusUpdateConnector.optIn(taxYear = taxYear, taxableEntityId = user.nino)))
       _ = logger.info(s"\n[SignUpSubmissionService][triggerSignUpRequest] Sign Up update response: $updateResponse")
-      _ <- makeSignUpAuditEventRequest(selectedSignUpYear, currentYearItsaStatus, nextYearItsaStatus)
+      _ <- auditingService.extendedAudit(SignUpAuditModel(taxYearsToSignUp.map(_.toString)))
     } yield {
       updateResponse
     }
