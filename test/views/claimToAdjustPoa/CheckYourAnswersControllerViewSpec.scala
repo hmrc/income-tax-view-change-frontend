@@ -53,7 +53,7 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {
       "render the heading" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-caption-l").first().ownText() shouldBe messages("claimToAdjustPoa.checkYourAnswers.caption", "2023", "2024")
+        document.getElementsByClass("govuk-caption-xl").first().ownText() shouldBe messages("claimToAdjustPoa.checkYourAnswers.caption", "2023", "2024")
         document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.heading")
       }
       "render the first first summary list key" in new Setup(isAgent) {
