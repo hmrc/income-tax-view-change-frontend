@@ -33,6 +33,13 @@ messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
 <div>
+  @if(viewModel.chargeItem.transactionType == PoaOneDebit ) {
+    @p(id = Some("lpi-poa2")){@messages("chargeSummary.lpi.paymentsOnAccount.poa1")}
+  } else @if(viewModel.chargeItem.transactionType == PoaTwoDebit) {
+      @p(id = Some("lpi-poa4")) {
+          @messages("chargeSummary.lpi.paymentsOnAccount.poa2")
+      }
+  }
     @p(id = Some("lpi-poa5"), classes = "govuk-body") {
       @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
       <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
