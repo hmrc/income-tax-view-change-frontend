@@ -161,7 +161,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         isCYPlus = false,
         contentFeatureSwitchEnabled = true
       ) {
-        document.getElementsByClass("govuk-caption-l").first().text().contains(pageSubHeading) shouldBe true
+        document.getElementsByClass("govuk-caption-xl").first().text().contains(pageSubHeading) shouldBe true
       }
 
       "render the continue button" in new Setup(
@@ -277,7 +277,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         isCYPlus = false,
         contentFeatureSwitchEnabled = false
       ) {
-        document.getElementsByClass("govuk-caption-l").first().text().contains(pageSubHeading) shouldBe true
+        document.getElementsByClass("govuk-caption-xl").first().text().contains(pageSubHeading) shouldBe true
       }
 
       "render the main paragraph" in new Setup(
