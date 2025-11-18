@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import enums.JourneyType._
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}
+import models.triggeredMigration.TriggeredMigrationSessionData
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -44,8 +45,12 @@ class SessionService @Inject()(
     }
   }
 
-  def createSession(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    setMongoData(UIJourneySessionData(hc.sessionId.get.value, journeyType.toString, None))
+  def createSession(journeyType: JourneyType, isTriggeredMigration: Boolean = false)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    setMongoData(UIJourneySessionData(
+      hc.sessionId.get.value,
+      journeyType.toString,
+      None,
+      triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration))))
   }
 
   private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {

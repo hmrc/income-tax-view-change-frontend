@@ -26,6 +26,7 @@ import models.UIJourneySessionData
 import models.admin.NavBarFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
+import models.triggeredMigration.TriggeredMigrationSessionData
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -227,8 +228,11 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
             IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
-            await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
-              Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
+            await(sessionService.setMongoData(
+              UIJourneySessionData(testSessionId, "CEASE-SE",
+                ceaseIncomeSourceData = Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))),
+                triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(false))
+              )))
 
             val result = buildPOSTMTDPostClient(selfEmploymentPath, additionalCookies, Map.empty).futureValue
 
@@ -257,7 +261,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
             IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
             await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
-              Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+              Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))),
+              triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(false)))))
 
             val result = buildPOSTMTDPostClient(ukPropertyPath, additionalCookies, Map.empty).futureValue
 
@@ -286,7 +291,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
             IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
             await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
-              Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
+              Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))),
+              triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(false)))))
 
             val result = buildPOSTMTDPostClient(foreignPropertyPath, additionalCookies, Map.empty).futureValue
 

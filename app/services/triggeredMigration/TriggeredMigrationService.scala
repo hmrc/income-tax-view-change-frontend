@@ -16,6 +16,7 @@
 
 package services.triggeredMigration
 
+import models.core.IncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 
@@ -33,6 +34,7 @@ class TriggeredMigrationService {
     CheckHmrcRecordsViewModel(
       soleTraderBusinesses = activeSoleTraderBusinesses.map { business =>
         CheckHmrcRecordsSoleTraderDetails(
+          incomeSourceId = IncomeSourceId(business.incomeSourceId),
           incomeSource = business.incomeSource,
           businessName = business.tradingName
         )

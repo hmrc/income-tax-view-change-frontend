@@ -16,7 +16,7 @@
 
 package services.triggeredMigration
 
-import models.core.CessationModel
+import models.core.{CessationModel, IncomeSourceId}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import testConstants.BusinessDetailsTestConstants.business1
@@ -47,7 +47,7 @@ class TriggeredMigrationServiceSpec extends TestSupport {
       val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources)
 
       val expectedResult = CheckHmrcRecordsViewModel(
-        soleTraderBusinesses = List(CheckHmrcRecordsSoleTraderDetails(Some("Fruit Ltd"), Some("nextUpdates.business"))),
+        soleTraderBusinesses = List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"),Some("Fruit Ltd"), Some("nextUpdates.business"))),
         hasActiveUkProperty = true,
         hasActiveForeignProperty = true
       )

@@ -22,6 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.InitialPage
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import enums.TriggeredMigration.TriggeredMigrationState
 import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{Mode, NormalMode}
@@ -56,16 +57,17 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
     controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   }
 
-  def show(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
+  //TODO: Redirect the user back to the triggered migration page if they access the page with triggered migration as false and they are unconfirmed
+  def show(id: Option[String], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
     authActions.asMTDIndividual.async {
       implicit user =>
-        handleRequest(id, isAgent = false, incomeSourceType)
+        handleRequest(id, isAgent = false, incomeSourceType, isTriggeredMigration)
   }
 
-  def showAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
+  def showAgent(id: Option[String], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
     authActions.asMTDAgentWithConfirmedClient.async {
       implicit mtdItUser =>
-        handleRequest(id, isAgent = true, incomeSourceType)
+        handleRequest(id, isAgent = true, incomeSourceType, isTriggeredMigration)
   }
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
@@ -80,9 +82,9 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
         handleSubmitRequest(id, isAgent = true, mode = NormalMode, incomeSourceType)
   }
 
-  def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] =
-    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage) { _ =>
+    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = InitialPage, isTriggeredMigration) { _ =>
 
       (incomeSourceType, id, getBusinessName(user, id)) match {
         case (SelfEmployment, None, _) =>
