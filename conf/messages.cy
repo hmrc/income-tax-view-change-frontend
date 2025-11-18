@@ -3290,6 +3290,16 @@ yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                      
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
 
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                    = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                  = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.p1                  = Mae arnoch log i CThEF oherwydd gwnaethoch dalu eich cosb am gyflwyno’n hwyr, yn hwyr
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.p1                = Mae arnoch log i CThEF oherwydd gwnaethoch dalu eich cosb gyntaf am dalu’n hwyr, yn hwyr
+yourSelfAssessmentChargeSummary.lpi.penalties.textOne                            = Mae llog am dalu’n hwyr yn cael ei godi o’r diwrnod cyntaf y mae’ch taliad yn hwyr tan y diwrnod y mae’n cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.lpi.penalties.linkText                           = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.lpi.penalties.textTwo                            = plws 2.5%.
+yourSelfAssessmentChargeSummary.lpi.penalties.p3                                 = Gweler yr arweiniad ynghylch y
+yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} i {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Cyfanswm y llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Swm y mae’r llog yn berthnasol iddo

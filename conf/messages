@@ -3364,6 +3364,16 @@ yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                      
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
 
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                       = Late payment interest on late submission penalty
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                     = Late payment interest on first late payment penalty
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.p1                  = You owe HMRC interest because you paid your late submission penalty late
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.p1                = You owe HMRC interest because you paid your first late payment penalty late
+yourSelfAssessmentChargeSummary.lpi.penalties.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+yourSelfAssessmentChargeSummary.lpi.penalties.linkText                       = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
+yourSelfAssessmentChargeSummary.lpi.penalties.p3                             = See guidance on the
+yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
 yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through PAYE tax code
 

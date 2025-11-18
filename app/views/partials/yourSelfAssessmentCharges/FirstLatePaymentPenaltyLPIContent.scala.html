@@ -1,0 +1,44 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import viewUtils.ExternalUrlHelper
+
+@this(
+        p: p,
+        link: link
+)
+
+
+@()(
+        implicit request: Request[_],
+        messages: Messages
+)
+
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
+}
+
+@p(id = Some("lpi-LPP1")){@getMessage("lpi.firstLatePaymentPenalty.p1")}
+@p(id = Some("lpi-LPP2")) {
+    @getMessage("lpi.penalties.textOne")
+    <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@getMessage("lpi.penalties.linkText")</a>
+    @getMessage("lpi.penalties.textTwo")
+}
+@p(id = Some("lpi-LPP3"), classes = "govuk-body") {
+    @getMessage("lpi.penalties.p3")
+    <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@getMessage("lpi.penalties.p3LinkText")</a>
+}
