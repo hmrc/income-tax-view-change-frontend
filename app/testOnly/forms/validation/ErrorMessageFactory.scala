@@ -21,7 +21,6 @@ import testOnly.forms.validation.models.{FieldError, SummaryError, TargetIds}
 
 object ErrorMessageFactory {
 
-  val FieldErrorLoc = 0
   val SummaryErrorLoc = 1
   val TargetIdsLoc = 2
 

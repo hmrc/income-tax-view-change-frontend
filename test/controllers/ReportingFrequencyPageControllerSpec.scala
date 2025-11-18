@@ -36,6 +36,7 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.DateService
 import services.optIn.OptInService
+import services.optIn.core.OptInProposition
 import services.optout.{OptOutProposition, OptOutService}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1
@@ -85,6 +86,16 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               nextYearItsaStatus = Mandated
             )
 
+            val optInProposition: OptInProposition =
+              OptInProposition.createOptInProposition(
+                currentYear = TaxYear(2024, 2025),
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Mandated
+              )
+
+            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+              .thenReturn(Future(optInProposition))
+
             when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
               Future(Seq(TaxYear(2024, 2025)))
             )
@@ -118,10 +129,11 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   isOptOutEnabled = true
                 ),
                 optInOptOutContentUpdateR17IsEnabled = false,
-                nextUpdatesLink = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
+                nextUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
               ).toString
           }
           "the reporting frequency and the R17 content feature switches are enabled" in {
+
             enable(ReportingFrequencyPage, SignUpFs, OptOutFs, OptInOptOutContentUpdateR17)
             setupMockSuccess(mtdRole)
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -137,6 +149,16 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               currentYearItsaStatus = Voluntary,
               nextYearItsaStatus = Mandated
             )
+
+            val optInProposition: OptInProposition =
+              OptInProposition.createOptInProposition(
+                currentYear = TaxYear(2024, 2025),
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Mandated
+              )
+
+            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+              .thenReturn(Future(optInProposition))
 
             when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
               Future(Seq(TaxYear(2024, 2025)))
@@ -171,7 +193,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   isOptOutEnabled = true
                 ),
                 optInOptOutContentUpdateR17IsEnabled = true,
-                nextUpdatesLink = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
+                nextUpdatesLink = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
               ).toString
           }
         }
@@ -193,6 +215,16 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               currentYearItsaStatus = Voluntary,
               nextYearItsaStatus = Mandated
             )
+
+            val optInProposition: OptInProposition =
+              OptInProposition.createOptInProposition(
+                currentYear = TaxYear(2024, 2025),
+                currentYearItsaStatus = Voluntary,
+                nextYearItsaStatus = Mandated
+              )
+
+            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+              .thenReturn(Future(optInProposition))
 
             when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
               Future(Seq(TaxYear(2024, 2025)))

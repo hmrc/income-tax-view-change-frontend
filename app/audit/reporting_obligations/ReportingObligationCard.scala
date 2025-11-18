@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package testOnly.forms.validation.utils
+package audit.reporting_obligations
 
-object Patterns {
+case class ReportingObligationCard(
+                                     journeyType: JourneyType,
+                                     taxYear: String,
+                                     singleYearOrOnwards: SingleYearOrOnwards
+                                   ) {
 
-  // ISO 8859-1 standard
-  // ASCII range {32 to 126} + {160 to 255} all values inclusive
-  val iso8859_1Regex = """^([\x20-\x7E\xA0-\xFF])*$"""
-
-  val emailRegex = """(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"""
-
-  def validText(text: String): Boolean = text matches iso8859_1Regex
-
-  def validEmail(text: String): Boolean = text matches emailRegex
-
+  def auditModelToString(): String = {
+    s"$journeyType$taxYear$singleYearOrOnwards"
+  }
 }

@@ -36,7 +36,7 @@ import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
 import services.optout.OptOutTestSupport._
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
 
@@ -99,7 +99,7 @@ class OptOutServiceSpec
     stubItsaStatuses(
       previousYear, previousYearStatus,
       currentYear, currentYearStatus,
-      nextYear, nextYearStatus, nino)
+      nextYear, nextYearStatus)
 
     stubCrystallisedStatus(previousYear, previousYearCrystallisedStatus)
 
@@ -118,7 +118,7 @@ class OptOutServiceSpec
 
   private def stubItsaStatuses(previousYear: TaxYear, previousYearStatus: Value,
                                currentYear: TaxYear, currentYearStatus: Value,
-                               nextYear: TaxYear, nextYearStatus: Value, nino: String): Unit = {
+                               nextYear: TaxYear, nextYearStatus: Value): Unit = {
     val taxYearStatusDetailMap: Map[TaxYear, StatusDetail] = Map(
       previousYear -> StatusDetail("", previousYearStatus, StatusReason.Rollover),
       currentYear -> StatusDetail("", currentYearStatus, StatusReason.Rollover),
@@ -363,8 +363,7 @@ class OptOutServiceSpec
           stubItsaStatuses(
             previousYear, NoStatus,
             currentYear, NoStatus,
-            nextYear, Voluntary,
-           testNino)
+            nextYear, Voluntary)
 
           when(mockCalculationListService.isTaxYearCrystallised(previousYear)).thenReturn(Future.failed(new RuntimeException("some api error")))
 

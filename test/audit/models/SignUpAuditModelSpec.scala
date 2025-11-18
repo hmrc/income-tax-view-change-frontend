@@ -45,7 +45,8 @@ class SignUpAuditModelSpec extends TestSupport {
     "user sign up for quarterly reporting is submitted" should {
       "create an audit model for multi year" in {
         val intentTaxYear = TaxYear(2023, 2024)
-        val auditModel = SignUpAuditModel(intentTaxYear, Annual, SignUpMultipleYears)
+        val nextTaxYear = TaxYear(2024, 2025)
+        val auditModel = SignUpAuditModel(Seq(intentTaxYear.toString, nextTaxYear.toString))
 
         auditModel.auditType shouldBe "SignUpTaxYearsPage"
         auditModel.transactionName shouldBe "sign-up-tax-years-page"
@@ -55,15 +56,13 @@ class SignUpAuditModelSpec extends TestSupport {
           "saUtr" -> tsTestUser.saUtr,
           "credId" -> tsTestUser.credId,
           "userType" -> tsTestUser.userType,
-          "signUpTaxYear" -> "2023-2024",
-          "taxYearItsaStatus" -> "Annual",
-          "signUpType" -> "MultiYear",
+          "signUpTaxYears" -> Json.arr("2023-2024", "2024-2025")
         )
       }
 
       "create an audit model for single year" in {
         val intentTaxYear = TaxYear(2023, 2024)
-        val auditModel = SignUpAuditModel(intentTaxYear, Annual, SignUpSingleYear)
+        val auditModel = SignUpAuditModel(Seq(intentTaxYear.toString))
 
         auditModel.auditType shouldBe "SignUpTaxYearsPage"
         auditModel.transactionName shouldBe "sign-up-tax-years-page"
@@ -73,9 +72,7 @@ class SignUpAuditModelSpec extends TestSupport {
           "saUtr" -> tsTestUser.saUtr,
           "credId" -> tsTestUser.credId,
           "userType" -> tsTestUser.userType,
-          "signUpTaxYear" -> "2023-2024",
-          "taxYearItsaStatus" -> "Annual",
-          "signUpType" -> "SingleYear"
+          "signUpTaxYears" -> Json.arr("2023-2024")
         )
       }
     }

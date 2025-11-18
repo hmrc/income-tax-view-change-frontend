@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import services.optout.{OptOutProposition, OptOutService}
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
@@ -79,12 +79,12 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
     when(mockOptOutService.saveIntent(any())(any(), any())).thenReturn(out)
   }
 
-  def mockUpdateOptOutJourneyStatusInSessionData(isJourneyComplete: Boolean = false): Unit = {
+  def mockUpdateOptOutJourneyStatusInSessionData(): Unit = {
     when(mockOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
       .thenReturn(Future.successful(false))
   }
 
-  def mockFetchOptOutJourneyCompleteStatus(isJourneyComplete: Boolean = false): Unit = {
+  def mockFetchOptOutJourneyCompleteStatus(): Unit = {
     when(mockOptOutService.fetchJourneyCompleteStatus()(any(), any()))
       .thenReturn(Future.successful(false))
   }

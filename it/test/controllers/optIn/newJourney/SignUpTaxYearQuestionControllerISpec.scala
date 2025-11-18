@@ -16,7 +16,7 @@
 
 package controllers.optIn.newJourney
 
-import audit.models.{SignUpAuditModel, SignUpMultipleYears, SignUpSingleYear}
+import audit.models.SignUpAuditModel
 import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import controllers.optIn.oldJourney.ConfirmTaxYearControllerISpec.emptyBodyString
@@ -490,7 +490,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
         whenReady(buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("sign-up-tax-year-question" -> Seq("Yes")))) { result => {
           AuditStub.verifyAuditEvent(
-            SignUpAuditModel(TaxYear(2022, 2023),  ITSAStatus.Annual, SignUpSingleYear)(testUser(mtdUserRole))
+            SignUpAuditModel(Seq(TaxYear(2022, 2023).toString))(testUser(mtdUserRole))
           )
 
           result should have(
@@ -542,7 +542,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
         whenReady(buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("sign-up-tax-year-question" -> Seq("Yes")))) { result => {
             AuditStub.verifyAuditEvent(
-              SignUpAuditModel(TaxYear(2022, 2023), ITSAStatus.Annual, SignUpMultipleYears)(testUser(mtdUserRole))
+              SignUpAuditModel(Seq(TaxYear(2022, 2023).toString))(testUser(mtdUserRole))
             )
 
             result should have(

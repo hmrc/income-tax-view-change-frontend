@@ -27,8 +27,7 @@ import javax.inject.Inject
 
 class MessageCheckController @Inject()(messageCheckView: MessageCheckView,
                                        mcc: MessagesControllerComponents,
-                                       appConfig: FrontendAppConfig,
-                                       languageUtils: LanguageUtils) extends ItvcLanguageController(mcc, appConfig, languageUtils) {
+                                       languageUtils: LanguageUtils) extends ItvcLanguageController(mcc, languageUtils) {
 
 
   def show(): Action[AnyContent] = Action { implicit req =>

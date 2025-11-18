@@ -27,11 +27,6 @@ object ChargeNameLangHelper {
     messages(s"yourSelfAssessmentChargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}.heading")
   }
 
-  def chargeHistoryHeading(chargeItem: ChargeItem)(implicit messages: Messages): String = {
-
-    messages(s"yourSelfAssessmentChargeSummary.chargeHistory.${chargeItem.getChargeTypeKey}.heading")
-  }
-
   def chargeHistoryCaption(chargeItem: ChargeItem)(implicit messages: Messages): String = {
     if (List(BalancingCharge, ITSAReturnAmendment).contains(chargeItem.transactionType) && !chargeItem.codedOutStatus.contains(Nics2))
       messages(s"yourSelfAssessmentChargeSummary.chargeHistory.default.caption",
