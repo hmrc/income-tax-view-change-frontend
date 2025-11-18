@@ -345,25 +345,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
       }
     }
 
-    "with ReviewAndReconcilePoa" should {
-      def testGetWhatYouOweChargesList(financialDetails: FinancialDetailsModel,
-                                       expectedResult: WhatYouOweChargesList): Unit = {
-        when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
-          .thenReturn(Future.successful(OutstandingChargesModel(List())))
-        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-          .thenReturn(Future.successful(List(financialDetails)))
-        TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
-          isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-          mainChargeIsNotPaidFilter,
-          claimARefundR18Enabled = true).futureValue shouldBe expectedResult
-      }
-
-      "return list including POA extra charges" in {
-        //testGetWhatYouOweChargesList(financialDetails = financialDetailsReviewAndReconcile, expectedResult = whatYouOweWithReviewReconcileData)
-        //testGetWhatYouOweChargesList(financialDetails = financialDetailsWithMixedData4, expectedResult = whatYouOweDataWithMixedData4Unfiltered)
-      }
-      }
-
     "with Penalties And Accruals" should {
       def testGetWhatYouOweChargesList(penaltiesEnabled: Boolean, financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
         enable(ClaimARefundR18)

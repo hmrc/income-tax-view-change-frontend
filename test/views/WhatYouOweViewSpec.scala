@@ -234,8 +234,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
-    accruingInterestAmount = accruingInterestAmount,
-    lpiWithDunningLock = lpiWithDunningLock
+    accruingInterestAmount = accruingInterestAmount
   )
 
   def financialDetailsOverdueWithLpiDunningLockZero(accruingInterestAmount: Option[BigDecimal], lpiWithDunningLock: Option[BigDecimal]): FinancialDetailsModel = testFinancialDetailsModelWithLpiDunningLockZero(
@@ -246,8 +245,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
     interestRate = List(Some(2.6), Some(6.2)),
-    accruingInterestAmount = accruingInterestAmount,
-    lpiWithDunningLock = lpiWithDunningLock
+    accruingInterestAmount = accruingInterestAmount
   )
 
   def whatYouOweDataWithOverdueInterestData(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(

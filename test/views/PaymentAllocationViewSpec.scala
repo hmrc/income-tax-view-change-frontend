@@ -25,14 +25,12 @@ import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.select.Elements
-import org.mockito.Mockito.when
 import testConstants.PaymentAllocationsTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.ViewSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.PaymentAllocation
 
-import java.time.LocalDate
 import scala.jdk.CollectionConverters._
 
 

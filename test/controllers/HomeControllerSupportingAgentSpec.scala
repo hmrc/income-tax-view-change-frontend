@@ -101,7 +101,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe messages("home.updates.heading")
+          document.select("#updates-tile").text() shouldBe "Next updates due View update deadlines"
         }
       }
 
@@ -117,7 +117,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe messages("home.updates.heading")
+          document.select("#updates-tile").text shouldBe "Next updates due View update deadlines"
         }
       }
 

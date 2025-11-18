@@ -21,7 +21,6 @@ import play.api.data.validation.Invalid
 
 object ErrorMessageFactory {
 
-  val FieldErrorLoc = 0
   val SummaryErrorLoc = 1
   val TargetIdsLoc = 2
 

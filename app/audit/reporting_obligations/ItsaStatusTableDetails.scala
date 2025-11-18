@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 
-package utils
+package audit.reporting_obligations
 
-import config.FrontendAppConfig
-import services.DateServiceInterface
+import models.itsaStatus.ITSAStatus.ITSAStatus
+import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
+case class ItsaStatusTableDetails(
+                                   taxYearPeriod: String,
+                                   taxYear: String,
+                                   usingMakingTaxDigitalForIncomeTax: Option[String],
+                                   userCurrentItsaStatus: String
+                                 )
 
-trait MtdConstants {
 
-  val dateService: DateServiceInterface
+object ItsaStatusTableDetails {
 
-  def getMtdThreshold()(implicit appConfig: FrontendAppConfig): String = {
-    val dateThreshold2027 = LocalDate.of(2027, 4, 6)
-    val dateThreshold2028 = LocalDate.of(2028, 4, 6)
-
-    if (dateService.getCurrentDate.isBefore(dateThreshold2027)) {
-      appConfig.preThreshold2027
-    } else if (dateService.getCurrentDate.isBefore(dateThreshold2028)) {
-      appConfig.threshold2027
-    } else {
-      appConfig.threshold2028
-    }
-  }
+  implicit val format: OFormat[ItsaStatusTableDetails] = Json.format[ItsaStatusTableDetails]
 }

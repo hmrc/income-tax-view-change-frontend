@@ -20,10 +20,6 @@ import play.api.libs.json.{Format, Json}
 
 sealed trait CreateIncomeSourceRequest
 
-object CreateIncomeSourceRequest {
-  implicit val format: Format[CreateIncomeSourceRequest] = Json.format[CreateIncomeSourceRequest]
-}
-
 // *********************************************************************************************************************
 // *                                                   Self-employment                                                 *
 // *********************************************************************************************************************

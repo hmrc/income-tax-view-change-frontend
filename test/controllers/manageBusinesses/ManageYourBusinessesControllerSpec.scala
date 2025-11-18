@@ -51,7 +51,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
           enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
-          setupMockClearSession(true)
+          setupMockClearSession()
           when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
             .thenReturn(
               Right(
@@ -76,7 +76,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
           disable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
-          setupMockClearSession(true)
+          setupMockClearSession()
           when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
             .thenReturn(
               Right(
@@ -114,7 +114,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
           enable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
-          setupMockClearSession(true)
+          setupMockClearSession()
           when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
             .thenReturn(
               Right(
@@ -149,7 +149,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
             enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
-            setupMockClearSession(true)
+            setupMockClearSession()
             when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
               .thenReturn(
                 Right(
@@ -187,7 +187,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
             enable(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
-            setupMockClearSession(true)
+            setupMockClearSession()
             when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
               .thenReturn(
                 Right(

@@ -35,9 +35,7 @@ trait MockBusinessDetailsConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockBusinessDetailsConnector)
   }
 
-  def setupMockIncomeSourceDetailsResponse(mtditid: String, nino: String,
-                                           saUtr: Option[String], credId: Option[String],
-                                           userType: Option[AffinityGroup])(response: IncomeSourceDetailsResponse): Unit =
+  def setupMockIncomeSourceDetailsResponse()(response: IncomeSourceDetailsResponse): Unit =
     when(mockBusinessDetailsConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any()))
       .thenReturn(Future.successful(response))
 

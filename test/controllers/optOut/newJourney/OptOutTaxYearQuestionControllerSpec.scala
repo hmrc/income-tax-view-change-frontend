@@ -80,14 +80,6 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
     }
   }
 
-  private def taxYearQuestionLink(isAgent: Boolean): Option[String] = {
-    if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents/optout?taxYear=2025")
-    } else {
-      Some("/report-quarterly/income-and-expenses/view/optout?taxYear=2025")
-    }
-  }
-
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
 

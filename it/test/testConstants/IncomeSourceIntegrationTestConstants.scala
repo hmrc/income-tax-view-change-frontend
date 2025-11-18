@@ -1636,10 +1636,10 @@ object IncomeSourceIntegrationTestConstants {
     )
   )
 
-  def testValidFinancialDetailsModelMFADebitsJson(originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
-                                                  dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
-                                                  interestLocks: List[String] = noInterestLock,
-                                                  accruingInterestAmount: Option[BigDecimal] = Some(100)
+  def testValidFinancialDetailsModelMFADebitsJson(originalAmount: BigDecimal,
+                                                  outstandingAmount: BigDecimal,
+                                                  taxYear: String = "2018",
+                                                  dueDate: String = "2018-02-14"
                                                  ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
@@ -1752,11 +1752,10 @@ object IncomeSourceIntegrationTestConstants {
     )
   )
 
-  def testValidFinancialDetailsModelReviewAndReconcileDebitsJson(
-                                                                  originalAmount: BigDecimal, outstandingAmount: BigDecimal, taxYear: String = "2018",
-                                                                  dueDate: String = "2018-02-14", dunningLock: List[String] = noDunningLock,
-                                                                  interestLocks: List[String] = noInterestLock,
-                                                                  accruingInterestAmount: Option[BigDecimal] = Some(100)
+  def testValidFinancialDetailsModelReviewAndReconcileDebitsJson(originalAmount: BigDecimal,
+                                                                 outstandingAmount: BigDecimal,
+                                                                 taxYear: String = "2018",
+                                                                 dueDate: String = "2018-02-14"
                                                                 ): JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,

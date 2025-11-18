@@ -34,12 +34,4 @@ class FrontendAuthConnector @Inject()(config: ServicesConfig,
 }
 
 @Singleton
-class ItvcHeaderCarrierForPartialsConverter @Inject()(val sessionCookieCrypto: SessionCookieCrypto) extends HeaderCarrierForPartialsConverter {}
-
-@Singleton
-class FormPartialProvider @Inject()(override val httpGet: HttpClient,
-                                    override val headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
-                                   ) extends FormPartialRetriever { }
-
-
-
+class ItvcHeaderCarrierForPartialsConverter @Inject()() extends HeaderCarrierForPartialsConverter {}
