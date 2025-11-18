@@ -21,7 +21,8 @@ import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import mocks.services._
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus._
+import models.itsaStatus.ITSAStatus._
+import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import models.optout._
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers
