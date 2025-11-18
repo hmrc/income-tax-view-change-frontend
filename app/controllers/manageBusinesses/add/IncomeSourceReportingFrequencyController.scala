@@ -100,7 +100,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
           incomeSourceType = incomeSourceType,
           taxDateService = dateService,
           isR17ContentEnabled = isR17ContentEnabled,
-          mtdThreshold = getMtdThreshold
+          mtdThreshold = getMtdThreshold()
         )))
     }
   }
@@ -152,7 +152,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
             incomeSourceType = incomeSourceType,
             taxDateService = dateService,
             isR17ContentEnabled = isR17ContentEnabled,
-            mtdThreshold = getMtdThreshold
+            mtdThreshold = getMtdThreshold()
           ))
         )
       }, {
@@ -165,7 +165,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
               incomeSourceType = incomeSourceType,
               taxDateService = dateService,
               isR17ContentEnabled = isR17ContentEnabled,
-              mtdThreshold = getMtdThreshold
+              mtdThreshold = getMtdThreshold()
             ))
           )
       }

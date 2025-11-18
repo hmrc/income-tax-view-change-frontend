@@ -91,19 +91,18 @@ class NextUpdatesController @Inject()(
                 val whatTheUserCanDoContent = if (isOptOutEnabled) nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent) else None
 
                 Ok(
-                nextUpdatesOptOutView(
-                  viewModel = viewModel,
-                  checks = checks,
-                  optOutProposition = optOutProposition,
-                  backUrl = backUrl.url,
-                  isAgent = isAgent,
-                  isSupportingAgent = user.isSupportingAgent,
-                  origin = origin,
-                  whatTheUserCanDo = whatTheUserCanDoContent,
-                  optInOptOutContentR17Enabled = isR17ContentEnabled,
-                  taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status)
+                  nextUpdatesOptOutView(
+                    viewModel = viewModel,
+                    checks = checks,
+                    optOutProposition = optOutProposition,
+                    backUrl = backUrl.url,
+                    isAgent = isAgent,
+                    isSupportingAgent = user.isSupportingAgent,
+                    origin = origin,
+                    whatTheUserCanDo = whatTheUserCanDoContent,
+                    optInOptOutContentR17Enabled = isR17ContentEnabled,
+                  taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status))
                 )
-              )
               }
             }.recoverWith {
               case ex =>
