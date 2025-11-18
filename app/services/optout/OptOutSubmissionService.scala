@@ -111,6 +111,23 @@ class OptOutSubmissionService @Inject()(
     }
   }
 
+  private def synchronousITSAStatusUpdates(taxYears: Seq[TaxYear], nino: String, optOutUpdateReason: String)
+                                          (implicit headerCarrier: HeaderCarrier, executionContext: ExecutionContext): Future[List[ITSAStatusUpdateResponse]] = {
+    taxYears.foldLeft(Future.successful(List.empty[ITSAStatusUpdateResponse])) { (accumulatorFuture, year) =>
+      accumulatorFuture.flatMap { acc =>
+        if (acc.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure])) {
+          logger.warn(s"Failed to (opt out) update ITSA status for tax year ${year.toString}")
+          Future.successful(acc)
+        } else {
+            itsaStatusUpdateConnector.makeITSAStatusUpdate(year, nino, optOutUpdateReason).map { response =>
+              logger.info(s"Successfully (opted out) updated ITSA status for tax year ${year.toString}")
+              acc :+ response
+          }
+        }
+      }
+    }
+  }
+
   def updateTaxYearsITSAStatusRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[List[ITSAStatusUpdateResponse]] = {
     for {
       maybeSessionData: Option[OptOutSessionData] <- getOptOutSessionData()
@@ -122,7 +139,7 @@ class OptOutSubmissionService @Inject()(
       filteredTaxYearsForDesiredItsaStatus: List[OptOutYearToUpdate] = optOutForSubsequentYearsValidatedList.filter { yearsToUpdate => yearsToUpdate.itsaStatus == Voluntary }
       taxYearsToUpdate = filteredTaxYearsForDesiredItsaStatus.map(_.taxYear)
       _ = logger.debug(s"[OptOutSubmissionService][updateTaxYearsITSAStatusRequest] Making update requests for tax years: $taxYearsToUpdate")
-      makeUpdateRequestsForEachYear: List[ITSAStatusUpdateResponse] <- Future.sequence(taxYearsToUpdate.map(taxYear => itsaStatusUpdateConnector.makeITSAStatusUpdate(taxYear, user.nino, optOutUpdateReason)))
+      makeUpdateRequestsForEachYear: List[ITSAStatusUpdateResponse] <- synchronousITSAStatusUpdates(taxYearsToUpdate, user.nino, optOutUpdateReason)
       _ = logger.debug(s"[OptOutSubmissionService][updateTaxYearsITSAStatusRequest] ITSA Status Update Responses: $makeUpdateRequestsForEachYear")
       _ = auditingService.extendedAudit(OptOutNewAuditModel(taxYearsToUpdate.map(_.toString)))
     } yield {

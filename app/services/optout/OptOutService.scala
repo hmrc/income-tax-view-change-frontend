@@ -50,6 +50,8 @@ class OptOutService @Inject()(
                                auditingService: AuditingService
                              ) {
 
+  private val logger = Logger("application")
+
   def fetchOptOutProposition()(implicit user: MtdItUser[_],
                                hc: HeaderCarrier,
                                ec: ExecutionContext): Future[OptOutProposition] = {
@@ -133,10 +135,8 @@ class OptOutService @Inject()(
 
   def makeOptOutUpdateRequest(optOutProposition: OptOutProposition, intentTaxYear: TaxYear)
                              (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
-
     val yearsToUpdate = optOutProposition.optOutYearsToUpdate(intentTaxYear)
-    val responsesSeqOfFutures = makeUpdateCalls(yearsToUpdate)
-    Future.sequence(responsesSeqOfFutures)
+    makeUpdateCalls(yearsToUpdate)
       .map(responsesSeq => findAnyFailOrFirstSuccess(responsesSeq))
       .map { res =>
         val auditModel = OptOutAuditModel.generateOptOutAudit(optOutProposition, intentTaxYear, res)
@@ -146,8 +146,20 @@ class OptOutService @Inject()(
   }
 
   private def makeUpdateCalls(optOutYearsToUpdate: Seq[TaxYear])
-                             (implicit user: MtdItUser[_], hc: HeaderCarrier): Seq[Future[ITSAStatusUpdateResponse]] = {
-    optOutYearsToUpdate.map(optOutYear => itsaStatusUpdateConnector.optOut(optOutYear, user.nino))
+                             (implicit user: MtdItUser[_], hc: HeaderCarrier, executionContext: ExecutionContext): Future[Seq[ITSAStatusUpdateResponse]] = {
+    optOutYearsToUpdate.foldLeft(Future.successful(Seq.empty[ITSAStatusUpdateResponse])) { (accumulatorFuture, optOutYear) =>
+      accumulatorFuture.flatMap { acc =>
+        if (acc.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure])) {
+          logger.warn(s"Failed to (opt out) update ITSA status for tax year ${optOutYear.toString}")
+          Future.successful(acc)
+        } else {
+          itsaStatusUpdateConnector.optOut(optOutYear, user.nino).map { response =>
+            logger.info(s"Successfully (opted out) updated ITSA status for tax year ${optOutYear.toString}")
+            acc :+ response
+          }
+        }
+      }
+    }
   }
 
   private def findAnyFailOrFirstSuccess(responses: Seq[ITSAStatusUpdateResponse]): ITSAStatusUpdateResponse = {
