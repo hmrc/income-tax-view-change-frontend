@@ -21,8 +21,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import mocks.services._
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus._
-import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
+import models.itsaStatus._
 import models.optout._
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers
@@ -956,7 +955,7 @@ class OptOutServiceSpec
           currentTaxYear = currentTaxYear,
           previousYearCrystallisedStatus = false,
           previousYearStatus = Voluntary,
-          currentYearStatus = ITSAStatus.Dormant,
+          currentYearStatus = Dormant,
           nextYearStatus = Voluntary,
           nino = testNino
         )
@@ -970,7 +969,7 @@ class OptOutServiceSpec
           PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), crystallised = false),
           Some(OneYearOptOutFollowedByMandated),
           0,
-          ITSAStatus.Dormant,
+          Dormant,
           Voluntary
         ))
       }
@@ -983,7 +982,7 @@ class OptOutServiceSpec
           currentTaxYear = currentTaxYear,
           previousYearCrystallisedStatus = false,
           previousYearStatus = Voluntary,
-          currentYearStatus = ITSAStatus.Dormant,
+          currentYearStatus = Dormant,
           nextYearStatus = Voluntary,
           nino = testNino
         )
@@ -994,10 +993,10 @@ class OptOutServiceSpec
         val result = service.isOptOutTaxYearValid(Some(queryTaxYear))
 
         result.futureValue shouldBe Some(OptOutTaxYearQuestionViewModel(
-          NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(ITSAStatus.Dormant, TaxYear(2025, 2026))),
+          NextOptOutTaxYear(Voluntary, TaxYear(2026, 2027), CurrentOptOutTaxYear(Dormant, TaxYear(2025, 2026))),
           Some(NextYearOptOut),
           0,
-          ITSAStatus.Dormant,
+          Dormant,
           Voluntary
         ))
       }
@@ -1011,7 +1010,7 @@ class OptOutServiceSpec
           previousYearCrystallisedStatus = false,
           previousYearStatus = NoStatus,
           currentYearStatus = Voluntary,
-          nextYearStatus = ITSAStatus.Dormant,
+          nextYearStatus = Dormant,
           nino = testNino
         )
 
@@ -1025,7 +1024,7 @@ class OptOutServiceSpec
           Some(OneYearOptOutFollowedByMandated),
           0,
           Voluntary,
-          ITSAStatus.Dormant
+          Dormant
         ))
       }
 
