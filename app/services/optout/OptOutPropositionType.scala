@@ -33,12 +33,10 @@ case class OneYearOptOutProposition private(proposition: OptOutProposition) exte
     val OptOutProposition(previousTaxYear, currentTaxYear, nextTaxYear) = proposition
 
     (intent, currentTaxYear.status, nextTaxYear.status) match {
-      case (selectedYear, Mandated, _) if selectedYear == previousTaxYear => Some(OneYearOptOutFollowedByMandated)
-      case (selectedYear, Dormant, _) if selectedYear == previousTaxYear => Some(OneYearOptOutFollowedByMandated)
+      case (selectedYear, Mandated | Dormant, _) if selectedYear == previousTaxYear => Some(OneYearOptOutFollowedByMandated)
       case (selectedYear, Annual, _) if selectedYear == previousTaxYear => Some(OneYearOptOutFollowedByAnnual)
 
-      case (selectedYear, _, Mandated) if selectedYear == currentTaxYear => Some(OneYearOptOutFollowedByMandated)
-      case (selectedYear, _, Dormant) if selectedYear == currentTaxYear => Some(OneYearOptOutFollowedByMandated)
+      case (selectedYear, _, Mandated | Dormant) if selectedYear == currentTaxYear => Some(OneYearOptOutFollowedByMandated)
       case (selectedYear, _, Annual) if selectedYear == currentTaxYear => Some(OneYearOptOutFollowedByAnnual)
 
       case (selectedYear, _, _) if selectedYear == nextTaxYear => Some(NextYearOptOut)
@@ -53,12 +51,10 @@ case class MultiYearOptOutProposition private(proposition: OptOutProposition) ex
     val OptOutProposition(previousTaxYear, currentTaxYear, nextTaxYear) = proposition
 
     (intent, currentTaxYear.status, nextTaxYear.status) match {
-      case (selectedYear, Mandated, _) if selectedYear == previousTaxYear => Some(OneYearOptOutFollowedByMandated)
-      case (selectedYear, Dormant, _) if selectedYear == previousTaxYear => Some(OneYearOptOutFollowedByMandated)
+      case (selectedYear, Mandated | Dormant, _) if selectedYear == previousTaxYear => Some(OneYearOptOutFollowedByMandated)
       case (selectedYear, Annual, _) if selectedYear == previousTaxYear => Some(OneYearOptOutFollowedByAnnual)
 
-      case (selectedYear, _, Mandated) if selectedYear == currentTaxYear => Some(OneYearOptOutFollowedByMandated)
-      case (selectedYear, _, Dormant) if selectedYear == currentTaxYear => Some(OneYearOptOutFollowedByMandated)
+      case (selectedYear, _, Mandated | Dormant) if selectedYear == currentTaxYear => Some(OneYearOptOutFollowedByMandated)
       case (selectedYear, _, Annual) if selectedYear == currentTaxYear => Some(OneYearOptOutFollowedByAnnual)
 
       case (selectedYear, currentYearStatus, _) if selectedYear == nextTaxYear && currentYearStatus != Voluntary => Some(NextYearOptOut)
