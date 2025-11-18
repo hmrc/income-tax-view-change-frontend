@@ -47,11 +47,11 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
         val currentYearOpt = TaxYear.getTaxYearModel(contextData.currentYear)
         currentYearOpt.map { currentYear =>
           val proposition = createOptOutProposition(
-            currentYear,
-            contextData.crystallisationStatus,
-            ITSAStatus.fromString(contextData.previousYearITSAStatus),
-            ITSAStatus.fromString(contextData.currentYearITSAStatus),
-            ITSAStatus.fromString(contextData.nextYearITSAStatus)
+            currentYear = currentYear,
+            previousYearCrystallised = contextData.crystallisationStatus,
+            previousYearItsaStatus = ITSAStatus.fromString(contextData.previousYearITSAStatus),
+            currentYearItsaStatus = ITSAStatus.fromString(contextData.currentYearITSAStatus),
+            nextYearItsaStatus = ITSAStatus.fromString(contextData.nextYearITSAStatus)
           )
           val selectedTaxYear = selectedOptOutYear match {
             case Some(year) => TaxYear.getTaxYearModel(year)

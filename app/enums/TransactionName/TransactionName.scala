@@ -153,3 +153,7 @@ case object SignUpTaxYearsPage extends TransactionName {
 case object OptOutTaxYearsPage extends TransactionName {
   val name = "opt-out-tax-years-page"
 }
+
+case object ReportingObligationsPage extends TransactionName {
+  val name = "reporting-obligations-page"
+}

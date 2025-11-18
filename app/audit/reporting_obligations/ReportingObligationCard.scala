@@ -14,27 +14,15 @@
  * limitations under the License.
  */
 
-package utils
+package audit.reporting_obligations
 
-import config.FrontendAppConfig
-import services.DateServiceInterface
+case class ReportingObligationCard(
+                                     journeyType: JourneyType,
+                                     taxYear: String,
+                                     singleYearOrOnwards: SingleYearOrOnwards
+                                   ) {
 
-import java.time.LocalDate
-
-trait MtdConstants {
-
-  val dateService: DateServiceInterface
-
-  def getMtdThreshold()(implicit appConfig: FrontendAppConfig): String = {
-    val dateThreshold2027 = LocalDate.of(2027, 4, 6)
-    val dateThreshold2028 = LocalDate.of(2028, 4, 6)
-
-    if (dateService.getCurrentDate.isBefore(dateThreshold2027)) {
-      appConfig.preThreshold2027
-    } else if (dateService.getCurrentDate.isBefore(dateThreshold2028)) {
-      appConfig.threshold2027
-    } else {
-      appConfig.threshold2028
-    }
+  def auditModelToString(): String = {
+    s"$journeyType$taxYear$singleYearOrOnwards"
   }
 }
