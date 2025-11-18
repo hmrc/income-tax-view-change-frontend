@@ -427,7 +427,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .text() shouldBe descriptionTextForRAR2
               }
 
-              "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA (old view)" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest, docId = id1040000123) {
+              "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest, docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -440,7 +440,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld(startYear.toString, endYear.toString)
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingRAR1Interest
                 document.getElementById("poa1-extra-charge-p1").text() shouldBe descriptionTextRAR1Interest
               }
@@ -462,7 +462,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
 
-              "the late payment interest flag is enabled (old view)" in new Setup(
+              "the late payment interest flag is enabled" in new Setup(
                 financialDetailsModel(lpiWithDunningLock = None, outstandingAmount = 0), docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -472,14 +472,14 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld("2017", "2018")
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption("2017", "2018")
                 document.select("h1").text() shouldBe lateInterestSuccessHeading
                 document.select("#dunningLocksBanner").size() shouldBe 0
-                document.select("main h2").text() shouldBe "History of this charge"
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
               }
             }
             "charge history feature is disabled and there is a user" that {
-              "provided with dunning locks and late payment interest flag, not showing the locks banner (old view)" in new Setup(
+              "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
                 financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)

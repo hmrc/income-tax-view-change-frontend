@@ -128,20 +128,6 @@
                     content = HtmlContent(viewModel.chargeItem.accruingInterestAmount.get.toCurrency),
                     format = Some("numeric")
                 )
-            ) else Nil,
-
-        if(!viewModel.latePaymentInterestCharge && viewModel.chargeHistoryEnabled)
-            Seq(
-                TableRow(
-                    content = HtmlContent(viewModel.chargeItem.documentDate.toLongDateShort.toNonBreaking)
-                ),
-                TableRow(
-                    content = Text(messages("chargeSummary.codingOutPayHistoryAmount", viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut))
-                ),
-                TableRow(
-                    content = HtmlContent(viewModel.chargeItem.originalAmount.toCurrency),
-                    format = Some("numeric")
-                )
             ) else Nil
     )
         ++ viewModel.reviewAndReconcileCredit.toSeq.collect {
