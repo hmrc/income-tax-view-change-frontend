@@ -231,7 +231,15 @@ class OptOutService @Inject()(
         case Some(p: OneYearOptOutProposition) =>
           Future.successful(Some(ConfirmedOptOutViewModel(optOutTaxYear = p.intent.taxYear, state = p.state())))
         case Some(p: MultiYearOptOutProposition) =>
-          Future.successful(intent.map(ConfirmedOptOutViewModel(_, p.state())))
+          val optOutTaxYearIntent = intent.flatMap { taxYear =>
+            proposition match {
+              case OptOutProposition(previousTaxYear, _, _) if previousTaxYear.taxYear == taxYear => Some(previousTaxYear)
+              case OptOutProposition(_, currentTaxYear, _) if currentTaxYear.taxYear == taxYear => Some(currentTaxYear)
+              case OptOutProposition(_, _, nextTaxYear) if nextTaxYear.taxYear == taxYear => Some(nextTaxYear)
+              case _ => None
+            }
+          }
+          Future.successful(optOutTaxYearIntent.map(optOutTaxYear => ConfirmedOptOutViewModel(optOutTaxYear.taxYear, p.state(optOutTaxYear))))
         case _ =>
           Future.successful(None)
       }
@@ -312,8 +320,8 @@ class OptOutService @Inject()(
           val nextYearStatus = proposition.nextTaxYear.status
 
           (checkOptOutStatus, proposition.optOutPropositionType) match {
-            case (Some((true, propositionTaxYear)), Some(propositionType)) if propositionType.state().isDefined =>
-              Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(), numberOfQuarterlyUpdates, currentYearStatus, nextYearStatus))
+            case (Some((true, propositionTaxYear)), Some(propositionType)) if propositionType.state(propositionTaxYear).isDefined =>
+              Some(OptOutTaxYearQuestionViewModel(propositionTaxYear, propositionType.state(propositionTaxYear), numberOfQuarterlyUpdates, currentYearStatus, nextYearStatus))
             case (Some((true, _)), Some(_)) =>
               Logger("application").warn("[OptOutService] Unknown scenario for opt out tax year, redirecting to Reporting Obligations Page")
               None
