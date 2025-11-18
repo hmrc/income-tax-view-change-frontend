@@ -100,13 +100,8 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
   def withSessionData(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState, isTriggeredMigration: Boolean = false)
                                           (codeBlock: UIJourneySessionData => Future[Result])
                                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
-    println(Console.CYAN + "TEST" + Console.RESET)
-
     sessionService.getMongo(incomeSources).flatMap {
       case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, incomeSources, journeyState) =>
-        println(Console.MAGENTA + incomeSources + Console.RESET)
-        println(Console.YELLOW + journeyState + Console.RESET)
         redirectUrl(incomeSources, useDefaultRedirect(data, incomeSources, journeyState))(user)
       case Right(Some(data: UIJourneySessionData)) =>
         codeBlock(data)
