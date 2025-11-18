@@ -216,10 +216,17 @@ class OptOutService @Inject()(
     } yield processPropositionType(propositionType.get, intent, quarterlyUpdatesCount)
   }
 
-  def getQuarterlyUpdatesCount(propositionType: Option[OptOutPropositionTypes])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Int] = {
+  def getQuarterlyUpdatesCount(propositionType: Option[OptOutPropositionTypes], selectedTaxYear: Option[TaxYear] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Int] = {
     propositionType match {
       case Some(p: OneYearOptOutProposition) =>
         getQuarterlyUpdatesCountForOfferedYears(p.proposition).map(_.getCountFor(p.intent.taxYear))
+      case Some(p: MultiYearOptOutProposition) =>
+        selectedTaxYear match {
+          case Some(taxYear) =>
+            getQuarterlyUpdatesCountForOfferedYears(p.proposition).map(_.getCountFor(taxYear))
+          case None =>
+            Future.successful(noQuarterlyUpdates)
+        }
       case _ =>
         Future.successful(noQuarterlyUpdates)
     }
@@ -307,15 +314,15 @@ class OptOutService @Inject()(
       case Some(year) =>
         for {
           proposition <- fetchOptOutProposition()
-          numberOfQuarterlyUpdates <- getQuarterlyUpdatesCount(proposition.optOutPropositionType)
-        } yield {
-          val checkOptOutStatus = year match {
+          checkOptOutStatus = year match {
             case ty if ty == proposition.previousTaxYear.taxYear.startYear.toString => Some((proposition.previousTaxYear.canOptOut, proposition.previousTaxYear))
             case ty if ty == proposition.currentTaxYear.taxYear.startYear.toString => Some((proposition.currentTaxYear.canOptOut, proposition.currentTaxYear))
             case ty if ty == proposition.nextTaxYear.taxYear.startYear.toString => Some((proposition.nextTaxYear.canOptOut, proposition.nextTaxYear))
             case _ => None
           }
-
+          selectedTaxYear = checkOptOutStatus.map(_._2.taxYear)
+          numberOfQuarterlyUpdates <- getQuarterlyUpdatesCount(proposition.optOutPropositionType, selectedTaxYear)
+        } yield {
           val currentYearStatus = proposition.currentTaxYear.status
           val nextYearStatus = proposition.nextTaxYear.status
 
