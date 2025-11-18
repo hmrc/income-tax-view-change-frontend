@@ -21,6 +21,7 @@ import enums.IncomeSourceJourney._
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState, ReportingFrequencyPages}
 import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import models.UIJourneySessionData
+import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -75,14 +76,15 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
       }
     }
 
-  private lazy val journeyRestartUrl: MtdItUser[_] => Future[Result] =
+  private def journeyRestartUrl(isTriggeredMigration: Boolean): MtdItUser[_] => Future[Result] =
     user => {
       Future.successful {
-        val manageBusinessesCall = if(isAgent(user)) {
-          controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
-        } else {
-          controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+        lazy val manageBusinessesCall = (isAgent(user), isTriggeredMigration) match {
+          case (false, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+          case (true, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
+          case (isAgent, true) => controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent)
         }
+
         Redirect(manageBusinessesCall)
       }
     }
@@ -95,27 +97,36 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
     }
   }
 
-  def withSessionData(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState)
+  def withSessionData(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState, isTriggeredMigration: Boolean = false)
                                           (codeBlock: UIJourneySessionData => Future[Result])
                                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
 
+    println(Console.CYAN + "TEST" + Console.RESET)
+
     sessionService.getMongo(incomeSources).flatMap {
       case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, incomeSources, journeyState) =>
+        println(Console.MAGENTA + incomeSources + Console.RESET)
+        println(Console.YELLOW + journeyState + Console.RESET)
         redirectUrl(incomeSources, useDefaultRedirect(data, incomeSources, journeyState))(user)
-      case Right(Some(data: UIJourneySessionData)) => codeBlock(data)
+      case Right(Some(data: UIJourneySessionData)) =>
+        codeBlock(data)
       case Right(None) =>
         if (journeyState == InitialPage) {
-          sessionService.createSession(incomeSources).flatMap { _ =>
-            val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
+          sessionService.createSession(incomeSources, isTriggeredMigration).flatMap { _ =>
+            val data = UIJourneySessionData(
+              hc.sessionId.get.value,
+              incomeSources.toString,
+              triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration))
+            )
             codeBlock(data)
           }
         }
-        else journeyRestartUrl(user)
+        else journeyRestartUrl(isTriggeredMigration)(user)
       case Left(ex) =>
         val agentPrefix = if (isAgent(user)) "[Agent]" else ""
         Logger("application").error(s"$agentPrefix" +
           s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}", ex)
-        journeyRestartUrl(user)
+        journeyRestartUrl(isTriggeredMigration)(user)
     }
   }
 

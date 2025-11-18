@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package models.triggeredMigration.viewModels
-import models.core.IncomeSourceId
+package models.triggeredMigration
 
-case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecordsSoleTraderDetails],
-                                     hasActiveUkProperty: Boolean,
-                                     hasActiveForeignProperty: Boolean) {
+import play.api.libs.json.{Json, OFormat}
+
+case class TriggeredMigrationSessionData(isTriggeredMigrationJourney: Boolean)
+
+object TriggeredMigrationSessionData {
+  implicit val format: OFormat[TriggeredMigrationSessionData] = Json.format[TriggeredMigrationSessionData]
 }
-
-case class CheckHmrcRecordsSoleTraderDetails(incomeSourceId: IncomeSourceId,
-                                             incomeSource: Option[String],
-                                             businessName: Option[String])

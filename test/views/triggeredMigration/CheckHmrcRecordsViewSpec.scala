@@ -16,6 +16,7 @@
 
 package views.triggeredMigration
 
+import models.core.IncomeSourceId
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import org.jsoup.Jsoup
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -28,7 +29,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
 
   class Setup(activeSoleTrader: Boolean, activeUkProperty: Boolean, activeForeignProperty: Boolean) {
     val soleTraderDetails = activeSoleTrader match {
-      case true => List(CheckHmrcRecordsSoleTraderDetails(Some("business"), Some("nextUpdates.business")))
+      case true => List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"), Some("business"), Some("nextUpdates.business")))
       case _ => List.empty
     }
 

@@ -22,6 +22,7 @@ import models.UIJourneySessionData
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
+import models.triggeredMigration.TriggeredMigrationSessionData
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
@@ -169,7 +170,7 @@ object IncomeSourceDetailsTestConstants {
     }
   }
 
-  def notCompletedUIJourneySessionData(journeyType: IncomeSourceJourneyType): UIJourneySessionData = {
+  def notCompletedUIJourneySessionData(journeyType: IncomeSourceJourneyType, isTriggeredMigration: Boolean = false): UIJourneySessionData = {
     journeyType.operation.operationType match {
       case "ADD" =>
         UIJourneySessionData(
@@ -208,8 +209,10 @@ object IncomeSourceDetailsTestConstants {
             endDate = Some(LocalDate.of(2022, 10, 10)),
             ceaseIncomeSourceDeclare = Some("true"),
             journeyIsComplete = None
-          ))
-        )
+          )),
+          triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(
+            isTriggeredMigrationJourney = isTriggeredMigration
+          )))
     }
   }
 

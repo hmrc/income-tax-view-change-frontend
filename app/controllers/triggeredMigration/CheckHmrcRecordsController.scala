@@ -21,23 +21,34 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.SessionService
 import services.triggeredMigration.TriggeredMigrationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.TriggeredMigrationUtils
 import views.html.triggeredMigration.CheckHmrcRecordsView
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
                                            val auth: AuthActions,
-                                           triggeredMigrationService: TriggeredMigrationService)
+                                           triggeredMigrationService: TriggeredMigrationService,
+                                           sessionService: SessionService)
                                           (mcc: MessagesControllerComponents,
-                                           implicit val appConfig: FrontendAppConfig)
+                                           implicit val appConfig: FrontendAppConfig,
+                                           implicit val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def show(isAgent: Boolean, state: Option[String] = None): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+    //TODO: Redirect the user back to the triggered migration page if they press the backlink (Requires the data from the API to know if the user has to stay in the journey)
     withTriggeredMigrationFS {
+      if (state.isDefined) {
+        val sessionId = hc.sessionId.getOrElse {
+          throw new RuntimeException("No session ID found when attempting to clear session")
+        }
+        sessionService.clearSession(sessionId.value)
+      }
+
       val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources)
 
       Future.successful(Ok(view(viewModel)))
