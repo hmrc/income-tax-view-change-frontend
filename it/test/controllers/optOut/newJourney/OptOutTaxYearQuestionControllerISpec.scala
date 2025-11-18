@@ -199,12 +199,11 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(OK),
-            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousYearHeadingMulti),
-            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousYearDesc1Multi),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousYearInsetMulti),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousYearDesc2Multi),
-            elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.previousYearDesc3Multi),
-            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousYearQuestionMulti),
+            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
+            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousSingleYearInset),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
+            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
         }
 
@@ -307,11 +306,10 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(OK),
-            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.currentYearHeadingAnnual),
-            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.currentYearDesc1Annual),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.currentYearDesc2Annual),
-            elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.currentYearDesc3Annual),
-            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.currentYearQuestionAnnual),
+            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualHeading),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc1),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc2),
+            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualQuestion),
           )
         }
 
