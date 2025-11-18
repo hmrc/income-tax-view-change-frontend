@@ -3351,6 +3351,19 @@ yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading					= Late paym
 yourSelfAssessmentChargeSummary.lpi.interestPeriod								    = Interest period:
 yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates						    = {0} to {1}
 
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading             = Interest for first payment on account: extra amount
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading             = Interest for second payment on account: extra amount
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3                           = Interest is charged from the date your first payment on account was due and calculated at the
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted second payment on account was too low.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                           = Interest is charged from the date your second payment on account was due and calculated at the
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
+
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
 yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through PAYE tax code
 

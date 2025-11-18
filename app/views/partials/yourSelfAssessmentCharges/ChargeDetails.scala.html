@@ -34,7 +34,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.MFADebitContent
 @import views.html.partials.yourSelfAssessmentCharges.POALPIExplanationContent
 @import views.html.partials.yourSelfAssessmentCharges.BalancingChargeLPIExplanationContent
-@import models.financialDetails.ChargeItem
+@import views.html.partials.yourSelfAssessmentCharges.POAReconciliationLPIExplanationContent
 @import models.financialDetails.Nics2
 @import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
 @import models.financialDetails.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit,MfaDebitCharge}
@@ -57,6 +57,7 @@
     mfaDebitContent: MFADebitContent,
     poaLPIExplanationContent: POALPIExplanationContent,
     balancingChargeLPIExplanationContent: BalancingChargeLPIExplanationContent,
+    poaReconciliationLPIExplanationContent: POAReconciliationLPIExplanationContent,
     govukDetails: GovukDetails
 )
 
@@ -73,6 +74,7 @@
     case (PoaOneDebit | PoaTwoDebit, _, true)              => poaLPIExplanationContent(viewModel)
     case (PoaOneDebit | PoaTwoDebit, None, _)              => whatIsPaymentOnAccount()
     case (PoaOneDebit | PoaTwoDebit, Some(Accepted), _)    => codedOutExplanationContent(viewModel.chargeItem)
+    case (PoaOneReconciliationDebit | PoaTwoReconciliationDebit, _, true) => poaReconciliationLPIExplanationContent(viewModel)
     case (PoaOneReconciliationDebit | PoaTwoReconciliationDebit, _, _) => whatIsPaymentOnAccountReconciliationPoaDebits(viewModel)
     case (LateSubmissionPenalty, _, _)                     => lateSubmissionPenaltyContent(viewModel.LSPUrl)
     case (FirstLatePaymentPenalty, _, _)                   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
