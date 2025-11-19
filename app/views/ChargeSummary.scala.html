@@ -286,7 +286,7 @@
         case _ => false
     }
 }
-@codingOutBCDMessage = {
+@codingOutBCDMessageInset = {
     @p(id=Some("coding-out-message")){
         @messages("chargeSummary.codingOutBCDMessage", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
     }
@@ -306,7 +306,7 @@
     }
 }
 
-@codingOutCancelledMessageInset = {
+@codingOutCancelledMessage = {
     @p(id = Some("cancelled-coding-out-notice")) {
         @messages("chargeSummary.cancelledPayeInset-1")
         @link(
@@ -318,6 +318,36 @@
             additionalOpenTabMessage = Some(".")
         )
         @messages("chargeSummary.cancelledPayeInset-3")
+    }
+}
+
+@codingOutBCDMessage = {
+    @if(!viewModel.isCredit) {
+        @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
+            @p(id = Some("p-interest-locks-msg")) {
+                @if(viewModel.isAgent) {
+                    @messages("chargeSummary.whatYouOwe.textOne-agent")
+                    @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                    @messages("chargeSummary.interestLocks.text-agent")
+                } else {
+                    @messages("chargeSummary.whatYouOwe.textOne")
+                    @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                    @messages("chargeSummary.interestLocks.text")
+                }
+            }
+        } else {
+            @p() {
+                @if(viewModel.isAgent) {
+                    @messages("chargeSummary.whatYouOwe.textOne-agent"),
+                    @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+                    @messages("chargeSummary.whatYouOwe.textTwo-agent")
+                } else {
+                    @messages("chargeSummary.whatYouOwe.textOne")
+                    @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
+                    @messages("chargeSummary.whatYouOwe.textTwo")
+                }
+            }
+        }
     }
 }
 
@@ -333,6 +363,26 @@
         captionMsg = messages("paymentDue.tax-year", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
     )
 
+    <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
+        s"${
+            messages(
+                    if(viewModel.chargeItem.isOverdue()) "yourSelfAssessmentChargeSummary.overDueCharge"
+                    else "yourSelfAssessmentChargeSummary.charge"
+            )
+        }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}${
+            if(viewModel.chargeItem.interestOutstandingAmount)
+                s"\t${
+                    messages("yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe")
+                }" else ""
+        }"
+    }</h2>
+
+    @if(true) {
+        @p(id = Some("due-date-text")) {
+            <b>@messages("yourSelfAssessmentChargeSummary.due", viewModel.chargeItem.getDueDate.toLongDate)</b>
+        }
+    }
+
     @if(Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(viewModel.chargeItem.transactionType) && !viewModel.latePaymentInterestCharge) {
         @govukWarningText(WarningText(content = Text(messages("chargeSummary.reviewAndReconcilePoa.warning"))))
     }
@@ -346,33 +396,24 @@
             @govukInsetText(InsetText(content = HtmlContent(codingOutMessageInset)))
         </div>
         @if(viewModel.chargeItem.transactionType == BalancingCharge) {
-            @codingOutBCDMessage
+            @codingOutBCDMessageInset
         }
     }
 
     @if(viewModel.chargeItem.codedOutStatus.contains(Cancelled)){
         <div id="cancelled-coding-out-wrapper">
-            @govukInsetText(InsetText(content = HtmlContent(codingOutCancelledMessageInset)))
+            @codingOutCancelledMessage
         </div>
         @if(viewModel.chargeItem.transactionType == BalancingCharge) {
             @codingOutBCDMessage
         }
     }
 
+
     @if(viewModel.codingOutEnabledAndIsClass2NicWithNoIsPayeSelfAssessment){
         @p(id = Some("nic2TaxYear")){
             @messages("chargeSummary.nic2TaxYear", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
         }
-    }
-
-    @if(!viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
-    && !isPOAReconciliationCredit) {
-        @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
-            viewModel.chargeItem,
-            viewModel.latePaymentInterestCharge,
-            viewModel.taxYearFromCodingOut,
-            viewModel.taxYearToCodingOut,
-            appConfig)
     }
 
     @if(viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
@@ -402,42 +443,7 @@
         }
     }
 
-
-
-    @if(!viewModel.isCredit) {
-        @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
-            @p(id = Some("p-interest-locks-msg")) {
-                @if(viewModel.isAgent) {
-                    @messages("chargeSummary.whatYouOwe.textOne-agent")
-                    @link(id = Some("what-you-owe-interest-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                    @messages("chargeSummary.interestLocks.text-agent")
-                } else {
-                    @messages("chargeSummary.whatYouOwe.textOne")
-                    @link(id = Some("what-you-owe-interest-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                    @messages("chargeSummary.interestLocks.text")
-                }
-
-            }
-        } else {
-            @p() {
-                @if(viewModel.isAgent) {
-                    @messages("chargeSummary.whatYouOwe.textOne-agent"),
-                    @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
-                    @messages("chargeSummary.whatYouOwe.textTwo-agent")
-                } else {
-                    @messages("chargeSummary.whatYouOwe.textOne")
-                    @link(id = Some("what-you-owe-link"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText")
-                    @messages("chargeSummary.whatYouOwe.textTwo")
-                }
-            }
-        }
-    }
-
-
-
-
-
-    @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
+    @if(true){
         @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus == None) {
             @h3(
                 msg = messages("chargeSummary.chargeHistory.heading"),
@@ -446,6 +452,10 @@
             )
         } else {
             @h2(msg = messages("chargeSummary.chargeHistory.heading"), optId = Some("charge-history-h2"))
+        }
+
+        @p(id = Some("")) {
+            @messages("chargeSummary.chargeHistory.text", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
         }
 
         @govukTable(Table(

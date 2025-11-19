@@ -115,6 +115,14 @@ case class ChargeSummaryViewModel(
       )
     }
 
+  val cancelledPayeSelfAssessmentIsCreated: Option[ChargeHistoryItem] = Option.when(!chargeItem.interestIsPaid) {
+      ChargeHistoryItem(
+        date = chargeItem.creationDate.getOrElse(currentDate),
+        description = Html(messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")),
+        amount = chargeItem.outstandingAmount
+      )
+    }
+
   val chargeItemList: Option[ChargeHistoryItem] = Option.when(chargeHistoryEnabled && latePaymentInterestCharge) {
     ChargeHistoryItem(
       date = chargeItem.interestEndDate.get,
@@ -193,6 +201,7 @@ case class ChargeSummaryViewModel(
 
   val sortedChargeHistoryTableEntries: List[ChargeHistoryItem] = {
       creationEventNoInterestChargeAndNotCodedOut.toList ++
+      cancelledPayeSelfAssessmentIsCreated.toList ++
       creationEventCodedOut.toList ++
       reviewAndReconcileCreditList.toList ++
       chargeHistoriesFormattedList ++
