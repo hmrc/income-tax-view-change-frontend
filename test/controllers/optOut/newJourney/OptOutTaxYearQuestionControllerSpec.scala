@@ -184,7 +184,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           redirectLocation(result) shouldBe Some(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent).url)
         }
 
-        "redirect the user when they select 'Yes' - current year with quarterly updates to confirm updates page" in {
+        "redirect the user when they select 'Yes' - opt out single year followed by mandated with updates" in {
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
@@ -192,7 +192,10 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(numberOfQuarterlyUpdates = 2))))
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(
+            numberOfQuarterlyUpdates = 2,
+            optOutState = Some(OneYearOptOutFollowedByMandated)
+          ))))
           mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
           mockUpdateOptOutJourneyStatusInSessionData()
           mockFetchOptOutJourneyCompleteStatus()

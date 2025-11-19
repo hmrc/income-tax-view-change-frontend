@@ -92,7 +92,5 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
 
   val messageSuffix = s"$taxYearMessageSuffix.$optOutStateMessageSuffix"
 
-  val redirectToConfirmUpdatesPage: Boolean = {
-    numberOfQuarterlyUpdates > 0 && isCurrentYear
-  }
+  val redirectToConfirmUpdatesPage: Boolean = optOutState.contains(OneYearOptOutFollowedByMandated) && !hasNoQuarterlyUpdatesSubmitted
 }
