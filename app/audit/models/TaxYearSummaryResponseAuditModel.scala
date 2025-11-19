@@ -19,6 +19,7 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import implicits.ImplicitDateParser
+import models.financialDetails.Accepted
 import models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.obligations.ObligationWithIncomeType
@@ -99,7 +100,8 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
   private def paymentsJson(docDateDetail: TaxYearSummaryChargeItem): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail, false),
       "underReview" -> docDateDetail.dunningLock,
-      "status" -> docDateDetail.getChargePaidStatus) ++
+      "status" -> docDateDetail.getChargePaidStatus,
+      "codedOut" -> docDateDetail.isCodingOutAccepted) ++
       ("amount", Option(docDateDetail.originalAmount)) ++
       ("dueDate", docDateDetail.dueDate)
   }
@@ -113,7 +115,8 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
   private def paymentsJsonLPI(docDateDetail: TaxYearSummaryChargeItem): JsObject = {
     Json.obj("paymentType" -> getChargeType(docDateDetail, latePaymentCharge = true),
       "underReview" -> docDateDetail.dunningLock,
-      "status" -> docDateDetail.getInterestPaidStatus) ++
+      "status" -> docDateDetail.getInterestPaidStatus,
+      "codedOut" -> docDateDetail.isCodingOutAccepted) ++
       ("amount", docDateDetail.accruingInterestAmount) ++
       ("dueDate", docDateDetail.dueDate)
   }

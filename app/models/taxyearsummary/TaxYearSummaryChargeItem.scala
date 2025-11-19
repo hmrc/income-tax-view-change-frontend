@@ -122,6 +122,10 @@ case class TaxYearSummaryChargeItem(
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
+  def isCodingOutAccepted: Boolean ={
+    codedOutStatus.contains(Accepted)
+  }
+
   def interestIsPaid: Boolean = interestOutstandingAmount match {
     case Some(amount) if amount == 0 => true
     case _ => false
