@@ -19,7 +19,6 @@ package auth.authV2
 object Constants {
 
   val agentServiceEnrolmentName = "HMRC-AS-AGENT"
-  val agentServiceIdentifierKey = "AgentReferenceNumber"
 
   val ninoEnrolmentName = "HMRC-NI"
   val ninoEnrolmentIdentifierKey = "NINO"

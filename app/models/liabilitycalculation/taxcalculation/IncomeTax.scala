@@ -37,10 +37,7 @@ case class IncomeTax(
                       totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                       giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
                       incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None
-                    ) {
-  val totalAllowancesDeductionsReliefs: BigDecimal = BigDecimal.valueOf(totalAllowancesAndDeductions) + totalReliefs.getOrElse(0.00)
-}
-
+                    )
 object IncomeTax {
   implicit val format: OFormat[IncomeTax] = Json.format[IncomeTax]
 }

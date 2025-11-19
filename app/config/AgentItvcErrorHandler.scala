@@ -43,14 +43,6 @@ class AgentItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
       isAgent = true
     ))
 
-  def showOkTechnicalDifficulties()(implicit request: RequestHeader): Result =
-    Ok(errorTemplate(
-      messagesApi.preferred(request)("standardError.heading"),
-      messagesApi.preferred(request)("standardError.heading"),
-      messagesApi.preferred(request)("standardError.message"),
-      isAgent = true
-    ))
-
   def supportingAgentUnauthorised()(implicit request: RequestHeader): Result =
     Unauthorized(unauthorisedAgentView())
 }

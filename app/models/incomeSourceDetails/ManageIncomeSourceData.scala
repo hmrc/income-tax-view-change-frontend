@@ -28,7 +28,6 @@ case class ManageIncomeSourceData(
 object ManageIncomeSourceData {
 
   val incomeSourceIdField = "incomeSourceId"
-  val journeyIsCompleteField: String = "incomeSourceCreatedJourneyComplete"
 
   def getJSONKeyPath(name: String): String = s"manageIncomeSourceData.$name"
 

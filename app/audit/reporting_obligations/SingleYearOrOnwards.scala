@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package models.taxYearAmount
+package audit.reporting_obligations
 
-import models.incomeSourceDetails.TaxYear
+sealed trait SingleYearOrOnwards
 
-case class EarliestDueCharge(
-                                     taxYear: TaxYear,
-                                     amount: BigDecimal
-                                   )
+case object Onwards extends SingleYearOrOnwards
+case object SingleTaxYear extends SingleYearOrOnwards
+case object NoTaxYear extends SingleYearOrOnwards
+

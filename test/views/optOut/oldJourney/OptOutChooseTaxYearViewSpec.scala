@@ -24,7 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.TestSupport
 import views.html.optOut.oldJourney.OptOutChooseTaxYear
 

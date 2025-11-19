@@ -67,13 +67,13 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
     implicit user =>
       claimToAdjustService.getPoaViewModelWithAdjustmentReason(Nino(user.nino)).flatMap {
         case Right(viewModel) =>
-          handleForm(viewModel, user.isAgent(), mode)
+          handleForm(viewModel, mode)
         case Left(ex) =>
           Future.successful(logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}"))
       }
   }
 
-  def handleForm(viewModel: PaymentOnAccountViewModel, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleForm(viewModel: PaymentOnAccountViewModel, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
       formWithErrors =>
         Future.successful(BadRequest(view(formWithErrors, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))),
@@ -81,20 +81,20 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
         poaSessionService.setNewPoaAmount(validForm.amount).flatMap {
           case Left(ex) =>
             Future.successful(logAndRedirect(s"Error while setting mongo data : ${ex.getMessage} - ${ex.getCause}"))
-          case Right(_) => getRedirect(viewModel, validForm.amount, user.isAgent(), mode)
+          case Right(_) => getRedirect(viewModel, validForm.amount, mode)
         }
     )
   }
 
-  def getRedirect(viewModel: PaymentOnAccountViewModel, newPoaAmount: BigDecimal, isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
+  def getRedirect(viewModel: PaymentOnAccountViewModel, newPoaAmount: BigDecimal, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     (viewModel.totalAmountLessThanPoa, newPoaAmount > viewModel.totalAmountOne) match {
-      case (true, true) => hasIncreased(user.isAgent())
-      case (true, _) => hasDecreased(user.isAgent(), mode)
+      case (true, true) => hasIncreased()
+      case (true, _) => hasDecreased(mode)
       case _ => Future.successful(Redirect(CheckYourAnswersController.show(user.isAgent())))
     }
   }
 
-  private def hasIncreased(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def hasIncreased()(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setAdjustmentReason(Increase).map {
       case Left(ex) =>
         logAndRedirect(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
@@ -104,7 +104,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
   }
 
   //user has decreased but could have increased:
-  private def hasDecreased(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def hasDecreased(mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     if (mode == NormalMode)
       Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent(), NormalMode)))
     else {

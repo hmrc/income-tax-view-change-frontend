@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class StubPenaltiesDataController @Inject()(stubDataView: StubDataView)
+class StubPenaltiesDataController @Inject()()
                                            (implicit val appConfig: FrontendAppConfig,
                                    implicit val mcc: MessagesControllerComponents,
                                    implicit val executionContext: ExecutionContext,

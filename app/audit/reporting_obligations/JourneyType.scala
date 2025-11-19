@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package testOnly.forms
+package audit.reporting_obligations
 
-import play.api.data.Form
-import play.api.data.Forms._
-import testOnly.forms.validation.Constraints._
-import testOnly.models.UserModel
+sealed trait JourneyType
 
-object UserModelForm {
+case object SignUp extends JourneyType
+case object OptOut extends JourneyType
 
-  val userModelForm: Form[UserModel] = Form(
-    mapping(
-      "mtdItId" -> text.verifying(nonEmpty("Must have an MTDID")),
-      "nino" -> text.verifying(nonEmpty("Must have a NINO"))
-    )(UserModel.apply)(UserModel.unapply)
-  )
-}
+

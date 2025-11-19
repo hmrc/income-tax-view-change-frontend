@@ -32,7 +32,7 @@ import play.api.Logger
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
-import services.reportingfreq.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
+import services.reporting_frequency.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -162,7 +162,7 @@ class OptOutService @Inject()(
                                      ec: ExecutionContext): Future[(OptOutProposition, Option[OptOutViewModel])] = {
     for {
       proposition <- fetchOptOutProposition()
-      _ <- optOutRepository.initialiseOptOutJourney(proposition)
+      _ <- optOutRepository.initialiseOptOutJourney(proposition, shouldResetIntent = false)
     } yield (proposition, nextUpdatesOptOutViewModel(proposition))
   }
 
@@ -171,7 +171,7 @@ class OptOutService @Inject()(
                                             ec: ExecutionContext): Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel], OptOutProposition)] = {
     for {
       proposition <- fetchOptOutProposition()
-      _ <- optOutRepository.initialiseOptOutJourney(proposition)
+      _ <- optOutRepository.initialiseOptOutJourney(proposition, shouldResetIntent = false)
     } yield (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition), proposition)
   }
 

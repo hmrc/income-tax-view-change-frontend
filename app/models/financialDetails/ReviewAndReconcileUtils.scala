@@ -21,9 +21,6 @@ object ReviewAndReconcileUtils {
   lazy val poaOneReviewAndReconcileDebit = "4911"
   lazy val poaTwoReviewAndReconcileDebit = "4913"
 
-  lazy val poaOneReviewAndReconcileCredit = "4912"
-  lazy val poaTwoReviewAndReconcileCredit = "4914"
-
   def isReviewAndReconcilePoaOne(mainTransaction: Option[String]): Boolean =
     mainTransaction.contains(poaOneReviewAndReconcileDebit)
 
