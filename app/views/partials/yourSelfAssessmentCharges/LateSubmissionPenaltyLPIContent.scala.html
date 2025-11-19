@@ -35,10 +35,10 @@
 @p(id = Some("lpi-LSP1")){@getMessage("lpi.lateSubmissionPenalty.p1")}
 @p(id = Some("lpi-LSP2")) {
     @getMessage("lpi.penalties.textOne")
-    <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@getMessage("lpi.penalties.linkText")</a>
+    <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}" target = Some("_blank")>@getMessage("lpi.penalties.linkText")</a>
     @getMessage("lpi.penalties.textTwo")
 }
 @p(id = Some("lpi-LSP3"), classes = "govuk-body") {
     @getMessage("lpi.penalties.p3")
-    <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@getMessage("lpi.penalties.p3LinkText")</a>
+    <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}" target = Some("_blank")>@getMessage("lpi.penalties.p3LinkText")</a>
 }

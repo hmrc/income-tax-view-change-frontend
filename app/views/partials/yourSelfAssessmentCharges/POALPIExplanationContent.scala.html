@@ -42,11 +42,11 @@ messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
   }
     @p(id = Some("lpi-poa5"), classes = "govuk-body") {
       @messages("chargeSummary.lpi.paymentsOnAccount.textOne")
-      <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
+      <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}" target = Some("_blank")>@messages("chargeSummary.lpi.paymentsOnAccount.linkText")</a>
       @messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
     }
     @p(id = Some("lpi-poa6"), classes = "govuk-body") {
       @messages("chargeSummary.lpi.paymentsOnAccount.p3")
-      <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
+      <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}" target = Some("_blank")>@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
     }
 </div>

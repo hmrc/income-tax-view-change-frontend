@@ -19,6 +19,7 @@
 
 @this(
     p: p,
+    link: link
 )
 
 @()(
@@ -34,11 +35,11 @@ messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
     @p(id = Some("lpi-bcd1")){@messages("chargeSummary.lpi.balancingCharge.p1")}
     @p(id = Some("lpi-bcd2")) {
         @messages("chargeSummary.lpi.balancingCharge.textOne")
-        <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}">@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
+        <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}" target = Some("_blank")>@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
         @messages("chargeSummary.lpi.balancingCharge.textTwo")
     }
     @p(id = Some("lpi-bcd3"), classes = "govuk-body govuk-!-margin-bottom-8") {
         @messages("chargeSummary.lpi.balancingCharge.p3")
-        <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
+        <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}" target = Some("_blank")>@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
     }
 </div>
