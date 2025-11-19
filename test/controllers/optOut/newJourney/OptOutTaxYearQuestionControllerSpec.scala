@@ -192,7 +192,10 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(numberOfQuarterlyUpdates = 2, optOutState = Some(OneYearOptOutFollowedByMandated)))))
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(
+            numberOfQuarterlyUpdates = 2,
+            optOutState = Some(OneYearOptOutFollowedByMandated)
+          ))))
           mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
           mockUpdateOptOutJourneyStatusInSessionData()
           mockFetchOptOutJourneyCompleteStatus()

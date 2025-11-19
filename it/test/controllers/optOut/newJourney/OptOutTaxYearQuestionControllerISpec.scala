@@ -27,8 +27,7 @@ import helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
+import models.itsaStatus.ITSAStatus._
 import models.obligations._
 import models.optout.OptOutSessionData
 import play.api.http.Status
@@ -145,9 +144,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.Voluntary,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Voluntary
+            `itsaStatusCY-1` = Voluntary,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Voluntary
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -181,9 +180,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.Voluntary,
-            itsaStatusCY = ITSAStatus.Annual,
-            `itsaStatusCY+1` = ITSAStatus.Voluntary
+            `itsaStatusCY-1` = Voluntary,
+            itsaStatusCY = Annual,
+            `itsaStatusCY+1` = Voluntary
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -199,12 +198,11 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(OK),
-            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousYearHeadingMulti),
-            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousYearDesc1Multi),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousYearInsetMulti),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousYearDesc2Multi),
-            elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.previousYearDesc3Multi),
-            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousYearQuestionMulti),
+            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
+            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousSingleYearInset),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
+            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
         }
 
@@ -217,9 +215,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.Voluntary,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Annual
+            `itsaStatusCY-1` = Voluntary,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Annual
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -253,9 +251,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.Voluntary,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Voluntary
+            `itsaStatusCY-1` = Voluntary,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Voluntary
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -289,9 +287,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.Voluntary,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Annual
+            `itsaStatusCY-1` = Voluntary,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Annual
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -307,11 +305,10 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(OK),
-            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.currentYearHeadingAnnual),
-            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.currentYearDesc1Annual),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.currentYearDesc2Annual),
-            elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.currentYearDesc3Annual),
-            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.currentYearQuestionAnnual),
+            elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualHeading),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc1),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc2),
+            elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualQuestion),
           )
         }
 
@@ -324,9 +321,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.Voluntary,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Voluntary
+            `itsaStatusCY-1` = Voluntary,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Voluntary
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -360,9 +357,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.Voluntary,
-            itsaStatusCY = ITSAStatus.Mandated,
-            `itsaStatusCY+1` = ITSAStatus.Mandated
+            `itsaStatusCY-1` = Voluntary,
+            itsaStatusCY = Mandated,
+            `itsaStatusCY+1` = Mandated
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -395,9 +392,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.NoStatus,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Mandated
+            `itsaStatusCY-1` = NoStatus,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Mandated
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -429,9 +426,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.NoStatus,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Mandated
+            `itsaStatusCY-1` = NoStatus,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Mandated
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -464,9 +461,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.Voluntary,
-            itsaStatusCY = ITSAStatus.Annual,
-            `itsaStatusCY+1` = ITSAStatus.Annual
+            `itsaStatusCY-1` = Voluntary,
+            itsaStatusCY = Annual,
+            `itsaStatusCY+1` = Annual
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -499,9 +496,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.NoStatus,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Annual
+            `itsaStatusCY-1` = NoStatus,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Annual
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -533,9 +530,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.NoStatus,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Annual
+            `itsaStatusCY-1` = NoStatus,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Annual
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -568,9 +565,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.NoStatus,
-            itsaStatusCY = ITSAStatus.Annual,
-            `itsaStatusCY+1` = ITSAStatus.Voluntary
+            `itsaStatusCY-1` = NoStatus,
+            itsaStatusCY = Annual,
+            `itsaStatusCY+1` = Voluntary
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -601,9 +598,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.NoStatus,
-            itsaStatusCY = ITSAStatus.Mandated,
-            `itsaStatusCY+1` = ITSAStatus.Voluntary
+            `itsaStatusCY-1` = NoStatus,
+            itsaStatusCY = Mandated,
+            `itsaStatusCY+1` = Voluntary
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),
@@ -637,9 +634,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
-          `itsaStatusCY-1` = ITSAStatus.Voluntary,
-          itsaStatusCY = ITSAStatus.Voluntary,
-          `itsaStatusCY+1` = ITSAStatus.Voluntary
+          `itsaStatusCY-1` = Voluntary,
+          itsaStatusCY = Voluntary,
+          `itsaStatusCY+1` = Voluntary
         )
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
@@ -706,9 +703,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
-          `itsaStatusCY-1` = ITSAStatus.Voluntary,
-          itsaStatusCY = ITSAStatus.Voluntary,
-          `itsaStatusCY+1` = ITSAStatus.Voluntary
+          `itsaStatusCY-1` = Voluntary,
+          itsaStatusCY = Voluntary,
+          `itsaStatusCY+1` = Voluntary
         )
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
@@ -775,9 +772,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
-          `itsaStatusCY-1` = ITSAStatus.Voluntary,
-          itsaStatusCY = ITSAStatus.Voluntary,
-          `itsaStatusCY+1` = ITSAStatus.Voluntary
+          `itsaStatusCY-1` = Voluntary,
+          itsaStatusCY = Voluntary,
+          `itsaStatusCY+1` = Voluntary
         )
         CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
@@ -799,9 +796,9 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
-            `itsaStatusCY-1` = ITSAStatus.Voluntary,
-            itsaStatusCY = ITSAStatus.Voluntary,
-            `itsaStatusCY+1` = ITSAStatus.Voluntary
+            `itsaStatusCY-1` = Voluntary,
+            itsaStatusCY = Voluntary,
+            `itsaStatusCY+1` = Voluntary
           )
           helper.stubOptOutInitialState(
             currentTaxYear(dateService),

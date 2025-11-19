@@ -43,7 +43,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
       api.inject.bind[OptOutService].toInstance(mockOptOutService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[ConfirmedOptOutController]
+  lazy val testController: ConfirmedOptOutController = app.injector.instanceOf[ConfirmedOptOutController]
 
   val taxYear = TaxYear.forYearEnd(2024)
   val optOutYear: OptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, taxYear)
@@ -69,7 +69,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockOptOutConfirmedPageViewModel(eligibleTaxYearResponse)
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(3))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -181,7 +181,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 0
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -213,7 +213,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 0
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -245,7 +245,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 3
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -280,7 +280,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 0
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -312,7 +312,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 3
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -347,7 +347,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 0
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -377,7 +377,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 3
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -410,7 +410,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 0
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -443,7 +443,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 0
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -473,7 +473,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 0
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -503,7 +503,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 0
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -533,7 +533,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
           val quarterlyUpdatesCount = 0
 
-          when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+          when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
             .thenReturn(Future.successful(quarterlyUpdatesCount))
 
           when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
@@ -589,7 +589,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
             val quarterlyUpdatesCount = 0
 
-            when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
               .thenReturn(Future.successful(quarterlyUpdatesCount))
 
             when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
