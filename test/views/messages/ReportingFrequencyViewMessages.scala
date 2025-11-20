@@ -44,6 +44,7 @@ object ReportingFrequencyViewMessages {
   val differentObligationsLiOne = "4 updates a year for each source of self employment and property income"
   val differentObligationsLiTwo = "a tax return"
   val differentObligationsTextTwo = "For tax years you are opted out of, you only need to file a tax return."
+  val differentObligationsTextTwoExempt = "For tax years you are opted out of or exempt, you only need to file a tax return."
   val differentObligationsTextThree = "You can see what is due on the updates and deadlines page."
 
   val yourObligationsHeading = "What your reporting obligations are"
@@ -72,5 +73,6 @@ object ReportingFrequencyViewMessages {
   val compatibleSoftwareTextTwo = "For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return."
 
   val compatibleSoftwareTextThreeR17 = "If you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
+  val compatibleSoftwareTextThreeR17Exempt = "If you are opted out or exempt, you can find out here how to file your Self Assessment tax return (opens in new tab)."
 
 }
