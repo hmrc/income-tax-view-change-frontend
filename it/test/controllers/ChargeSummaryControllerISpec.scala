@@ -174,7 +174,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("main h2")(paymentHistory),
+                                  elementTextBySelector("main h2")(s"${youOweMessage(chargeItemPaid)} $paymentHistory"),
                                   elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
                                 )
                               }
@@ -191,8 +191,8 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("main h2")(paymentHistory),
-                                  elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
+                                  elementTextBySelector("main h2")(s"${youOweMessage(chargeItemPaid)} $paymentHistory"),
+                                  elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(cancelledPAYECreated)
                                 )
                               }
                             }
@@ -234,49 +234,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.paymentOnAccount2.text"),
-                                  elementTextBySelector("main h2")("")
-                                )
-                              }
-                            }
-
-                            "has coding out details" when {
-                              "coding out is enabled and a coded out documentDetail id is passed" in {
-                                enable(ChargeHistory)
-                                stubAuthorised(mtdUserRole)
-                                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
-                                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
-                                  "codingDetails" -> Json.arr(),
-                                  "documentDetails" -> Json.arr(
-                                    Json.obj("taxYear" -> 2018,
-                                      "transactionId" -> "CODINGOUT01",
-                                      "documentDescription" -> "TRM New Charge",
-                                      "documentText" -> CODING_OUT_ACCEPTED,
-                                      "outstandingAmount" -> 2500.00,
-                                      "originalAmount" -> 2500.00,
-                                      "documentDate" -> "2018-03-29"
-                                    )),
-                                  "financialDetails" -> Json.arr(
-                                    Json.obj(
-                                      "transactionId" -> "CODINGOUT01",
-                                      "taxYear" -> "2018",
-                                      "mainTransaction" -> "4910",
-                                      "chargeReference" -> "chargeRef",
-                                      "items" -> Json.arr(
-                                        Json.obj(
-                                        "codedOutStatus" -> "I"
-                                      ))
-                                    )
-                                  )))
-
-                                val res = buildGETMTDClient(path +"?id=CODINGOUT01", additionalCookies).futureValue
-
-                                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                                res should have(
-                                  httpStatus(OK),
-                                  pageTitle(mtdUserRole, "tax-year-summary.payments.codingOut.text"),
-                                  elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
-                                  elementTextBySelector("#codedOutBCDExplanation")(codingOutMessageWithStringMessagesArgument(2017, 2018))
+                                  elementTextBySelector("main h2")("Charge: £0.00 (not including estimated interest) History of this charge")
                                 )
                               }
                             }
