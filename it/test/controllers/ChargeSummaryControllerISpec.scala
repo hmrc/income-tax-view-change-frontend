@@ -174,7 +174,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("main h2")(s"${youOweMessage(chargeItemPaid)} $paymentHistory"),
+                                  elementTextBySelector("#charge-history-heading")(paymentHistory),
                                   elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
                                 )
                               }
@@ -191,8 +191,8 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("main h2")(s"${youOweMessage(chargeItemPaid)} $paymentHistory"),
-                                  elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(cancelledPAYECreated)
+                                  elementTextBySelector("#charge-history-heading")(paymentHistory),
+                                  elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
                                 )
                               }
                             }
@@ -208,6 +208,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                   "documentDetails" -> Json.arr(
                                     Json.obj("taxYear" -> 2018,
                                       "transactionId" -> "1040001234",
+                                      "documentDueDate" -> "2019-03-29",
                                       "documentDescription" -> "ITSA - POA 2",
                                       "outstandingAmount" -> 0.0,
                                       "originalAmount" -> 10.34,
@@ -225,6 +226,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                       "chargeReference" -> "chargeRef",
                                     )
                                   )))
+                                IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "", "")(200, Json.obj())
 
                                 val res = buildGETMTDClient(path +"?id=1040001234&isInterestCharge=true", additionalCookies).futureValue
 
@@ -234,7 +236,49 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.paymentOnAccount2.text"),
-                                  elementTextBySelector("main h2")("Charge: £0.00 (not including estimated interest) History of this charge")
+                                  elementTextBySelector("#charge-history-heading")("")
+                                )
+                              }
+                            }
+
+                            "has coding out details" when {
+                              "coding out is enabled and a coded out documentDetail id is passed" in {
+                                enable(ChargeHistory)
+                                stubAuthorised(mtdUserRole)
+                                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
+                                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                                  "codingDetails" -> Json.arr(),
+                                  "documentDetails" -> Json.arr(
+                                    Json.obj("taxYear" -> 2018,
+                                      "transactionId" -> "CODINGOUT01",
+                                      "documentDescription" -> "TRM New Charge",
+                                      "documentText" -> CODING_OUT_ACCEPTED,
+                                      "outstandingAmount" -> 2500.00,
+                                      "originalAmount" -> 2500.00,
+                                      "documentDate" -> "2018-03-29"
+                                    )),
+                                  "financialDetails" -> Json.arr(
+                                    Json.obj(
+                                      "transactionId" -> "CODINGOUT01",
+                                      "taxYear" -> "2018",
+                                      "mainTransaction" -> "4910",
+                                      "chargeReference" -> "chargeRef",
+                                      "items" -> Json.arr(
+                                        Json.obj(
+                                        "codedOutStatus" -> "I"
+                                      ))
+                                    )
+                                  )))
+
+                                val res = buildGETMTDClient(path +"?id=CODINGOUT01", additionalCookies).futureValue
+
+                                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                                res should have(
+                                  httpStatus(OK),
+                                  pageTitle(mtdUserRole, "tax-year-summary.payments.codingOut.text"),
+                                  elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
+                                  elementTextBySelector("#codedOutBCDExplanation")(codingOutMessageWithStringMessagesArgument(2017, 2018))
                                 )
                               }
                             }

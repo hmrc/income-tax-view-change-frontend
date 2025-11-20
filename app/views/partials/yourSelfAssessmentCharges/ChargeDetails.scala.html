@@ -32,7 +32,11 @@
 @import views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentContent
 @import views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentCreditContent
 @import views.html.partials.yourSelfAssessmentCharges.MFADebitContent
-@import models.financialDetails.ChargeItem
+@import views.html.partials.yourSelfAssessmentCharges.POALPIExplanationContent
+@import views.html.partials.yourSelfAssessmentCharges.BalancingChargeLPIExplanationContent
+@import views.html.partials.yourSelfAssessmentCharges.POAReconciliationLPIExplanationContent
+@import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyLPIContent
+@import views.html.partials.yourSelfAssessmentCharges.FirstLatePaymentPenaltyLPIContent
 @import models.financialDetails.Nics2
 @import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
 @import models.financialDetails.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit,MfaDebitCharge}
@@ -53,6 +57,11 @@
     itsaReturnAmendmentCreditContent: ItsaReturnAmendmentCreditContent,
     whatIsPaymentOnAccountReconciliationPoaDebits: WhatIsPaymentOnAccountReconciliationPoaDebits,
     mfaDebitContent: MFADebitContent,
+    poaLPIExplanationContent: POALPIExplanationContent,
+    balancingChargeLPIExplanationContent: BalancingChargeLPIExplanationContent,
+    poaReconciliationLPIExplanationContent: POAReconciliationLPIExplanationContent,
+    lateSubmissionPenaltyLPIContent: LateSubmissionPenaltyLPIContent,
+    firstLatePaymentPenaltyLPIContent: FirstLatePaymentPenaltyLPIContent,
     govukDetails: GovukDetails
 )
 
@@ -61,18 +70,23 @@
     messages: Messages
 )
 
-@{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codedOutStatus) match {
-    case (BalancingCharge, Some(Nics2)) => classTwoNICSContent(viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString, viewModel.isAgent)
-    case (BalancingCharge, Some(Accepted)) => codedOutExplanationContent(viewModel.chargeItem)
-    case (BalancingCharge, None)        => whatIsABalancingPayment()
-    case (PoaOneDebit | PoaTwoDebit, None) => whatIsPaymentOnAccount()
-    case (PoaOneDebit | PoaTwoDebit, Some(Accepted)) => codedOutExplanationContent(viewModel.chargeItem)
-    case(PoaOneReconciliationDebit | PoaTwoReconciliationDebit, _) => whatIsPaymentOnAccountReconciliationPoaDebits(viewModel)
-    case (LateSubmissionPenalty, _)     => lateSubmissionPenaltyContent(viewModel.LSPUrl)
-    case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
-    case (ITSAReturnAmendment, _)       => itsaReturnAmendmentContent()
-    case (ITSAReturnAmendmentCredit, _) => itsaReturnAmendmentCreditContent(viewModel.chargeItem.taxYear)
-    case (MfaDebitCharge, _)            => mfaDebitContent()
+@{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codedOutStatus, viewModel.latePaymentInterestCharge) match {
+    case (BalancingCharge, _, true)                        => balancingChargeLPIExplanationContent()
+    case (BalancingCharge, Some(Nics2), _)                 => classTwoNICSContent(viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString, viewModel.isAgent)
+    case (BalancingCharge, Some(Accepted), _)              => codedOutExplanationContent(viewModel.chargeItem)
+    case (BalancingCharge, None, _)                        => whatIsABalancingPayment()
+    case (PoaOneDebit | PoaTwoDebit, _, true)              => poaLPIExplanationContent(viewModel)
+    case (PoaOneDebit | PoaTwoDebit, None, _)              => whatIsPaymentOnAccount()
+    case (PoaOneDebit | PoaTwoDebit, Some(Accepted), _)    => codedOutExplanationContent(viewModel.chargeItem)
+    case (PoaOneReconciliationDebit | PoaTwoReconciliationDebit, _, true) => poaReconciliationLPIExplanationContent(viewModel)
+    case (PoaOneReconciliationDebit | PoaTwoReconciliationDebit, _, _) => whatIsPaymentOnAccountReconciliationPoaDebits(viewModel)
+    case (LateSubmissionPenalty, _, true)                  => lateSubmissionPenaltyLPIContent()
+    case (LateSubmissionPenalty, _, _)                     => lateSubmissionPenaltyContent(viewModel.LSPUrl)
+    case (FirstLatePaymentPenalty, _, true)                => firstLatePaymentPenaltyLPIContent()
+    case (FirstLatePaymentPenalty, _, _)                   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
+    case (ITSAReturnAmendment, _, _)                       => itsaReturnAmendmentContent()
+    case (ITSAReturnAmendmentCredit, _, _)                 => itsaReturnAmendmentCreditContent(viewModel.chargeItem.taxYear)
+    case (MfaDebitCharge, _, _)                            => mfaDebitContent()
     case _                              =>
 }}
 
