@@ -1148,6 +1148,7 @@ chargeSummary.selfAssessmentCharges.text							= to check if you have any other 
 chargeSummary.selfAssessmentCharges.text-agent					    = to check if they have any other payments due.
 
 chargeSummary.chargeHistory.heading								        = History of this charge
+chargeSummary.chargeHistory.text								        = This charge goes towards your {0} to {1} tax bill.
 chargeSummary.chargeHistory.lateInterestPayment					        = Late payment interest history
 chargeSummary.chargeHistory.Poa1heading                                 = First payment on account history
 chargeSummary.chargeHistory.Poa2heading                                 = Second payment on account history

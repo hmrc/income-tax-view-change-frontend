@@ -1148,6 +1148,7 @@ chargeSummary.selfAssessmentCharges.text                        = sydd arnoch i 
 chargeSummary.selfAssessmentCharges.text-agent				    = sydd ar eich cleient i wirio a oes ganddo unrhyw daliadau eraill sy’n ddyledus.
 
 chargeSummary.chargeHistory.heading								        = Hanes y tâl hwn
+chargeSummary.chargeHistory.text								        = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
 chargeSummary.chargeHistory.lateInterestPayment					        = Hanes llog am dalu’n hwyr
 chargeSummary.chargeHistory.Poa1heading                                 = Hanes eich taliad ar gyfrif cyntaf
 chargeSummary.chargeHistory.Poa2heading                                 = Hanes eich ail daliad ar gyfrif

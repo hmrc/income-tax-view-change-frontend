@@ -17,6 +17,7 @@
 package controllers
 
 import enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.{ChargeItem, FinancialDetail, MfaDebitCharge}
@@ -45,6 +46,13 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     financialDetailModelPartial(originalAmount = 123.45, chargeType = NIC4_SCOTLAND, mainType = "SA Payment on Account 2", dunningLock = Some("Dunning Lock"), interestLock = Some("Manual RPI Signal")))
   val important: String = s"${messagesAPI("chargeSummary.dunning.locks.banner.title")}"
   val paymentHistory: String = messagesAPI("chargeSummary.chargeHistory.heading")
+  val cancelledPAYECreated: String = messagesAPI("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")
+  def youOweMessage(chargeItem: ChargeItem): String = s"""${
+    if (chargeItem.isOverdue()) messagesAPI("yourSelfAssessmentChargeSummary.overDueCharge")
+    else messagesAPI("yourSelfAssessmentChargeSummary.charge")
+  } ${chargeItem.outstandingAmount.toCurrencyString} ${
+    messagesAPI("yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe")
+  }"""
 
   def paymentsWithCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal): PaymentHistoryAllocations =
     PaymentHistoryAllocations(
