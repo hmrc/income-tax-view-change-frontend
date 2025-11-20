@@ -18,6 +18,7 @@ package controllers.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import enums.TriggeredMigration.TriggeredMigrationCeased
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -179,6 +180,25 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               redirectLocation(result) shouldBe Some(expectedRedirect)
             }
           }
+
+          s"return 303 SEE_OTHER and redirect to the triggered migration check hmrc records page" when {
+            "using the triggered migration journey" in {
+              setupMockSuccess(mtdRole)
+              mockBothPropertyBothBusiness()
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType), isTriggeredMigration = true))))
+
+              when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
+                .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
+
+              val result = action(fakePostRequest)
+
+              val expectedRedirect = controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(mtdRole != MTDIndividual, Some(TriggeredMigrationCeased.toString)).url
+
+              status(result) shouldBe Status.SEE_OTHER
+              redirectLocation(result) shouldBe Some(expectedRedirect)
+            }
+          }
+
           s"return 500 INTERNAL_SERVER_ERROR" when {
             "income source is missing" in {
               setupMockSuccess(mtdRole)

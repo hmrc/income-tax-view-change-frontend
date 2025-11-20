@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package models.triggeredMigration.viewModels
-import models.core.IncomeSourceId
+package enums.TriggeredMigration
 
-case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecordsSoleTraderDetails],
-                                     hasActiveUkProperty: Boolean,
-                                     hasActiveForeignProperty: Boolean) {
+sealed trait TriggeredMigrationState
+
+case object TriggeredMigrationCeased extends TriggeredMigrationState {
+  override val toString = "CEASED"
 }
 
-case class CheckHmrcRecordsSoleTraderDetails(incomeSourceId: IncomeSourceId,
-                                             incomeSource: Option[String],
-                                             businessName: Option[String])
+case object TriggeredMigrationAdded extends TriggeredMigrationState {
+  override val toString = "ADDED"
+}
