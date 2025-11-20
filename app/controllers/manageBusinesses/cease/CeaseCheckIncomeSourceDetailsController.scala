@@ -83,6 +83,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
           }
         case None =>
           Future.successful {
+            //TODO: will need to replace the hard coded false when we have backend data for triggered migration
             Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
           }
       }
@@ -90,6 +91,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent] "}" +
           s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage} - ${ex.getCause}")
+        //TODO: will need to replace the hard coded false when we have backend data for triggered migration
         Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
     }
 
@@ -210,7 +212,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
           updateIncomeSourceErrorResponse = Some(error)))
 
         Future.successful {
-          Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
+          Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType, isTriggeredMigration))
         }
     }
   }

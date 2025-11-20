@@ -35,17 +35,23 @@ class IncomeSourceNotCeasedController @Inject()(val authActions: AuthActions,
                                                 val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport  {
 
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      handleRequest(isAgent, incomeSourceType)
+      handleRequest(isAgent, incomeSourceType, isTriggeredMigration)
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     val pageTitle = messagesApi.preferred(user)("standardError.heading")
     val heading = messagesApi.preferred(user)("standardError.heading")
     val message = messagesApi.preferred(user)(s"incomeSources.cease.error.${incomeSourceType.key}.notCeased.text")
     val linkText = messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.text")
-    val linkUrl = if (isAgent) routes.CeaseIncomeSourceController.showAgent().url else routes.CeaseIncomeSourceController.show().url
+    val linkUrl = {
+      (isAgent, isTriggeredMigration) match {
+        case (false, false)  => routes.CeaseIncomeSourceController.show().url
+        case (true, false)   => routes.CeaseIncomeSourceController.showAgent().url
+        case (isAgent, true) => controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent).url
+      }
+    }
     val linkPrefix = Some(messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.prefix"))
 
     Future.successful {

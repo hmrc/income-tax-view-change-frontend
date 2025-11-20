@@ -189,6 +189,9 @@ object IncomeSourceDetailsTestConstants {
             reportingMethodTaxYear1 = None,
             reportingMethodTaxYear2 = None,
             incomeSourceCreatedJourneyComplete = None
+          )),
+          triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(
+            isTriggeredMigrationJourney = isTriggeredMigration
           ))
         )
       case "MANAGE" =>

@@ -24,6 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.BeforeSubmissionPage
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.TriggeredMigration.TriggeredMigrationAdded
 import models.UIJourneySessionData
 import models.admin.AccountingMethodJourney
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -53,9 +54,9 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   with JourneyCheckerManageBusinesses with I18nSupport {
 
 
-  private lazy val errorRedirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) =>
-    if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
-    else routes.IncomeSourceNotAddedController.show(incomeSourceType).url
+  private lazy val errorRedirectUrl: (Boolean, IncomeSourceType, Boolean) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean) =>
+    if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType, isTriggeredMigration).url
+    else routes.IncomeSourceNotAddedController.show(incomeSourceType, isTriggeredMigration).url
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
@@ -172,15 +173,20 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
-
-      val redirectUrl: (Boolean, IncomeSourceType) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType) => {
-        controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, isChange = false, incomeSourceType).url
+      val redirectUrl: (Boolean, IncomeSourceType, Boolean) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean) => {
+        if (isTriggeredMigration) {
+          controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent, Some(TriggeredMigrationAdded.toString)).url
+        } else {
+          controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, isChange = false, incomeSourceType).url
+        }
       }
+
+      val triggeredMigrationOpt = sessionData.triggeredMigrationSessionData.map(_.isTriggeredMigrationJourney)
 
       val viewModel = getViewModel(incomeSourceType, sessionData)
 
-      viewModel match {
-        case Some(viewModel) =>
+      (viewModel, triggeredMigrationOpt) match {
+        case (Some(viewModel), Some(isTriggeredMigration)) =>
           businessDetailsService.createRequest(viewModel) flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
 
@@ -201,7 +207,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                 }
 
               saveAddIncomeSourceDataToMongo.flatMap {
-                case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType)))
+                case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType, isTriggeredMigration)))
                 case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
               }
             case Left(ex) =>
@@ -210,18 +216,23 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
               )
               Future.failed(ex)
           }
-        case None =>
+        case (None, Some(isTriggeredMigration)) =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
             s"Unable to construct view model for $incomeSourceType")
           Future.successful {
-            Redirect(errorRedirectUrl(isAgent, incomeSourceType))
+            Redirect(errorRedirectUrl(isAgent, incomeSourceType, isTriggeredMigration))
           }
+        case (Some(_), None) =>
+          Logger("application").error("Missing triggered migration session data")
+          // TODO: defaulting to false for now. it'll need to be handled by using the downstream triggered migration flag once available
+          Future.successful(Redirect(errorRedirectUrl(isAgent, incomeSourceType, false)))
       }
     }
   }.recover {
     case ex: Exception =>
       Logger("application").error(s"${ex.getMessage}")
-      Redirect(errorRedirectUrl(isAgent, incomeSourceType))
+      // TODO: defaulting to false for now. it'll need to be handled by using the downstream triggered migration flag once available
+      Redirect(errorRedirectUrl(isAgent, incomeSourceType, false))
   }
 }
