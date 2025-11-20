@@ -19,7 +19,7 @@
 @import views.html.components._
 @import models.triggeredMigration.viewModels.CheckHmrcRecordsViewModel
 @import play.twirl.api.HtmlFormat
-@import enums.IncomeSourceJourney.SelfEmployment
+@import enums.IncomeSourceJourney.{SelfEmployment, UkProperty, ForeignProperty}
 
 @this(
     mainTemplate: unifiedLayout,
@@ -39,6 +39,16 @@
 @ceaseSoleTraderBusinessURL(incomeSourceIdHash: String) = @{
     if(user.isAgent()) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
     else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
+}
+
+@ceaseUKPropertyBusinessURL() = @{
+    if(user.isAgent()) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, UkProperty, isTriggeredMigration = true).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, UkProperty, isTriggeredMigration = true).url
+}
+
+@ceaseForeignPropertyBusinessURL() = @{
+    if(user.isAgent()) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, ForeignProperty, isTriggeredMigration = true).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, ForeignProperty, isTriggeredMigration = true).url
 }
 
 @soleTraderSection = {
@@ -102,8 +112,8 @@
                 @messages("triggered-migration.check-hmrc-records.ukProperty.heading")
             </h2>
             <ul class="govuk-summary-card__actions">
-                <li class="govuk-summary-card__action" id="uk-property-cease-link">
-                    <a class="govuk-link" href="#">@messages("triggered-migration.check-hmrc-records.ukProperty.cease.link")</a>
+                <li class="govuk-summary-card__action">
+                    <a class="govuk-link" id="uk-property-cease-link" href="@ceaseUKPropertyBusinessURL()">@messages("triggered-migration.check-hmrc-records.ukProperty.cease.link")</a>
                 </li>
             </ul>
         </div>
@@ -131,8 +141,8 @@
             @messages("triggered-migration.check-hmrc-records.foreignProperty.heading")
             </h2>
             <ul class="govuk-summary-card__actions">
-                <li class="govuk-summary-card__action" id="foreign-property-cease-link">
-                    <a class="govuk-link" href="#">@messages("triggered-migration.check-hmrc-records.foreignProperty.cease.link")</a>
+                <li class="govuk-summary-card__action">
+                    <a class="govuk-link" id="foreign-property-cease-link" href="@ceaseForeignPropertyBusinessURL()">@messages("triggered-migration.check-hmrc-records.foreignProperty.cease.link")</a>
                 </li>
             </ul>
         </div>
