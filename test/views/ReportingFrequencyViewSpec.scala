@@ -109,7 +109,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             Selectors.differentObligationsP1 -> differentObligationsText,
             Selectors.differentObligationsLi1 -> differentObligationsLiOne,
             Selectors.differentObligationsLi2 -> differentObligationsLiTwo,
-            Selectors.differentObligationsP2 -> differentObligationsTextTwo,
+            Selectors.differentObligationsP2 -> (if (exemptStatus) differentObligationsTextTwoExempt else differentObligationsTextTwo),
             Selectors.differentObligationsP3 -> differentObligationsTextThree
           )
 
@@ -130,7 +130,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
         val compatSoftware: Seq[(String, String)] = if (!noNonExemptStatus) Seq(
           Selectors.compatibleSoftwareH2 -> compatibleSoftwareHeadingR17,
           Selectors.compatibleSoftwareText -> compatibleSoftwareTextR17,
-          Selectors.compatibleSoftwareText2 -> compatibleSoftwareTextThreeR17
+          Selectors.compatibleSoftwareText2 -> (if (exemptStatus) compatibleSoftwareTextThreeR17Exempt else compatibleSoftwareTextThreeR17)
         ) else Seq.empty
 
         val mandatoryReportingContent: Seq[(String, String)] = if (noNonExemptStatus) Seq (

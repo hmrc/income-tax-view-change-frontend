@@ -3123,6 +3123,7 @@ reporting.frequency.different.obligations.p1                                = Wh
 reporting.frequency.different.obligations.li1                               = 4 updates a year for each source of self employment and property income
 reporting.frequency.different.obligations.li2                               = a tax return
 reporting.frequency.different.obligations.p2                                = For tax years you are opted out of, you only need to file a tax return.
+reporting.frequency.different.obligations.p2hasExempt                       = For tax years you are opted out of or exempt, you only need to file a tax return.
 reporting.frequency.different.obligations.p3                                = You can see what is due on the
 reporting.frequency.different.obligations.link.text                         = updates and deadlines
 reporting.frequency.different.obligations.link.text.additional.english      = page.
@@ -3166,6 +3167,7 @@ reporting.frequency.compatibleSoftware.p1.R17                           = Whethe
 reporting.frequency.compatibleSoftware.link.text.R17                    = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2.R17                           = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3.R17                           = If you are opted out, you can find out here how to
+reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = If you are opted out or exempt, you can find out here how to
 reporting.frequency.compatibleSoftware.link2.text                       = file your Self Assessment tax return
 
 

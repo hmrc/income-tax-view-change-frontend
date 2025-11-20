@@ -3113,6 +3113,7 @@ reporting.frequency.different.obligations.p1                                = Pa
 reporting.frequency.different.obligations.li1                               = 4 diweddariad y flwyddyn ar gyfer pob ffynhonnell o incwm o hunangyflogaeth ac eiddo
 reporting.frequency.different.obligations.li2                               = Ffurflen Dreth
 reporting.frequency.different.obligations.p2                                = Ar gyfer blynyddoedd treth yr ydych wedi optio allan ohonynt, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
+reporting.frequency.different.obligations.p2hasExempt                       = Ar gyfer blynyddoedd treth yr ydych wedi optio allan neu wedi’i esemptio, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
 reporting.frequency.different.obligations.p3                                = Gallwch fwrw golwg dros yr hyn sy’n ddyledus ar y dudalen
 reporting.frequency.different.obligations.link.text                         = diweddariadau a dyddiadau cau.
 reporting.frequency.different.obligations.link.text.additional.english      =
@@ -3156,6 +3157,7 @@ reporting.frequency.compatibleSoftware.p1.R17                           = P’un
 reporting.frequency.compatibleSoftware.link.text.R17                    = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm arnoch
 reporting.frequency.compatibleSoftware.p2.R17                           = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
 reporting.frequency.compatibleSoftware.p3.R17                           = Os ydych chi wedi optio allan, gallwch ddarganfod yma sut i
+reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = Os ydych chi wedi optio allan neu wedi’i esemptio, gallwch ddarganfod yma sut i
 reporting.frequency.compatibleSoftware.link2.text                       = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 
 reporting.frequency.table.h2                                        = Pa mor aml y mae angen i chi gyflwyno adroddiadau

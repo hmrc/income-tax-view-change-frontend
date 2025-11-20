@@ -295,9 +295,14 @@
         </li>
 
     </ul>
-    @p(id = Some("different-obligations-p2")){
-        @messages("reporting.frequency.different.obligations.p2")
+    @p(id = Some("different-obligations-p2")) {
+        @if(viewModel.hasExemptStatuses) {
+            @messages("reporting.frequency.different.obligations.p2hasExempt")
+        } else {
+            @messages("reporting.frequency.different.obligations.p2")
+        }
     }
+
     @p(id = Some("different-obligations-updates-and-deadlines")){
         @messages("reporting.frequency.different.obligations.p3")
         @linkComponent(nextUpdatesLink,
@@ -440,7 +445,12 @@
             @messages("reporting.frequency.compatibleSoftware.p2.R17")
         }
         @p(id=Some("compatible-software-text-2")){
-            @messages("reporting.frequency.compatibleSoftware.p3.R17")
+            @if(viewModel.hasExemptStatuses) {
+                @messages("reporting.frequency.compatibleSoftware.p3hasExempt.R17")
+            } else {
+                @messages("reporting.frequency.compatibleSoftware.p3.R17")
+            }
+
             @linkComponent(appConfig.selfAssessmentTaxReturnLink, message = s"${messages("reporting.frequency.compatibleSoftware.link2.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("self-assessment-tax-return-link"), additionalOpenTabMessage = Some("."))
         }
     }else{
