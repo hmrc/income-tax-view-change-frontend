@@ -194,7 +194,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
       "paymentType" -> paymentsPaymentOnAccount1,
       "underReview" -> false,
       "status" -> "unpaid",
-      "codedOut" -> false
+      "codedOut" -> false,
+      "codedOutStatus" -> "Not coded out"
     ), Json.obj(
       "amount" -> 100,
       "dueDate" -> "2019-05-15",
@@ -236,7 +237,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
       "paymentType" -> paymentsPaymentOnAccount1,
       "underReview" -> true,
       "status" -> "unpaid",
-      "codedOut" -> false
+      "codedOut" -> false,
+      "codedOutStatus" -> "Not coded out"
     ), Json.obj(
       "amount" -> 100,
       "dueDate" -> "2019-05-15",
@@ -278,7 +280,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
       "paymentType" -> paymentsCodedOutPoa,
       "underReview" -> true,
       "status" -> "unpaid",
-      "codedOut" -> true
+      "codedOut" -> true,
+      "codedOutStatus" -> "Initiated"
     )),
     "updates" -> Seq(Json.obj(
       "incomeSource" -> "Test Trading Name",

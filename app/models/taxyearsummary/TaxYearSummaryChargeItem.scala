@@ -162,5 +162,14 @@ case class TaxYearSummaryChargeItem(
     else interestOutstandingAmount.getOrElse(accruingInterestAmount.get)
   }
 
+  def codedOutStatusAuditCode: String = {
+    codedOutStatus match {
+      case Some(Accepted) => "Initiated"
+      case Some(Cancelled) => "Cancelled"
+      case Some(FullyCollected) => "Fully Collected"
+      case None => "Not coded out"
+    }
+  }
+
 
 }
