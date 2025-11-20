@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,31 +12,26 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package testOnly.forms.validation.utils
+@import views.html.components._
 
-import play.api.data.Forms._
-import play.api.data._
+@this(
+        p: p,
+        link: link,
+        bulletPointList: bulletPointList,
+)
 
-object MappingUtil {
+@(
 
-  val oText: Mapping[Option[String]] = optional(text)
+)(
+        implicit request: Request[_],
+        messages: Messages
+)
 
-  implicit class OTextUtil(mapping: Mapping[Option[String]]) {
-    def toText: Mapping[String] =
-      mapping.transform(
-        x => x.fold("")(x => x),
-        x => Some(x)
-      )
-
-    def toBoolean: Mapping[Boolean] = mapping.transform(
-      {
-        case Some("true") => true
-        case _ => false
-      },
-      x => Some(x.toString)
-    )
-  }
-
+@getMessage(key: String, args: String*) = @{
+    messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
+
+@p(id = Some("credit-created-text")){ @getMessage("definition.hmrcadjustment")}
+

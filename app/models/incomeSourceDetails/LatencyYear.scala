@@ -34,8 +34,6 @@ object LatencyYear {
 sealed trait LatencyYear {
   val taxYear: String
 
-  def isQuarterlyReporting: Boolean = this.isInstanceOf[QuarterlyReporting]
-
   def isAnnualReporting: Boolean = this.isInstanceOf[AnnualReporting]
 }
 

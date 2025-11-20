@@ -252,7 +252,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
 
-  def fakeRequestConfirmedClient(clientNino: String = "AA111111A", isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
+  def fakeRequestConfirmedClient(isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
       sessionUtils.SessionKeys.clientFirstName -> "Test",
       sessionUtils.SessionKeys.clientLastName -> "User",
@@ -263,7 +263,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
 
-  def fakePostRequestConfirmedClient(clientNino: String = "AA111111A", isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
+  def fakePostRequestConfirmedClient(isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
     fakePostRequestWithActiveSession.withSession(
       sessionUtils.SessionKeys.clientFirstName -> "Test",
       sessionUtils.SessionKeys.clientLastName -> "User",

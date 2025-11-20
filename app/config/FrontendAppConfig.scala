@@ -39,7 +39,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   private lazy val contactFrontendService: String = servicesConfig.baseUrl("contact-frontend")
   lazy val contactFormServiceIdentifier: String = "ITVC"
   lazy val contactFrontendBaseUrl: String = s"$contactFrontendService"
-  lazy val reportAProblemPartialUrl: String = s"$contactHost/contact/problem_reports_ajax?service=$contactFormServiceIdentifier"
   lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
   lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
   lazy val agentBetaFeedbackUrl = s"/$agentBaseUrl/feedback"
@@ -71,29 +70,11 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   def ggSignOutUrl(identifier: String): String = s"$ggUrl/bas-gateway/sign-out-without-state?continue=${exitSurveyUrl(identifier)}"
 
-  //MTD Income Tax Enrolment
-  lazy val mtdItEnrolmentKey: String = servicesConfig.getString("enrolments.mtd.key")
-  lazy val mtdItIdentifierKey: String = servicesConfig.getString("enrolments.mtd.identifier")
-
-  //ARN Enrolment
-  lazy val arnEnrolmentKey: String = servicesConfig.getString("enrolments.arn.key")
-  lazy val arnIdentifierKey: String = servicesConfig.getString("enrolments.arn.identifier")
-
-  //NINO Enrolment
-  lazy val ninoEnrolmentKey: String = servicesConfig.getString("enrolments.nino.key")
-  lazy val ninoIdentifierKey: String = servicesConfig.getString("enrolments.nino.identifier")
-
-  //SA Enrolment
-  lazy val saEnrolmentKey: String = servicesConfig.getString("enrolments.sa.key")
-  lazy val saIdentifierKey: String = servicesConfig.getString("enrolments.sa.identifier")
-
   //Business Tax Account
   lazy val btaService: String = servicesConfig.baseUrl("business-account")
   lazy val businessTaxAccount: String = servicesConfig.getString("business-tax-account.url")
-  lazy val personalTaxAccount: String = servicesConfig.getString("personal-tax-account.url")
   lazy val btaManageAccountUrl: String = s"$businessTaxAccount/manage-account"
   lazy val btaMessagesUrl: String = s"$businessTaxAccount/messages"
-  lazy val selfAssessmentUrl: String = s"$businessTaxAccount/self-assessment"
 
   // NRS
   lazy val nrsBaseUrl: String = servicesConfig.baseUrl("non-repudiation")
@@ -105,8 +86,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Subscription Service
   lazy val signUpUrl: String = servicesConfig.getString("mtd-subscription-service.url")
-
-  lazy val ftUrl: String = servicesConfig.baseUrl("financial-transactions")
 
   lazy val citizenDetailsUrl: String = servicesConfig.baseUrl("citizen-details")
 
@@ -126,14 +105,12 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val agentPaymentRedirectUrl: String = s"$itvcFrontendEnvironment/$agentBaseUrl/payments-owed"
 
   //Calculation Polling config
-  lazy val calcPollSchedulerInterval: Int = servicesConfig.getInt("calculation-polling.interval")
   lazy val calcPollSchedulerTimeout: Int = servicesConfig.getInt("calculation-polling.timeout")
   lazy val calcPollNumberOfAttempts: Int = servicesConfig.getInt("calculation-polling.attempts")
   lazy val calcPollDelayBetweenAttempts: Int = servicesConfig.getInt("calculation-polling.delayBetweenAttemptInMilliseconds")
 
   // Submission service
   // This URL has a set year and environment. Please use submissionFrontendTaxOverviewUrl instead.
-  lazy val submissionFrontendUrl: String = servicesConfig.getString("income-tax-submission-frontend.url")
   lazy val submissionFrontendTaxOverviewUrl: Int => String = taxYear =>
     servicesConfig.getString("income-tax-submission-frontend.host") + s"/update-and-submit-income-tax-return/$taxYear/view"
 
@@ -151,9 +128,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   // income-tax-session-data url
   lazy val incomeTaxSessionDataUrl: String = servicesConfig.baseUrl("income-tax-session-data")
-
-  // penalties stub url
-  lazy val incomeTaxPenaltiesStubBase: String = servicesConfig.baseUrl("income-tax-penalties-stub") + "/income-tax-penalties-stubs"
 
   lazy val penaltiesBackendBase: String = servicesConfig.baseUrl("penalties")
 

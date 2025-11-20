@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services.reportingfreq
+package services.reporting_frequency
 
 import models.incomeSourceDetails.TaxYear
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear

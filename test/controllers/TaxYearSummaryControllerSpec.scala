@@ -129,16 +129,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-                val taxYearSummary = TaxYearSummaryViewModel(
-                  Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-                  None,
-                  testChargesList,
-                  testObligtionsModel,
-                  showForecastData = true,
-                  ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                  pfaEnabled = true
-                )
-
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
                 contentType(result) shouldBe Some("text/html")
@@ -157,16 +147,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-                val taxYearSummary = TaxYearSummaryViewModel(
-                  Some(CalculationSummary(liabilityCalculationModelSuccessful.copy(metadata = metadataWithAmendment))),
-                  Some(CalculationSummary(liabilityCalculationModelSuccessful)),
-                  testChargesList,
-                  testObligtionsModel,
-                  showForecastData = true,
-                  ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                  pfaEnabled = true
-                )
-
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
                 contentType(result) shouldBe Some("text/html")
@@ -184,16 +164,6 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   response = testObligtionsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
-
-                val taxYearSummary = TaxYearSummaryViewModel(
-                  Some(CalculationSummary(liabilityCalculationModelSuccessfulNotCrystallised)),
-                  None,
-                  testChargesList,
-                  testObligtionsModel,
-                  showForecastData = true,
-                  ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                  pfaEnabled = true
-                )
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK

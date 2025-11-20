@@ -79,9 +79,9 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             mockFetchOptOutJourneyCompleteStatus()
 
             when(mockOptOutService.fetchOptOutProposition()(any(), any(), any()))
-              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2025, 2026), true, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated)))
+              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2025, 2026), previousYearCrystallised = true, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated)))
 
-            when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
               .thenReturn(Future.successful(2))
 
             when(mockOptOutService.recallSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear)))

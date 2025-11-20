@@ -31,10 +31,11 @@
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
 @import views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentContent
 @import views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentCreditContent
+@import views.html.partials.yourSelfAssessmentCharges.MFADebitContent
 @import models.financialDetails.ChargeItem
 @import models.financialDetails.Nics2
 @import views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
-@import models.financialDetails.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit}
+@import models.financialDetails.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit,MfaDebitCharge}
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccountReconciliationPoaDebits
 @import models.chargeSummary.ChargeSummaryViewModel
 
@@ -51,6 +52,7 @@
     itsaReturnAmendmentContent: ItsaReturnAmendmentContent,
     itsaReturnAmendmentCreditContent: ItsaReturnAmendmentCreditContent,
     whatIsPaymentOnAccountReconciliationPoaDebits: WhatIsPaymentOnAccountReconciliationPoaDebits,
+    mfaDebitContent: MFADebitContent,
     govukDetails: GovukDetails
 )
 
@@ -70,6 +72,7 @@
     case (FirstLatePaymentPenalty, _)   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
     case (ITSAReturnAmendment, _)       => itsaReturnAmendmentContent()
     case (ITSAReturnAmendmentCredit, _) => itsaReturnAmendmentCreditContent(viewModel.chargeItem.taxYear)
+    case (MfaDebitCharge, _)            => mfaDebitContent()
     case _                              =>
 }}
 

@@ -26,7 +26,6 @@ import scala.concurrent.Future
 
 @Singleton
 class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
-                                       appConfig: FrontendAppConfig,
                                        languageUtils: LanguageUtils) extends LanguageController(languageUtils, mcc) {
 
 

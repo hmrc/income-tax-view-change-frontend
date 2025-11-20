@@ -42,7 +42,7 @@ class OptOutNewAuditModelSpec extends TestSupport {
     "user opt out for quarterly reporting is submitted" should {
       "create an audit model - single year" in {
         val intentTaxYear = "2023-2024"
-        val auditModel = OptOutNewAuditModel(intentTaxYear, OptOutSingleYear)
+        val auditModel = OptOutNewAuditModel(Seq(intentTaxYear))
 
         auditModel.auditType shouldBe "OptOutTaxYearsPage"
         auditModel.transactionName shouldBe "opt-out-tax-years-page"
@@ -52,13 +52,13 @@ class OptOutNewAuditModelSpec extends TestSupport {
           "saUtr" -> tsTestUser.saUtr,
           "credId" -> tsTestUser.credId,
           "userType" -> tsTestUser.userType,
-          "optOutTaxYear" -> "2023-2024",
-          "optOutType" -> "SingleYear"
+          "optOutTaxYears" -> Json.arr("2023-2024")
         )
       }
       "create an audit model - multi year" in {
         val intentTaxYear = "2023-2024"
-        val auditModel = OptOutNewAuditModel(intentTaxYear, OptOutMultipleYears)
+        val nextTaxYear = "2024-2025"
+        val auditModel = OptOutNewAuditModel(Seq(intentTaxYear, nextTaxYear))
 
         auditModel.auditType shouldBe "OptOutTaxYearsPage"
         auditModel.transactionName shouldBe "opt-out-tax-years-page"
@@ -68,8 +68,7 @@ class OptOutNewAuditModelSpec extends TestSupport {
           "saUtr" -> tsTestUser.saUtr,
           "credId" -> tsTestUser.credId,
           "userType" -> tsTestUser.userType,
-          "optOutTaxYear" -> "2023-2024",
-          "optOutType" -> "MultiYear"
+          "optOutTaxYears" -> Json.arr("2023-2024", "2024-2025")
         )
       }
     }
