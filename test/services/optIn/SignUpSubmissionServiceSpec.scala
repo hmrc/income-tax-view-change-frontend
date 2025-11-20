@@ -430,5 +430,33 @@ class SignUpSubmissionServiceSpec extends UnitSpec
         }
       }
     }
+
+
+    ".synchronousITSAStatusUpdates" when {
+
+      "the 2nd connector call fails" should {
+
+        "return the correct responses - List(ITSAStatusUpdateResponseSuccess, ITSAStatusUpdateResponseFailure)" in {
+
+          val taxYears =
+            Seq(
+              TaxYear(2024, 2025),
+              TaxYear(2025, 2026),
+              TaxYear(2026, 2027)
+            )
+
+          when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
+            .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess()))
+            .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
+
+
+          val actual = service.synchronousITSAStatusUpdates(taxYears = taxYears, nino = "AB123456A")
+
+          whenReady(actual) { result =>
+            result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseFailure.defaultFailure())
+          }
+        }
+      }
+    }
   }
 }
