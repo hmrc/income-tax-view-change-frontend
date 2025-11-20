@@ -111,7 +111,7 @@ class OptOutSubmissionService @Inject()(
     }
   }
 
-  private def synchronousITSAStatusUpdates(taxYears: Seq[TaxYear], nino: String, optOutUpdateReason: String)
+  private[services] def synchronousITSAStatusUpdates(taxYears: Seq[TaxYear], nino: String, optOutUpdateReason: String)
                                           (implicit headerCarrier: HeaderCarrier, executionContext: ExecutionContext): Future[List[ITSAStatusUpdateResponse]] = {
     taxYears.foldLeft(Future.successful(List.empty[ITSAStatusUpdateResponse])) { (accumulatorFuture, year) =>
       accumulatorFuture.flatMap { acc =>

@@ -67,7 +67,7 @@ class SignUpSubmissionService @Inject()(
     }
   }
 
-  private def resolveUpdateItsaStatuses(
+  private[services] def synchronousITSAStatusUpdates(
                                          taxYears: Seq[TaxYear],
                                          nino: String
                                        )(implicit headerCarrier: HeaderCarrier, executionContext: ExecutionContext): Future[Seq[ITSAStatusUpdateResponse]] = {
@@ -102,7 +102,7 @@ class SignUpSubmissionService @Inject()(
       )
       taxYearsToSignUp = filterTaxYearsForSignUp(currentYearItsaStatus, nextYearItsaStatus, selectedSignUpYear)
       _ = logger.info(s"\n[SignUpSubmissionService][triggerSignUpRequest] taxYearsToSignUp: $taxYearsToSignUp")
-      updateResponse <- resolveUpdateItsaStatuses(taxYearsToSignUp, nino = user.nino)
+      updateResponse <- synchronousITSAStatusUpdates(taxYearsToSignUp, nino = user.nino)
       _ = logger.info(s"\n[SignUpSubmissionService][triggerSignUpRequest] Sign Up update response: $updateResponse")
       _ <- auditingService.extendedAudit(SignUpAuditModel(taxYearsToSignUp.map(_.toString)))
     } yield {

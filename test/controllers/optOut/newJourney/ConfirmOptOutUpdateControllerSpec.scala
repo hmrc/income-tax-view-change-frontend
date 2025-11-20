@@ -196,7 +196,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
         }
 
 
-        "redirect to the opt out error page if the opt out update request fails" in {
+        "redirect to the opt out error page if the opt out update request fails (all fail)" in {
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -204,6 +204,22 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
             .thenReturn(
               Future(List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure()))
+            )
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+        }
+
+        "redirect to the opt out error page if the opt out update request fails (1 fail mid multiyear update loop)" in {
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(
+              Future(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseSuccess()))
             )
 
           val result = action(fakeRequest)
