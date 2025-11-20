@@ -3270,6 +3270,8 @@ yourSelfAssessmentChargeSummary.hmrcAdjustment.text.heading             = HMRC a
 yourSelfAssessmentChargeSummary.chargeHistory.caption.hmrcAdjustment.text.heading = This charge goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.definition.hmrcadjustment               = HMRC has added this charge after an adjustment to your tax return.
 
+yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading = This charge goes towards your {0} to {1} tax bill.
+
 yourSelfAssessmentChargeSummary.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
 yourSelfAssessmentChargeSummary.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1               = HMRC has created this charge because your
@@ -3342,6 +3344,35 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credit from your amended tax return
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
+
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					= Late payment interest on first payment on account
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading					= Late payment interest on second payment on account
+yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading					= Late payment interest on balancing payment
+yourSelfAssessmentChargeSummary.lpi.interestPeriod								    = Interest period:
+yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates						    = {0} to {1}
+
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading             = Interest for first payment on account: extra amount
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading             = Interest for second payment on account: extra amount
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3                           = Interest is charged from the date your first payment on account was due and calculated at the
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted second payment on account was too low.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                           = Interest is charged from the date your second payment on account was due and calculated at the
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
+
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                       = Late payment interest on late submission penalty
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                     = Late payment interest on first late payment penalty
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.p1                  = You owe HMRC interest because you paid your late submission penalty late
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.p1                = You owe HMRC interest because you paid your first late payment penalty late
+yourSelfAssessmentChargeSummary.lpi.penalties.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+yourSelfAssessmentChargeSummary.lpi.penalties.linkText                       = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
+yourSelfAssessmentChargeSummary.lpi.penalties.p3                             = See guidance on the
+yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
 yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through PAYE tax code
