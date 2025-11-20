@@ -38,7 +38,7 @@ messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
         <a class="govuk-link" href="@{ExternalUrlHelper.interestRateBankRateUrl}" target = Some("_blank")>@messages("chargeSummary.lpi.balancingCharge.linkText")</a>
         @messages("chargeSummary.lpi.balancingCharge.textTwo")
     }
-    @p(id = Some("lpi-bcd3"), classes = "govuk-body govuk-!-margin-bottom-8") {
+    @p(id = Some("lpi-bcd3"), classes = "govuk-body") {
         @messages("chargeSummary.lpi.balancingCharge.p3")
         <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}" target = Some("_blank")>@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
     }
