@@ -3270,10 +3270,39 @@ yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading3             
 yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText                    = Cyfanswm y llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText                       = Gall llog ar dâl sydd arnoch fynd i fyny neu i lawr. Gweler yr arweiniad ar y gyfradd log a bennir gan CThEF
 yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText                   = y gyfradd llog a bennir gan CThEF
-
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad mantoli.
 yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
+
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					    = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading				        = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
+yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading	    		        = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+yourSelfAssessmentChargeSummary.lpi.interestPeriod								        = Cyfnod llog:
+yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates							    = {0} i {1}
+
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading                 = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading                 = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif, a gafodd ei addasu, yn rhy isel.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich taliad cyntaf ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif, a gafodd ei addasu, yn rhy isel.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich ail daliad ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
+
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                    = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                  = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.p1                  = Mae arnoch log i CThEF oherwydd gwnaethoch dalu eich cosb am gyflwyno’n hwyr, yn hwyr
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.p1                = Mae arnoch log i CThEF oherwydd gwnaethoch dalu eich cosb gyntaf am dalu’n hwyr, yn hwyr
+yourSelfAssessmentChargeSummary.lpi.penalties.textOne                            = Mae llog am dalu’n hwyr yn cael ei godi o’r diwrnod cyntaf y mae’ch taliad yn hwyr tan y diwrnod y mae’n cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.lpi.penalties.linkText                           = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.lpi.penalties.textTwo                            = plws 2.5%.
+yourSelfAssessmentChargeSummary.lpi.penalties.p3                                 = Gweler yr arweiniad ynghylch y
+yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} i {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Cyfanswm y llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Swm y mae’r llog yn berthnasol iddo
@@ -3300,6 +3329,9 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae ‘tal
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Os byddwch chi’n gwneud diwygiad i’r Ffurflen Dreth ac mae’r bil treth yn newid, yna bydd pob taliad ar gyfrif yn cael ei ddiweddaru i hanner y cyfanswm newydd.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i ddeall eich bil treth Hunanasesiad
+
+yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
+
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet1      = Treth Incwm
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet2      = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
