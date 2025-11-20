@@ -275,7 +275,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment collected through PAYE tax code")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount due to be collected: £12.34"
-                Option(document.getElementById("due-date-text")) shouldBe None
+                document.getElementById("due-date-text").text() shouldBe "Due 25 August 2021"
                 document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2020 to 2021 tax year. It will be collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
@@ -475,7 +475,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaptionOld("2017", "2018")
                 document.select("h1").text() shouldBe lateInterestSuccessHeading
                 document.select("#dunningLocksBanner").size() shouldBe 0
-                document.select("main h2").text() shouldBe "History of this charge"
+                document.select("main h2").text() shouldBe "You owe: £0.00 (not including estimated interest) History of this charge"
               }
             }
             "charge history feature is disabled and there is a user" that {

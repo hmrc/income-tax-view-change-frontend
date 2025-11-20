@@ -131,7 +131,7 @@
           }"
       }</h2>
 
-      @if(!viewModel.chargeItem.isCodingOut) {
+      @if(true) {
           @p(id = Some("due-date-text")) {
               <b>@getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)</b>
           }

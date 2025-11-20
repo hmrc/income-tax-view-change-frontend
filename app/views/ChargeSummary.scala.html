@@ -377,7 +377,7 @@
         }"
     }</h2>
 
-    @if(true) {
+    @if(viewModel.chargeItem.dueDate.isDefined) {
         @p(id = Some("due-date-text")) {
             <b>@messages("yourSelfAssessmentChargeSummary.due", viewModel.chargeItem.getDueDate.toLongDate)</b>
         }
@@ -443,53 +443,52 @@
         }
     }
 
-    @if(true){
-        @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus == None) {
-            @h3(
-                msg = messages("chargeSummary.chargeHistory.heading"),
-                classes = "govuk-heading-m",
-                optId = Some("charge-history-h3")
-            )
-        } else {
-            @h2(msg = messages("chargeSummary.chargeHistory.heading"), optId = Some("charge-history-h2"))
-        }
+    @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus == None) {
+        @h3(
+            msg = messages("chargeSummary.chargeHistory.heading"),
+            classes = "govuk-heading-m",
+            optId = Some("charge-history-h3")
+        )
+    } else {
+        @h2(msg = messages("chargeSummary.chargeHistory.heading"), optId = Some("charge-history-h2"))
+    }
 
-        @p(id = Some("")) {
-            @messages("chargeSummary.chargeHistory.text", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
-        }
+    @p(id = Some("")) {
+        @messages("chargeSummary.chargeHistory.text", viewModel.taxYearFromBCD.toString, viewModel.taxYearToBCD.toString)
+    }
 
-        @govukTable(Table(
-            rows = viewModel.sortedChargeHistoryTableEntries.map { chargeHistoryItem =>
-                Seq(
-                    TableRow(
-                        content = HtmlContent(chargeHistoryItem.date.toLongDateShort.toNonBreaking)
-                    ),
-                    TableRow(
-                        content = HtmlContent(chargeHistoryItem.description)
-                    ),
-                    TableRow(
-                        content = HtmlContent(chargeHistoryItem.amount.toCurrency),
-                        format = Some("numeric")
-                    )
-                )
-            },
-            head = Some(Seq(
-                HeadCell(
-                    content = Text(messages("chargeSummary.chargeHistory.date"))
+    @govukTable(Table(
+        rows = viewModel.sortedChargeHistoryTableEntries.map { chargeHistoryItem =>
+            Seq(
+                TableRow(
+                    content = HtmlContent(chargeHistoryItem.date.toLongDateShort.toNonBreaking)
                 ),
-                HeadCell(
-                    content = Text(messages("chargeSummary.chargeHistory.description"))
+                TableRow(
+                    content = HtmlContent(chargeHistoryItem.description)
                 ),
-                HeadCell(
-                    content = Text(messages("chargeSummary.chargeHistory.amount")),
+                TableRow(
+                    content = HtmlContent(chargeHistoryItem.amount.toCurrency),
                     format = Some("numeric")
                 )
-            )),
-            captionClasses = "govuk-table__caption--m",
-            attributes = Map("id" -> "payment-history-table"),
-            firstCellIsHeader = false
-        ))
-    }
+            )
+        },
+        head = Some(Seq(
+            HeadCell(
+                content = Text(messages("chargeSummary.chargeHistory.date"))
+            ),
+            HeadCell(
+                content = Text(messages("chargeSummary.chargeHistory.description"))
+            ),
+            HeadCell(
+                content = Text(messages("chargeSummary.chargeHistory.amount")),
+                format = Some("numeric")
+            )
+        )),
+        captionClasses = "govuk-table__caption--m",
+        attributes = Map("id" -> "payment-history-table"),
+        firstCellIsHeader = false
+    ))
+
 
     @if(viewModel.chargeItem.isCreditDrilldownPage) {
         @chargeSummaryPaymentAllocationTable(
