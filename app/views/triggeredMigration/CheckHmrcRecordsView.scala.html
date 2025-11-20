@@ -84,11 +84,11 @@
 }
 
 @addUKPropertyStartDateURL = @{
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = user.isAgent(), mode = NormalMode, UkProperty).url
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = user.isAgent(), mode = NormalMode, UkProperty, isTriggeredMigration = true).url
 }
 
 @addForeignPropertyBusinessStartDateURL = @{
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = user.isAgent(), mode = NormalMode, ForeignProperty).url
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = user.isAgent(), mode = NormalMode, ForeignProperty, isTriggeredMigration = true).url
 }
 
 @propertyBusinessSection = @{

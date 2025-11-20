@@ -41,13 +41,15 @@ class IncomeSourceNotAddedController @Inject()(val authActions: AuthActions,
   with IncomeSourcesUtils with I18nSupport{
 
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-    val incomeSourceRedirect: Call =
-      if (isAgent)
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
-      else
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+    val incomeSourceRedirect: Call = {
+      (isAgent, isTriggeredMigration) match {
+        case (false, false)  => controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+        case (true, false)   => controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
+        case (isAgent, true) => controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent)
+      }
+    }
 
     Future.successful(Ok(incomeSourceNotAddedError(
       isAgent,
@@ -56,19 +58,21 @@ class IncomeSourceNotAddedController @Inject()(val authActions: AuthActions,
     )))
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         isAgent = false,
-        incomeSourceType = incomeSourceType
+        incomeSourceType = incomeSourceType,
+        isTriggeredMigration
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
-        incomeSourceType = incomeSourceType
+        incomeSourceType = incomeSourceType,
+        isTriggeredMigration
       )
   }
 }

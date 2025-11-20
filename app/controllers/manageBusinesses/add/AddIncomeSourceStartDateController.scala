@@ -54,16 +54,18 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
                                                    val ec: ExecutionContext)
   extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport {
 
-
+  //TODO: Redirect the user back to the triggered migration page if they access the page with triggered migration as false and they are unconfirmed
   def show(isAgent: Boolean,
            mode: Mode,
-           incomeSourceType: IncomeSourceType
+           incomeSourceType: IncomeSourceType,
+           isTriggeredMigration: Boolean = false
           ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
     handleShowRequest(
       incomeSourceType = incomeSourceType,
       isAgent = isAgent,
-      mode = mode
+      mode = mode,
+      isTriggeredMigration = isTriggeredMigration
     )
   }
 
@@ -81,7 +83,8 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
   private def handleShowRequest(incomeSourceType: IncomeSourceType,
                                 isAgent: Boolean,
-                                mode: Mode)
+                                mode: Mode,
+                                isTriggeredMigration: Boolean)
                                (implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
@@ -91,10 +94,10 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
         case SelfEmployment => BeforeSubmissionPage
         case _ => InitialPage
       }
-    }) { sessionData =>
+    }, isTriggeredMigration) { sessionData =>
       if (mode == NormalMode && incomeSourceType.equals(UkProperty) || mode == NormalMode && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
-        sessionService.createSession(journeyType)
+        sessionService.createSession(journeyType, isTriggeredMigration)
       }
 
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
