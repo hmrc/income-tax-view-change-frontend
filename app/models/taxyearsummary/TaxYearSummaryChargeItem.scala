@@ -167,7 +167,7 @@ case class TaxYearSummaryChargeItem(
       case Some(Accepted) => "Initiated"
       case Some(Cancelled) => "Cancelled"
       case Some(FullyCollected) => "Fully Collected"
-      case None => "Not coded out"
+      case Some(Nics2) | None => "Not coded out"
     }
   }
 
