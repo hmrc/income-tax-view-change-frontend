@@ -202,7 +202,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(CurrentYearNYQuarterlyOrAnnualScenario)
+            result shouldBe CurrentYearNYQuarterlyOrAnnualScenario
           }
         }
       }
@@ -234,7 +234,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(CurrentYearNYQuarterlyOrAnnualScenario)
+            result shouldBe CurrentYearNYQuarterlyOrAnnualScenario
           }
         }
       }
@@ -266,7 +266,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(CurrentYearNYQuarterlyOrAnnualScenario)
+            result shouldBe CurrentYearNYQuarterlyOrAnnualScenario
           }
         }
       }
@@ -301,7 +301,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(CurrentYearNYMandatedScenario)
+            result shouldBe CurrentYearNYMandatedScenario
           }
         }
       }
@@ -333,7 +333,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             )
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(CurrentYearNYMandatedScenario)
+            result shouldBe CurrentYearNYMandatedScenario
           }
         }
       }
@@ -366,7 +366,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(NextTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(NextYearCYMandatedOrQuarterlyScenario)
+            result shouldBe NextYearCYMandatedOrQuarterlyScenario
           }
         }
       }
@@ -396,7 +396,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(NextTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(NextYearCYMandatedOrQuarterlyScenario)
+            result shouldBe NextYearCYMandatedOrQuarterlyScenario
           }
         }
       }
@@ -429,7 +429,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(NextTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(NextYearCYAnnualScenario)
+            result shouldBe NextYearCYAnnualScenario
           }
         }
       }
@@ -462,7 +462,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(NoChosenTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(PreviousAndNoStatusValidScenario)
+            result shouldBe PreviousAndNoStatusValidScenario
           }
         }
       }
@@ -492,7 +492,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(PreviousTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(PreviousAndNoStatusValidScenario)
+            result shouldBe PreviousAndNoStatusValidScenario
           }
         }
       }
@@ -522,7 +522,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(PreviousTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(PreviousAndNoStatusValidScenario)
+            result shouldBe PreviousAndNoStatusValidScenario
           }
         }
       }
@@ -552,7 +552,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             .thenReturn(Future(PreviousTaxYear))
 
           whenReady(testController.viewScenarioHandler()) { result =>
-            result shouldBe Right(PreviousAndNoStatusValidScenario)
+            result shouldBe PreviousAndNoStatusValidScenario
           }
         }
       }
@@ -608,7 +608,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
               .thenReturn(Future(PreviousTaxYear))
 
             whenReady(testController.viewScenarioHandler()) { result =>
-              result shouldBe Right(DefaultValidScenario)
+              result shouldBe DefaultValidScenario
             }
           }
         }
