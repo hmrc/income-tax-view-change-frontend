@@ -59,7 +59,7 @@
     useFallbackBackLink = true
 ) {
 
-        @h1(id = Some("heading"), msg = getHeading, size = "l")
+        @h1(id = Some("heading"), msg = getHeading, size = "xl")
 
         @formWithCSRF(action = getPostAction) {
             @if(!model.isNextTaxYear){

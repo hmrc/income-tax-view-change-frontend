@@ -30,7 +30,7 @@ import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
 
-object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
+object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   // NINO Lookup Stubs
   // =================

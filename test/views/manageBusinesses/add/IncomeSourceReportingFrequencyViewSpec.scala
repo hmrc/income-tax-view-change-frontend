@@ -94,11 +94,11 @@ class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateSe
       }
 
       "have the correct sub-heading" in new Setup(incomeSourceType) {
-        pageDocument.getElementsByClass("govuk-caption-l").textNodes().get(0).text shouldBe subHeadingText
+        pageDocument.getElementsByClass("govuk-caption-xl").textNodes().get(0).text shouldBe subHeadingText
       }
 
       "have the correct heading" in new Setup(incomeSourceType) {
-        pageDocument.getElementsByClass("govuk-heading-l margin-bottom-100").get(0).text shouldBe heading
+        pageDocument.getElementsByClass("govuk-heading-xl margin-bottom-100").get(0).text shouldBe heading
       }
 
       "have the correct page contents" in new Setup(incomeSourceType) {

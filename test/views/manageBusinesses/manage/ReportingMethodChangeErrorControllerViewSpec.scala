@@ -49,7 +49,7 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
     s"${if(isAgent) "Agent" else "Individual"}: ReportingMethodChangeErrorView - $incomeSourceType" should {
       "render the heading" in new Setup(isAgent, incomeSourceType) {
-        document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("standardError.heading")
+        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("standardError.heading")
       }
       "render p1 text and link" in new Setup(isAgent, incomeSourceType) {
         document.getElementById("reportingMethodError.p1").text() shouldBe

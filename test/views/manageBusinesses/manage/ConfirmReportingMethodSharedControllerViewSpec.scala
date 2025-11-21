@@ -140,7 +140,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         isCYPlus = false,
         contentFeatureSwitchEnabled = true
       ) {
-        document.getElementsByClass("govuk-heading-l").first().text() shouldBe getPageHeadingFor(reportingMethod = reportingMethod, CYPlus = false)
+        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe getPageHeadingFor(reportingMethod = reportingMethod, CYPlus = false)
       }
 
       "render the back link with the correct URL" in new Setup(
@@ -161,7 +161,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         isCYPlus = false,
         contentFeatureSwitchEnabled = true
       ) {
-        document.getElementsByClass("govuk-caption-l").first().text().contains(pageSubHeading) shouldBe true
+        document.getElementsByClass("govuk-caption-xl").first().text().contains(pageSubHeading) shouldBe true
       }
 
       "render the continue button" in new Setup(
@@ -256,7 +256,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         isCYPlus = false,
         contentFeatureSwitchEnabled = false
       ) {
-        document.getElementsByClass("govuk-heading-l").first().text() shouldBe oldPageHeading
+        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe oldPageHeading
       }
 
       "render the back link with the correct URL" in new Setup(
@@ -277,7 +277,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         isCYPlus = false,
         contentFeatureSwitchEnabled = false
       ) {
-        document.getElementsByClass("govuk-caption-l").first().text().contains(pageSubHeading) shouldBe true
+        document.getElementsByClass("govuk-caption-xl").first().text().contains(pageSubHeading) shouldBe true
       }
 
       "render the main paragraph" in new Setup(

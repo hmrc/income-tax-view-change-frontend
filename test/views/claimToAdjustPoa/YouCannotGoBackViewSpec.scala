@@ -58,7 +58,7 @@ class YouCannotGoBackViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {
       "render the heading" in new Setup(isAgent) {
-        document.getElementsByClass("govuk-heading-l").first().text() shouldBe messages("claimToAdjustPoa.youCannotGoBack.heading")
+        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("claimToAdjustPoa.youCannotGoBack.heading")
       }
       "render the first paragraph" in new Setup(isAgent) {
         document.getElementById("paragraph-text-1").text() shouldBe

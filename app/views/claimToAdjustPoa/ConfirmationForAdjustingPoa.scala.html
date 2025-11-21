@@ -59,9 +59,9 @@
      btaNavPartial = user.btaNavPartial,
      useFallbackBackLink = true) {
 
-    <span class="govuk-caption-l" id="caption">@getMessage("caption", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)</span>
+    <span class="govuk-caption-xl" id="caption">@getMessage("caption", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)</span>
 
-    @h1(msg = getMessage("heading"), size ="l", id = Some("h1"))
+    @h1(msg = getMessage("heading"), size ="xl", id = Some("h1"))
 
     @p(){
         @getCorrectBody

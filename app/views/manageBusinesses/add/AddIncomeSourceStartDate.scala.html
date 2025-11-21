@@ -67,11 +67,11 @@
             )
         }
 
-        <span class="govuk-caption-l">
+        <span class="govuk-caption-xl">
             @{ messages(s"incomeSources.add.${incomeSourceType.messagesSuffix}") }
         </span>
 
-        @h1(msg = getMessage("heading"), size = "l")
+        @h1(msg = getMessage("heading"), size = "xl")
 
         @p(id = Some("business-start-date-description-1")){ @getMessage("hint") }
         @p(id = Some("business-start-date-description-2")){ @getMessage("hint2") }

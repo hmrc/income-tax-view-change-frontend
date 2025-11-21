@@ -60,7 +60,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
   def executeTest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: AddIncomeSourceStartDateCheckView - $incomeSourceType" should {
       "render the heading" in new Setup(isAgent, hasError = false, incomeSourceType) {
-        document.getElementsByClass("govuk-caption-l").text() shouldBe getCaption(incomeSourceType)
+        document.getElementsByClass("govuk-caption-xl").text() shouldBe getCaption(incomeSourceType)
         document.getElementById("start-date-heading").text() shouldBe s"Is $formattedStartDate the correct date?"
       }
       "render the radio form" in new Setup(isAgent, hasError = false, incomeSourceType) {
