@@ -19,7 +19,7 @@ package audit.models
 import authV2.AuthActionsTestData._
 import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
-import models.financialDetails.{ChargeItem, DocumentDetail, DocumentDetailWithDueDate}
+import models.financialDetails.{Accepted, ChargeItem, CodedOutStatusType, DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
@@ -42,6 +42,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val auditType: String = "TaxYearOverviewResponse"
   val paymentsLpiPaymentOnAccount1: String = messages("tax-year-summary.payments.lpi.paymentOnAccount1.text")
   val paymentsPaymentOnAccount1: String = messages("tax-year-summary.payments.paymentOnAccount1.text")
+  val paymentsCodedOutPoa: String = messages("tax-year-summary.payments.poa1CodedOut.text")
   val updateTypeQuarterly: String = "Quarterly Update"
   val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
 
@@ -75,10 +76,19 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     forecastAllowancesAndDeductions = forecastAllowancesAndDeductions
   )
 
-  def payments(hasDunningLock: Boolean): List[ChargeItem] = {
-    List(
-      chargeItemModel(dunningLock = hasDunningLock)
-    )
+  def payments(hasDunningLock: Boolean, codedOutStatusType: Option[CodedOutStatusType], hasInterest: Boolean): List[ChargeItem] = {
+    if (hasInterest) {
+      List(
+        chargeItemModel(dunningLock = hasDunningLock, codedOutStatus = codedOutStatusType)
+      )
+    }
+    else {
+      List(
+        chargeItemModel(dunningLock = hasDunningLock, codedOutStatus = codedOutStatusType,
+          interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None)
+      )
+    }
   }
 
 
@@ -183,13 +193,16 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
       "dueDate" -> "2019-05-15",
       "paymentType" -> paymentsPaymentOnAccount1,
       "underReview" -> false,
-      "status" -> "unpaid"
+      "status" -> "unpaid",
+      "codedOut" -> false,
+      "codedOutStatus" -> "Not coded out"
     ), Json.obj(
       "amount" -> 100,
       "dueDate" -> "2019-05-15",
       "paymentType" -> "Late payment interest on first payment on account",
       "underReview" -> false,
-      "status" -> "part-paid"
+      "status" -> "part-paid",
+      "codedOut" -> false
     )),
     "updates" -> Seq(Json.obj(
       "incomeSource" -> "Test Trading Name",
@@ -223,13 +236,52 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
       "dueDate" -> "2019-05-15",
       "paymentType" -> paymentsPaymentOnAccount1,
       "underReview" -> true,
-      "status" -> "unpaid"
+      "status" -> "unpaid",
+      "codedOut" -> false,
+      "codedOutStatus" -> "Not coded out"
     ), Json.obj(
       "amount" -> 100,
       "dueDate" -> "2019-05-15",
       "paymentType" -> "Late payment interest on first payment on account",
       "underReview" -> true,
-      "status" -> "part-paid"
+      "status" -> "part-paid",
+      "codedOut" -> false
+    )),
+    "updates" -> Seq(Json.obj(
+      "incomeSource" -> "Test Trading Name",
+      "dateSubmitted" -> fixedDate.toString,
+      "updateType" -> updateTypeQuarterly
+    ))
+  )
+
+  val jsonAuditIndividualResponseWithCodedOut = commonAuditDetails(Individual) ++ Json.obj(
+    "taxYearOverview" -> Json.obj(
+      "calculationDate" -> "2017-07-06",
+      "calculationAmount" -> 2010,
+      "isCrystallised" -> false,
+      "forecastAmount" -> None
+    ),
+    "forecast" -> Json.obj(
+      "income" -> None,
+      "taxableIncome" -> None,
+      "taxDue" -> None,
+      "totalAllowancesAndDeductions" -> None
+    ),
+    "calculation" -> Json.obj(
+      "income" -> 199505,
+      "allowancesAndDeductions" -> 500,
+      "taxableIncome" -> 198500,
+      "taxDue" -> 2010,
+      "calculationReason" -> "customerRequest",
+    ),
+    "payments" -> Seq(Json.obj(
+      "amount" -> 1400,
+      "dueDate" -> "2019-05-15",
+      "paymentType" -> paymentsCodedOutPoa,
+      "underReview" -> true,
+      "status" -> "unpaid",
+      "codedOut" -> true,
+      "codedOutStatus" -> "Initiated"
     )),
     "updates" -> Seq(Json.obj(
       "incomeSource" -> "Test Trading Name",
@@ -244,7 +296,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
                                        forecastIncome: Option[Int] = None,
                                        forecastIncomeTaxAndNics: Option[BigDecimal] = None,
                                        forecastAllowancesAndDeductions: Option[BigDecimal] = None,
-                                       messages: Option[Messages] = None): TaxYearSummaryResponseAuditModel =
+                                       messages: Option[Messages] = None,
+                                       codedOutStatusType: Option[CodedOutStatusType] = None,
+                                       hasInterest: Boolean = true): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
       mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, business, Nil)),
       messagesApi = messagesApi,
@@ -253,7 +307,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastIncome = forecastIncome,
           forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
           forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
-        ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem),
+        ), charges = payments(paymentHasADunningLock, codedOutStatusType, hasInterest).map(TaxYearSummaryChargeItem.fromChargeItem),
         obligations = updates, ctaViewModel = emptyCTAViewModel, LPP2Url = "", pfaEnabled = false, previousCalculationSummary = None
         ),
       messages
@@ -264,7 +318,9 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
                                                  paymentHasADunningLock: Boolean = false,
                                                  forecastIncome: Option[Int] = None,
                                                  forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                                                 forecastAllowancesAndDeductions: Option[BigDecimal] = None): TaxYearSummaryResponseAuditModel =
+                                                 forecastAllowancesAndDeductions: Option[BigDecimal] = None,
+                                                 codedOutStatusType: Option[CodedOutStatusType] = None,
+                                                 hasInterest: Boolean = true): TaxYearSummaryResponseAuditModel =
     TaxYearSummaryResponseAuditModel(
       mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, business, Nil)),
       messagesApi = messagesApi,
@@ -272,7 +328,7 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastIncome = forecastIncome,
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
-      ), charges = payments(paymentHasADunningLock).map(TaxYearSummaryChargeItem.fromChargeItem(_)),
+      ), charges = payments(paymentHasADunningLock, codedOutStatusType, hasInterest).map(TaxYearSummaryChargeItem.fromChargeItem(_)),
         obligations = updates, showForecastData = true, ctaViewModel = emptyCTAViewModel, LPP2Url = "", pfaEnabled = false, previousCalculationSummary = None
       )
     )
@@ -335,6 +391,15 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
             agentReferenceNumber = None,
             paymentHasADunningLock = true
           ).detail shouldBe jsonAuditIndividualResponse
+        }
+        "full audit response with coding out" in {
+          taxYearOverviewResponseAuditFull(
+            userType = Some(Individual),
+            agentReferenceNumber = None,
+            paymentHasADunningLock = true,
+            codedOutStatusType = Some(Accepted),
+            hasInterest = false
+          ).detail shouldBe jsonAuditIndividualResponseWithCodedOut
         }
         "audit response has single error messages" in {
           taxYearOverviewResponseAuditFull(

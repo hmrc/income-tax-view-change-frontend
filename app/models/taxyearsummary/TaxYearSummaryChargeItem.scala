@@ -122,6 +122,10 @@ case class TaxYearSummaryChargeItem(
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
   }
 
+  def isCodingOutAccepted: Boolean ={
+    codedOutStatus.contains(Accepted)
+  }
+
   def interestIsPaid: Boolean = interestOutstandingAmount match {
     case Some(amount) if amount == 0 => true
     case _ => false
@@ -156,6 +160,15 @@ case class TaxYearSummaryChargeItem(
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
     else interestOutstandingAmount.getOrElse(accruingInterestAmount.get)
+  }
+
+  def codedOutStatusAuditCode: String = {
+    codedOutStatus match {
+      case Some(Accepted) => "Initiated"
+      case Some(Cancelled) => "Cancelled"
+      case Some(FullyCollected) => "Fully Collected"
+      case Some(Nics2) | None => "Not coded out"
+    }
   }
 
 
