@@ -118,7 +118,7 @@
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
-                  if(viewModel.chargeItem.isCodingOut) "toBeCollected" else
+                  if(viewModel.chargeItem.isCodingOutAcceptedOrFullyCollected) "toBeCollected" else
                   if(viewModel.chargeItem.isOverdue() || viewModel.chargeItem.isPaid) "overDueCharge"
                   else "charge"
               )
@@ -130,7 +130,7 @@
           }"
       }</h2>
 
-      @if(!viewModel.chargeItem.isCodingOut && !viewModel.chargeItem.isPaid) {
+      @if(!viewModel.chargeItem.isCodingOutAcceptedOrFullyCollected && !viewModel.chargeItem.isPaid) {
           @p(id = Some("due-date-text")) {
               <b>@getMessage("due", viewModel.chargeItem.getDueDate.toLongDate)</b>
           }
