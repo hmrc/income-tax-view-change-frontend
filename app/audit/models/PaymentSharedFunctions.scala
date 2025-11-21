@@ -36,6 +36,12 @@ trait PaymentSharedFunctions {
       case (PoaOneDebit,  _)  => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
       case (PoaTwoDebit,  _)  => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
       case (BalancingCharge, None )   => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
+      case (FirstLatePaymentPenalty, _) => if (latePaymentCharge) Some("Late payment interest on first late payment penalty") else Some("First late payment penalty")
+      case (SecondLatePaymentPenalty, _) => if (latePaymentCharge) Some("Late payment interest on second late payment penalty") else Some("Second late payment penalty")
+      case (LateSubmissionPenalty, _) => if (latePaymentCharge) Some("Late payment interest on late submission penalty") else Some("Late submission penalty")
+      case (ITSAReturnAmendment, _) => if (latePaymentCharge) Some("Late payment interest on balancing payment: extra amount due to amended return") else Some("Balancing payment: extra amount due to amended return")
+      case (PoaOneReconciliationDebit, _) => if (latePaymentCharge) Some("Interest for first payment on account: extra amount") else Some("First payment on account: extra amount from your tax return")
+      case (PoaTwoReconciliationDebit, _) => if (latePaymentCharge) Some("Interest for second payment on account: extra amount") else Some("Second payment on account: extra amount from your tax return")
       case (_, _)                     => Some(docDetail.transactionType.key)
     }
 
