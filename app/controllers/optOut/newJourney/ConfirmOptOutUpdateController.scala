@@ -68,12 +68,15 @@ class ConfirmOptOutUpdateController @Inject()(
         optOutService.fetchJourneyCompleteStatus().flatMap(journeyIsComplete => {
           if(!journeyIsComplete){
             withRecover(isAgent) {
-              withSessionData(isStart = false, TaxYear(taxYear.toInt, taxYear.toInt + 1)) {
+              val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
+              withSessionData(isStart = false, selectedTaxYear) {
                 for {
                   optOutProposition <- optOutService.fetchOptOutProposition()
-                  quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(optOutProposition.optOutPropositionType)
+                  quarterlyUpdatesCount <- optOutService.getQuarterlyUpdatesCount(
+                    optOutProposition.optOutPropositionType,
+                    Some(selectedTaxYear)
+                  )
                 } yield {
-                  val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
                   val reportingObligationsURL = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
                   Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, reportingObligationsURL))
                 }
