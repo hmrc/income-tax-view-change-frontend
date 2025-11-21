@@ -2619,7 +2619,7 @@ optout.checkAnswers.cancel              = Cancel
 #opt out with submitted updates check answers
 optout.updates.checkAnswers.heading     = Confirm and opt out for the {0} to {1} tax year
 optout.updates.checkAnswers.p1          = If you opt out, you would no longer need software compatible with Making Tax Digital for Income Tax.
-optout.updates.checkAnswers.inset       = You have <b>2 quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.updates.checkAnswers.inset       = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed

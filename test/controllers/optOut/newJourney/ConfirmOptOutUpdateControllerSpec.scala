@@ -90,6 +90,69 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
             status(result) shouldBe Status.OK
           }
+
+          "is for one year in V-M-M scenario with quarterly updates" in {
+            enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+            mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
+            mockUpdateOptOutJourneyStatusInSessionData()
+            mockFetchOptOutJourneyCompleteStatus()
+
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any()))
+              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), previousYearCrystallised = true, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated)))
+
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(3))
+
+            when(mockOptOutService.recallSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear)))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe Status.OK
+          }
+
+          "is for one year in V-M-V scenario with quarterly updates" in {
+            enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+            mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
+            mockUpdateOptOutJourneyStatusInSessionData()
+            mockFetchOptOutJourneyCompleteStatus()
+
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any()))
+              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), previousYearCrystallised = true, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Voluntary)))
+
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(3))
+
+            when(mockOptOutService.recallSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear)))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe Status.OK
+          }
+
+          "is for one year in V-M-A scenario with quarterly updates" in {
+            enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+            mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
+            mockUpdateOptOutJourneyStatusInSessionData()
+            mockFetchOptOutJourneyCompleteStatus()
+
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any()))
+              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), previousYearCrystallised = true, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Annual)))
+
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(3))
+
+            when(mockOptOutService.recallSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear)))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe Status.OK
+          }
         }
 
         "render the home page" when {
