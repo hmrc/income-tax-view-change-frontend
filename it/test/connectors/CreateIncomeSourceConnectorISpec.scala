@@ -30,6 +30,7 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   lazy val connector: CreateIncomeSourceConnector = app.injector.instanceOf[CreateIncomeSourceConnector]
 
   val mtdId = "ID"
+  val createIncomeSourceUrl = "/income-tax-view-change/create-income-source/business"
 
   override def beforeEach(): Unit = {
     WireMock.reset()
@@ -37,58 +38,57 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   }
 
   val businessRequestBody: JsValue = Json.parse(
-    """
-      |{
-      |  "businessDetails": [
-      |    {
-      |      "accountingPeriodStartDate": "01-02-2023",
-      |      "accountingPeriodEndDate": "",
-      |      "tradingName": "",
-      |      "addressDetails": {
-      |        "addressLine1": "tests test",
-      |        "addressLine2": "",
-      |        "countryCode": "UK",
-      |        "postalCode": ""
-      |      },
-      |      "tradingStartDate": "",
-      |      "cashOrAccrualsFlag": "CASH",
-      |      "cessationDate": ""
-      |    }
-      |  ]
+    """{
+      |  "mtdbsa" : "XAIT00001234567",
+      |  "businessDetails" : [ {
+      |    "accountingPeriodStartDate" : "01-02-2023",
+      |    "accountingPeriodEndDate" : "",
+      |    "tradingName" : "",
+      |    "address" : {
+      |      "addressLine1" : "tests test",
+      |      "addressLine2" : "",
+      |      "countryCode" : "UK",
+      |      "postalCode" : ""
+      |    },
+      |    "tradingStartDate" : "",
+      |    "cashOrAccrualsFlag" : "CASH",
+      |    "cessationDate" : ""
+      |  } ]
       |}
       |""".stripMargin
   )
 
   val foreignPropertyRequestBody: JsValue = Json.parse(
-    """
-      |{
-      |   "foreignPropertyDetails" : {
-      |       "tradingStartDate" : "01-02-2023",
-      |       "cashOrAccrualsFlag" : "CASH",
-      |       "startDate" : "01-02-2023"
-      |   }
+    """{
+      |  "mtdbsa" : "XAIT00001234567",
+      |  "foreignPropertyDetails" : {
+      |    "tradingStartDate" : "01-02-2023",
+      |    "cashOrAccrualsFlag" : "CASH",
+      |    "startDate" : "01-02-2023"
+      |  }
       |}
       |""".stripMargin
   )
 
   val ukPropertyRequestBody: JsValue = Json.parse(
-    """
-      |{
-      |  "ukPropertyDetails": {
-      |    "tradingStartDate": "01-02-2023",
-      |    "cashOrAccrualsFlag": "CASH",
-      |    "startDate": "01-02-2023"
+    """{
+      |  "mtdbsa" : "XAIT00001234567",
+      |  "ukPropertyDetails" : {
+      |    "tradingStartDate" : "01-02-2023",
+      |    "cashOrAccrualsFlag" : "CASH",
+      |    "startDate" : "01-02-2023"
       |  }
       |}
       |""".stripMargin
   )
 
   val createBusinessDetailsRequest: CreateBusinessIncomeSourceRequest = CreateBusinessIncomeSourceRequest(
-    List(
+    mtdbsa = "XAIT00001234567",
+    businessDetails = List(
       BusinessDetails(accountingPeriodStartDate = "01-02-2023",
         accountingPeriodEndDate = "",
         tradingName = "",
-        addressDetails = AddressDetails(
+        address = AddressDetails(
           addressLine1 = "tests test",
           addressLine2 = Some(""),
           addressLine3 = None,
@@ -106,7 +106,8 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   )
 
   val createForeignPropertyRequest: CreateForeignPropertyIncomeSourceRequest = CreateForeignPropertyIncomeSourceRequest(
-    PropertyDetails(
+    mtdbsa = "XAIT00001234567",
+    foreignPropertyDetails = PropertyDetails(
       "01-02-2023",
       Some("CASH"),
       "01-02-2023"
@@ -114,7 +115,8 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   )
 
   val createUKPropertyRequest: CreateUKPropertyIncomeSourceRequest = CreateUKPropertyIncomeSourceRequest(
-    PropertyDetails(
+    mtdbsa = "XAIT00001234567",
+    ukPropertyDetails = PropertyDetails(
       "01-02-2023",
       Some("CASH"),
       "01-02-2023"
@@ -134,91 +136,88 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
     ".createBusiness()" when {
       "sending a request" should {
         "return a successful response" in {
-          WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", businessRequestBody, OK, successfulApiResponse)
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, businessRequestBody, OK, successfulApiResponse)
 
-          val result = connector.createBusiness(mtdId, createBusinessDetailsRequest).futureValue
+          val result = connector.createBusiness(createBusinessDetailsRequest).futureValue
 
           result shouldBe Right(List(CreateIncomeSourceResponse("ID")))
-          WiremockHelper.verifyPost(s"/income-tax-view-change/create-income-source/business/$mtdId")
+          WiremockHelper.verifyPost(createIncomeSourceUrl)
         }
         "return an error when the request returns a 200 but the json is invalid" in {
-          WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", businessRequestBody, OK, "{}")
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, businessRequestBody, OK, "{}")
 
-          val result = connector.createBusiness(mtdId, createBusinessDetailsRequest).futureValue
+          val result = connector.createBusiness(createBusinessDetailsRequest).futureValue
 
           result shouldBe  Left(CreateIncomeSourceErrorResponse(200, "Not valid json: {}"))
-          WiremockHelper.verifyPost(s"/income-tax-view-change/create-income-source/business/$mtdId")
+          WiremockHelper.verifyPost(createIncomeSourceUrl)
         }
 
         "return an error when the request doesn't return a 200" in {
-          WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", businessRequestBody, INTERNAL_SERVER_ERROR, "{}")
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, businessRequestBody, INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.createBusiness(mtdId, createBusinessDetailsRequest).futureValue
+          val result = connector.createBusiness(createBusinessDetailsRequest).futureValue
 
           result shouldBe Left(CreateIncomeSourceErrorResponse(500, "Error creating incomeSource: {}"))
-          WiremockHelper.verifyPost(s"/income-tax-view-change/create-income-source/business/$mtdId")
+          WiremockHelper.verifyPost(createIncomeSourceUrl)
         }
       }
     }
     ".createForeignProperty()" when {
       "sending a request" should {
         "return a successful response" in {
-          WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", foreignPropertyRequestBody, OK, successfulApiResponse)
-
-          val result = connector.createForeignProperty(mtdId, createForeignPropertyRequest).futureValue
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, foreignPropertyRequestBody, OK, successfulApiResponse)
+          val result = connector.createForeignProperty(createForeignPropertyRequest).futureValue
 
           result shouldBe Right(List(CreateIncomeSourceResponse(mtdId)))
-          WiremockHelper.verifyPost(s"/income-tax-view-change/create-income-source/business/$mtdId")
+          WiremockHelper.verifyPost(createIncomeSourceUrl)
         }
         "return an error when the request returns a 200 but the json is invalid" in {
-          WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", foreignPropertyRequestBody, OK, "{}")
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, foreignPropertyRequestBody, OK, "{}")
 
-          val result = connector.createForeignProperty(mtdId, createForeignPropertyRequest).futureValue
+          val result = connector.createForeignProperty(createForeignPropertyRequest).futureValue
 
           result shouldBe  Left(CreateIncomeSourceErrorResponse(200, "Not valid json: {}"))
-          WiremockHelper.verifyPost(s"/income-tax-view-change/create-income-source/business/$mtdId")
+          WiremockHelper.verifyPost(createIncomeSourceUrl)
         }
 
         "return an error when the request doesn't return a 200" in {
-          WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", foreignPropertyRequestBody, INTERNAL_SERVER_ERROR, "{}")
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, foreignPropertyRequestBody, INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.createForeignProperty(mtdId, createForeignPropertyRequest).futureValue
+          val result = connector.createForeignProperty(createForeignPropertyRequest).futureValue
 
           result shouldBe Left(CreateIncomeSourceErrorResponse(500, "Error creating incomeSource: {}"))
-          WiremockHelper.verifyPost(s"/income-tax-view-change/create-income-source/business/$mtdId")
+          WiremockHelper.verifyPost(createIncomeSourceUrl)
         }
       }
     }
     ".createUKProperty()" when {
       "sending a request" should {
         "return a successful response" in {
-          WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", ukPropertyRequestBody, OK, successfulApiResponse)
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, ukPropertyRequestBody, OK, successfulApiResponse)
 
-          val result = connector.createUKProperty(mtdId, createUKPropertyRequest).futureValue
+          val result = connector.createUKProperty(createUKPropertyRequest).futureValue
 
           result shouldBe Right(List(CreateIncomeSourceResponse(mtdId)))
-          WiremockHelper.verifyPost(s"/income-tax-view-change/create-income-source/business/$mtdId")
+          WiremockHelper.verifyPost(createIncomeSourceUrl)
         }
         "return an error when the request returns a 200 but the json is invalid" in {
-          WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", ukPropertyRequestBody, OK, "{}")
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, ukPropertyRequestBody, OK, "{}")
 
-          val result = connector.createUKProperty(mtdId, createUKPropertyRequest).futureValue
+          val result = connector.createUKProperty(createUKPropertyRequest).futureValue
 
           result shouldBe  Left(CreateIncomeSourceErrorResponse(200, "Not valid json: {}"))
-          WiremockHelper.verifyPost(s"/income-tax-view-change/create-income-source/business/$mtdId")
+          WiremockHelper.verifyPost(createIncomeSourceUrl)
         }
 
         "return an error when the request doesn't return a 200" in {
-          WiremockHelper.stubPostWithRequest(s"/income-tax-view-change/create-income-source/business/$mtdId", ukPropertyRequestBody, INTERNAL_SERVER_ERROR, "{}")
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, ukPropertyRequestBody, INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.createUKProperty(mtdId, createUKPropertyRequest).futureValue
+          val result = connector.createUKProperty(createUKPropertyRequest).futureValue
 
           result shouldBe Left(CreateIncomeSourceErrorResponse(500, "Error creating incomeSource: {}"))
-          WiremockHelper.verifyPost(s"/income-tax-view-change/create-income-source/business/$mtdId")
+          WiremockHelper.verifyPost(createIncomeSourceUrl)
         }
       }
     }
   }
-
 }
-

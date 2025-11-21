@@ -26,10 +26,11 @@ import java.time.LocalDate
 trait IncomeSourcesDataHelper {
 
 
-  val businessDetails = BusinessDetails(accountingPeriodStartDate = "01-02-2023",
+  val businessDetails: BusinessDetails = BusinessDetails(
+    accountingPeriodStartDate = "01-02-2023",
     accountingPeriodEndDate = "",
     tradingName = "",
-    addressDetails = AddressDetails(
+    address = AddressDetails(
       addressLine1 = "tests test",
       addressLine2 = Some(""),
       addressLine3 = None,
@@ -44,55 +45,69 @@ trait IncomeSourcesDataHelper {
     cessationReason = None
   )
 
-  val createBusinessDetailsRequestObject = CreateBusinessIncomeSourceRequest(businessDetails =
-    List(businessDetails)
+  val createBusinessDetailsRequestObject: CreateBusinessIncomeSourceRequest = CreateBusinessIncomeSourceRequest(
+    mtdbsa = "XIAT00000000000",
+    businessDetails = List(businessDetails)
   )
 
   val createBusinessDetailsRequestObjectJson: JsValue = Json.parse(
     """{
-      |    "businessDetails": [
-      |        {
-      |            "accountingPeriodStartDate": "01-02-2023",
-      |            "accountingPeriodEndDate": "",
-      |            "tradingName": "",
-      |            "addressDetails": {
-      |                "addressLine1": "tests test",
-      |                "addressLine2": "",
-      |                "countryCode": "UK",
-      |                "postalCode": ""
-      |            },
-      |            "tradingStartDate": "",
-      |            "cashOrAccrualsFlag": "CASH",
-      |            "cessationDate": ""
-      |        }
-      |    ]
-      |}""".stripMargin)
+      |  "mtdbsa" : "XIAT00000000000",
+      |  "businessDetails" : [ {
+      |    "accountingPeriodStartDate" : "01-02-2023",
+      |    "accountingPeriodEndDate" : "",
+      |    "tradingName" : "",
+      |    "address" : {
+      |      "addressLine1" : "tests test",
+      |      "addressLine2" : "",
+      |      "countryCode" : "UK",
+      |      "postalCode" : ""
+      |    },
+      |    "tradingStartDate" : "",
+      |    "cashOrAccrualsFlag" : "CASH",
+      |    "cessationDate" : ""
+      |  } ]
+      |}
+      |""".stripMargin
+  )
 
-  val createForeignPropertyRequestObject = CreateForeignPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
+  val createForeignPropertyRequestObject: CreateForeignPropertyIncomeSourceRequest = CreateForeignPropertyIncomeSourceRequest(
+    mtdbsa = "XIAT00000000000",
+    foreignPropertyDetails = PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
     cashOrAccrualsFlag = Some("CASH"), startDate = LocalDate.of(2011, 1, 1).toString)
   )
 
-  val createForeignPropertyRequestObjectJson = Json.parse("""{
-        |    "foreignPropertyDetails": {
-        |        "tradingStartDate": "2011-01-01",
-        |        "cashOrAccrualsFlag": "CASH",
-        |        "startDate": "2011-01-01"
-        |    }
-        |}""".stripMargin)
+  val createForeignPropertyRequestObjectJson: JsValue = Json.parse(
+    """{
+      |  "mtdbsa" : "XIAT00000000000",
+      |  "foreignPropertyDetails" : {
+      |    "tradingStartDate" : "2011-01-01",
+      |    "cashOrAccrualsFlag" : "CASH",
+      |    "startDate" : "2011-01-01"
+      |  }
+      |}
+      |""".stripMargin
+  )
 
-  val createUKPropertyRequestObject = CreateUKPropertyIncomeSourceRequest(PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
+  val createUKPropertyRequestObject: CreateUKPropertyIncomeSourceRequest = CreateUKPropertyIncomeSourceRequest(
+    mtdbsa = "XIAT00000000000",
+    ukPropertyDetails = PropertyDetails(tradingStartDate = LocalDate.of(2011, 1, 1).toString,
     cashOrAccrualsFlag = Some("CASH"), startDate = LocalDate.of(2011, 1, 1).toString)
   )
 
-  val createUKPropertyRequestObjectJson  = Json.parse("""{
-    |    "ukPropertyDetails": {
-    |        "tradingStartDate": "2011-01-01",
-    |        "cashOrAccrualsFlag": "CASH",
-    |        "startDate": "2011-01-01"
-    |    }
-    |}""".stripMargin)
+  val createUKPropertyRequestObjectJson: JsValue = Json.parse(
+    """{
+      |  "mtdbsa" : "XIAT00000000000",
+      |  "ukPropertyDetails" : {
+      |    "tradingStartDate" : "2011-01-01",
+      |    "cashOrAccrualsFlag" : "CASH",
+      |    "startDate" : "2011-01-01"
+      |  }
+      |}
+      |""".stripMargin
+  )
 
-  val createBusinessViewModel = CheckBusinessDetailsViewModel(
+  val createBusinessViewModel: CheckBusinessDetailsViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("someBusinessName"),
     businessStartDate = Some(LocalDate.of(2022, 11, 11)),
     businessTrade = "someBusinessTrade",
@@ -108,7 +123,7 @@ trait IncomeSourcesDataHelper {
     showedAccountingMethod = false
   )
 
-  val createForeignPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = Some("CASH"), incomeSourceType = ForeignProperty)
+  val createForeignPropertyViewModel: CheckPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = Some("CASH"), incomeSourceType = ForeignProperty)
 
-  val createUKPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = Some("CASH"), incomeSourceType = UkProperty)
+  val createUKPropertyViewModel: CheckPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), cashOrAccrualsFlag = Some("CASH"), incomeSourceType = UkProperty)
 }

@@ -82,7 +82,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
 
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
@@ -138,7 +138,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
@@ -169,7 +169,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew(testMtditid)(response)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew()(response)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
