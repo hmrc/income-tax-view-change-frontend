@@ -1163,7 +1163,7 @@ chargeSummary.chargeHistory.created.class2Nic.text                      = Yswiri
 chargeSummary.chargeHistory.created.codingOut.text                      = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
 chargeSummary.chargeHistory.created.poa2CodedOut.text                   = Y swm i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}.
-chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
+chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Hunanasesiad TWE wedi’i ganslo wedi’i greu
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich taliad ar gyfrif cyntaf yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = Gwnaeth CThEF greu eich cosb am gyflwyno’n hwyr
@@ -3340,6 +3340,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.caption.poa2CodedOut.text.heading 
 yourSelfAssessmentChargeSummary.chargeHistory.poa1CodedOut.text.heading = Hanes eich taliad ar gyfrif cyntaf
 yourSelfAssessmentChargeSummary.chargeHistory.poa2CodedOut.text.heading = Hanes eich ail daliad ar gyfrif
 yourSelfAssessmentChargeSummary.chargeHistory.amend.codingOut.text = Y swm sydd wedi’i addasu i’w gasglu drwy’ch cod treth TWE yn y flwyddyn dreth {0} i {1}
+yourSelfAssessmentChargeSummary.cancelledPayeSelfAssessment.text.heading = Hunanasesiad TWE wedi’i ganslo (trwy eich cod treth TWE)
 yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount1.text.heading = Mae’r taliad ar gyfrif cyntaf hwn yn mynd tuag at eich bil treth {0} i {1}
 yourSelfAssessmentChargeSummary.chargeHistory.caption.paymentOnAccount2.text.heading = Mae’r ail daliad ar gyfrif hwn yn mynd tuag at eich bil treth {0} i {1}
 
