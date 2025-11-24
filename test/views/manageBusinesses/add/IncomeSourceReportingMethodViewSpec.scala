@@ -75,7 +75,7 @@ class IncomeSourceReportingMethodViewSpec extends TestSupport {
     lazy val documentWithOneLatencyYear: Document = if (error) Jsoup.parse(contentAsString(viewOneLatencyYearWithError)) else Jsoup.parse(contentAsString(viewOneLatencyYear))
 
     def checkHeading(): Assertion = {
-      documentWithTwoLatencyYears.getElementsByClass("govuk-caption-l").text().contains(messages(getMessage(incomeSourceType, "caption")))
+      documentWithTwoLatencyYears.getElementsByClass("govuk-caption-xl").text().contains(messages(getMessage(incomeSourceType, "caption")))
       documentWithTwoLatencyYears.getElementsByClass("govuk-heading-xl").text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.heading")
       documentWithTwoLatencyYears.getElementsByClass("govuk-heading-m").text() shouldBe messages("incomeSources.add.incomeSourceReportingMethod.chooseReport")
     }

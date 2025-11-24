@@ -43,7 +43,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   def summaryListRowValues()(implicit document: Document) = document.getElementsByClass("govuk-summary-list__value")
 
-  def h1()(implicit document: Document) = document.getElementsByClass("govuk-heading-l")
+  def h1()(implicit document: Document) = document.getElementsByClass("govuk-heading-xl")
 
   def changeLink(i: Int)(implicit document: Document) = document.getElementById(s"change-link-$i")
 

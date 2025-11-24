@@ -48,7 +48,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("type-of-business" -> "type-of-property")))
         }
 
-        @h1(msg = getMessage("heading"), size = "l", id = Some("heading"))
+        @h1(msg = getMessage("heading"), size = "xl", id = Some("heading"))
 
         @p(classes = "govuk-body", id = Some("text1")) {
             @getMessage("text1")
