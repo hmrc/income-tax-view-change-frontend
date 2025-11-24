@@ -167,7 +167,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
     Message("C159028", "the total tax taken off your client’s employment must be less than the total taxable pay including: tips, other payments, lump sums")
   ))))
-
+//pad this out to have one of everything, with interest
+  //or just test getChargeType directly
   val jsonAuditAgentResponse = commonAuditDetails(Agent) ++ Json.obj(
     "taxYearOverview" -> Json.obj(
       "calculationDate" -> "2017-07-06",

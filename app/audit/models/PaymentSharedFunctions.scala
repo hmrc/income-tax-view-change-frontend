@@ -17,13 +17,8 @@
 package audit.models
 
 import models.financialDetails._
-import services.DateServiceInterface
 
 trait PaymentSharedFunctions {
-
-  def isLatePaymentCharge(chargeItem: TransactionItem)(implicit dateService: DateServiceInterface): Boolean = {
-    chargeItem.isOverdue() && chargeItem.isAccruingInterest
-  }
 
   def getChargeType(docDetail: TransactionItem, latePaymentCharge: Boolean): Option[String] =
     (docDetail.transactionType, docDetail.codedOutStatus) match {
