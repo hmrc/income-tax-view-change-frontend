@@ -97,6 +97,8 @@ case class ChargeSummaryViewModel(
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !isCodedOut
 
+  val isCancelledPAYESelfAssessment: Boolean = true
+
   val creationEventNoInterestChargeAndNotCodedOut: Option[ChargeHistoryItem] = Option.when(chargeHistoryEnabled && noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
       ChargeHistoryItem(
         date = adjustmentHistory.creationEvent.adjustmentDate.getOrElse(chargeItem.documentDate),
@@ -110,6 +112,14 @@ case class ChargeSummaryViewModel(
         date = adjustmentHistory.creationEvent.adjustmentDate.getOrElse(chargeItem.documentDate),
         description = Html(messages(s"chargeSummary.chargeHistory.created.${chargeItem.getChargeTypeKey}",taxYearFromCodingOut, taxYearToCodingOut)),
         amount = adjustmentHistory.creationEvent.amount
+      )
+    }
+
+  val cancelledPayeSelfAssessmentIsCreated: Option[ChargeHistoryItem] = Option.when(!chargeItem.interestIsPaid) {
+      ChargeHistoryItem(
+        date = chargeItem.creationDate.getOrElse(currentDate),
+        description = Html(messages("chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text")),
+        amount = chargeItem.outstandingAmount
       )
     }
 
@@ -191,6 +201,7 @@ case class ChargeSummaryViewModel(
 
   val sortedChargeHistoryTableEntries: List[ChargeHistoryItem] = {
       creationEventNoInterestChargeAndNotCodedOut.toList ++
+      cancelledPayeSelfAssessmentIsCreated.toList ++
       creationEventCodedOut.toList ++
       reviewAndReconcileCreditList.toList ++
       chargeHistoriesFormattedList ++
