@@ -48,25 +48,9 @@
 }
 
 @chargeHistoryCaption = {
-    @if(viewModel.latePaymentInterestCharge) {
-        @p(id = Some("charge-history-caption")) {
-            @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading",
-                viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
-        }
-    } else {
-        @if(viewModel.chargeItem.transactionType == PoaOneDebit || viewModel.chargeItem.transactionType == PoaTwoDebit || viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit || viewModel.chargeItem.transactionType == MfaDebitCharge) {
-            @p(id = Some("charge-history-caption")) {
-                @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.${viewModel.chargeItem.getChargeTypeKey}.heading",
-                    viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
-            }
-        } else {
-            @if(viewModel.chargeItem.transactionType == BalancingCharge || viewModel.chargeItem.transactionType == ITSAReturnAmendment) {
-                @p(id = Some("charge-history-caption")) {
-                    @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.balancingCharge.text.caption",
-                        viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
-                }
-            }
-        }
+    @p(id = Some("charge-history-caption")) {
+        @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading",
+            viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
     }
 }
 
