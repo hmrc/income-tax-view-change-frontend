@@ -231,7 +231,8 @@ class OptOutService @Inject()(
   def getQuarterlyUpdatesCount(propositionType: Option[OptOutPropositionTypes], selectedTaxYear: Option[TaxYear] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Int] = {
     propositionType match {
       case Some(p: OneYearOptOutProposition) =>
-        getQuarterlyUpdatesCountForOfferedYears(p.proposition).map(_.getCountFor(p.intent.taxYear))
+        val taxYear = selectedTaxYear.getOrElse(p.intent.taxYear)
+        getQuarterlyUpdatesCountForOfferedYears(p.proposition).map(_.getCountFor(taxYear))
       case Some(p: MultiYearOptOutProposition) =>
         selectedTaxYear match {
           case Some(taxYear) =>

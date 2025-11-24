@@ -87,5 +87,44 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
 
       }
     }
+
+    "render the page with different quarterly updates counts" should {
+
+      "display 2 quarterly updates" in {
+        val reportingObligationsURL: String = controllers.routes.ReportingFrequencyPageController.show(isAgent = false).url
+        val pageDocument: Document = Jsoup.parse(
+          contentAsString(
+            checkOptOutUpdateAnswersView(
+              viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2023, 2024), 2),
+              isAgent = false,
+              reportingObligationsURL = reportingObligationsURL
+            )
+          )
+        )
+
+        val insetText = pageDocument.getElementById("check-opt-out-update-inset").text()
+        insetText should include("2")
+        insetText should include("quarterly updates")
+        insetText should include("If you continue, these updates will be deleted")
+      }
+
+      "display 3 quarterly updates correctly for V-M-M scenario" in {
+        val reportingObligationsURL: String = controllers.routes.ReportingFrequencyPageController.show(isAgent = false).url
+        val pageDocument: Document = Jsoup.parse(
+          contentAsString(
+            checkOptOutUpdateAnswersView(
+              viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2023, 2024), 3),
+              isAgent = false,
+              reportingObligationsURL = reportingObligationsURL
+            )
+          )
+        )
+
+        val insetText = pageDocument.getElementById("check-opt-out-update-inset").text()
+        insetText should include("3")
+        insetText should include("quarterly updates")
+        insetText should include("If you continue, these updates will be deleted")
+      }
+    }
   }
 }
