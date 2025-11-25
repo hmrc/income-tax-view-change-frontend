@@ -62,11 +62,11 @@
 
     @form(action = postAction, Symbol("id") -> "business-trade-form") {
 
-        <span class="govuk-caption-l", id="caption">
+        <span class="govuk-caption-xl", id="caption">
         @messages("incomeSources.add.sole-trader")
         </span>
 
-        @h1(messages("add-trade.heading"), size = "l")
+        @h1(messages("add-trade.heading"), size = "xl")
 
         @p(id = Some("business-trade-description"), classes = "govuk-body") {
             @messages("add-trade.trade-info-1")

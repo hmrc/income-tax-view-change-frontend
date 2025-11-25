@@ -58,7 +58,7 @@ class OptOutErrorControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(OK),
-              elementTextBySelector(".govuk-heading-l")(headingText),
+              elementTextBySelector(".govuk-heading-xl")(headingText),
             )
           }
         }
