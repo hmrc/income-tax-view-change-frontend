@@ -172,7 +172,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, isTriggeredMigration = true)))
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
