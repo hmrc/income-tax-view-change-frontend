@@ -82,7 +82,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo(), docId = id1040000126) {
                 enable(ChargeHistory)
@@ -98,7 +98,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 1 January 2020"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA1 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid(), docId = id1040000125) {
                 enable(ChargeHistory)
@@ -113,7 +113,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA2 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid(), docId = id1040000126) {
                 enable(ChargeHistory)
@@ -128,7 +128,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
                 enable(ChargeHistory)
@@ -144,7 +144,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("codedOutPOAExplanation").text() shouldBe "This is the tax you owe for the 2020 to 2021 tax year. It will be collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2020 to 2021 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
               "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
                 enable(ChargeHistory)
@@ -160,7 +160,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("codedOutPOAExplanation").text() shouldBe "This is the tax you owe for the 2020 to 2021 tax year. It will be collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2020 to 2021 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
               "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneWithLpi(), docId = codingout) {
                 enable(ChargeHistory)
@@ -178,7 +178,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("interestOnCharge.p2").text() shouldBe "Interest will be estimated until the charge it is related to is paid in full."
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
@@ -199,7 +199,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("interestOnCharge.p2").text() shouldBe "Interest will be estimated until the charge it is related to is paid in full."
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account goes towards your 2017 to 2018 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
@@ -219,7 +219,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2018 to 2019 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2018 to 2019 tax bill."
 
               }
               "provided with an id associated to a Balancing payment with accruing interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest, docId = id1040000123) {
@@ -240,7 +240,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("interestOnCharge.p2").text() shouldBe "Interest will be estimated until the charge it is related to is paid in full."
                 document.getElementById("interest-on-your-charge-table").getAllElements.size().equals(0) shouldBe false
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2018 to 2019 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2018 to 2019 tax bill."
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
@@ -278,7 +278,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 Option(document.getElementById("due-date-text")) shouldBe None
                 document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2020 to 2021 tax year. It will be collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
-                document.getElementById("charge-history-caption").text() shouldBe "This balancing payment goes towards your 2020 to 2021 tax bill."
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
                 document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 Mar 2018 Amount to be collected through your PAYE tax code in 2022 to 2023 tax year. £2,500.00"
                 document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 Mar 2019 Amount adjusted to be collected through your PAYE tax code in 2022 to 2023 tax year £2,000.00"
               }

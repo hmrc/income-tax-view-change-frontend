@@ -1163,7 +1163,7 @@ chargeSummary.chargeHistory.created.class2Nic.text                      = Class 
 chargeSummary.chargeHistory.created.codingOut.text                      = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.poa2CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
-chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment (through your PAYE tax code) created
+chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment created
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC created this extra amount for your first payment on account based on your tax return
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
@@ -3343,6 +3343,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.poa2CodedOut.text.heading = Second
 yourSelfAssessmentChargeSummary.chargeHistory.caption.poa1CodedOut.text.heading = This first payment on account goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.caption.poa2CodedOut.text.heading = This second payment on account goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.amend.codingOut.text = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year
+yourSelfAssessmentChargeSummary.cancelledPayeSelfAssessment.text.heading = 	Cancelled PAYE Self Assessment (through your PAYE tax code)
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
