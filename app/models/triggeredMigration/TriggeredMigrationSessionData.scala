@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package testOnly.forms
+package models.triggeredMigration
 
-import play.api.data.Form
-import play.api.data.Forms._
-import testOnly.forms.validation.Constraints._
-import testOnly.models.UserModel
+import play.api.libs.json.{Json, OFormat}
 
-object UserModelForm {
+case class TriggeredMigrationSessionData(isTriggeredMigrationJourney: Boolean)
 
-  val userModelForm: Form[UserModel] = Form(
-    mapping(
-      "mtdItId" -> text.verifying(nonEmpty("Must have an MTDID")),
-      "nino" -> text.verifying(nonEmpty("Must have a NINO"))
-    )(UserModel.apply)(UserModel.unapply)
-  )
+object TriggeredMigrationSessionData {
+  implicit val format: OFormat[TriggeredMigrationSessionData] = Json.format[TriggeredMigrationSessionData]
 }

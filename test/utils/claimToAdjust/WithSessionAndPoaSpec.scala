@@ -47,7 +47,6 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val TestWithSessionAndPoa: WithSessionAndPoa = new WithSessionAndPoa {
-    val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
     override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
     override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
@@ -56,7 +55,6 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   }
 
   lazy val TestWithSessionAndPoaSpy: WithSessionAndPoa = spy(new WithSessionAndPoa {
-    val appConfig: FrontendAppConfig = mockAppConfig
     override val poaSessionService: PaymentOnAccountSessionService = mockPaymentOnAccountSessionService
     override val individualErrorHandler: ItvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
     override val agentErrorHandler: AgentItvcErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]

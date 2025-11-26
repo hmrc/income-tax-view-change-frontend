@@ -79,10 +79,73 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             mockFetchOptOutJourneyCompleteStatus()
 
             when(mockOptOutService.fetchOptOutProposition()(any(), any(), any()))
-              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2025, 2026), true, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated)))
+              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2025, 2026), previousYearCrystallised = true, ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Mandated)))
 
-            when(mockOptOutService.getQuarterlyUpdatesCount(any())(any(), any(), any()))
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
               .thenReturn(Future.successful(2))
+
+            when(mockOptOutService.recallSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear)))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe Status.OK
+          }
+
+          "is for one year in V-M-M scenario with quarterly updates" in {
+            enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+            mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
+            mockUpdateOptOutJourneyStatusInSessionData()
+            mockFetchOptOutJourneyCompleteStatus()
+
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any()))
+              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), previousYearCrystallised = true, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Mandated)))
+
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(3))
+
+            when(mockOptOutService.recallSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear)))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe Status.OK
+          }
+
+          "is for one year in V-M-V scenario with quarterly updates" in {
+            enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+            mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
+            mockUpdateOptOutJourneyStatusInSessionData()
+            mockFetchOptOutJourneyCompleteStatus()
+
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any()))
+              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), previousYearCrystallised = true, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Voluntary)))
+
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(3))
+
+            when(mockOptOutService.recallSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear)))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe Status.OK
+          }
+
+          "is for one year in V-M-A scenario with quarterly updates" in {
+            enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            setupMockSuccess(mtdRole)
+            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+            mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
+            mockUpdateOptOutJourneyStatusInSessionData()
+            mockFetchOptOutJourneyCompleteStatus()
+
+            when(mockOptOutService.fetchOptOutProposition()(any(), any(), any()))
+              .thenReturn(Future.successful(OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), previousYearCrystallised = true, ITSAStatus.Voluntary, ITSAStatus.Mandated, ITSAStatus.Annual)))
+
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(3))
 
             when(mockOptOutService.recallSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear)))
 
@@ -196,7 +259,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
         }
 
 
-        "redirect to the opt out error page if the opt out update request fails" in {
+        "redirect to the opt out error page if the opt out update request fails (all fail)" in {
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -204,6 +267,22 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
             .thenReturn(
               Future(List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure()))
+            )
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe Status.SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+        }
+
+        "redirect to the opt out error page if the opt out update request fails (1 fail mid multiyear update loop)" in {
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          setupMockSuccess(mtdRole)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(
+              Future(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseSuccess()))
             )
 
           val result = action(fakeRequest)

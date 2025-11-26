@@ -20,11 +20,13 @@ import audit.models.CreateIncomeSourceAuditModel
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.TriggeredMigration.TriggeredMigrationAdded
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.{AccountingMethodJourney, NavBarFs}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
+import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -53,10 +55,11 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
     await(sessionService.deleteSession(Add))
   }
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
     journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
-    addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData))
+    addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData),
+    triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration)))
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
     val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
@@ -82,7 +85,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
 
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
@@ -138,7 +141,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse(testMtditid)(OK, response)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
@@ -163,13 +166,44 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
               }
             }
 
+            "redirect to check hmrc records page" when {
+              "user selects 'confirm and continue' and they are in triggered migration" in {
+                disable(NavBarFs)
+                stubAuthorised(mtdUserRole)
+                val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
+                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, isTriggeredMigration = true)))
+                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+
+                incomeSourceType match {
+                  case SelfEmployment => AuditStub.verifyAuditContainsDetail(
+                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+
+                  case UkProperty => AuditStub.verifyAuditContainsDetail(
+                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+
+                  case ForeignProperty => AuditStub.verifyAuditContainsDetail(
+                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                }
+
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent = mtdUserRole != MTDIndividual, Some(TriggeredMigrationAdded.toString)).url)
+                )
+              }
+            }
+
             "render the error page" when {
               "error in response from API" in {
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew(testMtditid)(response)
+                IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew()(response)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue

@@ -80,14 +80,6 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
     }
   }
 
-  private def taxYearQuestionLink(isAgent: Boolean): Option[String] = {
-    if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents/optout?taxYear=2025")
-    } else {
-      Some("/report-quarterly/income-and-expenses/view/optout?taxYear=2025")
-    }
-  }
-
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
 
@@ -200,7 +192,10 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
           setupMockSuccess(mtdRole)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(numberOfQuarterlyUpdates = 2, optOutState = Some(OneYearOptOutFollowedByMandated)))))
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(
+            numberOfQuarterlyUpdates = 2,
+            optOutState = Some(OneYearOptOutFollowedByMandated)
+          ))))
           mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
           mockUpdateOptOutJourneyStatusInSessionData()
           mockFetchOptOutJourneyCompleteStatus()

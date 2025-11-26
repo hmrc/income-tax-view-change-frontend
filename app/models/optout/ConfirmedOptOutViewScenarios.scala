@@ -29,7 +29,3 @@ case object NextYearCYAnnualScenario extends ConfirmedOptOutViewScenarios
 case object PreviousAndNoStatusValidScenario extends ConfirmedOptOutViewScenarios
 
 case object DefaultValidScenario extends ConfirmedOptOutViewScenarios
-
-sealed trait ConfirmedOptOutViewScenariosError
-
-case object UnableToDetermineContent extends ConfirmedOptOutViewScenariosError

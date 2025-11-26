@@ -176,10 +176,15 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             }
 
             "has a sign up and an opt out summary card" when {
+
               "CY is Annual and CY+1 is Quaterly" in {
+
                 enable(ReportingFrequencyPage, OptOutFs, OptInOptOutContentUpdateR17, SignUpFs)
+
                 stubAuthorised(mtdUserRole)
+
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,

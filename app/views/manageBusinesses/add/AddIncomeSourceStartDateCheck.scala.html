@@ -55,7 +55,7 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("start-date-check" -> "yes-response")))
         }
 
-        <span class="govuk-caption-l">@{
+        <span class="govuk-caption-xl">@{
             incomeSourceType match {
                 case SelfEmployment => messages("incomeSources.add.sole-trader")
                 case UkProperty => messages("incomeSources.add.uk-property")
@@ -67,7 +67,7 @@
         <div class="govuk-form-group govuk-form-group--error">
         }
 
-        @h1(msg = messages("radioForm.checkDate.heading.withDate", incomeSourceStartDate), size = "l", id = Some("start-date-heading"))
+        @h1(msg = messages("radioForm.checkDate.heading.withDate", incomeSourceStartDate), size = "xl", id = Some("start-date-heading"))
 
 
         @govukRadios(Radios(

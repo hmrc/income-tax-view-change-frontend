@@ -22,9 +22,10 @@ import services.DateServiceInterface
 import java.time.LocalDate
 
 trait MtdConstants {
+
   val dateService: DateServiceInterface
 
-  def getMtdThreshold(implicit appConfig: FrontendAppConfig): String = {
+  def getMtdThreshold()(implicit appConfig: FrontendAppConfig): String = {
     val dateThreshold2027 = LocalDate.of(2027, 4, 6)
     val dateThreshold2028 = LocalDate.of(2028, 4, 6)
 

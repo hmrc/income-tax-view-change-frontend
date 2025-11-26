@@ -1648,7 +1648,7 @@ incomeSources.cease.endDate.selfEmployment.heading                              
 incomeSources.cease.endDate.selfEmployment.error.invalid                         = Mae’n rhaid i’r dyddiad y gwnaeth eich busnes hunangyflogedig roi’r gorau i fasnachu fod yn ddyddiad go iawn
 incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
 
-incomeSources.cease.endDate.ukProperty.heading                    = Y dyddiad pan wnaeth eich busnes eiddo yn y DU stopio
+incomeSources.cease.endDate.ukProperty.heading                    = Pryd y gwnaeth y busnes eiddo yn y DU ddod i ben?
 incomeSources.cease.endDate.ukProperty.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
 
 incomeSources.cease.SE.heading                            = Cadarnhau eich bod am ddod â’ch busnes hunangyflogedig i ben
@@ -1676,7 +1676,7 @@ incomeSources.cease.FP.checkboxError                      = Dewiswch eich bod yn
 incomeSources.cease.FP.continue                           = Cadarnhau ac yn eich blaen
 incomeSources.cease.FP.p1                                 = Trwy barhau, rwy’n cadarnhau fy mod am ddod â’r busnes hwn i ben.
 
-incomeSources.cease.endDate.foreignProperty.heading                      = Y dyddiad pan wnaeth eich busnes eiddo tramor stopio
+incomeSources.cease.endDate.foreignProperty.heading                      = Pryd y gwnaeth eich busnes eiddo tramor ddod i ben?
 incomeSources.cease.endDate.foreignProperty.error.invalid                = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo tramor i ben fod yn ddyddiad go iawn
 
 incomeSources.cease.endDate.selfEmployment.future                  = Mae’n rhaid i’r dyddiad y daeth eich busnes unig fasnachwr i ben fod heddiw neu yn y gorffennol
@@ -3105,9 +3105,17 @@ reporting.frequency.different.obligations.p1                                = Pa
 reporting.frequency.different.obligations.li1                               = 4 diweddariad y flwyddyn ar gyfer pob ffynhonnell o incwm o hunangyflogaeth ac eiddo
 reporting.frequency.different.obligations.li2                               = Ffurflen Dreth
 reporting.frequency.different.obligations.p2                                = Ar gyfer blynyddoedd treth yr ydych wedi optio allan ohonynt, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
+reporting.frequency.different.obligations.p2hasExempt                       = Ar gyfer blynyddoedd treth yr ydych wedi optio allan neu wedi’i esemptio, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
 reporting.frequency.different.obligations.p3                                = Gallwch fwrw golwg dros yr hyn sy’n ddyledus ar y dudalen
 reporting.frequency.different.obligations.link.text                         = diweddariadau a dyddiadau cau.
 reporting.frequency.different.obligations.link.text.additional.english      =
+
+#your obligations (exempt)
+reporting.frequency.your.obligations.heading                           = Beth yw eich ymrwymiadau o ran adrodd
+reporting.frequency.your.obligations.p1                                = Ar gyfer blynyddoedd treth pan ydych yn esempt, dim ond cyflwyno Ffurflen Dreth y mae angen i chi ei wneud.
+reporting.frequency.your.obligations.p2                                = Dysgwch faint sy’n ddyledus ac erbyn pryd ar y dudalen
+reporting.frequency.your.obligations.link.text                         = diweddariadau a dyddiadau
+reporting.frequency.your.obligations.link.text.additional.english      = cau.
 
 reporting.frequency.mandatoryReporting.heading    = Pan fydd adrodd yn chwarterol yn ofynnol
 reporting.frequency.mandatoryReporting.inset      = Mae angen adrodd yn chwarterol os yw’ch incwm o hunangyflogaeth neu’ch incwm o eiddo, neu’r ddau, y tu hwn i’r trothwy incwm.
@@ -3119,6 +3127,15 @@ reporting.frequency.mandatoryReporting.heading.R17      = Pan fydd angen defnydd
 reporting.frequency.mandatoryReporting.inset.R17        = Mae’n rhaid i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o £50,000.
 reporting.frequency.mandatoryReporting.p1               = Os bydd hyn yn digwydd yn y flwyddyn dreth {0} i {1}, byddai’n ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer y flwyddyn dreth {2} i {3}.
 reporting.frequency.mandatoryReporting.p2               = Dysgwch ragor am y trothwy yn y
+
+reporting.frequency.mandatoryReporting.onlyExempt.p1    = Ar gyfer blynyddoedd rydych chi’n esempt, ni all fod yn ofynnol arnoch i ddefnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm.
+reporting.frequency.mandatoryReporting.onlyExempt.p2    = Dysgwch ragor am
+reporting.frequency.mandatoryReporting.onlyExempt.link.text  = a oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, a phryd y mae angen i chi wneud hynny.
+
+reporting.frequency.mandatoryReporting.hasExempt.p1    = Ar gyfer blynyddoedd rydych chi’n esempt, ni all fod yn ofynnol arnoch i ddefnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm. Ar gyfer unrhyw flynyddoedd treth pan nad ydych yn esempt, mae’n bosibl y byddwn yn gofyn i chi ddefnyddio’r cynllun.
+reporting.frequency.mandatoryReporting.hasExempt.p2    = Yna, bydd angen i chi ddefnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm hyd nes y bydd y math hwn o incwm yn is na’r trothwy am 3 blwyddyn dreth yn olynol. Ar ôl hynny, gallwch wirfoddoli i barhau i adrodd drwy’r dull hwn, neu ddewis i optio allan.
+reporting.frequency.mandatoryReporting.hasExempt.p3    = Dysgwch ragor am
+reporting.frequency.mandatoryReporting.hasExempt.link.text  = a oes angen i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, a phryd y mae angen i chi wneud hynny.
 
 reporting.frequency.compatibleSoftware.heading   = Pan fydd angen meddalwedd sy’n cydweddu
 reporting.frequency.compatibleSoftware.p1        = Os ydych yn adrodd yn chwarterol, bydd angen i chi ddefnyddio
@@ -3132,6 +3149,7 @@ reporting.frequency.compatibleSoftware.p1.R17                           = P’un
 reporting.frequency.compatibleSoftware.link.text.R17                    = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm arnoch
 reporting.frequency.compatibleSoftware.p2.R17                           = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
 reporting.frequency.compatibleSoftware.p3.R17                           = Os ydych chi wedi optio allan, gallwch ddarganfod yma sut i
+reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = Os ydych chi wedi optio allan neu wedi’i esemptio, gallwch ddarganfod yma sut i
 reporting.frequency.compatibleSoftware.link2.text                       = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 
 reporting.frequency.table.h2                                        = Pa mor aml y mae angen i chi gyflwyno adroddiadau
@@ -3143,6 +3161,7 @@ reporting.frequency.table.taxYear                                   = {0} i {1}
 reporting.frequency.table.mandated                                  = Yn chwarterol (gorfodol)
 reporting.frequency.table.voluntary                                 = Yn chwarterol
 reporting.frequency.table.annual                                    = Yn flynyddol
+reporting.frequency.table.exempt                                    = Esempt
 
 #new table messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.table.heading.usingMTD                          = Defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
@@ -3152,6 +3171,7 @@ reporting.frequency.table.MTD.isNotUsingMTD                         = Na
 reporting.frequency.table.mandated.r17                              = Yn ofynnol
 reporting.frequency.table.voluntary.r17                             = Wedi cofrestru’n wirfoddol
 reporting.frequency.table.annual.r17                                = Wedi optio allan
+reporting.frequency.table.exempt.r17                                = Esempt
 
 #changing reporting obligations section - R17
 reporting.obligations.changing.h2                                   = Newid eich ymrwymiadau o ran adrodd
@@ -3262,10 +3282,39 @@ yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading3             
 yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText                    = Cyfanswm y llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText                       = Gall llog ar dâl sydd arnoch fynd i fyny neu i lawr. Gweler yr arweiniad ar y gyfradd log a bennir gan CThEF
 yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText                   = y gyfradd llog a bennir gan CThEF
-
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad mantoli.
 yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
+
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					    = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading				        = Llog am dalu’n hwyr ar yr ail daliad ar gyfrif
+yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading	    		        = Llog am dalu’n hwyr ar gyfer y balans sy’n weddill
+yourSelfAssessmentChargeSummary.lpi.interestPeriod								        = Cyfnod llog:
+yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates							    = {0} i {1}
+
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading                 = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading                 = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif, a gafodd ei addasu, yn rhy isel.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich taliad cyntaf ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif, a gafodd ei addasu, yn rhy isel.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich ail daliad ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
+
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                    = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                  = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.p1                  = Mae arnoch log i CThEF oherwydd gwnaethoch dalu eich cosb am gyflwyno’n hwyr, yn hwyr
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.p1                = Mae arnoch log i CThEF oherwydd gwnaethoch dalu eich cosb gyntaf am dalu’n hwyr, yn hwyr
+yourSelfAssessmentChargeSummary.lpi.penalties.textOne                            = Mae llog am dalu’n hwyr yn cael ei godi o’r diwrnod cyntaf y mae’ch taliad yn hwyr tan y diwrnod y mae’n cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.lpi.penalties.linkText                           = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.lpi.penalties.textTwo                            = plws 2.5%.
+yourSelfAssessmentChargeSummary.lpi.penalties.p3                                 = Gweler yr arweiniad ynghylch y
+yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} i {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Cyfanswm y llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.table.head.amountInterestIsAppliedTo    = Swm y mae’r llog yn berthnasol iddo
@@ -3292,6 +3341,9 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1           = Mae ‘tal
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Mae CThEF yn amcangyfrif cyfanswm y bil yn seiliedig ar eich bil treth o’r flwyddyn flaenorol. Mae bob taliad yn hanner y swm hwnnw.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Os byddwch chi’n gwneud diwygiad i’r Ffurflen Dreth ac mae’r bil treth yn newid, yna bydd pob taliad ar gyfrif yn cael ei ddiweddaru i hanner y cyfanswm newydd.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i ddeall eich bil treth Hunanasesiad
+
+yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
+
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet1      = Treth Incwm
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet2      = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)

@@ -429,7 +429,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe messages("home.updates.heading")
+          document.select("#updates-tile").text() shouldBe "Next updates due View update deadlines"
         }
       }
 
@@ -559,7 +559,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe messages("home.updates.heading")
+          document.select("#updates-tile").text shouldBe "Next updates due View update deadlines"
         }
       }
 

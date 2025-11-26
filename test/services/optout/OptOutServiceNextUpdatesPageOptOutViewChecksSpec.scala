@@ -83,7 +83,7 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        when(repository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
+        when(repository.initialiseOptOutJourney(any(), any())(any(), any())).thenReturn(Future.successful(true))
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
         when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(
@@ -126,7 +126,7 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
         when(mockCalculationListService.isTaxYearCrystallised(previousTaxYear)).thenReturn(Future.successful(false))
 
         when(hc.sessionId).thenReturn(Some(SessionId(sessionIdValue)))
-        when(repository.initialiseOptOutJourney(any())(any())).thenReturn(Future.successful(true))
+        when(repository.initialiseOptOutJourney(any(), any())(any(), any())).thenReturn(Future.successful(true))
         when(repository.fetchSavedIntent()).thenReturn(Future.successful(Some(previousTaxYear)))
 
         when(optOutConnector.makeITSAStatusUpdate(any(), any(), any())(any[HeaderCarrier])).thenReturn(Future.successful(

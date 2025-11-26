@@ -17,9 +17,11 @@
 package controllers.triggeredMigration
 
 import enums.MTDIndividual
+import enums.TriggeredMigration.TriggeredMigrationCeased
 import mocks.auth.MockAuthActions
 import mocks.services.MockTriggeredMigrationService
 import models.admin.TriggeredMigration
+import models.core.IncomeSourceId
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
@@ -40,6 +42,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
   lazy val testController = app.injector.instanceOf[CheckHmrcRecordsController]
 
   val checkHmrcRecordsSoleTraderDetails = CheckHmrcRecordsSoleTraderDetails(
+    incomeSourceId = IncomeSourceId("XA00001234"),
     incomeSource = Some("Testing"),
     businessName = Some("Test Inc")
   )
@@ -54,22 +57,40 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
     val isAgent = mtdRole != MTDIndividual
 
     s"show(isAgent = $isAgent)" when {
-      val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
-        "render the Check HMRC Records page" in {
-          enable(TriggeredMigration)
-          setupMockSuccess(mtdRole)
-          mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel)
+        "render the Check HMRC Records page" when {
+          "state is None" in {
+            val action = testController.show(isAgent)
+            enable(TriggeredMigration)
+            setupMockSuccess(mtdRole)
+            mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel)
 
-          when(
-            mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-          ).thenReturn(Future(singleBusinessIncome))
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
 
-          val result = action(fakeRequest)
+            val result = action(fakeRequest)
 
-          status(result) shouldBe 200
+            status(result) shouldBe 200
+          }
+
+          "state is TriggeredMigrationCeased" in {
+            val action = testController.show(isAgent, Some(TriggeredMigrationCeased.toString))
+            enable(TriggeredMigration)
+            setupMockSuccess(mtdRole)
+            mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe 200
+          }
         }
         "redirect to the home page" when {
+          val action = testController.show(isAgent)
           "the triggered migration feature switch is disabled" in {
             disable(TriggeredMigration)
             setupMockSuccess(mtdRole)
@@ -85,7 +106,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+      testMTDAuthFailuresForRole(testController.show(isAgent), mtdRole)(fakeRequest)
     }
   }
 }

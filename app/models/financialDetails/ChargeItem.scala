@@ -140,7 +140,7 @@ case class ChargeItem (
   }
 
   // this method is used to filter charges down to those which have new designs
-  def isIncludedInSACSummary(isInterestCharge: Boolean): Boolean = {
+  def isIncludedInSACSummary: Boolean = {
 
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
@@ -160,7 +160,7 @@ case class ChargeItem (
       case _                              => false
     }
 
-    validCharge && !isInterestCharge
+    validCharge
   }
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
@@ -172,20 +172,13 @@ case class ChargeItem (
 
   val isCreditDrilldownPage: Boolean = isPoaReconciliationCredit || transactionType == ITSAReturnAmendmentCredit
 
-  val isPoaReconciliationDebit: Boolean = transactionType == PoaOneReconciliationDebit ||
-    transactionType == PoaTwoReconciliationDebit
-
   val isPoaDebit: Boolean = transactionType == PoaOneDebit || transactionType == PoaTwoDebit
-
-  val isReviewAndReconcileCharge: Boolean = isPoaReconciliationCredit || isPoaReconciliationDebit
 
   val isBalancingCharge: Boolean = transactionType == BalancingCharge
 
   val isPenalty: Boolean = List(LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty).contains(this.transactionType)
 
   val isLPP2: Boolean = transactionType == SecondLatePaymentPenalty
-
-   val isMFADebitCharge: Boolean = transactionType == MfaDebitCharge
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"
@@ -206,11 +199,6 @@ case class ChargeItem (
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
     else interestOutstandingAmount.getOrElse(accruingInterestAmount.getOrElse(0))
-  }
-
-  def checkIfEitherChargeOrLpiHasRemainingToPay: Boolean = {
-    if (isAccruingInterest) interestRemainingToPay > 0
-    else remainingToPay > 0
   }
 
   def poaLinkForDrilldownPage: String = transactionType match {

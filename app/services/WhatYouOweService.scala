@@ -146,7 +146,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def createWhatYouOweViewModel(backUrl: String,
-                                origin: Option[String],
                                 creditAndRefundUrl: String,
                                 taxYearSummaryUrl: Int => String,
                                 adjustPoaUrl: String,

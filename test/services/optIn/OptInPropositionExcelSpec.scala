@@ -171,7 +171,6 @@ class OptInPropositionExcelSpec extends UnitSpec {
         valid,
         intent,
         presented,
-        sent,
         expectedCY,
         expectedNY
       )
@@ -182,7 +181,6 @@ class OptInPropositionExcelSpec extends UnitSpec {
                                  valid: Boolean,
                                  intent: String,
                                  presented: List[String],
-                                 sent: String,
                                  expectedCY: String,
                                  expectedNY: String) = {
 

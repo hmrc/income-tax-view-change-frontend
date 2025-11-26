@@ -30,7 +30,7 @@ import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
 
-object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
+object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   // NINO Lookup Stubs
   // =================
@@ -77,14 +77,14 @@ object IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   }
 
   // Stub CreateBusinessDetails
-  def stubCreateBusinessDetailsResponse(mtditid: String)(status: Int, response: List[CreateIncomeSourceResponse]): Unit =
-    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", status, Json.toJson(response).toString)
+  def stubCreateBusinessDetailsResponse()(status: Int, response: List[CreateIncomeSourceResponse]): Unit =
+    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business", status, Json.toJson(response).toString)
 
-  def stubCreateBusinessDetailsErrorResponse(mtditid: String): Unit =
-    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", INTERNAL_SERVER_ERROR, "")
+  def stubCreateBusinessDetailsErrorResponse(): Unit =
+    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business", INTERNAL_SERVER_ERROR, "")
 
-  def stubCreateBusinessDetailsErrorResponseNew(mtditid: String)(response: List[CreateIncomeSourceErrorResponse]): Unit =
-    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business/$mtditid", INTERNAL_SERVER_ERROR, Json.toJson(response).toString)
+  def stubCreateBusinessDetailsErrorResponseNew()(response: List[CreateIncomeSourceErrorResponse]): Unit =
+    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business", INTERNAL_SERVER_ERROR, Json.toJson(response).toString)
 
   //PreviousObligations Stubs
   def fulfilledObligationsUrl(nino: String): String = {

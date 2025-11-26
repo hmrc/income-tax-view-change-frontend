@@ -148,8 +148,8 @@ GET         /tax-years/:taxYear/charge                                    contro
 GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, isInterestCharge: Boolean ?= false)
 
 #Triggered Migration
-GET         /check-your-active-businesses/hmrc-record                     controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = false)
-GET         /agents/check-your-active-businesses/hmrc-record              controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = true)
+GET         /check-your-active-businesses/hmrc-record                     controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = false, state: Option[String] ?= None)
+GET         /agents/check-your-active-businesses/hmrc-record              controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = true, state: Option[String] ?= None)
 GET         /check-your-active-businesses/complete                        controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = false)
 GET         /agents/check-your-active-businesses/complete                 controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = true)
 
@@ -184,7 +184,7 @@ GET         /cannot-access-service                                        contro
 GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show()
 
 #Uplift Success
-GET         /uplift-success                                               controllers.UpliftSuccessController.success(origin: Option[String])
+GET         /uplift-success                                               controllers.UpliftSuccessController.success()
 
 #BTA Partial
 GET         /partial                                                      controllers.bta.BTAPartialController.setupPartial()
@@ -208,7 +208,7 @@ GET         /agents/tax-overview                                          contro
 
 #Final Tax URLs
 GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int, origin: Option[String] ?= None)
-POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int, origin: Option[String] ?= None)
+POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
 GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 GET         /agents/:taxYear/final-tax-overview/calculate                 controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 

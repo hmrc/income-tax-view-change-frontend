@@ -72,7 +72,7 @@ class SelectYourReasonViewSpec extends TestSupport {
     }
 
     "render the correct heading" in {
-      document.getElementsByClass("govuk-heading-l").first().text() shouldBe heading
+      document.getElementsByClass("govuk-heading-xl").first().text() shouldBe heading
     }
 
     val paragraphs = document.getElementsByClass("govuk-body")

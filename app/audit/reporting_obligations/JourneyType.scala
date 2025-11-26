@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,29 +14,11 @@
  * limitations under the License.
  */
 
-package testOnly.forms.validation.utils
+package audit.reporting_obligations
 
-import play.api.data.Forms._
-import play.api.data._
+sealed trait JourneyType
 
-object MappingUtil {
+case object SignUp extends JourneyType
+case object OptOut extends JourneyType
 
-  val oText: Mapping[Option[String]] = optional(text)
 
-  implicit class OTextUtil(mapping: Mapping[Option[String]]) {
-    def toText: Mapping[String] =
-      mapping.transform(
-        x => x.fold("")(x => x),
-        x => Some(x)
-      )
-
-    def toBoolean: Mapping[Boolean] = mapping.transform(
-      {
-        case Some("true") => true
-        case _ => false
-      },
-      x => Some(x.toString)
-    )
-  }
-
-}

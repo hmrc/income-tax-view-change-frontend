@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package services.optIn
+package services.optout
 
 import audit.AuditingService
-import audit.models.{OptOutAuditModel, Outcome}
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import enums.JourneyType.{Opt, OptOutJourney}
@@ -29,10 +28,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
-import services.optout.OptOutSubmissionService
 import testConstants.BaseTestConstants.testSessionId
 import testUtils.{TestSupport, UnitSpec}
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.Future
@@ -644,6 +641,36 @@ class OptOutSubmissionServiceSpec extends UnitSpec
         }
       }
 
+    }
+
+    ".synchronousITSAStatusUpdates" when {
+
+      "the 2nd connector call fails" should {
+
+        "return the correct responses - List(ITSAStatusUpdateResponseSuccess, ITSAStatusUpdateResponseFailure)" in {
+
+          val taxYears =
+            Seq(
+              TaxYear(2024, 2025),
+              TaxYear(2025, 2026),
+              TaxYear(2026, 2027)
+            )
+
+          when(mockItsaStatusUpdateConnector.makeITSAStatusUpdate(any(), any(), any())(any()))
+            .thenAnswer { _ =>
+              Future.successful(ITSAStatusUpdateResponseSuccess())
+            }
+            .thenAnswer { _ =>
+              Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+            }
+
+          val actual = service.synchronousITSAStatusUpdates(taxYears = taxYears, nino = "AB123456A", optOutUpdateReason = "1")
+
+          whenReady(actual) { result =>
+            result shouldBe List(ITSAStatusUpdateResponseSuccess(204), ITSAStatusUpdateResponseFailure.defaultFailure())
+          }
+        }
+      }
     }
   }
 }

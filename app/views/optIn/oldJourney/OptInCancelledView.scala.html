@@ -18,7 +18,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.incomeSourceDetails.TaxYear
-@import services.reportingfreq.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+@import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 @import views.html.helpers.injected.ErrorSummary
 @import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 
@@ -59,7 +59,7 @@
     useFallbackBackLink = true
 ) {
 
-    @h1(id = Some("opt-in-cancelled"), msg = messages("optin.cancelled.h1"), size = "l")
+    @h1(id = Some("opt-in-cancelled"), msg = messages("optin.cancelled.h1"), size = "xl")
 
     @p(id=Some("continue-to-report-quarterly")) {
         @messages("optin.cancelled.p1", currentTaxYearStart, currentTaxYearEnd)
