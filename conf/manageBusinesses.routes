@@ -16,8 +16,8 @@ GET          /agents/manage-your-businesses/ceased-businesses                   
 
 GET          /manage-your-businesses/add/new-income-sources                       controllers.manageBusinesses.add.AddIncomeSourceController.show()
 GET          /agents/manage-your-businesses/add/new-income-sources                controllers.manageBusinesses.add.AddIncomeSourceController.showAgent()
-GET          /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.show(mode: Mode = NormalMode)
-GET          /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.showAgent(mode: Mode = NormalMode)
+GET          /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.show(mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
+GET          /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.showAgent(mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
 POST         /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.submit(mode: Mode = NormalMode)
 POST         /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.submitAgent(mode: Mode = NormalMode)
 
@@ -118,8 +118,8 @@ GET          /agents/manage-your-businesses/add-sole-trader/business-check-answe
 POST         /manage-your-businesses/add-sole-trader/business-check-answers               controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
 POST         /agents/manage-your-businesses/add-sole-trader/business-check-answers        controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 
-GET          /manage-your-businesses/add-sole-trader/change-business-name                      controllers.manageBusinesses.add.AddBusinessNameController.show(mode: Mode = CheckMode)
-GET          /agents/manage-your-businesses/add-sole-trader/change-business-name               controllers.manageBusinesses.add.AddBusinessNameController.showAgent(mode: Mode = CheckMode)
+GET          /manage-your-businesses/add-sole-trader/change-business-name                      controllers.manageBusinesses.add.AddBusinessNameController.show(mode: Mode = CheckMode, isTriggeredMigration: Boolean ?= false)
+GET          /agents/manage-your-businesses/add-sole-trader/change-business-name               controllers.manageBusinesses.add.AddBusinessNameController.showAgent(mode: Mode = CheckMode, isTriggeredMigration: Boolean ?= false)
 POST         /manage-your-businesses/add-sole-trader/change-business-name                     controllers.manageBusinesses.add.AddBusinessNameController.submit(mode: Mode = CheckMode)
 POST         /agents/manage-your-businesses/add-sole-trader/change-business-name              controllers.manageBusinesses.add.AddBusinessNameController.submitAgent(mode: Mode = CheckMode)
 

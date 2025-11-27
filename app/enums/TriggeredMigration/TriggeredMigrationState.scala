@@ -16,12 +16,14 @@
 
 package enums.TriggeredMigration
 
+import enums.IncomeSourceJourney.IncomeSourceType
+
 sealed trait TriggeredMigrationState
 
 case object TriggeredMigrationCeased extends TriggeredMigrationState {
   override val toString = "CEASED"
 }
 
-case object TriggeredMigrationAdded extends TriggeredMigrationState {
-  override val toString = "ADDED"
+case class TriggeredMigrationAdded(incomeSourceType: IncomeSourceType) extends TriggeredMigrationState {
+  override val toString = s"${incomeSourceType.key}-ADDED"
 }

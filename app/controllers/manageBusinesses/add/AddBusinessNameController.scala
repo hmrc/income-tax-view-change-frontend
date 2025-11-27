@@ -75,26 +75,28 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def show(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
       handleRequest(
         isAgent = false,
         backUrl = getBackUrl(false, mode),
-        mode = mode
+        mode = mode,
+        isTriggeredMigration = isTriggeredMigration
       )
   }
 
-  def showAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit user =>
       handleRequest(
         isAgent = true,
         backUrl = getBackUrl(true, mode),
-        mode = mode
+        mode = mode,
+        isTriggeredMigration = isTriggeredMigration
       )
   }
 
-  def handleRequest(isAgent: Boolean, backUrl: String, mode: Mode)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), journeyState = InitialPage) { sessionData =>
+  def handleRequest(isAgent: Boolean, backUrl: String, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), journeyState = InitialPage, isTriggeredMigration = isTriggeredMigration) { sessionData =>
       val businessNameOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessName)
       val filledForm: Form[BusinessNameForm] = businessNameOpt.fold(BusinessNameForm.form)(name =>
         BusinessNameForm.form.fill(BusinessNameForm(name)))

@@ -192,7 +192,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent = mtdUserRole != MTDIndividual, Some(TriggeredMigrationAdded.toString)).url)
+                  redirectURI(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent = mtdUserRole != MTDIndividual, Some(TriggeredMigrationAdded(incomeSourceType).toString)).url)
                 )
               }
             }
