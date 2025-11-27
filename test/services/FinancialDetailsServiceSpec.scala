@@ -78,8 +78,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           tradingStartDate = None,
           contextualTaxYear = None,
           cessation = None,
-          address = Some(address),
-          cashOrAccruals = Some(true)
+          address = Some(address)
         )
       },
       properties = Nil
@@ -102,8 +101,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         tradingStartDate = None,
         contextualTaxYear = None,
         cessation = None,
-        address = Some(address),
-        cashOrAccruals = Some(true)
+        address = Some(address)
       )
     ),
     properties = Nil

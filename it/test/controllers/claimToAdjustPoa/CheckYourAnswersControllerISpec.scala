@@ -45,23 +45,23 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
   private val validFinancialDetailsResponseBody: JsValue =
     testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
-  lazy val fixedDate : LocalDate = LocalDate.of(2024, 6, 5)
+  lazy val fixedDate: LocalDate = LocalDate.of(2024, 6, 5)
   lazy val incomeSource: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
     mtdbsa = testMtditid,
     yearOfMigration = None,
-    businesses = List(BusinessDetailsModel(
-      "testId",
-      incomeSource = Some(testIncomeSource),
-      Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
-      None,
-      None,
-      Some(getCurrentTaxYearEnd),
-      None,
-      None,
-      address = Some(address),
-      cashOrAccruals = Some(false)
-    )),
+    businesses =
+      List(BusinessDetailsModel(
+        incomeSourceId = "testId",
+        incomeSource = Some(testIncomeSource),
+        accountingPeriod = Some(AccountingPeriodModel(fixedDate, fixedDate.plusYears(1))),
+        tradingName = None,
+        firstAccountingPeriodEndDate = None,
+        tradingStartDate = Some(getCurrentTaxYearEnd),
+        contextualTaxYear = None,
+        cessation = None,
+        address = Some(address)
+      )),
     properties = Nil
   )
 
@@ -81,7 +81,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
   }
 
   def getPath(mtdUserRole: MTDUserRole): String = {
-    val pathStart = if(mtdUserRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdUserRole == MTDIndividual) "" else "/agents"
     pathStart + "/adjust-poa/check-your-answers"
   }
 

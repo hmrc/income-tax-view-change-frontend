@@ -52,7 +52,6 @@ object PropertyDetailsIntegrationTestConstants {
     propertyTradingStartDate,
     None,
     None,
-    cashOrAccruals = Some(false)
   )
 
   val oldProperty: PropertyDetailsModel = PropertyDetailsModel(
@@ -66,7 +65,6 @@ object PropertyDetailsIntegrationTestConstants {
     propertyTradingStartDate,
     None,
     None,
-    cashOrAccruals = Some(false)
   )
 
   def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel = PropertyDetailsModel(
@@ -80,7 +78,6 @@ object PropertyDetailsIntegrationTestConstants {
     propertyTradingStartDate,
     None,
     None,
-    cashOrAccruals = Some(false)
   )
 
   val ukProperty: PropertyDetailsModel = PropertyDetailsModel(
@@ -94,7 +91,6 @@ object PropertyDetailsIntegrationTestConstants {
     propertyTradingStartDate,
     None,
     None,
-    cashOrAccruals = Some(false)
   )
 
   val ukPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
@@ -108,7 +104,6 @@ object PropertyDetailsIntegrationTestConstants {
     None,
     None,
     None,
-    cashOrAccruals = Some(false)
   )
 
   val foreignProperty: PropertyDetailsModel = PropertyDetailsModel(
@@ -122,7 +117,6 @@ object PropertyDetailsIntegrationTestConstants {
     propertyTradingStartDate,
     None,
     None,
-    cashOrAccruals = Some(false)
   )
 
   val foreignPropertyWithUnknowns: PropertyDetailsModel = PropertyDetailsModel(
@@ -136,7 +130,6 @@ object PropertyDetailsIntegrationTestConstants {
     None,
     None,
     None,
-    cashOrAccruals = Some(false)
   )
 
   val propertySuccessResponse: JsValue = Json.obj(
@@ -158,7 +151,6 @@ object PropertyDetailsIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     None,
     cessation = None,
-    cashOrAccruals = Some(false),
     latencyDetails = Some(testLatencyDetails3)
   )
 
@@ -173,7 +165,6 @@ object PropertyDetailsIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     None,
     cessation = None,
-    cashOrAccruals = Some(false),
     latencyDetails = Some(testLatencyDetails3)
   )
 
@@ -188,7 +179,6 @@ object PropertyDetailsIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     contextualTaxYear = None,
     cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)))),
-    cashOrAccruals = Some(false),
     latencyDetails = Some(testLatencyDetails3)
   )
 
@@ -203,7 +193,6 @@ object PropertyDetailsIntegrationTestConstants {
     tradingStartDate = propertyTradingStartDate,
     contextualTaxYear = None,
     cessation = Some(CessationModel(Some(LocalDate.of(endYear, 12, 31)))),
-    cashOrAccruals = Some(false),
     latencyDetails = Some(testLatencyDetails3)
   )
 

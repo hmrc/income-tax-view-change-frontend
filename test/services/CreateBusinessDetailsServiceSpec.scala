@@ -90,7 +90,7 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         result shouldBe Right(CreateBusinessIncomeSourceRequest(testMtditid,
           List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
             AddressDetails("businessAddressLine1", None, None, None, Some("GB"), Some("SE15 4ER")),
-            Some("someBusinessTrade"), "2022-11-11", Some("CASH"), None, None))))
+            Some("someBusinessTrade"), "2022-11-11", None, None))))
       }
     }
 
@@ -106,7 +106,6 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = Some("CASH"),
         incomeSourceType = ForeignProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
@@ -125,26 +124,6 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         case Right(_) => fail("Expecting to fail")
       }
     }
-
-    "return failure: wrong data" in {
-      when(mockIncomeSourceConnector.createForeignProperty(any())(any()))
-        .thenReturn(Future {
-          Right(List(CreateIncomeSourceResponse("561")))
-        })
-
-      // set cashOrAccruals field to empty to cause failure
-      val viewModel = CheckPropertyViewModel(
-        tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = Some(""),
-        incomeSourceType = ForeignProperty
-      )
-      val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
-      result.futureValue match {
-        case Left(_) => succeed
-        case Right(_) => fail("Incorrect data in the view model")
-      }
-    }
-
   }
 
   "CreateBusinessDetailsService call create UK property " when {
@@ -157,7 +136,6 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = Some("CASH"),
         incomeSourceType = UkProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
@@ -172,7 +150,6 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = Some("CASH"),
         incomeSourceType = UkProperty
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
@@ -181,25 +158,5 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         case Right(_) => fail("Expecting to fail")
       }
     }
-
-    "return failure: wrong data" in {
-      when(mockIncomeSourceConnector.createUKProperty(any())(any()))
-        .thenReturn(Future {
-          Right(List(CreateIncomeSourceResponse("561")))
-        })
-
-      // set cashOrAccrualsFlag field as empty to cause failure
-      val viewModel = CheckPropertyViewModel(
-        tradingStartDate = LocalDate.of(2011, 1, 1),
-        cashOrAccrualsFlag = Some(""),
-        incomeSourceType = UkProperty
-      )
-      val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
-      result.futureValue match {
-        case Left(_) => succeed
-        case Right(_) => fail("Incorrect data in the view model")
-      }
-    }
-
   }
 }

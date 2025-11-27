@@ -22,24 +22,26 @@ import enums.MTDSupportingAgent
 import play.api.libs.json.{JsValue, Json}
 import utils.Utilities._
 
-case class IncomeSourceDetailsResponseAuditModel(mtdItUser: AuthorisedAndEnrolledRequest[_],
-                                                 nino: String,
-                                                 selfEmploymentIds: List[String],
-                                                 propertyIncomeIds: List[String],
-                                                 yearOfMigration: Option[String]) extends ExtendedAuditModel {
+case class IncomeSourceDetailsResponseAuditModel(
+                                                  mtdItUser: AuthorisedAndEnrolledRequest[_],
+                                                  nino: String,
+                                                  selfEmploymentIds: List[String],
+                                                  propertyIncomeIds: List[String],
+                                                  yearOfMigration: Option[String]
+                                                ) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.IncomeSourceDetailsResponse
   override val auditType: String = enums.AuditType.IncomeSourceDetailsResponse
 
   override val detail: JsValue = {
-      Json.obj("mtditid" -> mtdItUser.mtditId,
-        "selfEmploymentIncomeSourceIds" -> selfEmploymentIds,
-        "propertyIncomeSourceIds" -> propertyIncomeIds) ++
-        ("agentReferenceNumber", mtdItUser.authUserDetails.agentReferenceNumber) ++
-        ("saUtr", mtdItUser.saUtr) ++
-        userType(mtdItUser.authUserDetails.affinityGroup, mtdItUser.mtdUserRole == MTDSupportingAgent) ++
-        ("credId", mtdItUser.authUserDetails.credId) ++
-        ("nino", Some(nino)) ++
-        ("dateOfMigration", yearOfMigration)
+    Json.obj("mtditid" -> mtdItUser.mtditId,
+      "selfEmploymentIncomeSourceIds" -> selfEmploymentIds,
+      "propertyIncomeSourceIds" -> propertyIncomeIds) ++
+      ("agentReferenceNumber", mtdItUser.authUserDetails.agentReferenceNumber) ++
+      ("saUtr", mtdItUser.saUtr) ++
+      userType(mtdItUser.authUserDetails.affinityGroup, mtdItUser.mtdUserRole == MTDSupportingAgent) ++
+      ("credId", mtdItUser.authUserDetails.credId) ++
+      ("nino", Some(nino)) ++
+      ("dateOfMigration", yearOfMigration)
   }
 }
