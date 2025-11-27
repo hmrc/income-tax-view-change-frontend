@@ -31,6 +31,7 @@
 @import views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyContent
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccount
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsABalancingPayment
+@import views.html.partials.yourSelfAssessmentCharges.ITSAAmendmentChargeLPIContent
 @import views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentContent
 @import views.html.partials.yourSelfAssessmentCharges.ItsaReturnAmendmentCreditContent
 @import views.html.partials.yourSelfAssessmentCharges.MFADebitContent
@@ -65,6 +66,7 @@
     poaReconciliationLPIExplanationContent: POAReconciliationLPIExplanationContent,
     lateSubmissionPenaltyLPIContent: LateSubmissionPenaltyLPIContent,
     firstLatePaymentPenaltyLPIContent: FirstLatePaymentPenaltyLPIContent,
+    itsaAmendmentChargeLPIContent: ITSAAmendmentChargeLPIContent,
     govukDetails: GovukDetails
 )
 
@@ -89,6 +91,7 @@
     case (LateSubmissionPenalty, _, _)                     => lateSubmissionPenaltyContent(viewModel.LSPUrl)
     case (FirstLatePaymentPenalty, _, true)                => firstLatePaymentPenaltyLPIContent()
     case (FirstLatePaymentPenalty, _, _)                   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
+    case (ITSAReturnAmendment, _, true)                    => itsaAmendmentChargeLPIContent()
     case (ITSAReturnAmendment, _, _)                       => itsaReturnAmendmentContent()
     case (ITSAReturnAmendmentCredit, _, _)                 => itsaReturnAmendmentCreditContent(viewModel.chargeItem.taxYear)
     case (MfaDebitCharge, _, _)                            => mfaDebitContent()

@@ -3385,6 +3385,8 @@ yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                      
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                           = Interest is charged from the date your second payment on account was due and calculated at the
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
+yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Late payment interest on balancing payment: extra amount due to amended return
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = You owe HMRC interest because you paid your balancing payment late.
 
 yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                       = Late payment interest on late submission penalty
 yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                     = Late payment interest on first late payment penalty
