@@ -52,8 +52,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       Some(getCurrentTaxYearEnd),
       None,
       None,
-      address = Some(address),
-      cashOrAccruals = Some(false)
+      address = Some(address)
     )),
     properties = Nil
   )

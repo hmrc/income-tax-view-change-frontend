@@ -19,9 +19,9 @@ package controllers.manageBusinesses.add
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.{BeforeSubmissionPage, InitialPage}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.{BeforeSubmissionPage, InitialPage}
 import forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
 import implicits.ImplicitDateFormatterImpl
 import models.core.{CheckMode, Mode, NormalMode}
@@ -55,19 +55,16 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
   extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport {
 
   //TODO: Redirect the user back to the triggered migration page if they access the page with triggered migration as false and they are unconfirmed
-  def show(isAgent: Boolean,
-           mode: Mode,
-           incomeSourceType: IncomeSourceType,
-           isTriggeredMigration: Boolean = false
-          ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def show(isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
 
-    handleShowRequest(
-      incomeSourceType = incomeSourceType,
-      isAgent = isAgent,
-      mode = mode,
-      isTriggeredMigration = isTriggeredMigration
-    )
-  }
+      handleShowRequest(
+        incomeSourceType = incomeSourceType,
+        isAgent = isAgent,
+        mode = mode,
+        isTriggeredMigration = isTriggeredMigration
+      )
+    }
 
   def submit(isAgent: Boolean,
              mode: Mode,
@@ -211,6 +208,6 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
       case (true, _, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = mode)
       case (_, _, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = mode)
       case (_, _, _) => controllers.manageBusinesses.add.routes.AddPropertyController.show(isAgent = isAgent)
-      }).url
+    }).url
   }
 }

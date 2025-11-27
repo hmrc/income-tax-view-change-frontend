@@ -91,8 +91,8 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
         }
       case true =>
         val changeReportingFrequencyOption: Option[Boolean] = sessionData.addIncomeSourceData.flatMap(_.changeReportingFrequency)
-        val filledOrEmptyForm: Form[IncomeSourceReportingFrequencyForm] = changeReportingFrequencyOption.fold(IncomeSourceReportingFrequencyForm(isR17ContentEnabled))(yesOrNo =>
-          IncomeSourceReportingFrequencyForm(isR17ContentEnabled).fill(IncomeSourceReportingFrequencyForm(Some(yesOrNo.toString))))
+        val filledOrEmptyForm: Form[IncomeSourceReportingFrequencyForm] =
+          changeReportingFrequencyOption.fold(IncomeSourceReportingFrequencyForm(isR17ContentEnabled))(yesOrNo => IncomeSourceReportingFrequencyForm(isR17ContentEnabled).fill(IncomeSourceReportingFrequencyForm(Some(yesOrNo.toString))))
         Future.successful(Ok(view(
           continueAction = submitUrl(isAgent, isChange, incomeSourceType),
           isAgent = isAgent,

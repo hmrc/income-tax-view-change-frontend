@@ -63,8 +63,7 @@ object PaymentHistoryTestConstraints {
     None,
     None,
     None,
-    address = Some(address),
-    cashOrAccruals = Some(false)
+    address = Some(address)
   )
 
   val business2 = BusinessDetailsModel(
@@ -79,8 +78,7 @@ object PaymentHistoryTestConstraints {
     None,
     None,
     None,
-    address = Some(address),
-    cashOrAccruals = Some(false)
+    address = Some(address)
   )
 
 }

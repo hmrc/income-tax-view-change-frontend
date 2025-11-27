@@ -29,7 +29,6 @@ case class BusinessDetailsModel(incomeSourceId: String,
                                 tradingStartDate: Option[LocalDate],
                                 contextualTaxYear: Option[String],
                                 cessation: Option[CessationModel],
-                                cashOrAccruals: Option[Boolean],
                                 address: Option[AddressModel] = None,
                                 latencyDetails: Option[LatencyDetails] = None,
                                 quarterTypeElection: Option[QuarterTypeElection] = None) {

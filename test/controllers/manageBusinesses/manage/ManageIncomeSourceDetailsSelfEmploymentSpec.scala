@@ -59,7 +59,6 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
 
             manageDetailsSummaryRows.get(1).getElementsByTag("dt").text() shouldBe "Address"
             manageDetailsSummaryRows.get(1).getElementsByTag("dd").text() shouldBe businessWithLatencyAddress
-            getManageDetailsSummaryValues(document).get(5).text() shouldBe calendar
             manageDetailsSummaryRows.eq(6).isEmpty
             manageDetailsSummaryRows.eq(7).isEmpty
             document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
@@ -127,13 +126,14 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             val manageDetailsSummaryKeys = getManageDetailsSummaryKeys(document)
             manageDetailsSummaryKeys.get(1).text() shouldBe "Address"
             manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress
-            manageDetailsSummaryValues.get(5).text() shouldBe annuallyGracePeriod
-            manageDetailsSummaryValues.get(6).text() shouldBe quarterlyGracePeriod
+            manageDetailsSummaryValues.get(4).text() shouldBe annuallyGracePeriod
+            manageDetailsSummaryValues.get(5).text() shouldBe quarterlyGracePeriod
             manageDetailsSummaryKeys.eq(6).text().contains(reportingMethod)
             manageDetailsSummaryKeys.eq(7).text().contains(reportingMethod)
           }
 
           "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is Q" in {
+
             enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
@@ -247,15 +247,15 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             hasChangeFirstYearReportingMethodLink(document) shouldBe false
             hasChangeSecondYearReportingMethodLink(document) shouldBe false
             hasInsetText(document) shouldBe true
+
             manageDetailsSummaryKeys.get(0).text() shouldBe "Business name"
-            manageDetailsSummaryValues.get(0).text() shouldBe unknown
             manageDetailsSummaryKeys.get(1).text() shouldBe "Address"
-            manageDetailsSummaryValues.get(1).text() shouldBe unknown
             manageDetailsSummaryKeys.get(2).text() shouldBe "Date started"
-            manageDetailsSummaryValues.get(2).text() shouldBe unknown
             manageDetailsSummaryKeys.get(3).text() shouldBe "Type of trade"
-            manageDetailsSummaryKeys.get(4).text() shouldBe "Accounting method"
-            manageDetailsSummaryValues.get(4).text() shouldBe "Traditional accounting"
+
+            manageDetailsSummaryValues.get(0).text() shouldBe unknown
+            manageDetailsSummaryValues.get(1).text() shouldBe unknown
+            manageDetailsSummaryValues.get(2).text() shouldBe unknown
           }
 
           "the user has a valid id parameter, latency expired" in {
@@ -283,7 +283,6 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
             getManageDetailsSummaryKeys(document).get(1).text() shouldBe "Address"
             manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress
-            manageDetailsSummaryValues.get(5).text() shouldBe standard
           }
 
           "the user has a valid id parameter and AccountingMethodJourney is disabled" in {

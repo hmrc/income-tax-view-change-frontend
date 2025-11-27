@@ -45,8 +45,6 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
   lazy val quarterly: String = "Quarterly"
   lazy val annuallyGracePeriod: String = "Annual"
   lazy val quarterlyGracePeriod: String = "Quarterly"
-  lazy val standard: String = "Standard"
-  lazy val calendar: String = "Calendar"
   lazy val reportingMethod: String = "Reporting frequency"
 
   override lazy val app = applicationBuilderWithAuthBindings
