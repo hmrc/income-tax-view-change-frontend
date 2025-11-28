@@ -35,13 +35,13 @@ import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.agent.EnterClientsUTR
+import views.html.agent.EnterClientsUTRView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
+class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
                                           clientDetailsService: ClientDetailsService,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val authActions: AuthActions,

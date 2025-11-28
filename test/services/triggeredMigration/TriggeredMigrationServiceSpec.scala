@@ -17,7 +17,7 @@
 package services.triggeredMigration
 
 import models.core.{CessationModel, IncomeSourceId}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
@@ -29,7 +29,7 @@ class TriggeredMigrationServiceSpec extends TestSupport {
 
   val service: TriggeredMigrationService = new TriggeredMigrationService()
 
-  val baseIncomeSources = IncomeSourceDetailsModel(
+  val baseIncomeSources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = "AA123456A",
     mtdbsa = "123456789012345",
     yearOfMigration = None,

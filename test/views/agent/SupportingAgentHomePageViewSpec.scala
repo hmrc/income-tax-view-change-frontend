@@ -34,7 +34,7 @@ import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import views.html.agent.SupportingAgentHome
+import views.html.agent.SupportingAgentHomeView
 
 import java.time.{LocalDate, Month}
 import scala.util.Try
@@ -58,7 +58,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
   val testMtdItUserMigrated: MtdItUser[_] = defaultMTDITUser(Some(Agent),
     IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil), isSupportingAgent = true)
 
-  val testMtdItUserNoClientName = getMinimalMTDITUser(Some(Agent), IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil), isSupportingAgent = true)
+  val testMtdItUserNoClientName: MtdItUser[_] = getMinimalMTDITUser(Some(Agent), IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, Nil), isSupportingAgent = true)
 
 
   val year2018: Int = 2018
@@ -68,13 +68,13 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
   val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
 
-  val currentDate = dateService.getCurrentDate
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
+  val currentDate: LocalDate = dateService.getCurrentDate
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
   private val viewModelTwoOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
-  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false, false, ITSAStatus.NoStatus, None, None)
-  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true, false, ITSAStatus.NoStatus, None, None)
+    LocalDate.of(2018, 2, 1)), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, isReportingFrequencyEnabled = true, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
 
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
@@ -84,11 +84,11 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
                   user: MtdItUser[_] = testMtdItUserNotMigrated
                  ) {
 
-    val agentHome: SupportingAgentHome = app.injector.instanceOf[SupportingAgentHome]
+    val agentHome: SupportingAgentHomeView = app.injector.instanceOf[SupportingAgentHomeView]
 
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
+    val yourBusinessesTileViewModel: YourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
-    val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
+    val yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
     val view: HtmlFormat.Appendable = agentHome(
       yourBusinessesTileViewModel,
@@ -180,9 +180,9 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
             nextQuarterlyUpdateDueDate = Some(LocalDate.of(2099, 11, 5)),
             nextTaxReturnDueDate = Some(LocalDate.of(2100, 1, 31)))
         ) {
-          val tile = getElementById("updates-tile").get
-          val paragraphs = tile.select("p.govuk-body")
-          val link = tile.select("a.govuk-link").first()
+          val tile: Element = getElementById("updates-tile").get
+          val paragraphs: Elements = tile.select("p.govuk-body")
+          val link: Element = tile.select("a.govuk-link").first()
 
           paragraphs.get(0).text shouldBe "Next update due: 5 November 2099"
           paragraphs.get(1).text shouldBe "Next tax return due: 31 January 2100"
@@ -199,10 +199,10 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
             nextQuarterlyUpdateDueDate = Some(LocalDate.of(2024, 10, 1)),
             nextTaxReturnDueDate = Some(LocalDate.of(2025, 1, 31)))
         ) {
-          val tile = getElementById("updates-tile").get
-          val paragraphs = tile.select("p.govuk-body")
-          val tag = tile.select("span.govuk-tag.govuk-tag--red")
-          val link = tile.select("a.govuk-link").first()
+          val tile: Element = getElementById("updates-tile").get
+          val paragraphs: Elements = tile.select("p.govuk-body")
+          val tag: Elements = tile.select("span.govuk-tag.govuk-tag--red")
+          val link: Element = tile.select("a.govuk-link").first()
 
           tag.text() shouldBe "Overdue"
           paragraphs.get(1).text shouldBe "Next update due: 1 October 2024"
@@ -223,10 +223,10 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
             nextQuarterlyUpdateDueDate = Some(LocalDate.of(2024, 5, 5)),
             nextTaxReturnDueDate = Some(LocalDate.of(2025, 1, 31)))
         ) {
-          val tile = getElementById("updates-tile").get
-          val paragraphs = tile.select("p.govuk-body")
-          val tag = tile.select("span.govuk-tag.govuk-tag--red")
-          val link = tile.select("a.govuk-link").first()
+          val tile: Element = getElementById("updates-tile").get
+          val paragraphs: Elements = tile.select("p.govuk-body")
+          val tag: Elements = tile.select("span.govuk-tag.govuk-tag--red")
+          val link: Element = tile.select("a.govuk-link").first()
 
           tag.text() shouldBe "3 Overdue updates"
           paragraphs.get(1).text shouldBe "Next update due: 5 May 2024"
@@ -243,9 +243,9 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
             None,
             nextTaxReturnDueDate = Some(LocalDate.of(2101, 1, 31)))
         ) {
-          val tile = getElementById("updates-tile").get
-          val paragraphs = tile.select("p.govuk-body")
-          val tag = tile.select("span.govuk-tag.govuk-tag--red")
+          val tile: Element = getElementById("updates-tile").get
+          val paragraphs: Elements = tile.select("p.govuk-body")
+          val tag: Elements = tile.select("span.govuk-tag.govuk-tag--red")
 
           paragraphs.size() shouldBe 1
           paragraphs.get(0).text shouldBe "Next tax return due: 31 January 2101"

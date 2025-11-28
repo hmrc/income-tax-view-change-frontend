@@ -25,17 +25,17 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
-import views.html.agent.errorPages.UTRError
+import views.html.agent.errorPages.UTRErrorView
 
 class UTRErrorControllerSpec extends MockAuthActions
   with MockUTRError {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[UTRError].toInstance(utrError),
+      api.inject.bind[UTRErrorView].toInstance(utrError),
     ).build()
 
-  lazy val testUTRErrorController = app.injector.instanceOf[UTRErrorController]
+  lazy val testUTRErrorController: UTRErrorController = app.injector.instanceOf[UTRErrorController]
 
 
   "show" when {
