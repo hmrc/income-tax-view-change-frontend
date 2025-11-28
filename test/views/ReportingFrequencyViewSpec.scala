@@ -18,7 +18,6 @@ package views
 
 import models.ReportingFrequencyViewModel
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,8 +26,6 @@ import services.optout.{OptOutProposition, OptOutTestSupport}
 import testUtils.TestSupport
 import views.html.ReportingFrequencyView
 import views.messages.ReportingFrequencyViewMessages._
-
-import scala.util.Try
 
 class ReportingFrequencyViewSpec extends TestSupport {
 
@@ -46,7 +43,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
     if(isAgent) controllers.routes.NextUpdatesController.showAgent().url
     else controllers.routes.NextUpdatesController.show().url
 
-  val optOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
+  val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
 
   def bullet(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
@@ -694,7 +691,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), true, Annual, Voluntary, Annual),
+              proposition = OptOutProposition.createOptOutProposition(TaxYear(2024, 2025), previousYearCrystallised = true, Annual, Voluntary, Annual),
               isSignUpEnabled = true,
               isOptOutEnabled = true
             )
@@ -742,7 +739,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
               mtdThreshold = "£50,000",
-              proposition = OptOutProposition.createOptOutProposition(TaxYear(2023, 2024), true, Annual, Voluntary, Annual),
+              proposition = OptOutProposition.createOptOutProposition(TaxYear(2023, 2024), previousYearCrystallised = true, Annual, Voluntary, Annual),
               isSignUpEnabled = true,
               isOptOutEnabled = true
             )

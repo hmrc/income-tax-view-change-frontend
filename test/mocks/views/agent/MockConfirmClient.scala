@@ -20,12 +20,12 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import play.twirl.api.Html
-import views.html.agent.confirmClient
+import views.html.agent.ConfirmClientUTRView
 
 trait MockConfirmClient extends BeforeAndAfterEach {
   self: Suite =>
 
-  lazy val mockConfirmClient: confirmClient = mock(classOf[confirmClient])
+  lazy val mockConfirmClient: ConfirmClientUTRView = mock(classOf[ConfirmClientUTRView])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

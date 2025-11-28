@@ -32,7 +32,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
-import views.html.agent.confirmClient
+import views.html.agent.ConfirmClientUTRView
 
 class ConfirmClientUTRControllerSpec extends MockAuthActions
   with MockConfirmClient
@@ -40,7 +40,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[confirmClient].toInstance(mockConfirmClient),
+      api.inject.bind[ConfirmClientUTRView].toInstance(mockConfirmClient),
     ).build()
 
   lazy val testConfirmClientUTRController = app.injector.instanceOf[ConfirmClientUTRController]

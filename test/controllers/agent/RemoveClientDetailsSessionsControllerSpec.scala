@@ -23,14 +23,14 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import views.html.agent.EnterClientsUTR
+import views.html.agent.EnterClientsUTRView
 
 class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
   with MockEnterClientsUTR {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
+      api.inject.bind[EnterClientsUTRView].toInstance(enterClientsUTR)
     ).build()
 
   lazy val testRemoveClientDetailsSessionsController = app.injector.instanceOf[RemoveClientDetailsSessionsController]

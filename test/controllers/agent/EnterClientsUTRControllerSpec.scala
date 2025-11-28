@@ -31,7 +31,7 @@ import play.twirl.api.HtmlFormat
 import services.agent.ClientDetailsService._
 import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino}
 import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
-import views.html.agent.EnterClientsUTR
+import views.html.agent.EnterClientsUTRView
 
 class EnterClientsUTRControllerSpec extends MockAuthActions
   with MockEnterClientsUTR
@@ -40,7 +40,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
+      api.inject.bind[EnterClientsUTRView].toInstance(enterClientsUTR)
     ).build()
 
   lazy val testEnterClientsUTRController = app.injector.instanceOf[EnterClientsUTRController]

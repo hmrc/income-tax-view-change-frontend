@@ -35,7 +35,7 @@ import testConstants.BaseTestConstants._
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import views.html.agent.PrimaryAgentHome
+import views.html.agent.PrimaryAgentHomeView
 
 import java.time.{LocalDate, Month}
 import scala.util.Try
@@ -97,7 +97,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   claimARefundR18Enabled: Boolean = true,
                  ) {
 
-    val agentHome: PrimaryAgentHome = app.injector.instanceOf[PrimaryAgentHome]
+    val agentHome: PrimaryAgentHomeView = app.injector.instanceOf[PrimaryAgentHomeView]
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()),
       creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined, claimARefundR18enabled = claimARefundR18Enabled)
