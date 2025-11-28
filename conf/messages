@@ -3440,14 +3440,24 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 #######################################################################################################################
 
 # Check HMRC records page
+#TODO update these once the content update comes through
+triggered-migration.check-hmrc-records.cessation-banner.heading      = Ceased
+triggered-migration.check-hmrc-records.cessation-banner.text1        = Businesses you have ceased
+triggered-migration.check-hmrc-records.cessation-banner.text2        = You have ceased {0} business.
+triggered-migration.check-hmrc-records.cessation-banner.link         = View your ceased businesses.
 
-triggered-migration.check-hmrc-records.heading     = Check HMRC records only list your active businesses
-triggered-migration.check-hmrc-records.title       = Check HMRC records only list your active businesses
-triggered-migration.check-hmrc-records.desc        = You now have quarterly deadlines for your sole trader and/or property businesses listed here.
-triggered-migration.check-hmrc-records.inset       = Making sure this page is correct will help avoid both missing deadlines for your active businesses and having deadlines for an income source you may have closed down or sold.
-triggered-migration.check-hmrc-records.bulletStart = If necessary, you must:
-triggered-migration.check-hmrc-records.bullet1     = add any businesses that are missing
-triggered-migration.check-hmrc-records.bullet2     = cease any that you no longer get income from
+triggered-migration.check-hmrc-records.cessation-section.heading     = Your ceased businesses
+triggered-migration.check-hmrc-records.cessation-section.text-single = 1 business have ceased.
+triggered-migration.check-hmrc-records.cessation-section.text-multi  = {0} businesses have ceased.
+triggered-migration.check-hmrc-records.cessation-section.text-link   = View all ceased businesses.
+
+triggered-migration.check-hmrc-records.heading                       = Check HMRC records only list your active businesses
+triggered-migration.check-hmrc-records.title                         = Check HMRC records only list your active businesses
+triggered-migration.check-hmrc-records.desc                          = You now have quarterly deadlines for your sole trader and/or property businesses listed here.
+triggered-migration.check-hmrc-records.inset                         = Making sure this page is correct will help avoid both missing deadlines for your active businesses and having deadlines for an income source you may have closed down or sold.
+triggered-migration.check-hmrc-records.bulletStart                   = If necessary, you must:
+triggered-migration.check-hmrc-records.bullet1                       = add any businesses that are missing
+triggered-migration.check-hmrc-records.bullet2                       = cease any that you no longer get income from
 
 triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Your active businesses
 triggered-migration.check-hmrc-records.soleTrader.heading            = Sole trader businesses
