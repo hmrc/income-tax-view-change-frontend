@@ -28,7 +28,7 @@ import org.mockito.Mockito.when
 import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.triggeredMigration.TriggeredMigrationService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncomeCeased, singleBusinessIncome}
 
 import scala.concurrent.Future
 
@@ -107,6 +107,22 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
         }
       }
       testMTDAuthFailuresForRole(testController.show(isAgent), mtdRole)(fakeRequest)
+    }
+  }
+  "ceasedBusinessSetup" when {
+    "given a state of CEASED and 1 ceased business" should {
+      "return (true, number of ceased businesses)" in {
+        val (isCeased, noOfCeased) = testController.ceasedBusinessSetup(Some("CEASED"), businessesAndPropertyIncomeCeased)
+        isCeased shouldBe true
+        noOfCeased shouldBe 1
+      }
+    }
+    "given no state and 1 ceased businesses" should {
+      "return (false, number of ceased businesses)" in {
+        val (isCeased, noOfCeased) = testController.ceasedBusinessSetup(None, businessesAndPropertyIncomeCeased)
+        isCeased shouldBe false
+        noOfCeased shouldBe 1
+      }
     }
   }
 }
