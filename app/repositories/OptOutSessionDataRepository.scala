@@ -39,28 +39,27 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
       .getOrElse(false)
   }
 
+  def buildResult(contextData: OptOutContextData, selectedOptOutYear: Option[String]): Option[(OptOutProposition, Option[TaxYear])] = {
+    val currentYearOpt = TaxYear.getTaxYearModel(contextData.currentYear)
+    currentYearOpt.map { currentYear =>
+      val proposition = createOptOutProposition(
+        currentYear = currentYear,
+        previousYearCrystallised = contextData.crystallisationStatus,
+        previousYearItsaStatus = ITSAStatus.fromString(contextData.previousYearITSAStatus),
+        currentYearItsaStatus = ITSAStatus.fromString(contextData.currentYearITSAStatus),
+        nextYearItsaStatus = ITSAStatus.fromString(contextData.nextYearITSAStatus)
+      )
+      val selectedTaxYear = selectedOptOutYear match {
+        case Some(year) => TaxYear.getTaxYearModel(year)
+        case None => None
+      }
+      (proposition, selectedTaxYear)
+    }
+  }
+
   def recallOptOutPropositionWithIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[(OptOutProposition, Option[TaxYear])]] = {
 
     repository.get(hc.sessionId.get.value, Opt(OptOutJourney)).map { sessionData =>
-
-      def buildResult(contextData: OptOutContextData, selectedOptOutYear: Option[String]): Option[(OptOutProposition, Option[TaxYear])] = {
-        val currentYearOpt = TaxYear.getTaxYearModel(contextData.currentYear)
-        currentYearOpt.map { currentYear =>
-          val proposition = createOptOutProposition(
-            currentYear = currentYear,
-            previousYearCrystallised = contextData.crystallisationStatus,
-            previousYearItsaStatus = ITSAStatus.fromString(contextData.previousYearITSAStatus),
-            currentYearItsaStatus = ITSAStatus.fromString(contextData.currentYearITSAStatus),
-            nextYearItsaStatus = ITSAStatus.fromString(contextData.nextYearITSAStatus)
-          )
-          val selectedTaxYear = selectedOptOutYear match {
-            case Some(year) => TaxYear.getTaxYearModel(year)
-            case None => None
-          }
-          (proposition, selectedTaxYear)
-        }
-      }
-
       for {
         data <- sessionData
         optOutData <- data.optOutSessionData
@@ -100,7 +99,7 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
       journeyType = OptOutJourney.toString,
       optOutSessionData = Some(OptOutSessionData(Some(buildOptOutContextData(oop)), selectedOptOutYear = None))
     )
-    if(shouldResetIntent) {
+    if (shouldResetIntent) {
       val dataWithResetIntent = data.copy(
         optOutSessionData = data.optOutSessionData.map(_.copy(selectedOptOutYear = None))
       )

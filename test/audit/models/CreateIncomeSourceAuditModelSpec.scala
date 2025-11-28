@@ -47,20 +47,15 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     businessAddressLine2 = Some("Test Unit"),
     businessAddressLine3 = None,
     businessAddressLine4 = Some("Test City"),
-    businessCountryCode = Some("GB"),
-    incomeSourcesAccountingMethod = Some("cash"),
-    cashOrAccrualsFlag = Some("CASH"),
-    showedAccountingMethod = false
+    businessCountryCode = Some("GB")
   )
 
   val createForeignPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
-    cashOrAccrualsFlag = Some("CASH"),
     incomeSourceType = ForeignProperty)
 
   val createUKPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
-    cashOrAccrualsFlag = Some("CASH"),
     incomeSourceType = UkProperty)
 
   def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole, isError: Boolean): CreateIncomeSourceAuditModel = {
@@ -73,10 +68,10 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
   }
 
   val seAuditDetails: Boolean => JsObject = isSuccess => {
-    val outcome = if(isSuccess) {
+    val outcome = if (isSuccess) {
       Json.obj(
-          "isSuccessful" -> true
-        )
+        "isSuccessful" -> true
+      )
     } else {
       Json.obj(
         "isSuccessful" -> false,
@@ -94,9 +89,10 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       "addressLine2" -> "Test Unit",
       "addressTownOrCity" -> "Test City",
       "addressPostcode" -> "TE5 7TT",
-      "addressCountry" -> "GB",
-      "accountingMethod" -> "CASH"
-    ) ++ {if(isSuccess) Json.obj("addedIncomeSourceID" -> "XA00001234") else Json.obj()}
+      "addressCountry" -> "GB"
+    ) ++ {
+      if (isSuccess) Json.obj("addedIncomeSourceID" -> "XA00001234") else Json.obj()
+    }
   }
 
   val detailIndividualSE = commonAuditDetails(Individual) ++ seAuditDetails(true)
@@ -108,9 +104,8 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
   val detailProperty = commonAuditDetails(Individual) ++ Json.obj(
     "outcome" -> Json.obj("isSuccessful" -> true),
     "journeyType" -> "UKPROPERTY",
-    "addedIncomeSourceID" ->"XA00001234",
-    "dateStarted" -> "2022-01-01",
-    "accountingMethod" -> "CASH"
+    "addedIncomeSourceID" -> "XA00001234",
+    "dateStarted" -> "2022-01-01"
   )
 
   "CeaseIncomeSourceAuditModel" should {

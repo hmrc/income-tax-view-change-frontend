@@ -20,14 +20,14 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
+import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.{NavBarFs, AccountingMethodJourney}
+import models.admin.{AccountingMethodJourney, NavBarFs}
 import models.core.{CheckMode, Mode, NormalMode}
-import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
 import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -38,6 +38,7 @@ import java.time.LocalDate
 import scala.concurrent.ExecutionContext
 
 class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper {
+
   val continueButtonText: String = messagesAPI("base.continue")
   val incomeSourcePrefix: String = "start-date-check"
 
@@ -79,8 +80,8 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
   }
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, mode: Mode): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
-    val pathEnd = s"/${if(mode == CheckMode) "change-" else ""}business-start-date-check"
+    val pathStart = if (mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
+    val pathEnd = s"/${if (mode == CheckMode) "change-" else ""}business-start-date-check"
     incomeSourceType match {
       case SelfEmployment => s"$pathStart/add-sole-trader$pathEnd"
       case UkProperty => s"$pathStart/add-uk-property$pathEnd"
@@ -107,9 +108,13 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
   def verifySessionUpdate(incomeSourceType: IncomeSourceType, journeyType: IncomeSourceJourneyType) = {
     sessionService.getMongoKeyTyped[LocalDate](dateStartedField, journeyType).futureValue shouldBe Right(Some(testBusinessStartDate))
     sessionService.getMongoKeyTyped[LocalDate](accountingPeriodStartDateField, journeyType).futureValue shouldBe
-      Right{ if(incomeSourceType == SelfEmployment) Some(testAccountingPeriodStartDate) else None }
+      Right {
+        if (incomeSourceType == SelfEmployment) Some(testAccountingPeriodStartDate) else None
+      }
     sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyType).futureValue shouldBe
-      Right{if(incomeSourceType == SelfEmployment) Some(testAccountingPeriodEndDate) else None }
+      Right {
+        if (incomeSourceType == SelfEmployment) Some(testAccountingPeriodEndDate) else None
+      }
   }
 
   List(CheckMode, NormalMode).foreach { mode =>
@@ -117,6 +122,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
       mtdAllRoles.foreach { mtdUserRole =>
         val path = getPath(mtdUserRole, incomeSourceType, mode)
         val additionalCookies = getAdditionalCookies(mtdUserRole)
+
         s"GET $path" when {
           s"a user is a $mtdUserRole" that {
             "is authenticated, with a valid enrolment" should {
@@ -148,22 +154,25 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
           val isAgent = mtdUserRole != MTDIndividual
           s"a user is a $mtdUserRole" that {
             "is authenticated, with a valid enrolment" should {
-              if(mode == CheckMode) {
-                val checkDetailsUrl = if(isAgent) {
+
+              if (mode == CheckMode) {
+                val checkDetailsUrl = if (isAgent) {
                   controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
                 } else {
                   controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
                 }
+
                 s"redirect to $checkDetailsUrl" when {
+
                   "form response is Yes" in {
+
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-                    val result = buildPOSTMTDPostClient(path, additionalCookies,
-                      body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
+                    val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
 
                     verifySessionUpdate(incomeSourceType, journeyType)
                     result should have(
@@ -172,14 +181,16 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                     )
                   }
                 }
-              } else if(incomeSourceType == SelfEmployment) {
-                val addTradeUrl = if(isAgent) {
+              } else if (incomeSourceType == SelfEmployment) {
+                val addTradeUrl = if (isAgent) {
                   controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(mode = NormalMode).url
-                  } else {
+                } else {
                   controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(mode = NormalMode).url
-                  }
+                }
                 s"redirect to $addTradeUrl" when {
+
                   "form response is Yes" in {
+
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -196,13 +207,19 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                     )
                   }
                 }
+
               } else {
-                val accountingMethodUrl = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
-                val checkDetailsUrl =
-                  if(isAgent) controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType).url
-                  else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType).url
-                s"redirect to $accountingMethodUrl" when {
+
+                "redirect to IncomeSourceCheckDetails page" when {
+
                   "form response is Yes" in {
+
+                    val redirectCall =
+                      if (isAgent)
+                        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+                      else
+                        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+
                     enable(AccountingMethodJourney)
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
@@ -210,16 +227,20 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
 
                     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-                    val result = buildPOSTMTDPostClient(path, additionalCookies,
-                      body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
+                    val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
 
                     verifySessionUpdate(incomeSourceType, journeyType)
-                    result should have(
-                      httpStatus(SEE_OTHER),
-                      redirectURI(accountingMethodUrl)
-                    )
+                    result should have(httpStatus(SEE_OTHER), redirectURI(redirectCall.url))
                   }
+
                   "form response is Yes (accounting method FS disabled)" in {
+
+                    val redirectCall =
+                      if (isAgent)
+                        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+                      else
+                        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+
                     disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -232,23 +253,25 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                     verifySessionUpdate(incomeSourceType, journeyType)
                     result should have(
                       httpStatus(SEE_OTHER),
-                      redirectURI(checkDetailsUrl)
+                      redirectURI(redirectCall.url)
                     )
                   }
                 }
               }
-              val expectedUrlForNo = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController
-                .show(isAgent, mode, incomeSourceType).url
+
+              val expectedUrlForNo = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode, incomeSourceType).url
+
               s"redirect to $expectedUrlForNo" when {
+
                 "form response is No" in {
+
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-                  val result = buildPOSTMTDPostClient(path, additionalCookies,
-                    body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseNo))).futureValue
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseNo))).futureValue
 
                   result should have(
                     httpStatus(SEE_OTHER),
@@ -260,7 +283,9 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                   sessionService.getMongoKeyTyped[LocalDate](accountingPeriodEndDateField, journeyType).futureValue shouldBe Right(None)
                 }
               }
+
               "return a BAD_REQUEST" when {
+
                 "form is empty" in {
                   disable(NavBarFs)
                   stubAuthorised(mtdUserRole)

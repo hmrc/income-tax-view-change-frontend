@@ -20,46 +20,30 @@ import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 
 import java.time.LocalDate
 
-sealed trait CheckDetailsViewModel{
-  val cashOrAccruals: Option[String]
+sealed trait CheckDetailsViewModel {
+
   val incomeSourceType: IncomeSourceType
-  val showedAccountingMethod: Boolean
-
-  def getAccountingMethodMessageKey: String = {
-    val cashAccountingSelected = cashOrAccruals.forall(_.toLowerCase.equals("cash"))
-
-    if (cashAccountingSelected) {
-      "incomeSources.add.accountingMethod.cash"
-    } else {
-      "incomeSources.add.accountingMethod.accruals"
-    }
-  }
 }
 
-case class CheckBusinessDetailsViewModel(businessName: Option[String],
-                                         businessStartDate: Option[LocalDate],
-                                         accountingPeriodEndDate: LocalDate,
-                                         businessTrade: String,
-                                         businessAddressLine1: String,
-                                         businessAddressLine2: Option[String],
-                                         businessAddressLine3: Option[String],
-                                         businessAddressLine4: Option[String],
-                                         businessPostalCode: Option[String],
-                                         businessCountryCode: Option[String],
-                                         incomeSourcesAccountingMethod: Option[String],
-                                         cashOrAccrualsFlag: Option[String],
-                                         showedAccountingMethod: Boolean) extends CheckDetailsViewModel {
+case class CheckBusinessDetailsViewModel(
+                                          businessName: Option[String],
+                                          businessStartDate: Option[LocalDate],
+                                          accountingPeriodEndDate: LocalDate,
+                                          businessTrade: String,
+                                          businessAddressLine1: String,
+                                          businessAddressLine2: Option[String],
+                                          businessAddressLine3: Option[String],
+                                          businessAddressLine4: Option[String],
+                                          businessPostalCode: Option[String],
+                                          businessCountryCode: Option[String]
+                                        ) extends CheckDetailsViewModel {
 
-  override val cashOrAccruals: Option[String] = cashOrAccrualsFlag
   override val incomeSourceType: IncomeSourceType = SelfEmployment
 
   def countryName: Option[String] = Some("United Kingdom")
 
 }
 
-case class CheckPropertyViewModel(tradingStartDate: LocalDate, cashOrAccrualsFlag: Option[String], incomeSourceType: IncomeSourceType)
-  extends CheckDetailsViewModel {
+case class CheckPropertyViewModel(tradingStartDate: LocalDate, incomeSourceType: IncomeSourceType) extends CheckDetailsViewModel {
 
-  override val cashOrAccruals: Option[String] = cashOrAccrualsFlag
-  override val showedAccountingMethod: Boolean = true
 }

@@ -21,11 +21,11 @@ import audit.models.IncomeSourceReportingMethodAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.{AfterSubmissionPage, ReportingFrequencyPages}
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.{AfterSubmissionPage, ReportingFrequencyPages}
 import models.admin.OptInOptOutContentUpdateR17
-import models.core.IncomeSourceId
+import models.core.{IncomeSourceId, NormalMode}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels._
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -51,8 +51,8 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
                                                      val itvcErrorHandler: ItvcErrorHandler,
                                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                     (implicit val ec: ExecutionContext,
-                                                   val mcc: MessagesControllerComponents,
-                                                   val appConfig: FrontendAppConfig, dateService: DateServiceInterface
+                                                     val mcc: MessagesControllerComponents,
+                                                     val appConfig: FrontendAppConfig, dateService: DateServiceInterface
                                                     ) extends FrontendController(mcc)
   with JourneyCheckerManageBusinesses with I18nSupport {
 
@@ -97,17 +97,19 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
                            (implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
 
-      val backUrl: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
+      val backUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, NormalMode, incomeSourceType).url
       val postAction: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.submit(isAgent, incomeSourceType) else {
         controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.submit(isAgent, incomeSourceType)
       }
       Future.successful {
         Ok(checkDetailsView(
-          ReportingFrequencyCheckDetailsViewModel(incomeSourceType,
+          ReportingFrequencyCheckDetailsViewModel(
+            incomeSourceType,
             sessionData.incomeSourceReportingFrequencyData.nonEmpty,
             sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyCurrentYear),
             sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyForNextYear),
-            isEnabled(OptInOptOutContentUpdateR17)),
+            isEnabled(OptInOptOutContentUpdateR17)
+          ),
           postAction = postAction,
           isAgent,
           backUrl = backUrl
@@ -135,7 +137,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
         case _ =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
-          s"Unable to retrieve incomeSourceId from session data for $incomeSourceType on IncomeSourceReportingFrequency page")
+            s"Unable to retrieve incomeSourceId from session data for $incomeSourceType on IncomeSourceReportingFrequency page")
           Future.successful(Redirect(errorRedirectUrl(isAgent, incomeSourceType)))
       }
     }
