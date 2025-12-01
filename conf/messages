@@ -2642,11 +2642,19 @@ optout.confirmedOptOut.yourReportingFrequency.text               = your reportin
 
 optout.confirmedOptOut.submitTax                                 = Submit your tax return
 
-optout.confirmedOptOut.submitTax.confirmed.p1                    = Now you have opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:
+optout.confirmedOptOut.submitTax.confirmed.p1                    = Now you have opted out, you will need to go back to the way you have previously
+optout.confirmedOptOut.submitTax.confirmed.p1.link               = filed your Self Assessment tax return
 
-optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = As you are opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:
-optout.confirmedOptOut.submitTax.confirmed.bullet1               = keeping your compatible software and submitting your return that way
-optout.confirmedOptOut.submitTax.confirmed.bullet2               = using HMRC online service or other commercial software Making Tax Digital for Income Tax
+optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are still using Making Tax Digital for Income Tax, you will need
+optout.confirmedOptOut.submitTax.confirmed.p2.link.a             = compatible software
+optout.confirmedOptOut.submitTax.confirmed.p2.link.b             = .
+optout.confirmedOptOut.submitTax.confirmed.p2.link.c             =
+
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = As you are opted out, you can find out here how to
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = file your Self Assessment tax return
+
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1          = Now you have opted out, you will need to go back to the way you have previously
+optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = filed your Self Assessment tax return
 
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.

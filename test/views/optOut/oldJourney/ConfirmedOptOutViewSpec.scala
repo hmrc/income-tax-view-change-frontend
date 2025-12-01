@@ -42,7 +42,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
 
     val h2SubmitYourTaxReturn = "submit-your-tax-return-heading"
     val submitTaxReturnParagraph1 = "now-you-have-opted-out"
-    val submitTaxReturnBullet: Int => String = (i: Int) => s"submit-tax-return-bullet-$i"
+    val submitTaxReturnParagraph2 = "tax-year-reporting-quarterly"
     val selfAssessmentTaxReturnLink = "self-assessment-tax-return-link"
     val compatibleSoftwareLink = "compatible-software-link"
 
@@ -98,9 +98,9 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       "show the submit your tax return section" in {
 
         pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
-        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(1)).text() shouldBe "keeping your compatible software and submitting your return that way"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(2)).text() shouldBe "using HMRC online service or other commercial software Making Tax Digital for Income Tax"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
       }
 
       "show the 'Your reporting obligations' section" in {
@@ -147,10 +147,11 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       "show the submit your tax return section" in {
 
         pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
-        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(1)).text() shouldBe "keeping your compatible software and submitting your return that way"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(2)).text() shouldBe "using HMRC online service or other commercial software Making Tax Digital for Income Tax"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph2).text() shouldBe "For any tax year you are still using Making Tax Digital for Income Tax, you will need compatible software (opens in new tab)."
 
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "compatible software (opens in new tab)."
 
       }
 
@@ -195,9 +196,10 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       "show the submit your tax return section" in {
 
         pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
-        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(1)).text() shouldBe "keeping your compatible software and submitting your return that way"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(2)).text() shouldBe "using HMRC online service or other commercial software Making Tax Digital for Income Tax"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.compatibleSoftwareLink).text() shouldBe "compatible software (opens in new tab)."
       }
 
       "show the 'Your reporting obligations' section" in {
@@ -243,9 +245,8 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       "show the submit your tax return section" in {
 
         pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
-        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "As you are opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(1)).text() shouldBe "keeping your compatible software and submitting your return that way"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(2)).text() shouldBe "using HMRC online service or other commercial software Making Tax Digital for Income Tax"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "As you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "file your Self Assessment tax return (opens in new tab)."
       }
 
       "show the 'Your reporting obligations' section" in {
@@ -292,9 +293,8 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       "show the submit your tax return section" in {
 
         pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
-        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(1)).text() shouldBe "keeping your compatible software and submitting your return that way"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(2)).text() shouldBe "using HMRC online service or other commercial software Making Tax Digital for Income Tax"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
       }
 
       "show the 'Your reporting obligations' section" in {
@@ -340,9 +340,9 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       "show the submit your tax return section" in {
 
         pageDocument.getElementById(Selectors.h2SubmitYourTaxReturn).text() shouldBe "Submit your tax return"
-        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(1)).text() shouldBe "keeping your compatible software and submitting your return that way"
-        pageDocument.getElementById(Selectors.submitTaxReturnBullet(2)).text() shouldBe "using HMRC online service or other commercial software Making Tax Digital for Income Tax"
+        pageDocument.getElementById(Selectors.submitTaxReturnParagraph1).text() shouldBe "Now you have opted out, you will need to go back to the way you have previously filed your Self Assessment tax return (opens in new tab)."
+
+        pageDocument.getElementById(Selectors.selfAssessmentTaxReturnLink).text() shouldBe "filed your Self Assessment tax return (opens in new tab)."
       }
     }
   }
