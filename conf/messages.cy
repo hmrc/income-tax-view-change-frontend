@@ -3428,16 +3428,15 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 #######################################################################################################################
 
 # Check HMRC records page
-#TODO: Translate the following keys
-triggered-migration.check-hmrc-records.cessation-banner.heading      = Ceased
-triggered-migration.check-hmrc-records.cessation-banner.text1        = Businesses you have ceased
-triggered-migration.check-hmrc-records.cessation-banner.text2        = You have ceased {0} business.
-triggered-migration.check-hmrc-records.cessation-banner.link         = View your ceased businesses.
+triggered-migration.check-hmrc-records.cessation-banner.heading      = Wedi dod i ben
+triggered-migration.check-hmrc-records.cessation-banner.text1        = Rydych chi wedi dod â busnes i ben
+triggered-migration.check-hmrc-records.cessation-banner.text2        = View
+#TODO waiting on welsh for the above
+triggered-migration.check-hmrc-records.cessation-banner.link         = Eich busnesau sydd wedi dod i ben
 
-triggered-migration.check-hmrc-records.cessation-section.heading     = Your ceased businesses
-triggered-migration.check-hmrc-records.cessation-section.text-single = 1 business have ceased.
-triggered-migration.check-hmrc-records.cessation-section.text-multi  = {0} businesses have ceased.
-triggered-migration.check-hmrc-records.cessation-section.text-link   = View all ceased businesses.
+triggered-migration.check-hmrc-records.cessation-section.heading     = Eich busnesau sydd wedi dod i ben
+triggered-migration.check-hmrc-records.cessation-section.text        = Mae un neu ragor o fusnesau wedi dod i ben.
+triggered-migration.check-hmrc-records.cessation-section.text-link   = Gweld eich holl fusnesau sydd wedi dod i ben.
 
 triggered-migration.check-hmrc-records.heading                       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
 triggered-migration.check-hmrc-records.title                         = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol

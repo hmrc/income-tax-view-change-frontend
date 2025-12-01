@@ -184,8 +184,8 @@
         @messages("triggered-migration.check-hmrc-records.cessation-banner.text1")
     </h3>
     <p id="ceased-banner-text-2" class="govuk-body">
-        @messages("triggered-migration.check-hmrc-records.cessation-banner.text2", ceaseBannerParams._2)
-        <a id="ceased-banner-link" class="govuk-notification-banner__link" href="#ceased-section-heading">@messages("triggered-migration.check-hmrc-records.cessation-banner.link")</a>
+        @messages("triggered-migration.check-hmrc-records.cessation-banner.text2")
+        <a id="ceased-banner-link" class="govuk-notification-banner__link" href="#ceased-section-heading">@messages("triggered-migration.check-hmrc-records.cessation-banner.link")</a>.
     </p>
 }
 @ceasedBanner = {
@@ -199,11 +199,7 @@
 
 @ceasedBusinessSection = {
     @h2(messages("triggered-migration.check-hmrc-records.cessation-section.heading"), classes = "govuk-heading-l", optId = Some("ceased-section-heading"))
-    @if(ceaseBannerParams._2 != 1) {
-        <p id="ceased-section-text" class="govuk-body">@messages("triggered-migration.check-hmrc-records.cessation-section.text-multi", ceaseBannerParams._2)</p>
-    }else{
-        <p id="ceased-section-text" class="govuk-body">@messages("triggered-migration.check-hmrc-records.cessation-section.text-single")</p>
-    }
+    <p id="ceased-section-text" class="govuk-body">@messages("triggered-migration.check-hmrc-records.cessation-section.text")</p>
     <a class="govuk-link govuk-body" id="ceased-section-link" href=@controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
 }
 

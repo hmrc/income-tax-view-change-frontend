@@ -3440,16 +3440,14 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 #######################################################################################################################
 
 # Check HMRC records page
-#TODO update these once the content update comes through
 triggered-migration.check-hmrc-records.cessation-banner.heading      = Ceased
-triggered-migration.check-hmrc-records.cessation-banner.text1        = Businesses you have ceased
-triggered-migration.check-hmrc-records.cessation-banner.text2        = You have ceased {0} business.
-triggered-migration.check-hmrc-records.cessation-banner.link         = View your ceased businesses.
+triggered-migration.check-hmrc-records.cessation-banner.text1        = You have ceased a business.
+triggered-migration.check-hmrc-records.cessation-banner.text2        = View
+triggered-migration.check-hmrc-records.cessation-banner.link         = your ceased businesses
 
 triggered-migration.check-hmrc-records.cessation-section.heading     = Your ceased businesses
-triggered-migration.check-hmrc-records.cessation-section.text-single = 1 business have ceased.
-triggered-migration.check-hmrc-records.cessation-section.text-multi  = {0} businesses have ceased.
-triggered-migration.check-hmrc-records.cessation-section.text-link   = View all ceased businesses.
+triggered-migration.check-hmrc-records.cessation-section.text        = One or more businesses have ceased.
+triggered-migration.check-hmrc-records.cessation-section.text-link   = View all ceased businesses
 
 triggered-migration.check-hmrc-records.heading                       = Check HMRC records only list your active businesses
 triggered-migration.check-hmrc-records.title                         = Check HMRC records only list your active businesses

@@ -83,12 +83,11 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
 
     val ceasedBannerHeading = "Ceased"
     val ceasedBannerText1 = "Businesses you have ceased"
-    def ceasedBannerLinkText(numberOfCeasedBusinesses: Int): String = s"You have ceased $numberOfCeasedBusinesses business. View your ceased businesses."
+    val ceasedBannerLinkText: String = "You have ceased a business. View your ceased businesses."
 
     val ceasedSectionHeading = "Your ceased businesses"
-    val ceasedSectionTextSingle = "1 business have ceased."
-    def ceasedSectionTextMulti(numberOfCeasedBusinesses: Int): String = s"$numberOfCeasedBusinesses businesses have ceased."
-    val ceasedSectionLinkText = "View all ceased businesses."
+    val ceasedSectionText = "One or more businesses have ceased."
+    val ceasedSectionLinkText = "View all ceased businesses"
   }
 
   "Check HMRC records page" when {
@@ -201,32 +200,20 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     }
 
     "checking hmrc records with ceased businesses and ceased banner shown" should {
-      "display the ceased banner with one ceased business" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, CeasedBannerOneCeasedBusiness) {
+      "display the ceased banner after ceasing a business" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, CeasedBannerOneCeasedBusiness) {
         pageDocument.getElementById("ceased-banner-heading").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerHeading
         pageDocument.getElementById("ceased-banner-text-1").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerText1
-        pageDocument.getElementById("ceased-banner-text-2").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerLinkText(1)
+        pageDocument.getElementById("ceased-banner-text-2").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerLinkText
       }
 
-      "display the ceased banner with two ceased businesses" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, CeasedBannerTwoCeasedBusinesses) {
-        pageDocument.getElementById("ceased-banner-heading").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerHeading
-        pageDocument.getElementById("ceased-banner-text-1").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerText1
-        pageDocument.getElementById("ceased-banner-text-2").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerLinkText(2)
-      }
-
-      "display the ceased section with one ceased business" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOneCeasedBusiness) {
+      "display the ceased section when user has at least one ceased business" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOneCeasedBusiness) {
         pageDocument.getElementById("ceased-section-heading").text() shouldBe CheckHmrcRecordsMessages.ceasedSectionHeading
-        pageDocument.getElementById("ceased-section-text").text() shouldBe CheckHmrcRecordsMessages.ceasedSectionTextSingle
+        pageDocument.getElementById("ceased-section-text").text() shouldBe CheckHmrcRecordsMessages.ceasedSectionText
         pageDocument.getElementById("ceased-section-link").text() shouldBe CheckHmrcRecordsMessages.ceasedSectionLinkText
       }
     }
     "checking hmrc records with ceased businesses and ceased banner not shown" should {
-      "not display the ceased banner or ceased section" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
-        pageDocument.getElementById("ceased-banner-heading") shouldBe null
-        pageDocument.getElementById("ceased-section-heading") shouldBe null
-      }
-    }
-    "checking hmrc records with no ceased data" should {
-      "not display the ceased banner or ceased section" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
+      "not display the ceased banner or ceased section when there's no ceased businesses" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("ceased-banner-heading") shouldBe null
         pageDocument.getElementById("ceased-section-heading") shouldBe null
       }
