@@ -80,7 +80,6 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
 
   def getRedirectUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = {
     ((isEnabled(AccountingMethodJourney), isAgent, mode) match {
-//      case (true, _, NormalMode) => routes.IncomeSourcesAccountingMethodController.show(SelfEmployment, isAgent)
       case (_, false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
       case (_, true, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
