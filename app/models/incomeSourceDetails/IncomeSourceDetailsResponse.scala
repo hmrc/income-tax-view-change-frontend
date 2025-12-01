@@ -113,12 +113,6 @@ case class IncomeSourceDetailsModel(
     incomeSourceIdHash.findIncomeSourceIdMatchingHash(ids = allUserIncomeSourceIds)
   }
 
-//  def getBusinessCashOrAccruals()
-//                               (implicit user: MtdItUser[_]): List[Boolean] = {
-//    user.incomeSources.businesses
-//      .filterNot(_.isCeased)
-//  }
-
   def areAllBusinessesCeased: Boolean = businesses.forall(_.isCeased) && properties.forall(_.isCeased)
 
   def remainingActiveBusinessesCount: Int = businesses.filterNot(_.isCeased).size + properties.filterNot(_.isCeased).size

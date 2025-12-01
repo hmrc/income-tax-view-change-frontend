@@ -305,8 +305,6 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with I
                   val result =
                     action(fakeRequest.withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> responseYes))
 
-                  //                  if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
-
                   val route = if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType) else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
 
                   status(result) shouldBe SEE_OTHER
