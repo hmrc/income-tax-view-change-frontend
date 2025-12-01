@@ -86,7 +86,6 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val ceasedBannerHeading = "Ceased"
     val ceasedBannerText = "You have ceased a business"
     val ceasedBannerLinkText = "View your ceased businesses."
-
     val ceasedSectionHeading = "Your ceased businesses"
     val ceasedSectionText = "One or more businesses have ceased."
     val ceasedSectionLinkText = "View all ceased businesses"
