@@ -304,6 +304,25 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
               }
 
+              "provided with an id associated to outstanding interest on a paid ITSA Return Amendment charge" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment, docId = id1040000123) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123, isInterestCharge = true)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Late payment interest on balancing payment: extra amount due to amended return"
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £100.00"
+                document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
+                document.getElementById("lpi-itsa1").text() shouldBe "You owe HMRC interest because you paid your balancing payment late."
+                document.getElementById("lpi-itsa2").text() shouldBe "Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the Bank of England base rate (opens in new tab) plus 2.5%."
+                document.getElementById("lpi-itsa3").text() shouldBe "See guidance on the interest rates set by HMRC (opens in new tab)."
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
+              }
+
               "provided with an id associated to an ITSA Return Amendment credit" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarAndAmendmentCredits(), paymentAllocations = Right(paymentAllocationResponse), docId = id1040000127) {
                 enable(ChargeHistory)
