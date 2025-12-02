@@ -121,17 +121,16 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
   }
 
   private def getPropertyModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData): Option[CheckPropertyViewModel] = {
-    val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
     val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
-    (dateStartedOpt, accountingMethodOpt) match {
-      case (Some(dateStarted), _) =>
+    (dateStartedOpt) match {
+      case Some(dateStarted) =>
         Some(
           CheckPropertyViewModel(
             tradingStartDate = dateStarted,
             incomeSourceType = incomeSourceType
           )
         )
-      case (_, _) =>
+      case _ =>
         None
     }
   }
