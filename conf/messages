@@ -3441,7 +3441,7 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 
 # Check HMRC records page
 triggered-migration.check-hmrc-records.cessation-banner.heading      = Ceased
-triggered-migration.check-hmrc-records.cessation-banner.text1        = You have ceased a business.
+triggered-migration.check-hmrc-records.cessation-banner.text1        = You have ceased a business
 triggered-migration.check-hmrc-records.cessation-banner.text2        = View
 triggered-migration.check-hmrc-records.cessation-banner.link         = your ceased businesses
 

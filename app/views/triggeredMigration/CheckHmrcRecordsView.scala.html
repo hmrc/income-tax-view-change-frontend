@@ -36,7 +36,7 @@
     govukNotificationBanner : GovukNotificationBanner
 )
 
-@(viewModel: CheckHmrcRecordsViewModel, isAgent: Boolean, ceaseBannerParams: (Boolean, Int))(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: CheckHmrcRecordsViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @addSoleTraderBusinessURL() = @{
     if(user.isAgent()) {
@@ -210,7 +210,7 @@
     btaNavPartial = user.btaNavPartial
 ) {
 
-    @if(ceaseBannerParams._1) {
+    @if(viewModel.showCeasedBanner) {
         @ceasedBanner
     }
 
@@ -240,7 +240,9 @@
     @soleTraderSection
     @h3(messages("triggered-migration.check-hmrc-records.property.heading"), classes = "govuk-heading-m govuk-!-margin-top-5", optId = Some("property-heading"))
     @propertyBusinessSection
-    @if(ceaseBannerParams._2 != 0) {
+    @hr()
+
+    @if(viewModel.numberOfCeasedBusinesses != 0) {
         @ceasedBusinessSection
     }
     @hr()

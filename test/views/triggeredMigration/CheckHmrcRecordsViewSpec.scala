@@ -43,9 +43,11 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val viewModel: CheckHmrcRecordsViewModel = CheckHmrcRecordsViewModel(
       soleTraderBusinesses = soleTraderDetails,
       hasActiveUkProperty = activeUkProperty,
-      hasActiveForeignProperty = activeForeignProperty
+      hasActiveForeignProperty = activeForeignProperty,
+      showCeasedBanner = ceasedSetup._1,
+      numberOfCeasedBusinesses = ceasedSetup._2
     )
-    val pageDocument = Jsoup.parse(contentAsString(view(viewModel, isAgent = false, ceasedSetup)))
+    val pageDocument = Jsoup.parse(contentAsString(view(viewModel, isAgent = false)))
   }
 
   object CheckHmrcRecordsMessages {
@@ -82,7 +84,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val confirmRecordsButton = "Confirm and continue"
 
     val ceasedBannerHeading = "Ceased"
-    val ceasedBannerText = "You have ceased a business."
+    val ceasedBannerText = "You have ceased a business"
     val ceasedBannerLinkText = "View your ceased businesses."
 
     val ceasedSectionHeading = "Your ceased businesses"
