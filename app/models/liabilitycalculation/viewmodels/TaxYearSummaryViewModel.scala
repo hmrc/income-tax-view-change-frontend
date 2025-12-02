@@ -48,7 +48,7 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
 
   val forecastIncome = calculationSummary.flatMap(model => model.forecastIncome).getOrElse(0)
   val forecastTotalTaxableIncome = calculationSummary.flatMap(model => model.forecastTotalTaxableIncome).getOrElse(0)
-  val forecastIncomeAndNics = calculationSummary.flatMap(model => model.forecastIncomeTaxAndNics).get
+  val forecastIncomeAndNics = calculationSummary.flatMap(model => model.forecastIncomeTaxAndNics).getOrElse(BigDecimal(0))
 
   val forecastDeductions = calculationSummary.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0))
 
