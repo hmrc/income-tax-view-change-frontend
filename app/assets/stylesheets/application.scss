@@ -33,18 +33,21 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
 
       .govuk-table__cell {
         display: block;
-        padding-left: 0;
+        position: relative;
+        padding-left: 7.5rem; /* reserve space for the ::before label */
         padding-right: 0;
-        text-align: right;
+        text-align: left;
         &:last-child {
-          border-bottom: black solid 1px;
-          margin-bottom: 20px;
+          border-bottom: black solid 2px;
+          margin-bottom: 10px;
         }
         &::before {
           content: attr(data-th);
-          float: left;
+          position: absolute;
+          left: 0;
+          width: 6.5rem;
+          display: block;
           font-weight: $govuk-font-weight-bold;
-          padding-right: 1rem;
         }
       }
 
