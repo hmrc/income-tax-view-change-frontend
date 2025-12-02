@@ -31,13 +31,14 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import services.DateService
 import testConstants.BaseTestConstants._
-import testConstants.FinancialDetailsTestConstants.financialDetail
+import testConstants.ChargeConstants
+import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetails, financialDetail}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 
-class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentSharedFunctions {
+class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentSharedFunctions with ChargeConstants {
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
@@ -461,6 +462,82 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
 
           )
         }
+      }
+    }
+  }
+
+  "PaymentSharedFunctions.getChargeType" should {
+    "return the correct string" when {
+      "passed various charges" in {
+        val bcd = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = BalancingCharge)
+        val poa1 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = PoaOneDebit)
+        val poa2 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = PoaTwoDebit)
+        val lpp1 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = FirstLatePaymentPenalty)
+        val lpp2 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = SecondLatePaymentPenalty)
+        val lsp = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = LateSubmissionPenalty)
+        val poaRecon1 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = PoaOneReconciliationDebit)
+        val poaRecon2 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = PoaTwoReconciliationDebit)
+        val itsaAmendmentCharge = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = ITSAReturnAmendment)
+        val mfaDebit = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = MfaDebitCharge)
+        val nics2 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = BalancingCharge, codedOutStatus = Some(Nics2))
+        val codedBCD = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = BalancingCharge, codedOutStatus = Some(Accepted))
+        val codedPOA1 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = PoaOneDebit, codedOutStatus = Some(Accepted))
+        val codedPOA2 = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = PoaTwoDebit, codedOutStatus = Some(Accepted))
+        val cancelledCodedOut = chargeItemModel(interestOutstandingAmount = None, interestRate = None, interestFromDate = None,
+          interestEndDate = None, accruingInterestAmount = None, transactionType = PoaTwoDebit, codedOutStatus = Some(Cancelled))
+
+        getChargeType(bcd, false) shouldBe Some("Remaining balance")
+        getChargeType(bcd, true) shouldBe Some("Late payment interest for remaining balance")
+
+        getChargeType(poa1, false) shouldBe Some("First payment on account")
+        getChargeType(poa1, true) shouldBe Some("Late payment interest on first payment on account")
+
+        getChargeType(poa2, false) shouldBe Some("Second payment on account")
+        getChargeType(poa2, true) shouldBe Some("Late payment interest on second payment on account")
+
+        getChargeType(lpp1, false) shouldBe Some("First late payment penalty")
+        getChargeType(lpp1, true) shouldBe Some("Late payment interest on first late payment penalty")
+
+        getChargeType(lpp2, false) shouldBe Some("Second late payment penalty")
+        getChargeType(lpp2, true) shouldBe Some("Late payment interest on second late payment penalty")
+
+        getChargeType(lsp, false) shouldBe Some("Late submission penalty")
+        getChargeType(lsp, true) shouldBe Some("Late payment interest on late submission penalty")
+
+        getChargeType(poaRecon1, false) shouldBe Some("First payment on account: extra amount from your tax return")
+        getChargeType(poaRecon1, true) shouldBe Some("Interest for first payment on account: extra amount")
+
+        getChargeType(poaRecon2, false) shouldBe Some("Second payment on account: extra amount from your tax return")
+        getChargeType(poaRecon2, true) shouldBe Some("Interest for second payment on account: extra amount")
+
+        getChargeType(itsaAmendmentCharge, false) shouldBe Some("Balancing payment: extra amount due to amended return")
+        getChargeType(itsaAmendmentCharge, true) shouldBe Some("Late payment interest on balancing payment: extra amount due to amended return")
+
+        getChargeType(mfaDebit, false) shouldBe Some("MFADebit")
+
+        getChargeType(nics2, false) shouldBe Some("Class 2 National Insurance")
+
+        getChargeType(codedBCD, false) shouldBe Some("Balancing payment collected through PAYE tax code")
+
+        getChargeType(codedPOA1, false) shouldBe Some("First payment on account collected through PAYE tax code")
+
+        getChargeType(codedPOA2, false) shouldBe Some("Second payment on account collected through PAYE tax code")
+
+        getChargeType(cancelledCodedOut, false) shouldBe Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
       }
     }
   }

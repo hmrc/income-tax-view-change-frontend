@@ -19,6 +19,8 @@
 @import views.html.components._
 @import models.triggeredMigration.viewModels.CheckHmrcRecordsViewModel
 @import play.twirl.api.HtmlFormat
+@import models.core.NormalMode
+@import enums.IncomeSourceJourney.{UkProperty, ForeignProperty, SelfEmployment}
 
 @this(
     mainTemplate: unifiedLayout,
@@ -35,6 +37,11 @@
 
 @(viewModel: CheckHmrcRecordsViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
+@ceaseSoleTraderBusinessURL(incomeSourceIdHash: String) = @{
+    if(user.isAgent()) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
+    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
+}
+
 @soleTraderSection = {
     @h3(messages("triggered-migration.check-hmrc-records.soleTrader.heading"), classes = "govuk-heading-m", optId = Some("sole-trader-heading"))
     @p(id = Some("sole-trader-guidance")){@messages("triggered-migration.check-hmrc-records.soleTrader.guidance")}
@@ -47,7 +54,7 @@
                 </h2>
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
-                        <a class="govuk-link" id="sole-trader-cease-link-@index" href="#">@messages("triggered-migration.check-hmrc-records.soleTrader.cease.link")</a>
+                        <a class="govuk-link" id="sole-trader-cease-link-@index" href=@ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)>@messages("triggered-migration.check-hmrc-records.soleTrader.cease.link")</a>
                     </li>
                 </ul>
             </div>
@@ -76,6 +83,14 @@
     @link(link = "", messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link", id = Some("sole-trader-add-link"))
 }
 
+@addUKPropertyStartDateURL = @{
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = user.isAgent(), mode = NormalMode, UkProperty, isTriggeredMigration = true).url
+}
+
+@addForeignPropertyBusinessStartDateURL = @{
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = user.isAgent(), mode = NormalMode, ForeignProperty, isTriggeredMigration = true).url
+}
+
 @propertyBusinessSection = @{
     (viewModel.hasActiveUkProperty, viewModel.hasActiveForeignProperty) match {
         case (true, true) => HtmlFormat.fill(Seq(ukPropertyContent, foreignPropertyContent))
@@ -87,7 +102,7 @@
 
 @noActivePropertiesContent = { @p(id = Some("property-no-active-business-desc")){@messages("triggered-migration.check-hmrc-records.noActiveProperties")} }
 
-@addUkPropertyLink() = { @p(id = Some("uk-property-add-link")){@link(link = "", messageKey = "triggered-migration.check-hmrc-records.ukProperty.add.link")}}
+@addUkPropertyLink() = { @p(id = Some("uk-property-add-link")){@link(link = addUKPropertyStartDateURL, messageKey = "triggered-migration.check-hmrc-records.ukProperty.add.link")}}
 
 @ukPropertyContent = {
     <div class="govuk-summary-card">
@@ -116,7 +131,7 @@
     </div>
 }
 
-@addForeignPropertyLink() = { @p(id = Some("foreign-property-add-link")){@link(link = "", messageKey = "triggered-migration.check-hmrc-records.foreignProperty.add.link")}}
+@addForeignPropertyLink() = { @p(id = Some("foreign-property-add-link")){@link(link = addForeignPropertyBusinessStartDateURL, messageKey = "triggered-migration.check-hmrc-records.foreignProperty.add.link")}}
 
 @foreignPropertyContent = {
     <div class="govuk-summary-card">

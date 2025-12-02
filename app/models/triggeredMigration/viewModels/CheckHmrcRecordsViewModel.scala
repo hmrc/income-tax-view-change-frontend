@@ -15,13 +15,13 @@
  */
 
 package models.triggeredMigration.viewModels
+import models.core.IncomeSourceId
 
 case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecordsSoleTraderDetails],
                                      hasActiveUkProperty: Boolean,
                                      hasActiveForeignProperty: Boolean) {
 }
 
-case class CheckHmrcRecordsSoleTraderDetails(incomeSource: Option[String],
+case class CheckHmrcRecordsSoleTraderDetails(incomeSourceId: IncomeSourceId,
+                                             incomeSource: Option[String],
                                              businessName: Option[String])
-
-

@@ -174,7 +174,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("main h2")(paymentHistory),
+                                  elementTextBySelector("#charge-history-heading")(paymentHistory),
                                   elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
                                 )
                               }
@@ -191,7 +191,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("main h2")(paymentHistory),
+                                  elementTextBySelector("#charge-history-heading")(paymentHistory),
                                   elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
                                 )
                               }
@@ -208,6 +208,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                   "documentDetails" -> Json.arr(
                                     Json.obj("taxYear" -> 2018,
                                       "transactionId" -> "1040001234",
+                                      "documentDueDate" -> "2019-03-29",
                                       "documentDescription" -> "ITSA - POA 2",
                                       "outstandingAmount" -> 0.0,
                                       "originalAmount" -> 10.34,
@@ -225,6 +226,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                       "chargeReference" -> "chargeRef",
                                     )
                                   )))
+                                IncomeTaxViewChangeStub.stubGetPaymentAllocationResponse(testNino, "", "")(200, Json.obj())
 
                                 val res = buildGETMTDClient(path +"?id=1040001234&isInterestCharge=true", additionalCookies).futureValue
 
@@ -234,7 +236,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 res should have(
                                   httpStatus(OK),
                                   pageTitle(mtdUserRole, "chargeSummary.lpi.paymentOnAccount2.text"),
-                                  elementTextBySelector("main h2")("")
+                                  elementTextBySelector("#charge-history-heading")("")
                                 )
                               }
                             }

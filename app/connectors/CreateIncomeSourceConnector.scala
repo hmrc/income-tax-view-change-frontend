@@ -33,27 +33,27 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClientV2,
                                             val appConfig: FrontendAppConfig
                                            )(implicit val ec: ExecutionContext) {
 
-  def createBusinessIncomeSourcesUrl(mtdItid: String): String =
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business/$mtdItid"
+  def createBusinessIncomeSourcesUrl(): String =
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business"
 
-  def createBusiness(mtdItid: String, request: CreateBusinessIncomeSourceRequest)
+  def createBusiness(request: CreateBusinessIncomeSourceRequest)
                         (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
-    val url = createBusinessIncomeSourcesUrl(mtdItid)
+    val url = createBusinessIncomeSourcesUrl()
     val jsonRequest = Json.toJson(request)
     Logger("application").debug("createBusinessRequest json: " + jsonRequest)
     http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)
   }
 
-  def createForeignProperty(mtdItid: String, request: CreateForeignPropertyIncomeSourceRequest)
+  def createForeignProperty(request: CreateForeignPropertyIncomeSourceRequest)
                     (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
-    val url = createBusinessIncomeSourcesUrl(mtdItid)
+    val url = createBusinessIncomeSourcesUrl()
     val jsonRequest = Json.toJson(request)
     http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)
   }
 
-  def createUKProperty(mtdItid: String, request: CreateUKPropertyIncomeSourceRequest)
+  def createUKProperty(request: CreateUKPropertyIncomeSourceRequest)
                            (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
-    val url = createBusinessIncomeSourcesUrl(mtdItid)
+    val url = createBusinessIncomeSourcesUrl()
     val jsonRequest = Json.toJson(request)
 
     http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)

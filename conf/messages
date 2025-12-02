@@ -1163,7 +1163,7 @@ chargeSummary.chargeHistory.created.class2Nic.text                      = Class 
 chargeSummary.chargeHistory.created.codingOut.text                      = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.poa1CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
 chargeSummary.chargeHistory.created.poa2CodedOut.text                   = Amount to be collected through your PAYE tax code in {0} to {1} tax year.
-chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment (through your PAYE tax code) created
+chargeSummary.chargeHistory.created.cancelledPayeSelfAssessment.text	= Cancelled PAYE Self Assessment created
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC created this extra amount for your first payment on account based on your tax return
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
@@ -2619,7 +2619,7 @@ optout.checkAnswers.cancel              = Cancel
 #opt out with submitted updates check answers
 optout.updates.checkAnswers.heading     = Confirm and opt out for the {0} to {1} tax year
 optout.updates.checkAnswers.p1          = If you opt out, you would no longer need software compatible with Making Tax Digital for Income Tax.
-optout.updates.checkAnswers.inset       = You have <b>2 quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.updates.checkAnswers.inset       = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 
 # opt out confirmed
 optout.confirmedOptOut.heading                                   = Opt out completed
@@ -2642,19 +2642,11 @@ optout.confirmedOptOut.yourReportingFrequency.text               = your reportin
 
 optout.confirmedOptOut.submitTax                                 = Submit your tax return
 
-optout.confirmedOptOut.submitTax.confirmed.p1                    = Now you have opted out, you will need to go back to the way you have previously
-optout.confirmedOptOut.submitTax.confirmed.p1.link               = filed your Self Assessment tax return
+optout.confirmedOptOut.submitTax.confirmed.p1                    = Now you have opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:
 
-optout.confirmedOptOut.submitTax.confirmed.p2                    = For any tax year you are still using Making Tax Digital for Income Tax, you will need
-optout.confirmedOptOut.submitTax.confirmed.p2.link.a             = compatible software
-optout.confirmedOptOut.submitTax.confirmed.p2.link.b             = .
-optout.confirmedOptOut.submitTax.confirmed.p2.link.c             =
-
-optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = As you are opted out, you can find out here how to
-optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = file your Self Assessment tax return
-
-optout.confirmedOptOut.scenario5.submitTax.confirmed.p1          = Now you have opted out, you will need to go back to the way you have previously
-optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = filed your Self Assessment tax return
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = As you are opted out, you no longer need to use software compatible with Making Tax Digital for Income Tax. You will still need to file your tax return either by:
+optout.confirmedOptOut.submitTax.confirmed.bullet1               = keeping your compatible software and submitting your return that way
+optout.confirmedOptOut.submitTax.confirmed.bullet2               = using HMRC online service or other commercial software Making Tax Digital for Income Tax
 
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
@@ -3123,9 +3115,17 @@ reporting.frequency.different.obligations.p1                                = Wh
 reporting.frequency.different.obligations.li1                               = 4 updates a year for each source of self employment and property income
 reporting.frequency.different.obligations.li2                               = a tax return
 reporting.frequency.different.obligations.p2                                = For tax years you are opted out of, you only need to file a tax return.
+reporting.frequency.different.obligations.p2hasExempt                       = For tax years you are opted out of or exempt, you only need to file a tax return.
 reporting.frequency.different.obligations.p3                                = You can see what is due on the
 reporting.frequency.different.obligations.link.text                         = updates and deadlines
 reporting.frequency.different.obligations.link.text.additional.english      = page.
+
+#your obligations (exempt)
+reporting.frequency.your.obligations.heading                           = What your reporting obligations are
+reporting.frequency.your.obligations.p1                                = For tax years you are exempt, you only need to file a tax return.
+reporting.frequency.your.obligations.p2                                = Find out what is due and when on the
+reporting.frequency.your.obligations.link.text                         = updates and deadlines
+reporting.frequency.your.obligations.link.text.additional.english      = page.
 
 reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is mandatory
 reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is required if your income from self-employment or property, or both, exceeds the income threshold.
@@ -3137,6 +3137,15 @@ reporting.frequency.mandatoryReporting.heading.R17      = When Making Tax Digita
 reporting.frequency.mandatoryReporting.inset.R17        = You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold.
 reporting.frequency.mandatoryReporting.p1               = If this happens in the {0} to {1} tax year, you would be required to use Making Tax Digital for Income Tax for the {2} to {3} tax year.
 reporting.frequency.mandatoryReporting.p2               = Find out more about the threshold in the
+
+reporting.frequency.mandatoryReporting.onlyExempt.p1    = For tax years you are exempt, you cannot be required to use Making Tax Digital for Income Tax.
+reporting.frequency.mandatoryReporting.onlyExempt.p2    = Find out more about
+reporting.frequency.mandatoryReporting.onlyExempt.link.text  = if and when you need to use Making Tax Digital for Income Tax
+
+reporting.frequency.mandatoryReporting.hasExempt.p1    = For tax years you are exempt, you cannot be required to use Making Tax Digital for Income Tax. For any tax years you are not exempt, you could be required to use it.
+reporting.frequency.mandatoryReporting.hasExempt.p2    = You would then have to use Making Tax Digital for Income Tax until this type of income is below the threshold for 3 tax years in a row. After that, you could voluntarily continue to report this way or choose to opt out.
+reporting.frequency.mandatoryReporting.hasExempt.p3    = Find out more about
+reporting.frequency.mandatoryReporting.hasExempt.link.text  = if and when you need to use Making Tax Digital for Income Tax
 
 reporting.frequency.compatibleSoftware.heading   = When compatible software is required
 reporting.frequency.compatibleSoftware.p1        = If you are reporting quarterly, you will need to use
@@ -3150,6 +3159,7 @@ reporting.frequency.compatibleSoftware.p1.R17                           = Whethe
 reporting.frequency.compatibleSoftware.link.text.R17                    = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2.R17                           = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3.R17                           = If you are opted out, you can find out here how to
+reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = If you are opted out or exempt, you can find out here how to
 reporting.frequency.compatibleSoftware.link2.text                       = file your Self Assessment tax return
 
 
@@ -3162,6 +3172,7 @@ reporting.frequency.table.taxYear                                   = {0} to {1}
 reporting.frequency.table.mandated                                  = Quarterly (mandatory)
 reporting.frequency.table.voluntary                                 = Quarterly
 reporting.frequency.table.annual                                    = Annual
+reporting.frequency.table.exempt                                    = Exempt
 
 #new table messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.table.heading.usingMTD                          = Using Making Tax Digital for Income Tax
@@ -3171,6 +3182,8 @@ reporting.frequency.table.MTD.isNotUsingMTD                         = No
 reporting.frequency.table.mandated.r17                              = Required
 reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
 reporting.frequency.table.annual.r17                                = Opted out
+reporting.frequency.table.exempt.r17                                = Exempt
+
 
 #changing reporting obligations section - R17
 reporting.obligations.changing.h2                                   = Changing your reporting obligations
@@ -3270,6 +3283,8 @@ yourSelfAssessmentChargeSummary.hmrcAdjustment.text.heading             = HMRC a
 yourSelfAssessmentChargeSummary.chargeHistory.caption.hmrcAdjustment.text.heading = This charge goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.definition.hmrcadjustment               = HMRC has added this charge after an adjustment to your tax return.
 
+yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading = This charge goes towards your {0} to {1} tax bill.
+
 yourSelfAssessmentChargeSummary.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
 yourSelfAssessmentChargeSummary.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1               = HMRC has created this charge because your
@@ -3320,6 +3335,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.poa2CodedOut.text.heading = Second
 yourSelfAssessmentChargeSummary.chargeHistory.caption.poa1CodedOut.text.heading = This first payment on account goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.caption.poa2CodedOut.text.heading = This second payment on account goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.amend.codingOut.text = Amount adjusted to be collected through your PAYE tax code in {0} to {1} tax year
+yourSelfAssessmentChargeSummary.cancelledPayeSelfAssessment.text.heading = 	Cancelled PAYE Self Assessment (through your PAYE tax code)
 
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
@@ -3342,6 +3358,37 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credit from your amended tax return
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
+
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					= Late payment interest on first payment on account
+yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading					= Late payment interest on second payment on account
+yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading					= Late payment interest on balancing payment
+yourSelfAssessmentChargeSummary.lpi.interestPeriod								    = Interest period:
+yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates						    = {0} to {1}
+
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading             = Interest for first payment on account: extra amount
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading             = Interest for second payment on account: extra amount
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3                           = Interest is charged from the date your first payment on account was due and calculated at the
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted second payment on account was too low.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                           = Interest is charged from the date your second payment on account was due and calculated at the
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
+yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Late payment interest on balancing payment: extra amount due to amended return
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = You owe HMRC interest because you paid your balancing payment late.
+
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                       = Late payment interest on late submission penalty
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                     = Late payment interest on first late payment penalty
+yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.p1                  = You owe HMRC interest because you paid your late submission penalty late
+yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.p1                = You owe HMRC interest because you paid your first late payment penalty late
+yourSelfAssessmentChargeSummary.lpi.penalties.textOne                        = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
+yourSelfAssessmentChargeSummary.lpi.penalties.linkText                       = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
+yourSelfAssessmentChargeSummary.lpi.penalties.p3                             = See guidance on the
+yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
 yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through PAYE tax code

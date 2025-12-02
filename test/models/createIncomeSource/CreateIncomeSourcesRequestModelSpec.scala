@@ -31,7 +31,7 @@ class CreateIncomeSourcesRequestModelSpec extends TestSupport with IncomeSources
       Json.toJson(createBusinessDetailsRequestObject) shouldBe createBusinessDetailsRequestObjectJson
     }
     "check require field" in {
-      Try(CreateBusinessIncomeSourceRequest(businessDetails = List())).failed.get.getMessage shouldBe "requirement failed: Only single business can be created at a time"
+      Try(CreateBusinessIncomeSourceRequest(mtdbsa = "XIAT00000000000", businessDetails = List())).failed.get.getMessage shouldBe "requirement failed: Only single business can be created at a time"
     }
   }
 
