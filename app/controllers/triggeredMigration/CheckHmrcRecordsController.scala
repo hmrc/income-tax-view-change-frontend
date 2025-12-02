@@ -19,6 +19,11 @@ package controllers.triggeredMigration
 import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
+<<<<<<< HEAD
+=======
+import enums.TriggeredMigration.TriggeredMigrationCeased
+import models.incomeSourceDetails.IncomeSourceDetailsModel
+>>>>>>> fe3c011f4 (MISUV-10513 - addressed various comments and moved the ceased logic to the model)
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
