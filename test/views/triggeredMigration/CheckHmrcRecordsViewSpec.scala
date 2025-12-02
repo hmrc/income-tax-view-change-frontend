@@ -82,8 +82,8 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val confirmRecordsButton = "Confirm and continue"
 
     val ceasedBannerHeading = "Ceased"
-    val ceasedBannerText1 = "Businesses you have ceased"
-    val ceasedBannerLinkText: String = "You have ceased a business. View your ceased businesses."
+    val ceasedBannerText = "You have ceased a business."
+    val ceasedBannerLinkText = "View your ceased businesses."
 
     val ceasedSectionHeading = "Your ceased businesses"
     val ceasedSectionText = "One or more businesses have ceased."
@@ -202,7 +202,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     "checking hmrc records with ceased businesses and ceased banner shown" should {
       "display the ceased banner after ceasing a business" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, CeasedBannerOneCeasedBusiness) {
         pageDocument.getElementById("ceased-banner-heading").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerHeading
-        pageDocument.getElementById("ceased-banner-text-1").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerText1
+        pageDocument.getElementById("ceased-banner-text-1").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerText
         pageDocument.getElementById("ceased-banner-text-2").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerLinkText
       }
 
