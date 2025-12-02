@@ -34,7 +34,7 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
       .govuk-table__cell {
         display: block;
         position: relative;
-        padding-left: 7.5rem; /* reserve space for ::before label */
+        padding-left: 9rem; /* reserve space for ::before label */
         padding-right: 0;
         text-align: left;
         &:last-child {
@@ -45,7 +45,7 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
           content: attr(data-th);
           position: absolute;
           left: 0;
-          width: 6.5rem;
+          width: 8.75rem;
           display: block;
           font-weight: $govuk-font-weight-bold;
         }
