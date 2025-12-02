@@ -151,19 +151,19 @@
                         Seq(
                             Seq(
                                 TableRow(
-                                    attributes = Map("id" -> s"due-charge-due-date-$index"),
-                                    content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNonBreaking)
+                                    attributes = Map("id" -> s"due-charge-due-date-$index", "data-th" -> getMessage("tableHead.due-date")),
+                                    content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNonBreaking),
                                 ),
                                 TableRow(
-                                    attributes = Map("id" -> s"due-$index"),
+                                    attributes = Map("id" -> s"due-$index", "data-th" -> getMessage("tableHead.charge-type")),
                                     content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin)))
                                 ),
                                 TableRow(
-                                    attributes = Map("id" -> s"due-charge-tax-year-$index"),
+                                    attributes = Map("id" -> s"due-charge-tax-year-$index", "data-th" -> getMessage("tableHead.tax-year")),
                                     content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
                                 ),
                                 TableRow(
-                                    attributes = Map("id" -> s"due-charge-amount-due-$index"),
+                                    attributes = Map("id" -> s"due-charge-amount-due-$index", "data-th" -> getMessage("tableHead.amount-due")),
                                     content = HtmlContent(charge.remainingToPayOnCharge.toCurrency),
                                     format = Some("numeric")
                                 )
@@ -191,7 +191,8 @@
                 ).flatten,
                 caption = Some(getMessage("payments-due")),
                 attributes = Map("id" -> "payments-due-table"),
-                captionClasses = "govuk-table__caption govuk-visually-hidden"
+                captionClasses = "govuk-table__caption govuk-visually-hidden",
+                classes = "govuk-table--responsive"
             ))
         }
 

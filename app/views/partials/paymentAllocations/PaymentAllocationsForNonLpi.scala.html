@@ -36,17 +36,17 @@
     <tbody class="govuk-table__body">
 
         <tr>
-            <td class="govuk-table__cell">@paymentAllocation.clearingDateActual.toLongDateShort.toNonBreaking</td>
-            <td class="govuk-table__cell" id="payment-allocation-@index">
+            <td class="govuk-table__cell" data-th=@messages("paymentAllocation.tableHead.allocated-date")>@paymentAllocation.clearingDateActual.toLongDateShort.toNonBreaking</td>
+            <td class="govuk-table__cell" id="payment-allocation-@index" data-th=@messages("paymentAllocation.tableHead.description")>
                 <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
                     @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
                 </a>
             </td>
-            <td class="govuk-table__cell">
+            <td class="govuk-table__cell" data-th=@messages("paymentAllocation.tableHead.tax-year")>
                 <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYearHidden", (paymentAllocation.allocationDetailActual.getTaxYear - 1).toString, paymentAllocation.allocationDetailActual.getTaxYear.toString)</span>
                 <span class="govuk-body no-wrap" aria-hidden="true">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetailActual.getTaxYear - 1).toString, paymentAllocation.allocationDetailActual.getTaxYear.toString)</span>
             </td>
-            <td class="govuk-table__cell govuk-table__cell--numeric">@paymentAllocation.allocationDetailActual.amountActual.toCurrencyString</td>
+            <td class="govuk-table__cell govuk-table__cell--numeric" data-th=@messages("paymentAllocation.tableHead.amount")>@paymentAllocation.allocationDetailActual.amountActual.toCurrencyString</td>
         </tr>
     </tbody>
 
