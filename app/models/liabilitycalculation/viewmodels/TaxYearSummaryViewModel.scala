@@ -16,10 +16,13 @@
 
 package models.liabilitycalculation.viewmodels
 
+import auth.MtdItUser
 import models.financialDetails.SecondLatePaymentPenalty
 import models.incomeSourceDetails.TaxYear
 import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
+
+import java.time.LocalDate
 
 case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
                                    previousCalculationSummary: Option[CalculationSummary],
@@ -34,6 +37,20 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
   def showSubmissions: Boolean = {
     obligations.obligations.exists(_.obligations.nonEmpty)
   }
+
+  def groupedObligations(implicit user: MtdItUser[_]) = obligations.allDeadlinesWithSource(previous = true)
+    .reverse.groupBy[LocalDate] { nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due }
+    .toList
+    .collect {
+      case (due, dueObligations) => (due, obligations.groupByQuarterPeriod(dueObligations.distinct))
+    }
+    .sortBy(_._1).reverse
+
+  val forecastIncome = calculationSummary.flatMap(model => model.forecastIncome).getOrElse(0)
+  val forecastTotalTaxableIncome = calculationSummary.flatMap(model => model.forecastTotalTaxableIncome).getOrElse(0)
+  val forecastIncomeAndNics = calculationSummary.flatMap(model => model.forecastIncomeTaxAndNics).get
+
+  val forecastDeductions = calculationSummary.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0))
 
   private def validateCalculationSummary(calculationSummary: Option[CalculationSummary]): Unit = {
     calculationSummary.filter(_ => showForecastData).foreach(calculationSummaryValue => {
