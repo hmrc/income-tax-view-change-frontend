@@ -26,7 +26,7 @@
     p: p,
     continueButton: ContinueButton)
 
-@(isAgent: Boolean, subheadingContent: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean, subheadingContent: String, noSession: Boolean = false)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 @getManageUrl = @{
     if(isAgent) {
@@ -49,17 +49,20 @@
 
     @h1(msg = messages("cannotGoBack.heading"), id = Some("title"))
 
-    @h2(msg = subheadingContent, classes = "govuk-heading-m", optId = Some("subheading"))
-
+   @if(!noSession) {
+   @h2(msg = subheadingContent, classes = "govuk-heading-m", optId = Some("subheading"))
+   }
     @p(){
         @messages("cannotGoBack.youCan")
     }
 
     <ul class="govuk-list govuk-list--bullet">
+        @if(!noSession) {
         <li>@p(classes = "govuk-!-margin-bottom-4") {
             @link(link = getManageUrl, messageKey = "cannotGoBack.manageLink", id = Some("manage-link"))
             }
         </li>
+}
 
         <li>@p(classes = "govuk-!-margin-bottom-4") {
             @link(link = getHomeUrl, messageKey = "cannotGoBack.homeLink", id = Some("home-link"))
