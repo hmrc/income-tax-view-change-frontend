@@ -22,7 +22,7 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncomeCeased
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncomeCeased, singleBusinessIncome}
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -131,17 +131,24 @@ class TriggeredMigrationServiceSpec extends TestSupport {
 
     "ceasedBusinessSetup" when {
       "given a state of CEASED and 1 ceased business" should {
-        "return (true, number of ceased businesses)" in {
+        "return (true, 1 ceased business)" in {
           val (isCeased, noOfCeased) = service.ceasedBusinessSetup(Some(TriggeredMigrationCeased.toString), businessesAndPropertyIncomeCeased)
           isCeased shouldBe true
           noOfCeased shouldBe 1
         }
       }
       "given no state and 1 ceased businesses" should {
-        "return (false, number of ceased businesses)" in {
+        "return (false, 1 ceased business)" in {
           val (isCeased, noOfCeased) = service.ceasedBusinessSetup(None, businessesAndPropertyIncomeCeased)
           isCeased shouldBe false
           noOfCeased shouldBe 1
+        }
+      }
+      "given no state and 0 ceased businesses" should {
+        "return (false, 0 ceased businesses)" in {
+          val (isCeased, noOfCeased) = service.ceasedBusinessSetup(None, singleBusinessIncome)
+          isCeased shouldBe false
+          noOfCeased shouldBe 0
         }
       }
     }

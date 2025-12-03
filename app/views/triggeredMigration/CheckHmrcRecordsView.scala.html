@@ -242,10 +242,10 @@
     @propertyBusinessSection
     @hr()
 
-    @if(viewModel.numberOfCeasedBusinesses != 0) {
+    @if(viewModel.numberOfCeasedBusinesses > 0) {
         @ceasedBusinessSection
+        @hr()
     }
-    @hr()
 
     @h2(messages("triggered-migration.check-hmrc-records.confirmRecords.heading"), classes = "govuk-heading-l", optId = Some("confirm-records-heading"))
     @p(id = Some("confirm-records-desc")){@messages("triggered-migration.check-hmrc-records.confirmRecords.text")}
