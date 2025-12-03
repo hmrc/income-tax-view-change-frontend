@@ -163,6 +163,9 @@ GET          /agents/manage-your-businesses/manage/manage-foreign-property-canno
 GET          /manage-your-businesses/manage/manage-business-cannot-go-back                                 controllers.manageBusinesses.manage.CannotGoBackErrorController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/manage-your-businesses/manage/manage-business-cannot-go-back                          controllers.manageBusinesses.manage.CannotGoBackErrorController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment)
 
+GET          /manage-your-businesses/cannot-go-back                                                     controllers.manageBusinesses.manage.CannotGoBackErrorController.noJourneySessionShow(isAgent: Boolean = false)
+GET          /agents/manage-your-businesses/cannot-go-back                                              controllers.manageBusinesses.manage.CannotGoBackErrorController.noJourneySessionShow(isAgent: Boolean = true)
+
 # Income Sources - Cease
 GET          /manage-your-businesses/cease/cease-an-income-source                 controllers.manageBusinesses.cease.CeaseIncomeSourceController.show()
 GET          /agents/manage-your-businesses/cease/cease-an-income-source          controllers.manageBusinesses.cease.CeaseIncomeSourceController.showAgent()

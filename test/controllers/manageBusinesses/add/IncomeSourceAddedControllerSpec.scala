@@ -28,9 +28,9 @@ import models.incomeSourceDetails._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers.{await, defaultAwaitTimeout, status}
+import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
 import services._
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants.{year2018, year2019}
@@ -431,6 +431,66 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
       s"the user is authenticated as a MTDIndividual - $incomeSourceType" should {
 
+        "redirect to the cannot-go-back page" when {
+         "there is no journey session" in {
+           val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+           val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+           val testLatencyDetails =
+             LatencyDetails(
+               latencyEndDate = LocalDate.of(year2019, 1, 1),
+               taxYear1 = year2018.toString,
+               latencyIndicator1 = "A",
+               taxYear2 = year2019.toString,
+               latencyIndicator2 = "Q"
+             )
+
+           disableAllSwitches()
+           setupMockSuccess(MTDIndividual)
+
+           when(
+             mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+             .thenReturn(Future.successful(businessIncome))
+
+           when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+             .thenReturn(
+               Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+             )
+
+           when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+             .thenReturn(Some(testLatencyDetails))
+
+           when(mockDateService.getCurrentTaxYearStart)
+             .thenReturn(taxYearStartDate)
+
+           when(mockDateService.getCurrentDate)
+             .thenReturn(LocalDate.of(2024, 2, 6))
+
+           when(mockDateService.getAccountingPeriodEndDate(any()))
+             .thenReturn(LocalDate.of(2024, 4, 5))
+
+           when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+             .thenReturn(Future(viewModel))
+
+           when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+             thenReturn(Future(testObligationsModel))
+
+           when(mockSessionService.setMongoData(any()))
+             .thenReturn(Future(true))
+
+           when(mockSessionService.getMongo(any())(any(), any()))
+             .thenReturn(
+               Future(
+                 Right(None)
+               )
+             )
+
+           val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
+           val result = testIncomeSourceAddedController.show(incomeSourceType)(fakeRequest)
+           status(result) shouldBe SEE_OTHER
+           redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/cannot-go-back")
+         }
+        }
         "render the income source added page - OK (200)" when {
 
           "newly added IncomeSource and ObligationsViewModel without choosing reporting methods" in {
@@ -909,6 +969,67 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
       s"the user is authenticated as a MTDPrimaryAgent - $incomeSourceType" should {
 
+        "redirect to the cannot go back page" when {
+          "there is no journey session" in {
+            val taxYearStartDate = LocalDate.of(2023, 4, 6)
+
+            val testLatencyDetails =
+              LatencyDetails(
+                latencyEndDate = LocalDate.of(year2019, 1, 1),
+                taxYear1 = year2018.toString,
+                latencyIndicator1 = "A",
+                taxYear2 = year2019.toString,
+                latencyIndicator2 = "Q"
+              )
+
+            disableAllSwitches()
+            setupMockSuccess(MTDPrimaryAgent)
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome))
+
+            when(mockIncomeSourceDetailsService.getIncomeSource(incomeSourceType = any(), incomeSourceId = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(
+                Some(IncomeSourceFromUser(startDate = LocalDate.parse("2022-01-01"), businessName = Some("Business Name")))
+              )
+
+            when(mockIncomeSourceDetailsService.getLatencyDetailsFromUser(incomeSourceType = any(), incomeSourceDetailsModel = any()))
+              .thenReturn(Some(testLatencyDetails))
+
+            when(mockDateService.getCurrentTaxYearStart)
+              .thenReturn(taxYearStartDate)
+
+            when(mockDateService.getCurrentDate)
+              .thenReturn(LocalDate.of(2024, 2, 6))
+
+            when(mockDateService.getAccountingPeriodEndDate(any()))
+              .thenReturn(LocalDate.of(2024, 4, 5))
+
+            when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
+              .thenReturn(Future(viewModel))
+
+            when(mockNextUpdatesService.getOpenObligations()(any(), any())).
+              thenReturn(Future(testObligationsModel))
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(
+                  Right(None)
+                )
+              )
+
+            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDPrimaryAgent)
+            val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/cannot-go-back")
+
+          }
+
+        }
         "render the income source added page" when {
 
           "newly added IncomeSource and ObligationsViewModel without choosing reporting methods" in {
