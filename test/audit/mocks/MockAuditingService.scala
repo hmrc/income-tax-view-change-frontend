@@ -51,7 +51,7 @@ trait MockAuditingService extends TestSupport with BeforeAndAfterEach {
   def verifyExtendedAudit(model: ExtendedAuditModel, path: Option[String] = None): Unit =
     verify(mockAuditingService).extendedAudit(
       ArgumentMatchers.eq(model),
-      AdditionalMatchers.or(ArgumentMatchers.eq(path), ArgumentMatchers.isNull)
+      ArgumentMatchers.isNull[Option[String]]()
     )(
       ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[Request[_]],
