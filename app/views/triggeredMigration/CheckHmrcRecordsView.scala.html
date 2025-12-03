@@ -37,6 +37,14 @@
 
 @(viewModel: CheckHmrcRecordsViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
 
+@addSoleTraderBusinessURL() = @{
+    if(user.isAgent()) {
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = NormalMode, isTriggeredMigration = true).url
+    } else {
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = NormalMode, isTriggeredMigration = true).url
+    }
+}
+
 @ceaseSoleTraderBusinessURL(incomeSourceIdHash: String) = @{
     if(user.isAgent()) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
     else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
@@ -80,7 +88,7 @@
             </div>
         </div>
     }
-    @link(link = "", messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link", id = Some("sole-trader-add-link"))
+    @link(link = addSoleTraderBusinessURL, messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link", id = Some("sole-trader-add-link"))
 }
 
 @addUKPropertyStartDateURL = @{

@@ -157,6 +157,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
 
       "have the correct foreign property link" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = false) {
         pageDocument.getElementById("foreign-property-add-link").text() shouldBe CheckHmrcRecordsMessages.addForeignPropertyBusinessText
+        pageDocument.getElementById("foreign-property-add-link").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-foreign-property/business-start-date?isTriggeredMigration=true"
       }
     }
     "checking hmrc records with no active sole trader business and an active foreign property business only" should {
@@ -171,6 +172,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
 
       "have the add uk property link" in new Setup(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = true) {
         pageDocument.getElementById("uk-property-add-link").text() shouldBe CheckHmrcRecordsMessages.addAPropertyBusinessText
+        pageDocument.getElementById("uk-property-add-link").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-uk-property/business-start-date?isTriggeredMigration=true"
       }
     }
   }
@@ -214,6 +216,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
 
     "have the correct add a sole trader business text" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
       pageDocument.getElementById("sole-trader-add-link").text() shouldBe CheckHmrcRecordsMessages.addASoleTraderBusinessText
+      pageDocument.getElementById("sole-trader-add-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-name?isTriggeredMigration=true"
     }
 
     "have the correct confirm records heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {

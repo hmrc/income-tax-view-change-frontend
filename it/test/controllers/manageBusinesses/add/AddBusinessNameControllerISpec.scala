@@ -54,15 +54,17 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  def getPath(mtdRole: MTDUserRole, mode: Mode): String = {
+  def getPath(mtdRole: MTDUserRole, mode: Mode, isTriggeredMigration: Boolean): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
     val pathEnd = if(mode == CheckMode) "/change-business-name" else "/business-name"
-    pathStart + "/manage-your-businesses/add-sole-trader" + pathEnd
+    val triggeredMigrationParam = if(isTriggeredMigration) "?triggeredMigration=true" else ""
+    pathStart + "/manage-your-businesses/add-sole-trader" + pathEnd + triggeredMigrationParam
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
-    val path = getPath(mtdUserRole, mode = NormalMode)
-    val changePath = getPath(mtdUserRole, mode = CheckMode)
+    val path = getPath(mtdUserRole, mode = NormalMode, isTriggeredMigration = false)
+    val changePath = getPath(mtdUserRole, mode = CheckMode, isTriggeredMigration = false)
+    val triggeredMigrationPath = getPath(mtdUserRole, mode = NormalMode, isTriggeredMigration = true)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
       s"a user is a $mtdUserRole" that {
@@ -103,6 +105,32 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
               lazy val document: Document = Jsoup.parse(result.body)
               document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(mode = CheckMode, mtdUserRole != MTDIndividual)
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "add-business-name.heading1"),
+                elementTextByID("continue-button")(continueButtonText)
+              )
+            }
+          }
+        }
+        testAuthFailures(changePath, mtdUserRole)
+      }
+    }
+
+    s"GET $triggeredMigrationPath" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          "render the Add Business Name page" when {
+            "User is authorised" in {
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+              val result = buildGETMTDClient(triggeredMigrationPath, additionalCookies).futureValue
+
+              lazy val document: Document = Jsoup.parse(result.body)
+              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(mode = NormalMode, mtdUserRole != MTDIndividual)
 
               result should have(
                 httpStatus(OK),
