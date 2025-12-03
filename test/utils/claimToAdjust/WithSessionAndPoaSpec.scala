@@ -38,7 +38,7 @@ import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTyp
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.WhatYouNeedToKnow
+import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -62,14 +62,14 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
     override val claimToAdjustService: ClaimToAdjustService = mockClaimToAdjustService
   })
 
-  val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
+  val whatYouNeedToKnowView: WhatYouNeedToKnowView = app.injector.instanceOf[WhatYouNeedToKnowView]
 
   def successfulFutureOk: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
-    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(false, false))))
+    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(isAgent = false, showIncreaseAfterPaymentContent = false))))
   }
 
   def successfulFutureOkAgent: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
-    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true, true))))
+    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(isAgent = true, showIncreaseAfterPaymentContent = true))))
   }
 
   override implicit val individualUser: MtdItUser[_] =

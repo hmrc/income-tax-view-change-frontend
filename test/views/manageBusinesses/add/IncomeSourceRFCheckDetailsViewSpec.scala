@@ -23,11 +23,11 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.IncomeSourceRFCheckDetails
+import views.html.manageBusinesses.add.IncomeSourceRFCheckDetailsView
 
 class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
 
-  val view: IncomeSourceRFCheckDetails = app.injector.instanceOf[IncomeSourceRFCheckDetails]
+  val view: IncomeSourceRFCheckDetailsView = app.injector.instanceOf[IncomeSourceRFCheckDetailsView]
 
   class Setup(incomeSourceType: IncomeSourceType, changeReportingFrequency: Boolean = true, isReportingQuarterlyCurrentYear: Boolean = false, isReportingQuarterlyForNextYear: Boolean = false, isAgent: Boolean = false, displayR17Content: Boolean) {
 
@@ -53,7 +53,7 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
     }
 
     "have the correct subheading" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear, displayR17Content = displayR17Content) {
-      val subHeading = incomeSourceType match {
+      val subHeading: String = incomeSourceType match {
         case SelfEmployment => "Sole trader"
         case UkProperty => "UK property"
         case ForeignProperty => "Foreign property"

@@ -20,16 +20,17 @@ import forms.manageBusinesses.add.AddProprertyForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.FormError
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.AddProperty
+import views.html.manageBusinesses.add.AddPropertyView
 
 class AddPropertyViewSpec extends TestSupport{
 
-  val pageView = app.injector.instanceOf[AddProperty]
+  val pageView: AddPropertyView = app.injector.instanceOf[AddPropertyView]
 
   class Setup(isAgent: Boolean, hasError: Boolean) {
-    lazy val postCall = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
+    lazy val postCall: Call = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
     lazy val backUrl: String = if(isAgent) {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
     } else {

@@ -22,7 +22,7 @@ import models.core.NormalMode
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.manageBusinesses.add.AddBusinessTrade
+import views.html.manageBusinesses.add.AddBusinessTradeView
 
 class AddBusinessTradeViewSpec extends ViewSpec {
 
@@ -48,7 +48,7 @@ class AddBusinessTradeViewSpec extends ViewSpec {
     controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, mode = NormalMode).url
   }
 
-  val addBusinessTradeView: AddBusinessTrade = app.injector.instanceOf[AddBusinessTrade]
+  val addBusinessTradeView: AddBusinessTradeView = app.injector.instanceOf[AddBusinessTradeView]
 
   val pageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form, testCall, isAgent = false, backUrl)
   val changePageWithoutError: Html = addBusinessTradeView(BusinessTradeForm.form.fill(BusinessTradeForm("Oops wrong trade")),

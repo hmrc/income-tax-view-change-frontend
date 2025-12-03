@@ -24,11 +24,11 @@ import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoa
+import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
 
 class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 
-  val confirmationForAdjustingPoaView: ConfirmationForAdjustingPoa = app.injector.instanceOf[ConfirmationForAdjustingPoa]
+  val confirmationForAdjustingPoaView: ConfirmationForAdjustingPoaView = app.injector.instanceOf[ConfirmationForAdjustingPoaView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 
@@ -36,11 +36,11 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
   val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
   class Setup(isAgent: Boolean, isAmountZero: Boolean) {
-    val viewModel = ConfirmationForAdjustingPoaViewModel(TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAmountZero)
+    val viewModel: ConfirmationForAdjustingPoaViewModel = ConfirmationForAdjustingPoaViewModel(TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAmountZero)
     val view: Html = confirmationForAdjustingPoaView(isAgent = isAgent, viewModel)
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
-    val elements = groupButton.first().children()
+    val elements: Elements = groupButton.first().children()
   }
 
   "The ConfirmationForAdjustingPoa page" when {

@@ -24,12 +24,12 @@ import org.scalatest.Assertion
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.manageBusinesses.YouCannotGoBackError
+import views.html.manageBusinesses.YouCannotGoBackErrorView
 
 class YouCannotGoBackErrorViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, journeyType: IncomeSourceJourneyType) {
-    val errorView: YouCannotGoBackError = app.injector.instanceOf[YouCannotGoBackError]
+    val errorView: YouCannotGoBackErrorView = app.injector.instanceOf[YouCannotGoBackErrorView]
     val manageSubheadingContent: String = s"${messages(s"cannotGoBack.manage.${journeyType.businessType.key}", "2022", "2023")} " +
       s"${messages("cannotGoBack.reportingMethod")} ${messages("cannotGoBack.annual")}"
 

@@ -18,11 +18,11 @@ package views.errorPages
 
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.errorPages.CustomNotFoundError
+import views.html.errorPages.CustomNotFoundErrorView
 
 class CustomNotFoundErrorViewSpec extends ViewSpec {
 
-  def customNotFoundErrorView: Html = app.injector.instanceOf[CustomNotFoundError].apply()
+  def customNotFoundErrorView: Html = app.injector.instanceOf[CustomNotFoundErrorView].apply()
 
   "The Agent Error page" should {
 

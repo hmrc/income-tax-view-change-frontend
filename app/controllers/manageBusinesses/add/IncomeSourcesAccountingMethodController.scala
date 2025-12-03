@@ -32,16 +32,16 @@ import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.errorPages.CustomNotFoundError
-import views.html.manageBusinesses.add.IncomeSourcesAccountingMethod
+import views.html.errorPages.CustomNotFoundErrorView
+import views.html.manageBusinesses.add.IncomeSourcesAccountingMethodView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthActions,
-                                                        val view: IncomeSourcesAccountingMethod,
-                                                        val customNotFoundErrorView: CustomNotFoundError,
+                                                        val view: IncomeSourcesAccountingMethodView,
+                                                        val customNotFoundErrorView: CustomNotFoundErrorView,
                                                         val sessionService: SessionService,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
@@ -52,10 +52,10 @@ class IncomeSourcesAccountingMethodController @Inject()(val authActions: AuthAct
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean,
-                                               incomeSourceType: IncomeSourceType,
-                                               cashOrAccrualsFlag: Option[String])
-                                              (implicit user: MtdItUser[_],
+  private def handleUserActiveBusinessesCashOrAccruals(isAgent: Boolean,
+                                                       incomeSourceType: IncomeSourceType,
+                                                       cashOrAccrualsFlag: Option[String])
+                                                      (implicit user: MtdItUser[_],
                                                backUrl: String, postAction: Call): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
       val cashOrAccrualsRecords = user.incomeSources.getBusinessCashOrAccruals()

@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.ErrorRecovery
 import views.html.CreditAndRefunds
-import views.html.errorPages.CustomNotFoundError
+import views.html.errorPages.CustomNotFoundErrorView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,7 +49,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val agentErrorHandler: AgentItvcErrorHandler,
                                           val languageUtils: LanguageUtils,
                                           val ec: ExecutionContext,
-                                          val customNotFoundErrorView: CustomNotFoundError)
+                                          val customNotFoundErrorView: CustomNotFoundErrorView)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =

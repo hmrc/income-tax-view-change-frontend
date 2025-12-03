@@ -27,14 +27,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.add.AddProperty
+import views.html.manageBusinesses.add.AddPropertyView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
 class AddPropertyController @Inject()(authActions: AuthActions,
-                                      val addProperty: AddProperty,
+                                      val addProperty: AddPropertyView,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                      (implicit val appConfig: FrontendAppConfig,

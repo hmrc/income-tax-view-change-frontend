@@ -24,10 +24,10 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BusinessDetailsTestConstants._
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.AddIncomeSources
+import views.html.manageBusinesses.add.AddIncomeSourcesView
 
 class AddIncomeSourcesViewSpec extends TestSupport {
-  val addIncomeSources: AddIncomeSources = app.injector.instanceOf[AddIncomeSources]
+  val addIncomeSources: AddIncomeSourcesView = app.injector.instanceOf[AddIncomeSourcesView]
   val backUrl: String = controllers.routes.HomeController.show().url
   val backUrlAgent: String = controllers.routes.HomeController.showAgent().url
 
