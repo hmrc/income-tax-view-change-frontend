@@ -37,7 +37,7 @@ object BusinessDetailsTestConstants {
   val year2024: Int = 2024
   val year2025: Int = 2025
 
-  val fixedDate : LocalDate = LocalDate.of(2023, 12, 15)
+  val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
   val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
   val businessIncomeSourceId = "1234"
 
@@ -172,7 +172,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails),
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
 
@@ -187,7 +186,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = None,
     address = Some(testBizAddress),
-    cashOrAccruals = Some(true)
   )
 
   val business1Address2 = BusinessDetailsModel(
@@ -201,7 +199,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = None,
     address = Some(testBizAddress),
-    cashOrAccruals = Some(true)
   )
 
   val businessWithLatency1 = BusinessDetailsModel(
@@ -215,7 +212,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val businessWithLatency2 = BusinessDetailsModel(
@@ -230,7 +226,6 @@ object BusinessDetailsTestConstants {
     latencyDetails = Some(testLatencyDetails2),
     address = Some(address),
     quarterTypeElection = Some(quarterTypeElectionStandard),
-    cashOrAccruals = Some(true)
   )
 
   val businessWithLatency3 = BusinessDetailsModel(
@@ -244,7 +239,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails1),
     address = Some(testBizAddress),
-    cashOrAccruals = Some(true)
   )
 
   val businessWithLatency4 = BusinessDetailsModel(
@@ -258,7 +252,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     address = Some(testBizAddress),
-    cashOrAccruals = Some(true)
   )
 
   val businessWithOneYearInLatency = BusinessDetailsModel(
@@ -272,7 +265,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetailsWithOneInLatency),
     address = Some(testBizAddress),
-    cashOrAccruals = Some(true)
   )
 
   val businessWithOneYearInLatency2023 = BusinessDetailsModel(
@@ -286,7 +278,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetailsWithOneInLatency2023),
     address = Some(testBizAddress),
-    cashOrAccruals = Some(true)
   )
 
   val businessWithBothYearsInLatency = BusinessDetailsModel(
@@ -300,7 +291,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetailsWithBothYearsInLatency),
     address = Some(testBizAddress),
-    cashOrAccruals = Some(true)
   )
 
   val businessWithLatencyAndUnknowns = BusinessDetailsModel(
@@ -314,7 +304,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails2),
     address = None,
-    cashOrAccruals = Some(true)
   )
 
   val businessWithLatency2019 = BusinessDetailsModel(
@@ -328,7 +317,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = Some(testLatencyDetails),
     address = Some(testBizAddress),
-    cashOrAccruals = Some(false)
   )
 
   val soleTraderBusiness = BusinessDetailsModel(
@@ -340,7 +328,6 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     contextualTaxYear = None,
     cessation = None,
-    cashOrAccruals = Some(false),
     latencyDetails = None,
     address = Some(address),
     quarterTypeElection = Some(quarterTypeElectionCalendar)
@@ -355,7 +342,6 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate2005),
     contextualTaxYear = None,
     cessation = None,
-    cashOrAccruals = Some(false),
     latencyDetails = None,
     address = Some(address),
     quarterTypeElection = Some(quarterTypeElectionCalendar)
@@ -370,7 +356,6 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate3),
     contextualTaxYear = None,
     cessation = None,
-    cashOrAccruals = Some(true),
     latencyDetails = None,
     address = Some(address)
   )
@@ -385,7 +370,6 @@ object BusinessDetailsTestConstants {
     contextualTaxYear = None,
     cessation = None,
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val soleTraderBusiness4 = BusinessDetailsModel(
@@ -398,7 +382,6 @@ object BusinessDetailsTestConstants {
     contextualTaxYear = Some(testContextualTaxYear),
     cessation = None,
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val soleTraderBusinessNoTradingName = BusinessDetailsModel(
@@ -412,7 +395,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = None,
     address = None,
-    cashOrAccruals = Some(true)
   )
 
   val soleTraderBusinessNoTradingNameNoStartDate = BusinessDetailsModel(
@@ -426,7 +408,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = None,
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val soleTraderBusinessNoTradingStartDate = BusinessDetailsModel(
@@ -440,7 +421,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = None,
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val businessDetailsViewModel = BusinessDetailsViewModel(
@@ -510,10 +490,9 @@ object BusinessDetailsTestConstants {
     cessation = None,
     tradingStartDate = Some(testStartDate2),
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
-  val businessWithNoCashOrAccrualsFlag = business2.copy(cashOrAccruals = None)
+  val businessWithNoCashOrAccrualsFlag = business2.copy()
 
   val business2018 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
@@ -525,7 +504,6 @@ object BusinessDetailsTestConstants {
     tradingStartDate = Some(testStartDate),
     cessation = None,
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val business2019 = BusinessDetailsModel(
@@ -538,7 +516,6 @@ object BusinessDetailsTestConstants {
     cessation = None,
     tradingStartDate = Some(testStartDate),
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val businessNotValidObligationType = fakeNextUpdatesModel(SingleObligationModel(
@@ -561,7 +538,6 @@ object BusinessDetailsTestConstants {
     firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
     cessation = None,
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val ceasedBusiness = BusinessDetailsModel(
@@ -574,7 +550,6 @@ object BusinessDetailsTestConstants {
     contextualTaxYear = None,
     cessation = Some(testCessation),
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val ceasedBusiness2 = BusinessDetailsModel(
@@ -587,7 +562,6 @@ object BusinessDetailsTestConstants {
     contextualTaxYear = None,
     cessation = Some(testCessation2),
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val oldUseralignedBusiness = BusinessDetailsModel(
@@ -600,7 +574,6 @@ object BusinessDetailsTestConstants {
     contextualTaxYear = None,
     cessation = None,
     address = Some(address),
-    cashOrAccruals = Some(true)
   )
 
   val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)

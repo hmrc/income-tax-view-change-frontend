@@ -29,8 +29,11 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJour
 class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsHelper {
 
   mtdAllRoles.foreach { mtdUserRole =>
+
     val isAgent = mtdUserRole != MTDIndividual
+
     List(false, true).foreach { isChange =>
+
       s"show${if (isChange) "Change"}($isAgent, $UkProperty)" when {
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
         val action = if (isChange) {
@@ -61,7 +64,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              getManageDetailsSummaryValues(document).get(2).text() shouldBe standard
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
               Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
@@ -86,11 +88,11 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              getManageDetailsSummaryValues(document).get(2).text() shouldBe calendar
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
 
             "the user does not have reporting frequency related content" in {
+
               enable(DisplayBusinessStartDate, AccountingMethodJourney)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -111,11 +113,11 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              getManageDetailsSummaryValues(document).get(2).text() shouldBe standard
               hasReportingFrequencyContent(document) shouldBe false
             }
 
             "the user has a valid id parameter and AccountingMethodJourney is disabled" in {
+
               enable(DisplayBusinessStartDate, ReportingFrequencyPage)
               disable(AccountingMethodJourney)
 
@@ -138,6 +140,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               summaryKeys should not contain messages("incomeSources.manage.uk-property-manage-details.accounting-method")
             }
             "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
+
               enable(DisplayBusinessStartDate, AccountingMethodJourney, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
               setupMockSuccess(mtdUserRole)
@@ -155,32 +158,31 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               status(result) shouldBe Status.OK
 
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe title()
-              getHeading(document) shouldBe heading
-
-              hasInsetText(document) shouldBe true
 
               val latencyParagraph = document.getElementById("up-to-two-tax-years")
-              latencyParagraph should not be null
+              val summaryKeys = getManageDetailsSummaryKeys(document)
+              val summaryValues = getManageDetailsSummaryValues(document).eachText()
+              val actions = document.select(".govuk-summary-list__actions a").eachText()
+
               latencyParagraph.text().nonEmpty shouldBe true
 
+              document.title shouldBe title()
+              getHeading(document) shouldBe heading
+              hasInsetText(document) shouldBe true
+
               document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
+              summaryKeys.eq(2).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
+              summaryKeys.eq(3).text() shouldBe "Using Making Tax Digital for Income Tax for 2023 to 2024"
 
-              val summaryKeys = getManageDetailsSummaryKeys(document)
-
-              summaryKeys.eq(3).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
-              summaryKeys.eq(4).text() shouldBe "Using Making Tax Digital for Income Tax for 2023 to 2024"
-
-              val summaryValues = getManageDetailsSummaryValues(document).eachText()
               summaryValues should contain("Yes")
               summaryValues should contain("No")
 
-              val actions = document.select(".govuk-summary-list__actions a").eachText()
               actions should contain("Opt out")
               actions should contain("Sign up")
             }
 
             "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
+
               enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -203,16 +205,15 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasInsetText(document) shouldBe true
 
               val latencyParagraph = document.getElementById("up-to-two-tax-years")
-              latencyParagraph should not be null
               latencyParagraph.text().nonEmpty shouldBe true
 
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.get(2).text() shouldBe calendar
-              manageDetailsSummaryValues.get(3).text() shouldBe quarterlyGracePeriod
-              manageDetailsSummaryValues.get(4).text() shouldBe annuallyGracePeriod
+              manageDetailsSummaryValues.get(2).text() shouldBe quarterlyGracePeriod
+              manageDetailsSummaryValues.get(3).text() shouldBe annuallyGracePeriod
             }
 
             "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
+
               enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -234,9 +235,8 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.get(2).text() shouldBe calendar
+              manageDetailsSummaryValues.eq(2).size() shouldBe 1
               manageDetailsSummaryValues.eq(3).size() shouldBe 1
-              manageDetailsSummaryValues.eq(4).size() shouldBe 1
             }
             "the user has a valid id parameter, valid latency information and tax year1 crystallised and tax year not crystallised" in {
               enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
@@ -260,12 +260,11 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeSecondYearReportingMethodLink(document) shouldBe true
               hasGracePeriodInfo(document) shouldBe false
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.get(2).text() shouldBe calendar
+              manageDetailsSummaryValues.eq(2).size() shouldBe 1
               manageDetailsSummaryValues.eq(3).size() shouldBe 1
-              manageDetailsSummaryValues.eq(4).size() shouldBe 1
             }
 
-            "the user has a valid id parameter, valid latency information and two tax years crystallised" in {//I think this scenario is not possible
+            "the user has a valid id parameter, valid latency information and two tax years crystallised" in { //I think this scenario is not possible
               enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -287,9 +286,8 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.get(2).text() shouldBe calendar
+              manageDetailsSummaryValues.eq(2).size() shouldBe 1
               manageDetailsSummaryValues.eq(3).size() shouldBe 1
-              manageDetailsSummaryValues.eq(4).size() shouldBe 1
             }
 
             "the user has a valid id parameter, but non eligable itsa status" in {
@@ -316,7 +314,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
               manageDetailsSummaryValues.get(0).text() shouldBe unknown
-              manageDetailsSummaryValues.get(1).text() shouldBe "Traditional accounting"
             }
 
             "the user has a valid id parameter, latency expired" in {
@@ -340,8 +337,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.get(2).text() shouldBe calendar
-              manageDetailsSummaryValues.size() shouldBe 3
+              manageDetailsSummaryValues.size() shouldBe 2
             }
           }
 

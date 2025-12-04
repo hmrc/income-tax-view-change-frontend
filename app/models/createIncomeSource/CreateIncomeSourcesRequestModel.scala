@@ -26,7 +26,6 @@ sealed trait CreateIncomeSourceRequest
 
 final case class CreateBusinessIncomeSourceRequest(mtdbsa: String, businessDetails: List[BusinessDetails]) extends CreateIncomeSourceRequest {
   require(businessDetails.length == 1, "Only single business can be created at a time")
-  require(businessDetails.head.cashOrAccrualsFlag.forall(_.matches("^[A-Z]+$")), "Accounting method must be capitalised")
   require(mtdbsa.matches("^[A-Z]{4}[0-9]{11}$"), "MTDBSA ID should be of 11 characters and a specific format")
 }
 
@@ -36,7 +35,6 @@ case class BusinessDetails(accountingPeriodStartDate: String,
                            address: AddressDetails,
                            typeOfBusiness: Option[String],
                            tradingStartDate: String,
-                           cashOrAccrualsFlag: Option[String],
                            cessationDate: Option[String],
                            cessationReason: Option[String]
                           )
@@ -67,8 +65,7 @@ object AddressDetails {
 // *                                                   Property                                                        *
 // *********************************************************************************************************************
 
-final case class PropertyDetails(tradingStartDate: String, cashOrAccrualsFlag: Option[String], startDate: String) {
-  require(cashOrAccrualsFlag.forall(_.matches("^[A-Z]+$")), "Accounting method must be capitalised")
+final case class PropertyDetails(tradingStartDate: String, startDate: String) {
   require(tradingStartDate.nonEmpty, "Trading start date must be provided")
   require(tradingStartDate == startDate, "Trading start date and start date must be the same")
 }

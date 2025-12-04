@@ -57,8 +57,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
       Some(b2TradingStart),
       None,
       Some(CessationModel(Some(b2CessationDate))),
-      address = Some(address),
-      cashOrAccruals = Some(false)
+      address = Some(address)
     )),
     properties = Nil
   )
