@@ -28,7 +28,7 @@ import org.mockito.Mockito.when
 import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.triggeredMigration.TriggeredMigrationService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncomeCeased, singleBusinessIncome}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
 import scala.concurrent.Future
 
