@@ -25,6 +25,7 @@ import models.obligations._
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
@@ -35,7 +36,7 @@ import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
 import viewUtils.NextUpdatesViewUtils
 import views.html.components.link
-import views.html.nextUpdates.NextUpdatesOptOut
+import views.html.nextUpdates.NextUpdatesOptOutView
 
 import java.time.LocalDate
 
@@ -43,7 +44,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  def nextUpdatesView: NextUpdatesOptOut = app.injector.instanceOf[NextUpdatesOptOut]
+  def nextUpdatesView: NextUpdatesOptOutView = app.injector.instanceOf[NextUpdatesOptOutView]
 
   val linkComponent: link = app.injector.instanceOf[link]
 
@@ -52,7 +53,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
               reportingFrequencyPageFsEnabled: Boolean = true,
               optInOptOutContentR17Enabled: Boolean = false) {
 
-    val currentYear = TaxYear(2025, 2026)
+    val currentYear: TaxYear = TaxYear(2025, 2026)
 
     val user: MtdItUser[_] =
       getIndividualUser(FakeRequest())
@@ -72,7 +73,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
           previousYearCrystallisedStatus = true)
 
 
-    val optOutProposition = OptOutProposition.createOptOutProposition(
+    val optOutProposition: OptOutProposition = OptOutProposition.createOptOutProposition(
       currentYear = currentYear,
       previousYearCrystallised = false,
       previousYearItsaStatus = Annual,
@@ -169,8 +170,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         }
 
         s"have the correct TradeName" in new Setup() {
-          val section = nextUpdatesDocument.select(".govuk-accordion__section:nth-of-type(2)")
-          val table = section.select(".govuk-table")
+          val section: Elements = nextUpdatesDocument.select(".govuk-accordion__section:nth-of-type(2)")
+          val table: Elements = section.select(".govuk-table")
 
           table.select(".govuk-table__cell:nth-of-type(1)").text() shouldBe NextUpdatesTestConstants.quarterly
           table.select(".govuk-table__cell:nth-of-type(2)").text() shouldBe NextUpdatesTestConstants.businessIncome

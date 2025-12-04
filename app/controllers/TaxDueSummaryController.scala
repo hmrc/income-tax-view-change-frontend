@@ -37,7 +37,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.TaxCalcFallBackBackLink
-import views.html.TaxCalcBreakdown
+import views.html.TaxCalcBreakdownView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +48,7 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                         val obligationsConnector: ObligationsConnector,
-                                        val taxCalcBreakdown: TaxCalcBreakdown,
+                                        val taxCalcBreakdown: TaxCalcBreakdownView,
                                         val auditingService: AuditingService)
                                        (implicit val appConfig: FrontendAppConfig,
                                         val languageUtils: LanguageUtils,

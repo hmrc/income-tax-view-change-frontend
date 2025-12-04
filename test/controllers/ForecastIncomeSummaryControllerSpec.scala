@@ -28,7 +28,7 @@ import services.CalculationService
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import views.html.ForecastIncomeSummary
+import views.html.ForecastIncomeSummaryView
 
 class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalculationService {
 
@@ -37,14 +37,14 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
       api.inject.bind[CalculationService].toInstance(mockCalculationService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[ForecastIncomeSummaryController]
+  lazy val testController: ForecastIncomeSummaryController = app.injector.instanceOf[ForecastIncomeSummaryController]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     disable(NavBarFs)
   }
 
-  val view = app.injector.instanceOf[ForecastIncomeSummary]
+  val view: ForecastIncomeSummaryView = app.injector.instanceOf[ForecastIncomeSummaryView]
 
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
@@ -106,7 +106,7 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

@@ -24,11 +24,11 @@ import play.api.mvc.Call
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
 import uk.gov.hmrc.http.HttpVerbs
-import views.html.optOut.oldJourney.SingleYearOptOutWarning
+import views.html.optOut.oldJourney.SingleYearOptOutWarningView
 
 class SingleYearOptOutWarningViewSpec extends ViewSpec {
 
-  val singleYearOptOutWarningView: SingleYearOptOutWarning = app.injector.instanceOf[SingleYearOptOutWarning]
+  val singleYearOptOutWarningView: SingleYearOptOutWarningView = app.injector.instanceOf[SingleYearOptOutWarningView]
   val taxYear: TaxYear = TaxYear.forYearEnd(2024)
 
   val form: Form[ConfirmOptOutSingleTaxYearForm] = ConfirmOptOutSingleTaxYearForm(taxYear)

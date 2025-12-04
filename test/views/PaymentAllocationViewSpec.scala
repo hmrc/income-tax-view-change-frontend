@@ -24,12 +24,13 @@ import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import testConstants.PaymentAllocationsTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.ViewSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import views.html.PaymentAllocation
+import views.html.PaymentAllocationView
 
 import scala.jdk.CollectionConverters._
 
@@ -37,7 +38,7 @@ import scala.jdk.CollectionConverters._
 class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  lazy val paymentAllocationView = app.injector.instanceOf[PaymentAllocation]
+  lazy val paymentAllocationView: PaymentAllocationView = app.injector.instanceOf[PaymentAllocationView]
 
   lazy val backUrl: String = controllers.routes.PaymentHistoryController.show().url
 
@@ -146,7 +147,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         }
 
       "has table headers" in new PaymentAllocationSetup() {
-        val allTableHeadings = document.selectHead("thead")
+        val allTableHeadings: Element = document.selectHead("thead")
         allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
         allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
         allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
@@ -154,7 +155,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has a payment within the table" in new PaymentAllocationSetup() {
-        val allTableData = document.selectHead("tbody").selectHead("tr")
+        val allTableData: Element = document.selectHead("tbody").selectHead("tr")
         allTableData.selectNth("td", 1).text() shouldBe "27 May 2019"
         allTableData.selectNth("td", 2).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")}"
         allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.taxYearHidden", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
@@ -162,7 +163,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has a Credit on account link row within payment details when refunds page FS enabled" in new PaymentAllocationSetup() {
-        val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
+        val allTableData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
         document.select("a#money-on-account-link").size() shouldBe 1
         allTableData.get(1).text() shouldBe moneyOnAccount
         allTableData.get(2).text() shouldBe notApplicable
@@ -171,7 +172,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       "has a Credit on account text row within payment details when refunds page FS disabled" in
         new PaymentAllocationSetup(creditsRefundsRepayEnabled = false) {
-          val allTableData = document.getElementById("money-on-account").getElementsByTag("td")
+          val allTableData: Elements = document.getElementById("money-on-account").getElementsByTag("td")
           document.select("a#money-on-account-link").size() shouldBe 0
           allTableData.get(1).text() shouldBe moneyOnAccount
           allTableData.get(2).text() shouldBe notApplicable
@@ -194,8 +195,8 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         }
 
       "has a payment within the table for HMRC Adjustments with link back to charge view" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelHmrcAdjustment) {
-        val allTableData = document.selectHead("tbody").selectHead("tr")
-        val chargePageLink = document.selectHead("tbody").link.attr("href")
+        val allTableData: Element = document.selectHead("tbody").selectHead("tr")
+        val chargePageLink: String = document.selectHead("tbody").link.attr("href")
         val taxYear = 2022
         val chargePageLinkTrue = s"/report-quarterly/income-and-expenses/view/tax-years/$taxYear/charge?id=chargeReference3"
 
@@ -207,12 +208,12 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has a payment within the table right aligned" in new PaymentAllocationSetup() {
-        val allTableData = document.selectHead("tbody").selectHead("tr")
+        val allTableData: Element = document.selectHead("tbody").selectHead("tr")
         allTableData.selectNth("td", 4).hasClass("govuk-table__cell--numeric")
       }
 
       "has a payment headers right aligned" in new PaymentAllocationSetup() {
-        val allTableData = document.selectHead("thead").selectHead("tr")
+        val allTableData: Element = document.selectHead("thead").selectHead("tr")
         allTableData.selectNth("th", 4).hasClass("govuk-table__header--numeric")
       }
 
@@ -259,7 +260,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has table headers" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        val allTableHeadings = document.selectHead("thead")
+        val allTableHeadings: Element = document.selectHead("thead")
         allTableHeadings.selectNth("th", 1).text() shouldBe tableHeadings(0)
         allTableHeadings.selectNth("th", 2).text() shouldBe tableHeadings(1)
         allTableHeadings.selectNth("th", 3).text() shouldBe tableHeadings(2)
@@ -267,7 +268,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has a payment within the table" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        val allTableData = document.selectHead("tbody").selectHead("tr")
+        val allTableData: Element = document.selectHead("tbody").selectHead("tr")
         allTableData.selectNth("td", 1).text() shouldBe messages("paymentAllocation.noData")
         allTableData.selectNth("td", 2).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.balancingCharge.text")}"
         allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.taxYearHidden", "2019", "2020")} ${messages("paymentAllocation.taxYear", "2019", "2020")}"
@@ -275,7 +276,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       "has a payment within the table right aligned" in new PaymentAllocationSetup(paymentAllocationViewModelLpi) {
-        val allTableData = document.selectHead("tbody").selectHead("tr")
+        val allTableData: Element = document.selectHead("tbody").selectHead("tr")
         allTableData.selectNth("td", 3).hasClass("govuk-table__cell--numeric")
       }
     }
@@ -324,7 +325,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("poa1_7", "2019-04-05", POA1, NIC4_WALES, 7654.32) -> "2019-08-29",
         allocationDetail("poa1_8", "2019-04-06", POA1, NIC4_NI, 6543.21) -> "2019-08-30")) {
 
-        val expectedLinkUrls = Seq(
+        val expectedLinkUrls: Seq[String] = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "poa1_1").url,
           controllers.routes.ChargeSummaryController.show(2018, "poa1_2").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa1_3").url,
@@ -365,7 +366,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("poa2_7", "2019-04-05", POA2, NIC4_WALES, 7654.32) -> "2019-08-29",
         allocationDetail("poa2_8", "2019-04-06", POA2, NIC4_NI, 6543.21) -> "2019-08-30")) {
 
-        val expectedLinkUrls = Seq(
+        val expectedLinkUrls: Seq[String] = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "poa2_1").url,
           controllers.routes.ChargeSummaryController.show(2018, "poa2_2").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa2_3").url,
@@ -404,7 +405,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("bcd_5", "2019-04-05", BAL_CHARGE, SL, 8765.43) -> "2019-08-28",
         allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, VOLUNTARY_NIC2_NI, 7654.32) -> "2019-08-29")) {
 
-        val expectedLinkUrls = Seq(
+        val expectedLinkUrls: Seq[String] = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "bcd_1").url,
           controllers.routes.ChargeSummaryController.show(2018, "bcd_2").url,
           controllers.routes.ChargeSummaryController.show(2019, "bcd_3").url,

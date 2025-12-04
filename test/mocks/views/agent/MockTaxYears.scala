@@ -20,12 +20,12 @@ import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import play.twirl.api.Html
-import views.html.TaxYears
+import views.html.TaxYearsView
 
 trait MockTaxYears extends BeforeAndAfterEach {
   self: Suite =>
 
-  val taxYears: TaxYears = mock(classOf[TaxYears])
+  val taxYears: TaxYearsView = mock(classOf[TaxYearsView])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

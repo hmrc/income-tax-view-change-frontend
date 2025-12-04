@@ -20,14 +20,14 @@ import org.jsoup.select.Elements
 import play.api.mvc.Call
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.agent.errorPages.UTRError
+import views.html.agent.errorPages.UTRErrorView
 
 class UTRErrorViewSpec extends ViewSpec {
 
   lazy val postAction: Call = controllers.agent.routes.UTRErrorController.submit()
   lazy val testClientUtr: String = "1234567890"
 
-  val utrError: UTRError = app.injector.instanceOf[UTRError]
+  val utrError: UTRErrorView = app.injector.instanceOf[UTRErrorView]
 
   val utrErrorView: Html = utrError(
     postAction

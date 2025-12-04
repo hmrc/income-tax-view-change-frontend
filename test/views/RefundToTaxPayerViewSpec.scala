@@ -23,7 +23,7 @@ import models.repaymentHistory._
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import testUtils.ViewSpec
-import views.html.RefundToTaxPayer
+import views.html.RefundToTaxPayerView
 
 import java.time.LocalDate
 
@@ -31,7 +31,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  lazy val refundToTaxPayerView: RefundToTaxPayer = app.injector.instanceOf[RefundToTaxPayer]
+  lazy val refundToTaxPayerView: RefundToTaxPayerView = app.injector.instanceOf[RefundToTaxPayerView]
 
   object RefundToTaxPayerMessages {
     val heading: String = messages("refund-to-taxpayer.heading")

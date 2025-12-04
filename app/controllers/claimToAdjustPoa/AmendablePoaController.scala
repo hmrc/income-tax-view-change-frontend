@@ -29,7 +29,7 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa
-import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
+import views.html.claimToAdjustPoa.AmendablePoaView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AmendablePoaController @Inject()(val authActions: AuthActions,
                                        val claimToAdjustService: ClaimToAdjustService,
                                        val poaSessionService: PaymentOnAccountSessionService,
-                                       view: AmendablePaymentOnAccount)
+                                       view: AmendablePoaView)
                                       (implicit val appConfig: FrontendAppConfig,
                                        val individualErrorHandler: ItvcErrorHandler,
                                        val agentErrorHandler: AgentItvcErrorHandler,

@@ -23,11 +23,11 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.IncomeSourceAddedBackError
+import views.html.manageBusinesses.add.IncomeSourceAddedBackErrorView
 
 class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
 
-  val errorView: IncomeSourceAddedBackError = app.injector.instanceOf[IncomeSourceAddedBackError]
+  val errorView: IncomeSourceAddedBackErrorView = app.injector.instanceOf[IncomeSourceAddedBackErrorView]
 
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
 

@@ -34,7 +34,7 @@ import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheck
+import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -42,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthActions,
-                                                        val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheck,
+                                                        val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheckView,
                                                         val languageUtils: LanguageUtils,
                                                         val sessionService: SessionService,
                                                         val dateService: DateService,

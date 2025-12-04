@@ -25,14 +25,14 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.cease.IncomeSourceCeasedBackError
+import views.html.manageBusinesses.cease.IncomeSourceCeasedBackErrorView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceCeasedBackErrorController @Inject()(val authActions: AuthActions,
                                                       val sessionService: SessionService,
-                                                      val cannotGoBackCeasedError: IncomeSourceCeasedBackError,
+                                                      val cannotGoBackCeasedError: IncomeSourceCeasedBackErrorView,
                                                       val itvcErrorHandler: ItvcErrorHandler,
                                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                      (implicit val appConfig: FrontendAppConfig,

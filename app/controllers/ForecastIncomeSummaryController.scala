@@ -29,14 +29,14 @@ import play.api.mvc._
 import services.CalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.ForecastIncomeSummary
+import views.html.ForecastIncomeSummaryView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ForecastIncomeSummaryController @Inject()(val authActions: AuthActions,
-                                                val forecastIncomeSummaryView: ForecastIncomeSummary,
+                                                val forecastIncomeSummaryView: ForecastIncomeSummaryView,
                                                 val calculationService: CalculationService,
                                                 val auditingService: AuditingService,
                                                 val itvcErrorHandler: ItvcErrorHandler,

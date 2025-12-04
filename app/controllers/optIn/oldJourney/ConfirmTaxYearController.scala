@@ -30,13 +30,13 @@ import services.DateService
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
-import views.html.optIn.oldJourney.ConfirmTaxYear
+import views.html.optIn.oldJourney.ConfirmTaxYearView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYear,
+class ConfirmTaxYearController @Inject()(val view: ConfirmTaxYearView,
                                          val optInService: OptInService,
                                          val authActions: AuthActions,
                                          val itvcErrorHandler: ItvcErrorHandler,

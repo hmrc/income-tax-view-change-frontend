@@ -19,12 +19,12 @@ package controllers.errors
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.CustomNotFoundError
+import views.html.errorPages.CustomNotFoundErrorView
 
 import scala.concurrent.Future
 
 @Singleton
-class NotFoundDocumentIDLookupController @Inject()(customNotFoundError: CustomNotFoundError)
+class NotFoundDocumentIDLookupController @Inject()(customNotFoundError: CustomNotFoundErrorView)
                                                   (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
   val show: Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(customNotFoundError()))

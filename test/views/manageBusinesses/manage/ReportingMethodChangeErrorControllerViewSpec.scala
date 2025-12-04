@@ -21,13 +21,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.manageBusinesses.manage.ReportingMethodChangeError
+import views.html.manageBusinesses.manage.ReportingMethodChangeErrorView
 
 class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
 
   private lazy val manageIncomeSourceDetailsController = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController
 
-  val reportingMethodChangeErrorView: ReportingMethodChangeError = app.injector.instanceOf[ReportingMethodChangeError]
+  val reportingMethodChangeErrorView: ReportingMethodChangeErrorView = app.injector.instanceOf[ReportingMethodChangeErrorView]
 
   val testBusinessId = "000000"
 

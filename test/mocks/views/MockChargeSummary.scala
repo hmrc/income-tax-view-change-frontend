@@ -21,12 +21,12 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import play.twirl.api.Html
-import views.html.ChargeSummary
+import views.html.ChargeSummaryView
 
 trait MockChargeSummary extends BeforeAndAfterEach {
   self: Suite =>
 
-  val chargeSummary: ChargeSummary = mock(classOf[ChargeSummary])
+  val chargeSummary: ChargeSummaryView = mock(classOf[ChargeSummaryView])
   val viewModel: ChargeSummaryViewModel
   val whatYouOweLink: String
 

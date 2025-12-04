@@ -23,13 +23,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.manageBusinesses.ManageYourBusinesses
+import views.html.manageBusinesses.ManageYourBusinessesView
 
 import java.time.LocalDate
 
 class ManageYourBusinessesViewSpec extends TestSupport {
 
-  val view: ManageYourBusinesses = app.injector.instanceOf[ManageYourBusinesses]
+  val view: ManageYourBusinessesView = app.injector.instanceOf[ManageYourBusinessesView]
 
   val businessDetailsViewModel: ViewBusinessDetailsViewModel = ViewBusinessDetailsViewModel(
     IncomeSourceId("ID"),
@@ -38,11 +38,11 @@ class ManageYourBusinessesViewSpec extends TestSupport {
     Some(LocalDate.of(2024, 1, 1))
   )
 
-  val propertyDetailsViewModel = ViewPropertyDetailsViewModel(
+  val propertyDetailsViewModel: ViewPropertyDetailsViewModel = ViewPropertyDetailsViewModel(
     Some(LocalDate.of(2024, 1, 1))
   )
 
-  val ceasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
+  val ceasedBusinessDetailsViewModel: CeasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
     Some("Trading-Name"),
     SelfEmployment,
     Some(LocalDate.of(2024, 1, 1)),

@@ -32,13 +32,13 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.TaxCalcFallBackBackLink
-import views.html.IncomeBreakdown
+import views.html.IncomeBreakdownView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdown,
+class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdownView,
                                         val authActions: AuthActions,
                                         val calculationService: CalculationService,
                                         val auditingService: AuditingService,

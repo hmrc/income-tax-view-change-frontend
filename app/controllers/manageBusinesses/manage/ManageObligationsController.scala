@@ -32,7 +32,7 @@ import services.{DateService, IncomeSourceDetailsService, NextUpdatesService, Se
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.manage.ManageObligations
+import views.html.manageBusinesses.manage.ManageObligationsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,7 +41,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                             val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                            val obligationsView: ManageObligations,
+                                            val obligationsView: ManageObligationsView,
                                             val sessionService: SessionService,
                                             nextUpdatesService: NextUpdatesService,
                                             val dateService: DateService)

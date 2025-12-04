@@ -21,7 +21,7 @@ import models.incomeSourceDetails.viewmodels.{DatesModel, IncomeSourceCeasedObli
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.manageBusinesses.cease.IncomeSourceCeasedObligations
+import views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
 
 import java.time.LocalDate
 
@@ -49,7 +49,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
 
   val testId: String = "XAIS00000000005"
 
-  val view: IncomeSourceCeasedObligations = app.injector.instanceOf[IncomeSourceCeasedObligations]
+  val view: IncomeSourceCeasedObligationsView = app.injector.instanceOf[IncomeSourceCeasedObligationsView]
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
   val day: LocalDate = fixedDate

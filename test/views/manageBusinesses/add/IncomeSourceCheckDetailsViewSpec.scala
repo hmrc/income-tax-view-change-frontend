@@ -25,13 +25,13 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.IncomeSourceCheckDetails
+import views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 
 import java.time.LocalDate
 
 class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
-  val checkBusinessDetailsView: IncomeSourceCheckDetails = app.injector.instanceOf[IncomeSourceCheckDetails]
+  val checkBusinessDetailsView: IncomeSourceCheckDetailsView = app.injector.instanceOf[IncomeSourceCheckDetailsView]
 
   def businessViewModelMax: CheckDetailsViewModel = CheckBusinessDetailsViewModel(
     businessName = Some("Test Business"),
@@ -94,7 +94,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
   "IncomeSourceCheckDetails" should {
     "render the page correctly" when {
-      def runPageContenttest(isAgent: Boolean, incomeSourceType: IncomeSourceType) = {
+      def runPageContenttest(isAgent: Boolean, incomeSourceType: IncomeSourceType): Unit = {
         "render the heading" in new Setup(false, incomeSourceType, true) {
           document.getElementsByClass("govuk-heading-xl").text() shouldBe "Confirm this information is correct"
         }

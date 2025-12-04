@@ -24,11 +24,11 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testUtils.ViewSpec
-import views.html.TaxYears
+import views.html.TaxYearsView
 
 class TaxYearsViewSpec extends ViewSpec {
 
-  val taxYearsView: TaxYears = app.injector.instanceOf[TaxYears]
+  val taxYearsView: TaxYearsView = app.injector.instanceOf[TaxYearsView]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val taxYearsViewSummary: String = messages("taxYears.viewSummary")
   val earliestYear: Int = 2023

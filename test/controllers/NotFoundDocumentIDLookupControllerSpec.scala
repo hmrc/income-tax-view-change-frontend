@@ -22,12 +22,12 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.errorPages.CustomNotFoundError
+import views.html.errorPages.CustomNotFoundErrorView
 
 class NotFoundDocumentIDLookupControllerSpec extends TestSupport {
 
   object NotFoundDocumentIDLookupController extends NotFoundDocumentIDLookupController(
-    app.injector.instanceOf[CustomNotFoundError])(
+    app.injector.instanceOf[CustomNotFoundErrorView])(
     app.injector.instanceOf[MessagesControllerComponents]
   )
 

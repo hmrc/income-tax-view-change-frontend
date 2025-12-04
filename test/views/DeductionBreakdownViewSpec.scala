@@ -21,7 +21,7 @@ import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import testConstants.BaseTestConstants.testNavHtml
 import testUtils.ViewSpec
-import views.html.DeductionBreakdown
+import views.html.DeductionBreakdownView
 
 class DeductionBreakdownViewSpec extends ViewSpec {
 
@@ -29,7 +29,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
   val deductions: String = messages("deduction_breakdown.heading")
   val personalAllowance: String = messages("deduction_breakdown.table.personal_allowance")
 
-  def deductionBreakdownView: DeductionBreakdown = app.injector.instanceOf[DeductionBreakdown]
+  def deductionBreakdownView: DeductionBreakdownView = app.injector.instanceOf[DeductionBreakdownView]
 
   def subHeading(taxYear: Int): String =  messages("deduction_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
 

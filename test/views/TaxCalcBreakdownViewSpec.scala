@@ -27,7 +27,7 @@ import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.ViewSpec
-import views.html.TaxCalcBreakdown
+import views.html.TaxCalcBreakdownView
 
 class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
@@ -35,7 +35,7 @@ class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
 
   override def taxCalcBreakdown(taxDueSummaryViewModel: TaxDueSummaryViewModel, taxYear: Int, backUrl: String, isAgent: Boolean): Html = {
     val startAVRTYear = 2024
-    app.injector.instanceOf[TaxCalcBreakdown].apply(taxDueSummaryViewModel, taxYear, startAVRTYear, backUrl, isAgent)
+    app.injector.instanceOf[TaxCalcBreakdownView].apply(taxDueSummaryViewModel, taxYear, startAVRTYear, backUrl, isAgent)
   }
 
   override val expectedPageTitle: String = messages("htmlTitle", messages("taxCal_breakdown.heading"))
@@ -441,7 +441,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
 
       "have the correct heading" in new Setup(view) {
         document.getElementsByClass("govuk-heading-xl").text() shouldBe messages("taxCal_breakdown.heading")
-        document.getElementsByClass("govuk-caption-xl").text() shouldBe messages("taxCal_breakdown.dates", s"${taxYear2017}", s"${taxYear2017 + 1}")
+        document.getElementsByClass("govuk-caption-xl").text() shouldBe messages("taxCal_breakdown.dates", s"$taxYear2017", s"${taxYear2017 + 1}")
       }
 
       "have the correct guidance" in new Setup(view) {

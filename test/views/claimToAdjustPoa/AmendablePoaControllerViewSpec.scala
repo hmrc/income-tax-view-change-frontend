@@ -20,15 +20,16 @@ import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.AmendablePaymentOnAccount
+import views.html.claimToAdjustPoa.AmendablePoaView
 
 class AmendablePoaControllerViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, poAFullyPaid: Boolean = false, poasHaveBeenAdjustedPreviously: Option[Boolean] = None) {
 
-    val amendablePaymentOnAccount: AmendablePaymentOnAccount = app.injector.instanceOf[AmendablePaymentOnAccount]
+    val amendablePaymentOnAccount: AmendablePoaView = app.injector.instanceOf[AmendablePoaView]
 
     val document: Document =
       Jsoup.parse(
@@ -75,7 +76,7 @@ class AmendablePoaControllerViewSpec extends TestSupport {
       "render the Payment On Account Table" in new Setup(isAgent) {
         document.getElementsByClass("govuk-table__head").text() shouldBe messages("paymentOnAccount.table-heading-charge-type") +
           " " + messages("paymentOnAccount.table-heading-created-amount.key")
-        val tableBody = document.getElementsByClass("govuk-table__body")
+        val tableBody: Elements = document.getElementsByClass("govuk-table__body")
         tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe messages("paymentOnAccount.table-heading-1")
         tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe "£3,000.45"
         tableBody.select(".govuk-table__row:nth-of-type(2)").select(".govuk-table__header:nth-of-type(1)").text shouldBe messages("paymentOnAccount.table-heading-2")
@@ -85,7 +86,7 @@ class AmendablePoaControllerViewSpec extends TestSupport {
         document.getElementsByClass("govuk-table__head").text() shouldBe messages("paymentOnAccount.table-heading-charge-type") +
           " " + messages("paymentOnAccount.table-heading-created-amount.key") +
           " " + messages("paymentOnAccount.table-heading-adjusted-amount.key")
-        val tableBody = document.getElementsByClass("govuk-table__body")
+        val tableBody: Elements = document.getElementsByClass("govuk-table__body")
         tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__header:nth-of-type(1)").text shouldBe messages("paymentOnAccount.table-heading-1")
         tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(1)").text shouldBe "£5,000.50"
         tableBody.select(".govuk-table__row:nth-of-type(1)").select(".govuk-table__cell:nth-of-type(2)").text shouldBe "£3,000.45"

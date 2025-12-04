@@ -33,14 +33,14 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.add.AddBusinessName
+import views.html.manageBusinesses.add.AddBusinessNameView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddBusinessNameController @Inject()(val authActions: AuthActions,
-                                          val addBusinessView: AddBusinessName,
+                                          val addBusinessView: AddBusinessNameView,
                                           val sessionService: SessionService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: ItvcErrorHandler,

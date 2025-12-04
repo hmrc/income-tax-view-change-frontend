@@ -21,12 +21,12 @@ import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import play.twirl.api.Html
-import views.html.IncomeBreakdown
+import views.html.IncomeBreakdownView
 
 trait MockIncomeSummary extends BeforeAndAfterEach {
   self: Suite =>
 
-  lazy val incomeBreakdown: IncomeBreakdown = mock(classOf[IncomeBreakdown])
+  lazy val incomeBreakdown: IncomeBreakdownView = mock(classOf[IncomeBreakdownView])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -18,7 +18,7 @@ package views.agent
 
 import play.api.mvc.Call
 import testUtils.ViewSpec
-import views.html.agent.confirmClient
+import views.html.agent.ConfirmClientUTRView
 
 
 class ConfirmClientViewSpec extends ViewSpec {
@@ -28,7 +28,7 @@ class ConfirmClientViewSpec extends ViewSpec {
   lazy val testClientName: Option[String] = Some("Test Name")
   lazy val testClientUTR: Option[String] = Some("1234567890")
 
-  val confirmClient: confirmClient = app.injector.instanceOf[confirmClient]
+  val confirmClient: ConfirmClientUTRView = app.injector.instanceOf[ConfirmClientUTRView]
 
 
   val confirmClientView = confirmClient(

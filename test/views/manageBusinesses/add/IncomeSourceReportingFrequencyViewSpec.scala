@@ -21,16 +21,17 @@ import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import mocks.services.MockDateService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.IncomeSourceReportingFrequency
+import views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
 
 import java.time.LocalDate
 
 class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateService {
-  val view: IncomeSourceReportingFrequency = app.injector.instanceOf[IncomeSourceReportingFrequency]
+  val view: IncomeSourceReportingFrequencyView = app.injector.instanceOf[IncomeSourceReportingFrequencyView]
 
   class Setup(incomeSourceType: IncomeSourceType, hasR17Content: Boolean = false) {
     when(mockDateService.getCurrentTaxYearStart) thenReturn fixedDate
@@ -77,7 +78,7 @@ class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateSe
   }
 
   def getReportingFrequencyTableMessages(taxYear: Int): (String, String) = {
-    (s"Reporting frequency ${taxYear} to ${taxYear+1}", "Annual")
+    (s"Reporting frequency $taxYear to ${taxYear+1}", "Annual")
   }
 
   def getWarningInsetTextMessage(currentTaxYearEnd: Int): String = {
@@ -104,8 +105,8 @@ class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateSe
       "have the correct page contents" in new Setup(incomeSourceType) {
         val thisTaxYear: Int = LocalDate.of(2023, 4, 6).getYear
         val warningInsetTextMessages: String = getWarningInsetTextMessage(currentTaxYearEnd = thisTaxYear + 1)
-        val documentTableC1 = pageDocument.getElementsByTag("th")
-        val documentTableC2 = pageDocument.getElementsByTag("td")
+        val documentTableC1: Elements = pageDocument.getElementsByTag("th")
+        val documentTableC2: Elements = pageDocument.getElementsByTag("td")
 
         pageDocument.getElementById("paragraph-1").text shouldBe paragraph1
         pageDocument.getElementById("inset-text-bullet-1").text shouldBe reportingFrequencyUlLi1

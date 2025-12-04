@@ -22,11 +22,11 @@ import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.feedback.FeedbackThankYou
+import views.html.feedback.FeedbackThankYouView
 
 class FeedbackThankYouViewSpec extends TestSupport {
 
-  val feedbackThankYouView: FeedbackThankYou = app.injector.instanceOf[FeedbackThankYou]
+  val feedbackThankYouView: FeedbackThankYouView = app.injector.instanceOf[FeedbackThankYouView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 

@@ -17,16 +17,16 @@
 package controllers.manageBusinesses.manage
 
 import controllers.ControllerISpecHelper
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.NavBarFs
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData, emptyUIJourneySessionData}
+import testConstants.IncomeSourceIntegrationTestConstants._
 
 class CannotGoBackErrorControllerISpec extends ControllerISpecHelper {
   val title: String = messagesAPI("cannotGoBack.heading")
@@ -47,7 +47,7 @@ class CannotGoBackErrorControllerISpec extends ControllerISpecHelper {
     pathStart + "/manage-your-businesses/manage" + pathEnd
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
       val path = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)

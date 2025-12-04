@@ -26,11 +26,11 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
-import views.html.manageBusinesses.add.AddBusinessName
+import views.html.manageBusinesses.add.AddBusinessNameView
 
 class AddBusinessNameViewSpec extends ViewSpec {
 
-  val addBusinessName: AddBusinessName = app.injector.instanceOf[AddBusinessName]
+  val addBusinessName: AddBusinessNameView = app.injector.instanceOf[AddBusinessNameView]
 
   class TestSetup(isAgent: Boolean, error: Boolean = false, isChange: Boolean) {
     val addBusinessNameForm: Form[BusinessNameForm] = BusinessNameForm.form

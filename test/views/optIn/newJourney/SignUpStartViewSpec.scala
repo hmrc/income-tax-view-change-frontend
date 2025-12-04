@@ -20,11 +20,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.optIn.newJourney.SignUpStart
+import views.html.optIn.newJourney.SignUpStartView
 
 class SignUpStartViewSpec extends TestSupport {
 
-  val signUpStartView: SignUpStart = app.injector.instanceOf[SignUpStart]
+  val signUpStartView: SignUpStartView = app.injector.instanceOf[SignUpStartView]
   val startButtonUrl = "/some/signUp/url"
 
   class Setup(isAgent: Boolean = true, isCY: Boolean) {

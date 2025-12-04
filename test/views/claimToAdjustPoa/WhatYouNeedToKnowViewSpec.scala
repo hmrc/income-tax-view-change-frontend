@@ -23,11 +23,11 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.WhatYouNeedToKnow
+import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 class WhatYouNeedToKnowViewSpec extends TestSupport {
 
-  val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
+  val whatYouNeedToKnowView: WhatYouNeedToKnowView = app.injector.instanceOf[WhatYouNeedToKnowView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 

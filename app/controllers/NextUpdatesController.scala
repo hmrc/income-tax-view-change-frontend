@@ -32,15 +32,15 @@ import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewUtils.NextUpdatesViewUtils
-import views.html.nextUpdates.{NextUpdatesOptOut, NoNextUpdates}
+import views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NextUpdatesController @Inject()(
-                                       noNextUpdatesView: NoNextUpdates,
-                                       nextUpdatesOptOutView: NextUpdatesOptOut,
+                                       noNextUpdatesView: NoNextUpdatesView,
+                                       nextUpdatesOptOutView: NextUpdatesOptOutView,
                                        auditingService: AuditingService,
                                        nextUpdatesService: NextUpdatesService,
                                        itvcErrorHandler: ItvcErrorHandler,
@@ -65,8 +65,8 @@ class NextUpdatesController @Inject()(
     }
   }
 
-  def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
-                    (implicit user: MtdItUser[_]): Future[Result] = {
+  private def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
+                            (implicit user: MtdItUser[_]): Future[Result] = {
 
     hasAnyIncomeSource {
       for {

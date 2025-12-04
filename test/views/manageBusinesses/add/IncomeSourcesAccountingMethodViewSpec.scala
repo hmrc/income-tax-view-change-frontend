@@ -29,10 +29,10 @@ import play.twirl.api.HtmlFormat
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import views.html.manageBusinesses.add.IncomeSourcesAccountingMethod
+import views.html.manageBusinesses.add.IncomeSourcesAccountingMethodView
 
 class IncomeSourcesAccountingMethodViewSpec extends TestSupport {
-  val incomeSourcesAccountingMethodView: IncomeSourcesAccountingMethod = app.injector.instanceOf[IncomeSourcesAccountingMethod]
+  val incomeSourcesAccountingMethodView: IncomeSourcesAccountingMethodView = app.injector.instanceOf[IncomeSourcesAccountingMethodView]
 
   val prefixSoleTrader: String = "incomeSources.add." + SelfEmployment.key + ".AccountingMethod"
   val prefixUKProperty: String = "incomeSources.add." + UkProperty.key + ".AccountingMethod"

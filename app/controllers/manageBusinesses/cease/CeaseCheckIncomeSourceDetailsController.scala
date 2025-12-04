@@ -34,7 +34,7 @@ import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetails
+import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
 
 import java.time.LocalDate
 import javax.inject.Inject
@@ -43,7 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class CeaseCheckIncomeSourceDetailsController @Inject()(
                                                          val authActions: AuthActions,
                                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
-                                                         val view: CeaseCheckIncomeSourceDetails,
+                                                         val view: CeaseCheckIncomeSourceDetailsView,
                                                          val updateIncomeSourceService: UpdateIncomeSourceService,
                                                          val sessionService: SessionService,
                                                          val auditingService: AuditingService)

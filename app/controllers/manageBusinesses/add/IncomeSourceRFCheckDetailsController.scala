@@ -36,12 +36,12 @@ import services.manageBusinesses.IncomeSourceRFService
 import services.{CreateBusinessDetailsService, DateServiceInterface, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.IncomeSourceRFCheckDetails
+import views.html.manageBusinesses.add.IncomeSourceRFCheckDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceRFCheckDetails,
+class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceRFCheckDetailsView,
                                                      val incomeSourceRFService: IncomeSourceRFService,
                                                      val updateIncomeSourceService: UpdateIncomeSourceService,
                                                      val authActions: AuthActions,

@@ -24,13 +24,13 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import services.optout.OneYearOptOutFollowedByAnnual
 import testUtils.TestSupport
-import views.html.optOut.oldJourney.ConfirmOptOut
+import views.html.optOut.oldJourney.ConfirmOptOutView
 import views.messages.ConfirmOptOutMessages
 
 class ConfirmOptOutViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val confirmOptOutView: ConfirmOptOut = app.injector.instanceOf[ConfirmOptOut]
+  val confirmOptOutView: ConfirmOptOutView = app.injector.instanceOf[ConfirmOptOutView]
 
   val expectedQuarterlyUpdates = 4
 

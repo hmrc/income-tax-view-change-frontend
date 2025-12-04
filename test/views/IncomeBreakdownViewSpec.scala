@@ -19,13 +19,13 @@ package views
 import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
-import views.html.IncomeBreakdown
+import views.html.IncomeBreakdownView
 
 class IncomeBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "testUrl"
 
-  val incomeBreakdown: IncomeBreakdown = app.injector.instanceOf[IncomeBreakdown]
+  val incomeBreakdown: IncomeBreakdownView = app.injector.instanceOf[IncomeBreakdownView]
 
   val income = "Income"
 

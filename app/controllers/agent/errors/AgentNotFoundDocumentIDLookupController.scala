@@ -21,11 +21,11 @@ import com.google.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.CustomNotFoundError
+import views.html.errorPages.CustomNotFoundErrorView
 
 @Singleton
 class AgentNotFoundDocumentIDLookupController @Inject()(val authActions: AuthActions,
-                                                        customNotFoundError: CustomNotFoundError)
+                                                        customNotFoundError: CustomNotFoundErrorView)
                                                        (implicit mcc: MessagesControllerComponents
                                                         ) extends FrontendController(mcc) with I18nSupport {
 

@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.WhatYouOwe
+import views.html.WhatYouOweView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +39,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                      implicit val dateService: DateServiceInterface,
-                                     whatYouOwe: WhatYouOwe
+                                     whatYouOwe: WhatYouOweView
                                     )(implicit val appConfig: FrontendAppConfig,
                                       val mcc: MessagesControllerComponents,
                                       val ec: ExecutionContext) extends FrontendController(mcc)

@@ -45,9 +45,9 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeController @Inject()(val homeView: views.html.Home,
-                               val primaryAgentHomeView: views.html.agent.PrimaryAgentHome,
-                               val supportingAgentHomeView: views.html.agent.SupportingAgentHome,
+class HomeController @Inject()(val homeView: views.html.HomeView,
+                               val primaryAgentHomeView: views.html.agent.PrimaryAgentHomeView,
+                               val supportingAgentHomeView: views.html.agent.SupportingAgentHomeView,
                                val authActions: AuthActions,
                                val nextUpdatesService: NextUpdatesService,
                                val incomeSourceDetailsService: IncomeSourceDetailsService,

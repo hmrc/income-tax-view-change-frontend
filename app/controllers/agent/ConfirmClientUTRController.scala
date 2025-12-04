@@ -30,13 +30,13 @@ import play.api.mvc._
 import services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.agent.confirmClient
+import views.html.agent.ConfirmClientUTRView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
+class ConfirmClientUTRController @Inject()(confirmClient: ConfirmClientUTRView,
                                            val authActions: AuthActions,
                                            val auditingService: AuditingService,
                                            val sessionDataService: SessionDataService)

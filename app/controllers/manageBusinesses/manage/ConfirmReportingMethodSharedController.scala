@@ -37,14 +37,14 @@ import play.api.mvc._
 import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.manage.ConfirmReportingMethod
+import views.html.manageBusinesses.manage.ConfirmReportingMethodView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActions,
                                                        val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                       val confirmReportingMethod: ConfirmReportingMethod,
+                                                       val confirmReportingMethod: ConfirmReportingMethodView,
                                                        val sessionService: SessionService,
                                                        val auditingService: AuditingService,
                                                        val dateService: DateService)
@@ -263,7 +263,7 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
     val (_, successCall) = getRedirectCalls(isAgent, incomeSourceId, incomeSourceType, isEnabled(OptInOptOutContentUpdateR17))
 
     (getTaxYearModel(taxYear), getReportingMethod(changeTo)) match {
-      case (Some(taxModel), Some(reportingMethod)) => {
+      case (Some(taxModel), Some(reportingMethod)) =>
         if(isEnabled(OptInOptOutContentUpdateR17)) {
           handleChangeMethodForm(
             taxYearModel = taxModel,
@@ -276,7 +276,7 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
         }else{
           Future.successful (Redirect(successCall))
         }
-      }
+
       case (None, _) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse taxYear: $taxYear"))
       case (_, None) => Future.successful(logAndShowError(isAgent, s"[handleSubmitRequest]: Could not parse reporting method: $changeTo"))
     }

@@ -36,12 +36,12 @@ import play.api.mvc._
 import services.{CreateBusinessDetailsService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.IncomeSourceCheckDetails
+import views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceCheckDetails,
+class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceCheckDetailsView,
                                                    val authActions: AuthActions,
                                                    val businessDetailsService: CreateBusinessDetailsService,
                                                    val auditingService: AuditingService,

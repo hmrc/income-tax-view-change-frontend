@@ -40,14 +40,14 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{JourneyCheckerManageBusinesses, MtdConstants}
 import viewUtils.ReportingFrequencyViewUtils
 import views.html.errorPages.templates.ErrorTemplate
-import views.html.manageBusinesses.add.IncomeSourceReportingFrequency
+import views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthActions,
                                                          val updateIncomeSourceService: UpdateIncomeSourceService,
-                                                         val view: IncomeSourceReportingFrequency,
+                                                         val view: IncomeSourceReportingFrequencyView,
                                                          val sessionService: SessionService,
                                                          val incomeSourceReportingFrequencyService: IncomeSourceRFService,
                                                          val errorTemplate: ErrorTemplate,
@@ -60,7 +60,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                          val ec: ExecutionContext
                                                         ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching with MtdConstants {
 
-  lazy val submitUrl: (Boolean, Boolean, IncomeSourceType) => Call = (isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType) =>
+  private lazy val submitUrl: (Boolean, Boolean, IncomeSourceType) => Call = (isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType) =>
     controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, isChange, incomeSourceType)
 
   def show(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
@@ -68,7 +68,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
       implicit user => handleGetRequest(isAgent, isChange, incomeSourceType)
     }
 
-  def handleGetRequest(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleGetRequest(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     incomeSourceReportingFrequencyService.redirectChecksForIncomeSourceRF(IncomeSourceJourneyType(Add, incomeSourceType),
       AfterSubmissionPage, incomeSourceType, dateService.getCurrentTaxYearEnd, isAgent, isChange) { sessionData =>
       handleIncomeSourceIdRetrievalSuccess(incomeSourceType, sessionData, isAgent, isChange, isEnabled(OptInOptOutContentUpdateR17))
@@ -183,7 +183,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
       val updatedSessionData = sessionData.copy(
         addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(changeReportingFrequency = Some(yesOrNo))))
       sessionService.setMongoData(updatedSessionData)
-      Future.successful(Redirect(controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, false, incomeSourceType)))
+      Future.successful(Redirect(controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, isChange = false, incomeSourceType)))
     } else {
       sessionService.setMongoData(sessionData.copy(
         addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(changeReportingFrequency = Some(yesOrNo))),

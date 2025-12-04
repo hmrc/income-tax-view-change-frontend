@@ -28,13 +28,13 @@ import repositories.OptOutSessionDataRepository
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
-import views.html.optOut.oldJourney.OptOutChooseTaxYear
+import views.html.optOut.oldJourney.OptOutChooseTaxYearView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYear,
+class OptOutChooseTaxYearController @Inject()(val optOutChooseTaxYear: OptOutChooseTaxYearView,
                                               val optOutService: OptOutService,
                                               val repository: OptOutSessionDataRepository,
                                               val authActions: AuthActions,

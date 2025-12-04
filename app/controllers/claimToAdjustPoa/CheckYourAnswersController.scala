@@ -31,7 +31,7 @@ import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionServic
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa
-import views.html.claimToAdjustPoa.CheckYourAnswers
+import views.html.claimToAdjustPoa.CheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
                                            val poaSessionService: PaymentOnAccountSessionService,
                                            val ctaCalculationService: ClaimToAdjustPoaCalculationService,
                                            val nrsService: NrsService,
-                                           val checkYourAnswers: CheckYourAnswers,
+                                           val checkYourAnswers: CheckYourAnswersView,
                                            val auditingService: AuditingService)
                                           (implicit val appConfig: FrontendAppConfig,
                                            val individualErrorHandler: ItvcErrorHandler,

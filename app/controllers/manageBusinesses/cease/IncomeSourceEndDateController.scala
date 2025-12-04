@@ -34,7 +34,7 @@ import services.{DateService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.cease.IncomeSourceEndDate
+import views.html.manageBusinesses.cease.IncomeSourceEndDateView
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -42,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
-                                              val incomeSourceEndDate: IncomeSourceEndDate,
+                                              val incomeSourceEndDate: IncomeSourceEndDateView,
                                               val sessionService: SessionService,
                                               form: CeaseIncomeSourceEndDateFormProvider,
                                               val itvcErrorHandler: ItvcErrorHandler,

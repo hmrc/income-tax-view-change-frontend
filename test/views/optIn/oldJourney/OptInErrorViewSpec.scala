@@ -20,11 +20,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.optIn.oldJourney.OptInError
+import views.html.optIn.oldJourney.OptInErrorView
 
 class OptInErrorViewSpec extends TestSupport {
 
-  val optInErrorPage: OptInError = app.injector.instanceOf[OptInError]
+  val optInErrorPage: OptInErrorView = app.injector.instanceOf[OptInErrorView]
 
   class Setup(isAgent: Boolean) {
     val pageDocument: Document = Jsoup.parse(contentAsString(optInErrorPage(isAgent)))

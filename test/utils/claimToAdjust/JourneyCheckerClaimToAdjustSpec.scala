@@ -35,7 +35,7 @@ import services.PaymentOnAccountSessionService
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.WhatYouNeedToKnow
+import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -63,13 +63,13 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   override lazy val tsTestUserAgent: MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
 
-  val whatYouNeedToKnowView: WhatYouNeedToKnow = app.injector.instanceOf[WhatYouNeedToKnow]
+  val whatYouNeedToKnowView: WhatYouNeedToKnowView = app.injector.instanceOf[WhatYouNeedToKnowView]
 
   def successfulFutureOk: PoaAmendmentData => Future[Result] = _ => {
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(false, false))))
+    Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(isAgent = false, showIncreaseAfterPaymentContent = false))))
 }
   def successfulFutureOkAgent: PoaAmendmentData => Future[Result] = _ => {
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(true, true))))
+    Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(isAgent = true, showIncreaseAfterPaymentContent = true))))
   }
 
   override def beforeEach(): Unit = {

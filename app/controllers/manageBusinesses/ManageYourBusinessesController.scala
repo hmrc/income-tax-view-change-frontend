@@ -28,13 +28,13 @@ import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.ManageYourBusinesses
+import views.html.manageBusinesses.ManageYourBusinessesView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageYourBusinesses,
+class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageYourBusinessesView,
                                                val authActions: AuthActions,
                                                incomeSourceDetailsService: IncomeSourceDetailsService,
                                                val sessionService: SessionService)

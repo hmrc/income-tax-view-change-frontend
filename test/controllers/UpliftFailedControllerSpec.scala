@@ -25,7 +25,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.expectedJourneyId
 import testUtils.TestSupport
-import views.html.errorPages.UpliftFailed
+import views.html.errorPages.UpliftFailedView
 
 import scala.concurrent.ExecutionContext
 
@@ -34,7 +34,7 @@ class UpliftFailedControllerSpec extends TestSupport with MockAuditingService {
   val upliftFailureTitle: String = messages("upliftFailure.title")
 
   object TestUpliftFailedController extends UpliftFailedController(
-    app.injector.instanceOf[UpliftFailed],
+    app.injector.instanceOf[UpliftFailedView],
     app.injector.instanceOf[MessagesControllerComponents],
     mockAuditingService
   )(app.injector.instanceOf[ExecutionContext])

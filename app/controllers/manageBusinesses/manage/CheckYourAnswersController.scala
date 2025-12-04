@@ -36,13 +36,13 @@ import services.{SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.manage.CheckYourAnswers
+import views.html.manageBusinesses.manage.CheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswers,
+class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswersView,
                                            val authActions: AuthActions,
                                            val updateIncomeSourceService: UpdateIncomeSourceService,
                                            val sessionService: SessionService,

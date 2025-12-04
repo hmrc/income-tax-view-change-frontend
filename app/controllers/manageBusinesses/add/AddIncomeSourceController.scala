@@ -28,7 +28,7 @@ import play.api.mvc._
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.add.AddIncomeSources
+import views.html.manageBusinesses.add.AddIncomeSourcesView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +36,7 @@ import scala.util.{Failure, Success}
 
 @Singleton
 class AddIncomeSourceController @Inject()(val authActions: AuthActions,
-                                          val addIncomeSources: AddIncomeSources,
+                                          val addIncomeSources: AddIncomeSourcesView,
                                           val incomeSourceDetailsService: IncomeSourceDetailsService)
                                          (implicit val appConfig: FrontendAppConfig,
                                           val ec: ExecutionContext,
@@ -46,8 +46,8 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
                                           val mcc: MessagesControllerComponents) extends FrontendController(mcc)
   with I18nSupport with IncomeSourcesUtils {
 
-  lazy val homePageCall: Call = controllers.routes.HomeController.show()
-  lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent()
+  private lazy val homePageCall: Call = controllers.routes.HomeController.show()
+  private lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent()
 
   def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>

@@ -25,7 +25,7 @@ import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.AddIncomeSourceStartDate
+import views.html.manageBusinesses.add.AddIncomeSourceStartDateView
 
 import java.time.LocalDate
 
@@ -33,7 +33,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, formType: String = "Standard", incomeSourceType: IncomeSourceType, isChange: Boolean = false) {
 
-    val addIncomeSourceStartDate: AddIncomeSourceStartDate = app.injector.instanceOf[AddIncomeSourceStartDate]
+    val addIncomeSourceStartDate: AddIncomeSourceStartDateView = app.injector.instanceOf[AddIncomeSourceStartDateView]
     lazy val form: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider().apply(incomeSourceType.startDateMessagesPrefix)
     lazy val errorFormWithRequiredError: Form[LocalDate] = new AddIncomeSourceStartDateFormProvider()(incomeSourceType.startDateMessagesPrefix)
       .withError(FormError("income-source-start-date", s"${incomeSourceType.startDateMessagesPrefix}.required", "day"))
@@ -74,7 +74,7 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
       }
 
       "render the description for the business start date" in new Setup(isAgent, "Standard", incomeSourceType) {
-        val descriptionText = incomeSourceType match {
+        val descriptionText: String = incomeSourceType match {
           case SelfEmployment => "This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate."
           case UkProperty => "This is the date you first received rental income from this UK property business, such as letting or renting out a property or land."
           case ForeignProperty => "This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land."

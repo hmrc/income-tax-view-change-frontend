@@ -27,14 +27,14 @@ import play.api.mvc._
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
-import views.html.optIn.oldJourney.BeforeYouStart
+import views.html.optIn.oldJourney.BeforeYouStartView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BeforeYouStartController @Inject()(authActions: AuthActions,
-                                         val beforeYouStart: BeforeYouStart,
+                                         val beforeYouStart: BeforeYouStartView,
                                          val optInService: OptInService,
                                          val itvcErrorHandler: ItvcErrorHandler,
                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)

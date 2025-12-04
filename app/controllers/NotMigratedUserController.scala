@@ -24,13 +24,13 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.notMigrated.NotMigratedUser
+import views.html.notMigrated.NotMigratedUserView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUser,
+class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
                                           val authActions: AuthActions,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)

@@ -35,7 +35,7 @@ import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants._
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.TestSupport
-import views.html.Home
+import views.html.HomeView
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -83,18 +83,18 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val multipleOverdueCharges = "3 Overdue charges"
   val overdueMessage = "! Warning You have overdue charges. You may be charged interest on these until they are paid in full."
   val overdueMessageForDunningLocks = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
-  val currentDate = dateService.getCurrentDate
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
+  val currentDate: LocalDate = dateService.getCurrentDate
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
   private val viewModelThreeOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, false, false, ITSAStatus.NoStatus, None, None)
-  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, false, false, ITSAStatus.NoStatus, None, None)
-  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true, false, ITSAStatus.NoStatus, None, None)
+    LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, isReportingFrequencyEnabled = true, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
   val paymentTileOverdueDate: LocalDate = LocalDate.of(2020, 4, 6)
   val paymentTileFutureDate: LocalDate = LocalDate.of(2100, 4, 6)
   val paymentTileFutureDateLongFormat: String = paymentTileFutureDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
   val paymentTileOverdueDateLongFormat: String = s"Overdue ${paymentTileOverdueDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))}"
-  val testFutureTaxYear = TaxYear(2099,2100)
+  val testFutureTaxYear: TaxYear = TaxYear(2099,2100)
 
   class Setup(paymentDueDate: LocalDate = nextPaymentDueDate, overDuePaymentsCount: Int = 0, paymentsAccruingInterestCount: Int = 0,
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
@@ -102,20 +102,20 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
               reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsIsEnabled: Boolean = true, claimARefundR18Enabled: Boolean = true,
               penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
 
-    val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
+    val returnsTileViewModel: ReturnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
-    val nextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount)
+    val nextPaymentsTileViewModel: NextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount)
 
-    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()),
+    val paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()),
       creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined, claimARefundR18enabled = claimARefundR18Enabled)
 
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
+    val yourBusinessesTileViewModel: YourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
-    val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
+    val yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
 
-    val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, submissionFrequency, penaltyPoints)
+    val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, submissionFrequency, penaltyPoints)
 
-    val homePageViewModel = HomePageViewModel(
+    val homePageViewModel: HomePageViewModel = HomePageViewModel(
       utr = utr,
       nextUpdatesTileViewModel = nextUpdatesTileViewModel,
       returnsTileViewModel = returnsTileViewModel,
@@ -127,14 +127,14 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       dunningLockExists = dunningLockExists
     )
 
-    val home: Home = app.injector.instanceOf[Home]
+    val home: HomeView = app.injector.instanceOf[HomeView]
     lazy val page: HtmlFormat.Appendable = home(
       homePageViewModel
     )(FakeRequest(), implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
-    val user2 = user.copy(authUserDetails = user.authUserDetails.copy(name = None))
-    lazy val page2 = home(homePageViewModel)(FakeRequest(), implicitly, user2, implicitly)
+    val user2: MtdItUser[Any] = user.copy(authUserDetails = user.authUserDetails.copy(name = None))
+    lazy val page2: HtmlFormat.Appendable = home(homePageViewModel)(FakeRequest(), implicitly, user2, implicitly)
     lazy val document2: Document = Jsoup.parse(contentAsString(page2))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
@@ -182,13 +182,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       getTextOfElementById("utr-reference-heading") shouldBe Some(s"Unique Taxpayer Reference (UTR): $testSaUtr")
     }
 
-    "not have the users UTR when it is absent in user profile" in new Setup(user = testMtdItUser(false)) {
+    "not have the users UTR when it is absent in user profile" in new Setup(user = testMtdItUser(hasSAUtr = false)) {
       getElementById("utr-reference-heading") shouldBe None
     }
 
     "have a language selection switch" which {
 
-      "displays the correct content" in new Setup(user = testMtdItUser(false)) {
+      "displays the correct content" in new Setup(user = testMtdItUser(hasSAUtr = false)) {
         val langSwitchScript: Option[Element] = getElementById("language-switch")
         langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
         langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith ir Gymraeg Cymraeg")

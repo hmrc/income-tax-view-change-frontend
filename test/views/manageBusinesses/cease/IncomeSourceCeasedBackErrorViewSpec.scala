@@ -22,11 +22,11 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.manageBusinesses.cease.IncomeSourceCeasedBackError
+import views.html.manageBusinesses.cease.IncomeSourceCeasedBackErrorView
 
 class IncomeSourceCeasedBackErrorViewSpec extends TestSupport{
 
-  val errorView: IncomeSourceCeasedBackError = app.injector.instanceOf[IncomeSourceCeasedBackError]
+  val errorView: IncomeSourceCeasedBackErrorView = app.injector.instanceOf[IncomeSourceCeasedBackErrorView]
 
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
 
