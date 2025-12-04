@@ -29,7 +29,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.testMtditid
-import views.html.RefundToTaxPayer
+import views.html.RefundToTaxPayerView
 
 import java.time.LocalDate
 
@@ -41,7 +41,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
       api.inject.bind[RepaymentHistoryConnector].toInstance(mockRepaymentHistoryConnector)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[RefundToTaxPayerController]
+  lazy val testController: RefundToTaxPayerController = app.injector.instanceOf[RefundToTaxPayerController]
 
   val repaymentRequestNumber: String = "023942042349"
   val testNino: String = "AB123456C"
@@ -54,7 +54,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
     }
   }
 
-  lazy val refundToTaxPayerView: RefundToTaxPayer = app.injector.instanceOf[RefundToTaxPayer]
+  lazy val refundToTaxPayerView: RefundToTaxPayerView = app.injector.instanceOf[RefundToTaxPayerView]
 
   val testRepaymentHistory: RepaymentHistory = RepaymentHistory(
     Some(705.2),
@@ -129,7 +129,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
     )
   )
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showAgent(repaymentRequestNumber) else testController.show(repaymentRequestNumber)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
@@ -188,7 +188,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

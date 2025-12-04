@@ -33,13 +33,13 @@ import play.twirl.api.Html
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.ViewSpec
-import views.html.ChargeSummary
+import views.html.ChargeSummaryView
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
-  lazy val chargeSummary: ChargeSummary = app.injector.instanceOf[ChargeSummary]
+  lazy val chargeSummary: ChargeSummaryView = app.injector.instanceOf[ChargeSummaryView]
   val whatYouOweAgentUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
   import Messages._

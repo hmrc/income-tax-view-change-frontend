@@ -18,18 +18,20 @@ package views.timeout
 
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.timeout.Timeout
+import views.html.timeout.TimeoutView
 
 class SessionTimeoutViewSpec extends TestSupport {
 
-  lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  lazy val timeoutView = app.injector.instanceOf[Timeout]
+  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  lazy val timeoutView: TimeoutView = app.injector.instanceOf[TimeoutView]
 
-  lazy val page = timeoutView()(FakeRequest(), implicitly)
-  lazy val document = Jsoup.parse(contentAsString(page))
+  lazy val page: HtmlFormat.Appendable = timeoutView()(FakeRequest(), implicitly)
+  lazy val document: Document = Jsoup.parse(contentAsString(page))
 
   "The Session timeout view" should {
 

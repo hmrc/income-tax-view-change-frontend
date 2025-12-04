@@ -30,13 +30,13 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.CreditHistoryService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.CreditsSummary
+import views.html.CreditsSummaryView
 
 import java.net.URI
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
+class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
                                          val authActions: AuthActions,
                                          creditHistoryService: CreditHistoryService,
                                          itvcErrorHandler: ItvcErrorHandler,
@@ -59,9 +59,9 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
   private def agentCreditsSummaryUrl(calendarYear: Int): String =
     controllers.routes.CreditsSummaryController.showAgentCreditsSummary(calendarYear).url
 
-  lazy val agentCreditAndRefundUrl: String = controllers.routes.CreditAndRefundController.showAgent().url
+  private lazy val agentCreditAndRefundUrl: String = controllers.routes.CreditAndRefundController.showAgent().url
 
-  lazy val agentPaymentHistoryHomeUrl: String = controllers.routes.PaymentHistoryController.showAgent().url
+  private lazy val agentPaymentHistoryHomeUrl: String = controllers.routes.PaymentHistoryController.showAgent().url
 
   private def getBackURL(referer: Option[String], origin: Option[String], calendarYear: Int): String = {
     referer.map(URI.create(_).getPath) match {
@@ -100,7 +100,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
           charges = charges,
           maybeAvailableCredit = maybeAvailableCredit,
           origin = origin)))
-      case Left(_) => {
+      case Left(_) =>
         if (isAgent) {
           Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
           Future.successful(agentItvcErrorHandler.showInternalServerError())
@@ -109,7 +109,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummary,
           Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
           Future.successful(itvcErrorHandler.showInternalServerError())
         }
-      }
     }
   }
 

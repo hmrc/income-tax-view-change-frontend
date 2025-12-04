@@ -32,7 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.ErrorRecovery
-import views.html.CreditAndRefunds
+import views.html.CreditAndRefundsView
 import views.html.errorPages.CustomNotFoundErrorView
 
 import javax.inject.Inject
@@ -40,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val creditService: CreditService,
-                                          val view: CreditAndRefunds,
+                                          val view: CreditAndRefundsView,
                                           val repaymentService: RepaymentService,
                                           val auditingService: AuditingService,
                                           mcc: MessagesControllerComponents)

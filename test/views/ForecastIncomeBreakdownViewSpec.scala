@@ -20,15 +20,15 @@ import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import testUtils.ViewSpec
-import views.html.ForecastIncomeSummary
+import views.html.ForecastIncomeSummaryView
 
 class ForecastIncomeBreakdownViewSpec extends ViewSpec {
 
   val backUrl = "testUrl"
 
-  val forecastIncomeTemplate: ForecastIncomeSummary = app.injector.instanceOf[ForecastIncomeSummary]
+  val forecastIncomeTemplate: ForecastIncomeSummaryView = app.injector.instanceOf[ForecastIncomeSummaryView]
 
-  val viewModelFull = EndOfYearEstimate(
+  val viewModelFull: EndOfYearEstimate = EndOfYearEstimate(
     incomeSource = Some(List(
       IncomeSource(
         incomeSourceType = "01",

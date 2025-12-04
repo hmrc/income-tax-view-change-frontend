@@ -23,13 +23,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.optOut.newJourney.CheckOptOutUpdateAnswers
+import views.html.optOut.newJourney.CheckOptOutUpdateAnswersView
 import views.messages.{CheckOptOutUpdateAnswersMessages => viewMessages}
 
 class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val checkOptOutUpdateAnswersView: CheckOptOutUpdateAnswers = app.injector.instanceOf[CheckOptOutUpdateAnswers]
+  val checkOptOutUpdateAnswersView: CheckOptOutUpdateAnswersView = app.injector.instanceOf[CheckOptOutUpdateAnswersView]
 
   val confirmOptOutUpdateSubmitURL: (Boolean, String) => String = (isAgent: Boolean, taxYear: String) => controllers.optOut.newJourney.routes.ConfirmOptOutUpdateController.submit(isAgent, taxYear).url
 

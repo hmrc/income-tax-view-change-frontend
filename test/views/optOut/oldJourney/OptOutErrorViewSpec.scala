@@ -20,11 +20,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.optOut.oldJourney.OptOutError
+import views.html.optOut.oldJourney.OptOutErrorView
 
 class OptOutErrorViewSpec extends TestSupport {
 
-  val optOutErrorPage: OptOutError = app.injector.instanceOf[OptOutError]
+  val optOutErrorPage: OptOutErrorView = app.injector.instanceOf[OptOutErrorView]
 
   class Setup(isAgent: Boolean) {
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutErrorPage(isAgent)))

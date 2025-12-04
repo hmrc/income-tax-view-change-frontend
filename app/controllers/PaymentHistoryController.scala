@@ -36,7 +36,7 @@ import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.PaymentHistory
+import views.html.PaymentHistoryView
 import views.html.errorPages.CustomNotFoundErrorView
 
 import javax.inject.{Inject, Singleton}
@@ -49,7 +49,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                                          itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                          paymentHistoryService: PaymentHistoryService,
                                          val repaymentService: RepaymentService,
-                                         paymentHistoryView: PaymentHistory,
+                                         paymentHistoryView: PaymentHistoryView,
                                          val customNotFoundErrorView: CustomNotFoundErrorView
                                         )(implicit val appConfig: FrontendAppConfig,
                                           dateService: DateServiceInterface,

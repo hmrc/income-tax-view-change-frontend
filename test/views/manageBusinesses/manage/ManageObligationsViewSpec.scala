@@ -23,7 +23,7 @@ import org.jsoup.select.Elements
 import play.twirl.api.Html
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
 import testUtils.ViewSpec
-import views.html.manageBusinesses.manage.ManageObligations
+import views.html.manageBusinesses.manage.ManageObligationsView
 
 import java.time.LocalDate
 
@@ -46,11 +46,11 @@ class ManageObligationsViewSpec extends ViewSpec {
     val headingR17 = "Your revised deadlines"
   }
 
-  val view: ManageObligations = app.injector.instanceOf[ManageObligations]
+  val view: ManageObligationsView = app.injector.instanceOf[ManageObligationsView]
 
-  val day = LocalDate.of(2022, 1, 1)
+  val day: LocalDate = LocalDate.of(2022, 1, 1)
 
-  val finalDeclarationDates = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallisation")
+  val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallisation")
 
   val viewModelWithAllData: ObligationsViewModel = ObligationsViewModel(
     quarterlyObligationDatesFull,
@@ -160,19 +160,19 @@ class ManageObligationsViewSpec extends ViewSpec {
 
       "user switches to Quarterly in CY+1" in new Setup(quarterlyCyPlus1) {
         paragraphText should include("Even if they are not displayed right away")
-        paragraphText should not include("you may have overdue updates")
+        paragraphText should not include "you may have overdue updates"
         paragraphText should include("View your businesses to add")
       }
 
       "user switches to Annual in CY" in new Setup(annualCy) {
         paragraphText should include("Even if they are not displayed right away")
-        paragraphText should not include("you may have overdue updates")
+        paragraphText should not include "you may have overdue updates"
         paragraphText should include("View your businesses to add")
       }
 
       "user switches to Annual in CY+1" in new Setup(annualCyPlus1) {
         paragraphText should include("Even if they are not displayed right away")
-        paragraphText should not include("you may have overdue updates")
+        paragraphText should not include "you may have overdue updates"
         paragraphText should include("View your businesses to add")
       }
     }

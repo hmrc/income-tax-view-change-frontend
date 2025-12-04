@@ -26,13 +26,13 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.Html
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
-import views.html.manageBusinesses.cease.IncomeSourceEndDate
+import views.html.manageBusinesses.cease.IncomeSourceEndDateView
 
 import java.time.LocalDate
 
 class IncomeSourceEndDateViewSpec extends TestSupport {
 
-  val IncomeSourceEndDateView: IncomeSourceEndDate = app.injector.instanceOf[IncomeSourceEndDate]
+  val IncomeSourceEndDateView: IncomeSourceEndDateView = app.injector.instanceOf[IncomeSourceEndDateView]
   val incomeSourceEndDateForm: CeaseIncomeSourceEndDateFormProvider = app.injector.instanceOf[CeaseIncomeSourceEndDateFormProvider]
   val nextTaxYear: Int = dateService.getCurrentTaxYearEnd + 1
 

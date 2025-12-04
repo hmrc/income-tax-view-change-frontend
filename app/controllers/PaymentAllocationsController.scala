@@ -35,13 +35,13 @@ import services.PaymentAllocationsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.FallBackBackLinks
-import views.html.PaymentAllocation
+import views.html.PaymentAllocationView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentAllocation,
+class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentAllocationView,
                                              val authActions: AuthActions,
                                              itvcErrorHandler: ItvcErrorHandler,
                                              val itvcErrorHandlerAgent: AgentItvcErrorHandler,

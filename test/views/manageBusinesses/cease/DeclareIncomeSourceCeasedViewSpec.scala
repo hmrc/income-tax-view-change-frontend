@@ -25,17 +25,17 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.manageBusinesses.cease.DeclareIncomeSourceCeased
+import views.html.manageBusinesses.cease.DeclareIncomeSourceCeasedView
 
 class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
 
-  val declarePropertyCeasedView: DeclareIncomeSourceCeased = app.injector.instanceOf[DeclareIncomeSourceCeased]
+  val declarePropertyCeasedView: DeclareIncomeSourceCeasedView = app.injector.instanceOf[DeclareIncomeSourceCeasedView]
 
   val testBusinessName: String = "Big Business"
 
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, error: Boolean = false, businessName: Option[String] = None) {
 
-    val backUrl = {
+    val backUrl: String = {
       if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent()
       else         controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show()
     }.url

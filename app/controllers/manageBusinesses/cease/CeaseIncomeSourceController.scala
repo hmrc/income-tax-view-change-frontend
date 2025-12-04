@@ -29,12 +29,12 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.cease.CeaseIncomeSources
+import views.html.manageBusinesses.cease.CeaseIncomeSourcesView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeSources,
+class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeSourcesView,
                                             val authActions: AuthActions,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler,

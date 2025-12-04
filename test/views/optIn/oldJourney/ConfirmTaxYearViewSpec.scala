@@ -22,11 +22,11 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.optIn.oldJourney.ConfirmTaxYear
+import views.html.optIn.oldJourney.ConfirmTaxYearView
 
 class ConfirmTaxYearViewSpec extends TestSupport {
 
-  val view: ConfirmTaxYear = app.injector.instanceOf[ConfirmTaxYear]
+  val view: ConfirmTaxYearView = app.injector.instanceOf[ConfirmTaxYearView]
 
   val forCurrentYearEnd = 2025
   val currentTaxYear: TaxYear = TaxYear.forYearEnd(forCurrentYearEnd)
