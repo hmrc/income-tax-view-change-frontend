@@ -183,7 +183,6 @@ class OptOutService @Inject()(
                                             ec: ExecutionContext): Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel], OptOutProposition)] = {
     for {
       proposition <- fetchOptOutProposition()
-      _ <- optOutRepository.initialiseOptOutJourney(proposition, shouldResetIntent = false)
     } yield (nextUpdatesQuarterlyReportingContentChecks(proposition), nextUpdatesOptOutViewModel(proposition), proposition)
   }
 
