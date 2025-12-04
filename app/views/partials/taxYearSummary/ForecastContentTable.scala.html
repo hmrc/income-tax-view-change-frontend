@@ -27,30 +27,25 @@
 @(viewModel: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean)(implicit messages: Messages)
 
 @{
-    val forecastIncome = viewModel.calculationSummary.flatMap(model => model.forecastIncome).getOrElse(0).toCurrencyString
-    val forecastTotalTaxableIncome = viewModel.calculationSummary.flatMap(model => model.forecastTotalTaxableIncome).getOrElse(0).toCurrencyString
-    val forecastIncomeAndNics = viewModel.calculationSummary.flatMap(model => model.forecastIncomeTaxAndNics).get.toCurrencyString
-
-    val forecastDeductions = viewModel.calculationSummary.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0)).toCurrencyString
     govukTable(Table(
         rows = Seq(
             Seq(
                 TableRow(content = HtmlContent(link(link = viewModel.getForecastSummaryHref(taxYear, isAgent),
                     messageKey = "tax-year-summary.income"))),
-                TableRow(content = Text(forecastIncome), format = Some("numeric")),
+                TableRow(content = Text(viewModel.forecastIncome.toCurrencyString), format = Some("numeric")),
             ),
             Seq(
                 TableRow(content = Text(messages("tax-year-summary.deductions")), classes = "govuk-!-font-weight-regular"),
-                TableRow(content = HtmlContent(s"<span>$forecastDeductions</span>"), classes = "govuk-!-font-weight-regular", format = Some("numeric"))
+                TableRow(content = HtmlContent(s"<span>${viewModel.forecastDeductions.toCurrencyString}</span>"), classes = "govuk-!-font-weight-regular", format = Some("numeric"))
             ),
             Seq(
                 TableRow(content = Text(messages("tax-year-summary.taxable-income"))),
-                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>$forecastTotalTaxableIncome</span>"), format = Some("numeric"))
+                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>${viewModel.forecastTotalTaxableIncome.toCurrencyString}</span>"), format = Some("numeric"))
             ),
             Seq(
                 TableRow(content = HtmlContent(link(link = viewModel.getForecastTaxDueHref(taxYear, isAgent),
                     classes = "govuk-link govuk-!-font-weight-bold", messageKey = "tax-year-summary.forecast.tax-due"))),
-                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>$forecastIncomeAndNics</span>"),
+                TableRow(content = HtmlContent(s"<span class='govuk-!-font-weight-bold'>${viewModel.forecastIncomeAndNics.toCurrencyString}</span>"),
                     format = Some("numeric"))
             )
         ),

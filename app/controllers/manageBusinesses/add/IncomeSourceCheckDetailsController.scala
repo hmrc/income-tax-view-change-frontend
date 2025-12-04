@@ -175,7 +175,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val redirectUrl: (Boolean, IncomeSourceType, Boolean) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean) => {
         if (isTriggeredMigration) {
-          controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent, Some(TriggeredMigrationAdded.toString)).url
+          controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent, Some(TriggeredMigrationAdded(incomeSourceType).toString)).url
         } else {
           controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, isChange = false, incomeSourceType).url
         }

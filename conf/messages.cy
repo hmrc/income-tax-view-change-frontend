@@ -2633,19 +2633,11 @@ optout.confirmedOptOut.yourReportingFrequency.text               = eich ymrwymia
 
 optout.confirmedOptOut.submitTax                                 = Cyflwyno’ch Ffurflen Dreth
 
-optout.confirmedOptOut.submitTax.confirmed.p1                    = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech arfer ei defnyddio i
-optout.confirmedOptOut.submitTax.confirmed.p1.link               = gyflwyno’ch Ffurflenni Treth Hunanasesiad
+optout.confirmedOptOut.submitTax.confirmed.p1                    = Gan eich bod bellach wedi optio allan, nid oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Bydd yn dal i fod angen i chi gyflwyno’ch Ffurflen Dreth drwy wneud y naill neu’r llall o’r canlynol:
 
-optout.confirmedOptOut.submitTax.confirmed.p2                    = Ar gyfer unrhyw flwyddyn dreth lle’r ydych yn dal i fod yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen
-optout.confirmedOptOut.submitTax.confirmed.p2.link.a             = meddalwedd sy’n cydweddu
-optout.confirmedOptOut.submitTax.confirmed.p2.link.b             =
-optout.confirmedOptOut.submitTax.confirmed.p2.link.c             = arnoch.
-
-optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = Gan eich bod wedi optio allan, gallwch ddefnyddio’r cysylltiad hwn i gael gwybod sut i
-optout.confirmedOptOut.scenario4.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflen Dreth Hunanasesiad
-
-optout.confirmedOptOut.scenario5.submitTax.confirmed.p1          = Nawr eich bod wedi optio allan, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech arfer ei defnyddio i
-optout.confirmedOptOut.scenario5.submitTax.confirmed.p1.link     = gyflwyno’ch Ffurflenni Treth Hunanasesiad
+optout.confirmedOptOut.scenario4.submitTax.confirmed.p1          = Gan eich bod wedi optio allan, nid oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Bydd yn dal i fod angen i chi gyflwyno’ch Ffurflen Dreth drwy wneud y naill neu’r llall o’r canlynol:
+optout.confirmedOptOut.submitTax.confirmed.bullet1               = cadw’ch meddalwedd sy’n cydweddu a chyflwyno’ch Ffurflen Dreth drwy’r dull hwnnw
+optout.confirmedOptOut.submitTax.confirmed.bullet2               = defnyddio gwasanaethau ar-lein CThEF neu feddalwedd fasnachol arall sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
@@ -3312,6 +3304,8 @@ yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                      
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich ail daliad ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
+yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
 
 yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                    = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
 yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                  = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
