@@ -174,6 +174,15 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               summaryKeys.eq(2).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
               summaryKeys.eq(3).text() shouldBe "Using Making Tax Digital for Income Tax for 2023 to 2024"
 
+<<<<<<< HEAD
+=======
+              val summaryKeys = getManageDetailsSummaryKeys(document)
+
+              summaryKeys.eq(2).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
+              summaryKeys.eq(3).text() shouldBe "Using Making Tax Digital for Income Tax for 2023 to 2024"
+
+              val summaryValues = getManageDetailsSummaryValues(document).eachText()
+>>>>>>> a27151df8 (MISUV-10527 Remove standard quarterly period section from Manage your details page)
               summaryValues should contain("Yes")
               summaryValues should contain("No")
 

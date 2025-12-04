@@ -2178,17 +2178,6 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property
 
 ####### Manage journey manage income source
 
-incomeSources.manage.quarterly-period                                 =   Cyfnod diweddaru
-incomeSources.manage.quarterly-period.standard                        =   Safonol
-incomeSources.manage.quarterly-period.calendar                        =   Calendr
-incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
-incomeSources.manage.quarterly-period.calendar.summary                =   Beth yw cyfnod chwarterol calendr?
-incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r busnes yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
-incomeSources.manage.quarterly-period.standard.content.p2             =   Os yw eich meddalwedd yn ei gefnogi gallwch newid hyn i gyflwyno adroddiadau o 1af y mis yn ôl chwarterau calendr.
-incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r busnes yn cyflwyno adroddiadau o 1 Ebrill yn ôl chwarterau calendr.
-incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
-incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
-
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
 incomeSources.manage.business-manage-details.sole-trader-section      =   Unig fasnachwr
 incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes
@@ -2215,14 +2204,6 @@ incomeSources.manage.foreign-property-manage-details.accounting-method          
 ##################### New - Manage journey manage income source #####################
 
 incomeSources.manage.new.business-manage-details.heading                  =   Manage your details
-
-incomeSources.manage.new.quarterly.update.period                          =   Cyfnod diweddaru
-incomeSources.manage.new.quarterly.period.standard                        =   Safonol
-incomeSources.manage.new.quarterly.period.calendar                        =   Calendr
-incomeSources.manage.new.quarterly.period.summary                         =   Beth yw cyfnod chwarterol safonol?
-incomeSources.manage.new.quarterly.period.content.p1                      =   Mae’r busnes hwn yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth – enw arall ar hyn yw ‘defnyddio cyfnodau diweddaru safonol’.
-incomeSources.manage.new.quarterly.period.content.p2                      =   Gallwch ddewis adrodd gan ddefnyddio cyfnodau diweddaru calendr sy’n dod i ben ar ddiwrnod olaf y mis, os yw’ch meddalwedd yn caniatáu hyn.
-incomeSources.manage.new.quarterly.period.content.p3.link                 =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
 
 incomeSources.manage.new.business.details.heading                         =   Gwirio’ch manylion
 incomeSources.manage.new.business.details.sole.trader.section             =   Unig fasnachwr

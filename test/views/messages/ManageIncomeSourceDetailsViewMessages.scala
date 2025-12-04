@@ -27,7 +27,13 @@ object ManageIncomeSourceDetailsViewMessages {
   val businessAddress: String = "Address"
   val dateStarted: String = "Date started"
   val typeOfTrade: String = "Type of trade"
+<<<<<<< HEAD
   val quarterlyPeriodType: String = "Update period"
+=======
+  val isTraditionalAccountingMethod: String = "Traditional accounting"
+  val ukAccountingMethod: String = "Accounting method"
+  val foreignAccountingMethod: String = "Accounting method"
+>>>>>>> a27151df8 (MISUV-10527 Remove standard quarterly period section from Manage your details page)
   val reportingMethod1: String = "Reporting frequency 2022 to 2023"
   val reportingMethod2: String = "Reporting frequency 2023 to 2024"
 
@@ -38,8 +44,12 @@ object ManageIncomeSourceDetailsViewMessages {
   val quarterlyGracePeriod: String = "Quarterly"
   val annuallyGracePeriod: String = "Annual"
 
+<<<<<<< HEAD
   val standard: String = "Standard"
   val calendar: String = "Calendar"
+=======
+  val cashBasisAccounting: String = "Cash basis accounting"
+>>>>>>> a27151df8 (MISUV-10527 Remove standard quarterly period section from Manage your details page)
 
   val expectedAddress: Option[AddressModel] = Some(AddressModel(Some("Line 1"), Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), Some("NI")))
 
@@ -47,15 +57,7 @@ object ManageIncomeSourceDetailsViewMessages {
 
   val expectedBusinessName: String = "Business income"
   val expectedBusinessStartDate: String = "1 January 2022"
-  val expandableInfoStandardSummary: String = "What is a standard quarterly period?"
-  val expandableInfoStandardContentP1: String = "This business is reporting from 6 April in line with the tax year, also known as using standard update periods."
-  val expandableInfoStandardContentP2: String = "If your software supports it, you can choose to report using calendar update periods which end on the last day of the month."
 
-  val expandableInfoContentP3: String = "Learn more about standard and calendar quarters"
-  val expandableMoreInfoLink = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
-  val opensInNewTabText: String = "(opens in new tab)"
   val reportingFrequencyText: String = "View and change your reporting frequency for all your businesses"
   val newBusinessInsetText: String = "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2024, you could be required to report quarterly."
-
-
 }
