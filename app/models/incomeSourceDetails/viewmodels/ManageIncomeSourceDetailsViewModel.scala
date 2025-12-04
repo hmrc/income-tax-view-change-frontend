@@ -43,14 +43,6 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
     }
   }
 
-  def businessAccountingMethodAsKey(isTraditionalAccountingMethod: Boolean): String = {
-    if (isTraditionalAccountingMethod) {
-      "incomeSources.manage.business-manage-details.traditional-accounting"
-    } else {
-      "incomeSources.manage.business-manage-details.cash-accounting"
-    }
-  }
-
   def isBusinessInLatency: Boolean = {
     latencyDetails.exists(_.isBusinessOrPropertyInLatency(currentTaxYearEnd))
   }
