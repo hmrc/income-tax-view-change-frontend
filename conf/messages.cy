@@ -3430,9 +3430,8 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 # Check HMRC records page
 triggered-migration.check-hmrc-records.cessation-banner.heading      = Wedi dod i ben
 triggered-migration.check-hmrc-records.cessation-banner.text1        = Rydych chi wedi dod â busnes i ben
-triggered-migration.check-hmrc-records.cessation-banner.text2        = View
-#TODO waiting on welsh for the above
-triggered-migration.check-hmrc-records.cessation-banner.link         = Eich busnesau sydd wedi dod i ben
+triggered-migration.check-hmrc-records.cessation-banner.text2        = Gweld
+triggered-migration.check-hmrc-records.cessation-banner.link         = eich busnesau sydd wedi dod i ben
 
 triggered-migration.check-hmrc-records.cessation-section.heading     = Eich busnesau sydd wedi dod i ben
 triggered-migration.check-hmrc-records.cessation-section.text        = Mae un neu ragor o fusnesau wedi dod i ben.
