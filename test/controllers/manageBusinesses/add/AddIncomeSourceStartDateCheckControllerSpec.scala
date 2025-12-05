@@ -24,14 +24,15 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
-import models.core.{CheckMode, NormalMode}
 import models.admin.AccountingMethodJourney
-import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
+import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.verify
+import org.scalatest.Assertion
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -43,18 +44,17 @@ import testConstants.BaseTestConstants.testSessionId
 import java.time.LocalDate
 
 
-class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter
-  with MockSessionService {
+class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[DateService].toInstance(dateService)
-    ).build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[SessionService].toInstance(mockSessionService),
+        api.inject.bind[DateService].toInstance(dateService)
+      ).build()
 
-  lazy val testAddIncomeSourceStartDateCheckController = app.injector.instanceOf[AddIncomeSourceStartDateCheckController]
-
+  lazy val testAddIncomeSourceStartDateCheckController: AddIncomeSourceStartDateCheckController =
+    app.injector.instanceOf[AddIncomeSourceStartDateCheckController]
 
   val testStartDate: LocalDate = LocalDate.of(2022, 11, 11)
   val testBusinessAccountingPeriodStartDate: LocalDate = LocalDate.of(2022, 11, 11)
@@ -125,7 +125,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
     argument.getValue.addIncomeSourceData shouldBe Some(addIncomeSourceDataEmpty)
   }
 
-  def verifySetMongoData(incomeSourceType: IncomeSourceType): Unit = {
+  def verifySetMongoData(incomeSourceType: IncomeSourceType): Assertion = {
     val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
     verify(mockSessionService).setMongoData(argument.capture())
 
@@ -138,9 +138,11 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
 
   mtdAllRoles.foreach { mtdRole =>
     List(NormalMode, CheckMode).foreach { mode =>
+
       val isAgent = mtdRole != MTDIndividual
       incomeSourceTypes.foreach { incomeSourceType =>
-        s"show(${if (isAgent) "Agent"}, $mode, $incomeSourceType)" when {
+
+        s".show() - ${if (isAgent) "Agent"}, $mode, $incomeSourceType" when {
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
           val action = testAddIncomeSourceStartDateCheckController.show(isAgent, mode, incomeSourceType)
           s"the user is authenticated as a $mtdRole" should {
@@ -150,7 +152,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                 mockNoIncomeSources()
                 setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
 
-                if(mode == CheckMode) {
+                if (mode == CheckMode) {
                   setupMockGetMongo(Right(Some(sessionDataWithDate(journeyType(incomeSourceType)))))
                 } else {
                   setupMockGetMongo(Right(Some(dataWithAccSD(incomeSourceType))))
@@ -209,7 +211,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
           }
         }
 
-        s"submit(${if (isAgent) "Agent"}, ${mode == CheckMode}, $incomeSourceType)" when {
+        s".submit - ${if (isAgent) "Agent"}, $mode, $incomeSourceType" when {
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
           val action = testAddIncomeSourceStartDateCheckController.submit(isAgent, mode, incomeSourceType)
           s"the user is authenticated as a $mtdRole" should {
@@ -234,9 +236,13 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
 
               }
             }
-            if(mode == NormalMode) {
+
+            if (mode == NormalMode) {
+
               s"return ${Status.SEE_OTHER}: redirect to $incomeSourceType accounting method page, isAgent = $isAgent" when {
+
                 "Yes is submitted with the form with a valid session" in {
+
                   setupMockSuccess(mtdRole)
                   enable(AccountingMethodJourney)
 
@@ -245,22 +251,22 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                   setupMockSetMongoData(result = true)
                   setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
-                  val result = action(fakeRequest
-                    .withFormUrlEncodedBody(
-                      AddIncomeSourceStartDateCheckForm.response -> responseYes
-                    ))
+                  val result = action(fakeRequest.withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> responseYes))
+
+                  val expected =
+                    incomeSourceType match {
+                      case SelfEmployment if isAgent => routes.AddBusinessTradeController.showAgent(mode = mode)
+                      case SelfEmployment => routes.AddBusinessTradeController.show(mode = mode)
+                      case _ if isAgent => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+                      case _ => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
+                    }
 
                   status(result) shouldBe SEE_OTHER
-                  if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
-                  redirectLocation(result) shouldBe Some({
-                    incomeSourceType match {
-                      case SelfEmployment if !isAgent => routes.AddBusinessTradeController.show(mode = mode)
-                      case SelfEmployment => routes.AddBusinessTradeController.showAgent(mode = mode)
-                      case _ => routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent)
-                    }
-                  }.url)
+                  redirectLocation(result) shouldBe Some(expected.url)
                 }
+
                 "Yes is submitted with the form with a valid session (accounting method FS disabled)" in {
+
                   setupMockSuccess(mtdRole)
 
                   mockNoIncomeSources()
@@ -269,25 +275,26 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                   setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
                   val result = action(fakeRequest
-                    .withFormUrlEncodedBody(
-                      AddIncomeSourceStartDateCheckForm.response -> responseYes
-                    ))
+                    .withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> responseYes))
 
                   status(result) shouldBe SEE_OTHER
-                  if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
-                  redirectLocation(result) shouldBe Some({
+
+                  val route =
                     incomeSourceType match {
-                      case SelfEmployment if !isAgent => routes.AddBusinessTradeController.show(mode = mode)
-                      case SelfEmployment => routes.AddBusinessTradeController.showAgent(mode = mode)
-                      case _ if(isAgent) => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
+                      case SelfEmployment if isAgent => routes.AddBusinessTradeController.showAgent(mode = mode)
+                      case SelfEmployment => routes.AddBusinessTradeController.show(mode = mode)
+                      case _ if isAgent => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
                       case _ => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
                     }
-                  }.url)
+
+                  redirectLocation(result) shouldBe Some(route.url)
                 }
               }
             } else {
               s"return ${Status.SEE_OTHER}: redirect to check $incomeSourceType details page, isAgent = $isAgent" when {
+
                 "Yes is submitted with isUpdate flag set to true" in {
+
                   setupMockSuccess(mtdRole)
                   mockNoIncomeSources()
 
@@ -295,16 +302,13 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions
                   setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSourceJourneyType(Add, incomeSourceType)))))
                   setupMockSetMongoData(result = true)
 
-                  val result = action(fakeRequest
-                    .withFormUrlEncodedBody(
-                      AddIncomeSourceStartDateCheckForm.response -> responseYes
-                    ))
+                  val result =
+                    action(fakeRequest.withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> responseYes))
+
+                  val route = if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType) else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
 
                   status(result) shouldBe SEE_OTHER
-                  if (incomeSourceType == SelfEmployment) verifySetMongoData(SelfEmployment)
-                  redirectLocation(result) shouldBe Some({
-                    if (isAgent) routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType) else routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-                  }.url)
+                  redirectLocation(result) shouldBe Some(route.url)
                 }
               }
             }

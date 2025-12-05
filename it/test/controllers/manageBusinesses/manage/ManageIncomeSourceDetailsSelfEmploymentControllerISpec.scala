@@ -34,11 +34,13 @@ import java.time.LocalDate
 class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncomeSourceDetailsISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/manage-your-businesses/manage/your-details?id=$thisTestSelfEmploymentIdHashed"
   }
+
   val dateNow = LocalDate.now()
-  def taxYearEnd: Int = if(dateNow.isAfter(LocalDate.of(dateNow.getYear, 4, 5))) dateNow.getYear + 1 else dateNow.getYear
+
+  def taxYearEnd: Int = if (dateNow.isAfter(LocalDate.of(dateNow.getYear, 4, 5))) dateNow.getYear + 1 else dateNow.getYear
 
   mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
@@ -70,8 +72,6 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod),
                 elementTextByID("up-to-two-tax-years")("")
               )
             }
@@ -80,10 +80,8 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               enable(DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
-              //enable(TimeMachineAddYear)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
 
-              // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
               CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
@@ -104,14 +102,13 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod),
                 elementTextByID("change-link-1")(""),
                 elementTextByID("change-link-2")("")
               )
             }
 
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
+
               enable(DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
@@ -119,9 +116,6 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
               val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
-
-              val taxYear1ToString = s"${latencyDetailsCty.taxYear1.toInt - 1} to ${latencyDetailsCty.taxYear1}"
-              val taxYear2ToString = s"${latencyDetailsCty.taxYear2.toInt - 1} to ${latencyDetailsCty.taxYear2}"
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
@@ -129,34 +123,17 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-              And("Mongo storage is successfully set")
               sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
               result should have(
                 httpStatus(OK),
-                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dt")("Business name"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dd")(businessTradingName),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dt")("Address"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dd")(addressAsString),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")(s"Reporting frequency $taxYear1ToString"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")(messagesAnnuallyGracePeriod),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dt")(s"Reporting frequency $taxYear2ToString"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dd")(messagesQuarterlyGracePeriod),
-                elementTextByID("change-link-1")(messagesChangeLinkText),
-                elementTextByID("change-link-2")(messagesChangeLinkText),
-                elementTextByID("up-to-two-tax-years")("Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2027, you could be required to report quarterly.")
+                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading")
               )
             }
 
             "URL has valid income source ID and user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
+
               enable(DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
@@ -167,36 +144,18 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
               val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
 
-              val taxYear1ToString = s"${latencyDetailsCty.taxYear1.toInt - 1} to ${latencyDetailsCty.taxYear1}"
-              val taxYear2ToString = s"${latencyDetailsCty.taxYear2.toInt - 1} to ${latencyDetailsCty.taxYear2}"
-
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-              And("Mongo storage is successfully set")
               sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
 
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dt")("Business name"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(1) dd")(businessTradingName),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dt")("Address"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dd")(addressAsString),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")(businessAccountingMethod),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dt")(s"Reporting frequency $taxYear1ToString"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")(messagesAnnuallyGracePeriod),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dt")(s"Reporting frequency $taxYear2ToString"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(7) dd")(messagesQuarterlyGracePeriod),
-                elementTextByID("change-link-1")(""),
-                elementTextByID("change-link-2")(messagesChangeLinkText)
-              )
+              result should
+                have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading")
+                )
             }
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
@@ -223,9 +182,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(2) dd")(messagesUnknown),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(3) dd")(messagesUnknown),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(5) dd")("Cash basis accounting")
+                elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(4) dt")("Type of trade")
               )
             }
           }

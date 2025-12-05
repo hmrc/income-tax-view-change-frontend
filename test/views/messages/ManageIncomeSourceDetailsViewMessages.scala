@@ -27,10 +27,7 @@ object ManageIncomeSourceDetailsViewMessages {
   val businessAddress: String = "Address"
   val dateStarted: String = "Date started"
   val typeOfTrade: String = "Type of trade"
-  val isTraditionalAccountingMethod: String = "Traditional accounting"
-  val ukAccountingMethod: String = "Accounting method"
   val quarterlyPeriodType: String = "Update period"
-  val foreignAccountingMethod: String = "Accounting method"
   val reportingMethod1: String = "Reporting frequency 2022 to 2023"
   val reportingMethod2: String = "Reporting frequency 2023 to 2024"
 
@@ -40,8 +37,6 @@ object ManageIncomeSourceDetailsViewMessages {
 
   val quarterlyGracePeriod: String = "Quarterly"
   val annuallyGracePeriod: String = "Annual"
-
-  val cashBasisAccounting: String = "Cash basis accounting"
 
   val standard: String = "Standard"
   val calendar: String = "Calendar"

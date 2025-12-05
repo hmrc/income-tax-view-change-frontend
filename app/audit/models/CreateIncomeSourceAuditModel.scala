@@ -77,8 +77,7 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
         propDetails
     }
 
-    baseDetails ++ businessDetails ++ Json.obj(
-      "accountingMethod" -> viewModel.cashOrAccruals)
+    baseDetails ++ businessDetails
 
   }
 }

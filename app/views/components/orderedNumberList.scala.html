@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,23 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package enums
+@this()
 
-import enums.AccountingMethod.fromApiField
-import forms.IncomeSourcesFormsSpec.convertToAnyShouldWrapper
-import org.scalatest.wordspec.AnyWordSpec
+@(itemMsgKeys: String*)(implicit messages: Messages)
 
-class AccountingMethodSpec extends AnyWordSpec {
-
-    "fromApiField call" when {
-      "conversion from Api field" in {
-        fromApiField(cashOrAccrualsField = true) shouldBe AccrualsAsAccountingMethod
-        fromApiField(cashOrAccrualsField = false) shouldBe CashAsAccountingMethod
-      }
-  }
-
-}
-
-
+<ol class="govuk-list govuk-list--number">
+    @itemMsgKeys.zipWithIndex.map { case (msgKey, index) =>
+     <li id="numbered-element-@index">@messages(msgKey)</li>
+    }
+</ol>

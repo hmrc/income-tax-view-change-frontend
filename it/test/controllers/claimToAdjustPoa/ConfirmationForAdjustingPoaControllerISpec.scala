@@ -40,11 +40,16 @@ import java.time.LocalDate
 class ConfirmationForAdjustingPoaControllerISpec extends ControllerISpecHelper {
 
   private val testTaxYear = 2024
+
   private val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
+
   private val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
+
   private val validFinancialDetailsResponseBody: JsValue =
     testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
+
   lazy val fixedDate: LocalDate = LocalDate.of(2024, 6, 5)
+
   lazy val incomeSource: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
     mtdbsa = testMtditid,
@@ -58,8 +63,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ControllerISpecHelper {
       Some(getCurrentTaxYearEnd),
       None,
       None,
-      address = Some(address),
-      cashOrAccruals = Some(false)
+      address = Some(address)
     )),
     properties = Nil
   )

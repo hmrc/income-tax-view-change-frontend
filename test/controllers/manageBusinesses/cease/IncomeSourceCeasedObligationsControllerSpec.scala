@@ -105,7 +105,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
     tradingStartDate = None,
     contextualTaxYear = None,
     cessation = None,
-    cashOrAccruals = Some(false),
     latencyDetails = None
   )
   private val propertyDetailsModelForeign = propertyDetailsModelUK.copy(incomeSourceType = Some("foreign-property"))
@@ -119,8 +118,7 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
       None,
       Some(LocalDate.of(2022, 1, 1)),
       contextualTaxYear = None,
-      None,
-      cashOrAccruals = Some(false)
+      None
     )), List.empty)
     setupMockGetIncomeSourceDetails(sources)
 
