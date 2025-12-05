@@ -67,10 +67,14 @@
         <div class="govuk-form-group govuk-form-group--error">
         }
 
-        @h1(msg = messages("radioForm.checkDate.heading.withDate", incomeSourceStartDate), size = "xl", id = Some("start-date-heading"))
-
-
         @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+               legend = Some(Legend(
+                 content = Text(messages("radioForm.checkDate.heading.withDate", incomeSourceStartDate)),
+                 classes = "govuk-fieldset__legend--xl start-date-heading",
+                 isPageHeading = true
+                ))
+            )),
             items = Seq(
                 RadioItem(
                     id = Some("yes-response"),
