@@ -24,9 +24,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
-import models.core.{IncomeSourceId, Mode, NormalMode}
-import models.admin.AccountingMethodJourney
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.{IncomeSourceId, Mode}
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -78,10 +77,11 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def getRedirectUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = {
-    ((isEnabled(AccountingMethodJourney), isAgent, mode) match {
-      case (_, false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, true, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+  private def getRedirectUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = {
+    (if (isAgent) {
+      routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+    } else {
+      routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
     }).url
   }
 

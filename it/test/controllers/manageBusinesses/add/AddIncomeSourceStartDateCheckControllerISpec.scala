@@ -24,7 +24,7 @@ import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.{AccountingMethodJourney, NavBarFs}
+import models.admin.NavBarFs
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
@@ -213,27 +213,6 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 "redirect to IncomeSourceCheckDetails page" when {
 
                   "form response is Yes" in {
-
-                    val redirectCall =
-                      if (isAgent)
-                        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
-                      else
-                        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-
-                    enable(AccountingMethodJourney)
-                    disable(NavBarFs)
-                    stubAuthorised(mtdUserRole)
-                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-
-                    await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
-
-                    val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map(AddIncomeSourceStartDateCheckForm.response -> Seq(responseYes))).futureValue
-
-                    verifySessionUpdate(incomeSourceType, journeyType)
-                    result should have(httpStatus(SEE_OTHER), redirectURI(redirectCall.url))
-                  }
-
-                  "form response is Yes (accounting method FS disabled)" in {
 
                     val redirectCall =
                       if (isAgent)

@@ -492,8 +492,6 @@ object BusinessDetailsTestConstants {
     address = Some(address),
   )
 
-  val businessWithNoCashOrAccrualsFlag = business2.copy()
-
   val business2018 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),

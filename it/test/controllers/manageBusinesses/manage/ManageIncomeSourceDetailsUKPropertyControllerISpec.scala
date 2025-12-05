@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, NavBarFs}
+import models.admin.{DisplayBusinessStartDate, NavBarFs}
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -53,7 +53,7 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
 
             "URL contains a valid income source ID user has no latency information" in {
 
-              enable(DisplayBusinessStartDate, AccountingMethodJourney)
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -74,7 +74,7 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
             //Crystallisation doesn't matter, need to cleanup tests after discussion
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
 
-              enable(DisplayBusinessStartDate, AccountingMethodJourney)
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
@@ -96,7 +96,7 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
             }
 
             "URL has valid income source ID and user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
-              enable(DisplayBusinessStartDate, AccountingMethodJourney)
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
@@ -122,7 +122,7 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
             }
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
-              enable(DisplayBusinessStartDate, AccountingMethodJourney)
+              enable(DisplayBusinessStartDate)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))

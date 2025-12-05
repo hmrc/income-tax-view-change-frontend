@@ -26,11 +26,10 @@ import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationAdded
 import models.UIJourneySessionData
-import models.admin.AccountingMethodJourney
 import models.core.NormalMode
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
