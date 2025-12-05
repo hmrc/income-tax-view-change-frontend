@@ -374,49 +374,70 @@ class OptOutServiceSpec
 
     }
 
-    ".nextUpdatesPageOptOutViewModels" when {
-      "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
-        "return NextUpdatesQuarterlyReportingContentCheck" in {
-          // Because we're saving the status as well as building view models...
-          allowWriteOfOptOutDataToMongoToSucceed()
+      "called after opt-out is complete" should {
+        "not call initialiseOptOutJourney to preserve session data" in {
+          stubOptOut(
+            currentTaxYear = taxYear2023_2024,
+            previousYearCrystallisedStatus = false,
+            previousYearStatus = Voluntary,
+            currentYearStatus = Voluntary,
+            nextYearStatus = Voluntary,
+            nino = testNino
+          )
 
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
-          setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-          setupMockGetCurrentTaxYear(taxYear)
+          when(mockRepository.fetchSavedIntent()(any(), any())).thenReturn(Future.successful(Some(taxYear2022_2023)))
 
-          val expected = NextUpdatesQuarterlyReportingContentChecks(
-            currentYearItsaStatus = true,
-            previousYearItsaStatus = false,
-            previousYearCrystallisedStatus = crystallised)
+          val response = service.nextUpdatesPageChecksAndProposition()
 
-          service.nextUpdatesPageChecksAndProposition().futureValue._1 shouldBe expected
+          response.futureValue
+
+          verify(mockRepository, never()).initialiseOptOutJourney(any(), any())(any(), any())
         }
       }
+  }
 
-      "Calculation State for CY-1 is unavailable" should {
-        "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.failed(error))
-          setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-          setupMockGetCurrentTaxYear(taxYear)
+  ".nextUpdatesPageOptOutViewModels" when {
+    "ITSA Status from CY-1 till future years and Calculation State for CY-1 is available" should {
+      "return NextUpdatesQuarterlyReportingContentCheck" in {
+        // Because we're saving the status as well as building view models...
+        allowWriteOfOptOutDataToMongoToSucceed()
 
-          service.nextUpdatesPageChecksAndProposition().failed.map { ex =>
+        setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
+        setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
+        setupMockGetCurrentTaxYear(taxYear)
 
-            ex shouldBe a[RuntimeException]
-            ex.getMessage shouldBe error.getMessage
-          }
+        val expected = NextUpdatesQuarterlyReportingContentChecks(
+          currentYearItsaStatus = true,
+          previousYearItsaStatus = false,
+          previousYearCrystallisedStatus = crystallised)
+
+        service.nextUpdatesPageChecksAndProposition().futureValue._1 shouldBe expected
+      }
+    }
+
+    "Calculation State for CY-1 is unavailable" should {
+      "return NextUpdatesQuarterlyReportingContentCheck" in {
+        setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.failed(error))
+        setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
+        setupMockGetCurrentTaxYear(taxYear)
+
+        service.nextUpdatesPageChecksAndProposition().failed.map { ex =>
+
+          ex shouldBe a[RuntimeException]
+          ex.getMessage shouldBe error.getMessage
         }
       }
+    }
 
-      "ITSA Status from CY-1 till future years is unavailable" should {
-        "return NextUpdatesQuarterlyReportingContentCheck" in {
-          setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
-          setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
-          setupMockGetCurrentTaxYear(taxYear)
+    "ITSA Status from CY-1 till future years is unavailable" should {
+      "return NextUpdatesQuarterlyReportingContentCheck" in {
+        setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
+        setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
+        setupMockGetCurrentTaxYear(taxYear)
 
-          service.nextUpdatesPageChecksAndProposition().failed.map { ex =>
-            ex shouldBe a[RuntimeException]
-            ex.getMessage shouldBe error.getMessage
-          }
+        service.nextUpdatesPageChecksAndProposition().failed.map { ex =>
+          ex shouldBe a[RuntimeException]
+          ex.getMessage shouldBe error.getMessage
         }
       }
     }

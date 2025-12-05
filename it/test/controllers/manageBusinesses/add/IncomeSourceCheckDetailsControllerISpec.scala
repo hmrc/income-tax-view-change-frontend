@@ -22,6 +22,7 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationAdded
 import enums.{MTDIndividual, MTDUserRole}
+import helpers.IncomeSourceCheckDetailsConstants._
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.{AccountingMethodJourney, NavBarFs}
@@ -35,10 +36,8 @@ import testConstants.IncomeSourceIntegrationTestConstants.{emptyUIJourneySession
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
-  import helpers.IncomeSourceCheckDetailsConstants._
-
   def errorPageUrl(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole): String = {
-    if(mtdUserRole == MTDIndividual) {
+    if (mtdUserRole == MTDIndividual) {
       controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.show(incomeSourceType).url
     } else {
       controllers.manageBusinesses.add.routes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
@@ -47,7 +46,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
   val continueButtonText: String = "Confirm and continue"
   val descriptionText: String = "Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so."
-
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
   override def beforeEach(): Unit = {
@@ -55,14 +53,16 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
     await(sessionService.deleteSession(Add))
   }
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): UIJourneySessionData = UIJourneySessionData(
-    sessionId = testSessionId,
-    journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
-    addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData),
-    triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration)))
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): UIJourneySessionData =
+    UIJourneySessionData(
+      sessionId = testSessionId,
+      journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
+      addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData),
+      triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration))
+    )
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
+    val pathStart = if (mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
     incomeSourceType match {
       case SelfEmployment => s"$pathStart/add-sole-trader/business-check-answers"
       case UkProperty => s"$pathStart/add-uk-property/check-answers"
@@ -74,11 +74,17 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
       val path = getPath(mtdUserRole, incomeSourceType)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
+
       s"GET $path" when {
+
         s"a user is a $mtdUserRole" that {
+
           "is authenticated, with a valid enrolment" should {
+
             "render the Check Business details page with accounting method" when {
+
               "the user has no existing businesses" in {
+
                 enable(AccountingMethodJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
@@ -92,6 +98,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 incomeSourceType match {
+
                   case SelfEmployment =>
                     result should have(
                       httpStatus(OK),
@@ -100,7 +107,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")("1 January 2023"),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(3) dd:nth-of-type(1)")(testBusinessTrade),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(4) dd:nth-of-type(1)")(testBusinessAddressLine1 + " " + testBusinessPostCode + " " + testBusinessCountryCode),
-                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(5) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
                       elementTextByID("check-details-description")(descriptionText),
                       elementTextByID("confirm-button")(continueButtonText)
                     )
@@ -108,9 +114,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                   case UkProperty =>
                     result should have(
                       httpStatus(OK),
-                      pageTitle(mtdUserRole,"check-details-uk.title"),
+                      pageTitle(mtdUserRole, "check-details-uk.title"),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
-                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
                       elementTextByID("check-details-description")(descriptionText),
                       elementTextByID("confirm-button")(continueButtonText)
                     )
@@ -120,7 +125,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                       httpStatus(OK),
                       pageTitle(mtdUserRole, "check-details-fp.title"),
                       elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(1) dd:nth-of-type(1)")("1 January 2023"),
-                      elementTextBySelector("dl:nth-of-type(1) div:nth-of-type(2) dd:nth-of-type(1)")(testBusinessAccountingMethodView),
                       elementTextByID("check-details-description")(descriptionText),
                       elementTextByID("confirm-button")(continueButtonText)
                     )
@@ -192,7 +196,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(SEE_OTHER),
-                  redirectURI(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent = mtdUserRole != MTDIndividual, Some(TriggeredMigrationAdded.toString)).url)
+                  redirectURI(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent = mtdUserRole != MTDIndividual, Some(TriggeredMigrationAdded(incomeSourceType).toString)).url)
                 )
               }
             }

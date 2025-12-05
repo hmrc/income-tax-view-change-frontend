@@ -57,7 +57,6 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
       None,
       Some(CessationModel(Some(b2CessationDate))),
       address = Some(address),
-      cashOrAccruals = Some(false)
     )),
     properties = Nil
   )

@@ -51,7 +51,6 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
       |      "postalCode" : ""
       |    },
       |    "tradingStartDate" : "",
-      |    "cashOrAccrualsFlag" : "CASH",
       |    "cessationDate" : ""
       |  } ]
       |}
@@ -63,7 +62,6 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
       |  "mtdbsa" : "XAIT00001234567",
       |  "foreignPropertyDetails" : {
       |    "tradingStartDate" : "01-02-2023",
-      |    "cashOrAccrualsFlag" : "CASH",
       |    "startDate" : "01-02-2023"
       |  }
       |}
@@ -75,7 +73,6 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
       |  "mtdbsa" : "XAIT00001234567",
       |  "ukPropertyDetails" : {
       |    "tradingStartDate" : "01-02-2023",
-      |    "cashOrAccrualsFlag" : "CASH",
       |    "startDate" : "01-02-2023"
       |  }
       |}
@@ -98,7 +95,6 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
         ),
         typeOfBusiness = None,
         tradingStartDate = "",
-        cashOrAccrualsFlag = Some("CASH"),
         cessationDate = Some(""),
         cessationReason = None
       )
@@ -109,7 +105,6 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
     mtdbsa = "XAIT00001234567",
     foreignPropertyDetails = PropertyDetails(
       "01-02-2023",
-      Some("CASH"),
       "01-02-2023"
     )
   )
@@ -118,7 +113,6 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
     mtdbsa = "XAIT00001234567",
     ukPropertyDetails = PropertyDetails(
       "01-02-2023",
-      Some("CASH"),
       "01-02-2023"
     )
   )
@@ -210,8 +204,8 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
         }
 
         "return an error when the request doesn't return a 200" in {
-          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, ukPropertyRequestBody, INTERNAL_SERVER_ERROR, "{}")
 
+          WiremockHelper.stubPostWithRequest(createIncomeSourceUrl, ukPropertyRequestBody, INTERNAL_SERVER_ERROR, "{}")
           val result = connector.createUKProperty(createUKPropertyRequest).futureValue
 
           result shouldBe Left(CreateIncomeSourceErrorResponse(500, "Error creating incomeSource: {}"))

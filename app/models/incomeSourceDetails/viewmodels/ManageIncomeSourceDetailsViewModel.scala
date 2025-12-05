@@ -27,7 +27,6 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               tradingName: Option[String],
                                               tradingStartDate: Option[LocalDate],
                                               address: Option[AddressModel],
-                                              isTraditionalAccountingMethod: Option[Boolean],
                                               latencyYearsQuarterly: LatencyYearsQuarterly,
                                               latencyYearsAnnual: LatencyYearsAnnual,
                                               latencyYearsCrystallised: LatencyYearsCrystallised,
@@ -41,14 +40,6 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
     latencyIndicator match {
       case "A" => "annually"
       case "Q" => "quarterly"
-    }
-  }
-
-  def businessAccountingMethodAsKey(isTraditionalAccountingMethod: Boolean): String = {
-    if (isTraditionalAccountingMethod) {
-      "incomeSources.manage.business-manage-details.traditional-accounting"
-    } else {
-      "incomeSources.manage.business-manage-details.cash-accounting"
     }
   }
 

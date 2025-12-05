@@ -60,10 +60,6 @@
     }
 }
 
-@accountingMethodMessageKey = @{
-    viewModel.getAccountingMethodMessageKey
-}
-
 @changeBusinessNameURL = @{
     if(isAgent) {
         controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = CheckMode).url
@@ -113,10 +109,6 @@
 
 @changeStartDateURL = @{
     controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = CheckMode, viewModel.incomeSourceType).url
-}
-
-@changeAccountingMethodURL = @{
-        controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(viewModel.incomeSourceType, isAgent).url
 }
 
 @extractName = @{
@@ -217,7 +209,7 @@
                         ActionItem(
                             href = changeBusinessTradeURL,
                             content = Text(getMessage("change")),
-                            attributes = Map("id" -> "change-business-name-link")
+                            attributes = Map("id" -> "change-business-trade-link")
                         )
                     )
                 ))
@@ -250,30 +242,6 @@
     } else Seq.empty
 }
 
-@businessAccountingMethodRow = @{
-    if((viewModel.showedAccountingMethod || viewModel.incomeSourceType != SelfEmployment) && displayAccountingMethod) {
-        Seq(
-            SummaryListRow(
-                key = Key(
-                    content = Text(getMessage("accounting-method"))
-                ),
-                value = Value(
-                    content = Text(messages(accountingMethodMessageKey))
-                ),
-                actions = Some(Actions(
-                    items = Seq(
-                        ActionItem(
-                            href = changeAccountingMethodURL,
-                            content = Text(getMessage("change")),
-                            attributes = Map("id" -> "change-accounting-method-link")
-                        )
-                    )
-                ))
-            )
-        )
-    } else Seq.empty
-}
-
 @mainTemplate(
     pageTitle = getMessage("title"),
     backUrl = Some(backUrl),
@@ -292,7 +260,7 @@
 
         @govukSummaryList(SummaryList(
             rows = {
-                businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow ++ businessAccountingMethodRow
+                businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow
             },
             attributes = Map("id" -> "check-details-table")
         ))

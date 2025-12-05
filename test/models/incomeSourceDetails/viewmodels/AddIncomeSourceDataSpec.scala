@@ -35,7 +35,6 @@ class AddIncomeSourceDataSpec extends UnitSpec{
         incomeSourceId = Some("abc-123"),
         address = Some(Address(Seq("123 Test Street", "Testville"), Some("AB1 2CD"))),
         countryCode = Some("GB"),
-        incomeSourcesAccountingMethod = Some("Cash"),
         changeReportingFrequency = Some(true),
         reportingMethodTaxYear1 = Some("Quarterly"),
         reportingMethodTaxYear2 = Some("Annual"),

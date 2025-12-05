@@ -60,7 +60,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              getManageDetailsSummaryValues(document).get(2).text() shouldBe calendar
+
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
               Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
@@ -84,7 +84,6 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              getManageDetailsSummaryValues(document).get(2).text() shouldBe standard
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
             "the user does not have Reporting frequency content/link" in {
@@ -108,7 +107,6 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              getManageDetailsSummaryValues(document).get(2).text() shouldBe calendar
               hasReportingFrequencyContent(document) shouldBe false
             }
 
@@ -167,8 +165,8 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
 
               val summaryKeys = getManageDetailsSummaryKeys(document)
 
-              summaryKeys.eq(2).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
-              summaryKeys.eq(3).text() shouldBe  "Using Making Tax Digital for Income Tax for 2023 to 2024"
+              summaryKeys.eq(1).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
+              summaryKeys.eq(2).text() shouldBe  "Using Making Tax Digital for Income Tax for 2023 to 2024"
 
               val summaryValues = getManageDetailsSummaryValues(document).eachText()
               summaryValues should contain("No")
@@ -205,11 +203,12 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               latencyParagraph.text().nonEmpty shouldBe true
 
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
+              manageDetailsSummaryValues.get(1).text() shouldBe annuallyGracePeriod
               manageDetailsSummaryValues.get(2).text() shouldBe annuallyGracePeriod
-              manageDetailsSummaryValues.get(3).text() shouldBe annuallyGracePeriod
             }
 
             "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
+
               enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
@@ -231,8 +230,8 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
+              manageDetailsSummaryValues.eq(1).size() shouldBe 1
               manageDetailsSummaryValues.eq(2).size() shouldBe 1
-              manageDetailsSummaryValues.eq(3).size() shouldBe 1
             }
 
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
@@ -262,7 +261,9 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
 
             "the user has a valid id parameter, but non eligable itsa status" in {
+
               enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
 
@@ -285,7 +286,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
               manageDetailsSummaryValues.get(0).text() shouldBe unknown
-              manageDetailsSummaryValues.get(1).text() shouldBe "Traditional accounting"
+              manageDetailsSummaryValues.get(1).text() shouldBe "Annual"
             }
 
             "the user has a valid id parameter, latency expired" in {
@@ -310,7 +311,6 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.get(2).text() shouldBe standard
             }
           }
 

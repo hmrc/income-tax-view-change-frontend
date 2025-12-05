@@ -40,13 +40,20 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
   def taxYearEnd: Int = if(dateNow.isAfter(LocalDate.of(dateNow.getYear, 4, 5))) dateNow.getYear + 1 else dateNow.getYear
 
   mtdAllRoles.foreach { mtdUserRole =>
+
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
+
     s"GET $path" when {
+
       s"a user is a $mtdUserRole" that {
+
         "is authenticated, with a valid enrolment" should {
+
           "render the Manage Foreign Property page" when {
+
             "URL contains a valid income source ID and user has no latency information" in {
+
               enable(DisplayBusinessStartDate, AccountingMethodJourney)
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
@@ -63,8 +70,6 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
                 elementTextByID("up-to-two-tax-years")("")
               )
             }
@@ -89,8 +94,6 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
                 elementTextByID("change-link-1")(""),
                 elementTextByID("change-link-2")("")
               )
@@ -116,8 +119,6 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
                 elementTextByID("change-link-1")(messagesChangeLinkText),
                 elementTextByID("change-link-2")(messagesChangeLinkText),
                 elementTextByID("up-to-two-tax-years")("Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2027, you could be required to report quarterly.")
@@ -145,8 +146,6 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")(businessAccountingMethod),
                 elementTextByID("change-link-1")(""),
                 elementTextByID("change-link-2")(messagesChangeLinkText)
               )
@@ -167,9 +166,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dt")("Accounting method"),
-                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(2)", "dd")("Cash basis accounting")
+                elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(messagesUnknown)
               )
             }
           }

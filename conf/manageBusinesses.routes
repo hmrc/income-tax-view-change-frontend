@@ -16,8 +16,8 @@ GET          /agents/manage-your-businesses/ceased-businesses                   
 
 GET          /manage-your-businesses/add/new-income-sources                       controllers.manageBusinesses.add.AddIncomeSourceController.show()
 GET          /agents/manage-your-businesses/add/new-income-sources                controllers.manageBusinesses.add.AddIncomeSourceController.showAgent()
-GET          /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.show(mode: Mode = NormalMode)
-GET          /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.showAgent(mode: Mode = NormalMode)
+GET          /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.show(mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
+GET          /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.showAgent(mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
 POST         /manage-your-businesses/add-sole-trader/business-name                controllers.manageBusinesses.add.AddBusinessNameController.submit(mode: Mode = NormalMode)
 POST         /agents/manage-your-businesses/add-sole-trader/business-name         controllers.manageBusinesses.add.AddBusinessNameController.submitAgent(mode: Mode = NormalMode)
 
@@ -91,43 +91,26 @@ POST         /agents/manage-your-businesses/add-foreign-property/change-business
 GET          /manage-your-businesses/add-sole-trader/business-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/manage-your-businesses/add-sole-trader/business-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 
-GET          /manage-your-businesses/add/uk-property-accounting-method            controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/add/uk-property-accounting-method     controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = true)
-POST         /manage-your-businesses/add/uk-property-accounting-method            controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = false)
-POST         /agents/manage-your-businesses/add/uk-property-accounting-method     controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = true)
-
-GET          /manage-your-businesses/add/foreign-property-accounting-method         controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/add/foreign-property-accounting-method  controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
-POST         /manage-your-businesses/add/foreign-property-accounting-method         controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
-POST         /agents/manage-your-businesses/add/foreign-property-accounting-method  controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
-
 GET          /manage-your-businesses/add-foreign-property/foreign-property-added                       controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /agents/manage-your-businesses/add-foreign-property/foreign-property-added                controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
 
 GET          /manage-your-businesses/add-uk-property/uk-property-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = UkProperty)
 GET          /agents/manage-your-businesses/add-uk-property/uk-property-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
 
-GET          /manage-your-businesses/add/business-accounting-method                   controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/add/business-accounting-method            controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = true)
-POST         /manage-your-businesses/add/business-accounting-method                   controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = false)
-POST         /agents/manage-your-businesses/add/business-accounting-method            controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.submit(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = true)
+###### Check details / Change ######
 
-#Check details / Change
 GET          /manage-your-businesses/add-sole-trader/business-check-answers                controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.show(incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/manage-your-businesses/add-sole-trader/business-check-answers              controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 POST         /manage-your-businesses/add-sole-trader/business-check-answers               controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
 POST         /agents/manage-your-businesses/add-sole-trader/business-check-answers        controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
 
-GET          /manage-your-businesses/add-sole-trader/change-business-name                      controllers.manageBusinesses.add.AddBusinessNameController.show(mode: Mode = CheckMode)
-GET          /agents/manage-your-businesses/add-sole-trader/change-business-name               controllers.manageBusinesses.add.AddBusinessNameController.showAgent(mode: Mode = CheckMode)
+POST         /manage-your-businesses/add/business-check-details                          controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
+POST         /agents/manage-your-businesses/add/business-check-details                   controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
+
+GET          /manage-your-businesses/add-sole-trader/change-business-name                      controllers.manageBusinesses.add.AddBusinessNameController.show(mode: Mode = CheckMode, isTriggeredMigration: Boolean ?= false)
+GET          /agents/manage-your-businesses/add-sole-trader/change-business-name               controllers.manageBusinesses.add.AddBusinessNameController.showAgent(mode: Mode = CheckMode, isTriggeredMigration: Boolean ?= false)
 POST         /manage-your-businesses/add-sole-trader/change-business-name                     controllers.manageBusinesses.add.AddBusinessNameController.submit(mode: Mode = CheckMode)
 POST         /agents/manage-your-businesses/add-sole-trader/change-business-name              controllers.manageBusinesses.add.AddBusinessNameController.submitAgent(mode: Mode = CheckMode)
-
-GET          /manage-your-businesses/add/change-business-accounting-method          controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/add/change-business-accounting-method   controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = SelfEmployment, isAgent: Boolean = true)
-POST          /manage-your-businesses/add/business-check-details                    controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = SelfEmployment)
-POST          /agents/manage-your-businesses/add/business-check-details              controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType: IncomeSourceType = SelfEmployment)
-
 
 GET          /manage-your-businesses/add-foreign-property/check-answers                   controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.show(incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /agents/manage-your-businesses/add-foreign-property/check-answers            controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.showAgent(incomeSourceType: IncomeSourceType = ForeignProperty)
@@ -138,10 +121,6 @@ GET          /manage-your-businesses/add-uk-property/check-answers         contr
 GET          /agents/manage-your-businesses/add-uk-property/check-answers        controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
 POST         /manage-your-businesses/add-uk-property/check-answers           controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submit(incomeSourceType: IncomeSourceType = UkProperty)
 POST         /agents/manage-your-businesses/add-uk-property/check-answers         controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType: IncomeSourceType = UkProperty)
-
-GET          /manage-your-businesses/add/change-uk-property-accounting-method            controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/add/change-uk-property-accounting-method     controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = UkProperty, isAgent: Boolean = true)
-
 
 GET          /manage-your-businesses/add-sole-trader/error-business-not-added                           controllers.manageBusinesses.add.IncomeSourceNotAddedController.show(incomeSourceType: IncomeSourceType = SelfEmployment, isTriggeredMigration: Boolean ?= false)
 GET          /agents/manage-your-businesses/add-sole-trader/error-business-not-added                    controllers.manageBusinesses.add.IncomeSourceNotAddedController.showAgent(incomeSourceType: IncomeSourceType = SelfEmployment, isTriggeredMigration: Boolean ?= false)
@@ -416,9 +395,3 @@ GET          /manage-your-businesses/add-foreign-property/reporting-frequency-ch
 GET          /agents/manage-your-businesses/add-foreign-property/reporting-frequency-check-details                          controllers.manageBusinesses.add.IncomeSourceRFCheckDetailsController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
 POST         /manage-your-businesses/add-foreign-property/reporting-frequency-check-details                                 controllers.manageBusinesses.add.IncomeSourceRFCheckDetailsController.submit(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty)
 POST         /agents/manage-your-businesses/add-foreign-property/reporting-frequency-check-details                          controllers.manageBusinesses.add.IncomeSourceRFCheckDetailsController.submit(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
-
-# Income Sources - TO BE IMPLEMENTED
-GET          /manage-your-businesses/add/foreign-property-accounting-method                 controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/add/foreign-property-accounting-method          controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.show(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)
-GET          /manage-your-businesses/add/change-foreign-property-accounting-method          controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/add/change-foreign-property-accounting-method   controllers.manageBusinesses.add.IncomeSourcesAccountingMethodController.changeIncomeSourcesAccountingMethod(incomeSourceType: IncomeSourceType = ForeignProperty, isAgent: Boolean = true)

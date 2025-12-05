@@ -32,6 +32,7 @@ import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptIn
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
 import play.api.http.Status.OK
 import repositories.UIJourneySessionDataRepository
@@ -50,7 +51,8 @@ class OptInServiceSpec extends UnitSpec
   with MockDateService
   with OneInstancePerTest
   with MockITSAStatusUpdateConnector
-  with MockAuditingService {
+  with MockAuditingService
+  with Eventually {
 
   implicit val hc: HeaderCarrier = mock(classOf[HeaderCarrier])
 
@@ -205,16 +207,19 @@ class OptInServiceSpec extends UnitSpec
       whenReady(service.makeOptInCall()) { result =>
 
         val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
-        verifyExtendedAudit(
-          OptInAuditModel(
-            OptInProposition(
-              currentTaxYearOptIn,
-              NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
-            ),
-            currentTaxYear,
-            ITSAStatusUpdateResponseSuccess(OK)
+
+        eventually {
+          verifyExtendedAudit(
+            OptInAuditModel(
+              OptInProposition(
+                currentTaxYearOptIn,
+                NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+              ),
+              currentTaxYear,
+              ITSAStatusUpdateResponseSuccess(OK)
+            )
           )
-        )
+        }
 
         result.isInstanceOf[ITSAStatusUpdateResponseSuccess] shouldBe true
       }
@@ -231,16 +236,18 @@ class OptInServiceSpec extends UnitSpec
       whenReady(service.makeOptInCall()) { result =>
         val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
 
-        verifyExtendedAudit(
-          OptInAuditModel(
-            OptInProposition(
-              currentTaxYearOptIn,
-              NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
-            ),
-            currentTaxYear,
-            ITSAStatusUpdateResponseFailure.defaultFailure()
+        eventually {
+          verifyExtendedAudit(
+            OptInAuditModel(
+              OptInProposition(
+                currentTaxYearOptIn,
+                NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+              ),
+              currentTaxYear,
+              ITSAStatusUpdateResponseFailure.defaultFailure()
+            )
           )
-        )
+        }
 
         result.isInstanceOf[ITSAStatusUpdateResponseFailure] shouldBe true
       }
