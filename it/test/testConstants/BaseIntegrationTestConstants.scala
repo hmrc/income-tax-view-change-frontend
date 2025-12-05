@@ -205,7 +205,6 @@ object BaseIntegrationTestConstants {
     ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
-    quarterReportingType = Some(QuarterTypeStandard),
     currentTaxYearEnd = getCurrentTaxYearEnd.getYear
   )
 
@@ -229,7 +228,6 @@ object BaseIntegrationTestConstants {
     ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
-    quarterReportingType = Some(QuarterTypeStandard),
     currentTaxYearEnd = getCurrentTaxYearEnd.getYear
   )
 
@@ -253,7 +251,6 @@ object BaseIntegrationTestConstants {
     ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
-    quarterReportingType = None,
     currentTaxYearEnd = getCurrentTaxYearEnd.getYear
   )
 }

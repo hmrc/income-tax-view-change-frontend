@@ -60,7 +60,6 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
               Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
@@ -310,7 +309,6 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
-              val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
             }
           }
 
