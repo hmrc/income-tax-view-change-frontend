@@ -19,6 +19,8 @@ package controllers.triggeredMigration
 import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
+import enums.TriggeredMigration.TriggeredMigrationCeased
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -39,6 +41,7 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
                                            implicit val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
+
   def show(isAgent: Boolean, state: Option[String] = None): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     //TODO: Redirect the user back to the triggered migration page if they press the backlink (Requires the data from the API to know if the user has to stay in the journey)
     withTriggeredMigrationFS {
@@ -49,9 +52,9 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
         sessionService.clearSession(sessionId.value)
       }
 
-      val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources)
+      val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources, state)
 
-      Future.successful(Ok(view(viewModel)))
+      Future.successful(Ok(view(viewModel, isAgent)))
     }
   }
 }

@@ -32,10 +32,11 @@
     govukInsetText: GovukInsetText,
     link: link,
     continueButton: ContinueButton,
-    hr: hr
+    hr: hr,
+    govukNotificationBanner : GovukNotificationBanner
 )
 
-@(viewModel: CheckHmrcRecordsViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: CheckHmrcRecordsViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @addSoleTraderBusinessURL() = @{
     if(user.isAgent()) {
@@ -178,12 +179,41 @@
     </div>
 }
 
+@ceasedBannerContent = {
+    <h3 id="ceased-banner-text-1" class="govuk-notification-banner__heading">
+        @messages("triggered-migration.check-hmrc-records.cessation-banner.text1")
+    </h3>
+    <p id="ceased-banner-text-2" class="govuk-body">
+        @messages("triggered-migration.check-hmrc-records.cessation-banner.text2")
+        <a id="ceased-banner-link" class="govuk-notification-banner__link" href="#ceased-section-heading">@messages("triggered-migration.check-hmrc-records.cessation-banner.link")</a>.
+    </p>
+}
+@ceasedBanner = {
+    @govukNotificationBanner(NotificationBanner(
+        title = HtmlContent(messages("triggered-migration.check-hmrc-records.cessation-banner.heading")),
+        titleId = Some("ceased-banner-heading"),
+        content = HtmlContent(ceasedBannerContent),
+        bannerType = Some("success")
+    ))
+}
+
+@ceasedBusinessSection = {
+    @h2(messages("triggered-migration.check-hmrc-records.cessation-section.heading"), classes = "govuk-heading-l", optId = Some("ceased-section-heading"))
+    <p id="ceased-section-text" class="govuk-body">@messages("triggered-migration.check-hmrc-records.cessation-section.text")</p>
+    <a class="govuk-link govuk-body" id="ceased-section-link" href=@controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
+}
+
 @mainTemplate(
     pageTitle = messages("triggered-migration.check-hmrc-records.title"),
     backUrl = Some("#"),
     isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial
 ) {
+
+    @if(viewModel.showCeasedBanner) {
+        @ceasedBanner
+    }
+
     @h1(messages("triggered-migration.check-hmrc-records.heading"), id = Some("check-hmrc-records-heading"))
 
     @p(id = Some("check-hmrc-records-desc")){@messages("triggered-migration.check-hmrc-records.desc")}
@@ -210,8 +240,12 @@
     @soleTraderSection
     @h3(messages("triggered-migration.check-hmrc-records.property.heading"), classes = "govuk-heading-m govuk-!-margin-top-5", optId = Some("property-heading"))
     @propertyBusinessSection
-
     @hr()
+
+    @if(viewModel.numberOfCeasedBusinesses > 0) {
+        @ceasedBusinessSection
+        @hr()
+    }
 
     @h2(messages("triggered-migration.check-hmrc-records.confirmRecords.heading"), classes = "govuk-heading-l", optId = Some("confirm-records-heading"))
     @p(id = Some("confirm-records-desc")){@messages("triggered-migration.check-hmrc-records.confirmRecords.text")}

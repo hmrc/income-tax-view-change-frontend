@@ -33,7 +33,7 @@ trait MockTriggeredMigrationService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockGetCheckHmrcRecordsViewModel(out: CheckHmrcRecordsViewModel): Unit = {
-    when(mockTriggeredMigrationService.getCheckHmrcRecordsViewModel(any()))
+    when(mockTriggeredMigrationService.getCheckHmrcRecordsViewModel(any(), any()))
       .thenReturn(out)
   }
 }
