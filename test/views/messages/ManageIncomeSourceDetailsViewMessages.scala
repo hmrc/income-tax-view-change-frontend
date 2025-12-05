@@ -27,13 +27,6 @@ object ManageIncomeSourceDetailsViewMessages {
   val businessAddress: String = "Address"
   val dateStarted: String = "Date started"
   val typeOfTrade: String = "Type of trade"
-<<<<<<< HEAD
-  val quarterlyPeriodType: String = "Update period"
-=======
-  val isTraditionalAccountingMethod: String = "Traditional accounting"
-  val ukAccountingMethod: String = "Accounting method"
-  val foreignAccountingMethod: String = "Accounting method"
->>>>>>> a27151df8 (MISUV-10527 Remove standard quarterly period section from Manage your details page)
   val reportingMethod1: String = "Reporting frequency 2022 to 2023"
   val reportingMethod2: String = "Reporting frequency 2023 to 2024"
 
@@ -43,13 +36,6 @@ object ManageIncomeSourceDetailsViewMessages {
 
   val quarterlyGracePeriod: String = "Quarterly"
   val annuallyGracePeriod: String = "Annual"
-
-<<<<<<< HEAD
-  val standard: String = "Standard"
-  val calendar: String = "Calendar"
-=======
-  val cashBasisAccounting: String = "Cash basis accounting"
->>>>>>> a27151df8 (MISUV-10527 Remove standard quarterly period section from Manage your details page)
 
   val expectedAddress: Option[AddressModel] = Some(AddressModel(Some("Line 1"), Some("Line 2"), Some("Line 3"), Some("Line 4"), Some("LN12 2NL"), Some("NI")))
 
