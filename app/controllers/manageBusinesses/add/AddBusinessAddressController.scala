@@ -77,7 +77,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     }
   }
 
-  private def getRedirectUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = {
+  private def getRedirectUrl(isAgent: Boolean)(implicit user: MtdItUser[_]): String = {
     (if (isAgent) {
       routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     } else {
@@ -107,7 +107,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
 
   def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], mode: Mode)
                          (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    val redirectUrl = getRedirectUrl(isAgent = isAgent, mode = mode)
+    val redirectUrl = getRedirectUrl(isAgent = isAgent)
     val redirect = Redirect(redirectUrl)
 
     addressLookupService.fetchAddress(id).flatMap(setUpSession(_).flatMap {
