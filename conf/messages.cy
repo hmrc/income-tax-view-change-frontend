@@ -1781,27 +1781,18 @@ check-details.business-name                             = Enw’r busnes
 check-details.start-date                                = Dyddiad dechrau masnachu
 check-details.trade                                     = Math o fasnach
 check-details.address                                   = Cyfeiriad
-check-details.accounting-method                         = Dull cyfrifydd
-check-details.cash-accounting                           = Cyfrifyddu ar sail arian parod
-check-details.traditional-accounting                    = Cyfrifyddu traddodiadol
 check-details.change                                    = Newid
 check-details.description                               = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
 check-details-uk.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-uk.heading                                = Eiddo yn y DU
 check-details-uk.start-date                             = Dyddiad dechrau
-check-details-uk.accounting-method                      = Dull cyfrifyddu
-check-details-uk.cash-accounting                        = Cyfrifyddu ar sail arian parod
-check-details-uk.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-uk.change                                 = Newid
 check-details-uk.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
 check-details-fp.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-fp.heading                                = Eiddo tramor
 check-details-fp.start-date                             = Dyddiad dechrau
-check-details-fp.accounting-method                      = Dull cyfrifyddu
-check-details-fp.cash-accounting                        = Cyfrifyddu ar sail arian parod
-check-details-fp.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-fp.change                                 = Newid
 check-details-fp.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
@@ -2194,23 +2185,18 @@ incomeSources.manage.business-manage-details.sole-trader-section      =   Unig f
 incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes
 incomeSources.manage.business-manage-details.business-address         =   Cyfeiriad
 incomeSources.manage.business-manage-details.date-started             =   Dyddiad cychwyn
-incomeSources.manage.business-manage-details.accounting-method        =   Dull cyfrifyddu
 incomeSources.manage.business-manage-details.reporting-method         =   Amlder cyflwyno {0} i {1}
 incomeSources.manage.business-manage-details.change                   =   Newid
 incomeSources.manage.business-manage-details.quarterly                =   Bob chwarter
 incomeSources.manage.business-manage-details.annually                 =   Blynyddol
 incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Bob chwarter
 incomeSources.manage.business-manage-details.annually.graceperiod     =   Blynyddol
-incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
-incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
 incomeSources.manage.business-manage-details.tradetype                =   Math o fasnach
 incomeSources.manage.business-manage-details.reportingFrequency       =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
 incomeSources.manage.business-manage-details.insetText                =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
-incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Eiddo tramor
-incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu
 
 ##################### New - Manage journey manage income source #####################
 
@@ -2229,24 +2215,19 @@ incomeSources.manage.new.business.details.sole.trader.section             =   Un
 incomeSources.manage.new.business.details.business.name                   =   Enw’r busnes
 incomeSources.manage.new.business.details.business.address                =   Cyfeiriad
 incomeSources.manage.new.business.details.date.started                    =   Dyddiad cychwyn
-incomeSources.manage.new.business.details.accounting.method               =   Dull cyfrifyddu
 incomeSources.manage.new.business.details.reporting.method                =   Amlder cyflwyno {0} i {1}
 incomeSources.manage.new.business.details.change                          =   Newid
 incomeSources.manage.new.business.details.quarterly                       =   Bob chwarter
 incomeSources.manage.new.business.details.annually                        =   Blynyddol
 incomeSources.manage.new.business.details.quarterly.grace.period          =   Bob chwarter
 incomeSources.manage.new.business.details.annually.grace.period           =   Blynyddol
-incomeSources.manage.new.business.details.cash.accounting                 =   Cyfrifyddu ar sail arian parod
-incomeSources.manage.new.business.details.traditional.accounting          =   Cyfrifyddu traddodiadol
 incomeSources.manage.new.business.details.trade.type                      =   Math o fasnach
 incomeSources.manage.new.business.details.reporting.frequency             =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
 incomeSources.manage.new.business.details.insetText                       =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
 
 
 incomeSources.manage.new.uk.property.manage.details.uk.property.section              =   Eiddo yn y DU
-incomeSources.manage.new.uk.property.manage.details.accounting.method                =   Dull cyfrifyddu
 incomeSources.manage.new.foreign.property.manage.details.foreign.property.section    =   Eiddo tramor
-incomeSources.manage.new.foreign.property.manage.details.accounting.method           =   Dull cyfrifyddu
 
 
 # Used when OptInOptOutContentUpdateR17 feature switch is enabled

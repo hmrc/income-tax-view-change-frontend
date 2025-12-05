@@ -24,7 +24,6 @@ import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
-import models.admin.AccountingMethodJourney
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
@@ -239,33 +238,8 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with I
 
             if (mode == NormalMode) {
 
-              s"return ${Status.SEE_OTHER}: redirect to $incomeSourceType accounting method page, isAgent = $isAgent" when {
-
+              s"return ${Status.SEE_OTHER}: redirect to $incomeSourceType check details page, isAgent = $isAgent" when {
                 "Yes is submitted with the form with a valid session" in {
-
-                  setupMockSuccess(mtdRole)
-                  enable(AccountingMethodJourney)
-
-                  mockNoIncomeSources()
-                  setupMockGetSessionKeyMongoTyped[LocalDate](dateStartedField, journeyType(incomeSourceType), Right(Some(testStartDate)))
-                  setupMockSetMongoData(result = true)
-                  setupMockGetMongo(Right(Some(sessionDataWithDate(IncomeSourceJourneyType(Add, incomeSourceType)))))
-
-                  val result = action(fakeRequest.withFormUrlEncodedBody(AddIncomeSourceStartDateCheckForm.response -> responseYes))
-
-                  val expected =
-                    incomeSourceType match {
-                      case SelfEmployment if isAgent => routes.AddBusinessTradeController.showAgent(mode = mode)
-                      case SelfEmployment => routes.AddBusinessTradeController.show(mode = mode)
-                      case _ if isAgent => routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
-                      case _ => routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-                    }
-
-                  status(result) shouldBe SEE_OTHER
-                  redirectLocation(result) shouldBe Some(expected.url)
-                }
-
-                "Yes is submitted with the form with a valid session (accounting method FS disabled)" in {
 
                   setupMockSuccess(mtdRole)
 

@@ -37,7 +37,6 @@ object BusinessDetailsIntegrationTestConstants {
   val b1AddressLine4 = "England"
   val b1AddressLine5 = "ZL1 064"
   val b1CountryCode = "UK"
-  val b1AccountingMethod = Some(false)
 
   val b2CessationDate = LocalDate.of(endYear, 12, 31)
   val b2TradingStart = LocalDate.parse("2018-01-01")
@@ -152,21 +151,6 @@ object BusinessDetailsIntegrationTestConstants {
     contextualTaxYear = None,
     cessation = None,
     address = None
-  )
-
-  val businessWithAddressAndAccountingMethod = BusinessDetailsModel(
-    incomeSourceId = testSelfEmploymentId,
-    incomeSource = Some(testIncomeSource),
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = b1AccountingStart,
-      end = b1AccountingEnd
-    )),
-    tradingName = Some(b1TradingName),
-    firstAccountingPeriodEndDate = Some(b1AccountingEnd),
-    tradingStartDate = Some(b1TradingStart),
-    contextualTaxYear = None,
-    cessation = None,
-    address = Some(testBusinessAddress)
   )
 
   val ceasedBusiness1 = BusinessDetailsModel(

@@ -26,11 +26,10 @@ import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationAdded
 import models.UIJourneySessionData
-import models.admin.AccountingMethodJourney
 import models.core.NormalMode
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -94,8 +93,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
                 viewModel,
                 postAction = postAction,
                 isAgent,
-                backUrl = backUrl,
-                displayAccountingMethod = isEnabled(AccountingMethodJourney)
+                backUrl = backUrl
               )
             )
           }
@@ -122,7 +120,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
 
   private def getPropertyModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData): Option[CheckPropertyViewModel] = {
     val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
-    (dateStartedOpt) match {
+    dateStartedOpt match {
       case Some(dateStarted) =>
         Some(
           CheckPropertyViewModel(
@@ -130,8 +128,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
             incomeSourceType = incomeSourceType
           )
         )
-      case _ =>
-        None
+      case _ => None
     }
   }
 

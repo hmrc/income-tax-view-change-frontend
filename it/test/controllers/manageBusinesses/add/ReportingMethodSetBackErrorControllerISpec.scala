@@ -58,7 +58,7 @@ class ReportingMethodSetBackErrorControllerISpec extends ControllerISpecHelper {
       s"GET $path" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            "render the Business Accounting Method page" in {
+            "render the Cannot go back page" in {
               disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

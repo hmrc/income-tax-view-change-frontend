@@ -25,7 +25,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import helpers.IncomeSourceCheckDetailsConstants._
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.{AccountingMethodJourney, NavBarFs}
+import models.admin.NavBarFs
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -81,11 +81,9 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
           "is authenticated, with a valid enrolment" should {
 
-            "render the Check Business details page with accounting method" when {
+            "render the Check Business details page" when {
 
               "the user has no existing businesses" in {
-
-                enable(AccountingMethodJourney)
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)

@@ -46,8 +46,7 @@
         postAction: Call,
         isAgent: Boolean,
         backUrl: String,
-        origin: Option[String] = None,
-        displayAccountingMethod: Boolean
+        origin: Option[String] = None
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate

@@ -20,7 +20,6 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
-import models.admin.AccountingMethodJourney
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel}
 import org.mockito.ArgumentCaptor
@@ -121,10 +120,14 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
       s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
         val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.submit(Some("123"), mode) else testAddBusinessAddressController.agentSubmit(Some("123"), mode)
         s"the user is authenticated as a $mtdRole" should {
-          "redirect to add accounting method page" when {
+          "redirect to the business check answers page" when {
             "valid data received" in {
+              val checkAnswersUrl = if(mtdRole == MTDIndividual) {
+                "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-check-answers"
+              } else {
+                "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add-sole-trader/business-check-answers"
+              }
               setupMockSuccess(mtdRole)
-              enable(AccountingMethodJourney)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
@@ -134,6 +137,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
+              redirectLocation(result) mustBe Some(checkAnswersUrl)
               verifySetMongoData()
             }
           }
