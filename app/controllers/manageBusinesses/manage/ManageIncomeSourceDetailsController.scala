@@ -213,23 +213,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
     }
   }
 
-  private def getQuarterType(latencyDetails: Option[LatencyDetails],
-                             quarterTypeElection: Option[QuarterTypeElection]): Option[QuarterReportingType] = {
-    quarterTypeElection.flatMap(quarterTypeElection => {
-      latencyDetails match {
-        case Some(latencyDetails: LatencyDetails) =>
-          val quarterIndicator = "Q"
-          val currentTaxYearEnd = dateService.getCurrentTaxYearEnd.toString
-          val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
-          val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
-          val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd
-          val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2 || showIfLatencyExpired
-          if (showQuarterReportingType) quarterTypeElection.isStandardQuarterlyReporting else None
-        case None => quarterTypeElection.isStandardQuarterlyReporting
-      }
-    })
-  }
-
   private def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
                                            (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Option[List[Boolean]]] = {
     latencyDetails match {
@@ -262,7 +245,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
       currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
@@ -283,7 +265,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
       currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
