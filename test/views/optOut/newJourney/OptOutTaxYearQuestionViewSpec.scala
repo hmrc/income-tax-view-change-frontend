@@ -266,7 +266,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-
     "opting out of a single year followed by Annual - With updates" should {
       "have the correct title" in new Setup("current", OneYearOptOutFollowedByAnnual, 1, NoStatus, Voluntary, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualUpdatesTitle
@@ -348,7 +347,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
     }
 
     // TODO: MISUV-10308 - Scenario 3
-    "opting out for the next year in V-M-V scenario submitted updates - Single-year Opt-Out" should {
+    "opting out for the next year in V-M-V scenario with submitted updates - Single-year Opt-Out" should {
       "have the correct title" in new Setup("next", NextYearOptOut, 0, Voluntary, Mandated, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.nextYearOptOutMandatedTitle
       }
@@ -365,6 +364,27 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       "display the correct error message when form has errors" in new Setup("next", NextYearOptOut, 0, Voluntary, Mandated, Voluntary, withError = true) {
         pageDocument.getElementsByClass("govuk-error-summary__title").text() shouldBe "There is a problem"
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2026 to 2027 tax year"
+      }
+    }
+
+    // TODO: MISUV-10308 - Scenario 4
+    "opting out from the previous year in V-V-A scenario without submitted updates - Multi-year Opt-Out" should {
+      "have the correct title" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousYearTitleMulti
+      }
+      "have the correct heading" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
+        pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousYearHeadingMulti
+      }
+      "have the correct description" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
+        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc1Multi
+        pageDocument.getElementById("opt-out-question-desc-3").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc3Multi // TODO: need to rename from desc3 to desc2 ( we only have 2 paragraphs now)
+      }
+      "have the correct radio question" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
+        pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousYearQuestionMulti
+      }
+      "display the correct error message when form has errors" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual, withError = true) {
+        pageDocument.getElementsByClass("govuk-error-summary__title").text() shouldBe "There is a problem"
+        pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2024 to 2025 tax year"
       }
     }
 
