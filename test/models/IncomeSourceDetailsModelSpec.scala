@@ -41,7 +41,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
   val testSelfEmploymentIdHashValueMaybe: Option[String] = Option(testQueryString)
   val emptyIncomeSourceIdHash: IncomeSourceIdHash = mkIncomeSourceId("").toHash
 
-  lazy val fixedDate : LocalDate = LocalDate.of(2023, 12, 4)
+  lazy val fixedDate: LocalDate = LocalDate.of(2023, 12, 4)
 
   "The IncomeSourceDetailsModel" when {
 
@@ -88,9 +88,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       "should have an address" in {
         singleBusinessIncomeWithLatency2019.businesses.head.address.get shouldBe testBizAddress
       }
-      "should have a cashOrAccruals field" in {
-        singleBusinessIncomeWithLatency2019.businesses.head.cashOrAccruals shouldBe Some(false)
-      }
+
       //Test Property details
       s"should not have property details" in {
         singleBusinessIncome.properties shouldBe Nil
@@ -133,7 +131,6 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               cessation = None,
               latencyDetails = None,
               address = Some(address),
-              cashOrAccruals = Some(true)
             ),
             BusinessDetailsModel(
               incomeSourceId = "",
@@ -146,7 +143,6 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
               cessation = None,
               latencyDetails = None,
               address = Some(address),
-              cashOrAccruals = Some(true)
             )
           ),
           List(PropertyDetailsModel(
@@ -157,7 +153,6 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
             tradingStartDate = Some(LocalDate.parse("2022-01-01")),
             contextualTaxYear = None,
             cessation = None,
-            cashOrAccruals = Some(true)
           )
           ))
         preSanitised.sanitise shouldBe expected
@@ -206,24 +201,6 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
     }
   }
 
-  "getCashOrAccruals method" when {
-    "return list of cashOrAccrual flags from all active businesses" should {
-      "return true if there is a field" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, ukPropertyAndSoleTraderBusinessIncomeNoTradingName)
-
-        val result = user.incomeSources.getBusinessCashOrAccruals()
-
-        result shouldBe List(true)
-      }
-      "return an empty list if there are no cashOrAccrual fields" in {
-        implicit val user: MtdItUser[_] = getIndividualUserIncomeSourcesConfigurable(fakeRequestWithActiveSession, singleBusinessWithNoCashOrAccuralsFlag)
-
-        val result = user.incomeSources.getBusinessCashOrAccruals()
-
-        result shouldBe List.empty
-      }
-    }
-  }
 
   "getIncomeSourceBusinessName" should {
     "return None when we don't pass sole trader business id for SelfEmployment" in {
@@ -245,7 +222,6 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
         cessation = None,
         latencyDetails = None,
         address = None,
-        cashOrAccruals = None
       )
 
       val business2 = business1.copy(
@@ -261,7 +237,6 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
         tradingStartDate = None,
         contextualTaxYear = None,
         cessation = None,
-        cashOrAccruals = None
       )
 
       val model = IncomeSourceDetailsModel(

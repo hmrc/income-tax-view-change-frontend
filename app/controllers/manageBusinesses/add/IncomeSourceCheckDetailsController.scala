@@ -27,6 +27,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationAdded
 import models.UIJourneySessionData
 import models.admin.AccountingMethodJourney
+import models.core.NormalMode
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -41,7 +42,7 @@ import views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceCheckDetailsView,
+class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsView: IncomeSourceCheckDetailsView,
                                                    val authActions: AuthActions,
                                                    val businessDetailsService: CreateBusinessDetailsService,
                                                    val auditingService: AuditingService,
@@ -81,20 +82,22 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
                             incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] =
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
-      val backUrl: String = controllers.manageBusinesses.add.routes.IncomeSourcesAccountingMethodController.show(incomeSourceType, isAgent).url
+      val backUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, NormalMode, incomeSourceType).url
       val postAction: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType) else {
         controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
       }
       getViewModel(incomeSourceType, sessionData)(user) match {
         case Some(viewModel) =>
           Future.successful {
-            Ok(checkDetailsView(
-              viewModel,
-              postAction = postAction,
-              isAgent,
-              backUrl = backUrl,
-              displayAccountingMethod = isEnabled(AccountingMethodJourney)
-            ))
+            Ok(
+              incomeSourceCheckDetailsView(
+                viewModel,
+                postAction = postAction,
+                isAgent,
+                backUrl = backUrl,
+                displayAccountingMethod = isEnabled(AccountingMethodJourney)
+              )
+            )
           }
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
@@ -118,23 +121,21 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
   }
 
   private def getPropertyModel(incomeSourceType: IncomeSourceType, sessionData: UIJourneySessionData): Option[CheckPropertyViewModel] = {
-    val accountingMethodOpt = sessionData.addIncomeSourceData.flatMap(_.incomeSourcesAccountingMethod)
     val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
-    (dateStartedOpt, accountingMethodOpt) match {
-      case (Some(dateStarted), accountingMethod) =>
-        Some(CheckPropertyViewModel(
-          tradingStartDate = dateStarted,
-          cashOrAccrualsFlag = accountingMethod,
-          incomeSourceType = incomeSourceType
-        ))
-      case (_, _) =>
+    (dateStartedOpt) match {
+      case Some(dateStarted) =>
+        Some(
+          CheckPropertyViewModel(
+            tradingStartDate = dateStarted,
+            incomeSourceType = incomeSourceType
+          )
+        )
+      case _ =>
         None
     }
   }
 
   private def getBusinessModel(sessionData: UIJourneySessionData)(implicit user: MtdItUser[_]): Option[CheckBusinessDetailsViewModel] = {
-    val userActiveBusinesses: List[BusinessDetailsModel] = user.incomeSources.businesses.filterNot(_.isCeased)
-    val showAccountingMethodPage: Boolean = userActiveBusinesses.isEmpty
 
     sessionData.addIncomeSourceData.flatMap { addIncomeSourceData =>
       for {
@@ -152,10 +153,7 @@ class IncomeSourceCheckDetailsController @Inject()(val checkDetailsView: IncomeS
         businessAddressLine3 = address.lines.lift(2),
         businessAddressLine4 = address.lines.lift(3),
         businessPostalCode = address.postcode,
-        businessCountryCode = addIncomeSourceData.countryCode,
-        incomeSourcesAccountingMethod = addIncomeSourceData.incomeSourcesAccountingMethod,
-        cashOrAccrualsFlag = addIncomeSourceData.incomeSourcesAccountingMethod,
-        showedAccountingMethod = showAccountingMethodPage
+        businessCountryCode = addIncomeSourceData.countryCode
       )
     }
   }

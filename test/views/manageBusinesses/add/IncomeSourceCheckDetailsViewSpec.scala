@@ -33,27 +33,25 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
   val checkBusinessDetailsView: IncomeSourceCheckDetailsView = app.injector.instanceOf[IncomeSourceCheckDetailsView]
 
-  def businessViewModelMax: CheckDetailsViewModel = CheckBusinessDetailsViewModel(
-    businessName = Some("Test Business"),
-    businessStartDate = Some(LocalDate.of(2022, 1, 1)),
-    businessTrade = "Test Trade",
-    businessAddressLine1 = "64 Zoo Lane",
-    businessPostalCode = Some("ZO0 1AN"),
-    incomeSourcesAccountingMethod = Some("ACCRUALS"),
-    accountingPeriodEndDate = LocalDate.of(2022, 1, 1),
-    businessAddressLine2 = None,
-    businessAddressLine3 = Some("Cbeebies"),
-    businessAddressLine4 = None,
-    businessCountryCode = Some("United Kingdom"),
-    cashOrAccrualsFlag = Some("ACCRUALS"),
-    showedAccountingMethod = true
-  )
+  def businessViewModelMax: CheckDetailsViewModel =
+    CheckBusinessDetailsViewModel(
+      businessName = Some("Test Business"),
+      businessStartDate = Some(LocalDate.of(2022, 1, 1)),
+      businessTrade = "Test Trade",
+      businessAddressLine1 = "64 Zoo Lane",
+      businessPostalCode = Some("ZO0 1AN"),
+      accountingPeriodEndDate = LocalDate.of(2022, 1, 1),
+      businessAddressLine2 = None,
+      businessAddressLine3 = Some("Cbeebies"),
+      businessAddressLine4 = None,
+      businessCountryCode = Some("United Kingdom")
+    )
 
-  def propertyViewModelMax(incomeSourceType: IncomeSourceType): CheckDetailsViewModel = CheckPropertyViewModel(
-    tradingStartDate = LocalDate.of(2022, 1, 1),
-    cashOrAccrualsFlag = Some("ACCRUALS"),
-    incomeSourceType = incomeSourceType
-  )
+  def propertyViewModelMax(incomeSourceType: IncomeSourceType): CheckDetailsViewModel =
+    CheckPropertyViewModel(
+      tradingStartDate = LocalDate.of(2022, 1, 1),
+      incomeSourceType = incomeSourceType
+    )
 
   def postAction(incomeSourceType: IncomeSourceType): Call = {
     controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
@@ -65,7 +63,6 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     val businessStartDate = "1 January 2022"
     val businessTrade = "Test Trade"
     val businessAddressAsString = "64 Zoo Lane Cbeebies ZO0 1AN United Kingdom"
-    val businessAccountingMethod = "Traditional accounting"
 
     val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else
       controllers.routes.HomeController.show().url
@@ -88,7 +85,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
   def getStartDateMessage(incomeSourceType: IncomeSourceType): String = {
     incomeSourceType match {
       case SelfEmployment => "Trading start date"
-      case _              => "Start date"
+      case _ => "Start date"
     }
   }
 
@@ -106,23 +103,19 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe "Trading start date"
             document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe "Type of trade"
             document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Address"
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Accounting method"
 
             document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe businessName
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe businessStartDate
             document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe businessTrade
             document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe businessAddressAsString
-            document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe businessAccountingMethod
           }
         }
-          else {
+        else {
           "render the summary list" in new Setup(isAgent, incomeSourceType, true) {
             document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe getStartDateMessage(incomeSourceType)
-            document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe "Accounting method"
 
             document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe businessStartDate
-            document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe businessAccountingMethod
-        }
+          }
 
         }
 

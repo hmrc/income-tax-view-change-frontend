@@ -67,9 +67,9 @@
     @for((business, index) <- viewModel.soleTraderBusinesses.zipWithIndex) {
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title" id="sole-trader-business-@index">
+                <h3 class="govuk-summary-card__title" id="sole-trader-business-@index">
                 @business.incomeSource.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
-                </h2>
+                </h3>
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
                         <a class="govuk-link" id="sole-trader-cease-link-@index" href=@ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)>@messages("triggered-migration.check-hmrc-records.soleTrader.cease.link")</a>
@@ -125,9 +125,9 @@
 @ukPropertyContent = {
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">
-            <h2 class="govuk-summary-card__title" id="uk-property-heading">
+            <h3 class="govuk-summary-card__title" id="uk-property-heading">
                 @messages("triggered-migration.check-hmrc-records.ukProperty.heading")
-            </h2>
+            </h3>
             <ul class="govuk-summary-card__actions">
                 <li class="govuk-summary-card__action">
                     <a class="govuk-link" id="uk-property-cease-link" href="@ceaseUKPropertyBusinessURL()">@messages("triggered-migration.check-hmrc-records.ukProperty.cease.link")</a>
@@ -154,9 +154,9 @@
 @foreignPropertyContent = {
     <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">
-            <h2 class="govuk-summary-card__title" id="foreign-property-heading">
+            <h3 class="govuk-summary-card__title" id="foreign-property-heading">
             @messages("triggered-migration.check-hmrc-records.foreignProperty.heading")
-            </h2>
+            </h3>
             <ul class="govuk-summary-card__actions">
                 <li class="govuk-summary-card__action">
                     <a class="govuk-link" id="foreign-property-cease-link" href="@ceaseForeignPropertyBusinessURL()">@messages("triggered-migration.check-hmrc-records.foreignProperty.cease.link")</a>

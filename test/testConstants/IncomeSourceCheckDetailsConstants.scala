@@ -50,7 +50,6 @@ object IncomeSourceCheckDetailsConstants {
       address = Some(testBusinessAddress),
       countryCode = Some(testCountryCode),
       accountingPeriodEndDate = Some(testAccountingPeriodEndDate),
-      incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
     )))
 
 
@@ -59,7 +58,6 @@ object IncomeSourceCheckDetailsConstants {
     journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(
       dateStarted = Some(testBusinessStartDate),
-      incomeSourcesAccountingMethod = Some(testBusinessAccountingMethod)
     )))
 
   def sessionDataCompletedJourney(journeyType: IncomeSourceJourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceCreatedJourneyComplete = Some(true))))
