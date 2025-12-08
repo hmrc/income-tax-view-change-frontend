@@ -96,7 +96,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 checkActiveSoleTrader(result)
                 checkActiveUkProperty(result)
-                checkNoForeignProperty(result)
+                checkPropertyLink(result)
               }
             }
             "has an active sole trader business and foreign property only" in {
@@ -109,7 +109,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 checkActiveSoleTrader(result)
                 checkActiveForeignProperty(result)
-                checkNoUkProperty(result)
+                checkPropertyLink(result)
               }
             }
             "has an active uk property and foreign property only" in {
@@ -132,8 +132,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 checkCommonContent(result, mtdUserRole)
 
                 checkActiveSoleTrader(result)
-                checkNoUkProperty(result)
-                checkNoForeignProperty(result)
+                checkPropertyLink(result)
                 checkNoProperty(result)
               }
             }
@@ -145,7 +144,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveUkProperty(result)
-                checkNoForeignProperty(result)
+                checkPropertyLink(result)
               }
             }
             "has an active foreign property only" in {
@@ -156,7 +155,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveForeignProperty(result)
-                checkNoUkProperty(result)
+                checkPropertyLink(result)
               }
             }
             "has no active businesses" in {
@@ -166,9 +165,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
-                checkNoUkProperty(result)
                 checkNoProperty(result)
-                checkNoForeignProperty(result)
+                checkPropertyLink(result)
               }
             }
 
@@ -231,15 +229,9 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
     )
   }
 
-  def checkNoUkProperty(res: WSResponse) = {
+  def checkPropertyLink(res: WSResponse) = {
     res should have(
-      elementTextByID("uk-property-add-link")(CheckHmrcRecordsMessages.addAPropertyBusinessText),
-    )
-  }
-
-  def checkNoForeignProperty(res: WSResponse) = {
-    res should have(
-      elementTextByID("foreign-property-add-link")(CheckHmrcRecordsMessages.addForeignPropertyBusinessText),
+      elementTextByID("add-property-link")(CheckHmrcRecordsMessages.addAPropertyBusinessText),
     )
   }
 

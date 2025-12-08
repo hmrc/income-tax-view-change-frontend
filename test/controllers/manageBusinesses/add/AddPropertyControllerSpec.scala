@@ -83,6 +83,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
 
     s"submit($isAgent)" when {
       val action = testController.submit(isAgent)
+      val actionTrigMig = testController.submit(isAgent, isTrigMig = true)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
       s"the user is authenticated as a $mtdRole" should {
         s"return ${Status.SEE_OTHER}: redirect to the correct Add Start Date Page" when {
@@ -110,6 +111,35 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
 
             status(result) shouldBe SEE_OTHER
             val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
+        s"return ${Status.SEE_OTHER}: redirect to the correct Add Start Date Page when accessed via Triggered Migration" when {
+          "foreign property selected" in {
+            setupMockSuccess(mtdRole)
+
+            mockNoIncomeSources()
+
+            val result = actionTrigMig(fakeRequest.withFormUrlEncodedBody(
+              AddProprertyForm.response -> responseUK
+            ))
+
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = true).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+          "uk property selected" in {
+            setupMockSuccess(mtdRole)
+
+            mockNoIncomeSources()
+
+            val result = actionTrigMig(fakeRequest.withFormUrlEncodedBody(
+              AddProprertyForm.response -> responseForeign
+            ))
+
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = true).url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
