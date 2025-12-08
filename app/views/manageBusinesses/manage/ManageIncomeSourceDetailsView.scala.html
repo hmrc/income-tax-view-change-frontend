@@ -47,7 +47,6 @@
         viewModel: ManageIncomeSourceDetailsViewModel,
         isAgent: Boolean,
         showStartDate: Boolean,
-        showAccountingMethod: Boolean,
         showOptInOptOutContentUpdateR17: Boolean,
         showReportingFrequencyLink: Boolean,
         backUrl: String
@@ -75,14 +74,6 @@
     content match {
         case Some(x) => x
         case None => messages("incomeSources.generic.unknown")
-    }
-}
-
-@getAccountingMethodMessage = @{
-    viewModel.incomeSourceType match {
-        case SelfEmployment => messages("incomeSources.manage.new.business.details.accounting.method")
-        case UkProperty => messages("incomeSources.manage.new.uk.property.manage.details.accounting.method")
-        case ForeignProperty => messages("incomeSources.manage.new.foreign.property.manage.details.accounting.method")
     }
 }
 

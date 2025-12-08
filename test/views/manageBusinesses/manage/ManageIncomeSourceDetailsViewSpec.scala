@@ -60,7 +60,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -82,7 +81,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -104,7 +102,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -122,7 +119,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -144,7 +140,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -165,7 +160,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -186,7 +180,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -204,7 +197,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -226,7 +218,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -247,7 +238,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -268,7 +258,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -286,7 +275,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = false,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -303,7 +291,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true
       )(messages, implicitly)
@@ -347,21 +334,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(5).text() shouldBe quarterlyGracePeriod
       document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
       document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(false)
-    }
-
-    "not display the accounting method row when showAccountingMethod is false" in {
-
-      val view = manageIncomeSourceDetailsView(
-        selfEmploymentViewModel,
-        isAgent = false,
-        backUrl = backUrl(false),
-        showStartDate = true,
-        showAccountingMethod = false,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
-      )(messages, implicitly)
-
-      implicit val document: Document = Jsoup.parse(contentAsString(view))
     }
 
     "render the whole page with unknowns and no change links or inset text" in new SelfEmploymentUnknownsSetup(false) {
@@ -450,7 +422,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         testViewModel,
         isAgent = false,
         showStartDate = true,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true,
         backUrl = backUrl(false)
@@ -493,7 +464,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         testViewModel,
         isAgent = false,
         showStartDate = true,
-        showAccountingMethod = true,
         showOptInOptOutContentUpdateR17 = true,
         showReportingFrequencyLink = true,
         backUrl = backUrl(false)
@@ -589,37 +559,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(0).text() shouldBe expectedBusinessStartDate
       summaryListRowValues().eq(1).text() shouldBe annuallyGracePeriod
       summaryListRowValues().eq(2).text() shouldBe quarterlyGracePeriod
-    }
-
-    "not display the accounting method row when showAccountingMethod is false" in {
-      val view = manageIncomeSourceDetailsView(
-        ukViewModel,
-        isAgent = false,
-        backUrl = backUrl(false),
-        showStartDate = true,
-        showAccountingMethod = false,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
-      )(messages, implicitly)
-
-      implicit val document = Jsoup.parse(contentAsString(view))
-      val summaryKeys = summaryListRowKeys().eachText()
-
-    }
-
-    "not display the accounting method row when showAccountingMethod is true but isTraditionalAccountingMethod in the view model is empty" in {
-      val view = manageIncomeSourceDetailsView(
-        ukViewModel.copy(),
-        isAgent = false,
-        backUrl = backUrl(false),
-        showStartDate = true,
-        showAccountingMethod = false,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
-      )(messages, implicitly)
-
-      val document = Jsoup.parse(contentAsString(view))
-      val summaryKeys = document.getElementsByClass("govuk-summary-list__key").eachText()
     }
 
     "render the whole page with unknowns and no change links" in new UkSetupUnknowns(false) {
@@ -733,21 +672,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(1).text() shouldBe annuallyGracePeriod
       summaryListRowValues().eq(2).text() shouldBe quarterlyGracePeriod
 
-    }
-
-    "not display the accounting method row when showAccountingMethod is false" in {
-      val view = manageIncomeSourceDetailsView(
-        foreignViewModel,
-        isAgent = false,
-        backUrl = backUrl(false),
-        showStartDate = true,
-        showAccountingMethod = false,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
-      )(messages, implicitly)
-
-      implicit val document = Jsoup.parse(contentAsString(view))
-      val summaryKeys = summaryListRowKeys().eachText()
     }
 
     "render the whole page with unknowns and no change links or inset text" in new ForeignSetupUnknowns(false) {

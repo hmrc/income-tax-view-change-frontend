@@ -1783,27 +1783,18 @@ check-details.business-name                             = Business name
 check-details.start-date                                = Trading start date
 check-details.trade                                     = Type of trade
 check-details.address                                   = Address
-check-details.accounting-method                         = Accounting method
-check-details.cash-accounting                           = Cash basis accounting
-check-details.traditional-accounting                    = Traditional accounting
 check-details.change                                    = Change
 check-details.description                               = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
 check-details-uk.title                                  = Confirm this information is correct
 check-details-uk.heading                                = UK property
 check-details-uk.start-date                             = Start date
-check-details-uk.accounting-method                      = Accounting method
-check-details-uk.cash-accounting                        = Cash basis accounting
-check-details-uk.traditional-accounting                 = Traditional accounting
 check-details-uk.change                                 = Change
 check-details-uk.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
 check-details-fp.title                                  = Confirm this information is correct
 check-details-fp.heading                                = Foreign property
 check-details-fp.start-date                             = Start date
-check-details-fp.accounting-method                      = Accounting method
-check-details-fp.cash-accounting                        = Cash basis accounting
-check-details-fp.traditional-accounting                 = Traditional accounting
 check-details-fp.change                                 = Change
 check-details-fp.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
@@ -2184,24 +2175,19 @@ incomeSources.manage.business-manage-details.sole-trader-section      =   Sole t
 incomeSources.manage.business-manage-details.business-name            =   Business name
 incomeSources.manage.business-manage-details.business-address         =   Address
 incomeSources.manage.business-manage-details.date-started             =   Date started
-incomeSources.manage.business-manage-details.accounting-method        =   Accounting method
 incomeSources.manage.business-manage-details.reporting-method         =   Reporting frequency {0} to {1}
 incomeSources.manage.business-manage-details.change                   =   Change
 incomeSources.manage.business-manage-details.quarterly                =   Quarterly
 incomeSources.manage.business-manage-details.annually                 =   Annual
 incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Quarterly
 incomeSources.manage.business-manage-details.annually.graceperiod     =   Annual
-incomeSources.manage.business-manage-details.cash-accounting          =   Cash basis accounting
-incomeSources.manage.business-manage-details.traditional-accounting   =   Traditional accounting
 incomeSources.manage.business-manage-details.tradetype                =   Type of trade
 incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
 incomeSources.manage.business-manage-details.insetText                =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
-incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property
-incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method
 
 
 ##################### New - Manage journey manage income source #####################
@@ -2213,25 +2199,20 @@ incomeSources.manage.new.business.details.sole.trader.section             =   So
 incomeSources.manage.new.business.details.business.name                   =   Business name
 incomeSources.manage.new.business.details.business.address                =   Address
 incomeSources.manage.new.business.details.date.started                    =   Date started
-incomeSources.manage.new.business.details.accounting.method               =   Accounting method
 incomeSources.manage.new.business.details.reporting.method                =   Reporting frequency {0} to {1}
 incomeSources.manage.new.business.details.change                          =   Change
 incomeSources.manage.new.business.details.quarterly                       =   Quarterly
 incomeSources.manage.new.business.details.annually                        =   Annual
 incomeSources.manage.new.business.details.quarterly.grace.period          =   Quarterly
 incomeSources.manage.new.business.details.annually.grace.period           =   Annual
-incomeSources.manage.new.business.details.cash.accounting                 =   Cash basis accounting
-incomeSources.manage.new.business.details.traditional.accounting          =   Traditional accounting
 incomeSources.manage.new.business.details.trade.type                      =   Type of trade
 incomeSources.manage.new.business.details.reporting.frequency             =   View and change your reporting frequency for all your businesses
 incomeSources.manage.new.business.details.insetText                       =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
 
 incomeSources.manage.new.uk.property.manage.details.uk.property.section              =   UK property
-incomeSources.manage.new.uk.property.manage.details.accounting.method                =   Accounting method
 
 incomeSources.manage.new.foreign.property.manage.details.foreign.property.section    =   Foreign property
-incomeSources.manage.new.foreign.property.manage.details.accounting.method           =   Accounting method
 
 # Used when OptInOptOutContentUpdateR17 feature switch is enabled
 
