@@ -72,7 +72,7 @@ object OptOutTaxYearQuestionMessages {
   // Single year followed by Annual
   val singleYearFollowedByAnnualHeading = "Opt out of Making Tax Digital for Income Tax for the 2025 to 2026 tax year"
   val singleYearFollowedByAnnualTitle = "Opt out of Making Tax Digital for Income Tax for the 2025 to 2026 tax year - Manage your Self Assessment - GOV.UK"
-  val singleYearFollowedByAnnualDesc1 = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
+  val singleYearFollowedByAnnualDesc1 = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
   val singleYearFollowedByAnnualDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
   val singleYearFollowedByAnnualQuestion = "Do you want to opt out for the 2025 to 2026 tax year?"
 
