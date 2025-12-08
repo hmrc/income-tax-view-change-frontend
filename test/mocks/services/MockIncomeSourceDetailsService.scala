@@ -75,10 +75,6 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
 
   def mockBusinessIncomeSourceWithAccruals(): Unit = setupMockGetIncomeSourceDetails(businessIncome2)
 
-  def mockBusinessIncomeSourceWithCashAndAccruals(): Unit = setupMockGetIncomeSourceDetails(businessIncome3)
-
-  def mockBusinessIncomeSourceMissingCashOrAccrualsField(): Unit = setupMockGetIncomeSourceDetails(businessIncome4)
-
   def mockPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(propertyIncomeOnly)
 
   def mockUKPropertyIncomeSource(): Unit = setupMockGetIncomeSourceDetails(ukPropertyIncome)

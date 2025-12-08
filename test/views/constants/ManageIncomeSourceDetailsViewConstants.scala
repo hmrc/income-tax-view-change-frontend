@@ -47,7 +47,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = SelfEmployment,
-      quarterReportingType = Some(QuarterTypeStandard),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -72,7 +71,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = SelfEmployment,
-      quarterReportingType = Some(QuarterTypeStandard),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -97,7 +95,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails4),
       incomeSourceType = SelfEmployment,
-      quarterReportingType = Some(QuarterTypeStandard),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -122,7 +119,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = None,
       incomeSourceType = SelfEmployment,
-      quarterReportingType = None,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -147,7 +143,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = UkProperty,
-      quarterReportingType = Some(QuarterTypeCalendar),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -172,7 +167,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails4),
       incomeSourceType = UkProperty,
-      quarterReportingType = Some(QuarterTypeCalendar),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -197,7 +191,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = UkProperty,
-      quarterReportingType = Some(QuarterTypeStandard),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -222,7 +215,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetailsCYUnknown),
       incomeSourceType = UkProperty,
-      quarterReportingType = Some(QuarterTypeStandard),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -247,7 +239,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = None,
       incomeSourceType = UkProperty,
-      quarterReportingType = None,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -272,7 +263,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = ForeignProperty,
-      quarterReportingType = Some(QuarterTypeCalendar),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -297,7 +287,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = ForeignProperty,
-      quarterReportingType = Some(QuarterTypeStandard),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -322,7 +311,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetailsCYUnknown),
       incomeSourceType = ForeignProperty,
-      quarterReportingType = Some(QuarterTypeStandard),
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
 
@@ -347,9 +335,6 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = None,
       incomeSourceType = ForeignProperty,
-      quarterReportingType = None,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear
     )
-
-
 }
