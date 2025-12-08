@@ -81,14 +81,14 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
     s"have the correct audit event type of '$auditType'" in {
       claimARefundAuditFull().auditType shouldBe auditType
     }
-    s"return a full audit event correctly with MFA Credits, Cutover Credits, Payments and Refunds, Balancing Charge Credit & Repayment Supplement, Credit POA 1/2 Reconciliation Credit, ITSA Return Amendment Credit," in {
+    s"return a full audit event correctly with POA 1/2 Reconciliation Credit, ITSA Return Amendment Credit, MFA Credits, Cutover Credits, Payments and Refunds, Balancing Charge Credit & Repayment Supplement Credit" in {
       claimARefundAuditFull().detail shouldBe commonAuditDetails(Individual) ++ Json.obj(
         "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
-            Json.obj("description" -> "First payment on account: extra amount from your tax return", "amount" -> 800),
-            Json.obj("description" -> "Second payment on account: extra amount from your tax return", "amount" -> 500),
-            Json.obj("description" -> "Balancing payment: extra amount due to amended return", "amount" -> 400),
+            Json.obj("description" -> "First payment on account: credit from your tax return", "amount" -> 800),
+            Json.obj("description" -> "Second payment on account: credit from your tax return", "amount" -> 500),
+            Json.obj("description" -> "Credit from your amended tax return", "amount" -> 400),
             Json.obj("description" -> "Balancing charge credit", "amount" -> 100),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1000),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),
@@ -113,14 +113,14 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
         "refundDocuments" ->
           Json.arr())
     }
-    s"return a full audit event for an agent user correctly with MFA Credits, Cutover Credits, Payments and Refunds & Repayment Supplement Credit, POA 1/2 Reconciliation Credit, ITSA Return Amendment Credit," in {
+    s"return a full audit event for an agent user correctly with POA 1/2 Reconciliation Credit, ITSA Return Amendment Credit, MFA Credits, Cutover Credits, Payments and Refunds & Repayment Supplement Credit" in {
       claimARefundAuditFull(testMtdItAgentUser).detail shouldBe commonAuditDetails(Agent) ++ Json.obj(
         "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
-            Json.obj("description" -> "First payment on account: extra amount from your tax return", "amount" -> 800),
-            Json.obj("description" -> "Second payment on account: extra amount from your tax return", "amount" -> 500),
-            Json.obj("description" -> "Balancing payment: extra amount due to amended return", "amount" -> 400),
+            Json.obj("description" -> "First payment on account: credit from your tax return", "amount" -> 800),
+            Json.obj("description" -> "Second payment on account: credit from your tax return", "amount" -> 500),
+            Json.obj("description" -> "Credit from your amended tax return", "amount" -> 400),
             Json.obj("description" -> "Balancing charge credit", "amount" -> 100),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1000),
             Json.obj("description" -> "Credit from HMRC adjustment", "amount" -> 1100),

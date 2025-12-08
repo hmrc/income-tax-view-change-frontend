@@ -39,9 +39,9 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
       case Some(MfaCreditType)             if hasCredit                           => Some(getPayment(payment, "Credit from HMRC adjustment"))
       case Some(CutOverCreditType)         if hasCredit                           => Some(getPayment(payment, "Credit from an earlier tax year"))
       case Some(BalancingChargeCreditType) if hasCredit                           => Some(getPayment(payment, "Balancing charge credit"))
-      case Some(PoaOneReconciliationCredit)if hasCredit                           =>Some(getPayment(payment, "First payment on account: extra amount from your tax return"))
-      case Some(PoaTwoReconciliationCredit)if hasCredit                           =>Some(getPayment(payment, "Second payment on account: extra amount from your tax return"))
-      case Some(ITSAReturnAmendmentCredit) if hasCredit                           =>Some(getPayment(payment, "Balancing payment: extra amount due to amended return"))
+      case Some(PoaOneReconciliationCredit)if hasCredit                           =>Some(getPayment(payment, "First payment on account: credit from your tax return"))
+      case Some(PoaTwoReconciliationCredit)if hasCredit                           =>Some(getPayment(payment, "Second payment on account: credit from your tax return"))
+      case Some(ITSAReturnAmendmentCredit) if hasCredit                           =>Some(getPayment(payment, "Credit from your amended tax return"))
       case Some(RepaymentInterest)         if hasCredit                           => Some(getPayment(payment, "Interest on set off charge"))
       case Some(PaymentType)               if !hasCredit && hasLot                => Some(getPayment(payment, "Payment Made to HMRC"))
       case _ => None
