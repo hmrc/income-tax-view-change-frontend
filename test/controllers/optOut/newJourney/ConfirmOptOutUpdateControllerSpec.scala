@@ -16,7 +16,8 @@
 
 package controllers.optOut.newJourney
 
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure.defaultFailure
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseSuccess}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockOptOutService, MockSessionService}
@@ -61,7 +62,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
   val failedResponse: Future[Nothing] = Future.failed(new Exception("some error"))
 
   val optOutUpdateResponseSuccess: Future[ITSAStatusUpdateResponse] = Future.successful(ITSAStatusUpdateResponseSuccess())
-  val optOutUpdateResponseFailure: Future[ITSAStatusUpdateResponse] = Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
+  val optOutUpdateResponseFailure: Future[ITSAStatusUpdateResponse] = Future.successful(defaultFailure())
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
@@ -255,7 +256,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
         }
 
 
@@ -266,13 +267,13 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
             .thenReturn(
-              Future(List(ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseFailure.defaultFailure()))
+              Future(List(defaultFailure(), defaultFailure(), defaultFailure()))
             )
 
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
         }
 
         "redirect to the opt out error page if the opt out update request fails (1 fail mid multiyear update loop)" in {
@@ -282,13 +283,13 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
             .thenReturn(
-              Future(List(ITSAStatusUpdateResponseSuccess(), ITSAStatusUpdateResponseFailure.defaultFailure(), ITSAStatusUpdateResponseSuccess()))
+              Future(List(ITSAStatusUpdateResponseSuccess(), defaultFailure(), ITSAStatusUpdateResponseSuccess()))
             )
 
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
         }
 
         "redirect to the home page" when {

@@ -219,7 +219,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockOptIn
           val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optIn.oldJourney.routes.OptInErrorController.show(isAgent).url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
         }
 
         "redirect to the reporting obligations page when the user selects 'No'" in {
