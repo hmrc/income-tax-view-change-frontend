@@ -66,8 +66,6 @@
         @messages("incomeSources.add.sole-trader")
         </span>
 
-        @h1(messages("add-trade.heading"), size = "xl")
-
         @p(id = Some("business-trade-description"), classes = "govuk-body") {
             @messages("add-trade.trade-info-1")
         }
@@ -77,6 +75,11 @@
                 id = businessTrade,
                 name = businessTrade,
                 classes = "govuk-input--width-30",
+                label = Label(
+                content = Text(messages("add-trade.heading")),
+                isPageHeading = true,
+                classes = "govuk-label--l"
+                ),
                 hint = Some(Hint(content = HtmlContent(
                     hintContent
                 )))
