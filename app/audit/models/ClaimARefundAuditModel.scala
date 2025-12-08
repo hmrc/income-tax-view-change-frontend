@@ -56,6 +56,9 @@ case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: Mtd
       case (Some(MfaCreditType), _) => "Credit from HMRC adjustment"
       case (Some(CutOverCreditType), _) => "Credit from an earlier tax year"
       case (Some(BalancingChargeCreditType), _) => "Balancing charge credit"
+      case (Some(PoaOneReconciliationCredit), _) => "First payment on account: extra amount from your tax return"
+      case (Some(PoaTwoReconciliationCredit), _) => "Second payment on account: extra amount from your tax return"
+      case (Some(ITSAReturnAmendmentCredit), _) => "Balancing payment: extra amount due to amended return"
       case (Some(RepaymentInterest), _) => s"Credit from repayment interest - ${credit.taxYearString}"
       case (_, Some(date)) if credit.isPayment => s"Payment made on ${getFullDueDate(date)}"
       case (_, None) if credit.isPayment =>
