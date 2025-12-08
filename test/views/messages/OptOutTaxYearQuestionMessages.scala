@@ -30,7 +30,7 @@ object OptOutTaxYearQuestionMessages {
   val currentYearTitleMulti = "Opt out of Making Tax Digital for Income Tax from the current tax year - Manage your Self Assessment - GOV.UK"
   val currentYearDesc1Multi = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
   val currentYearQuarterlyInsetMulti = "You have 3 quarterly updates submitted for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return."
-  val currentYearDesc3Multi = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+  val currentYearDesc3Multi = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know." // TODO: need to rename from desc3 to desc2 ( we only have 2 paragraphs now)
   val currentYearQuestionMulti = "Do you want to opt out from the current tax year?"
 
   val currentYearHeadingMultiAnnualFollowing = "Opt out of Making Tax Digital for Income Tax from the 2025 to 2026 tax year"
@@ -90,7 +90,7 @@ object OptOutTaxYearQuestionMessages {
 
   val nextYearOptOutMandatedHeading = "Opt out of Making Tax Digital for Income Tax from the 2026 to 2027 tax year onwards"
   val nextYearOptOutMandatedTitle = "Opt out of Making Tax Digital for Income Tax from the 2026 to 2027 tax year onwards - Manage your Self Assessment - GOV.UK"
-  val nextYearOptOutMandatedDesc1 = "From 6 April 2026, this would mean you would not need to use software compatible with Making Tax Digital for Income Tax."
+  val nextYearOptOutMandatedDesc1 = "From 6 April 2026 this would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
   val nextYearOptOutMandatedDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
   val nextYearOptOutMandatedQuestion = "Do you want to opt out from the 2026 to 2027 tax year?"
   

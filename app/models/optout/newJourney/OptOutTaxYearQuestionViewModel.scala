@@ -74,16 +74,15 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
       case (Some(OneYearOptOutFollowedByAnnual), _, true)      => true
       case (Some(OneYearOptOutFollowedByMandated), _, true)    => true
       case (Some(OneYearOptOutFollowedByAnnual), false, false) => true
-      case (Some(MultiYearOptOutDefault), false, false) => true //
-//      case (Some(MultiYearOptOutDefault), false, true) => true //
-
+      case (Some(MultiYearOptOutDefault), false, false) => true // TODO: Opting out from CY in mutli-year scenario
+      case (Some(MultiYearOptOutDefault), false, true) => true // TODO: Opting out from CY in mutli-year scenario
       case _                                                   => false
     }
   }
 
   def showSecondParagraph: Boolean = {
     optOutState match {
-//      case Some(MultiYearOptOutDefault)                                     => true
+      //      case Some(MultiYearOptOutDefault)                                     => true // TODO: Might need to use this isntead of showThirdParagraph
       case Some(OneYearOptOutFollowedByAnnual)                              => true
       case Some(NextYearOptOut) if currentYearStatus == ITSAStatus.Mandated => true
       case Some(OneYearOptOutFollowedByMandated) if isPreviousYear          => true

@@ -2806,7 +2806,7 @@ optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutDefault     = Do you
 ## opt out of CY+1 - CY Mandated
 optout.taxYearQuestion.heading.nextYear.nextYearOptOutMandated           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
 optout.taxYearQuestion.title.nextYear.nextYearOptOutMandated             = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
-optout.taxYearQuestion.desc1.nextYear.nextYearOptOutMandated             = From 6 April {0}, this would mean you would not need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutMandated             = From 6 April {0} this would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
 optout.taxYearQuestion.desc2.nextYear.nextYearOptOutMandated             = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutMandated     = Do you want to opt out from the {0} to {1} tax year?
 
