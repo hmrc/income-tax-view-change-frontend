@@ -22,11 +22,11 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.notEnrolled.NotEnrolled
+import views.html.notEnrolled.NotEnrolledView
 
 class NotEnrolledControllerSpec extends TestSupport {
 
-  object TestNotEnrolledController extends NotEnrolledController(app.injector.instanceOf[NotEnrolled])(
+  object TestNotEnrolledController extends NotEnrolledController(app.injector.instanceOf[NotEnrolledView])(
     app.injector.instanceOf[MessagesControllerComponents]
   )
 

@@ -17,12 +17,12 @@
 package controllers.manageBusinesses.cease
 
 import controllers.ControllerISpecHelper
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.NavBarFs
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
@@ -30,10 +30,10 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 class IncomeSourceCeasedBackErrorControllerISpec extends ControllerISpecHelper {
 
-  val title = messagesAPI("cannotGoBack.heading")
-  val headingSE = messagesAPI("cannotGoBack.sole-trader-ceased")
-  val headingUk = messagesAPI("cannotGoBack.uk-property-ceased")
-  val headingFP = messagesAPI("cannotGoBack.foreign-property-ceased")
+  val title: String = messagesAPI("cannotGoBack.heading")
+  val headingSE: String = messagesAPI("cannotGoBack.sole-trader-ceased")
+  val headingUk: String = messagesAPI("cannotGoBack.uk-property-ceased")
+  val headingFP: String = messagesAPI("cannotGoBack.foreign-property-ceased")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
@@ -42,7 +42,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ControllerISpecHelper {
     await(sessionService.deleteSession(Cease))
   }
 
-  def specificHeading(incomeSourceType: IncomeSourceType) = incomeSourceType match {
+  def specificHeading(incomeSourceType: IncomeSourceType): String = incomeSourceType match {
     case SelfEmployment => headingSE
     case UkProperty => headingUk
     case ForeignProperty => headingFP

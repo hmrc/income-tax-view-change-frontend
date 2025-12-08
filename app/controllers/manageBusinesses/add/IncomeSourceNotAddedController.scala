@@ -25,14 +25,14 @@ import play.api.mvc._
 import services.CreateBusinessDetailsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.add.IncomeSourceNotAddedError
+import views.html.manageBusinesses.add.IncomeSourceNotAddedErrorView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceNotAddedController @Inject()(val authActions: AuthActions,
                                                val businessDetailsService: CreateBusinessDetailsService,
-                                               val incomeSourceNotAddedError: IncomeSourceNotAddedError,
+                                               val incomeSourceNotAddedError: IncomeSourceNotAddedErrorView,
                                                val itvcErrorHandler: ItvcErrorHandler,
                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                               (implicit val appConfig: FrontendAppConfig,

@@ -26,12 +26,12 @@ import play.api.test.Helpers._
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testUtils.TestSupport
-import views.html.optOut.oldJourney.OptOutChooseTaxYear
+import views.html.optOut.oldJourney.OptOutChooseTaxYearView
 
 class OptOutChooseTaxYearViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val optOutChooseTaxYearView: OptOutChooseTaxYear = app.injector.instanceOf[OptOutChooseTaxYear]
+  val optOutChooseTaxYearView: OptOutChooseTaxYearView = app.injector.instanceOf[OptOutChooseTaxYearView]
   //test data needs to be added
   val taxYear: TaxYear = TaxYear.forYearEnd(2024)
   val availableOptOutTaxYear: Seq[TaxYear] = Seq(taxYear)
@@ -42,7 +42,7 @@ class OptOutChooseTaxYearViewSpec extends TestSupport {
     QuarterlyUpdatesCountForTaxYearModel(Seq())
 
   class Setup(isAgent: Boolean = true) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
+    val cancelURL: String = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutChooseTaxYearView(ConfirmOptOutMultiTaxYearChoiceForm(availableOptOutTaxYearsList), availableOptOutTaxYear, submissionsCountForTaxYearModel, isAgent, cancelURL)))
   }
   class SetupNoSubmissions(isAgent: Boolean = true) extends Setup{

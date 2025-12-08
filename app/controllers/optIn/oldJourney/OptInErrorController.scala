@@ -22,13 +22,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
-import views.html.optIn.oldJourney.OptInError
+import views.html.optIn.oldJourney.OptInErrorView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OptInErrorController @Inject()(val view: OptInError,
+class OptInErrorController @Inject()(val view: OptInErrorView,
                                      val authActions: AuthActions)
                                     (implicit val appConfig: FrontendAppConfig,
                                       val ec: ExecutionContext,

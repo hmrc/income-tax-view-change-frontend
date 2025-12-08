@@ -29,7 +29,7 @@ class TriggeredMigrationServiceSpec extends TestSupport {
 
   val service: TriggeredMigrationService = new TriggeredMigrationService()
 
-  val baseIncomeSources = IncomeSourceDetailsModel(
+  val baseIncomeSources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = "AA123456A",
     mtdbsa = "123456789012345",
     yearOfMigration = None,

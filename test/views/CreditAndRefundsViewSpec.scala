@@ -29,7 +29,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.ANewCreditAndRefundModel
 import testUtils.{TestSupport, ViewSpec}
-import views.html.CreditAndRefunds
+import views.html.CreditAndRefundsView
 
 import java.time.LocalDate
 
@@ -37,7 +37,7 @@ import java.time.LocalDate
 class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val creditAndRefundView: CreditAndRefunds = app.injector.instanceOf[CreditAndRefunds]
+  val creditAndRefundView: CreditAndRefundsView = app.injector.instanceOf[CreditAndRefundsView]
   val creditAndRefundHeading: String = messages("credit-and-refund.heading")
 
   val paymentText: String = messages("credit-and-refund.payment")
@@ -68,7 +68,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
     } else { messages }
 
-    val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditAndRefundModel, claimARefundR18Enabled)
+    val viewModel: CreditAndRefundViewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditAndRefundModel, claimARefundR18Enabled)
 
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(

@@ -18,12 +18,7 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.{ComponentSpecBase, WiremockHelper}
-import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, NO_CONTENT, OK}
-import play.api.libs.json.{JsArray, Json}
-import testConstants.BaseIntegrationTestConstants.testNino
+import play.api.http.Status.{NO_CONTENT, OK}
 
 
 object PenaltyDetailsStub extends ComponentSpecBase {

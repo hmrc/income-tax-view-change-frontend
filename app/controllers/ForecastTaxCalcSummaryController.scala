@@ -31,14 +31,14 @@ import services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.ForecastTaxCalcSummary
+import views.html.ForecastTaxCalcSummaryView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ForecastTaxCalcSummaryController @Inject()(val authActions: AuthActions,
-                                                 val forecastTaxCalcSummaryView: ForecastTaxCalcSummary,
+                                                 val forecastTaxCalcSummaryView: ForecastTaxCalcSummaryView,
                                                  val auditingService: AuditingService,
                                                  val calculationService: CalculationService,
                                                  val itvcErrorHandler: ItvcErrorHandler,

@@ -24,13 +24,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.CheckYourAnswers
+import views.html.claimToAdjustPoa.CheckYourAnswersView
 
 class CheckYourAnswersControllerViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, poaReason: SelectYourReason = MainIncomeLower) {
 
-    val checkYourAnswers: CheckYourAnswers = app.injector.instanceOf[CheckYourAnswers]
+    val checkYourAnswers: CheckYourAnswersView = app.injector.instanceOf[CheckYourAnswersView]
 
     val document: Document =
       Jsoup.parse(

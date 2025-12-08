@@ -17,11 +17,13 @@
 package views
 
 import models.liabilitycalculation.EndOfYearEstimate
+import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNavHtml, testTaxYear}
 import testUtils.ViewSpec
-import views.html.ForecastTaxCalcSummary
+import views.html.ForecastTaxCalcSummaryView
 
 class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
@@ -88,7 +90,7 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
     incomeTaxNicAndCgtAmount = None
   )
 
-  lazy val forecastTaxCalcView: ForecastTaxCalcSummary = app.injector.instanceOf[ForecastTaxCalcSummary]
+  lazy val forecastTaxCalcView: ForecastTaxCalcSummaryView = app.injector.instanceOf[ForecastTaxCalcSummaryView]
 
   val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
   val viewModel2: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel2, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
@@ -106,7 +108,7 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
       }
 
       "have the correct caption" in new Setup(view) {
-        val caption = messages("forecast_taxCalc.dates", s"${testTaxYear - 1}", s"$testTaxYear")
+        val caption: String = messages("forecast_taxCalc.dates", s"${testTaxYear - 1}", s"$testTaxYear")
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe caption
       }
 
@@ -140,8 +142,8 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
         forAll(expectedDataItems) { (paraNo: Int, dataItem: String, formattedAmount: String) =>
 
           s"has the dataItem: '$dataItem' with the correct amount value: $formattedAmount" in new Setup(view) {
-            val paragraphs = layoutContent.getElementsByClass("govuk-body-l")
-            val para = paragraphs.get(paraNo)
+            val paragraphs: Elements = layoutContent.getElementsByClass("govuk-body-l")
+            val para: Element = paragraphs.get(paraNo)
             para.text shouldBe s"$dataItem $formattedAmount"
           }
         }
@@ -170,8 +172,8 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
         forAll(expectedDataItems2) { (paraNo: Int, dataItem: String, formattedAmount: String) =>
 
           s"has the dataItem: '$dataItem' with the correct amount value: $formattedAmount" in new Setup(view) {
-            val paragraphs = layoutContent.getElementsByClass("govuk-body-l")
-            val para = paragraphs.get(paraNo)
+            val paragraphs: Elements = layoutContent.getElementsByClass("govuk-body-l")
+            val para: Element = paragraphs.get(paraNo)
             para.text shouldBe s"$dataItem $formattedAmount"
           }
         }

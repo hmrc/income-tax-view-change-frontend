@@ -18,17 +18,18 @@ package views.notEnrolled
 
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.notEnrolled.NotEnrolled
+import views.html.notEnrolled.NotEnrolledView
 
 class NotEnrolledViewSpec extends TestSupport {
 
-  lazy val mockAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val page = app.injector.instanceOf[NotEnrolled]
+  val page: NotEnrolledView = app.injector.instanceOf[NotEnrolledView]
 
-  lazy val document = Jsoup.parse(contentAsString(page()))
+  lazy val document: Document = Jsoup.parse(contentAsString(page()))
 
   "The Not Enrolled view" should {
 

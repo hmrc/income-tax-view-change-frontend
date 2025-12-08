@@ -17,26 +17,26 @@
 package controllers.claimToAdjustPoa
 
 import controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import enums._
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.{OtherIncomeLower, PoaAmendmentData}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
 
 class AmendablePoaControllerISpec extends ControllerISpecHelper {
 
   private val testTaxYear = 2024
   val sessionService: PaymentOnAccountSessionService = app.injector.instanceOf[PaymentOnAccountSessionService]
 
-  def getPath(mtdUserRole: MTDUserRole) = {
+  def getPath(mtdUserRole: MTDUserRole): String = {
     val pathStart = if(mtdUserRole == MTDIndividual) "" else "/agents"
     pathStart + "/adjust-poa/start"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {

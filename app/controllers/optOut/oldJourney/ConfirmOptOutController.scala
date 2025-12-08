@@ -30,14 +30,14 @@ import play.api.mvc._
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
-import views.html.optOut.oldJourney.{CheckOptOutAnswers, ConfirmOptOut}
+import views.html.optOut.oldJourney.{CheckOptOutAnswersView, ConfirmOptOutView}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmOptOutController @Inject()(view: ConfirmOptOut,
-                                        checkOptOutAnswers: CheckOptOutAnswers,
+class ConfirmOptOutController @Inject()(view: ConfirmOptOutView,
+                                        checkOptOutAnswers: CheckOptOutAnswersView,
                                         optOutService: OptOutService,
                                         authActions: AuthActions,
                                         val itvcErrorHandler: ItvcErrorHandler,

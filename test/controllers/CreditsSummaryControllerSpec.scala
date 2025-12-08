@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import services.{CalculationService, CreditHistoryService}
 import testConstants.BaseTestConstants.{calendarYear2018, testSaUtr}
 import testConstants.FinancialDetailsTestConstants._
-import views.html.CreditsSummary
+import views.html.CreditsSummaryView
 
 
 class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationService
@@ -40,7 +40,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
       api.inject.bind[CreditHistoryService].toInstance(mockCreditHistoryService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[CreditsSummaryController]
+  lazy val testController: CreditsSummaryController = app.injector.instanceOf[CreditsSummaryController]
 
   val testCharges: List[DocumentDetail] = List(
     documentDetailModel(
@@ -56,7 +56,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
     disableAllSwitches()
   }
 
-  lazy val creditsSummaryView = app.injector.instanceOf[CreditsSummary]
+  lazy val creditsSummaryView: CreditsSummaryView = app.injector.instanceOf[CreditsSummaryView]
   mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     s"show${if (isAgent) "AgentCreditsSummary"}" when {
@@ -233,7 +233,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

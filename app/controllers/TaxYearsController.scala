@@ -26,13 +26,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DateServiceInterface
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.TaxYears
+import views.html.TaxYearsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class TaxYearsController @Inject()(taxYearsView: TaxYears,
+class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
                                    val authActions: AuthActions,
                                    itvcErrorHandler: ItvcErrorHandler,
                                    agentItvcErrorHandler: AgentItvcErrorHandler)

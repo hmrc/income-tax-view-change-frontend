@@ -28,13 +28,13 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.YouCannotGoBackError
+import views.html.manageBusinesses.YouCannotGoBackErrorView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
-                                            val cannotGoBackError: YouCannotGoBackError,
+                                            val cannotGoBackError: YouCannotGoBackErrorView,
                                             val sessionService: SessionService,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)

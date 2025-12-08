@@ -22,7 +22,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.InitialPage
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.TriggeredMigration.TriggeredMigrationState
 import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{Mode, NormalMode}
@@ -35,13 +34,13 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.cease.DeclareIncomeSourceCeased
+import views.html.manageBusinesses.cease.DeclareIncomeSourceCeasedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions,
-                                                    val view: DeclareIncomeSourceCeased,
+                                                    val view: DeclareIncomeSourceCeasedView,
                                                     val sessionService: SessionService,
                                                     val itvcErrorHandler: ItvcErrorHandler,
                                                     val itvcErrorHandlerAgent: AgentItvcErrorHandler)

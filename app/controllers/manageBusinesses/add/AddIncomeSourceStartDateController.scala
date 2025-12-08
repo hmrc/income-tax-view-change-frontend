@@ -32,8 +32,8 @@ import play.api.mvc._
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.errorPages.CustomNotFoundError
-import views.html.manageBusinesses.add.AddIncomeSourceStartDate
+import views.html.errorPages.CustomNotFoundErrorView
+import views.html.manageBusinesses.add.AddIncomeSourceStartDateView
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -41,8 +41,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
-                                                   val addIncomeSourceStartDate: AddIncomeSourceStartDate,
-                                                   val customNotFoundErrorView: CustomNotFoundError,
+                                                   val addIncomeSourceStartDate: AddIncomeSourceStartDateView,
+                                                   val customNotFoundErrorView: CustomNotFoundErrorView,
                                                    val sessionService: SessionService,
                                                    form: AddIncomeSourceStartDateFormProvider,
                                                    val itvcErrorHandler: ItvcErrorHandler,
@@ -154,8 +154,8 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode)
-                         (implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode)
+                                 (implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
         case SelfEmployment => BeforeSubmissionPage
