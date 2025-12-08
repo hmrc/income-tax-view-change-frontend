@@ -1258,6 +1258,12 @@ upliftFailure.bullet.1                                          = you took too l
 upliftFailure.bullet.2                                          = you have failed to answer enough questions correctly
 upliftFailure.bullet.3                                          = we could not match your details to our system
 
+## Cannot Update Reporting Obligations
+cannotUpdateReportingObligations.title                          = Sorry, there is a problem with the service
+cannotUpdateReportingObligations.p1                             = We were unable to change your reporting obligations for one or more tax years.
+cannotUpdateReportingObligations.p2                             = Check which tax years have been updated or try again on
+cannotUpdateReportingObligations.link                           = your reporting obligations
+cannotUpdateReportingObligations.p3                             = page.
 
 ## Payment History Page ##
 paymentHistory.heading                                          = Payment history
