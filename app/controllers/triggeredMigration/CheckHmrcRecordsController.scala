@@ -19,11 +19,7 @@ package controllers.triggeredMigration
 import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-<<<<<<< HEAD
-=======
-import enums.TriggeredMigration.TriggeredMigrationCeased
-import models.incomeSourceDetails.IncomeSourceDetailsModel
->>>>>>> fe3c011f4 (MISUV-10513 - addressed various comments and moved the ceased logic to the model)
+import enums.TriggeredMigration.TriggeredMigrationState
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -54,7 +50,7 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
         sessionService.clearSession(sessionId.value)
       }
 
-      val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources, state)
+      val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources, TriggeredMigrationState.getStateFromString(state))
 
       Future.successful(Ok(view(viewModel, isAgent)))
     }

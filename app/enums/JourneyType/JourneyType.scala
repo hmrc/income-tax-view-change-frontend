@@ -53,5 +53,3 @@ case object OptInJourney extends OptJourney {
 case object OptOutJourney extends OptJourney {
   override val toString = "OPTOUT"
 }
-
-

@@ -16,7 +16,6 @@
 
 package connectors
 
-import audit.AuditingService
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}

@@ -17,7 +17,7 @@
 package config
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{InternalServerError, Ok, Unauthorized}
+import play.api.mvc.Results.{InternalServerError, Unauthorized}
 import play.api.mvc.{RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler

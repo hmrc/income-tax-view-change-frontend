@@ -32,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
 import views.html.optIn.oldJourney.CheckYourAnswersView
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OptInCheckYourAnswersController @Inject()(val view: CheckYourAnswersView,

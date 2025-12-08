@@ -3361,6 +3361,15 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 #######################################################################################################################
 
 # Check HMRC records page
+triggered-migration.check-hmrc-records.add-banner.heading            = Added
+triggered-migration.check-hmrc-records.add-banner.text1.SE           = Sole trader business added
+triggered-migration.check-hmrc-records.add-banner.text1.UK           = UK property business added
+triggered-migration.check-hmrc-records.add-banner.text1.FP           = Foreign property business added
+triggered-migration.check-hmrc-records.add-banner.text2              = View your
+triggered-migration.check-hmrc-records.add-banner.link.SE            = sole trader business
+triggered-migration.check-hmrc-records.add-banner.link.UK            = UK property business
+triggered-migration.check-hmrc-records.add-banner.link.FP            = foreign property business
+
 triggered-migration.check-hmrc-records.cessation-banner.heading      = Ceased
 triggered-migration.check-hmrc-records.cessation-banner.text1        = You have ceased a business
 triggered-migration.check-hmrc-records.cessation-banner.text2        = View
