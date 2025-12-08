@@ -58,23 +58,12 @@
             @getMessage("desc1", startTaxYear, endTaxYear)
         }
 
-        @if(viewModel.showInset) {
-            @govukInsetText(InsetText(
-                id = Some("opt-out-question-inset"),
-                content = HtmlContent(
-                    getMessage("inset", endTaxYear)
-                )
-            ))
-        }
 
         @if(viewModel.showQuarterlyUpdatesInset) {
             @govukInsetText(InsetText(
                 id = Some("opt-out-question-inset"),
-                content = HtmlContent(s"""
-                    ${getMessage("inset")}
-                    <strong class="govuk-!-font-weight-bold">${getMessage("insetBold", viewModel.numberOfQuarterlyUpdates.toString)}</strong>
-                    ${getMessage("inset2")}
-                    """
+                content = HtmlContent(
+                    getMessage("inset", viewModel.numberOfQuarterlyUpdates.toString)
                 )
             ))
         }

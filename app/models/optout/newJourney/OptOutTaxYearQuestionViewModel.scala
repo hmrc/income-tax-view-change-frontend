@@ -62,8 +62,8 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
   def showInset: Boolean = {
     (optOutState, isCurrentYear, isPreviousYear, nextYearStatus) match {
       case (Some(MultiYearOptOutDefault), true, _, Annual)      => false
-      case (Some(MultiYearOptOutDefault), true, _, _)           => true
-      case (Some(MultiYearOptOutDefault), _, true, _)           => true
+//      case (Some(MultiYearOptOutDefault), true, _, _)           => false // when false it breaks other cases  - need to ivnestigate further
+//      case (Some(MultiYearOptOutDefault), _, true, _)           => true
       case (Some(OneYearOptOutFollowedByMandated), _, false, _) => true
       case _ => false
     }
@@ -74,13 +74,16 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
       case (Some(OneYearOptOutFollowedByAnnual), _, true)      => true
       case (Some(OneYearOptOutFollowedByMandated), _, true)    => true
       case (Some(OneYearOptOutFollowedByAnnual), false, false) => true
+      case (Some(MultiYearOptOutDefault), false, false) => true //
+//      case (Some(MultiYearOptOutDefault), false, true) => true //
+
       case _                                                   => false
     }
   }
 
   def showSecondParagraph: Boolean = {
     optOutState match {
-      case Some(MultiYearOptOutDefault)                                     => true
+//      case Some(MultiYearOptOutDefault)                                     => true
       case Some(OneYearOptOutFollowedByAnnual)                              => true
       case Some(NextYearOptOut) if currentYearStatus == ITSAStatus.Mandated => true
       case Some(OneYearOptOutFollowedByMandated) if isPreviousYear          => true

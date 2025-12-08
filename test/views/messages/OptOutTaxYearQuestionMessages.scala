@@ -20,7 +20,7 @@ object OptOutTaxYearQuestionMessages {
 
   // Multi
   val previousYearHeadingMulti = "Opt out of Making Tax Digital for Income Tax from the 2024 to 2025 tax year"
-  val previousYearDesc1Multi = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
+  val previousYearDesc1Multi = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax." // TODO: update this
   val previousYearInsetMulti = "Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return."
   val previousYearDesc2Multi = "You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
   val previousYearDesc3Multi = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
@@ -28,9 +28,8 @@ object OptOutTaxYearQuestionMessages {
 
   val currentYearHeadingMulti = "Opt out of Making Tax Digital for Income Tax from the current tax year"
   val currentYearTitleMulti = "Opt out of Making Tax Digital for Income Tax from the current tax year - Manage your Self Assessment - GOV.UK"
-  val currentYearDesc1Multi = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
-  val currentYearInsetMulti = "Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return."
-  val currentYearDesc2Multi = "You would need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
+  val currentYearDesc1Multi = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
+  val currentYearQuarterlyInsetMulti = "You have 3 quarterly updates submitted for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return."
   val currentYearDesc3Multi = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
   val currentYearQuestionMulti = "Do you want to opt out from the current tax year?"
 
