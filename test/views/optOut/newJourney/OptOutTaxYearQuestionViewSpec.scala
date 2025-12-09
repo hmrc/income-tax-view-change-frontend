@@ -226,22 +226,23 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
       }
     }
+    // TODO: MISUV-10308 - Scenario 5?
     "opting out for a previous single year followed by Annual - No updates" should {
-      "have the correct title" in new Setup("previous", OneYearOptOutFollowedByAnnual, 2, Voluntary, Annual, Annual) {
+      "have the correct title" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
       }
-      "have the correct heading" in new Setup("previous", OneYearOptOutFollowedByAnnual, 2, Voluntary, Annual, Annual) {
+      "have the correct heading" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearHeading
       }
-      "have the correct description" in new Setup("previous", OneYearOptOutFollowedByAnnual, 2, Voluntary, Annual, Annual) {
+      "have the correct description" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearInset
+        pageDocument.getElementById("opt-out-question-inset").text() shouldBe null
         pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc2
       }
-      "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByAnnual, 2, Voluntary, Annual, Annual) {
+      "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearQuestion
       }
-      "display the correct error message when form has errors" in new Setup("previous", OneYearOptOutFollowedByAnnual, 2, Voluntary, Annual, Annual, withError = true) {
+      "display the correct error message when form has errors" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual, withError = true) {
         pageDocument.getElementsByClass("govuk-error-summary__title").text() shouldBe "There is a problem"
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2024 to 2025 tax year"
       }
