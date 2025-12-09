@@ -56,7 +56,7 @@ object NrsMetadata extends InstantFormatter {
     ): NrsMetadata =
     NrsMetadata(
       businessId              = "income-tax-view-change",
-      notableEvent            = "adjust-payment-on-account",
+      notableEvent            = "income-tax-view-change-adjust-payment-on-account",
       payloadContentType      = MimeTypes.XML,
       payloadSha256Checksum   = checkSum,
       userSubmissionTimestamp = userSubmissionTimestamp,
