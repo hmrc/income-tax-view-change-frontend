@@ -16,11 +16,13 @@
 
 package services.triggeredMigration
 
+import enums.TriggeredMigration.TriggeredMigrationCeased
 import models.core.{CessationModel, IncomeSourceId}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncomeCeased, singleBusinessIncome}
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -44,7 +46,7 @@ class TriggeredMigrationServiceSpec extends TestSupport {
         properties = List(ukPropertyDetails, foreignPropertyDetails)
       )
 
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources)
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"),Some("Fruit Ltd"), Some("nextUpdates.business"))),
@@ -64,19 +66,21 @@ class TriggeredMigrationServiceSpec extends TestSupport {
         )
       )
 
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources)
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = false,
-        hasActiveForeignProperty = false
+        hasActiveForeignProperty = false,
+        showCeasedBanner = false,
+        numberOfCeasedBusinesses = 1
       )
 
       result shouldBe expectedResult
     }
 
     "return a view model with an active sole trader business and no active uk or foreign property businesses due to no returned businesses" in {
-      val result = service.getCheckHmrcRecordsViewModel(baseIncomeSources)
+      val result = service.getCheckHmrcRecordsViewModel(baseIncomeSources, None)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List.empty,
@@ -93,12 +97,14 @@ class TriggeredMigrationServiceSpec extends TestSupport {
         properties = List(ukPropertyDetails)
       )
 
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources)
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = true,
-        hasActiveForeignProperty = false
+        hasActiveForeignProperty = false,
+        showCeasedBanner = false,
+        numberOfCeasedBusinesses = 1
       )
 
       result shouldBe expectedResult
@@ -110,15 +116,42 @@ class TriggeredMigrationServiceSpec extends TestSupport {
         properties = List(foreignPropertyDetails)
       )
 
-      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources)
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, None)
 
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = false,
-        hasActiveForeignProperty = true
+        hasActiveForeignProperty = true,
+        showCeasedBanner = false,
+        numberOfCeasedBusinesses = 1
       )
 
       result shouldBe expectedResult
     }
+
+    "ceasedBusinessSetup" when {
+      "given a state of CEASED and 1 ceased business" should {
+        "return (true, 1 ceased business)" in {
+          val (isCeased, noOfCeased) = service.ceasedBusinessSetup(Some(TriggeredMigrationCeased.toString), businessesAndPropertyIncomeCeased)
+          isCeased shouldBe true
+          noOfCeased shouldBe 1
+        }
+      }
+      "given no state and 1 ceased businesses" should {
+        "return (false, 1 ceased business)" in {
+          val (isCeased, noOfCeased) = service.ceasedBusinessSetup(None, businessesAndPropertyIncomeCeased)
+          isCeased shouldBe false
+          noOfCeased shouldBe 1
+        }
+      }
+      "given no state and 0 ceased businesses" should {
+        "return (false, 0 ceased businesses)" in {
+          val (isCeased, noOfCeased) = service.ceasedBusinessSetup(None, singleBusinessIncome)
+          isCeased shouldBe false
+          noOfCeased shouldBe 0
+        }
+      }
+    }
+
   }
 }

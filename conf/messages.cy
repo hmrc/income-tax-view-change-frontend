@@ -3350,14 +3350,22 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 #######################################################################################################################
 
 # Check HMRC records page
+triggered-migration.check-hmrc-records.cessation-banner.heading      = Wedi dod i ben
+triggered-migration.check-hmrc-records.cessation-banner.text1        = Rydych chi wedi dod â busnes i ben
+triggered-migration.check-hmrc-records.cessation-banner.text2        = Gweld
+triggered-migration.check-hmrc-records.cessation-banner.link         = eich busnesau sydd wedi dod i ben
 
-triggered-migration.check-hmrc-records.heading     = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
-triggered-migration.check-hmrc-records.title       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
-triggered-migration.check-hmrc-records.desc        = Nawr, mae’ch dyddiadau cau chwarterol ar gyfer eich busnesau fel unig fasnachwr a/neu eich busnesau eiddo wedi’u rhestru yma.
-triggered-migration.check-hmrc-records.inset       = Bydd sicrhau bod y manylion ar y dudalen hon yn gywir yn eich helpu chi i osgoi colli dyddiadau cau ar gyfer eich busnesau cyfredol, ac yn osgoi rhoi dyddiadau cau i chi ar gyfer ffynonellau incwm y gallech fod wedi’u cau neu eu gwerthu.
-triggered-migration.check-hmrc-records.bulletStart = Bydd yn rhaid i chi wneud y canlynol, os oes angen:
-triggered-migration.check-hmrc-records.bullet1     = ychwanegu unrhyw fusnesau sydd ar goll
-triggered-migration.check-hmrc-records.bullet2     = dod ag unrhyw fusnesau, nad ydynt bellach yn rhoi incwm i chi, i ben
+triggered-migration.check-hmrc-records.cessation-section.heading     = Eich busnesau sydd wedi dod i ben
+triggered-migration.check-hmrc-records.cessation-section.text        = Mae un neu ragor o fusnesau wedi dod i ben.
+triggered-migration.check-hmrc-records.cessation-section.text-link   = Gweld eich holl fusnesau sydd wedi dod i ben.
+
+triggered-migration.check-hmrc-records.heading                       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.title                         = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.desc                          = Nawr, mae’ch dyddiadau cau chwarterol ar gyfer eich busnesau fel unig fasnachwr a/neu eich busnesau eiddo wedi’u rhestru yma.
+triggered-migration.check-hmrc-records.inset                         = Bydd sicrhau bod y manylion ar y dudalen hon yn gywir yn eich helpu chi i osgoi colli dyddiadau cau ar gyfer eich busnesau cyfredol, ac yn osgoi rhoi dyddiadau cau i chi ar gyfer ffynonellau incwm y gallech fod wedi’u cau neu eu gwerthu.
+triggered-migration.check-hmrc-records.bulletStart                   = Bydd yn rhaid i chi wneud y canlynol, os oes angen:
+triggered-migration.check-hmrc-records.bullet1                       = ychwanegu unrhyw fusnesau sydd ar goll
+triggered-migration.check-hmrc-records.bullet2                       = dod ag unrhyw fusnesau, nad ydynt bellach yn rhoi incwm i chi, i ben
 
 triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Eich busnesau cyfredol
 triggered-migration.check-hmrc-records.soleTrader.heading            = Busnesau unig fasnachwr

@@ -28,7 +28,12 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
 
   val view: CheckHmrcRecordsView = app.injector.instanceOf[CheckHmrcRecordsView]
 
-  class Setup(activeSoleTrader: Boolean, activeUkProperty: Boolean, activeForeignProperty: Boolean) {
+  val noCeasedBannerOrCeasedBusinesses: (Boolean, Int) = (false, 0)
+  val noCeasedBannerOneCeasedBusiness: (Boolean, Int) = (false, 1)
+  val CeasedBannerOneCeasedBusiness: (Boolean, Int) = (true, 1)
+  val CeasedBannerTwoCeasedBusinesses: (Boolean, Int) = (true, 2)
+
+  class Setup(activeSoleTrader: Boolean, activeUkProperty: Boolean, activeForeignProperty: Boolean, ceasedSetup: (Boolean, Int)) {
     val soleTraderDetails: List[CheckHmrcRecordsSoleTraderDetails] = if (activeSoleTrader) {
       List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"), Some("business"), Some("nextUpdates.business")))
     } else {
@@ -38,10 +43,11 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val viewModel: CheckHmrcRecordsViewModel = CheckHmrcRecordsViewModel(
       soleTraderBusinesses = soleTraderDetails,
       hasActiveUkProperty = activeUkProperty,
-      hasActiveForeignProperty = activeForeignProperty
+      hasActiveForeignProperty = activeForeignProperty,
+      showCeasedBanner = ceasedSetup._1,
+      numberOfCeasedBusinesses = ceasedSetup._2
     )
-
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(viewModel)))
+    val pageDocument = Jsoup.parse(contentAsString(view(viewModel, isAgent = false)))
   }
 
   object CheckHmrcRecordsMessages {
@@ -76,13 +82,21 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val confirmRecordsHeading = "Confirm HMRC records only list your active businesses"
     val confirmRecordsText = "This page only needs to list all your active sole trader and property income sources. Any other business details that are not right, misspelt or out of date, can be amended at a later date."
     val confirmRecordsButton = "Confirm and continue"
+
+    val ceasedBannerHeading = "Ceased"
+    val ceasedBannerText = "You have ceased a business"
+    val ceasedBannerLinkText = "View your ceased businesses."
+
+    val ceasedSectionHeading = "Your ceased businesses"
+    val ceasedSectionText = "One or more businesses have ceased."
+    val ceasedSectionLinkText = "View all ceased businesses"
   }
 
   "Check HMRC records page" when {
     "checking hmrc records with an active sole trader, uk and foreign property business" should {
       checkCommonContent(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true)
 
-      "have the correct sole trader business details" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true) {
+      "have the correct sole trader business details" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("sole-trader-business-0").text() shouldBe "business"
         pageDocument.getElementById("sole-trader-business-name-0").text() shouldBe CheckHmrcRecordsMessages.businessNameText
         pageDocument.getElementById("sole-trader-business-name-value-0").text() shouldBe "nextUpdates.business"
@@ -91,7 +105,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("sole-trader-cease-link-0").text() shouldBe CheckHmrcRecordsMessages.ceaseText
       }
 
-      "have the correct uk property details" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true) {
+      "have the correct uk property details" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("uk-property-heading").text() shouldBe CheckHmrcRecordsMessages.ukPropertyHeading
         pageDocument.getElementById("uk-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("uk-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
@@ -99,7 +113,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("uk-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref
       }
 
-      "have the correct foreign property details" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true) {
+      "have the correct foreign property details" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("foreign-property-heading").text() shouldBe CheckHmrcRecordsMessages.foreignPropertyHeading
         pageDocument.getElementById("foreign-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("foreign-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
@@ -110,7 +124,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     "checking hmrc records with no active sole trader, uk or foreign property business" should {
       checkCommonContent(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = false)
 
-      "have the correct property details" in new Setup(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = false) {
+      "have the correct property details" in new Setup(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = false, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("property-no-active-business-desc").text() shouldBe CheckHmrcRecordsMessages.noActivePropertyText
         pageDocument.getElementById("uk-property-add-link").text() shouldBe CheckHmrcRecordsMessages.addAPropertyBusinessText
         pageDocument.getElementById("foreign-property-add-link").text() shouldBe CheckHmrcRecordsMessages.addForeignPropertyBusinessText
@@ -119,7 +133,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     "checking hmrc records with an active sole trader business and no active uk or foreign property business" should {
       checkCommonContent(activeSoleTrader = true, activeUkProperty = false, activeForeignProperty = false)
 
-      "have the correct sole trader business details" in new Setup(activeSoleTrader = true, activeUkProperty = false, activeForeignProperty = false) {
+      "have the correct sole trader business details" in new Setup(activeSoleTrader = true, activeUkProperty = false, activeForeignProperty = false,noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("sole-trader-business-0").text() shouldBe "business"
         pageDocument.getElementById("sole-trader-business-name-0").text() shouldBe CheckHmrcRecordsMessages.businessNameText
         pageDocument.getElementById("sole-trader-business-name-value-0").text() shouldBe "nextUpdates.business"
@@ -128,7 +142,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("sole-trader-cease-link-0").text() shouldBe CheckHmrcRecordsMessages.ceaseText
       }
 
-      "have the correct property details" in new Setup(activeSoleTrader = true, activeUkProperty = false, activeForeignProperty = false) {
+      "have the correct property details" in new Setup(activeSoleTrader = true, activeUkProperty = false, activeForeignProperty = false, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("property-no-active-business-desc").text() shouldBe CheckHmrcRecordsMessages.noActivePropertyText
         pageDocument.getElementById("uk-property-add-link").text() shouldBe CheckHmrcRecordsMessages.addAPropertyBusinessText
         pageDocument.getElementById("foreign-property-add-link").text() shouldBe CheckHmrcRecordsMessages.addForeignPropertyBusinessText
@@ -137,7 +151,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     "checking hmrc records with no active sole trader business and an active uk and foreign property business" should {
       checkCommonContent(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = true)
 
-      "have the correct uk property details" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = true) {
+      "have the correct uk property details" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("uk-property-heading").text() shouldBe CheckHmrcRecordsMessages.ukPropertyHeading
         pageDocument.getElementById("uk-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("uk-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
@@ -146,7 +160,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
 
       }
 
-      "have the correct foreign property details" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = true) {
+      "have the correct foreign property details" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("foreign-property-heading").text() shouldBe CheckHmrcRecordsMessages.foreignPropertyHeading
         pageDocument.getElementById("foreign-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("foreign-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
@@ -157,7 +171,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     "checking hmrc records with no active sole trader business and an active uk property business only" should {
       checkCommonContent(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = false)
 
-      "have the correct uk property details" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = false) {
+      "have the correct uk property details" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = false, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("uk-property-heading").text() shouldBe CheckHmrcRecordsMessages.ukPropertyHeading
         pageDocument.getElementById("uk-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("uk-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
@@ -165,7 +179,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("uk-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref
       }
 
-      "have the correct foreign property link" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = false) {
+      "have the correct foreign property link" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = false, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("foreign-property-add-link").text() shouldBe CheckHmrcRecordsMessages.addForeignPropertyBusinessText
         pageDocument.getElementById("foreign-property-add-link").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-foreign-property/business-start-date?isTriggeredMigration=true"
       }
@@ -173,7 +187,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     "checking hmrc records with no active sole trader business and an active foreign property business only" should {
       checkCommonContent(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = true)
 
-      "have the correct foreign property details" in new Setup(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = true) {
+      "have the correct foreign property details" in new Setup(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("foreign-property-heading").text() shouldBe CheckHmrcRecordsMessages.foreignPropertyHeading
         pageDocument.getElementById("foreign-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("foreign-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
@@ -181,64 +195,84 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("foreign-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref
       }
 
-      "have the add uk property link" in new Setup(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = true) {
+      "have the add uk property link" in new Setup(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
         pageDocument.getElementById("uk-property-add-link").text() shouldBe CheckHmrcRecordsMessages.addAPropertyBusinessText
         pageDocument.getElementById("uk-property-add-link").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-uk-property/business-start-date?isTriggeredMigration=true"
+      }
+    }
+
+    "checking hmrc records with ceased businesses and ceased banner shown" should {
+      "display the ceased banner after ceasing a business" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, CeasedBannerOneCeasedBusiness) {
+        pageDocument.getElementById("ceased-banner-heading").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerHeading
+        pageDocument.getElementById("ceased-banner-text-1").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerText
+        pageDocument.getElementById("ceased-banner-text-2").text() shouldBe CheckHmrcRecordsMessages.ceasedBannerLinkText
+      }
+
+      "display the ceased section when user has at least one ceased business" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOneCeasedBusiness) {
+        pageDocument.getElementById("ceased-section-heading").text() shouldBe CheckHmrcRecordsMessages.ceasedSectionHeading
+        pageDocument.getElementById("ceased-section-text").text() shouldBe CheckHmrcRecordsMessages.ceasedSectionText
+        pageDocument.getElementById("ceased-section-link").text() shouldBe CheckHmrcRecordsMessages.ceasedSectionLinkText
+      }
+    }
+    "checking hmrc records with ceased businesses and ceased banner not shown" should {
+      "not display the ceased banner or ceased section when there's no ceased businesses" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBannerOrCeasedBusinesses) {
+        pageDocument.getElementById("ceased-banner-heading") shouldBe null
+        pageDocument.getElementById("ceased-section-heading") shouldBe null
       }
     }
   }
 
   def checkCommonContent(activeSoleTrader: Boolean, activeUkProperty: Boolean, activeForeignProperty: Boolean): Unit = {
-    "have the correct title" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct title" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.title() shouldBe CheckHmrcRecordsMessages.title
     }
-    "have the correct heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.select("h1").text() shouldBe CheckHmrcRecordsMessages.heading
     }
 
-    "have the correct description" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct description" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("check-hmrc-records-desc").text() shouldBe CheckHmrcRecordsMessages.desc
     }
 
-    "have the correct inset" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct inset" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("check-hmrc-records-inset").text() shouldBe CheckHmrcRecordsMessages.inset
     }
 
-    "have the correct bullet points" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct bullet points" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("check-hmrc-records-bullet-start").text() shouldBe CheckHmrcRecordsMessages.bulletStart
       pageDocument.getElementById("check-hmrc-records-bullets").text() shouldBe CheckHmrcRecordsMessages.bullet1 + " " + CheckHmrcRecordsMessages.bullet2
     }
 
-    "have the correct your active businesses heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct your active businesses heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("your-active-businesses-heading").text() shouldBe CheckHmrcRecordsMessages.yourActiveBusinessesHeading
     }
 
-    "have the correct sole trader heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct sole trader heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("sole-trader-heading").text() shouldBe CheckHmrcRecordsMessages.soleTraderHeading
     }
 
-    "have the correct sole trader guidance" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct sole trader guidance" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("sole-trader-guidance").text() shouldBe CheckHmrcRecordsMessages.soleTraderGuidance
     }
 
-    "have the correct property heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct property heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("property-heading").text() shouldBe CheckHmrcRecordsMessages.propertyHeading
     }
 
-    "have the correct add a sole trader business text" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct add a sole trader business text" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("sole-trader-add-link").text() shouldBe CheckHmrcRecordsMessages.addASoleTraderBusinessText
       pageDocument.getElementById("sole-trader-add-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-name?isTriggeredMigration=true"
     }
 
-    "have the correct confirm records heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct confirm records heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("confirm-records-heading").text() shouldBe CheckHmrcRecordsMessages.confirmRecordsHeading
     }
 
-    "have the correct confirm records text" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "have the correct confirm records text" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("confirm-records-desc").text() shouldBe CheckHmrcRecordsMessages.confirmRecordsText
     }
 
-    "confirm and continue button is displayed" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty) {
+    "confirm and continue button is displayed" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBannerOrCeasedBusinesses) {
       pageDocument.getElementById("continue-button").text() shouldBe CheckHmrcRecordsMessages.confirmRecordsButton
     }
   }

@@ -19,7 +19,10 @@ import models.core.IncomeSourceId
 
 case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecordsSoleTraderDetails],
                                      hasActiveUkProperty: Boolean,
-                                     hasActiveForeignProperty: Boolean) {
+                                     hasActiveForeignProperty: Boolean,
+                                     showCeasedBanner: Boolean = false,
+                                     numberOfCeasedBusinesses: Int = 0
+                                    ) {
 }
 
 case class CheckHmrcRecordsSoleTraderDetails(incomeSourceId: IncomeSourceId,
