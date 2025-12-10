@@ -118,7 +118,8 @@
                     ActionItem(
                         href = changeReportingFrequencyURL,
                         content = Text(messages("income-sources.check-details-reporting-frequency.change")),
-                        attributes = Map("id" -> "change-reporting-frequency-link")
+                        attributes = Map("id" -> "change-reporting-frequency-link"),
+                        visuallyHiddenText = Some(getMessage("change-rf-key"))
                     )
                 )
             ))
@@ -141,7 +142,8 @@
                         ActionItem(
                             href = changeChooseTaxYearURL,
                             content = Text(messages("income-sources.check-details-reporting-frequency.change")),
-                            attributes = Map("id" -> "change-choose-tax-year-link")
+                            attributes = Map("id" -> "change-choose-tax-year-link"),
+                            visuallyHiddenText = Some(getMessage("change-rf-key"))
                         )
                     )
                 ))
