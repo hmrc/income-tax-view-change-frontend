@@ -3402,7 +3402,6 @@ triggered-migration.check-hmrc-records.ukProperty.heading            = UK proper
 triggered-migration.check-hmrc-records.ukProperty.cease.link         = Cease
 triggered-migration.check-hmrc-records.ukProperty.businessState      = Business state
 triggered-migration.check-hmrc-records.ukProperty.active             = Active
-triggered-migration.check-hmrc-records.addProperty.link              = Add a property business
 triggered-migration.check-hmrc-records.foreignProperty.heading       = Foreign property
 triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Cease
 triggered-migration.check-hmrc-records.foreignProperty.businessState = Business state

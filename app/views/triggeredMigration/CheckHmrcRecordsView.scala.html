@@ -105,12 +105,18 @@
 }
 
 @addPropertyURL() = @{controllers.manageBusinesses.add.routes.AddPropertyController.show(user.isAgent, isTrigMig = true).url}
+@addForeignPropertyURL() = @{controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = true).url}
+@addUKPropertyURL() = @{controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = true).url}
+
+@addUKPropertyLink() = { @p(id = Some("add-uk-property-link")){@link(link = addUKPropertyURL, messageKey = "manage.your.businesses.addIncomeSources.ukProperty.link")}}
+@addForeignPropertyLink() = { @p(id = Some("add-foreign-property-link")){@link(link = addForeignPropertyURL, messageKey = "manage.your.businesses.addIncomeSources.foreignProperty.link")}}
+@addPropertyLink() = { @p(id = Some("add-property-link")){@link(link = addPropertyURL, messageKey = "manage.your.businesses.addIncomeSources.property.link")}}
 
 @propertyBusinessSection = @{
     (viewModel.hasActiveUkProperty, viewModel.hasActiveForeignProperty) match {
         case (true, true) => HtmlFormat.fill(Seq(ukPropertyContent, foreignPropertyContent))
-        case (true, false) => HtmlFormat.fill(Seq(ukPropertyContent, addPropertyLink()))
-        case (false, true) => HtmlFormat.fill(Seq(addPropertyLink(), foreignPropertyContent))
+        case (true, false) => HtmlFormat.fill(Seq(ukPropertyContent, addForeignPropertyLink()))
+        case (false, true) => HtmlFormat.fill(Seq(foreignPropertyContent, addUKPropertyLink()))
         case _ => HtmlFormat.fill(Seq(noActivePropertiesContent, addPropertyLink()))
     }
 }
@@ -143,8 +149,6 @@
         </div>
     </div>
 }
-
-@addPropertyLink() = { @p(id = Some("add-property-link")){@link(link = addPropertyURL, messageKey = "triggered-migration.check-hmrc-records.addProperty.link")}}
 
 @foreignPropertyContent = {
     <div class="govuk-summary-card">

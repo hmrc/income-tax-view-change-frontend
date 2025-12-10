@@ -50,7 +50,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
     val propertyHeading = "Property businesses"
     val ukPropertyHeading = "UK property"
     val foreignPropertyHeading = "Foreign property"
-    val addAPropertyBusinessText = "Add a property business"
+    val addPropertyBusinessText = "Add property business"
     val addForeignPropertyBusinessText = "Add foreign property business"
     val noActivePropertyText = "If you get income from one or more properties in the UK, you have a UK property business. If the property is abroad, you have a foreign property business. For example: letting houses, flats or holiday homes either on a long or short term basis."
 
@@ -96,7 +96,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 checkActiveSoleTrader(result)
                 checkActiveUkProperty(result)
-                checkPropertyLink(result)
               }
             }
             "has an active sole trader business and foreign property only" in {
@@ -109,7 +108,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 checkActiveSoleTrader(result)
                 checkActiveForeignProperty(result)
-                checkPropertyLink(result)
               }
             }
             "has an active uk property and foreign property only" in {
@@ -144,7 +142,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveUkProperty(result)
-                checkPropertyLink(result)
               }
             }
             "has an active foreign property only" in {
@@ -155,7 +152,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveForeignProperty(result)
-                checkPropertyLink(result)
               }
             }
             "has no active businesses" in {
@@ -231,7 +227,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
   def checkPropertyLink(res: WSResponse) = {
     res should have(
-      elementTextByID("add-property-link")(CheckHmrcRecordsMessages.addAPropertyBusinessText),
+      elementTextByID("add-property-link")(CheckHmrcRecordsMessages.addPropertyBusinessText),
     )
   }
 
