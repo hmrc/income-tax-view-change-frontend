@@ -469,7 +469,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
       }
     }
-
+    // TODO: MISUV-10308 - Scenario 6: (V-A-V) when opting out of CY-1
     "opting out for CY-1 in V-A-V scenario" should {
       "have the correct title" in new Setup("previous", OneYearOptOutFollowedByAnnual, 2, Voluntary, Annual, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
