@@ -229,7 +229,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
         }
 
         "redirect the user to the opt out error page when they select 'Yes' and the submit fails " in {
@@ -255,7 +255,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
         }
 
         "redirect to the reporting obligations page when the user selects 'No'" in {
