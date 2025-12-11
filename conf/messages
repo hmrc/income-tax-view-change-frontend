@@ -3366,7 +3366,7 @@ triggered-migration.check-hmrc-records.add-banner.text1.SE           = Sole trad
 triggered-migration.check-hmrc-records.add-banner.text1.UK           = UK property business added
 triggered-migration.check-hmrc-records.add-banner.text1.FP           = Foreign property business added
 triggered-migration.check-hmrc-records.add-banner.text2              = View your
-triggered-migration.check-hmrc-records.add-banner.link.SE            = sole trader business
+triggered-migration.check-hmrc-records.add-banner.link.SE            = sole trader businesses
 triggered-migration.check-hmrc-records.add-banner.link.UK            = UK property business
 triggered-migration.check-hmrc-records.add-banner.link.FP            = foreign property business
 

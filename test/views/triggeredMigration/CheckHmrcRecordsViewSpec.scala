@@ -21,7 +21,6 @@ import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeas
 import models.core.IncomeSourceId
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.triggeredMigration.CheckHmrcRecordsView
@@ -86,7 +85,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
 
     val ceasedBannerHeading = "Ceased"
     val ceasedBannerText = "You have ceased a business"
-    val ceasedBannerLinkText = "View your ceased businesses"
+    val ceasedBannerLinkText = "View your ceased businesses."
     val ceasedSectionHeading = "Your ceased businesses"
     val ceasedSectionText = "One or more businesses have ceased."
     val ceasedSectionLinkText = "View all ceased businesses"
@@ -95,9 +94,9 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val addedBannerTextSelfEmployment = "Sole trader business added"
     val addedBannerTextUkProperty = "UK property business added"
     val addedBannerTextForeignProperty = "Foreign property business added"
-    val addedBannerLinkTextSelfEmployment = "View your sole trader business"
-    val addedBannerLinkTextUkProperty = "View your UK property business"
-    val addedBannerLinkTextForeignProperty = "View your foreign property business"
+    val addedBannerLinkTextSelfEmployment = "View your sole trader businesses."
+    val addedBannerLinkTextUkProperty = "View your UK property business."
+    val addedBannerLinkTextForeignProperty = "View your foreign property business."
   }
 
   "Check HMRC records page" when {

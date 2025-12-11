@@ -193,7 +193,7 @@
     </h3>
     <p id="ceased-banner-text-2" class="govuk-body">
         @messages("triggered-migration.check-hmrc-records.cessation-banner.text2")
-        <a id="ceased-banner-link" class="govuk-notification-banner__link" href="@state.anchorLinkId">@messages("triggered-migration.check-hmrc-records.cessation-banner.link")</a>
+        <a id="ceased-banner-link" class="govuk-notification-banner__link" href="@state.anchorLinkId">@messages("triggered-migration.check-hmrc-records.cessation-banner.link")</a>@messages("base.fullstop")
     </p>
 }
 
@@ -212,7 +212,7 @@
     </h3>
     <p id="added-banner-text-2" class="govuk-body">
         @messages("triggered-migration.check-hmrc-records.add-banner.text2")
-        <a id="added-banner-link" class="govuk-notification-banner__link" href="@state.anchorLinkId">@messages(s"triggered-migration.check-hmrc-records.add-banner.link.${state.messageKeyValue}")</a>
+        <a id="added-banner-link" class="govuk-notification-banner__link" href="@state.anchorLinkId">@messages(s"triggered-migration.check-hmrc-records.add-banner.link.${state.messageKeyValue}")</a>@messages("base.fullstop")
     </p>
 }
 
