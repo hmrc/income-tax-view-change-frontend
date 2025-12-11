@@ -16,7 +16,6 @@
 
 package models.optout.newJourney
 
-import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
 import models.optout.OneYearOptOutCheckpointViewModel
 import services.optout._
@@ -59,38 +58,17 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
     case _                        => false
   }
 
-  def showInset: Boolean = {
-    (optOutState, isCurrentYear, isPreviousYear, nextYearStatus) match {
-      case (Some(MultiYearOptOutDefault), true, _, Annual)      => false
-//      case (Some(MultiYearOptOutDefault), true, _, _)           => false // when false it breaks other cases  - need to ivnestigate further
-//      case (Some(MultiYearOptOutDefault), _, true, _)           => true
-      case (Some(OneYearOptOutFollowedByMandated), _, false, _) => true
-      case _ => false
-    }
+  def showQuarterlyUpdatesInset: Boolean = optOutState match {
+    case Some(OneYearOptOutFollowedByMandated) => false
+    case Some(_) if numberOfQuarterlyUpdates > 0 => true
+    case _ => false
   }
 
-  def showQuarterlyUpdatesInset: Boolean = {
-    (optOutState, hasNoQuarterlyUpdatesSubmitted, isPreviousYear) match {
-      case (Some(OneYearOptOutFollowedByAnnual), _, true)      => true
-      case (Some(OneYearOptOutFollowedByMandated), _, true)    => true
-      case (Some(OneYearOptOutFollowedByAnnual), false, false) => true
-      case (Some(MultiYearOptOutDefault), false, false) => true // TODO: Opting out from CY in mutli-year scenario
-      case (Some(MultiYearOptOutDefault), false, true) => true // TODO: Opting out from CY in mutli-year scenario
-      case _                                                   => false
-    }
+  def showSecondParagraph: Boolean = optOutState match {
+    case Some(OneYearOptOutFollowedByMandated) => false
+    case Some(_)                               => true
+    case _                                     => false
   }
-
-  def showSecondParagraph: Boolean = {
-    optOutState match {
-      //      case Some(MultiYearOptOutDefault)                                     => true // TODO: Might need to use this isntead of showThirdParagraph
-      case Some(OneYearOptOutFollowedByAnnual)                              => true
-      case Some(NextYearOptOut) if currentYearStatus == ITSAStatus.Mandated => true
-      case Some(OneYearOptOutFollowedByMandated) if isPreviousYear          => true
-      case _                                                                => false
-    }
-  }
-
-  def showThirdParagraph: Boolean = optOutState.contains(MultiYearOptOutDefault)
 
   val messageSuffix = s"$taxYearMessageSuffix.$optOutStateMessageSuffix"
 

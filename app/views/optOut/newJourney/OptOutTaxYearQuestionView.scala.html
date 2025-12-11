@@ -74,12 +74,6 @@
             }
         }
 
-        @if(viewModel.showThirdParagraph) {
-            @p(id = Some("opt-out-question-desc-3")) {
-                @getMessage("desc3")
-            }
-        }
-
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(

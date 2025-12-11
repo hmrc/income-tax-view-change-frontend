@@ -61,14 +61,14 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
   }
 
   "Opt out tax year question page" when {
-    // TODO: MISUV-10308 - Scenario 7
+    // TODO: MISUV-10308 - Scenario 7.
     "opting out from the previous year onwards without submitted updates - Multi-year Opt-Out" should {
       "have the correct heading" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousYearHeadingMulti
       }
       "have the correct description" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc1Multi
-        pageDocument.getElementById("opt-out-question-desc-3").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc3Multi // TODO: need to rename from desc3 to desc2 ( we only have 2 paragraphs now)
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc2Multi
       }
       "have the correct radio question" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousYearQuestionMulti
@@ -79,8 +79,8 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 1
-    "opting out for the current year onwards with voluntary next year without submitted updates - Multi-year Opt-Out" should {
+    // TODO: MISUV-10308 - Scenario 1.
+    "opting out from the current year onwards with voluntary next year without submitted updates - Multi-year Opt-Out" should {
       "have the correct title" in new Setup("current", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.currentYearTitleMulti
       }
@@ -89,7 +89,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("current", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc1Multi
-        pageDocument.getElementById("opt-out-question-desc-3").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc3Multi // TODO: need to rename from desc3 to desc2 ( we only have 2 paragraphs now)
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc2Multi
       }
       "have the correct radio question" in new Setup("current", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.currentYearQuestionMulti
@@ -100,8 +100,8 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 1b
-    "opting out for the current year onwards with voluntary next year with submitted updates - Multi-year Opt-Out" should {
+    // TODO: MISUV-10308 - Scenario 1b.
+    "opting out from the current year onwards with voluntary next year with submitted updates - Multi-year Opt-Out" should {
       "have the correct title" in new Setup("current", MultiYearOptOutDefault, 3, Voluntary, Voluntary, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.currentYearTitleMulti
       }
@@ -111,7 +111,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       "have the correct description" in new Setup("current", MultiYearOptOutDefault, 3, Voluntary, Voluntary, Voluntary) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc1Multi
         pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.currentYearQuarterlyInsetMulti
-        pageDocument.getElementById("opt-out-question-desc-3").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc3Multi // TODO: need to rename from desc3 to desc2 ( we only have 2 paragraphs now)
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc2Multi
       }
       "have the correct radio question" in new Setup("current", MultiYearOptOutDefault, 3, Voluntary, Voluntary, Voluntary) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.currentYearQuestionMulti
@@ -122,31 +122,28 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: this test is incorrect opting out from CY followed by Annual is single year optout - Needs investigation
-//    "opting out for the current year onwards with annual next year - Single year" should {
-//      "have the correct title" in new Setup("current", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
-//        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.currentYearTitleMultiAnnualFollowing
-//      }
-//      "have the correct heading" in new Setup("current", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
-//        pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.currentYearHeadingMultiAnnualFollowing
-//      }
-//      "have the correct description" in new Setup("current", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
-//
-//        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc1MultiAnnualFollowing
-////        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc2MultiAnnualFollowing
-//        pageDocument.getElementById("opt-out-question-desc-3").text() shouldBe OptOutTaxYearQuestionMessages.currentYearDesc3MultiAnnualFollowing // TODO: need to rename from desc3 to desc2 ( we only have 2 paragraphs now)
-//      }
-//      "have the correct radio question" in new Setup("current", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
-//        pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.currentYearQuestionMultiAnnualFollowing
-//      }
-//      "display the correct error message when form has errors" in new Setup("current", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary, withError = true) {
-//        pageDocument.getElementsByClass("govuk-error-summary__title").text() shouldBe "There is a problem"
-//        pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
-//      }
-//    }
+    // TODO: MISUV-10308 - Scenario 4b.
+    "opting out for the current year onwards with annual next year without submitted updates - Single-year Opt-out" should {
+      "have the correct title" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, Voluntary, Voluntary, Annual) {
+        pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualTitle
+      }
+      "have the correct heading" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, Voluntary, Voluntary, Annual) {
+        pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualHeading
+      }
+      "have the correct description" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, Voluntary, Voluntary, Annual) {
+        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc1
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc2
+      }
+      "have the correct radio question" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, Voluntary, Voluntary, Voluntary) {
+        pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualQuestion
+      }
+      "display the correct error message when form has errors" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, Voluntary, Voluntary, Voluntary, withError = true) {
+        pageDocument.getElementsByClass("govuk-error-summary__title").text() shouldBe "There is a problem"
+        pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
+      }
+    }
 
-
-    "opting out for the next year onwards - Multi" should {
+    "opting out for the next year onwards without submitted updates - Single-year Opt-out" should {
       "have the correct title" in new Setup("next", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.nextYearTitleMulti
       }
@@ -156,7 +153,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       "have the correct description" in new Setup("next", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.nextYearDesc1Multi
         pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.nextYearDesc2Multi
-        pageDocument.getElementById("opt-out-question-desc-3").text() shouldBe OptOutTaxYearQuestionMessages.nextYearDesc3Multi
       }
       "have the correct radio question" in new Setup("next", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.nextYearQuestionMulti
@@ -167,6 +163,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
+    //TODO: MISUV-10308 - Scenario 8 Needs New Ticket to display the correct elements
     "opting out for a previous single year followed by Mandated - No updates" should {
       "have the correct title" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Mandated) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
@@ -176,8 +173,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Mandated) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearInset
-        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc2
       }
       "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Mandated) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearQuestion
@@ -188,7 +183,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    "opting out for a single year followed by Mandated - No updates" should {
+    "opting out for the current single year followed by Mandated - No updates" should {
       "have the correct title" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Mandated) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedTitle
       }
@@ -197,7 +192,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedDesc1
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedInset
       }
       "have the correct radio question" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedQuestion
@@ -207,6 +201,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
       }
     }
+
     "opting out for a single year followed by Mandated - With updates" should {
       "have the correct title" in new Setup("current", OneYearOptOutFollowedByMandated, 1, NoStatus, Voluntary, Mandated) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesTitle
@@ -216,7 +211,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("current", OneYearOptOutFollowedByMandated, 1, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesDesc1
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesInset
       }
       "have the correct radio question" in new Setup("current", OneYearOptOutFollowedByMandated, 1, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesQuestion
@@ -226,7 +220,8 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
       }
     }
-    // TODO: MISUV-10308 - Scenario 5
+
+    // TODO: MISUV-10308 - Scenario 5.
     "opting out for a previous single year followed by Annual - No updates" should {
       "have the correct title" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
@@ -236,7 +231,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe null
         pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc2
       }
       "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
@@ -247,7 +241,8 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2024 to 2025 tax year"
       }
     }
-    // TODO: MISUV-10308 - Scenario 2
+
+    // TODO: MISUV-10308 - Scenario 2.
     "opting out of a single year followed by Annual - No updates" should {
       "have the correct title" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, NoStatus, Voluntary, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualTitle
@@ -267,8 +262,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
       }
     }
-    // TODO: MISUV-10308 - Scenario 2b
-    "opting out of a single year followed by Annual - With updates" should {
+
+    // TODO: MISUV-10308 - Scenario 2b.
+    "opting out for current single year followed by Annual - With updates" should {
       "have the correct title" in new Setup("current", OneYearOptOutFollowedByAnnual, 1, NoStatus, Voluntary, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualUpdatesTitle
       }
@@ -288,6 +284,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
       }
     }
+
     "opting out of the next year - Annual CY" should {
       "have the correct title" in new Setup("next", NextYearOptOut, 0, NoStatus, Annual, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.nextYearOptOutDefaultTitle
@@ -336,8 +333,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Voluntary) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearInset
-        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc2
       }
       "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Voluntary) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearQuestion
@@ -369,7 +364,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 4
+    // TODO: MISUV-10308 - Scenario 4.
     "opting out from the previous year in V-V-A scenario without submitted updates - Multi-year Opt-Out" should {
       "have the correct title" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousYearTitleMulti
@@ -379,7 +374,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc1Multi
-        pageDocument.getElementById("opt-out-question-desc-3").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc3Multi // TODO: need to rename from desc3 to desc2 ( we only have 2 paragraphs now)
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc2Multi
       }
       "have the correct radio question" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousYearQuestionMulti
@@ -399,7 +394,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedDesc1
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedInset
       }
       "have the correct radio question" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedQuestion
@@ -419,8 +413,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Dormant, Voluntary) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearInset
-        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc2
       }
       "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Dormant, Voluntary) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearQuestion
@@ -459,7 +451,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Dormant) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedDesc1
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedInset
       }
       "have the correct radio question" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Dormant) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedQuestion
@@ -469,7 +460,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
       }
     }
-    // TODO: MISUV-10308 - Scenario 6: (V-A-V) when opting out of CY-1
+    // TODO: MISUV-10308 - Scenario 6.
     "opting out for CY-1 in V-A-V scenario" should {
       "have the correct title" in new Setup("previous", OneYearOptOutFollowedByAnnual, 2, Voluntary, Annual, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
@@ -516,9 +507,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc1Multi
-        pageDocument.getElementById("opt-out-question-inset").text() shouldBe OptOutTaxYearQuestionMessages.previousYearInsetMulti
         pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc2Multi
-        pageDocument.getElementById("opt-out-question-desc-3").text() shouldBe OptOutTaxYearQuestionMessages.previousYearDesc3Multi
       }
       "have the correct radio question" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousYearQuestionMulti
