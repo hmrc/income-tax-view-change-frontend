@@ -1261,8 +1261,8 @@ upliftFailure.bullet.3                                          = nid oeddem yn 
 cannotUpdateReportingObligations.title                          = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 cannotUpdateReportingObligations.p1                             = Nid oeddem yn gallu newid eich ymrwymiadau o ran adrodd ar gyfer un neu fwy o flynyddoedd treth.
 cannotUpdateReportingObligations.p2                             = Gwiriwch pa flynyddoedd treth sydd wedi eu diweddaru neu rhowch gynnig arall arni ar dudalen
-cannotUpdateReportingObligations.link                           = eich ymrwymiadau o ran adrodd
-cannotUpdateReportingObligations.p3                             = .
+cannotUpdateReportingObligations.link                           = eich ymrwymiadau o ran adrodd.
+cannotUpdateReportingObligations.p3                             =
 
 ## Payment History Page ##
 paymentHistory.heading                                          = Hanes taliadau
