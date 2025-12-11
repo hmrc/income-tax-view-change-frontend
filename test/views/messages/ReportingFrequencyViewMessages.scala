@@ -35,7 +35,7 @@ object ReportingFrequencyViewMessages {
 
   val manageReportingObligationsHeading = "Changing your reporting obligations"
   val manageReportingObligationsCardHeading = "Opt out from the current tax year"
-  val manageReportingObligationsCardLink = "Opt out"
+  val manageReportingObligationsCardLink = "Opt out from the current tax year"
   val manageReportingObligationsCardDesc = "You can stop using Making Tax Digital for Income Tax from the 2023 to 2024 tax year onwards."
   val manageReportingObligationsCardText = "Stop from 6 April 2023"
 
