@@ -21,6 +21,7 @@
 @import play.twirl.api.HtmlFormat
 @import models.core.NormalMode
 @import enums.IncomeSourceJourney.{UkProperty, ForeignProperty, SelfEmployment}
+@import enums.TriggeredMigration.TriggeredMigrationState
 
 @this(
     mainTemplate: unifiedLayout,
@@ -35,6 +36,7 @@
     hr: hr,
     govukNotificationBanner : GovukNotificationBanner
 )
+
 
 @(viewModel: CheckHmrcRecordsViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -179,28 +181,48 @@
     </div>
 }
 
-@ceasedBannerContent = {
+@ceasedBusinessSection = {
+    @h2(messages("triggered-migration.check-hmrc-records.cessation-section.heading"), classes = "govuk-heading-l", optId = Some("ceased-section-heading"))
+    <p id="ceased-section-text" class="govuk-body">@messages("triggered-migration.check-hmrc-records.cessation-section.text")</p>
+    <a class="govuk-link govuk-body" id="ceased-section-link" href=@controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
+}
+
+@ceasedBannerContent(state: TriggeredMigrationState) = {
     <h3 id="ceased-banner-text-1" class="govuk-notification-banner__heading">
         @messages("triggered-migration.check-hmrc-records.cessation-banner.text1")
     </h3>
     <p id="ceased-banner-text-2" class="govuk-body">
         @messages("triggered-migration.check-hmrc-records.cessation-banner.text2")
-        <a id="ceased-banner-link" class="govuk-notification-banner__link" href="#ceased-section-heading">@messages("triggered-migration.check-hmrc-records.cessation-banner.link")</a>.
+        <a id="ceased-banner-link" class="govuk-notification-banner__link" href="@state.anchorLinkId">@messages("triggered-migration.check-hmrc-records.cessation-banner.link")</a>@messages("base.fullstop")
     </p>
 }
-@ceasedBanner = {
+
+@ceasedBanner(state: TriggeredMigrationState) = {
     @govukNotificationBanner(NotificationBanner(
         title = HtmlContent(messages("triggered-migration.check-hmrc-records.cessation-banner.heading")),
         titleId = Some("ceased-banner-heading"),
-        content = HtmlContent(ceasedBannerContent),
+        content = HtmlContent(ceasedBannerContent(state)),
         bannerType = Some("success")
     ))
 }
 
-@ceasedBusinessSection = {
-    @h2(messages("triggered-migration.check-hmrc-records.cessation-section.heading"), classes = "govuk-heading-l", optId = Some("ceased-section-heading"))
-    <p id="ceased-section-text" class="govuk-body">@messages("triggered-migration.check-hmrc-records.cessation-section.text")</p>
-    <a class="govuk-link govuk-body" id="ceased-section-link" href=@controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
+@addedBannerContent(state: TriggeredMigrationState) = {
+    <h3 id="added-banner-text-1" class="govuk-notification-banner__heading">
+    @messages(s"triggered-migration.check-hmrc-records.add-banner.text1.${state.messageKeyValue}")
+    </h3>
+    <p id="added-banner-text-2" class="govuk-body">
+        @messages("triggered-migration.check-hmrc-records.add-banner.text2")
+        <a id="added-banner-link" class="govuk-notification-banner__link" href="@state.anchorLinkId">@messages(s"triggered-migration.check-hmrc-records.add-banner.link.${state.messageKeyValue}")</a>@messages("base.fullstop")
+    </p>
+}
+
+@addedBanner(state: TriggeredMigrationState) = {
+    @govukNotificationBanner(NotificationBanner(
+        title = HtmlContent(messages("triggered-migration.check-hmrc-records.add-banner.heading")),
+        titleId = Some("added-banner-heading"),
+        content = HtmlContent(addedBannerContent(state)),
+        bannerType = Some("success")
+    ))
 }
 
 @mainTemplate(
@@ -209,9 +231,12 @@
     isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial
 ) {
-
-    @if(viewModel.showCeasedBanner) {
-        @ceasedBanner
+    @{
+        viewModel.triggeredMigrationState match {
+            case Some(state) if viewModel.showCeasedBanner => ceasedBanner(state)
+            case Some(state) if viewModel.showAddedBanner  => addedBanner(state)
+            case _ =>
+        }
     }
 
     @h1(messages("triggered-migration.check-hmrc-records.heading"), id = Some("check-hmrc-records-heading"))

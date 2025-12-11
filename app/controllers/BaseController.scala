@@ -17,12 +17,11 @@
 package controllers
 
 import play.api.http.HeaderNames
-import play.api.mvc.{MessagesControllerComponents, RequestHeader, Result}
+import play.api.mvc.{MessagesControllerComponents, RequestHeader}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 abstract class BaseController @Inject()(implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
 

@@ -16,13 +16,13 @@
 
 package services.triggeredMigration
 
-import enums.TriggeredMigration.TriggeredMigrationCeased
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import models.core.{CessationModel, IncomeSourceId}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncomeCeased, singleBusinessIncome}
 import testUtils.TestSupport
 
 import java.time.LocalDate
@@ -51,7 +51,8 @@ class TriggeredMigrationServiceSpec extends TestSupport {
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"),Some("Fruit Ltd"), Some("nextUpdates.business"))),
         hasActiveUkProperty = true,
-        hasActiveForeignProperty = true
+        hasActiveForeignProperty = true,
+        triggeredMigrationState = None
       )
 
       result shouldBe expectedResult
@@ -72,7 +73,7 @@ class TriggeredMigrationServiceSpec extends TestSupport {
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = false,
         hasActiveForeignProperty = false,
-        showCeasedBanner = false,
+        triggeredMigrationState = None,
         numberOfCeasedBusinesses = 1
       )
 
@@ -85,7 +86,8 @@ class TriggeredMigrationServiceSpec extends TestSupport {
       val expectedResult = CheckHmrcRecordsViewModel(
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = false,
-        hasActiveForeignProperty = false
+        hasActiveForeignProperty = false,
+        triggeredMigrationState = None
       )
 
       result shouldBe expectedResult
@@ -103,8 +105,44 @@ class TriggeredMigrationServiceSpec extends TestSupport {
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = true,
         hasActiveForeignProperty = false,
-        showCeasedBanner = false,
+        triggeredMigrationState = None,
         numberOfCeasedBusinesses = 1
+      )
+
+      result shouldBe expectedResult
+    }
+
+    "return a view model with an active sole trader businesses and active uk and foreign property businesses and a state of ceased" in {
+      val populatedIncomeSources = baseIncomeSources.copy(
+        businesses = List(business1),
+        properties = List(ukPropertyDetails, foreignPropertyDetails)
+      )
+
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, Some(TriggeredMigrationCeased))
+
+      val expectedResult = CheckHmrcRecordsViewModel(
+        soleTraderBusinesses = List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"),Some("Fruit Ltd"), Some("nextUpdates.business"))),
+        hasActiveUkProperty = true,
+        hasActiveForeignProperty = true,
+        triggeredMigrationState = Some(TriggeredMigrationCeased)
+      )
+
+      result shouldBe expectedResult
+    }
+
+    "return a view model with an active sole trader businesses and active uk and foreign property businesses and a state of added" in {
+      val populatedIncomeSources = baseIncomeSources.copy(
+        businesses = List(business1),
+        properties = List(ukPropertyDetails, foreignPropertyDetails)
+      )
+
+      val result = service.getCheckHmrcRecordsViewModel(populatedIncomeSources, Some(TriggeredMigrationAdded(SelfEmployment)))
+
+      val expectedResult = CheckHmrcRecordsViewModel(
+        soleTraderBusinesses = List(CheckHmrcRecordsSoleTraderDetails(IncomeSourceId("XA00001234"),Some("Fruit Ltd"), Some("nextUpdates.business"))),
+        hasActiveUkProperty = true,
+        hasActiveForeignProperty = true,
+        triggeredMigrationState = Some(TriggeredMigrationAdded(SelfEmployment))
       )
 
       result shouldBe expectedResult
@@ -122,36 +160,11 @@ class TriggeredMigrationServiceSpec extends TestSupport {
         soleTraderBusinesses = List.empty,
         hasActiveUkProperty = false,
         hasActiveForeignProperty = true,
-        showCeasedBanner = false,
+        triggeredMigrationState = None,
         numberOfCeasedBusinesses = 1
       )
 
       result shouldBe expectedResult
     }
-
-    "ceasedBusinessSetup" when {
-      "given a state of CEASED and 1 ceased business" should {
-        "return (true, 1 ceased business)" in {
-          val (isCeased, noOfCeased) = service.ceasedBusinessSetup(Some(TriggeredMigrationCeased.toString), businessesAndPropertyIncomeCeased)
-          isCeased shouldBe true
-          noOfCeased shouldBe 1
-        }
-      }
-      "given no state and 1 ceased businesses" should {
-        "return (false, 1 ceased business)" in {
-          val (isCeased, noOfCeased) = service.ceasedBusinessSetup(None, businessesAndPropertyIncomeCeased)
-          isCeased shouldBe false
-          noOfCeased shouldBe 1
-        }
-      }
-      "given no state and 0 ceased businesses" should {
-        "return (false, 0 ceased businesses)" in {
-          val (isCeased, noOfCeased) = service.ceasedBusinessSetup(None, singleBusinessIncome)
-          isCeased shouldBe false
-          noOfCeased shouldBe 0
-        }
-      }
-    }
-
   }
 }
