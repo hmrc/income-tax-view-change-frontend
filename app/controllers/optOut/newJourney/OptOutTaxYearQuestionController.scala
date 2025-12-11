@@ -96,11 +96,11 @@ class OptOutTaxYearQuestionController @Inject()(
         } else {
           optOutSubmissionService.updateTaxYearsITSAStatusRequest().map {
             case List() =>
-              Redirect(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent))
+              Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
             case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
               Redirect(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent))
             case _ =>
-              Redirect(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent))
+              Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
           }
         }
       case Some(OptOutTaxYearQuestionForm.responseNo) =>
