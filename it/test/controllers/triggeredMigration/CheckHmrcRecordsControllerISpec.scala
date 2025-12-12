@@ -54,7 +54,10 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
     val addForeignPropertyBusinessText = "Add foreign property business"
     val noActivePropertyText = "If you get income from one or more properties in the UK, you have a UK property business. If the property is abroad, you have a foreign property business. For example: letting houses, flats or holiday homes either on a long or short term basis."
 
-    val ceaseText = "Cease"
+    val ceaseSoleTraderText = "Cease Fruit Ltd"
+    val ceaseSoleTraderUnknownText = "Cease Unknown"
+    val ceaseForeignPropertyText = "Cease Foreign property"
+    val ceaseUkPropertyText = "Cease UK property"
     val businessNameText = "Business name"
     val businessStateText = "Business state"
     val activeText = "Active"
@@ -180,7 +183,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                   elementTextByID("sole-trader-business-name-value-0")(CheckHmrcRecordsMessages.unknownText),
                   elementTextByID("sole-trader-business-state-0")(CheckHmrcRecordsMessages.businessStateText),
                   elementTextByID("sole-trader-business-state-value-0")(CheckHmrcRecordsMessages.activeText),
-                  elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseText)
+                  elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseSoleTraderUnknownText)
                 )
               }
             }
@@ -197,7 +200,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
       elementTextByID("sole-trader-business-name-value-0")("business"),
       elementTextByID("sole-trader-business-state-0")(CheckHmrcRecordsMessages.businessStateText),
       elementTextByID("sole-trader-business-state-value-0")(CheckHmrcRecordsMessages.activeText),
-      elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseText)
+      elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseSoleTraderText)
     )
   }
 
@@ -206,7 +209,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
       elementTextByID("foreign-property-heading")(CheckHmrcRecordsMessages.foreignPropertyHeading),
       elementTextByID("foreign-property-business-state")(CheckHmrcRecordsMessages.businessStateText),
       elementTextByID("foreign-property-business-state-value")(CheckHmrcRecordsMessages.activeText),
-      elementTextByID("foreign-property-cease-link")(CheckHmrcRecordsMessages.ceaseText)
+      elementTextByID("foreign-property-cease-link")(CheckHmrcRecordsMessages.ceaseForeignPropertyText)
     )
   }
 
@@ -221,7 +224,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
       elementTextByID("uk-property-heading")(CheckHmrcRecordsMessages.ukPropertyHeading),
       elementTextByID("uk-property-business-state")(CheckHmrcRecordsMessages.businessStateText),
       elementTextByID("uk-property-business-state-value")(CheckHmrcRecordsMessages.activeText),
-      elementTextByID("uk-property-cease-link")(CheckHmrcRecordsMessages.ceaseText)
+      elementTextByID("uk-property-cease-link")(CheckHmrcRecordsMessages.ceaseUkPropertyText)
     )
   }
 

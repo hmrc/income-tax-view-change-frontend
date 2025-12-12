@@ -63,6 +63,9 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val soleTraderHeading = "Sole trader businesses"
     val addASoleTraderBusinessText = "Add a sole trader business"
     val soleTraderGuidance = "You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader."
+    val visuallyHiddenSoleTraderText = "business"
+    val visuallyHiddenTextForeignProperty = "Foreign property"
+    val visuallyHiddenTextUkProperty = "UK property"
 
     val propertyHeading = "Property businesses"
     val ukPropertyHeading = "UK property"
@@ -73,7 +76,9 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val addPropertyBusinessText = "Add property business"
     val addUKPropertyBusinessText = "Add UK property business"
 
-    val ceaseText = "Cease"
+    val ceaseSoleTraderText = "Cease business"
+    val ceaseUkPropertyText = "Cease UK property"
+    val ceaseForeignPropertyText = "Cease Foreign property"
     val ceaseLinkUkPropertyHref = "/report-quarterly/income-and-expenses/view/manage-your-businesses/cease/uk-property-confirm-cease?isTriggeredMigration=true"
     val ceaseLinkForeignPropertyHref = "/report-quarterly/income-and-expenses/view/manage-your-businesses/cease/foreign-property-confirm-cease?isTriggeredMigration=true"
     val businessNameText = "Business name"
@@ -111,23 +116,26 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("sole-trader-business-name-value-0").text() shouldBe "nextUpdates.business"
         pageDocument.getElementById("sole-trader-business-state-0").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("sole-trader-business-state-value-0").text() shouldBe CheckHmrcRecordsMessages.activeText
-        pageDocument.getElementById("sole-trader-cease-link-0").text() shouldBe CheckHmrcRecordsMessages.ceaseText
+        pageDocument.getElementById("sole-trader-cease-link-0").text() shouldBe CheckHmrcRecordsMessages.ceaseSoleTraderText
+        pageDocument.select("#sole-trader-cease-link-0 > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenSoleTraderText
       }
 
       "have the correct uk property details" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBusinesses, None) {
         pageDocument.getElementById("uk-property-heading").text() shouldBe CheckHmrcRecordsMessages.ukPropertyHeading
         pageDocument.getElementById("uk-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("uk-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
-        pageDocument.getElementById("uk-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseText
+        pageDocument.getElementById("uk-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseUkPropertyText
         pageDocument.getElementById("uk-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref
+        pageDocument.select("#uk-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextUkProperty
       }
 
       "have the correct foreign property details" in new Setup(activeSoleTrader = true, activeUkProperty = true, activeForeignProperty = true, noCeasedBusinesses, None) {
         pageDocument.getElementById("foreign-property-heading").text() shouldBe CheckHmrcRecordsMessages.foreignPropertyHeading
         pageDocument.getElementById("foreign-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("foreign-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
-        pageDocument.getElementById("foreign-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseText
+        pageDocument.getElementById("foreign-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseForeignPropertyText
         pageDocument.getElementById("foreign-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref
+        pageDocument.select("#foreign-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextForeignProperty
       }
     }
     "checking hmrc records with no active sole trader, uk or foreign property business" should {
@@ -147,7 +155,8 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("sole-trader-business-name-value-0").text() shouldBe "nextUpdates.business"
         pageDocument.getElementById("sole-trader-business-state-0").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("sole-trader-business-state-value-0").text() shouldBe CheckHmrcRecordsMessages.activeText
-        pageDocument.getElementById("sole-trader-cease-link-0").text() shouldBe CheckHmrcRecordsMessages.ceaseText
+        pageDocument.getElementById("sole-trader-cease-link-0").text() shouldBe CheckHmrcRecordsMessages.ceaseSoleTraderText
+        pageDocument.select("#sole-trader-cease-link-0 > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenSoleTraderText
       }
 
       "have the correct property details" in new Setup(activeSoleTrader = true, activeUkProperty = false, activeForeignProperty = false, noCeasedBusinesses, None) {
@@ -162,17 +171,18 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("uk-property-heading").text() shouldBe CheckHmrcRecordsMessages.ukPropertyHeading
         pageDocument.getElementById("uk-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("uk-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
-        pageDocument.getElementById("uk-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseText
+        pageDocument.getElementById("uk-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseUkPropertyText
         pageDocument.getElementById("uk-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref
-
+        pageDocument.select("#uk-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextUkProperty
       }
 
       "have the correct foreign property details" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = true, noCeasedBusinesses, None) {
         pageDocument.getElementById("foreign-property-heading").text() shouldBe CheckHmrcRecordsMessages.foreignPropertyHeading
         pageDocument.getElementById("foreign-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("foreign-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
-        pageDocument.getElementById("foreign-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseText
+        pageDocument.getElementById("foreign-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseForeignPropertyText
         pageDocument.getElementById("foreign-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref
+        pageDocument.select("#foreign-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextForeignProperty
       }
     }
     "checking hmrc records with no active sole trader business and an active uk property business only" should {
@@ -182,8 +192,9 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("uk-property-heading").text() shouldBe CheckHmrcRecordsMessages.ukPropertyHeading
         pageDocument.getElementById("uk-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("uk-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
-        pageDocument.getElementById("uk-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseText
+        pageDocument.getElementById("uk-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseUkPropertyText
         pageDocument.getElementById("uk-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref
+        pageDocument.select("#uk-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextUkProperty
       }
 
       "have the correct foreign property link" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = false, noCeasedBusinesses, None) {
@@ -198,7 +209,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("foreign-property-heading").text() shouldBe CheckHmrcRecordsMessages.foreignPropertyHeading
         pageDocument.getElementById("foreign-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("foreign-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
-        pageDocument.getElementById("foreign-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseText
+        pageDocument.getElementById("foreign-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseForeignPropertyText
         pageDocument.getElementById("foreign-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref
       }
       
