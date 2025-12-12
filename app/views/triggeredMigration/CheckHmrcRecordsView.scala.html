@@ -68,7 +68,7 @@
     @p(id = Some("sole-trader-guidance")){@messages("triggered-migration.check-hmrc-records.soleTrader.guidance")}
 
     @for((business, index) <- viewModel.soleTraderBusinesses.zipWithIndex) {
-        <div class="govuk-summary-card" xmlns="http://www.w3.org/1999/html">
+        <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h3 class="govuk-summary-card__title" id="sole-trader-business-@index">
                 @business.incomeSource.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
