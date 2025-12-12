@@ -38,6 +38,17 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
   val nextStartYear = dateService.getCurrentTaxYear.nextYear.startYear.toString
   val nextEndYear = dateService.getCurrentTaxYear.nextYear.endYear.toString
 
+  val fromTheCurrentTaxYear =  " from the current tax year"
+  val fromTheNextTaxYear =  " from the next tax year"
+  val optOutFromTheCurrentTaxYear =  s"Opt out$fromTheCurrentTaxYear"
+  val optOutForTheCurrentTaxYear =  "Opt out for the current tax year"
+  val optOutFromTheNextTaxYear =  s"Opt out$fromTheNextTaxYear"
+  val optOutOfTheLastTaxYear =  "Opt out of the last tax year"
+  val optOutFromTheLastTaxYear =  "Opt out from the last tax year"
+  val signUpFromTheCurrentTaxYear =  s"Sign up$fromTheCurrentTaxYear"
+  val signUpToTheCurrentTaxYear =  "Sign up to the current tax year"
+  val signUpFromTheNextTaxYear =  s"Sign up$fromTheNextTaxYear"
+
   def optInOptOutLinks(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
   def latencyDetailsHeader: String = s"#main-content > div > div > div > details > summary > span"
@@ -87,12 +98,12 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Opt out from the current tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-1")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(optOutFromTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-1")(optOutFromTheCurrentTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can stop using Making Tax Digital for Income Tax from the $currentStartYear to $currentEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-1")("Stop now"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Opt out from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(optOutFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(optOutFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can stop using Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Stop from 6 April $nextStartYear")
                 )
@@ -122,12 +133,12 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Sign up from the current tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-1")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(signUpFromTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-1")(signUpFromTheCurrentTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can start using Making Tax Digital for Income Tax from the $currentStartYear to $currentEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-1")("Start now"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Sign up from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(signUpFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(signUpFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can choose to use Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Start from 6 April $nextStartYear"),
                   elementTextByID("manage-reporting-obligations-note")(s"If you sign up to the current tax year after 7 August $currentStartYear, you would have at least one quarterly update overdue.")
@@ -158,12 +169,12 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Opt out for the current tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-1")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(optOutForTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-1")(optOutForTheCurrentTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can stop using Making Tax Digital for Income Tax for the $currentStartYear to $currentEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-1")("Stop now"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Sign up from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(signUpFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(signUpFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can choose to use Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Start from 6 April $nextStartYear")
                 )
@@ -199,12 +210,12 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Sign up to the current tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-1")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(signUpToTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-1")(signUpToTheCurrentTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can start using Making Tax Digital for Income Tax for the $currentStartYear to $currentEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-1")("Start now"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Opt out from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(optOutFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(optOutFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can stop using Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Stop from 6 April $nextStartYear"),
                   elementTextByID("manage-reporting-obligations-note")(s"If you sign up to the current tax year after 7 August $currentStartYear, you would have at least one quarterly update overdue.")
@@ -235,8 +246,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result should have(
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Sign up to the current tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-1")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(signUpToTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-1")(signUpToTheCurrentTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can start using Making Tax Digital for Income Tax for the $currentStartYear to $currentEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-1")("Start now"),
                   elementTextByID("manage-reporting-obligations-note")(s"If you sign up to the current tax year after 7 August $currentStartYear, you would have at least one quarterly update overdue.")
@@ -267,8 +278,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Sign up from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(signUpFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(signUpFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can choose to use Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Start from 6 April $nextStartYear")
                 )
@@ -297,8 +308,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Sign up from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(signUpFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(signUpFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can choose to use Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Start from 6 April $nextStartYear")
                 )
@@ -307,7 +318,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page."),
                   elementTextByID("manage-reporting-obligations-card-heading-0")("Opt out from the previous tax year"),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Opt out for the current tax year")
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(optOutFromTheCurrentTaxYear)
                 )
               }
             }
@@ -331,8 +342,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Opt out from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(optOutFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(optOutFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can stop using Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Stop from 6 April $nextStartYear")
                 )
@@ -363,16 +374,16 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-0")("Opt out from the last tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-0")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-0")(optOutFromTheLastTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-0")(optOutFromTheLastTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-0")(s"You can stop using Making Tax Digital for Income Tax from the $previousStartYear to $previousEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-0")("Stop now"),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Opt out for the current tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-1")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(optOutForTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-1")(optOutForTheCurrentTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can stop using Making Tax Digital for Income Tax for the $currentStartYear to $currentEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-1")(s"Stop from 6 April $currentStartYear"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Sign up from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(signUpFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(signUpFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can choose to use Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Start from 6 April $nextStartYear")
                 )
@@ -403,16 +414,16 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-0")("Opt out of the last tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-0")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-0")(optOutOfTheLastTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-0")(optOutOfTheLastTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-0")(s"You can stop using Making Tax Digital for Income Tax for the $previousStartYear to $previousEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-0")("Stop now"),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Sign up from the current tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-1")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(signUpFromTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-1")(signUpFromTheCurrentTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can start using Making Tax Digital for Income Tax from the $currentStartYear to $currentEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-1")(s"Start from 6 April $currentStartYear"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Sign up from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Sign up"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(signUpFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(signUpFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can choose to use Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Start from 6 April $nextStartYear"),
                   elementTextByID("manage-reporting-obligations-note")(s"If you sign up to the current tax year after 7 August $currentStartYear, you would have at least one quarterly update overdue.")
@@ -444,16 +455,16 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-0")("Opt out from the last tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-0")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-0")(optOutFromTheLastTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-0")(optOutFromTheLastTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-0")(s"You can stop using Making Tax Digital for Income Tax from the $previousStartYear to $previousEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-0")("Stop now"),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Opt out from the current tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-1")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(optOutFromTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-1")(optOutFromTheCurrentTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-1")(s"You can stop using Making Tax Digital for Income Tax from the $currentStartYear to $currentEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-1")(s"Stop from 6 April $currentStartYear"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Opt out from the next tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-2")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(optOutFromTheNextTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-2")(optOutFromTheNextTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-2")(s"You can stop using Making Tax Digital for Income Tax from the $nextStartYear to $nextEndYear tax year onwards."),
                   elementTextByID("manage-reporting-obligations-card-text-2")(s"Stop from 6 April $nextStartYear")
                 )
@@ -484,8 +495,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-0")("Opt out of the last tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-0")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-0")(optOutOfTheLastTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-0")(optOutOfTheLastTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-0")(s"You can stop using Making Tax Digital for Income Tax for the $previousStartYear to $previousEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-0")("Stop now")
                 )
@@ -515,8 +526,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                   pageTitle(mtdUserRole, "Your reporting obligations"),
                   httpStatus(OK),
                   elementTextByID("manage-reporting-obligations-heading")("Changing your reporting obligations"),
-                  elementTextByID("manage-reporting-obligations-card-heading-0")("Opt out of the last tax year"),
-                  elementTextByID("manage-reporting-obligations-card-link-0")("Opt out"),
+                  elementTextByID("manage-reporting-obligations-card-heading-0")(optOutOfTheLastTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-link-0")(optOutOfTheLastTaxYear),
                   elementTextByID("manage-reporting-obligations-card-desc-0")(s"You can stop using Making Tax Digital for Income Tax for the $previousStartYear to $previousEndYear tax year."),
                   elementTextByID("manage-reporting-obligations-card-text-0")("Stop now")
                 )
@@ -524,8 +535,8 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
                 result shouldNot have(
                   elementTextBySelector(latencyDetailsHeader)("You can have different reporting obligations for your new businesses"),
                   elementTextByID("ceased-business-warning")("Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page."),
-                  elementTextByID("manage-reporting-obligations-card-heading-1")("Sign up from the current tax year"),
-                  elementTextByID("manage-reporting-obligations-card-heading-2")("Sign up from the next tax year")
+                  elementTextByID("manage-reporting-obligations-card-heading-1")(signUpFromTheCurrentTaxYear),
+                  elementTextByID("manage-reporting-obligations-card-heading-2")(signUpFromTheNextTaxYear)
                 )
               }
             }
