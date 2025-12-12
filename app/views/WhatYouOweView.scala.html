@@ -199,6 +199,11 @@
             @dunningLockParagraph()
         }
 
+        @claimToAdjustPoaSection(
+            viewModel.whatYouOweChargesList.hasUnpaidPOAs,
+            viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+            viewModel.adjustPoaUrl
+        )
         @paymentsMadeContent(
             isAgent = user.isAgent,
             origin = origin,

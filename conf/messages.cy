@@ -3350,6 +3350,15 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 #######################################################################################################################
 
 # Check HMRC records page
+triggered-migration.check-hmrc-records.add-banner.heading            = Wedi ychwanegu
+triggered-migration.check-hmrc-records.add-banner.text1.SE           = Busnes Unig fasnachwr wedi’i ychwanegu
+triggered-migration.check-hmrc-records.add-banner.text1.UK           = Busnes Eiddo yn y DU wedi’i ychwanegu
+triggered-migration.check-hmrc-records.add-banner.text1.FP           = Busnes Eiddo Tramor wedi’i ychwanegu
+triggered-migration.check-hmrc-records.add-banner.text2              = Bwrw golwg dros eich
+triggered-migration.check-hmrc-records.add-banner.link.SE            = busnes unig fasnachwr sydd wedi’i ychwanegu
+triggered-migration.check-hmrc-records.add-banner.link.UK            = busnes eiddo yn y DU
+triggered-migration.check-hmrc-records.add-banner.link.FP            = busnes eiddo Tramor
+
 triggered-migration.check-hmrc-records.cessation-banner.heading      = Wedi dod i ben
 triggered-migration.check-hmrc-records.cessation-banner.text1        = Rydych chi wedi dod â busnes i ben
 triggered-migration.check-hmrc-records.cessation-banner.text2        = Gweld
@@ -3382,7 +3391,6 @@ triggered-migration.check-hmrc-records.ukProperty.heading            = Eiddo yn 
 triggered-migration.check-hmrc-records.ukProperty.cease.link         = Wedi dod i ben
 triggered-migration.check-hmrc-records.ukProperty.businessState      = Statws y busnes
 triggered-migration.check-hmrc-records.ukProperty.active             = Cyfredol
-triggered-migration.check-hmrc-records.ukProperty.add.link           = Ychwanegu busnes eiddo
 triggered-migration.check-hmrc-records.foreignProperty.heading       = Eiddo Tramor
 triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Wedi dod i ben
 triggered-migration.check-hmrc-records.foreignProperty.businessState = Statws y busnes

@@ -16,8 +16,9 @@
 
 package controllers.triggeredMigration
 
+import enums.IncomeSourceJourney.SelfEmployment
 import enums.MTDIndividual
-import enums.TriggeredMigration.TriggeredMigrationCeased
+import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import mocks.auth.MockAuthActions
 import mocks.services.MockTriggeredMigrationService
 import models.admin.TriggeredMigration
@@ -49,7 +50,8 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
   val testCheckHmrcRecordsViewModel = CheckHmrcRecordsViewModel(
     soleTraderBusinesses = List(checkHmrcRecordsSoleTraderDetails),
     hasActiveUkProperty = true,
-    hasActiveForeignProperty = true
+    hasActiveForeignProperty = true,
+    triggeredMigrationState = None
   )
 
   mtdAllRoles.foreach { mtdRole =>
@@ -78,7 +80,22 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             val action = testController.show(isAgent, Some(TriggeredMigrationCeased.toString))
             enable(TriggeredMigration)
             setupMockSuccess(mtdRole)
-            mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel)
+            mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationCeased)))
+
+            when(
+              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+            ).thenReturn(Future(singleBusinessIncome))
+
+            val result = action(fakeRequest)
+
+            status(result) shouldBe 200
+          }
+
+          "state is TriggeredMigrationAdded" in {
+            val action = testController.show(isAgent, Some(TriggeredMigrationAdded(SelfEmployment).toString))
+            enable(TriggeredMigration)
+            setupMockSuccess(mtdRole)
+            mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationAdded(SelfEmployment))))
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())

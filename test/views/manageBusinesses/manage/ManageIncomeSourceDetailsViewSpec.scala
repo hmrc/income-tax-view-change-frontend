@@ -326,7 +326,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       changeLink(1).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
       changeLink(2).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
-      println(summaryListRowValues())
+
       summaryListRowValues().eq(0).text() shouldBe expectedBusinessName
       summaryListRowValues().eq(1).text() shouldBe expectedViewAddressString1
       summaryListRowValues().eq(2).text() shouldBe expectedBusinessStartDate

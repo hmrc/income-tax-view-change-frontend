@@ -29,8 +29,8 @@ class AddPropertyViewSpec extends TestSupport{
 
   val pageView: AddPropertyView = app.injector.instanceOf[AddPropertyView]
 
-  class Setup(isAgent: Boolean, hasError: Boolean) {
-    lazy val postCall: Call = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
+  class Setup(isAgent: Boolean, hasError: Boolean, isTrigMig: Boolean = false) {
+    lazy val postCall: Call = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent, isTrigMig)
     lazy val backUrl: String = if(isAgent) {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
     } else {
