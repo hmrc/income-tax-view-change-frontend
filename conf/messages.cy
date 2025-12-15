@@ -3435,3 +3435,16 @@ signUpOptOut.cannotGoBack.h2.signUp     = Rydych wedi cofrestru ar gyfer y cynll
 signUpOptOut.cannotGoBack.ul.heading    = Gallwch wneud y canlynol:
 signUpOptOut.cannotGoBack.linkText1     = bwrw golwg dros eich dyddiadau cau sydd ar ddod
 signUpOptOut.cannotGoBack.linkText2     = mynd yn ôl i’r hafan
+
+#TODO get Welsh translations for the below keys
+###You Must Wait To Use This Service Page
+#Individual:
+youMustWait.heading            = You can access this service from 6 April {0}
+youMustWait.text               = This is because you are signed up to use Making Tax Digital for Income Tax from the next tax year, which starts 6 April {0}.
+youMustWait.text2              = Find more about
+youMustWait.linkText           = Making Tax Digital for Income Tax
+
+#Agent:
+youMustWait.agent.heading      = You can view this client from 6 April {0}
+youMustWait.agent.text         = This is because your client is signed up to use Making Tax digital for Income Tax from the next tax year, which starts 6 April {0}.
+youMustWait.agent.button.text  = Enter another UTR
