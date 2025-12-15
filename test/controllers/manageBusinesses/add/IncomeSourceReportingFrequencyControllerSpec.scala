@@ -21,7 +21,8 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockIncomeSourceRFService, MockSessionService}
-import models.incomeSourceDetails.AddIncomeSourceData
+import models.UIJourneySessionData
+import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -45,6 +46,14 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   lazy val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
   lazy val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
   lazy val mockDateService: DateService = mock(classOf[DateService])
+
+  private val existingRfData: IncomeSourceReportingFrequencySourceData =
+    IncomeSourceReportingFrequencySourceData(
+      displayOptionToChangeForCurrentTaxYear = true,
+      displayOptionToChangeForNextTaxYear = true,
+      isReportingQuarterlyCurrentYear = true,
+      isReportingQuarterlyForNextYear = true
+    )
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -185,6 +194,23 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
     }
   }
 
+  private def sessionWith(previousChoice: Boolean, incomeSourceType: IncomeSourceType): UIJourneySessionData =
+    notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)).copy(
+      addIncomeSourceData = Some(
+        AddIncomeSourceData(
+          incomeSourceId = Some(testSelfEmploymentId),
+          changeReportingFrequency = Some(previousChoice)
+        )
+      ),
+      incomeSourceReportingFrequencyData = Some(existingRfData)
+    )
+
+  private def submitChangeYes(isAgent: Boolean, incomeSourceType: IncomeSourceType, fakeRequest: play.api.test.FakeRequest[_]) = {
+    val action = testController.submit(isAgent, true, incomeSourceType)
+    action(fakeRequest.withFormUrlEncodedBody("reporting-quarterly-form" -> "true"))
+  }
+
+
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
 
   mtdAllRoles.foreach { mtdRole =>
@@ -211,6 +237,35 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
         val action = testController.submit(isAgent, false, incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
+          "return 303 SEE_OTHER and redirect to the check details page" when {
+            s"changing answer, yes selected, previous choice was true and RF data exists" in {
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              setupMockGetMongo(Right(Some(sessionWith(previousChoice = true, incomeSourceType))))
+
+              val expectedRedirectUrl =
+                controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType).url
+
+              val result = submitChangeYes(isAgent, incomeSourceType, fakeRequest)
+
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+            }
+          }
+
+          "return 303 SEE_OTHER and redirect to the ChooseTaxYear Page" when {
+            s"changing answer, yes selected, previous choice was false (or missing) even if RF data exists" in {
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              setupMockGetMongo(Right(Some(sessionWith(previousChoice = false, incomeSourceType))))
+
+              val expectedRedirectUrl =
+                controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, false, incomeSourceType).url
+
+              val result = submitChangeYes(isAgent, incomeSourceType, fakeRequest)
+
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+            }
+          }
           "return 303 SEE_OTHER and redirect to the ChooseTaxYear Page" when {
             s"completing the form with yes selected and updates send successfully" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
