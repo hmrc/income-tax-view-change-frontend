@@ -1286,7 +1286,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   private val poa1Description: String = "ITSA- POA 1"
-  private val poa2Description: String = "ITSA - POA 2"
+  private val poa2Description: String = "ITSA- POA 2"
 
   def testChargeHistoryJson(mtdBsa: String, documentId: String, amount: BigDecimal): JsValue = Json.obj(
     "idType" -> "MTDBSA",

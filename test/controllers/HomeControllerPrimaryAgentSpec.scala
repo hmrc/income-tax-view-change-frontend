@@ -140,7 +140,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString), dunningLock = Some("Stand over order"))))))),
               FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
-                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA- POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                   documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
                 financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
                   transactionId = Some("testId3"),
@@ -188,7 +188,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
               FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
-                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA- POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                   documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
                 financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
                   transactionId = Some("testId3"),
