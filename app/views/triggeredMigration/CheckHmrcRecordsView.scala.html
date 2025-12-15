@@ -75,7 +75,7 @@
                 </h3>
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
-                        <a class="govuk-link" id="sole-trader-cease-link-@index" href=@ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)>@messages("triggered-migration.check-hmrc-records.soleTrader.cease.link")</a>
+                        <a class="govuk-link" id="sole-trader-cease-link-@index" href=@ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)>@messages("triggered-migration.check-hmrc-records.soleTrader.cease.link")<span class="govuk-visually-hidden"> @business.incomeSource.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))</span></a>
                     </li>
                 </ul>
             </div>
@@ -131,7 +131,7 @@
             </h3>
             <ul class="govuk-summary-card__actions">
                 <li class="govuk-summary-card__action">
-                    <a class="govuk-link" id="uk-property-cease-link" href="@ceaseUKPropertyBusinessURL()">@messages("triggered-migration.check-hmrc-records.ukProperty.cease.link")</a>
+                    <a class="govuk-link" id="uk-property-cease-link" href="@ceaseUKPropertyBusinessURL()">@messages("triggered-migration.check-hmrc-records.ukProperty.cease.link")<span class="govuk-visually-hidden"> @messages("triggered-migration.check-hmrc-records.ukProperty.heading")</span></a>
                 </li>
             </ul>
         </div>
@@ -158,7 +158,7 @@
             </h3>
             <ul class="govuk-summary-card__actions">
                 <li class="govuk-summary-card__action">
-                    <a class="govuk-link" id="foreign-property-cease-link" href="@ceaseForeignPropertyBusinessURL()">@messages("triggered-migration.check-hmrc-records.foreignProperty.cease.link")</a>
+                    <a class="govuk-link" id="foreign-property-cease-link" href="@ceaseForeignPropertyBusinessURL()">@messages("triggered-migration.check-hmrc-records.foreignProperty.cease.link")<span class="govuk-visually-hidden"> @messages("triggered-migration.check-hmrc-records.foreignProperty.heading")</span></a>
                 </li>
             </ul>
         </div>
