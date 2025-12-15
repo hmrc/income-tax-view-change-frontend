@@ -16,7 +16,6 @@
 
 package controllers
 
-import auth.MtdItUser
 import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.FrontendAppConfig
