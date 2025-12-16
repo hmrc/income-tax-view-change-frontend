@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.errorPages.CannotUpdateReportingObligations
-import views.html.notEnrolled.NotEnrolled
 
 import scala.concurrent.Future
 
