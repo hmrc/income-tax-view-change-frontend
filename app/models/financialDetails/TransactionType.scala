@@ -238,7 +238,7 @@ object CreditType {
 
   val itsaReturnAmendmentCredit = "4916"
 
-  val creditsWithSummaryPages = List(poaOneReconciliationCredit, poaTwoReconciliationCredit, itsaReturnAmendmentCredit)
+  val creditsWithSummaryPages = List(poaOneReconciliationCredit, poaTwoReconciliationCredit, itsaReturnAmendmentCredit, cutOver, balancingCharge, repaymentInterest) ++ mfaCredit
 
   val payment = List("0060")
 
