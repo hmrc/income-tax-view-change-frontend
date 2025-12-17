@@ -24,43 +24,42 @@ import services.DateServiceInterface
 
 import java.time.LocalDate
 
-case class ChargeItem (
-                        transactionId: String,
-                        taxYear: TaxYear,
-                        transactionType: TransactionType,
-                        codedOutStatus: Option[CodedOutStatusType],
-                        documentDate: LocalDate,
-                        dueDate: Option[LocalDate],
-                        originalAmount: BigDecimal,
-                        outstandingAmount: BigDecimal,
-                        interestOutstandingAmount: Option[BigDecimal],
-                        accruingInterestAmount: Option[BigDecimal],
-                        interestFromDate: Option[LocalDate],
-                        interestEndDate: Option[LocalDate],
-                        interestRate: Option[BigDecimal],
-                        lpiWithDunningLock: Option[BigDecimal],
-                        amountCodedOut: Option[BigDecimal],
-                        dunningLock: Boolean,
-                        poaRelevantAmount: Option[BigDecimal],
-                        dueDateForFinancialDetail: Option[LocalDate] = None,
-                        paymentLotItem: Option[String] = None,
-                        paymentLot: Option[String] = None,
-                        creationDate: Option[LocalDate] = None,
-                        chargeReference: Option[String]
-                      ) extends TransactionItem {
+case class ChargeItem(
+                       transactionId: String,
+                       taxYear: TaxYear,
+                       transactionType: TransactionType,
+                       codedOutStatus: Option[CodedOutStatusType],
+                       documentDate: LocalDate,
+                       dueDate: Option[LocalDate],
+                       originalAmount: BigDecimal,
+                       outstandingAmount: BigDecimal,
+                       interestOutstandingAmount: Option[BigDecimal],
+                       accruingInterestAmount: Option[BigDecimal],
+                       interestFromDate: Option[LocalDate],
+                       interestEndDate: Option[LocalDate],
+                       interestRate: Option[BigDecimal],
+                       lpiWithDunningLock: Option[BigDecimal],
+                       amountCodedOut: Option[BigDecimal],
+                       dunningLock: Boolean,
+                       poaRelevantAmount: Option[BigDecimal],
+                       dueDateForFinancialDetail: Option[LocalDate] = None,
+                       paymentLotItem: Option[String] = None,
+                       paymentLot: Option[String] = None,
+                       creationDate: Option[LocalDate] = None,
+                       chargeReference: Option[String]
+                     ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
-    dueDate.exists(_ isBefore dateService.getCurrentDate)
+    dueDate.exists(_.isBefore(dateService.getCurrentDate))
 
-  // => TODO: to clarify / raise with the BA / why we have two way of identifying credits charge?
+  // TODO: to clarify / raise with the BA / why we have two way of identifying credits charge?
   val isCredit = originalAmount < 0
 
   def credit: Option[BigDecimal] = originalAmount match {
-    case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
-    case _ if (originalAmount >= 0) => None
+    case _ if paymentLotItem.isDefined && paymentLot.isDefined => None
+    case _ if originalAmount >= 0 => None
     case credit => Some(credit * -1)
   }
-  // <=
 
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
@@ -75,7 +74,7 @@ case class ChargeItem (
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
-    if(transactionType == BalancingCharge && (codedOutStatus.isEmpty) && originalAmount == 0.0) {
+    if (transactionType == BalancingCharge && (codedOutStatus.isEmpty) && originalAmount == 0.0) {
       None
     } else {
       dueDate
@@ -146,21 +145,21 @@ case class ChargeItem (
       case (BalancingCharge, Some(Nics2)) => true
       case (BalancingCharge, Some(Accepted)) => true
       case (BalancingCharge, Some(Cancelled)) => true
-      case (BalancingCharge, None       ) => true
-      case (PoaOneDebit, Some(Accepted)           ) => true
-      case (PoaTwoDebit, Some(Accepted)           ) => true
+      case (BalancingCharge, None) => true
+      case (PoaOneDebit, Some(Accepted)) => true
+      case (PoaTwoDebit, Some(Accepted)) => true
       case (PoaOneDebit, Some(Cancelled)) => true
       case (PoaTwoDebit, Some(Cancelled)) => true
-      case (PoaOneDebit, None           ) => true
-      case (PoaTwoDebit, None           ) => true
-      case (PoaOneReconciliationDebit,     _) => true
-      case (PoaTwoReconciliationDebit,     _) => true
-      case (MfaDebitCharge,     _) => true
-      case (LateSubmissionPenalty,     _) => true
-      case (FirstLatePaymentPenalty,   _) => true
-      case (ITSAReturnAmendment,       _) => true
+      case (PoaOneDebit, None) => true
+      case (PoaTwoDebit, None) => true
+      case (PoaOneReconciliationDebit, _) => true
+      case (PoaTwoReconciliationDebit, _) => true
+      case (MfaDebitCharge, _) => true
+      case (LateSubmissionPenalty, _) => true
+      case (FirstLatePaymentPenalty, _) => true
+      case (ITSAReturnAmendment, _) => true
       case (ITSAReturnAmendmentCredit, _) => true
-      case _                              => false
+      case _ => false
     }
 
     validCharge
@@ -199,6 +198,7 @@ case class ChargeItem (
     if (isInterestCharge) interestIsPaid
     else isPaid
   }
+
   def interestRemainingToPay: BigDecimal = {
     if (interestIsPaid) BigDecimal(0)
     else interestOutstandingAmount.getOrElse(accruingInterestAmount.getOrElse(0))
@@ -223,8 +223,19 @@ object ChargeItem {
     }
   }
 
-  private val validChargeTypes = List(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
-    BalancingCharge, LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty, ITSAReturnAmendment, MfaDebitCharge)
+  private val validChargeTypes =
+    List(
+      PoaOneDebit,
+      PoaTwoDebit,
+      PoaOneReconciliationDebit,
+      PoaTwoReconciliationDebit,
+      BalancingCharge,
+      LateSubmissionPenalty,
+      FirstLatePaymentPenalty,
+      SecondLatePaymentPenalty,
+      ITSAReturnAmendment,
+      MfaDebitCharge
+    )
 
   val isAKnownTypeOfCharge: ChargeItem => Boolean = chargeItem => {
     (chargeItem.transactionType, chargeItem.codedOutStatus) match {

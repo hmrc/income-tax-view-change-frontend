@@ -16,6 +16,7 @@
 
 package controllers.triggeredMigration
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.MTDIndividual
 import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
@@ -28,6 +29,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import services.triggeredMigration.TriggeredMigrationService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
@@ -37,7 +39,10 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[TriggeredMigrationService].toInstance(mockTriggeredMigrationService)
+      api.inject.bind[TriggeredMigrationService].toInstance(mockTriggeredMigrationService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[CheckHmrcRecordsController]
@@ -65,6 +70,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             val action = testController.show(isAgent)
             enable(TriggeredMigration)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel)
 
             when(
@@ -80,6 +86,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             val action = testController.show(isAgent, Some(TriggeredMigrationCeased.toString))
             enable(TriggeredMigration)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationCeased)))
 
             when(
@@ -95,6 +102,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             val action = testController.show(isAgent, Some(TriggeredMigrationAdded(SelfEmployment).toString))
             enable(TriggeredMigration)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationAdded(SelfEmployment))))
 
             when(
@@ -111,6 +119,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
           "the triggered migration feature switch is disabled" in {
             disable(TriggeredMigration)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())

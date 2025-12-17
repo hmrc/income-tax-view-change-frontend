@@ -46,11 +46,14 @@ class SessionService @Inject()(
   }
 
   def createSession(journeyType: JourneyType, isTriggeredMigration: Boolean = false)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    setMongoData(UIJourneySessionData(
-      hc.sessionId.get.value,
-      journeyType.toString,
-      None,
-      triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration))))
+    setMongoData(
+      UIJourneySessionData(
+        sessionId = hc.sessionId.get.value,
+        journeyType = journeyType.toString,
+        addIncomeSourceData = None,
+        triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration))
+      )
+    )
   }
 
   private def getKeyFromObject[A](objectOpt: Option[Any], key: String): Either[Throwable, Option[A]] = {

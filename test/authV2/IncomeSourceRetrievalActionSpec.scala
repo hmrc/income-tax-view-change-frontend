@@ -69,8 +69,8 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
           defaultAsyncBody(_.incomeSources shouldBe defaultIncomeSourcesData)
         )
 
-          status(result) shouldBe OK
-          contentAsString(result) shouldBe "Successful"
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
       }
     }
     "Income source details are not returned" should {
@@ -87,8 +87,8 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
           defaultAsync
         )
 
-          status(result) shouldBe INTERNAL_SERVER_ERROR
-          contentAsString(result) shouldBe "ERROR PAGE"
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        contentAsString(result) shouldBe "ERROR PAGE"
       }
       "Show internal server error for agent" in {
         val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
@@ -102,8 +102,8 @@ class IncomeSourceRetrievalActionSpec extends AuthActionsSpecHelper {
           authorisedAndEnrolledRequest,
           defaultAsync
         )
-            status(result) shouldBe INTERNAL_SERVER_ERROR
-            contentAsString(result) shouldBe "ERROR PAGE"
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+        contentAsString(result) shouldBe "ERROR PAGE"
 
       }
     }

@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
@@ -26,20 +27,20 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService
-  with MockClaimToAdjustPoaCalculationService {
+class CheckYourAnswersControllerSpec extends MockAuthActions with MockClaimToAdjustService with MockPaymentOnAccountSessionService with MockClaimToAdjustPoaCalculationService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[ClaimToAdjustPoaCalculationService].toInstance(mockClaimToAdjustPoaCalculationService),
-      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[CheckYourAnswersController]
@@ -78,6 +79,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe OK
               contentAsString(result).contains("Confirm and continue") shouldBe true
@@ -89,6 +91,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSessionIncrease))))
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe OK
               contentAsString(result).contains("Confirm and save") shouldBe true
@@ -101,6 +104,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
@@ -113,6 +117,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
@@ -122,6 +127,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(emptySession))))
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
@@ -131,6 +137,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockGetPaymentsOnAccount(None)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
@@ -140,6 +147,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockGetPaymentsOnAccount(None)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession.copy(poaAdjustmentReason = None)))))
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
@@ -149,6 +157,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockGetPaymentsOnAccount(None)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession.copy(newPoaAmount = None)))))
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
@@ -158,6 +167,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockGetPaymentsOnAccount(poa)
               setupMockPaymentOnAccountSessionService(Future.successful(Left(new Exception("Something went wrong"))))
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
 
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -169,6 +179,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
               setupMockPaymentOnAccountSessionService(Future.failed(new Error("Error getting mongo session")))
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
@@ -188,6 +199,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           s"redirect to POA adjusted page" when {
             "data to API 1773 successfully sent" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               setupMockGetPaymentsOnAccount()
@@ -201,6 +213,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "redirect to API error page" when {
             "data to API 1773 failed to be sent" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               setupMockGetPaymentsOnAccount()
@@ -215,6 +228,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "redirect an error 500" when {
             "Payment On Account Session data is missing" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               setupMockGetPaymentsOnAccount(None)
@@ -225,6 +239,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
 
             "an Exception is returned from ClaimToAdjustService" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               setupMockGetPaymentsOnAccountBuildFailure()

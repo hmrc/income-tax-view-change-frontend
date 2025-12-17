@@ -38,34 +38,42 @@ trait MockOptInService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockSaveIntent(intent: TaxYear, isSuccessful: Boolean = true): Unit = {
-    when(mockOptInService.saveIntent(ArgumentMatchers.eq(intent))(any(), any(), any())).thenReturn(Future.successful(isSuccessful))
+    when(mockOptInService.saveIntent(ArgumentMatchers.eq(intent))(any(), any(), any()))
+      .thenReturn(Future.successful(isSuccessful))
   }
 
   def mockAvailableOptInTaxYear(choices: List[TaxYear]): Unit = {
-    when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(Future.successful(choices))
+    when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
+      .thenReturn(Future.successful(choices))
   }
 
   def mockFetchSavedChosenTaxYear(intentOpl: Option[TaxYear]): Unit = {
-    when(mockOptInService.fetchSavedChosenTaxYear()(any(), any(), any())).thenReturn(Future.successful(intentOpl))
+    when(mockOptInService.fetchSavedChosenTaxYear()(any(), any(), any()))
+      .thenReturn(Future.successful(intentOpl))
   }
 
   def mockFetchOptInProposition(propositionOpl: Option[OptInProposition]): Unit = {
     propositionOpl.map { proposition =>
-      when(mockOptInService.fetchOptInProposition()(any(), any(), any())).thenReturn(Future.successful(proposition))
+      when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+        .thenReturn(Future.successful(proposition))
     } getOrElse {
-      when(mockOptInService.fetchOptInProposition()(any(), any(), any())).thenReturn(Future.failed(new RuntimeException("Some error")))
+      when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+        .thenReturn(Future.failed(new RuntimeException("Some error")))
     }
   }
 
   def mockIsSignUpTaxYearValid(out: Future[Option[SignUpTaxYearQuestionViewModel]]): Unit = {
-    when(mockOptInService.isSignUpTaxYearValid(any())(any(), any(), any())).thenReturn(out)
+    when(mockOptInService.isSignUpTaxYearValid(any())(any(), any(), any()))
+      .thenReturn(out)
   }
 
   def mockFetchSavedOptInSessionData(): Unit = {
-    when(mockOptInService.fetchSavedOptInSessionData()(any(), any(), any())).thenReturn(Future.successful(None))
+    when(mockOptInService.fetchSavedOptInSessionData()(any(), any(), any()))
+      .thenReturn(Future.successful(None))
   }
 
   def mockUpdateOptInJourneyStatusInSessionData(journeyComplete: Boolean = false): Unit = {
-    when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any())).thenReturn(Future.successful(journeyComplete))
+    when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+      .thenReturn(Future.successful(journeyComplete))
   }
 }
