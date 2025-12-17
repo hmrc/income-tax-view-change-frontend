@@ -58,7 +58,7 @@
 @agentContent = {
     @h1(messages("youMustWait.agent.heading", viewModel.nextTaxYear), id = Some("you-must-wait-agent-heading"))
     @p(id = Some("you-must-wait-agent-text"))(Html(messages("youMustWait.agent.text", viewModel.nextTaxYear)))
-//    TODO - implement button in MISUV-10514
+    @*TODO - implement button in MISUV-10514*@
     @button(alternativeText = Some(messages("youMustWait.agent.button.text")), href = Some(""), id = Some("you-must-wait-agent-button"))
 }
 
