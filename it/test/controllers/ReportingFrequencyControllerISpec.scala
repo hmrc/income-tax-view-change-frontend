@@ -26,6 +26,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.messages.ReportingFrequencyMessages.PageMessages._
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
@@ -37,17 +38,6 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
   val currentEndYear = dateService.getCurrentTaxYear.endYear.toString
   val nextStartYear = dateService.getCurrentTaxYear.nextYear.startYear.toString
   val nextEndYear = dateService.getCurrentTaxYear.nextYear.endYear.toString
-
-  val fromTheCurrentTaxYear =  " from the current tax year"
-  val fromTheNextTaxYear =  " from the next tax year"
-  val optOutFromTheCurrentTaxYear =  s"Opt out$fromTheCurrentTaxYear"
-  val optOutForTheCurrentTaxYear =  "Opt out for the current tax year"
-  val optOutFromTheNextTaxYear =  s"Opt out$fromTheNextTaxYear"
-  val optOutOfTheLastTaxYear =  "Opt out of the last tax year"
-  val optOutFromTheLastTaxYear =  "Opt out from the last tax year"
-  val signUpFromTheCurrentTaxYear =  s"Sign up$fromTheCurrentTaxYear"
-  val signUpToTheCurrentTaxYear =  "Sign up to the current tax year"
-  val signUpFromTheNextTaxYear =  s"Sign up$fromTheNextTaxYear"
 
   def optInOptOutLinks(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
