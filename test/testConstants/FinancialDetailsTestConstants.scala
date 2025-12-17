@@ -561,7 +561,7 @@ object FinancialDetailsTestConstants {
   )
 
   val documentDetailPOA1: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 1"))
-  val documentDetailPOA2: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA - POA 2"))
+  val documentDetailPOA2: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 2"))
   val documentDetailBalancingCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"))
   val documentDetailAmendedBalCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM Amend Charge"))
   val documentDetailClass2Nic: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS), paymentLot = None, accruingInterestAmount = None)
@@ -1165,7 +1165,7 @@ object FinancialDetailsTestConstants {
 
   private def testFinancialDetailsModel(dueDate: List[Option[LocalDate]],
                                         dunningLock: List[Option[String]],
-                                        documentDescription: List[Option[String]] = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+                                        documentDescription: List[Option[String]] = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
                                         mainType: List[Option[String]] = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
                                         mainTransaction: List[Option[String]] = List(Some("4920"), Some("4930")),
                                         outstandingAmount: List[BigDecimal] = List(50, 75),
@@ -1205,7 +1205,7 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  def testFinancialDetailsModelWithInterest(documentDescription: List[Option[String]] = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+  def testFinancialDetailsModelWithInterest(documentDescription: List[Option[String]] = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
                                             mainType: List[Option[String]] = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
                                             mainTransaction: List[Option[String]] = List(Some("4920"), Some("4930")),
                                             dueDate: List[Option[LocalDate]],
@@ -1345,7 +1345,7 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(documentDetailModel(testTaxYear, paymentLot = None,
-        paymentLotItem = None, accruingInterestAmount = None, documentDescription = Some("ITSA - POA 2"))),
+        paymentLotItem = None, accruingInterestAmount = None, documentDescription = Some("ITSA- POA 2"))),
       financialDetails = List(financialDetail(testTaxYear, mainType = "ITSA Poa 2", mainTransaction = "4930"),
         financialDetail(testTaxYear, transactionId = Some("123456"), mainType = "ITSA Poa 2 extra charge", mainTransaction = "4913")
       )
@@ -1517,7 +1517,7 @@ object FinancialDetailsTestConstants {
       documentDetails = List(
         DocumentDetail(fixedDateTwo.getYear, id1040000125, Some("ITSA- POA 1"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
-        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA - POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA- POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
         DocumentDetail(fixedDateTwo.getYear, id1040000123, Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
@@ -1536,7 +1536,7 @@ object FinancialDetailsTestConstants {
       documentDetails = List(
         DocumentDetail(fixedDateTwo.getYear, id1040000125, Some("ITSA- POA 1"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
-        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA - POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA- POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
         DocumentDetail(fixedDateTwo.getYear, id1040000123, Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 0, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), None,
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(150), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
@@ -1673,7 +1673,7 @@ object FinancialDetailsTestConstants {
   )
 
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(35)), Some(fixedDate.minusDays(1))),
@@ -1682,7 +1682,7 @@ object FinancialDetailsTestConstants {
   )
 
   val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
@@ -1691,7 +1691,7 @@ object FinancialDetailsTestConstants {
   )
 
   val financialDetailsWithMixedData3: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
@@ -1701,7 +1701,7 @@ object FinancialDetailsTestConstants {
   )
 
   val financialDetailsWithMixedData4: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("ITSA- POA 2")),
     mainType = List(Some("SA POA 1 Reconciliation"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4911"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
@@ -1711,7 +1711,7 @@ object FinancialDetailsTestConstants {
   )
 
   val financialDetailsWithMixedData4Penalties: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("Late Submission Penalty"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("Late Submission Penalty"), Some("ITSA- POA 2")),
     mainType = List(Some("LSP"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4027"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
@@ -1725,7 +1725,7 @@ object FinancialDetailsTestConstants {
                                                    interestOutstandingAmount: List[Option[BigDecimal]] = List(None, None),
                                                    amountCodedOut: List[Option[BigDecimal]] = List(None, None)
                                                   ): FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4920"), Some("4930")),
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
@@ -1749,7 +1749,7 @@ object FinancialDetailsTestConstants {
 //  val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
 //    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None),
 //    chargesList =
-//      testFinancialDetailsModelWithInterest(documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+//      testFinancialDetailsModelWithInterest(documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
 //        mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
 //        mainTransaction = List(Some("4920"), Some("4930")),
 //        dueDate = dueDateOverdue,
@@ -1760,7 +1760,7 @@ object FinancialDetailsTestConstants {
 //        interestRate = List(Some(2.6), Some(6.2)),
 //        accruingInterestAmount = List(Some(34.56), None)
 //      ).getAllDocumentDetailsWithDueDates() ++
-//        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA - POA 2"),
+//        testFinancialDetailsModelOneItemInList(documentDescription = Some("ITSA- POA 2"),
 //          mainType = Some("SA Payment on Account 2"),
 //          mainTransaction = Some("4930"),
 //          dueDate = Some(fixedDate.plusDays(1)),

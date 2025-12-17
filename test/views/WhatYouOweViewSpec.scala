@@ -98,7 +98,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val hmrcAdjustmentHeading: String = messages("whatYouOwe.hmrcAdjustment.heading")
   val hmrcAdjustmentLine1: String = messages("whatYouOwe.hmrcAdjustment.line1")
   val itsaPOA1: String = "ITSA- POA 1"
-  val itsaPOA2: String = "ITSA - POA 2"
+  val itsaPOA2: String = "ITSA- POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
   val poa1CollectedCodedOut: String = messages("whatYouOwe.poa1CodedOut.text")
   val poa2CollectedCodedOut: String = messages("whatYouOwe.poa2CodedOut.text")

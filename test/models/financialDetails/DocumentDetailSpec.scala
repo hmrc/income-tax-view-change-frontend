@@ -114,7 +114,7 @@ class DocumentDetailSpec extends UnitSpec {
       }
       "return POA2" when {
         "when document description is ITSA - POA 2" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("ITSA - POA 2")).getChargeTypeKey shouldBe "paymentOnAccount2.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 2")).getChargeTypeKey shouldBe "paymentOnAccount2.text"
 
         }
       }

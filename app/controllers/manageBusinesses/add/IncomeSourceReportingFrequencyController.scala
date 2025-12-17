@@ -125,7 +125,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
         case Some(_) => IncomeSourceReportingFrequencyForm(isR17ContentEnabled).bindFromRequest().fold(
           _ => handleInvalidForm(isAgent, isChange, incomeSourceType, isR17ContentEnabled),
-          valid => handleValidForm(isAgent, valid, incomeSourceType, sessionData)
+          valid => handleValidForm(isAgent, isChange, valid, incomeSourceType, sessionData)
         )
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
@@ -173,6 +173,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
   }
 
   private def handleValidForm(isAgent: Boolean,
+                              isChange: Boolean,
                               form: IncomeSourceReportingFrequencyForm,
                               incomeSourceType: IncomeSourceType,
                               sessionData: UIJourneySessionData
@@ -180,10 +181,23 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                              (implicit user: MtdItUser[_]): Future[Result] = {
     val yesOrNo = form.yesNo.exists(_.toBoolean)
     if (yesOrNo) {
+      val previousChoice: Option[Boolean] =
+        sessionData.addIncomeSourceData.flatMap(_.changeReportingFrequency)
       val updatedSessionData = sessionData.copy(
         addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(changeReportingFrequency = Some(yesOrNo))))
       sessionService.setMongoData(updatedSessionData)
-      Future.successful(Redirect(controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, isChange = false, incomeSourceType)))
+
+      val hasExistingRfData = sessionData.incomeSourceReportingFrequencyData.isDefined
+
+      if (isChange && hasExistingRfData && previousChoice.contains(true)) {
+        Future.successful(
+          Redirect(controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType))
+        )
+      } else {
+        Future.successful(
+          Redirect(controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, isChange = false, incomeSourceType))
+        )
+      }
     } else {
       sessionService.setMongoData(sessionData.copy(
         addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(changeReportingFrequency = Some(yesOrNo))),
