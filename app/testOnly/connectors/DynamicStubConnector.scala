@@ -82,18 +82,19 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
   def overwriteItsaStatus(nino: Nino, taxYearRange: String, itsaStatus: String)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
-    val url = getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus)
-    http.get(url"$url")
-        .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
-        .execute[HttpResponse] map { response =>
-      response.status match {
-        case OK =>
-          (): Unit
-        case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
-          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
-      }
-    }
+//    val url = getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus)
+//    http.get(url"$url")
+//        .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+//        .execute[HttpResponse] map { response =>
+//      response.status match {
+//        case OK =>
+//          (): Unit
+//        case _ =>
+//          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+//          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+//      }
+//    }
+    Future()
   }
 
   def getOverwriteCalculationListUrl(nino: String, taxYearRange: String, crystallisationStatus: String): String = {

@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.cease
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
@@ -26,24 +27,30 @@ import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.Mockito.when
 import play.api
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc._
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, SessionService}
+import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService {
 
-  override lazy val app = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[DateService].toInstance(dateService),
-    ).build()
+  override lazy val app =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[SessionService].toInstance(mockSessionService),
+        //        api.inject.bind[DateService].toInstance(dateService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceEndDateController]
 
@@ -79,15 +86,23 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+  }
+
   mtdAllRoles.foreach { mtdRole =>
+
     incomeSourceTypes.foreach { incomeSourceType =>
       List(NormalMode, CheckMode).foreach { mode =>
+
         val isAgent = mtdRole != MTDIndividual
         val optIncomeSourceIdHash = if (incomeSourceType == SelfEmployment) {
           Some(mkIncomeSourceId(testSelfEmploymentId).toHash.hash)
         } else {
           None
         }
+
         s"show($incomeSourceType, $isAgent, $mode)" when {
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
           val action = testController.show(optIncomeSourceIdHash, incomeSourceType, isAgent, mode)
@@ -95,7 +110,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
             "render the end date page" when {
               "using the manage businesses journey" in {
                 setupMockSuccess(mtdRole)
-                mockBothPropertyBothBusiness()
+                mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                //                mockBothPropertyBothBusiness()
                 if (mode == CheckMode) {
                   setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 } else {
@@ -127,7 +143,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
             "redirect to the Cannot Go Back page" when {
               "journey is complete" in {
                 setupMockSuccess(mtdRole)
-                mockBothPropertyBothBusiness()
+                mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                //                mockBothPropertyBothBusiness()
                 setupMockCreateSession(true)
                 setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 val result: Future[Result] = action(fakeRequest)
@@ -146,7 +163,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               "return 500 INTERNAL SERVER ERROR to internal server page" when {
                 "income source ID is missing" in {
                   setupMockSuccess(mtdRole)
-                  mockBothPropertyBothBusiness()
+                  mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                  //                  mockBothPropertyBothBusiness()
 
                   setupMockCreateSession(true)
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -156,7 +174,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 }
                 "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" in {
                   setupMockSuccess(mtdRole)
-                  mockBothPropertyBothBusiness()
+                  mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                  //                  mockBothPropertyBothBusiness()
 
                   setupMockCreateSession(true)
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -177,7 +196,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
             "redirect to CheckIncomeSourceDetails" when {
               "form is completed successfully" in {
                 setupMockSuccess(mtdRole)
-                mockBothPropertyBothBusiness()
+                mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                //                mockBothPropertyBothBusiness()
                 setupMockCreateSession(true)
                 if (incomeSourceType == SelfEmployment) {
                   setupMockSetMultipleMongoData(Right(true))
@@ -202,7 +222,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
             "display date errors" when {
               "form is errored out with before trading start date error" in {
                 setupMockSuccess(mtdRole)
-                mockBothPropertyBothBusiness()
+                mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                //                mockBothPropertyBothBusiness()
                 setupMockCreateSession(true)
                 if (incomeSourceType == SelfEmployment) {
                   setupMockSetMultipleMongoData(Right(true))
@@ -234,9 +255,14 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 document.getElementById("error-summary").text() shouldBe expectedErrorMessage._1
                 document.getElementById("value-error").text() shouldBe expectedErrorMessage._2
               }
+
               "form is errored out with future date error" in {
+
                 setupMockSuccess(mtdRole)
-                mockBothPropertyBothBusiness()
+                mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+
+                when(mockDateServiceInterface.getCurrentDate).thenReturn(LocalDate.of(2028, 1, 1))
+
                 setupMockCreateSession(true)
                 if (incomeSourceType == SelfEmployment) {
                   setupMockSetMultipleMongoData(Right(true))
@@ -245,7 +271,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 }
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
-                  "value.year" -> (dateService.getCurrentDate.getYear + 1).toString))
+                  "value.year" -> (mockDateServiceInterface.getCurrentDate.getYear + 1).toString))
 
                 val expectedErrorMessage: (String, String) = incomeSourceType match {
                   case SelfEmployment => (
@@ -271,6 +297,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               "form is errored out with earliest date error for SelfEmployment" in {
                 if (incomeSourceType == SelfEmployment) {
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction(soleTraderWithStartDate2005)
                   mockSoleTraderWithStartDate2005()
                   setupMockCreateSession(true)
                   if (incomeSourceType == SelfEmployment) {
@@ -293,6 +320,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
             "return 400 BAD_REQUEST" when {
               "the form is not completed successfully" in {
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
                 mockBusinessIncomeSource()
                 val result: Future[Result] = action(fakeRequest
                   .withFormUrlEncodedBody("value.day" -> "", "value.month" -> "8",
@@ -310,7 +338,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 if (incomeSourceType == SelfEmployment) {
                   "income source ID is missing" in {
                     setupMockSuccess(mtdRole)
-                    mockBothPropertyBothBusiness()
+                    mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                    //                    mockBothPropertyBothBusiness()
 
                     val actionMissingId = testController.submit(None, incomeSourceType, isAgent, mode)
                     val result: Future[Result] = actionMissingId(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
@@ -320,7 +349,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                   }
                   "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" in {
                     setupMockSuccess(mtdRole)
-                    mockBothPropertyBothBusiness()
+                    mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                    //                    mockBothPropertyBothBusiness()
 
                     val actionInvalidId = testController.submit(Some("12345"), incomeSourceType, isAgent, mode)
 
@@ -332,7 +362,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                   "unable to set incomeSourceIdField session data" in {
                     setupMockSuccess(mtdRole)
-                    mockBothPropertyBothBusiness()
+                    mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                    //                    mockBothPropertyBothBusiness()
 
                     setupMockCreateSession(true)
                     setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Right(true))
@@ -344,7 +375,8 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 } else {
                   "unable to set dateCeased session data" in {
                     setupMockSuccess(mtdRole)
-                    mockBothPropertyBothBusiness()
+                    mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
+                    //                    mockBothPropertyBothBusiness()
 
                     setupMockCreateSession(true)
                     setupMockSetSessionKeyMongo(CeaseIncomeSourceData.dateCeasedField)(Left(new Exception()))

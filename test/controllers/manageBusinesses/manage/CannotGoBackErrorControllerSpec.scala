@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.manage
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
@@ -25,14 +26,17 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.SessionService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
+import services.{DateServiceInterface, SessionService}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, singleUKPropertyIncome2024}
 
 class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[CannotGoBackErrorController]
@@ -53,6 +57,7 @@ class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionSe
         s"the user is authenticated as a $mtdRole" should {
           "render the manage income sources page" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleUKPropertyIncome2024)
             mockUKPropertyIncomeSourceWithLatency2024()
             setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
@@ -63,6 +68,7 @@ class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionSe
           "render the error page" when {
             "Required Mongo data is missing" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(singleUKPropertyIncome2024)
               mockUKPropertyIncomeSourceWithLatency2024()
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 

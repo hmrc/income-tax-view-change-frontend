@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -30,16 +31,12 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.manageBusinesses.IncomeSourceRFService
-import services.{DateService, SessionService, UpdateIncomeSourceService}
+import services.{DateService, DateServiceInterface, SessionService, UpdateIncomeSourceService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 
-class IncomeSourceRFCheckDetailsControllerSpec
-  extends MockAuthActions
-  with MockDateService
-  with MockSessionService
-  with MockIncomeSourceRFService {
+class IncomeSourceRFCheckDetailsControllerSpec extends MockAuthActions with MockDateService with MockSessionService with MockIncomeSourceRFService {
 
   lazy val mockUpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
 
@@ -48,7 +45,10 @@ class IncomeSourceRFCheckDetailsControllerSpec
       api.inject.bind[IncomeSourceRFService].toInstance(mockIncomeSourceRFService),
       api.inject.bind[DateService].toInstance(mockDateService),
       api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService)
+      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceRFCheckDetailsController]
@@ -62,6 +62,7 @@ class IncomeSourceRFCheckDetailsControllerSpec
         s"the user is authenticated as a $mtdRole" should {
           "render the check your answers page" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRedirectChecksForIncomeSourceRF()
 
@@ -79,6 +80,7 @@ class IncomeSourceRFCheckDetailsControllerSpec
         s"the user is authenticated as a $mtdRole" should {
           "render the check your answers page" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRedirectChecksForIncomeSourceRF()
             setupMockGetCurrentTaxYearEnd(2025)
@@ -102,6 +104,7 @@ class IncomeSourceRFCheckDetailsControllerSpec
 
           "return an error if the session data contains errors for updating the income source" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRedirectChecksForIncomeSourceRF()
             setupMockGetCurrentTaxYearEnd(2025)
@@ -127,6 +130,7 @@ class IncomeSourceRFCheckDetailsControllerSpec
 
           "return an error if the session data doesn't retrieve the income source id" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRedirectChecksForIncomeSourceRF()
 

@@ -36,12 +36,12 @@ trait MockPenaltyDetailsService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupMockGetPenaltyDetailsCount(enabled: Boolean)(out: Future[Int]): Unit = {
-    when(mockPenaltyDetailsService.getPenaltiesCount(ArgumentMatchers.eq(enabled))(any, any, any))
+    when(mockPenaltyDetailsService.getPenaltiesCount(any())(any, any, any))
       .thenReturn(out)
   }
 
   def setupMockGetPenaltySubmissionFrequency(status: ITSAStatus)(out: String): Unit = {
-    when(mockPenaltyDetailsService.getPenaltySubmissionFrequency(ArgumentMatchers.eq(status)))
+    when(mockPenaltyDetailsService.getPenaltySubmissionFrequency(any()))
       .thenReturn(out)
   }
 }

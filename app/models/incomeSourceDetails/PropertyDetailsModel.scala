@@ -21,15 +21,17 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-case class PropertyDetailsModel(incomeSourceId: String,
-                                accountingPeriod: Option[AccountingPeriodModel],
-                                firstAccountingPeriodEndDate: Option[LocalDate],
-                                incomeSourceType: Option[String],
-                                tradingStartDate: Option[LocalDate],
-                                contextualTaxYear: Option[String],
-                                cessation: Option[CessationModel],
-                                latencyDetails: Option[LatencyDetails] = None,
-                                quarterTypeElection: Option[QuarterTypeElection] = None) {
+case class PropertyDetailsModel(
+                                 incomeSourceId: String,
+                                 accountingPeriod: Option[AccountingPeriodModel],
+                                 firstAccountingPeriodEndDate: Option[LocalDate],
+                                 incomeSourceType: Option[String],
+                                 tradingStartDate: Option[LocalDate],
+                                 contextualTaxYear: Option[String],
+                                 cessation: Option[CessationModel],
+                                 latencyDetails: Option[LatencyDetails] = None,
+                                 quarterTypeElection: Option[QuarterTypeElection] = None
+                               ) {
 
   def isUkProperty: Boolean = incomeSourceType.contains("uk-property")
 
