@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.cease
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
@@ -33,15 +34,19 @@ import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.SessionService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData}
+import services.{DateServiceInterface, SessionService}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
 
 class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockSessionService {
 
-  override lazy val app = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService))
-    .build()
+  override lazy val app =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[SessionService].toInstance(mockSessionService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface))
+      .build()
 
   lazy val testController = app.injector.instanceOf[DeclareIncomeSourceCeasedController]
 
@@ -85,6 +90,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
         s"the user is authenticated as a $mtdRole" should {
           "render the declare incomeSourceCeased page" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
             mockBothPropertyBothBusiness()
 
             setupMockCreateSession(true)
@@ -99,6 +105,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
           "redirect to the Cannot Go Back page" when {
             "journey is complete" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               disableAllSwitches()
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
@@ -131,6 +138,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
           "redirect to end date controller" when {
             "cease declaration is completed" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockSetSessionKeyMongo(Right(true))
 
@@ -139,7 +147,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
 
               status(result) shouldBe Status.SEE_OTHER
-              val optId = if(incomeSourceType == SelfEmployment) Some("test-id") else None
+              val optId = if (incomeSourceType == SelfEmployment) Some("test-id") else None
               redirectLocation(result) shouldBe Some(controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(optId, incomeSourceType, isAgent, NormalMode).url)
               verifySetMongoKey(CeaseIncomeSourceData.ceaseIncomeSourceDeclare, "true", journeyType)
             }
@@ -148,6 +156,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
           "return 500 INTERNAL_SERVER_ERROR" when {
             "Exception received from Mongo" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockSetSessionKeyMongo(Left(new Exception))
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))

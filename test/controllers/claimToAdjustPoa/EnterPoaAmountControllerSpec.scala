@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.agent.sessionUtils
 import enums.{MTDIndividual, MTDSupportingAgent}
 import generators.PoaGenerator
@@ -33,7 +34,7 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
 import testConstants.BaseTestConstants
 
 import scala.concurrent.Future
@@ -46,7 +47,10 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
-      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[EnterPoaAmountController]
@@ -116,6 +120,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
                   val result = action(fakeRequest)
                   status(result) shouldBe OK
                   Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe ""
@@ -127,6 +132,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                     setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
 
                     setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction()
                     val result = action(fakeRequest)
                     status(result) shouldBe OK
                     Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe ""
@@ -139,6 +145,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
                 Jsoup.parse(contentAsString(result)).select("#poa-amount").attr("value") shouldBe "1111.22"
@@ -152,6 +159,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 setupMockGetPoaAmountViewModel(Right(poaViewModelIncreaseJourney))
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe SEE_OTHER
                 redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
@@ -164,6 +172,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 setupMockGetPaymentOnAccountViewModel()
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
@@ -173,6 +182,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 setupMockGetPaymentOnAccountViewModel()
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
@@ -182,6 +192,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 setupMockGetPaymentOnAccountViewModel()
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
@@ -191,13 +202,14 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 setupMockGetPoaAmountViewModelFailure()
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
               }
             }
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
       }
 
       s"submit(isAgent = $isAgent, mode = $mode)" when {
@@ -214,6 +226,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1234.56"))
                 status(result) shouldBe SEE_OTHER
                 redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
@@ -228,6 +241,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4500"))
                   status(result) shouldBe SEE_OTHER
                   redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
@@ -244,6 +258,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                     when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
 
                     setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction()
                     val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4500"))
                     status(result) shouldBe SEE_OTHER
                     redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
@@ -259,6 +274,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                     when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
 
                     setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction()
                     val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1000"))
                     status(result) shouldBe SEE_OTHER
                     redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
@@ -274,6 +290,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4500"))
                   status(result) shouldBe SEE_OTHER
                   redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(isAgent).url)
@@ -289,6 +306,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1234.56"))
                   status(result) shouldBe SEE_OTHER
                   redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, mode).url)
@@ -302,6 +320,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1234.56"))
                   status(result) shouldBe SEE_OTHER
                   redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, mode).url)
@@ -315,6 +334,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> ""))
                 status(result) shouldBe BAD_REQUEST
                 redirectLocation(result) shouldBe None
@@ -325,6 +345,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 forAll(poaViewModelGen) { generatedPoaViewModel =>
                   setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
 
                   val inputAmount = -100
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
@@ -337,6 +358,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 forAll(poaViewModelGen) { generatedPoaViewModel =>
                   setupMockGetPoaAmountViewModel(Right(generatedPoaViewModel))
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
 
                   val inputAmount = generatedPoaViewModel.relevantAmountOne + 100
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> inputAmount.toString))
@@ -350,6 +372,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "test"))
                 status(result) shouldBe BAD_REQUEST
                 redirectLocation(result) shouldBe None
@@ -360,6 +383,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "6000"))
                 status(result) shouldBe BAD_REQUEST
                 redirectLocation(result) shouldBe None
@@ -370,6 +394,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Right(())))
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4000"))
                 status(result) shouldBe BAD_REQUEST
                 redirectLocation(result) shouldBe None
@@ -381,6 +406,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                 when(mockPaymentOnAccountSessionService.setNewPoaAmount(any())(any(), any())).thenReturn(Future(Left(new Error("Error setting poa amount"))))
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1234.56"))
                 status(result) shouldBe INTERNAL_SERVER_ERROR
                 redirectLocation(result) shouldBe None
@@ -394,6 +420,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Left(new Error("Error setting adjustment reason"))))
 
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "4500"))
                   status(result) shouldBe INTERNAL_SERVER_ERROR
                   redirectLocation(result) shouldBe None
@@ -408,6 +435,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
                   when(mockPaymentOnAccountSessionService.setAdjustmentReason(any())(any(), any())).thenReturn(Future(Right(())))
 
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
                   val result = action(fakeRequest.withFormUrlEncodedBody("poa-amount" -> "1000"))
                   status(result) shouldBe INTERNAL_SERVER_ERROR
                   redirectLocation(result) shouldBe None
@@ -416,7 +444,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
             }
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
       }
     }
   }

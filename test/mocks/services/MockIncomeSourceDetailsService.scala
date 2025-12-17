@@ -38,18 +38,18 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
   }
 
   def setupMockGetIncomeSourceDetails(sources: IncomeSourceDetailsResponse): Unit = {
-    when(
-      mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+    when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
       .thenReturn(Future.successful(sources))
   }
 
-  def mockSingleBusinessIncomeSource(userMigrated: Boolean = true): Unit = setupMockGetIncomeSourceDetails(
-    if (userMigrated) {
-      singleBusinessIncome
-    } else {
-      singleBusinessIncomeNotMigrated
-    }
-  )
+  def mockSingleBusinessIncomeSource(userMigrated: Boolean = true): Unit =
+    setupMockGetIncomeSourceDetails(
+      if (userMigrated) {
+        singleBusinessIncome
+      } else {
+        singleBusinessIncomeNotMigrated
+      }
+    )
 
   def mockSingleBusinessIncomeSourceNoLatency(): Unit =
     setupMockGetIncomeSourceDetails(singleBusinessIncomeNoLatency)
@@ -87,7 +87,7 @@ trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
 
   def mockTwoActiveForeignPropertyIncomeSourcesErrorScenario(): Unit = setupMockGetIncomeSourceDetails(twoActiveForeignPropertyIncomes)
 
-  def mockForeignPropertyIncomeSourceWithCeasedForeignProperty(): Unit = setupMockGetIncomeSourceDetails(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
+//  def mockForeignPropertyIncomeSourceWithCeasedForeignProperty(): Unit = setupMockGetIncomeSourceDetails(foreignPropertyIncomeWithCeasedForiegnPropertyIncome)
 
   def mockBothIncomeSources(): Unit = setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 

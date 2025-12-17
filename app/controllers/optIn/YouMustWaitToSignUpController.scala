@@ -18,26 +18,43 @@ package controllers.optIn
 
 import auth.authV2.AuthActions
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import models.optin.YouMustWaitToSignUpViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.DateService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.optIn.YouMustWaitToSignUpView
+
 import scala.concurrent.Future
 
 class YouMustWaitToSignUpController @Inject()(
-                                     val view: YouMustWaitToSignUpView,
-                                     val authActions: AuthActions
-                                            )(
-                                              implicit val frontendAppConfig: FrontendAppConfig,
-                                              mcc: MessagesControllerComponents,
-                                              dateService: DateService
-                                            ) extends FrontendController(mcc) with I18nSupport {
+                                               authActions: AuthActions,
+                                               dateService: DateService,
+                                               view: YouMustWaitToSignUpView,
+                                             )(implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+    lazy val auth = {
+      if (isAgent) {
+        authActions.checkSessionTimeout andThen
+          authActions.authoriseAndRetrieveAgent.authorise() andThen
+          authActions.retrieveClientData.authorise() andThen
+          authActions.authoriseAndRetrieveMtdAgent andThen
+          authActions.agentHasConfirmedClientAction andThen
+          authActions.incomeSourceRetrievalAction andThen
+          //          authActions.itsaStatusRetrievalAction andThen  // we cannot use this auth action here otherwise it kinda calls itself... and redirects to this page when CY+1 only
+          authActions.retrieveFeatureSwitches
+      } else {
+        authActions.checkSessionTimeout andThen
+          authActions.authoriseAndRetrieveIndividual andThen
+          authActions.incomeSourceRetrievalAction andThen
+          //          authActions.itsaStatusRetrievalAction andThen  // we cannot use this auth action here otherwise it kinda calls itself... and redirects to this page when CY+1 only
+          authActions.retrieveFeatureSwitches andThen
+          authActions.retrieveNavBar
+      }
+
+    }
+    auth.async { implicit user =>
       val model = YouMustWaitToSignUpViewModel(taxYear = dateService.getCurrentTaxYear)
       Future.successful(Ok(view(model, isAgent)))
     }

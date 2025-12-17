@@ -16,6 +16,7 @@
 
 package controllers.optIn.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
@@ -29,6 +30,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
+import services.DateServiceInterface
 import services.optIn.OptInService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -36,29 +38,42 @@ import scala.concurrent.Future
 
 class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[OptInService].toInstance(mockOptInService)
-    ).build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[OptInService].toInstance(mockOptInService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
-  lazy val testController = app.injector.instanceOf[BeforeYouStartController]
+  lazy val testController: BeforeYouStartController = app.injector.instanceOf[BeforeYouStartController]
 
   val endTaxYear = 2025
   val taxYear2024: TaxYear = TaxYear.forYearEnd(endTaxYear - 1)
   val taxYear2025: TaxYear = TaxYear.forYearEnd(endTaxYear)
 
   mtdAllRoles.foreach { mtdRole =>
+
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
+
     s"show(isAgent = $isAgent)" when {
+
       val action = testController.show(isAgent)
+
       s"the user is authenticated as a $mtdRole" should {
+
         s"render the before you start page" that {
+
           "contains a button to redirect to choose tax year" when {
+
             "there are multiple optIn tax years" in {
+
               enable(ReportingFrequencyPage)
               enable(SignUpFs)
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
@@ -74,10 +89,13 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
           }
 
           "contains a button to redirect to confirm tax year page" when {
+
             "there is one optIn tax year" in {
+
               enable(ReportingFrequencyPage)
               enable(SignUpFs)
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
@@ -92,11 +110,13 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
             }
           }
         }
+
         "render the error page" when {
           "the call to get available optInTaxYear fails" in {
             enable(ReportingFrequencyPage)
             enable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
@@ -111,6 +131,7 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
             disable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -127,10 +148,13 @@ class BeforeYouStartControllerSpec extends MockAuthActions with MockOptInService
         }
 
         "render the reporting obligations page" when {
+
           "the reporting frequency feature switch is enabled but the sign up feature switch is disabled" in {
+
             enable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)

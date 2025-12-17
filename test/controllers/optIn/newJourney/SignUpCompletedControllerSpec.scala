@@ -16,6 +16,7 @@
 
 package controllers.optIn.newJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
@@ -29,6 +30,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition.createOptInProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -40,6 +42,9 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[SignUpCompletedController]
@@ -58,6 +63,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
@@ -74,6 +80,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
@@ -92,6 +99,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockFetchOptInProposition(None)
@@ -104,6 +112,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockFetchOptInProposition(Some(createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)))
@@ -119,6 +128,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             disable(SignUpFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -140,6 +150,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             disable(OptInOptOutContentUpdateR17)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)

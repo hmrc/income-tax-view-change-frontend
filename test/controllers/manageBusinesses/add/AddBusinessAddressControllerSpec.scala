@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -31,7 +32,7 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, Result}
 import play.api.test.Helpers._
-import services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
+import services.{AddressLookupService, DateServiceInterface, IncomeSourceDetailsService, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
@@ -49,7 +50,10 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[AddressLookupService].toInstance(mockAddressLookupService)
+      api.inject.bind[AddressLookupService].toInstance(mockAddressLookupService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testAddBusinessAddressController = app.injector.instanceOf[AddBusinessAddressController]
@@ -66,16 +70,19 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
   case class AddressError(status: String) extends RuntimeException
 
-
   Seq(CheckMode, NormalMode).foreach { mode =>
+
     mtdAllRoles.foreach { mtdRole =>
+
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+
       s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
         val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(mode) else testAddBusinessAddressController.showAgent(mode)
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the address lookup service" when {
             "location redirect is returned by the lookup service" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
@@ -90,6 +97,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
           "return the correct error" when {
             "no location returned" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Right(None)))
@@ -100,6 +108,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
             "failure returned" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Left(AddressError("Test status"))))
@@ -128,6 +137,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
                 "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add-sole-trader/business-check-answers"
               }
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
@@ -145,6 +155,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
           "return the correct error" when {
             "no address returned" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
