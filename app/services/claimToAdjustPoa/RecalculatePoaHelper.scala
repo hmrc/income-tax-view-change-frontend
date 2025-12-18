@@ -145,10 +145,13 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
 
     val metadata: NrsMetadata = {
 
-      val currentHeaderData: JsObject = baseMetadata.headerData.as[JsObject]
-      val mergedHeaderData: JsObject = currentHeaderData ++ Json.obj("tags" -> Json.toJson(auditTags))
+      val currentHeaderData: Map[String, String] = baseMetadata.headerData
+      val tagsMap: Map[String, Map[String, String]] = Map("tags" -> auditTags)
 
-      baseMetadata.copy(headerData = mergedHeaderData)
+      val combinedValid: Map[String, String] = currentHeaderData ++ tagsMap.flatMap {
+        case (k: String, v) => v.map(y => s"${k}.${y._1}" -> y._2)
+      }
+      baseMetadata.copy(headerData = combinedValid)
     }
 
     val submission = NrsSubmission(RawPayload(jsonBytes, user.charset), metadata)
@@ -158,4 +161,5 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
       case None       => logger.error("NRS submission failed or was not accepted")
     }
   }
+
 }

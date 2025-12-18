@@ -32,7 +32,7 @@ case class NrsMetadata(
   userSubmissionTimestamp:  Instant,
   identityData:             IdentityData,
   userAuthToken:            String,
-  headerData:               JsValue,
+  headerData:               Map[String, String],
   searchKeys:               SearchKeys
 )
 
@@ -61,8 +61,15 @@ object NrsMetadata extends InstantFormatter {
       payloadSha256Checksum   = checkSum,
       userSubmissionTimestamp = userSubmissionTimestamp,
       userAuthToken           = request.headers.get("Authorization").getOrElse(""),
-      headerData              = JsObject(request.headers.toMap.map(x => x._1 -> JsString(x._2 mkString ","))),
+      headerData              = request.headers.toMap.map(x => x._1 -> (x._2 mkString ",")),
       searchKeys              = searchKeys,
       identityData            = identityData
     )
+
+//  private def serialiseHeaderData(request: Request[_]) = {
+//    val combinedValid: Map[String, String] = request.headers.toMap.flatMap {
+//      case (k: String, v) => v.map(y => s"${k}.${y._1}" -> y._2)
+//
+//    }
+
 }
