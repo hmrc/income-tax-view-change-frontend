@@ -416,7 +416,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
                     taxYear = getCurrentTaxYearEnd.getYear,
                     transactionId = "testTransactionId2",
                     documentText = Some("documentText"),
-                    documentDescription = Some("ITSA - POA 2"),
+                    documentDescription = Some("ITSA- POA 2"),
                     outstandingAmount = 500.00,
                     originalAmount = 1000.00,
                     documentDate = LocalDate.of(2018, 3, 29),

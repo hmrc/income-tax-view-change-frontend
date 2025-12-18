@@ -25,14 +25,14 @@ import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSaved
+import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSavedView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceReportingMethodNotSavedController @Inject()(val authActions: AuthActions,
-                                                              val view: IncomeSourceReportingMethodNotSaved,
+                                                              val view: IncomeSourceReportingMethodNotSavedView,
                                                               val itvcAgentErrorHandler: AgentItvcErrorHandler,
                                                               val itvcErrorHandler: ItvcErrorHandler)
                                                              (implicit val ec: ExecutionContext,

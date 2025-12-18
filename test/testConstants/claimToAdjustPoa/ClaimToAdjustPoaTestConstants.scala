@@ -76,7 +76,7 @@ object ClaimToAdjustPoaTestConstants {
   def genericDocumentDetailPOA2(taxYearEnd: Int, outstandingAmount: BigDecimal = 250.00) = DocumentDetail(
     taxYear = taxYearEnd,
     transactionId = "DOCID02",
-    documentDescription = Some("ITSA - POA 2"),
+    documentDescription = Some("ITSA- POA 2"),
     documentText = None,
     outstandingAmount = outstandingAmount,
     originalAmount = 250.00,

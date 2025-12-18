@@ -22,13 +22,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
-import views.html.optOut.oldJourney.OptOutError
+import views.html.optOut.oldJourney.OptOutErrorView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class OptOutErrorController @Inject()(val view: OptOutError,
+class OptOutErrorController @Inject()(val view: OptOutErrorView,
                                       val authActions: AuthActions,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)

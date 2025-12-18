@@ -19,6 +19,7 @@ package controllers.triggeredMigration
 import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
+import enums.TriggeredMigration.TriggeredMigrationState
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -49,9 +50,9 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
         sessionService.clearSession(sessionId.value)
       }
 
-      val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources)
+      val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources, TriggeredMigrationState.getStateFromString(state))
 
-      Future.successful(Ok(view(viewModel)))
+      Future.successful(Ok(view(viewModel, isAgent)))
     }
   }
 }

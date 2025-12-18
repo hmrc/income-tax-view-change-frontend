@@ -20,7 +20,7 @@ import forms.agent.ClientsUTRForm
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.agent.EnterClientsUTR
+import views.html.agent.EnterClientsUTRView
 
 class EnterClientsUTRViewSpec extends ViewSpec {
 
@@ -36,7 +36,7 @@ class EnterClientsUTRViewSpec extends ViewSpec {
     val errorPrefix: String = "Error:"
   }
 
-  val enterClientsUTR: EnterClientsUTR = app.injector.instanceOf[EnterClientsUTR]
+  val enterClientsUTR: EnterClientsUTRView = app.injector.instanceOf[EnterClientsUTRView]
 
   val pageWithoutError: Html = enterClientsUTR(ClientsUTRForm.form, testCall)
 
@@ -112,7 +112,7 @@ class EnterClientsUTRViewSpec extends ViewSpec {
 
     "have the black banner empty" in new Setup(pageWithoutError) {
       document.select(".govuk-header__content")
-        .select(".hmrc-header__service-name hmrc-header__service-name--linked").text shouldBe ("")
+        .select(".hmrc-header__service-name hmrc-header__service-name--linked").text shouldBe ""
     }
   }
 }

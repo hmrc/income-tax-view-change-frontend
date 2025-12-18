@@ -28,14 +28,14 @@ import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa
-import views.html.claimToAdjustPoa.WhatYouNeedToKnow
+import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
-                                            val view: WhatYouNeedToKnow,
+                                            val view: WhatYouNeedToKnowView,
                                             val claimToAdjustService: ClaimToAdjustService,
                                             val poaSessionService: PaymentOnAccountSessionService)
                                            (implicit val appConfig: FrontendAppConfig,

@@ -32,7 +32,6 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               latencyYearsCrystallised: LatencyYearsCrystallised,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
-                                              quarterReportingType: Option[QuarterReportingType],
                                               currentTaxYearEnd: Int
                                              ) {
 

@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
@@ -36,7 +36,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
       s"the user is authenticated as a $mtdUserRole" should {
         "render the appropriate IncomeSourceDetails page" when {
           "the user has a valid id parameter and no latency information" in {
-            enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -66,7 +66,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter and latency information but user is not in latency period" in {
-            enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -96,7 +96,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
-            enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -134,7 +134,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
 
           "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is Q" in {
 
-            enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -164,7 +164,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is A" in {
-            enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -223,7 +223,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter, but non eligible itsa status" in {
-            enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -259,7 +259,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter, latency expired" in {
-            enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             setupMockCreateSession(true)
 
@@ -284,32 +284,6 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             getManageDetailsSummaryKeys(document).get(1).text() shouldBe "Address"
             manageDetailsSummaryValues.get(1).text() shouldBe businessWithLatencyAddress
           }
-
-          "the user has a valid id parameter and AccountingMethodJourney is disabled" in {
-            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
-            disable(AccountingMethodJourney)
-            disable(OptInOptOutContentUpdateR17)
-
-            setupMockSuccess(mtdUserRole)
-            setupMockCreateSession(true)
-
-            setupMockGetCurrentTaxYearEnd(2024)
-            setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
-            mockUkPlusForeignPlusSoleTraderWithLatency()
-            setupMockTaxYearNotCrystallised(2023)
-            setupMockTaxYearNotCrystallised(2024)
-
-            setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment)))))
-            setupMockSetSessionKeyMongo(Right(true))
-
-            val result = action(fakeRequest)
-            status(result) shouldBe Status.OK
-            val document: Document = Jsoup.parse(contentAsString(result))
-
-            val keys = getManageDetailsSummaryKeys(document).eachText()
-            keys should not contain messages("incomeSources.manage.business-manage-details.accounting-method")
-          }
-
 
           "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
             enable(DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage)

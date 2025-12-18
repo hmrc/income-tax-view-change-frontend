@@ -28,14 +28,14 @@ import services.DateServiceInterface
 import services.optIn.OptInService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerSignUp
-import views.html.optIn.newJourney.SignUpStart
+import views.html.optIn.newJourney.SignUpStartView
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SignUpStartController @Inject()(authActions: AuthActions,
-                                      signUpStart: SignUpStart,
+                                      signUpStart: SignUpStartView,
                                       val optInService: OptInService,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,

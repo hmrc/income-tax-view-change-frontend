@@ -5,10 +5,10 @@
 
 GET          /manage-your-businesses                                              controllers.manageBusinesses.ManageYourBusinessesController.show()
 GET          /agents/manage-your-businesses                                       controllers.manageBusinesses.ManageYourBusinessesController.showAgent()
-GET          /manage-your-businesses/add-property/property-type                   controllers.manageBusinesses.add.AddPropertyController.show(isAgent: Boolean = false)
-GET          /agents/manage-your-businesses/add-property/property-type            controllers.manageBusinesses.add.AddPropertyController.show(isAgent: Boolean = true)
-POST         /manage-your-businesses/add-property/property-type                   controllers.manageBusinesses.add.AddPropertyController.submit(isAgent: Boolean = false)
-POST         /agents/manage-your-businesses/add-property/property-type            controllers.manageBusinesses.add.AddPropertyController.submit(isAgent: Boolean = true)
+GET          /manage-your-businesses/add-property/property-type                   controllers.manageBusinesses.add.AddPropertyController.show(isAgent: Boolean = false, isTrigMig: Boolean ?= false)
+GET          /agents/manage-your-businesses/add-property/property-type            controllers.manageBusinesses.add.AddPropertyController.show(isAgent: Boolean = true, isTrigMig: Boolean ?= false)
+POST         /manage-your-businesses/add-property/property-type                   controllers.manageBusinesses.add.AddPropertyController.submit(isAgent: Boolean = false, isTrigMig: Boolean ?= false)
+POST         /agents/manage-your-businesses/add-property/property-type            controllers.manageBusinesses.add.AddPropertyController.submit(isAgent: Boolean = true, isTrigMig: Boolean ?= false)
 GET          /manage-your-businesses/ceased-businesses                            controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.show(isAgent: Boolean = false)
 GET          /agents/manage-your-businesses/ceased-businesses                     controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController.show(isAgent: Boolean = true)
 
@@ -162,6 +162,9 @@ GET          /manage-your-businesses/manage/manage-foreign-property-cannot-go-ba
 GET          /agents/manage-your-businesses/manage/manage-foreign-property-cannot-go-back                  controllers.manageBusinesses.manage.CannotGoBackErrorController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty)
 GET          /manage-your-businesses/manage/manage-business-cannot-go-back                                 controllers.manageBusinesses.manage.CannotGoBackErrorController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment)
 GET          /agents/manage-your-businesses/manage/manage-business-cannot-go-back                          controllers.manageBusinesses.manage.CannotGoBackErrorController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment)
+
+GET          /manage-your-businesses/cannot-go-back                                                     controllers.manageBusinesses.manage.CannotGoBackErrorController.noJourneySessionShow(isAgent: Boolean = false)
+GET          /agents/manage-your-businesses/cannot-go-back                                              controllers.manageBusinesses.manage.CannotGoBackErrorController.noJourneySessionShow(isAgent: Boolean = true)
 
 # Income Sources - Cease
 GET          /manage-your-businesses/cease/cease-an-income-source                 controllers.manageBusinesses.cease.CeaseIncomeSourceController.show()

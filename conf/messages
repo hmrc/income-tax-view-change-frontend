@@ -1783,27 +1783,18 @@ check-details.business-name                             = Business name
 check-details.start-date                                = Trading start date
 check-details.trade                                     = Type of trade
 check-details.address                                   = Address
-check-details.accounting-method                         = Accounting method
-check-details.cash-accounting                           = Cash basis accounting
-check-details.traditional-accounting                    = Traditional accounting
 check-details.change                                    = Change
 check-details.description                               = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
 check-details-uk.title                                  = Confirm this information is correct
 check-details-uk.heading                                = UK property
 check-details-uk.start-date                             = Start date
-check-details-uk.accounting-method                      = Accounting method
-check-details-uk.cash-accounting                        = Cash basis accounting
-check-details-uk.traditional-accounting                 = Traditional accounting
 check-details-uk.change                                 = Change
 check-details-uk.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
 check-details-fp.title                                  = Confirm this information is correct
 check-details-fp.heading                                = Foreign property
 check-details-fp.start-date                             = Start date
-check-details-fp.accounting-method                      = Accounting method
-check-details-fp.cash-accounting                        = Cash basis accounting
-check-details-fp.traditional-accounting                 = Traditional accounting
 check-details-fp.change                                 = Change
 check-details-fp.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
@@ -2179,79 +2170,49 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property
 
 ####### Manage journey manage income source
 
-incomeSources.manage.quarterly-period                                 =   Update period
-incomeSources.manage.quarterly-period.standard                        =   Standard
-incomeSources.manage.quarterly-period.calendar                        =   Calendar
-incomeSources.manage.quarterly-period.standard.summary                =   What is a standard quarterly period?
-incomeSources.manage.quarterly-period.calendar.summary                =   What is a calendar quarterly period?
-incomeSources.manage.quarterly-period.standard.content.p1             =   This business is reporting from 6th April in line with the tax year, also known as standard quarters.
-incomeSources.manage.quarterly-period.standard.content.p2             =   If your software supports it, you can change this to report from the 1st of the month by calendar quarters.
-incomeSources.manage.quarterly-period.calendar.content.p1             =   This business is currently reporting from the 1st April by calendar quarters.
-incomeSources.manage.quarterly-period.calendar.content.p2             =   You can change this to report by standard quarters, in line with the tax year, so you report from 6th April. This change can only be made in your compatible software.
-incomeSources.manage.quarterly-period.content.p3                      =   Learn more about standard and calendar quarters
-
 incomeSources.manage.business-manage-details.heading                  =   Manage your details
 incomeSources.manage.business-manage-details.sole-trader-section      =   Sole trader
 incomeSources.manage.business-manage-details.business-name            =   Business name
 incomeSources.manage.business-manage-details.business-address         =   Address
 incomeSources.manage.business-manage-details.date-started             =   Date started
-incomeSources.manage.business-manage-details.accounting-method        =   Accounting method
 incomeSources.manage.business-manage-details.reporting-method         =   Reporting frequency {0} to {1}
 incomeSources.manage.business-manage-details.change                   =   Change
 incomeSources.manage.business-manage-details.quarterly                =   Quarterly
 incomeSources.manage.business-manage-details.annually                 =   Annual
 incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Quarterly
 incomeSources.manage.business-manage-details.annually.graceperiod     =   Annual
-incomeSources.manage.business-manage-details.cash-accounting          =   Cash basis accounting
-incomeSources.manage.business-manage-details.traditional-accounting   =   Traditional accounting
 incomeSources.manage.business-manage-details.tradetype                =   Type of trade
 incomeSources.manage.business-manage-details.reportingFrequency       =   View and change your reporting frequency for all your businesses
 incomeSources.manage.business-manage-details.insetText                =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   UK property
-incomeSources.manage.uk-property-manage-details.accounting-method                =   Accounting method
 
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Foreign property
-incomeSources.manage.foreign-property-manage-details.accounting-method           =   Accounting method
 
 
 ##################### New - Manage journey manage income source #####################
 
-
 incomeSources.manage.new.business-manage-details.heading                  =   Manage your details
-
-incomeSources.manage.new.quarterly.update.period                          =   Update period
-incomeSources.manage.new.quarterly.period.standard                        =   Standard
-incomeSources.manage.new.quarterly.period.calendar                        =   Calendar
-incomeSources.manage.new.quarterly.period.summary                         =   What is a standard quarterly period?
-incomeSources.manage.new.quarterly.period.content.p1                      =   This business is reporting from 6 April in line with the tax year, also known as using standard update periods.
-incomeSources.manage.new.quarterly.period.content.p2                      =   If your software supports it, you can choose to report using calendar update periods which end on the last day of the month.
-incomeSources.manage.new.quarterly.period.content.p3.link                 =   Learn more about standard and calendar quarters
 
 incomeSources.manage.new.business.details.heading                         =   Manage your details
 incomeSources.manage.new.business.details.sole.trader.section             =   Sole trader
 incomeSources.manage.new.business.details.business.name                   =   Business name
 incomeSources.manage.new.business.details.business.address                =   Address
 incomeSources.manage.new.business.details.date.started                    =   Date started
-incomeSources.manage.new.business.details.accounting.method               =   Accounting method
 incomeSources.manage.new.business.details.reporting.method                =   Reporting frequency {0} to {1}
 incomeSources.manage.new.business.details.change                          =   Change
 incomeSources.manage.new.business.details.quarterly                       =   Quarterly
 incomeSources.manage.new.business.details.annually                        =   Annual
 incomeSources.manage.new.business.details.quarterly.grace.period          =   Quarterly
 incomeSources.manage.new.business.details.annually.grace.period           =   Annual
-incomeSources.manage.new.business.details.cash.accounting                 =   Cash basis accounting
-incomeSources.manage.new.business.details.traditional.accounting          =   Traditional accounting
 incomeSources.manage.new.business.details.trade.type                      =   Type of trade
 incomeSources.manage.new.business.details.reporting.frequency             =   View and change your reporting frequency for all your businesses
 incomeSources.manage.new.business.details.insetText                       =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
 
 incomeSources.manage.new.uk.property.manage.details.uk.property.section              =   UK property
-incomeSources.manage.new.uk.property.manage.details.accounting.method                =   Accounting method
 
 incomeSources.manage.new.foreign.property.manage.details.foreign.property.section    =   Foreign property
-incomeSources.manage.new.foreign.property.manage.details.accounting.method           =   Accounting method
 
 # Used when OptInOptOutContentUpdateR17 feature switch is enabled
 
@@ -3393,14 +3354,31 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 #######################################################################################################################
 
 # Check HMRC records page
+triggered-migration.check-hmrc-records.add-banner.heading            = Added
+triggered-migration.check-hmrc-records.add-banner.text1.SE           = Sole trader business added
+triggered-migration.check-hmrc-records.add-banner.text1.UK           = UK property business added
+triggered-migration.check-hmrc-records.add-banner.text1.FP           = Foreign property business added
+triggered-migration.check-hmrc-records.add-banner.text2              = View your
+triggered-migration.check-hmrc-records.add-banner.link.SE            = sole trader businesses
+triggered-migration.check-hmrc-records.add-banner.link.UK            = UK property business
+triggered-migration.check-hmrc-records.add-banner.link.FP            = foreign property business
 
-triggered-migration.check-hmrc-records.heading     = Check HMRC records only list your active businesses
-triggered-migration.check-hmrc-records.title       = Check HMRC records only list your active businesses
-triggered-migration.check-hmrc-records.desc        = You now have quarterly deadlines for your sole trader and/or property businesses listed here.
-triggered-migration.check-hmrc-records.inset       = Making sure this page is correct will help avoid both missing deadlines for your active businesses and having deadlines for an income source you may have closed down or sold.
-triggered-migration.check-hmrc-records.bulletStart = If necessary, you must:
-triggered-migration.check-hmrc-records.bullet1     = add any businesses that are missing
-triggered-migration.check-hmrc-records.bullet2     = cease any that you no longer get income from
+triggered-migration.check-hmrc-records.cessation-banner.heading      = Ceased
+triggered-migration.check-hmrc-records.cessation-banner.text1        = You have ceased a business
+triggered-migration.check-hmrc-records.cessation-banner.text2        = View
+triggered-migration.check-hmrc-records.cessation-banner.link         = your ceased businesses
+
+triggered-migration.check-hmrc-records.cessation-section.heading     = Your ceased businesses
+triggered-migration.check-hmrc-records.cessation-section.text        = One or more businesses have ceased.
+triggered-migration.check-hmrc-records.cessation-section.text-link   = View all ceased businesses
+
+triggered-migration.check-hmrc-records.heading                       = Check HMRC records only list your active businesses
+triggered-migration.check-hmrc-records.title                         = Check HMRC records only list your active businesses
+triggered-migration.check-hmrc-records.desc                          = You now have quarterly deadlines for your sole trader and/or property businesses listed here.
+triggered-migration.check-hmrc-records.inset                         = Making sure this page is correct will help avoid both missing deadlines for your active businesses and having deadlines for an income source you may have closed down or sold.
+triggered-migration.check-hmrc-records.bulletStart                   = If necessary, you must:
+triggered-migration.check-hmrc-records.bullet1                       = add any businesses that are missing
+triggered-migration.check-hmrc-records.bullet2                       = cease any that you no longer get income from
 
 triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Your active businesses
 triggered-migration.check-hmrc-records.soleTrader.heading            = Sole trader businesses
@@ -3417,7 +3395,6 @@ triggered-migration.check-hmrc-records.ukProperty.heading            = UK proper
 triggered-migration.check-hmrc-records.ukProperty.cease.link         = Cease
 triggered-migration.check-hmrc-records.ukProperty.businessState      = Business state
 triggered-migration.check-hmrc-records.ukProperty.active             = Active
-triggered-migration.check-hmrc-records.ukProperty.add.link           = Add a property business
 triggered-migration.check-hmrc-records.foreignProperty.heading       = Foreign property
 triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Cease
 triggered-migration.check-hmrc-records.foreignProperty.businessState = Business state
@@ -3462,3 +3439,15 @@ signUpOptOut.cannotGoBack.h2.signUp     = You have signed up to Making Tax Digit
 signUpOptOut.cannotGoBack.ul.heading    = You can:
 signUpOptOut.cannotGoBack.linkText1     = view your upcoming deadlines
 signUpOptOut.cannotGoBack.linkText2     = go back to the home page
+
+###You Must Wait To Use This Service Page
+#Individual:
+youMustWait.heading            = You can access this service from 6 April {0}
+youMustWait.text               = This is because you are signed up to use Making Tax Digital for Income Tax from the next tax year, which starts 6 April {0}.
+youMustWait.text2              = Find more about
+youMustWait.linkText           = Making Tax Digital for Income Tax
+
+#Agent:
+youMustWait.agent.heading      = You can view this client from 6 April {0}
+youMustWait.agent.text         = This is because your client is signed up to use Making Tax digital for Income Tax from the next tax year, which starts 6 April {0}.
+youMustWait.agent.button.text  = Enter another UTR

@@ -50,11 +50,14 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
     val propertyHeading = "Property businesses"
     val ukPropertyHeading = "UK property"
     val foreignPropertyHeading = "Foreign property"
-    val addAPropertyBusinessText = "Add a property business"
+    val addPropertyBusinessText = "Add property business"
     val addForeignPropertyBusinessText = "Add foreign property business"
     val noActivePropertyText = "If you get income from one or more properties in the UK, you have a UK property business. If the property is abroad, you have a foreign property business. For example: letting houses, flats or holiday homes either on a long or short term basis."
 
-    val ceaseText = "Cease"
+    val ceaseSoleTraderText = "Cease Fruit Ltd"
+    val ceaseSoleTraderUnknownText = "Cease Unknown"
+    val ceaseForeignPropertyText = "Cease Foreign property"
+    val ceaseUkPropertyText = "Cease UK property"
     val businessNameText = "Business name"
     val businessStateText = "Business state"
     val activeText = "Active"
@@ -96,7 +99,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 checkActiveSoleTrader(result)
                 checkActiveUkProperty(result)
-                checkNoForeignProperty(result)
               }
             }
             "has an active sole trader business and foreign property only" in {
@@ -109,7 +111,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 checkActiveSoleTrader(result)
                 checkActiveForeignProperty(result)
-                checkNoUkProperty(result)
               }
             }
             "has an active uk property and foreign property only" in {
@@ -132,8 +133,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 checkCommonContent(result, mtdUserRole)
 
                 checkActiveSoleTrader(result)
-                checkNoUkProperty(result)
-                checkNoForeignProperty(result)
+                checkPropertyLink(result)
                 checkNoProperty(result)
               }
             }
@@ -145,7 +145,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveUkProperty(result)
-                checkNoForeignProperty(result)
               }
             }
             "has an active foreign property only" in {
@@ -156,7 +155,6 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveForeignProperty(result)
-                checkNoUkProperty(result)
               }
             }
             "has no active businesses" in {
@@ -166,9 +164,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
-                checkNoUkProperty(result)
                 checkNoProperty(result)
-                checkNoForeignProperty(result)
+                checkPropertyLink(result)
               }
             }
 
@@ -186,7 +183,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                   elementTextByID("sole-trader-business-name-value-0")(CheckHmrcRecordsMessages.unknownText),
                   elementTextByID("sole-trader-business-state-0")(CheckHmrcRecordsMessages.businessStateText),
                   elementTextByID("sole-trader-business-state-value-0")(CheckHmrcRecordsMessages.activeText),
-                  elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseText)
+                  elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseSoleTraderUnknownText)
                 )
               }
             }
@@ -203,7 +200,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
       elementTextByID("sole-trader-business-name-value-0")("business"),
       elementTextByID("sole-trader-business-state-0")(CheckHmrcRecordsMessages.businessStateText),
       elementTextByID("sole-trader-business-state-value-0")(CheckHmrcRecordsMessages.activeText),
-      elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseText)
+      elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseSoleTraderText)
     )
   }
 
@@ -212,7 +209,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
       elementTextByID("foreign-property-heading")(CheckHmrcRecordsMessages.foreignPropertyHeading),
       elementTextByID("foreign-property-business-state")(CheckHmrcRecordsMessages.businessStateText),
       elementTextByID("foreign-property-business-state-value")(CheckHmrcRecordsMessages.activeText),
-      elementTextByID("foreign-property-cease-link")(CheckHmrcRecordsMessages.ceaseText)
+      elementTextByID("foreign-property-cease-link")(CheckHmrcRecordsMessages.ceaseForeignPropertyText)
     )
   }
 
@@ -227,19 +224,13 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
       elementTextByID("uk-property-heading")(CheckHmrcRecordsMessages.ukPropertyHeading),
       elementTextByID("uk-property-business-state")(CheckHmrcRecordsMessages.businessStateText),
       elementTextByID("uk-property-business-state-value")(CheckHmrcRecordsMessages.activeText),
-      elementTextByID("uk-property-cease-link")(CheckHmrcRecordsMessages.ceaseText)
+      elementTextByID("uk-property-cease-link")(CheckHmrcRecordsMessages.ceaseUkPropertyText)
     )
   }
 
-  def checkNoUkProperty(res: WSResponse) = {
+  def checkPropertyLink(res: WSResponse) = {
     res should have(
-      elementTextByID("uk-property-add-link")(CheckHmrcRecordsMessages.addAPropertyBusinessText),
-    )
-  }
-
-  def checkNoForeignProperty(res: WSResponse) = {
-    res should have(
-      elementTextByID("foreign-property-add-link")(CheckHmrcRecordsMessages.addForeignPropertyBusinessText),
+      elementTextByID("add-property-link")(CheckHmrcRecordsMessages.addPropertyBusinessText),
     )
   }
 

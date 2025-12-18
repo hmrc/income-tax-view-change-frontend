@@ -39,8 +39,8 @@ import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{financialDetails, _}
-import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised, metadataWithAmendment}
-import views.html.TaxYearSummary
+import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
+import views.html.TaxYearSummaryView
 
 import java.time.LocalDate
 
@@ -56,11 +56,11 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService)
     ).build()
 
-  lazy val taxYearSummaryView: TaxYearSummary = app.injector.instanceOf[TaxYearSummary]
+  lazy val taxYearSummaryView: TaxYearSummaryView = app.injector.instanceOf[TaxYearSummaryView]
 
-  lazy val testController = app.injector.instanceOf[TaxYearSummaryController]
+  lazy val testController: TaxYearSummaryController = app.injector.instanceOf[TaxYearSummaryController]
 
-  val testCharge = chargeItemModel()
+  val testCharge: ChargeItem = chargeItemModel()
 
   val testChargesList: List[TaxYearSummaryChargeItem] = List(
     TaxYearSummaryChargeItem.fromChargeItem(testCharge.copy(accruingInterestAmount = None)),
@@ -104,7 +104,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
     )
   ))
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.renderAgentTaxYearSummaryPage(testTaxYear) else testController.renderTaxYearSummaryPage(testTaxYear)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
@@ -792,7 +792,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
 
     if (mtdUserRole != MTDSupportingAgent) {

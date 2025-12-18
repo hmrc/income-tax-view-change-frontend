@@ -23,11 +23,11 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.IncomeSourceRFCheckDetails
+import views.html.manageBusinesses.add.IncomeSourceRFCheckDetailsView
 
 class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
 
-  val view: IncomeSourceRFCheckDetails = app.injector.instanceOf[IncomeSourceRFCheckDetails]
+  val view: IncomeSourceRFCheckDetailsView = app.injector.instanceOf[IncomeSourceRFCheckDetailsView]
 
   class Setup(incomeSourceType: IncomeSourceType, changeReportingFrequency: Boolean = true, isReportingQuarterlyCurrentYear: Boolean = false, isReportingQuarterlyForNextYear: Boolean = false, isAgent: Boolean = false, displayR17Content: Boolean) {
 
@@ -53,7 +53,7 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
     }
 
     "have the correct subheading" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear, displayR17Content = displayR17Content) {
-      val subHeading = incomeSourceType match {
+      val subHeading: String = incomeSourceType match {
         case SelfEmployment => "Sole trader"
         case UkProperty => "UK property"
         case ForeignProperty => "Foreign property"
@@ -63,18 +63,26 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
     }
 
     "have the correct summary heading and page contents" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear, displayR17Content = displayR17Content) {
+
+      val visuallyHidden = pageDocument.getElementsByClass("govuk-summary-list__actions").first().select(".govuk-visually-hidden").text()
+      val visuallyHiddenLast = pageDocument.getElementsByClass("govuk-summary-list__actions").last().select(".govuk-visually-hidden").text()
+
       if(displayR17Content) {
         pageDocument.getElementsByClass("govuk-summary-list__key").first().text() shouldBe "Do you want to sign this new business up to Making Tax Digital for Income Tax?"
+        pageDocument.getElementsByClass("govuk-summary-list__actions").first().select(".govuk-visually-hidden").text() shouldBe "Do you want to sign this new business up to Making Tax Digital for Income Tax?"
       } else {
         pageDocument.getElementsByClass("govuk-summary-list__key").first().text() shouldBe "Do you want to change to report quarterly?"
+        pageDocument.getElementsByClass("govuk-summary-list__actions").first().select(".govuk-visually-hidden").text() shouldBe "Do you want to change to report quarterly?"
       }
 
       if (changeReportingFrequency) {
         pageDocument.getElementsByClass("govuk-summary-list__value").first().text() shouldBe "Yes"
         if(displayR17Content) {
           pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax year(s) do you want to sign up for?"
+          pageDocument.getElementsByClass("govuk-summary-list__actions").last().select(".govuk-visually-hidden").text() shouldBe "Which tax year(s) do you want to sign up for?"
         } else {
           pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax year(s) do you want to report quarterly for?"
+          pageDocument.getElementsByClass("govuk-summary-list__actions").last().select(".govuk-visually-hidden").text() shouldBe "Which tax year(s) do you want to report quarterly for?"
         }
 
         (isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) match {
@@ -83,13 +91,13 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
           case (true, true) => pageDocument.getElementsByClass("govuk-summary-list__value").last().text() shouldBe "2023 to 2024 2024 to 2025"
         }
 
-        pageDocument.getElementsByClass("govuk-summary-list__actions").last().text() shouldBe "Change"
+        pageDocument.getElementsByClass("govuk-summary-list__actions").last().text().replace(visuallyHiddenLast, "").trim shouldBe "Change"
         pageDocument.getElementsByClass("govuk-summary-list__actions").last().attr("href") shouldBe ""
 
       } else {
         pageDocument.getElementsByClass("govuk-summary-list__value").first().text() shouldBe "No"
       }
-      pageDocument.getElementsByClass("govuk-summary-list__actions").first().text() shouldBe "Change"
+      pageDocument.getElementsByClass("govuk-summary-list__actions").first().text().replace(visuallyHidden, "").trim shouldBe "Change"
 
       pageDocument.getElementById("confirm-button").text() shouldBe "Confirm and continue"
     }

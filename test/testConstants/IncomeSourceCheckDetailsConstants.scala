@@ -33,12 +33,10 @@ object IncomeSourceCheckDetailsConstants {
   val testBusinessAddressLine1: String = "123 Main Street"
   val testBusinessPostCode: String = "AB123CD"
   val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
-  val testBusinessAccountingMethod = "cash"
   val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
   val testCountryCode = "GB"
 
   val testPropertyStartDate: LocalDate = LocalDate.of(2023, 1, 1)
-  val testPropertyAccountingMethod: String = "CASH"
 
   val testUIJourneySessionDataBusiness: UIJourneySessionData = UIJourneySessionData(
     sessionId = "some-session-id",

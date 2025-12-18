@@ -27,14 +27,14 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.add.AddProperty
+import views.html.manageBusinesses.add.AddPropertyView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
 class AddPropertyController @Inject()(authActions: AuthActions,
-                                      val addProperty: AddProperty,
+                                      val addProperty: AddPropertyView,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                      (implicit val appConfig: FrontendAppConfig,
@@ -48,21 +48,21 @@ class AddPropertyController @Inject()(authActions: AuthActions,
     controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user => handleRequest(isAgent)
+  def show(isAgent: Boolean, isTrigMig: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user => handleRequest(isAgent, isTrigMig)
   }
 
-  def handleRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
+  def handleRequest(isAgent: Boolean, isTrigMig: Boolean = false)(implicit user: MtdItUser[_]): Future[Result] = {
+    val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent, isTrigMig)
     Future.successful(Ok(addProperty(form.apply, isAgent, Some(getBackUrl(isAgent)), postAction)))
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    handleSubmitRequest(isAgent = isAgent)
+  def submit(isAgent: Boolean, isTrigMig: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+    handleSubmitRequest(isAgent = isAgent, isTrigMig)
   }
 
-  private def handleSubmitRequest(isAgent: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent)
+  private def handleSubmitRequest(isAgent: Boolean, isTrigMig: Boolean = false)(implicit user: MtdItUser[_]): Future[Result] = {
+    val postAction = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent, isTrigMig)
     form.apply.bindFromRequest().fold(
       formWithErrors =>
         Future.successful {
@@ -76,17 +76,18 @@ class AddPropertyController @Inject()(authActions: AuthActions,
           )
         },
       formData =>
-        handleValidForm(formData, isAgent)
+        handleValidForm(formData, isAgent, isTrigMig)
     )
   }
 
   private def handleValidForm(validForm: form,
-                              isAgent: Boolean)
+                              isAgent: Boolean,
+                              isTrigMig: Boolean = false)
                              (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
-    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, UkProperty).url
-    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty).url
+    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = isTrigMig).url
+    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = isTrigMig).url
 
     formResponse match {
       case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))

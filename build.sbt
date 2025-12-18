@@ -124,3 +124,6 @@ lazy val it = project
   .settings(
     libraryDependencies ++= appDependenciesIt
   )
+
+addCommandAlias("compileAll", "compile ; test:compile ; it/test:compile")
+

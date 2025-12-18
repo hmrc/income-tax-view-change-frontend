@@ -16,7 +16,6 @@
 
 package audit.reporting_obligations
 
-import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.libs.json.{Json, OFormat}
 
 case class ItsaStatusTableDetails(

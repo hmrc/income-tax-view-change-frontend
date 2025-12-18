@@ -19,7 +19,7 @@ package controllers.optIn.newJourney
 import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import forms.optIn.SignUpTaxYearQuestionForm
 import play.api.Logger
 import play.api.i18n.I18nSupport

@@ -40,7 +40,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.FallBackBackLinks
-import views.html.{ChargeSummary, YourSelfAssessmentChargeSummary}
+import views.html.{ChargeSummaryView, YourSelfAssessmentChargeSummaryView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,8 +54,8 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                         val auditingService: AuditingService,
                                         val itvcErrorHandler: ItvcErrorHandler,
                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                        val chargeSummaryView: ChargeSummary,
-                                        val yourSelfAssessmentChargeSummary: YourSelfAssessmentChargeSummary,
+                                        val chargeSummaryView: ChargeSummaryView,
+                                        val yourSelfAssessmentChargeSummary: YourSelfAssessmentChargeSummaryView,
                                         val chargeHistoryService: ChargeHistoryService,
                                         val paymentAllocations: PaymentAllocationsService)
                                        (implicit val appConfig: FrontendAppConfig,

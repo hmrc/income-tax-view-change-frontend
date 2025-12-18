@@ -17,14 +17,14 @@
 package controllers.claimToAdjustPoa
 
 import controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import enums._
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.PoaAmendmentData
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import testConstants.BaseIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants._
 
 class PoaAdjustedControllerISpec extends ControllerISpecHelper {
 
@@ -41,7 +41,7 @@ class PoaAdjustedControllerISpec extends ControllerISpecHelper {
     pathStart + "/adjust-poa/success"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {

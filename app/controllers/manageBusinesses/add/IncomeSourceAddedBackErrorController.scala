@@ -28,13 +28,13 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.IncomeSourceAddedBackError
+import views.html.manageBusinesses.add.IncomeSourceAddedBackErrorView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthActions,
-                                                     val cannotGoBackError: IncomeSourceAddedBackError,
+                                                     val cannotGoBackError: IncomeSourceAddedBackErrorView,
                                                      val sessionService: SessionService)
                                                     (implicit val appConfig: FrontendAppConfig,
                                                      mcc: MessagesControllerComponents,
@@ -91,7 +91,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
       _.addIncomeSourceData.map(_.incomeSourceId) match {
         case Some(_) =>
           Future.successful {
-            Redirect(routes.IncomeSourceReportingFrequencyController.show(isAgent, false, incomeSourceType))
+            Redirect(routes.IncomeSourceReportingFrequencyController.show(isAgent, isChange = false, incomeSourceType))
           }
         case None => Logger("application").error(
           "Error: Unable to find id in session")

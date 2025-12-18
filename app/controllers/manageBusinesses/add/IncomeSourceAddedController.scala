@@ -38,6 +38,7 @@ import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.postfixOps
 
 class IncomeSourceAddedController @Inject()(
                                              authActions: AuthActions,
@@ -150,7 +151,7 @@ class IncomeSourceAddedController @Inject()(
             result
           case _ =>
             logger.error(agentPrefix + s"Unable to retrieve Mongo session data for $incomeSourceType")
-            Future(errorView)
+            Future(Redirect(controllers.manageBusinesses.manage.routes.CannotGoBackErrorController.noJourneySessionShow(isAgent)))
         }
     } yield {
       result

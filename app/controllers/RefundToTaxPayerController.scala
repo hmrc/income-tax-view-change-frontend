@@ -32,13 +32,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.RefundToTaxPayer
+import views.html.RefundToTaxPayerView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayer,
+class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayerView,
                                            val repaymentHistoryConnector: RepaymentHistoryConnector,
                                            val authActions: AuthActions,
                                            itvcErrorHandler: ItvcErrorHandler,

@@ -19,17 +19,18 @@ package views.manageBusinesses.add
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.IncomeSourceNotAddedError
+import views.html.manageBusinesses.add.IncomeSourceNotAddedErrorView
 
 class IncomeSourceNotAddedErrorViewSpec extends TestSupport {
 
-  val incomeSourceNotAddedErrorView: IncomeSourceNotAddedError = app.injector.instanceOf[IncomeSourceNotAddedError]
+  val incomeSourceNotAddedErrorView: IncomeSourceNotAddedErrorView = app.injector.instanceOf[IncomeSourceNotAddedErrorView]
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
 
-    val continueAction = if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent() else
+    val continueAction: Call = if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent() else
       controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
 
     lazy val view: HtmlFormat.Appendable = incomeSourceNotAddedErrorView(isAgent = isAgent, incomeSourceType = incomeSourceType, continueAction = continueAction)

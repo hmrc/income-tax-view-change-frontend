@@ -22,19 +22,19 @@ import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.NormalMode
 import models.incomeSourceDetails.viewmodels.{CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.BusinessDetailsTestConstants._
 import testUtils.TestSupport
-import views.html.manageBusinesses.cease.CeaseIncomeSources
+import views.html.manageBusinesses.cease.CeaseIncomeSourcesView
 
 class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter {
-  val ceaseIncomeSources: CeaseIncomeSources = app.injector.instanceOf[CeaseIncomeSources]
+  val ceaseIncomeSources: CeaseIncomeSourcesView = app.injector.instanceOf[CeaseIncomeSourcesView]
 
   class Setup(isAgent: Boolean, missingValues: Boolean = false) {
-    val viewModel = if (missingValues) {
+    val viewModel: CeaseIncomeSourcesViewModel = if (missingValues) {
       CeaseIncomeSourcesViewModel(
         soleTraderBusinesses = List(CeaseBusinessDetailsViewModel( mkIncomeSourceId(testSelfEmploymentId), None, None)),
         ukProperty = Some(CeasePropertyDetailsViewModel(None)),
@@ -63,12 +63,12 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     lazy val view: HtmlFormat.Appendable = if (isAgent) {
       ceaseIncomeSources(
         viewModel,
-        true,
+        isAgent = true,
         controllers.routes.HomeController.showAgent().url)(implicitly, agentUserConfirmedClient())
     } else {
       ceaseIncomeSources(
         viewModel,
-        false,
+        isAgent = false,
         controllers.routes.HomeController.show().url)(implicitly, individualUser)
     }
 
@@ -104,7 +104,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     }
     "render Self employment table" when {
       "all fields have value" in new Setup(false) {
-        val table = document.getElementById("sole-trader-businesses-table")
+        val table: Element = document.getElementById("sole-trader-businesses-table")
 
         document.getElementById("self-employment-h1").text() shouldBe "Self employment (sole trader)"
         table.getElementById("table-row-trading-name-0").text() shouldBe testTradeName
@@ -113,7 +113,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       }
 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
-        val table = document.getElementById("sole-trader-businesses-table")
+        val table: Element = document.getElementById("sole-trader-businesses-table")
 
         document.getElementById("self-employment-h1").text() shouldBe "Self employment (sole trader)"
         table.getElementById("table-row-trading-name-0").text() shouldBe "Unknown"
@@ -125,7 +125,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
 
     "render UK Property table" should {
       "all fields have value" in new Setup(false) {
-        val table = document.getElementById("uk-property-table")
+        val table: Element = document.getElementById("uk-property-table")
 
         document.getElementById("uk-property-h1").text() shouldBe "UK property"
         document.getElementById("uk-property-p1").text() shouldBe "You should only cease your UK property if you no longer receive any income from it."
@@ -135,7 +135,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       }
 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
-        val table = document.getElementById("uk-property-table")
+        val table: Element = document.getElementById("uk-property-table")
 
         document.getElementById("uk-property-h1").text() shouldBe "UK property"
         document.getElementById("uk-property-p1").text() shouldBe "You should only cease your UK property if you no longer receive any income from it."
@@ -147,7 +147,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
 
     "render Foreign Property table" should {
       "all fields have value" in new Setup(false) {
-        val table = document.getElementById("foreign-property-table")
+        val table: Element = document.getElementById("foreign-property-table")
 
         document.getElementById("foreign-property-h1").text() shouldBe "Foreign property"
         document.getElementById("foreign-property-p1").text() shouldBe "You should only cease your foreign property if you no longer receive any income from it."
@@ -157,7 +157,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       }
 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
-        val table = document.getElementById("foreign-property-table")
+        val table: Element = document.getElementById("foreign-property-table")
 
         document.getElementById("foreign-property-h1").text() shouldBe "Foreign property"
         document.getElementById("foreign-property-p1").text() shouldBe "You should only cease your foreign property if you no longer receive any income from it."
@@ -169,7 +169,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
 
     "render ceased business table" should {
       "all fields have value" in new Setup(false) {
-        val table = document.getElementById("ceased-businesses-table")
+        val table: Element = document.getElementById("ceased-businesses-table")
 
         document.getElementById("ceased-businesses-heading").text() shouldBe "Businesses that have ceased"
 
@@ -191,7 +191,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       }
 
       "unknown is shown on missing fields" in new Setup(false, missingValues = true) {
-        val table = document.getElementById("ceased-businesses-table")
+        val table: Element = document.getElementById("ceased-businesses-table")
 
         document.getElementById("ceased-businesses-heading").text() shouldBe "Businesses that have ceased"
 
@@ -223,7 +223,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
     }
     "render Self employment table" when {
       "all fields have value" in new Setup(true) {
-        val table = document.getElementById("sole-trader-businesses-table")
+        val table: Element = document.getElementById("sole-trader-businesses-table")
 
         document.getElementById("self-employment-h1").text() shouldBe "Self employment (sole trader)"
         table.getElementById("table-row-trading-name-0").text() shouldBe testTradeName
@@ -232,7 +232,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       }
 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
-        val table = document.getElementById("sole-trader-businesses-table")
+        val table: Element = document.getElementById("sole-trader-businesses-table")
 
         document.getElementById("self-employment-h1").text() shouldBe "Self employment (sole trader)"
         table.getElementById("table-row-trading-name-0").text() shouldBe "Unknown"
@@ -244,7 +244,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
 
     "render UK Property table" should {
       "all fields have value" in new Setup(true) {
-        val table = document.getElementById("uk-property-table")
+        val table: Element = document.getElementById("uk-property-table")
 
         document.getElementById("uk-property-h1").text() shouldBe "UK property"
         document.getElementById("uk-property-p1").text() shouldBe "You should only cease your UK property if you no longer receive any income from it."
@@ -254,7 +254,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       }
 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
-        val table = document.getElementById("uk-property-table")
+        val table: Element = document.getElementById("uk-property-table")
 
         document.getElementById("uk-property-h1").text() shouldBe "UK property"
         document.getElementById("uk-property-p1").text() shouldBe "You should only cease your UK property if you no longer receive any income from it."
@@ -266,7 +266,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
 
     "render Foreign Property table" should {
       "all fields have value" in new Setup(true) {
-        val table = document.getElementById("foreign-property-table")
+        val table: Element = document.getElementById("foreign-property-table")
 
         document.getElementById("foreign-property-h1").text() shouldBe "Foreign property"
         document.getElementById("foreign-property-p1").text() shouldBe "You should only cease your foreign property if you no longer receive any income from it."
@@ -276,7 +276,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       }
 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
-        val table = document.getElementById("foreign-property-table")
+        val table: Element = document.getElementById("foreign-property-table")
 
         document.getElementById("foreign-property-h1").text() shouldBe "Foreign property"
         document.getElementById("foreign-property-p1").text() shouldBe "You should only cease your foreign property if you no longer receive any income from it."
@@ -288,7 +288,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
 
     "render ceased business table" should {
       "all fields have value" in new Setup(true) {
-        val table = document.getElementById("ceased-businesses-table")
+        val table: Element = document.getElementById("ceased-businesses-table")
 
         document.getElementById("ceased-businesses-heading").text() shouldBe "Businesses that have ceased"
 
@@ -310,7 +310,7 @@ class CeaseIncomeSourcesViewSpec extends TestSupport with ImplicitDateFormatter 
       }
 
       "unknown is shown on missing fields" in new Setup(true, missingValues = true) {
-        val table = document.getElementById("ceased-businesses-table")
+        val table: Element = document.getElementById("ceased-businesses-table")
 
         document.getElementById("ceased-businesses-heading").text() shouldBe "Businesses that have ceased"
 

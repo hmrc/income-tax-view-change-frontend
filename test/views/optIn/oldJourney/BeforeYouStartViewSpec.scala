@@ -21,12 +21,12 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.optIn.oldJourney.BeforeYouStart
+import views.html.optIn.oldJourney.BeforeYouStartView
 
 class BeforeYouStartViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val beforeYouStartView: BeforeYouStart = app.injector.instanceOf[BeforeYouStart]
+  val beforeYouStartView: BeforeYouStartView = app.injector.instanceOf[BeforeYouStartView]
   val startButtonUrl = "/some/optIn/url"
 
   class Setup(isAgent: Boolean = true) {

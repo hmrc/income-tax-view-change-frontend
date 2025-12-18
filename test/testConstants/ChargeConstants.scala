@@ -1195,7 +1195,7 @@ trait ChargeConstants {
       )
     )
 
-  def testFinancialDetailsModelWithInterest(documentDescription: List[Option[String]] = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+  def testFinancialDetailsModelWithInterest(documentDescription: List[Option[String]] = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
                                             mainType: List[Option[String]] = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
                                             mainTransaction: List[Option[String]] = List(Some("4920"), Some("4930")),
                                             dueDate: List[Option[LocalDate]],

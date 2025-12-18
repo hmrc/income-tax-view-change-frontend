@@ -230,7 +230,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA- POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -269,7 +269,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA- POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -336,7 +336,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA- POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -365,7 +365,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val chargeHistories: List[ChargeHistoryModel] = List(
         ChargeHistoryModel(s"$taxYear", "1040000124", LocalDate.of(taxYear, 2, 14), "ITSA- POA 1", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("001")),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA- POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(10, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
@@ -445,7 +445,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       val chargeHistoriesNoPoaAtHead: List[ChargeHistoryModel] = List(
         chargeHistoryModelNoPOA(taxYear),
-        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA - POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("002")))
+        ChargeHistoryModel(s"$taxYear", "1040000125", LocalDate.of(taxYear, 2, 14), "ITSA- POA 2", 2500, LocalDateTime.of(LocalDate.of(taxYear + 1, 2, 14), LocalTime.of(9, 30, 45)), "Customer Request", Some("002")))
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 

@@ -23,11 +23,11 @@ import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.feedback.Feedback
+import views.html.feedback.FeedbackView
 
 class FeedbackViewSpec extends ViewSpec {
 
-  val feedbackView: Feedback = app.injector.instanceOf[Feedback]
+  val feedbackView: FeedbackView = app.injector.instanceOf[FeedbackView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 

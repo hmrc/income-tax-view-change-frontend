@@ -28,13 +28,13 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.YouCannotGoBackError
+import views.html.manageBusinesses.YouCannotGoBackErrorView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
-                                            val cannotGoBackError: YouCannotGoBackError,
+                                            val cannotGoBackError: YouCannotGoBackErrorView,
                                             val sessionService: SessionService,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)
@@ -44,15 +44,25 @@ class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
   with I18nSupport with JourneyCheckerManageBusinesses {
 
   def show(isAgent: Boolean,
-           incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      handleRequest(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType
-      )
+           incomeSourceType: IncomeSourceType): Action[AnyContent] = {
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        handleRequest(
+          isAgent = isAgent,
+          incomeSourceType = incomeSourceType
+        )
+    }
   }
 
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] =
+  def noJourneySessionShow(isAgent: Boolean): Action[AnyContent] = {
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        Future.successful(Ok(cannotGoBackError(isAgent, "", noSession = true)))
+    }
+  }
+
+
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = CannotGoBackPage) { data =>
       data.manageIncomeSourceData match {
         case Some(manageData) if manageData.reportingMethod.isDefined && manageData.taxYear.isDefined =>
@@ -69,6 +79,7 @@ class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
           }
       }
     }
+  }
 
   def getSubheadingContent(incomeSourceType: IncomeSourceType, reportingMethod: String, taxYear: Int)(implicit request: Request[_]): String = {
     val methodString = if (reportingMethod == "annual")

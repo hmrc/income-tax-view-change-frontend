@@ -66,7 +66,12 @@
         @messages("incomeSources.add.sole-trader")
         </span>
 
-        @h1(messages("add-trade.heading"), size = "xl")
+        <h1 class="govuk-label-wrapper">
+            <!--suppress XmlInvalidId -->
+            <label class="govuk-label govuk-label--xl" for="business-trade">
+                @messages("add-trade.heading")
+            </label>
+        </h1>
 
         @p(id = Some("business-trade-description"), classes = "govuk-body") {
             @messages("add-trade.trade-info-1")

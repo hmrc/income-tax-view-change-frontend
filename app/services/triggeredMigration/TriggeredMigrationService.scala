@@ -16,6 +16,7 @@
 
 package services.triggeredMigration
 
+import enums.TriggeredMigration.{TriggeredMigrationCeased, TriggeredMigrationState}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
@@ -25,11 +26,13 @@ import javax.inject.Singleton
 @Singleton
 class TriggeredMigrationService {
 
-  def getCheckHmrcRecordsViewModel(incomeSources: IncomeSourceDetailsModel): CheckHmrcRecordsViewModel = {
+  def getCheckHmrcRecordsViewModel(incomeSources: IncomeSourceDetailsModel, state: Option[TriggeredMigrationState]): CheckHmrcRecordsViewModel = {
     val activeSoleTraderBusinesses = incomeSources.businesses.filterNot(_.isCeased)
 
     val hasActiveUkProperty = incomeSources.properties.filterNot(_.isCeased).exists(_.isUkProperty)
     val hasActiveForeignProperty = incomeSources.properties.filterNot(_.isCeased).exists(_.isForeignProperty)
+
+    val numberOfCeasedBusinesses = incomeSources.businesses.count(_.isCeased)
 
     CheckHmrcRecordsViewModel(
       soleTraderBusinesses = activeSoleTraderBusinesses.map { business =>
@@ -40,7 +43,9 @@ class TriggeredMigrationService {
         )
       },
       hasActiveUkProperty = hasActiveUkProperty,
-      hasActiveForeignProperty = hasActiveForeignProperty
+      hasActiveForeignProperty = hasActiveForeignProperty,
+      triggeredMigrationState = state,
+      numberOfCeasedBusinesses = numberOfCeasedBusinesses
     )
   }
 }

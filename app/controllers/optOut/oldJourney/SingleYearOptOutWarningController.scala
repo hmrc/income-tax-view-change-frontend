@@ -29,14 +29,14 @@ import play.api.mvc._
 import services.optout.OptOutService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
-import views.html.optOut.oldJourney.SingleYearOptOutWarning
+import views.html.optOut.oldJourney.SingleYearOptOutWarningView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SingleYearOptOutWarningController @Inject()(auth: AuthActions,
-                                                  view: SingleYearOptOutWarning,
+                                                  view: SingleYearOptOutWarningView,
                                                   optOutService: OptOutService)
                                                  (implicit val appConfig: FrontendAppConfig,
                                                   val ec: ExecutionContext,

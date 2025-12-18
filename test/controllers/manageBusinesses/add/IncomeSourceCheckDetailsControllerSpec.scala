@@ -98,7 +98,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
               status(result) shouldBe OK
               document.title shouldBe getTitle(incomeSourceType, mtdRole != MTDIndividual)
               document.select("h1:nth-child(1)").text shouldBe getHeading(incomeSourceType)
-              changeDetailsLinks.first().text shouldBe getLink(incomeSourceType)
+              changeDetailsLinks.first().ownText() shouldBe getLink(incomeSourceType)
             }
           }
 
