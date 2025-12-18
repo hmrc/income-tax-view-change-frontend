@@ -37,16 +37,21 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) extends ClaimToAdjustHelper {
 
+//  def getPoaTaxYearForEntryPoint(nino: Nino)
+//                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
+//    {
+//      for {
+//        fdMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
+//        maybeTaxYear <- EitherT.right[Throwable](Future.successful {
+//          fdMaybe.flatMap(_.arePoaPaymentsPresent())
+//        })
+//      } yield maybeTaxYear
+//    }.value
+//  }
+
   def getPoaTaxYearForEntryPoint(nino: Nino)
-                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
-    {
-      for {
-        fdMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
-        maybeTaxYear <- EitherT.right[Throwable](Future.successful {
-          fdMaybe.flatMap(_.arePoaPaymentsPresent())
-        })
-      } yield maybeTaxYear
-    }.value
+                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[TaxYear]] = {
+    checkValidYearsWithPOAs(nino)
   }
 
   def getPoaForNonCrystallisedTaxYear(nino: Nino)
@@ -120,6 +125,22 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
         case _ => Right(None)
       }
+    }
+  }
+
+  private def checkValidYearsWithPOAs(nino: Nino)
+                                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[TaxYear]] = {
+   getPoaAdjustableTaxYears.foldLeft[Future[List[TaxYear]]](Future.successful(List.empty)) { (acc, item) =>
+      financialDetailsConnector.getFinancialDetails(item.endYear, nino.value).flatMap {
+        case financialDetails: FinancialDetailsModel if financialDetails.arePoaPaymentsPresent().isDefined => acc.map(list => list :+ item)
+        case _ => acc
+      }
+    }.flatMap {
+      validTaxYearsWithPoas =>
+        checkCrystallisation(nino, validTaxYearsWithPoas)(hc, dateService, calculationListConnector, ec).map {
+          case None => None
+          case Some(taxYear: TaxYear) => Some(taxYear)
+        }
     }
   }
 
