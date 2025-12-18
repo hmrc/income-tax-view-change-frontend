@@ -124,11 +124,10 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
           model.showSecondParagraph shouldBe true
         }
 
-        // TODO: review this scenario
-//        "the optOutState is NextYearOptOut and the current year status is Voluntary" in {
-//          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(NextYearOptOut), 0, Voluntary, Voluntary)
-//          model.showSecondParagraph shouldBe false
-//        }
+        "the optOutState is NextYearOptOut and the current year status is Voluntary" in {
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(NextYearOptOut), 0, Voluntary, Voluntary)
+          model.showSecondParagraph shouldBe true
+        }
       }
     }
 

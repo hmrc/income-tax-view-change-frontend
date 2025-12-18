@@ -61,7 +61,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
   }
 
   "Opt out tax year question page" when {
-    // TODO: MISUV-10308 - Scenario 7.
     "opting out from the previous year onwards without submitted updates - Multi-year Opt-Out" should {
       "have the correct heading" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousYearHeadingMulti
@@ -79,7 +78,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 1.
     "opting out from the current year onwards with voluntary next year without submitted updates - Multi-year Opt-Out" should {
       "have the correct title" in new Setup("current", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.currentYearTitleMulti
@@ -100,7 +98,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 1b.
     "opting out from the current year onwards with voluntary next year with submitted updates - Multi-year Opt-Out" should {
       "have the correct title" in new Setup("current", MultiYearOptOutDefault, 3, Voluntary, Voluntary, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.currentYearTitleMulti
@@ -122,7 +119,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 4b.
     "opting out for the current year onwards with annual next year without submitted updates - Single-year Opt-out" should {
       "have the correct title" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, Voluntary, Voluntary, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualTitle
@@ -163,7 +159,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    //TODO: MISUV-10308 - Scenario 8 Needs New Ticket to display the correct elements
     "opting out for a previous single year followed by Mandated - No updates" should {
       "have the correct title" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Mandated) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
@@ -221,7 +216,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 5.
+
     "opting out for a previous single year followed by Annual - No updates" should {
       "have the correct title" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
@@ -242,7 +237,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 2.
     "opting out of a single year followed by Annual - No updates" should {
       "have the correct title" in new Setup("current", OneYearOptOutFollowedByAnnual, 0, NoStatus, Voluntary, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualTitle
@@ -263,7 +257,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 2b.
     "opting out for current single year followed by Annual - With updates" should {
       "have the correct title" in new Setup("current", OneYearOptOutFollowedByAnnual, 1, NoStatus, Voluntary, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualUpdatesTitle
@@ -343,7 +336,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 3
     "opting out for the next year in V-M-V scenario with submitted updates - Single-year Opt-Out" should {
       "have the correct title" in new Setup("next", NextYearOptOut, 0, Voluntary, Mandated, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.nextYearOptOutMandatedTitle
@@ -364,7 +356,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
     }
 
-    // TODO: MISUV-10308 - Scenario 4.
     "opting out from the previous year in V-V-A scenario without submitted updates - Multi-year Opt-Out" should {
       "have the correct title" in new Setup("previous", MultiYearOptOutDefault, 0, Voluntary, Voluntary, Annual) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousYearTitleMulti
@@ -460,7 +451,6 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2025 to 2026 tax year"
       }
     }
-    // TODO: MISUV-10308 - Scenario 6.
     "opting out for CY-1 in V-A-V scenario" should {
       "have the correct title" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Voluntary) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
