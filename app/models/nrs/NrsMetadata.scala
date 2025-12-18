@@ -66,10 +66,4 @@ object NrsMetadata extends InstantFormatter {
       identityData            = identityData
     )
 
-//  private def serialiseHeaderData(request: Request[_]) = {
-//    val combinedValid: Map[String, String] = request.headers.toMap.flatMap {
-//      case (k: String, v) => v.map(y => s"${k}.${y._1}" -> y._2)
-//
-//    }
-
 }
