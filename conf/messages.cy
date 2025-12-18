@@ -2709,14 +2709,14 @@ optout.cancelled.p3                                 = i newid pa mor aml rydych 
 optout.taxYearQuestion.heading.previousYear.multiYear       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.previousYear.multiYear         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.desc1.previousYear.multiYear         = Bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
-optout.taxYearQuestion.inset.previousYear.multiYear         = Bydd diweddariadau chwarterol yr ydych wedi’u cyflwyno yn cael eu dileu o’n cofnodion os ydych yn optio allan o’r flwyddyn dreth honno. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.inset.previousYear.multiYear         = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 optout.taxYearQuestion.desc2.previousYear.multiYear         = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.previousYear.multiYear = A ydych am optio allan o’r flwyddyn dreth {0} i {1}?
 
 optout.taxYearQuestion.heading.currentYear.multiYear                   = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r  flwyddyn dreth bresennol ymlaen
 optout.taxYearQuestion.title.currentYear.multiYear                     = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r  flwyddyn dreth bresennol ymlaen
 optout.taxYearQuestion.desc1.currentYear.multiYear                     = Bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
-optout.taxYearQuestion.inset.currentYear.multiYear                     = Bydd diweddariadau chwarterol yr ydych wedi’u cyflwyno yn cael eu dileu o’n cofnodion os ydych yn optio allan o’r flwyddyn dreth honno. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.inset.currentYear.multiYear                     = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 optout.taxYearQuestion.desc2.currentYear.multiYear                     = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.currentYear.multiYear             = A ydych am optio allan o’r flwyddyn dreth bresennol ymlaen?
 
@@ -2736,9 +2736,7 @@ optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual    
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated         = Byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = Mae gennych
-optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByMandated     = {0} ddiweddariad chwarterol wedi’u cyflwyno
-optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByMandated        = ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByMandated = A ydych am optio allan o flwyddyn dreth {0} i {1} o hyd?
 
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByMandated       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth unigol
@@ -2758,9 +2756,7 @@ optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByMandatedWit
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByAnnual       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByAnnual         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByAnnual         = Bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
-optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = Mae gennych
-optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByAnnual     = {0} ddiweddariad chwarterol wedi’u cyflwyno
-optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByAnnual        = ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 optout.taxYearQuestion.desc2.previousYear.singleYearFollowedByAnnual         = Yn y dyfodol, gallai fod gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByAnnual = A ydych am optio allan o flwyddyn dreth {0} i {1} o hyd?
 
@@ -2774,9 +2770,7 @@ optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnual = A 
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByAnnualWithUpdates       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.currentYear.singleYearFollowedByAnnualWithUpdates         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnualWithUpdates         = Bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
-optout.taxYearQuestion.inset.currentYear.singleYearFollowedByAnnualWithUpdates         = Mae gennych
-optout.taxYearQuestion.insetBold.currentYear.singleYearFollowedByAnnualWithUpdates     = {0} ddiweddariad chwarterol wedi’u cyflwyno
-optout.taxYearQuestion.inset2.currentYear.singleYearFollowedByAnnualWithUpdates        = ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.inset.currentYear.singleYearFollowedByAnnualWithUpdates         = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates         = Yn y dyfodol, gallai fod gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 

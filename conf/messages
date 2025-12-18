@@ -2749,9 +2749,7 @@ optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual    
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated         = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
-optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = You have
-optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByMandated     = {0} quarterly updates submitted
-optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByMandated        = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByMandated = Do you still want to opt out for the {0} to {1} tax year?
 
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax for a single tax year
@@ -2772,8 +2770,6 @@ optout.taxYearQuestion.heading.previousYear.singleYearFollowedByAnnual       = O
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByAnnual         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByAnnual         = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
 optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
-optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByAnnual     = {0} quarterly updates submitted
-optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByAnnual        = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 optout.taxYearQuestion.desc2.previousYear.singleYearFollowedByAnnual         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByAnnual = Do you still want to opt out for the {0} to {1} tax year?
 
@@ -2788,8 +2784,6 @@ optout.taxYearQuestion.heading.currentYear.singleYearFollowedByAnnualWithUpdates
 optout.taxYearQuestion.title.currentYear.singleYearFollowedByAnnualWithUpdates         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnualWithUpdates         = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
 optout.taxYearQuestion.inset.currentYear.singleYearFollowedByAnnualWithUpdates         = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
-optout.taxYearQuestion.insetBold.currentYear.singleYearFollowedByAnnualWithUpdates     = {0} quarterly updates submitted
-optout.taxYearQuestion.inset2.currentYear.singleYearFollowedByAnnualWithUpdates        = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = Do you want to opt out for the {0} to {1} tax year?
 
