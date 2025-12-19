@@ -29,18 +29,16 @@ class CreditsModelSpec extends UnitSpec {
 
   val availableCreditForRepayment:BigDecimal = 20
 
-  val allocatedCredit:BigDecimal = 5
-  val allocatedCreditForFutureCharges:BigDecimal = 10
+  val allocatedCreditForFutureCharges: BigDecimal = 10
 
-  val unallocatedCredit:BigDecimal = 20
+  val unallocatedCredit: BigDecimal = 20
 
   val totalCredit: BigDecimal = 35
 
-  val allCreditsJson =
+  val allCreditsJson: String =
     s"""
       |{
       |  "availableCreditForRepayment" : ${availableCreditForRepayment},
-      |  "allocatedCredit" : ${allocatedCredit},
       |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
       |  "unallocatedCredit" : ${unallocatedCredit},
       |  "totalCredit" : ${totalCredit},
@@ -80,7 +78,7 @@ class CreditsModelSpec extends UnitSpec {
       |}
       |""".stripMargin
 
-  val allCreditsObj = CreditsModel(availableCreditForRepayment, allocatedCredit, allocatedCreditForFutureCharges,
+  val allCreditsObj = CreditsModel(availableCreditForRepayment, allocatedCreditForFutureCharges,
     unallocatedCredit, totalCredit, List(
     Transaction(transactionType = Repayment,
       amount = 5,
@@ -167,7 +165,6 @@ class CreditsModelSpec extends UnitSpec {
 
       val result = Json.toJson(allCreditsObj)
 
-      (result \ "allocatedCredit").get shouldBe JsNumber(allocatedCredit)
       (result \ "allocatedCreditForFutureCharges").get shouldBe JsNumber(allocatedCreditForFutureCharges)
       (result \ "availableCreditForRepayment").get shouldBe JsNumber(availableCreditForRepayment)
       (result \ "totalCredit").get shouldBe JsNumber(totalCredit)
@@ -188,7 +185,6 @@ class CreditsModelSpec extends UnitSpec {
         s"""
           |{
           |  "availableCreditForRepayment" : ${availableCreditForRepayment},
-          |  "allocatedCredit" : ${allocatedCredit},
           |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
           |  "unallocatedCredit" : ${unallocatedCredit},
           |  "totalCredit" : ${totalCredit},
