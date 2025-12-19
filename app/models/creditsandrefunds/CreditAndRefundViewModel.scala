@@ -78,8 +78,8 @@ object CreditAndRefundViewModel {
   def fromCreditAndRefundModel(model: CreditsModel, claimARefundR18Enabled: Boolean = true): CreditAndRefundViewModel = {
     CreditAndRefundViewModel(
       availableCredit = model.availableCreditForRepayment,
-      allocatedCredit = if (claimARefundR18Enabled) model.allocatedCreditForFutureCharges else model.allocatedCredit,
-      unallocatedCredit = if(claimARefundR18Enabled) model.unallocatedCredit else model.availableCreditForRepayment - model.allocatedCredit,
+      allocatedCredit = model.allocatedCreditForFutureCharges,
+      unallocatedCredit =  model.unallocatedCredit,
       totalCredit = if (claimARefundR18Enabled) model.totalCredit else model.availableCreditForRepayment,
       creditRows =
         (removeNoRemainingCredit andThen

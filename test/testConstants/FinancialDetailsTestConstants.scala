@@ -2228,7 +2228,7 @@ object FinancialDetailsTestConstants {
 
 }
 
-case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0, 0.0, 0.0, 0.0, Nil)) {
+case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0, 0.0, 0.0, Nil)) {
 
   def withAvailableCredit(availableCredit: BigDecimal): ANewCreditAndRefundModel = {
     ANewCreditAndRefundModel(model.copy(availableCreditForRepayment = availableCredit))
@@ -2236,10 +2236,6 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
 
   def withAllocatedFutureCredit(allocatedCredit: BigDecimal): ANewCreditAndRefundModel = {
     ANewCreditAndRefundModel(model.copy(allocatedCreditForFutureCharges = allocatedCredit))
-  }
-
-  def withAllocatedOverdueCredit(allocatedCredit: BigDecimal): ANewCreditAndRefundModel = {
-    ANewCreditAndRefundModel(model.copy(allocatedCredit = allocatedCredit))
   }
 
   def withTotalCredit(totalCredit: BigDecimal): ANewCreditAndRefundModel = {
