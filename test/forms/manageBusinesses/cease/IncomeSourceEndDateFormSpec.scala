@@ -58,7 +58,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
 
   def setupBindFutureDateTest(incomeSourceType: IncomeSourceType): Unit = {
     val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(incomeSourceType, setupTestId(incomeSourceType))(testUser)
-    val futureYear = dateService.getCurrentTaxYearEnd + 1
+    val futureYear = mockDateService.getCurrentTaxYearEnd + 1
     val formData = Map("income-source-end-date.day" -> "20", "income-source-end-date.month" -> "12", "income-source-end-date.year" -> s"$futureYear")
     val completedForm = form.bind(formData)
 
