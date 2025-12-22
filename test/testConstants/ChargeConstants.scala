@@ -1303,14 +1303,13 @@ trait ChargeConstants {
     outstandingChargesModel = Some(OutstandingChargesModel(List()))
   )
 
-  def whatYouOweDataWithAvailableCredits(dunningLocks: List[Option[String]] = noDunningLocks, claimARefundR18Enabled: Boolean = true): WhatYouOweChargesList = WhatYouOweChargesList(
+  def whatYouOweDataWithAvailableCredits(dunningLocks: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(300.00), Some(150.00), None, Some(350.00), None, None, Some(BigDecimal(100.00))),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDateMoreThan30Days,
       dunningLock = dunningLocks
     ),
-    outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days),
-    claimARefundR18Enabled = claimARefundR18Enabled
+    outstandingChargesModel = Some(outstandingChargesDueInMoreThan30Days)
   )
 
   /// integration tests
