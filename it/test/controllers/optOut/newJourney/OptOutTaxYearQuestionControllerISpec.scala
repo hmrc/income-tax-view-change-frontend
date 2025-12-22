@@ -60,39 +60,33 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
   object optOutTaxYearQuestionMessages {
     // Multi
     val previousYearHeadingMulti = "Opt out of Making Tax Digital for Income Tax from the 2021 to 2022 tax year"
-    val previousYearDesc1Multi = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
-    val previousYearInsetMulti = "Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return."
-    val previousYearDesc2Multi = "You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
-    val previousYearDesc3Multi = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+    val previousYearDesc1Multi = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
+    val previousYearDesc2Multi = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val previousYearQuestionMulti = "Do you want to opt out from the 2021 to 2022 tax year?"
 
     val currentYearHeading = "Opt out of Making Tax Digital for Income Tax from the current tax year"
     val currentYearTitle = "Opt out of Making Tax Digital for Income Tax from the current tax year - Manage your Self Assessment - GOV.UK"
-    val currentYearDesc1 = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
-    val currentYearInset = "Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return."
-    val currentYearDesc2 = "You would need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
-    val currentYearDesc3 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+    val currentYearDesc1 = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
+    val currentYearDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val currentYearQuestion = "Do you want to opt out from the current tax year?"
 
     val currentYearHeadingAnnual = "Opt out of Making Tax Digital for Income Tax from the 2022 to 2023 tax year"
     val currentYearTitleAnnual = "Opt out of Making Tax Digital for Income Tax from the 2022 to 2023 tax year - Manage your Self Assessment - GOV.UK"
-    val currentYearDesc1Annual = "From 6 April 2022, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax."
+    val currentYearDesc1Annual = "From 6 April 2022 this would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
     val currentYearDesc2Annual = "You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
     val currentYearDesc3Annual = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val currentYearQuestionAnnual = "Do you want to opt out for the 2022 to 2023 tax year?"
 
     val nextYearHeading = "Opt out of Making Tax Digital for Income Tax from the next tax year"
     val nextYearTitle = "Opt out of Making Tax Digital for Income Tax from the next tax year - Manage your Self Assessment - GOV.UK"
-    val nextYearDesc1 = "From 6 April 2023, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax."
-    val nextYearDesc2 = "You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future."
-    val nextYearDesc3 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+    val nextYearDesc1 = "From 6 April 2023 this would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
+    val nextYearDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val nextYearQuestion = "Do you want to opt out from the next tax year?"
 
     // Single Year followed by Mandated
     val previousSingleYearHeading = "Opt out of Making Tax Digital for Income Tax for the 2021 to 2022 tax year"
     val previousSingleYearTitle = "Opt out of Making Tax Digital for Income Tax for the 2024 to 2025 tax year - Manage your Self Assessment - GOV.UK"
-    val previousSingleYearDesc1 = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
-    val previousSingleYearInset = "You have 0 quarterly updates submitted for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return."
+    val previousSingleYearDesc1 = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
     val previousSingleYearDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val previousSingleYearQuestion = "Do you still want to opt out for the 2021 to 2022 tax year?"
 
@@ -108,12 +102,12 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
     // Single year followed by Annual
     val singleYearFollowedByAnnualHeading = "Opt out of Making Tax Digital for Income Tax for the 2022 to 2023 tax year"
-    val singleYearFollowedByAnnualDesc1 = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
+    val singleYearFollowedByAnnualDesc1 = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
     val singleYearFollowedByAnnualDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val singleYearFollowedByAnnualQuestion = "Do you want to opt out for the 2022 to 2023 tax year?"
 
     val singleYearFollowedByAnnualUpdatesHeading = "Opt out of Making Tax Digital for Income Tax for the 2022 to 2023 tax year"
-    val singleYearFollowedByAnnualUpdatesDesc1 = "This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax."
+    val singleYearFollowedByAnnualUpdatesDesc1 = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
     val singleYearFollowedByAnnualUpdatesInset = "You have 1 quarterly updates submitted for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return."
     val singleYearFollowedByAnnualUpdatesDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val singleYearFollowedByAnnualUpdatesQuestion = "Do you want to opt out for the 2022 to 2023 tax year?"
@@ -124,7 +118,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
     val nextYearOptOutDefaultQuestion = "Do you want to opt out from the 2023 to 2024 tax year?"
 
     val nextYearOptOutMandatedHeading = "Opt out of Making Tax Digital for Income Tax from the 2023 to 2024 tax year onwards"
-    val nextYearOptOutMandatedDesc1 = "From 6 April 2023, this would mean you would not need to use software compatible with Making Tax Digital for Income Tax."
+    val nextYearOptOutMandatedDesc1 = "From 6 April 2023 this would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
     val nextYearOptOutMandatedDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val nextYearOptOutMandatedQuestion = "Do you want to opt out from the 2023 to 2024 tax year?"
   }
@@ -164,9 +158,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousYearHeadingMulti),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousYearDesc1Multi),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousYearInsetMulti),
             elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousYearDesc2Multi),
-            elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.previousYearDesc3Multi),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousYearQuestionMulti),
           )
         }
@@ -200,7 +192,6 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousSingleYearInset),
             elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
@@ -235,9 +226,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousYearHeadingMulti),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousYearDesc1Multi),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousYearInsetMulti),
             elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousYearDesc2Multi),
-            elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.previousYearDesc3Multi),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousYearQuestionMulti),
           )
         }
@@ -271,9 +260,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.currentYearHeading),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.currentYearDesc1),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.currentYearInset),
             elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.currentYearDesc2),
-            elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.currentYearDesc3),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.currentYearQuestion),
           )
         }
@@ -342,7 +329,6 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.nextYearHeading),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.nextYearDesc1),
             elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.nextYearDesc2),
-            elementTextByID("opt-out-question-desc-3")(optOutTaxYearQuestionMessages.nextYearDesc3),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.nextYearQuestion),
           )
         }
@@ -377,8 +363,6 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousSingleYearInset),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
         }
@@ -412,7 +396,6 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.singleYearFollowedByMandatedHeading),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.singleYearFollowedByMandatedDesc1),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.singleYearFollowedByMandatedInset),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.singleYearFollowedByMandatedQuestion),
           )
         }
@@ -446,7 +429,6 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesHeading),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesDesc1),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesInset),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesQuestion),
           )
         }
@@ -481,7 +463,6 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
-            elementTextByID("opt-out-question-inset")(optOutTaxYearQuestionMessages.previousSingleYearInset),
             elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
@@ -618,7 +599,6 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.nextYearOptOutMandatedHeading),
             elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.nextYearOptOutMandatedDesc1),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.nextYearOptOutMandatedDesc2),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.nextYearOptOutMandatedQuestion),
           )
         }
