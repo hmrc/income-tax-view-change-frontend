@@ -1316,6 +1316,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00,
       "totalCreditAvailableForRepayment" -> 5.00,
+      "totalCredit" -> 5.00,
       "firstPendingAmountRequested" -> 3.00,
       "secondPendingAmountRequested" -> 2.00
     ),
@@ -1495,6 +1496,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00,
       "totalCreditAvailableForRepayment" -> 5.00,
+      "totalCredit" -> 5.00,
       "firstPendingAmountRequested" -> 3.00,
       "secondPendingAmountRequested" -> 2.00
     ),
