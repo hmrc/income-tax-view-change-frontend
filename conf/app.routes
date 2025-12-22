@@ -187,6 +187,10 @@ GET         /cannot-access-service                                        contro
 #Uplift Failed
 GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show()
 
+#Cannot Change Reporting Obligations
+GET         /cannot-update-reporting-obligations                          controllers.errors.CannotUpdateReportingObligationsController.show(isAgent: Boolean = false)
+GET         /agents/cannot-update-reporting-obligations                   controllers.errors.CannotUpdateReportingObligationsController.show(isAgent: Boolean = true)
+
 #Uplift Success
 GET         /uplift-success                                               controllers.UpliftSuccessController.success()
 

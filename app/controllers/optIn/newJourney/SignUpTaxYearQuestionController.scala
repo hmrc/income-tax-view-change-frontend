@@ -94,11 +94,11 @@ class SignUpTaxYearQuestionController @Inject()(
                   case Some(SignUpTaxYearQuestionForm.responseYes) =>
                     signUpSubmissionService.triggerSignUpRequest().map {
                       case Seq() =>
-                        Redirect(controllers.optIn.oldJourney.routes.OptInErrorController.show(isAgent))
+                        Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
                       case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
                         Redirect(controllers.optIn.newJourney.routes.SignUpCompletedController.show(isAgent))
                       case _ =>
-                        Redirect(controllers.optIn.oldJourney.routes.OptInErrorController.show(isAgent))
+                        Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
                     }
                   case Some(SignUpTaxYearQuestionForm.responseNo) =>
                     Future(Redirect(controllers.routes.ReportingFrequencyPageController.show(isAgent).url))
