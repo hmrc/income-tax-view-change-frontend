@@ -64,8 +64,7 @@ case class CreditAndRefundViewModel(availableCredit: BigDecimal,
                                     allocatedCredit: BigDecimal,
                                     unallocatedCredit: BigDecimal,
                                     totalCredit: BigDecimal,
-                                    creditRows: List[CreditRow],
-                                    claimARefundR18Enabled: Boolean) {
+                                    creditRows: List[CreditRow]) {
   val hasCreditOrRefunds: Boolean = {
     availableCredit > 0 || allocatedCredit > 0 || creditRows.exists(_.amount > 0)
   }
@@ -75,17 +74,16 @@ case class CreditAndRefundViewModel(availableCredit: BigDecimal,
 
 object CreditAndRefundViewModel {
 
-  def fromCreditAndRefundModel(model: CreditsModel, claimARefundR18Enabled: Boolean = true): CreditAndRefundViewModel = {
+  def fromCreditAndRefundModel(model: CreditsModel): CreditAndRefundViewModel = {
     CreditAndRefundViewModel(
       availableCredit = model.availableCreditForRepayment,
       allocatedCredit = model.allocatedCreditForFutureCharges,
       unallocatedCredit =  model.unallocatedCredit,
-      totalCredit = if (claimARefundR18Enabled) model.totalCredit else model.availableCreditForRepayment,
+      totalCredit = model.totalCredit,
       creditRows =
         (removeNoRemainingCredit andThen
           orderByDescendingTaxYear andThen
-          orderCreditsFirstRepaymentsSecond).apply(model.transactions).flatMap(CreditRow.fromTransaction),
-      claimARefundR18Enabled = claimARefundR18Enabled
+          orderCreditsFirstRepaymentsSecond).apply(model.transactions).flatMap(CreditRow.fromTransaction)
     )
   }
 

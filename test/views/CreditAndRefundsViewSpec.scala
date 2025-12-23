@@ -61,14 +61,13 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
                    creditAndRefundModel: CreditsModel,
                    isAgent: Boolean = false,
                    backUrl: String = "testString",
-                   welshLang: Boolean  = false,
-                   claimARefundR18Enabled: Boolean = true) {
+                   welshLang: Boolean  = false) {
 
     val testMessages: Messages = if(welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
     } else { messages }
 
-    val viewModel: CreditAndRefundViewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditAndRefundModel, claimARefundR18Enabled)
+    val viewModel: CreditAndRefundViewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditAndRefundModel)
 
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(
@@ -183,7 +182,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
         document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
       }
 
-      "ClaimARefundR18 FS is true uses correct fields" when {
         "there is allocated credit" which {
 
           "is more than available credit" in new TestSetup(
@@ -237,7 +235,6 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
             document.select("#main-content .govuk-button").first().text() shouldBe claimBtn
           }
         }
-      }
 
       "there are multiple MFA credits sorted by tax year" in
         new TestSetup(

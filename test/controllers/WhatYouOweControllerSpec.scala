@@ -20,7 +20,7 @@ import controllers.routes.{ChargeSummaryController, CreditAndRefundController, P
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
-import models.admin.{ClaimARefundR18, CreditsRefundsRepay, PenaltiesAndAppeals}
+import models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.financialDetails.WhatYouOweViewModel
 import models.incomeSourceDetails.TaxYear
@@ -202,7 +202,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 setupMockSuccess(mtdUserRole)
                 enable(CreditsRefundsRepay)
-                enable(ClaimARefundR18)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
