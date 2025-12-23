@@ -665,7 +665,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       }
     }
 
-//    testMTDAgentAuthFailures(testHomeController.showAgent(), false)
-//    testMTDObligationsDueFailures(testHomeController.showAgent(), agentType)(fakeRequest)
+    testMTDAgentAuthFailures(testHomeController.showAgent(), false)
+    testMTDObligationsDueFailures(testHomeController.showAgent(), agentType)(fakeRequest)
   }
 }

@@ -83,12 +83,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
           ))
         )
 
-      //      val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
       val mtdUser = getMtdItUser(Agent)
-
-
-      ////      when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
-      ////        .thenReturn(Future(defaultIncomeSourcesData))
 
       when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
         .thenReturn(Future(Right(List(itsaStatusResponse))))
@@ -114,12 +109,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
           ))
         )
 
-      //      val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDIndividual, fakeRequestWithActiveSession)
-
       val mtdUser = getMtdItUser(Individual, isSupportingAgent = true)
-
-      //      when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
-      //        .thenReturn(Future(defaultIncomeSourcesData))
 
       when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
         .thenReturn(Future(Right(List(itsaStatusResponse))))
@@ -145,12 +135,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
           ))
         )
 
-      //      val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDSupportingAgent, fakeRequestWithActiveSession)
-
       val mtdUser = getMtdItUser(Agent, isSupportingAgent = true)
-
-      //      when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
-      //        .thenReturn(Future(defaultIncomeSourcesData))
 
       when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
         .thenReturn(Future(Right(List(itsaStatusResponse))))
@@ -181,11 +166,6 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         )
       )
 
-      //      val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
-
-      //      when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
-      //        .thenReturn(Future(defaultIncomeSourcesData))
-
       val mtdUser = getMtdItUser(Individual)
 
       when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
@@ -208,11 +188,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
       val itsaStatusResponseError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "some random failure")
 
-      //      val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDIndividual, fakeRequestWithActiveSession)
       val mtdUser = getMtdItUser(Individual)
-
-      //      when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
-      //        .thenReturn(Future(defaultIncomeSourcesData))
 
       when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
         .thenReturn(Future(Left(itsaStatusResponseError)))
@@ -241,11 +217,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
       val itsaStatusResponseError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "some random failure")
 
-      //      val authorisedAndEnrolledRequest = defaultAuthorisedAndEnrolledRequest(MTDPrimaryAgent, fakeRequestWithActiveSession)
       val mtdUser = getMtdItUser(Agent)
-
-      //      when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
-      //        .thenReturn(Future(defaultIncomeSourcesData))
 
       when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
         .thenReturn(Future(Left(itsaStatusResponseError)))

@@ -221,7 +221,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
           }
         }
       }
-//      testMTDAgentAuthFailures(testManageYourBusinessesController.showAgent(), isSupportingAgent)
+      testMTDAgentAuthFailures(testManageYourBusinessesController.showAgent(), isSupportingAgent)
     }
   }
 }
