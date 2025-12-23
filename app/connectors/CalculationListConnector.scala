@@ -58,12 +58,11 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
               valid
             }
           )
+        case status if (status >= INTERNAL_SERVER_ERROR) =>
+          Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+          CalculationListErrorModel(response.status, response.body)
         case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
-          } else {
-            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
-          }
+          Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           CalculationListErrorModel(response.status, response.body)
       }
     }
