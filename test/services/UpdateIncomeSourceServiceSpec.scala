@@ -33,6 +33,7 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class UpdateIncomeSourceServiceSpec extends TestSupport with FeatureSwitching {
+
   implicit val userWithSessionKey: MtdItUser[_] = defaultMTDITUser(Some(Individual), ukPropertyIncome)
 
   val cessationDate: LocalDate = LocalDate.of(2022, 7, 1)
