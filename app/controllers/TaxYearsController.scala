@@ -16,73 +16,65 @@
 
 package controllers
 
-import auth.MtdItUser
 import auth.authV2.AuthActions
+import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.admin.{ITSASubmissionIntegration, PostFinalisationAmendmentsR18}
-import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.DateServiceInterface
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.TaxYearsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
-class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
-                                   val authActions: AuthActions,
-                                   itvcErrorHandler: ItvcErrorHandler,
-                                   agentItvcErrorHandler: AgentItvcErrorHandler)
-                                  (implicit val appConfig: FrontendAppConfig,
-                                   mcc: MessagesControllerComponents,
-                                   val ec: ExecutionContext,
-                                   val dateService: DateServiceInterface
-                                  ) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
-
-
-  def handleRequest(backUrl: String,
-                    isAgent: Boolean,
-                    origin: Option[String] = None)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
-    Try {
-      taxYearsView(
-        taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
-        backUrl,
-        isAgent = isAgent,
-        utr = user.saUtr,
-        itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-        isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
-        earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
-        btaNavPartial = user.btaNavPartial,
-        origin = origin)
-    } match {
-      case Success(taxView) => Future.successful(Ok(taxView))
-      case Failure(ex) =>
-        Logger("application").error(s"failed to render view file for taxYears due to ${ex.getMessage}")
-        val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
-        Future.successful(errorHandler.showInternalServerError())
-    }
-  }
+class TaxYearsController @Inject()(
+                                    val authActions: AuthActions,
+                                    taxYearsView: TaxYearsView
+                                  )(
+                                    implicit val appConfig: FrontendAppConfig,
+                                    mcc: MessagesControllerComponents,
+                                    ec: ExecutionContext,
+                                    dateService: DateServiceInterface
+                                  ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def showTaxYears(origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async { implicit user =>
-      handleRequest(
-        backUrl = controllers.routes.HomeController.show(origin).url,
-        isAgent = false,
-        origin = origin
-      )
+    authActions.asMTDIndividual.async {
+      implicit user =>
+        Future(
+          Ok(
+            taxYearsView(
+              taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+              backUrl = controllers.routes.HomeController.show(origin).url,
+              isAgent = false,
+              utr = user.saUtr,
+              itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+              isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
+              earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
+              btaNavPartial = user.btaNavPartial,
+              origin = origin)
+          )
+        )
     }
 
   def showAgentTaxYears: Action[AnyContent] =
     authActions.asMTDPrimaryAgent.async {
-      implicit mtdItUser =>
-        handleRequest(
-          backUrl = controllers.routes.HomeController.showAgent().url,
-          isAgent = true
+      implicit user =>
+        Future(
+          Ok(
+            taxYearsView(
+              taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+              backUrl = controllers.routes.HomeController.showAgent().url,
+              isAgent = true,
+              utr = user.saUtr,
+              itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+              isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
+              earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
+              btaNavPartial = user.btaNavPartial,
+              origin = None
+            )
+          )
         )
     }
 }
