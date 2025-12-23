@@ -28,7 +28,7 @@ import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, Message, Messages}
 import models.obligations._
-import models.taxyearsummary.TaxYearSummaryChargeItem
+import models.taxyearsummary.{MtdSoftware, TaxYearSummaryChargeItem}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -240,7 +240,8 @@ class TaxYearSummaryControllerSpec
                     testTaxYear, taxYearSummary,
                     taxYearsBackLink(isAgent),
                     ctaLink = ctaLink(isAgent),
-                    isAgent = isAgent
+                    isAgent = isAgent,
+                    taxYearViewScenarios = MtdSoftware
                   ).toString
 
                 val result = action(fakeRequest)
@@ -280,7 +281,8 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString
 
                 val result = action(fakeRequest)
@@ -321,7 +323,8 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString
 
                 val result = action(fakeRequest)
@@ -592,7 +595,9 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   backUrl = homeBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
+                ).toString
 
               val result = action(fakeGetRequestBasedOnMTDUserType(mtdUserRole))
               status(result) shouldBe Status.OK
@@ -635,7 +640,9 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
+                ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -677,7 +684,9 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
+                ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -722,7 +731,8 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString
 
                 val result = action(fakeRequest)
@@ -758,7 +768,8 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString
 
                 val result = action(fakeRequest)
@@ -799,7 +810,8 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString()).text()
 
                 val result = action(fakeRequest)
@@ -841,7 +853,9 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
+                ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK

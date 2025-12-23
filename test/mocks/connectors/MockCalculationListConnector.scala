@@ -37,7 +37,7 @@ trait MockCalculationListConnector extends UnitSpec with BeforeAndAfterEach {
   }
 
   def setupGetLegacyCalculationList(nino: String, taxYear: String)(response: CalculationListResponseModel): Unit = {
-    when(mockCalculationListConnector.getLegacyCalculationList(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(taxYear))(any()))
+    when(mockCalculationListConnector.getLegacyCalculationList(nino, ArgumentMatchers.eq(taxYear))(any()))
       .thenReturn(Future.successful(response))
   }
 

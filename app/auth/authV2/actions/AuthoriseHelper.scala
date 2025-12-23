@@ -29,8 +29,7 @@ import scala.concurrent.Future
 
 trait AuthoriseHelper extends FeatureSwitching {
 
-  type AuthRetrievals =
-    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
+  type AuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
 
   val logger: Logger
 
