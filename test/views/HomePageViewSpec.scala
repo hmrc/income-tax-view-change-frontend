@@ -487,7 +487,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/payment-refund-history")
           link.map(_.text) shouldBe Some("Payment history")
         }
-        s"has the available credit using totalCredit when ClaimToAdjustR18 FS is true" in new Setup(creditAndRefundEnabled = true) {
+        s"has the available credit using totalCredit" in new Setup(creditAndRefundEnabled = true) {
           getTextOfElementById("available-credit") shouldBe Some("£200.00 is in your account")
         }
       }

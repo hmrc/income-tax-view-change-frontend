@@ -397,7 +397,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           link.map(_.text) shouldBe Some("Payment history")
         }
 
-        s"has the available credit using totalCredit when ClaimToAdjustR18 FS is true" in new TestSetup(creditAndRefundEnabled = true) {
+        s"has the available credit using totalCredit" in new TestSetup(creditAndRefundEnabled = true) {
           getTextOfElementById("available-credit") shouldBe Some("£200.00 is in your account")
         }
       }
