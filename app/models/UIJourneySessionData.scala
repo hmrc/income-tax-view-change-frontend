@@ -59,22 +59,8 @@ case class UIJourneySessionData(
 
 object UIJourneySessionData {
 
-  implicit val format: OFormat[UIJourneySessionData] = {
-
-    ((__ \ "sessionId").format[String]
-      ~ (__ \ "journeyType").format[String]
-      ~ (__ \ "addIncomeSourceData").formatNullable[AddIncomeSourceData]
-      ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
-      ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
-      ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
-      ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
-      ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
-      ~ (__ \ "triggeredMigrationSessionData").formatNullable[TriggeredMigrationSessionData]
-      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      ~ (__ \ "journeyIsComplete").formatNullable[Boolean]
-      )(UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
-    )
-  }
+  implicit val format: OFormat[UIJourneySessionData] =
+    Json.format[UIJourneySessionData]
 }
 
 case class SensitiveUIJourneySessionData(

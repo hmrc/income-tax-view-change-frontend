@@ -59,11 +59,11 @@ object ClientDetailsService {
 
   sealed trait ClientDetailsFailure
 
-  final case object BusinessDetailsNotFound extends ClientDetailsFailure
+   case object BusinessDetailsNotFound extends ClientDetailsFailure
 
-  final case object CitizenDetailsNotFound extends ClientDetailsFailure
+   case object CitizenDetailsNotFound extends ClientDetailsFailure
 
-  final case object APIError extends ClientDetailsFailure
+   case object APIError extends ClientDetailsFailure
 
   final case class ClientDetails(firstName: Option[String], lastName: Option[String], nino: String, mtdItId: String)
 

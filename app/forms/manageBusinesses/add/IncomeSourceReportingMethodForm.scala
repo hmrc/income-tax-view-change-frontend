@@ -39,8 +39,31 @@ object IncomeSourceReportingMethodForm extends CustomConstraints {
       taxYear1ReportingMethod -> optional(text),
       taxYear2 -> optional(text),
       taxYear2ReportingMethod -> optional(text)
-    )(IncomeSourceReportingMethodForm.apply)(IncomeSourceReportingMethodForm.unapply)
-  )
+    )
+    (
+     ( newTaxYear1ReportingMethod,
+      newTaxYear2ReportingMethod,
+      taxYear1,
+      taxYear1ReportingMethod,
+      taxYear2,
+      taxYear2ReportingMethod) =>
+       IncomeSourceReportingMethodForm(newTaxYear1ReportingMethod,
+       newTaxYear2ReportingMethod,
+       taxYear1,
+       taxYear1ReportingMethod,
+       taxYear2,
+       taxYear2ReportingMethod)
+    )(
+      form =>
+      Some(
+        form.newTaxYear1ReportingMethod,
+        form.newTaxYear2ReportingMethod,
+        form.taxYear1,
+        form.taxYear1ReportingMethod,
+        form.taxYear2,
+        form.taxYear2ReportingMethod
+      )
+  ))
 }
 
 case class IncomeSourceReportingMethodForm(newTaxYear1ReportingMethod: Option[String],

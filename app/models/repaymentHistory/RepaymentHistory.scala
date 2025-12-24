@@ -24,13 +24,13 @@ sealed abstract class RepaymentHistoryStatus(indicator: String) {
   override def toString: String = this.indicator
 }
 
-final case class Approved private(indicator: String) extends RepaymentHistoryStatus(indicator) {
+final case class Approved (indicator: String) extends RepaymentHistoryStatus(indicator) {
   def isApprovedByRisking: Boolean = indicator.equals("A")
 
   def isApprovedManually: Boolean = indicator.equals("M")
 }
 
-final case class Rejected private(indicator: String) extends RepaymentHistoryStatus(indicator)
+final case class Rejected (indicator: String) extends RepaymentHistoryStatus(indicator)
 
 object SentForRisking extends RepaymentHistoryStatus("I")
 

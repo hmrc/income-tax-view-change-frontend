@@ -33,7 +33,9 @@ object CheckActiveBusinessesConfirmForm {
           .verifying(errorKey, value =>
             value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo))
           )
-      )(CheckActiveBusinessesConfirmForm.apply)(CheckActiveBusinessesConfirmForm.unapply)
+      )
+      (response => CheckActiveBusinessesConfirmForm(response))
+      (form => Some(form.response))
     )
   }
 }

@@ -88,7 +88,13 @@ class IncomeSourceEndDateForm @Inject()(val dateService: DateService)(implicit v
         },
         date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
       ).verifying(firstError(dateConstraints: _*))
-      )(DateFormElement.apply)(DateFormElement.unapply))
+      )(
+        date =>
+          DateFormElement(date)
+      )(
+        form =>
+          Some(form.date)
+      ))
   }
 
   private def dateMustBeCompleteKey(incomeSourceType: IncomeSourceType): String = incomeSourceType match {

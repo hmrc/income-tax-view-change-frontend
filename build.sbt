@@ -8,17 +8,16 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "income-tax-view-change-frontend"
 
-val bootstrapPlayVersion = "10.4.0"
-val playPartialsVersion = "9.1.0"
-val playFrontendHMRCVersion = "11.13.0"
-val catsVersion = "2.12.0"
-val scalaTestPlusVersion = "7.0.1"
-val jsoupVersion = "1.18.1"
-val mockitoVersion = "5.11.0"
-val scalaMockVersion = "5.2.0"
-val wiremockVersion = "3.0.0-beta-7"
-val hmrcMongoVersion = "2.6.0"
-val currentScalaVersion = "2.13.16"
+val bootstrapPlayVersion = "10.5.0"
+val playPartialsVersion = "10.2.0"
+val playFrontendHMRCVersion = "12.25.0"
+val catsVersion = "2.13.0"
+val jsoupVersion = "1.21.2"
+val mockitoVersion = "5.21.0"
+val scalaMockVersion = "7.5.2"
+val wiremockVersion = "3.8.0"
+val hmrcMongoVersion = "2.11.0"
+val currentScalaVersion = "3.3.6"
 val playVersion = "play-30"
 
 scalacOptions ++= Seq(
@@ -37,7 +36,6 @@ val compile = Seq(
 )
 
 def test(scope: String = "test"): Seq[ModuleID] = Seq(
-  "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
@@ -50,7 +48,6 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
 )
 
 def it(scope: String = "test"): Seq[ModuleID] = Seq(
-  "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusVersion % scope,
   "org.scalamock" %% "scalamock" % scalaMockVersion % scope,
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
@@ -107,6 +104,18 @@ lazy val microservice = Project(appName, file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
     ),
     RoutesKeys.routesImport := Seq("enums.IncomeSourceJourney._", "models.admin._", "models.core._"),
+  )
+  .settings(ThisBuild / scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
+  .settings(
+    scalacOptions --= Seq("-Wunused", "-Wunused:all"),
+    scalacOptions += "-deprecation",
+    Test / scalacOptions ++= Seq(
+      "-Wunused:imports",
+      "-Wunused:params",
+      "-Wunused:implicits",
+      "-Wunused:explicits",
+      "-Wunused:privates"
+    ),
   )
 
 lazy val it = project
