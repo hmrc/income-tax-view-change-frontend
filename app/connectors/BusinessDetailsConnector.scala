@@ -99,10 +99,7 @@ class BusinessDetailsConnector @Inject()(
   }
 
 
-  def getIncomeSources()(
-    implicit headerCarrier: HeaderCarrier,
-    mtdItUser: AuthorisedAndEnrolledRequest[_]
-  ): Future[IncomeSourceDetailsResponse] = {
+  def getIncomeSources()(implicit headerCarrier: HeaderCarrier, mtdItUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {
 
     val url = getIncomeSourcesUrl(mtdItUser.mtditId)
     Logger("application").debug(s"GET $url")

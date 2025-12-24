@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
@@ -29,7 +30,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -37,7 +38,10 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService))
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface))
     .build()
 
   lazy val testIncomeSourceAddedBackErrorController = app.injector.instanceOf[IncomeSourceAddedBackErrorController]
@@ -66,7 +70,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
         s"the user is authenticated as a $mtdRole" should {
           s"render the you cannot go back error page" in {
             setupMockSuccess(mtdRole)
-
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockMongo(IncomeSourceJourneyType(Add, SelfEmployment))
 
@@ -90,6 +94,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
 
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
 

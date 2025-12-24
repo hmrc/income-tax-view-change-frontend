@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
@@ -24,19 +25,20 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 
 import scala.concurrent.Future
 
-class YouCannotGoBackControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService {
+class YouCannotGoBackControllerSpec extends MockAuthActions with MockClaimToAdjustService with MockPaymentOnAccountSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
-      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[YouCannotGoBackController]
@@ -58,6 +60,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
             "AdjustPaymentsOnAccount FS is enabled and journeyComplete is true" in {
               setupTest()
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
 
               setupMockGetPaymentsOnAccount(testPoa1Maybe)
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
@@ -73,6 +76,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe OK
 
@@ -88,6 +92,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
 
@@ -100,6 +105,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
               setupMockPaymentOnAccountSessionService(Future.successful(Right(None)))
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
 
@@ -112,6 +118,7 @@ class YouCannotGoBackControllerSpec extends MockAuthActions
               setupMockPaymentOnAccountSessionService(Future.failed(new Error("")))
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
 

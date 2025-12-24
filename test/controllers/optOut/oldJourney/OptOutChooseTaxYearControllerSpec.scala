@@ -16,6 +16,7 @@
 
 package controllers.optOut.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import forms.optOut.ConfirmOptOutMultiTaxYearChoiceForm
 import mocks.auth.MockAuthActions
@@ -31,6 +32,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import repositories.OptOutSessionDataRepository
+import services.DateServiceInterface
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.{CurrentOptOutTaxYear, OptOutProposition, OptOutService, OptOutTestSupport}
 import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
@@ -44,7 +46,10 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
-      api.inject.bind[OptOutSessionDataRepository].toInstance(mockOptOutSessionDataRepository)
+      api.inject.bind[OptOutSessionDataRepository].toInstance(mockOptOutSessionDataRepository),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[OptOutChooseTaxYearController]
@@ -86,6 +91,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "has intent not pre-selected" in {
             enable(OptOutFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockGetSubmissionCountForTaxYear(counts)
             mockRecallOptOutPropositionWithIntent(Future.successful(optOutProposition, None))
@@ -100,6 +106,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "has intent pre-selected" in {
             enable(OptOutFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockGetSubmissionCountForTaxYear(counts)
             mockRecallOptOutPropositionWithIntent(Future.successful(optOutProposition, Some(optOutTaxYear.taxYear)))
@@ -116,6 +123,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
             disable(OptOutFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -131,8 +139,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
-
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
     s"submit(isAgent = $isAgent)" when {
@@ -144,6 +151,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
             enable(OptOutFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
@@ -167,6 +175,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "previous tax is chosen" in {
             enable(OptOutFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
@@ -188,6 +197,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "next tax is chosen" in {
             enable(OptOutFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
@@ -211,6 +221,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "choice is missing in form" in {
             enable(OptOutFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
@@ -232,6 +243,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "intent cant be saved" in {
             enable(OptOutFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockGetSubmissionCountForTaxYear(counts)
@@ -252,6 +264,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           "the opt out feature switch is disabled" in {
             disable(OptOutFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -267,7 +280,7 @@ class OptOutChooseTaxYearControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

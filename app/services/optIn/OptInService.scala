@@ -73,17 +73,11 @@ class OptInService @Inject()(
       }
   }
 
-  def availableOptInTaxYear()(implicit user: MtdItUser[_],
-                              hc: HeaderCarrier,
-                              ec: ExecutionContext): Future[Seq[TaxYear]] = fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
+  def availableOptInTaxYear()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[TaxYear]] =
+    fetchOptInProposition().map(_.availableOptInYears.map(_.taxYear))
 
-  def setupSessionData()(implicit hc: HeaderCarrier): Future[Boolean] = {
-    repository.set(
-      UIJourneySessionData(hc.sessionId.get.value,
-        Opt(OptInJourney).toString,
-        optInSessionData =
-          Some(OptInSessionData(None, None, Some(false)))))
-  }
+  def setupSessionData()(implicit hc: HeaderCarrier): Future[Boolean] =
+    repository.set(UIJourneySessionData(hc.sessionId.get.value, Opt(OptInJourney).toString, optInSessionData = Some(OptInSessionData(None, None, Some(false)))))
 
   private def fetchExistingUIJourneySessionDataOrInit(attempt: Int = 1)(implicit user: MtdItUser[_],
                                                                         hc: HeaderCarrier,
@@ -112,10 +106,7 @@ class OptInService @Inject()(
     }
   }
 
-  def fetchSavedOptInSessionData()
-                                        (implicit user: MtdItUser[_],
-                                         hc: HeaderCarrier,
-                                         ec: ExecutionContext): Future[Option[OptInSessionData]] = {
+  def fetchSavedOptInSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptInSessionData]] = {
 
     val savedOptInSessionData = for {
       sessionData <- OptionT(fetchExistingUIJourneySessionDataOrInit())
@@ -180,8 +171,8 @@ class OptInService @Inject()(
   }
 
   private def getITSAStatusesFrom(taxYear: TaxYear)(implicit user: MtdItUser[_],
-                                                        hc: HeaderCarrier,
-                                                        ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] = {
+                                                    hc: HeaderCarrier,
+                                                    ec: ExecutionContext): Future[Map[TaxYear, ITSAStatus]] = {
     itsaStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status).toMap.withDefaultValue(ITSAStatus.NoStatus))
   }
 

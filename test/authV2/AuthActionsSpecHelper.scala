@@ -31,6 +31,7 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
 
   lazy val mockAuthConnector = mock[FrontendAuthConnector]
   lazy val mockIncomeSourceDetailsService = mock[IncomeSourceDetailsService]
+
   lazy val mockAppConfig = mock[FrontendAppConfig]
   lazy val mockAuditingService = mock[AuditingService]
   lazy val mockSessionDataService = mock[SessionDataService]

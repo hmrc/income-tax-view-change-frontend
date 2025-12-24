@@ -16,22 +16,24 @@
 
 package controllers.manageBusinesses.manage
 
-import connectors.BusinessDetailsConnector
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import mocks.auth.MockAuthActions
-import mocks.connectors.MockBusinessDetailsConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api
-import services.{CalculationListService, DateService, ITSAStatusService, SessionService}
+import services._
 import testConstants.BaseTestConstants.testSelfEmploymentId
 
-trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessDetailsConnector
-  with MockSessionService with MockDateService with MockITSAStatusService with MockCalculationListService {
+trait ManageIncomeSourceDetailsHelper
+  extends MockAuthActions
+    with MockSessionService
+    with MockDateService
+    with MockITSAStatusService
+    with MockCalculationListService {
 
   lazy val incomeSourceIdHash: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
-
   lazy val heading: String = "Manage your details"
 
   def title() = "Manage your details - Manage your Self Assessment - GOV.UK"
@@ -47,14 +49,17 @@ trait ManageIncomeSourceDetailsHelper extends MockAuthActions with MockBusinessD
   lazy val quarterlyGracePeriod: String = "Quarterly"
   lazy val reportingMethod: String = "Reporting frequency"
 
-  override lazy val app = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateService].toInstance(mockDateService),
-      api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
-      api.inject.bind[CalculationListService].toInstance(mockCalculationListService)
-    ).build()
+  override lazy val app =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[SessionService].toInstance(mockSessionService),
+        api.inject.bind[DateService].toInstance(mockDateService),
+        api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
+        api.inject.bind[CalculationListService].toInstance(mockCalculationListService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[ManageIncomeSourceDetailsController]
 

@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.manage
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -26,20 +27,23 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.{SessionService, UpdateIncomeSourceService}
+import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome
 
 import scala.concurrent.Future
 
-class ReportingMethodChangeErrorControllerSpec
-  extends MockAuthActions with MockSessionService {
+class ReportingMethodChangeErrorControllerSpec extends MockAuthActions with MockSessionService {
 
   lazy val mockUpdateIncomeSourcesService = mock(classOf[UpdateIncomeSourceService])
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourcesService)
+      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourcesService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ReportingMethodChangeErrorController]
@@ -48,22 +52,26 @@ class ReportingMethodChangeErrorControllerSpec
 
   mtdAllRoles.foreach { mtdRole =>
     incomeSourceTypes.foreach { incomeSourceType =>
+
       val isAgent = mtdRole != MTDIndividual
+
       s"show($isAgent, $incomeSourceType)" when {
+
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = testController.show(isAgent, incomeSourceType)
+
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting method change error page" when {
             "using the manage businesses journey" in {
+
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
+
               if (incomeSourceType == SelfEmployment)
+
                 when(mockSessionService.getMongoKey(any(), any())(any(), any()))
-                  .thenReturn(
-                    Future(
-                      Right(Some(testSelfEmploymentId))
-                    )
-                  )
+                  .thenReturn(Future(Right(Some(testSelfEmploymentId))))
 
               val result = action(fakeRequest)
 

@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
@@ -24,7 +25,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{charset, contentType, _}
-import services.CalculationService
+import services.{CalculationService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
@@ -34,7 +35,10 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[CalculationService].toInstance(mockCalculationService)
+      api.inject.bind[CalculationService].toInstance(mockCalculationService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController: ForecastIncomeSummaryController = app.injector.instanceOf[ForecastIncomeSummaryController]
@@ -58,6 +62,7 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
           "render the forecast income summary page" when {
             "the given tax year is present in ETMP" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessIncome2018and2019)
               mockCalculationSuccessfulNew(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
@@ -90,6 +95,7 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
           "render the error page" when {
             "given a tax year which can not be found in ETMP" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessIncome2018and2019)
               mockCalculationNotFoundNew(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
@@ -98,6 +104,7 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
 
             "there is a downstream error which return INTERNAL_SERVER_ERROR" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessIncome2018and2019)
               mockCalculationErrorNew(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
@@ -106,7 +113,7 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
+             testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

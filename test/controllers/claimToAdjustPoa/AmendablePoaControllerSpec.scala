@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
@@ -23,7 +24,7 @@ import models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
 import play.api.test.Helpers._
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 
@@ -39,7 +40,10 @@ class AmendablePoaControllerSpec
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
-      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[AmendablePoaController]
@@ -56,6 +60,7 @@ class AmendablePoaControllerSpec
           s"render the Amendable POA page" when {
             "PoA tax year crystallized and no active session" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future(Right(None)))
               setupMockPaymentOnAccountSessionServiceCreateSession(Future(Right(())))
@@ -68,6 +73,7 @@ class AmendablePoaControllerSpec
 
             "PoA data is all fine, and we have an active session but is journey completed flag is false" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future(Right(getMongoResponseJourneyComplete)))
               setupMockPaymentOnAccountSessionServiceCreateSession(Future(Right(())))
@@ -80,6 +86,7 @@ class AmendablePoaControllerSpec
 
             "PoA data is all fine, and we have an active session but is journey completed flag is true" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
 
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future(Right(getMongoResponseJourneyIncomplete)))
@@ -94,6 +101,7 @@ class AmendablePoaControllerSpec
           s"return status: $INTERNAL_SERVER_ERROR" when {
             "an Exception is returned from ClaimToAdjustService" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
 
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future(Right(Some(PoaAmendmentData()))))
@@ -105,6 +113,7 @@ class AmendablePoaControllerSpec
 
             "Error creating mongo session" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
 
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
@@ -120,7 +129,7 @@ class AmendablePoaControllerSpec
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

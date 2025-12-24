@@ -3433,12 +3433,14 @@ signUpOptOut.cannotGoBack.linkText2     = mynd yn ôl i’r hafan
 
 ###You Must Wait To Use This Service Page
 #Individual:
+youMustWait.title              = Gallwch gael mynediad at y gwasanaeth hwn o 6 Ebrill {0} ymlaen
 youMustWait.heading            = Gallwch gael mynediad at y gwasanaeth hwn o 6 Ebrill {0} ymlaen
 youMustWait.text               = Mae hyn oherwydd eich bod wedi cofrestru i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf, sy’n dechrau 6 Ebrill {0}.
 youMustWait.text2              = Dysgwch ragor am
 youMustWait.linkText           = Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 #Agent:
+youMustWait.agent.title        = Gallwch fwrw golwg dros y cleient hwn o 6 Ebrill {0} ymlaen
 youMustWait.agent.heading      = Gallwch fwrw golwg dros y cleient hwn o 6 Ebrill {0} ymlaen
 youMustWait.agent.text         = Mae hyn oherwydd bod eich cleient wedi’i gofrestru i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf, sy’n dechrau ar 6 Ebrill {0}.
 youMustWait.agent.button.text  = Nodwch UTR arall

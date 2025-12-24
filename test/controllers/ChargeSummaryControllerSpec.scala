@@ -16,19 +16,22 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails.PoaTwoReconciliationCredit
 import models.repaymentHistory.RepaymentHistoryUtils
+import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
+import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, PaymentAllocationsService}
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.FinancialDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -39,7 +42,10 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
     .overrides(
       api.inject.bind[ChargeHistoryService].toInstance(mockChargeHistoryService),
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
-      api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService)
+      api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ChargeSummaryController]
@@ -48,7 +54,15 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
   val startYear: Int = endYear - 1
 
   def codedOutAdjustmentHistory: AdjustmentHistoryModel =
-    AdjustmentHistoryModel(AdjustmentModel(2500.00, Some(LocalDate.of(2018,3,29)), AdjustmentReversalReason), List(AdjustmentModel(2000.00, Some(LocalDate.of(2019,3,30)), AmendedReturnReversalReason)))
+    AdjustmentHistoryModel(AdjustmentModel(2500.00, Some(LocalDate.of(2018, 3, 29)), AdjustmentReversalReason), List(AdjustmentModel(2000.00, Some(LocalDate.of(2019, 3, 30)), AmendedReturnReversalReason)))
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+
+    when(mockDateServiceInterface.getCurrentDate).thenReturn(fixedDate)
+    when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
+  }
 
 
   mtdAllRoles.foreach { mtdUserRole =>
@@ -71,6 +85,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a POA1 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo(), docId = id1040000125) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000125)(fakeRequest)
@@ -87,6 +102,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo(), docId = id1040000126) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000126)(fakeRequest)
@@ -103,6 +119,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a POA1 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid(), docId = id1040000125) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action("1040000125")(fakeRequest)
@@ -118,6 +135,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a POA2 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid(), docId = id1040000126) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action("1040000126")(fakeRequest)
@@ -130,9 +148,10 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
-              "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+              "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
@@ -146,9 +165,10 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+              "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
@@ -165,6 +185,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneWithLpi(), docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
@@ -186,6 +207,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaTwoWithLpi(), docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
@@ -207,6 +229,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge, docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -225,6 +248,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a Balancing payment with accruing interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest, docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -249,6 +273,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a charge for Class 2 National Insurance" in new Setup(testFinancialDetailsModelWithCodingOutNics2(), docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
@@ -263,9 +288,10 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               }
 
-              "provided with an id associated to a coded out Balancing Payment" in new Setup(testFinancialDetailsModelWithPayeSACodingOut(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+              "provided with an id associated to a coded out Balancing Payment" in new Setup(testFinancialDetailsModelWithPayeSACodingOut(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
@@ -286,6 +312,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to an ITSA Return Amendment charge" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment, docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -307,6 +334,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to outstanding interest on a paid ITSA Return Amendment charge" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment, docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123, isInterestCharge = true)(fakeRequest)
@@ -327,6 +355,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 financialDetailsModelWithPoaOneAndTwoWithRarAndAmendmentCredits(), paymentAllocations = Right(paymentAllocationResponse), docId = id1040000127) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000127)(fakeRequest)
@@ -346,6 +375,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty, docId = id1040000123) {
                 enable(ChargeHistory, PenaltiesAndAppeals)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -368,10 +398,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               }
 
-              "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty, docId = id1040000123){
+              "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty, docId = id1040000123) {
                 enable(ChargeHistory, PenaltiesAndAppeals)
 
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -390,10 +421,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 testFinancialDetailsModelWithReviewAndReconcileAndPoas, docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
-                val chargeSummaryUrl = if(isAgent) {
+                val chargeSummaryUrl = if (isAgent) {
                   routes.ChargeSummaryController.showAgent(testTaxYear, id1040000123).url
                 } else {
                   routes.ChargeSummaryController.show(testTaxYear, id1040000123).url
@@ -420,12 +452,13 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas, docId = id1040000124) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
                 val result: Future[Result] = action(id1040000124)(fakeRequest)
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                val chargeSummaryUrl = if(isAgent) {
+                val chargeSummaryUrl = if (isAgent) {
                   routes.ChargeSummaryController.showAgent(testTaxYear, id1040000124).url
                 } else {
                   routes.ChargeSummaryController.show(testTaxYear, id1040000124).url
@@ -449,6 +482,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest, docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val endYear: Int = 2018
@@ -467,6 +501,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(accruingInterestAmount = Some(0.0)), docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
 
@@ -485,6 +520,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 financialDetailsModel(lpiWithDunningLock = None, outstandingAmount = 0), docId = id1040000123) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123, isInterestCharge = true)(fakeRequest)
@@ -502,6 +538,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
                 val result: Future[Result] = action(id1040000123, isInterestCharge = true)(fakeRequest)
 
@@ -516,6 +553,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear)), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -530,6 +568,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 chargesWithAllocatedPaymentModel(), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -541,7 +580,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 doc.getElementsByClass("govuk-notification-banner__title").first.text() shouldBe s"$dunningLocksBannerHeading"
                 doc.getElementById("charge-history-heading").text() shouldBe "History of this charge"
 
-                val allocationsUrl = if(isAgent) {
+                val allocationsUrl = if (isAgent) {
                   routes.PaymentAllocationsController.viewPaymentAllocationAgent(id1040000124).url
                 } else {
                   routes.PaymentAllocationsController.viewPaymentAllocation(id1040000124).url
@@ -554,6 +593,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 chargesWithAllocatedPaymentModel(), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -570,12 +610,13 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "displays link to poa extra charge on poa page when reconciliation charge exists" in new Setup(financialDetailsModelWithPoaExtraCharge(), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
 
                 status(result) shouldBe Status.OK
-                val chargeSummaryUrl = if(isAgent) {
+                val chargeSummaryUrl = if (isAgent) {
                   routes.ChargeSummaryController.showAgent(testTaxYear, "123456").url
                 } else {
                   routes.ChargeSummaryController.show(testTaxYear, "123456").url
@@ -585,6 +626,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel(), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -597,6 +639,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 financialDetailsModel(mainTransaction = "4910"), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -608,6 +651,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile, docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -624,6 +668,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 financialDetailsModelWithPoaOneAndTwoWithRarAndAmendmentCredits(), docId = id1040000125) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000125)(fakeRequest)
@@ -641,6 +686,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 financialDetailsModelWithPoaOneAndTwoWithRarAndAmendmentCredits(), docId = id1040000126) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000126)(fakeRequest)
@@ -658,6 +704,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 financialDetailsModelWithMFADebit(), docId = id1040000123) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -671,11 +718,12 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
             "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel(), docId = "fakeId") {
               disable(ChargeHistory)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockBothIncomeSources()
 
               val result: Future[Result] = action("fakeId")(fakeRequest)
 
-              val notFoundDocumentIDUrl = if(isAgent) {
+              val notFoundDocumentIDUrl = if (isAgent) {
                 controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
               } else {
                 controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
@@ -691,6 +739,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               enable(ChargeHistory)
               disable(ChargeHistory)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockBothIncomeSources()
 
               val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -702,6 +751,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
             "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing, docId = id1040000123) {
               disable(ChargeHistory)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockBothIncomeSources()
 
               val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -712,6 +762,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
             "the financial details response does not contain a chargeReference" in new Setup(financialDetailsModelWithPoaOneNoChargeRef(), docId = id1040000125) {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockBothIncomeSources()
 
               val result: Future[Result] = action(id1040000125)(fakeRequest)
@@ -721,8 +772,10 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
             }
 
             "the charge type is forbidden by current feature switches" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty, docId = id1040000123) {
+
               disable(PenaltiesAndAppeals)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockBothIncomeSources()
 
               val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -735,6 +788,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               "no related tax year financial details found" in new Setup(testFinancialDetailsModelWithPayeSACodingOut(), docId = codingout) {
                 disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
                 val result: Future[Result] = testController.show(2020, "CODINGOUT01")(fakeRequest)
@@ -746,7 +800,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
           }
         }
       }
-      testMTDAuthFailuresForRole(action(id1040000123), mtdUserRole, false)(fakeRequest)
+
+             testMTDAuthFailuresForRole(action(id1040000123), mtdUserRole, false)(fakeRequest)
     }
   }
 }

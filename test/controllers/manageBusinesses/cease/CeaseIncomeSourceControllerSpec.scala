@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.cease
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
@@ -29,10 +30,10 @@ import play.api
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
 import testConstants.BusinessDetailsTestConstants.{ceaseBusinessDetailsViewModel, ceaseBusinessDetailsViewModel2}
 import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, notCompletedUIJourneySessionData}
 
 import scala.concurrent.Future
 
@@ -41,7 +42,10 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testCeaseIncomeSourceController = app.injector.instanceOf[CeaseIncomeSourceController]
@@ -54,6 +58,7 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
         "Render the cease an income source page" when {
           "income source is enabled" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, SelfEmployment)))))
@@ -75,13 +80,13 @@ class CeaseIncomeSourceControllerSpec extends MockAuthActions
         "show error page" when {
           "using the manage businesses journey" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             mockBothIncomeSources()
 
             when(mockIncomeSourceDetailsService.getCeaseIncomeSourceViewModel(any(), any()))
               .thenReturn(Left(MissingFieldException("Trading Name")))
 
             val result: Future[Result] = action(fakeRequest)
-
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
           }
         }

@@ -16,51 +16,58 @@
 
 package controllers.optIn
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
-import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application
-import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
-import play.api.test.Helpers.{redirectLocation, status}
+import play.api.http.Status.OK
+import play.api.test.Helpers.{defaultAwaitTimeout, status}
+import services.DateServiceInterface
 import services.optIn.OptInService
-import services.optIn.core.OptInProposition.createOptInProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-
 
 import scala.concurrent.Future
 
 class YouMustWaitToSignUpControllerSpec extends MockAuthActions with MockOptInService {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[OptInService].toInstance(mockOptInService),
-    ).build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[OptInService].toInstance(mockOptInService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[YouMustWaitToSignUpController]
 
   mtdAllRoles.foreach { mtdRole =>
+
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
-    s"show(isAgent = $isAgent)" when {
-      val action = testController.show(isAgent)
-      s"the user is authenticated as a $mtdRole" should {
-        s"render the YouMustWaitToSignUp page" in {
-            setupMockSuccess(mtdRole)
-            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-            when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
-              .thenReturn(Future.successful(true))
+    val action = testController.show(isAgent)
 
-            val result = action(fakeRequest)
-            status(result) shouldBe OK
+    s"show(isAgent = $isAgent)" when {
+
+      s"the user is authenticated as a $mtdRole" should {
+
+        s"render the YouMustWaitToSignUp page" in {
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+          when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+            .thenReturn(Future(true))
+
+          val result = action(fakeRequest)
+          status(result) shouldBe OK
         }
+
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }

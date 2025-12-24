@@ -30,15 +30,10 @@
     button: ContinueButton
 )
 @(
-        viewModel: YouMustWaitToSignUpViewModel,
-        isAgent: Boolean,
-        origin: Option[String] = None
-)(
-        implicit request: Request[_],
-        user: MtdItUser[_],
-        messages: Messages,
-        dateService: DateServiceInterface
-)
+    viewModel: YouMustWaitToSignUpViewModel,
+    isAgent: Boolean,
+    origin: Option[String] = None
+)(implicit user: MtdItUser[_], messages: Messages)
 
 @individualContent = {
     @h1(messages("youMustWait.heading", viewModel.nextTaxYear), id = Some("you-must-wait-heading"))
@@ -63,7 +58,7 @@
 }
 
 @mainTemplate(
-    pageTitle = getHeading,
+    pageTitle = if(isAgent) messages("youMustWait.agent.title", viewModel.nextTaxYear) else messages("youMustWait.title", viewModel.nextTaxYear),
     backUrl = if(isAgent) None else Some(viewModel.backUrl),
     btaNavPartial = user.btaNavPartial
 ) {

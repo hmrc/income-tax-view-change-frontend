@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockDateService, MockPaymentOnAccountSessionService}
@@ -26,7 +27,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{ClaimToAdjustService, DateService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateService, DateServiceInterface, PaymentOnAccountSessionService}
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -37,12 +38,16 @@ class PoaAdjustedControllerSpec extends MockAuthActions
   with MockPaymentOnAccountSessionService
   with MockDateService {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
-      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
-      api.inject.bind[DateService].toInstance(mockDateService)
-    ).build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
+        api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
+        api.inject.bind[DateService].toInstance(mockDateService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[PoaAdjustedController]
 
@@ -61,7 +66,7 @@ class PoaAdjustedControllerSpec extends MockAuthActions
           s"render the POA Adjusted page" when {
             "PaymentOnAccount model is returned successfully with PoA tax year crystallized" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
-
+              mockItsaStatusRetrievalAction()
               when(mockDateService.getCurrentDate).thenReturn(startOfTaxYear)
               when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
               when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
@@ -74,8 +79,9 @@ class PoaAdjustedControllerSpec extends MockAuthActions
               status(result) shouldBe OK
             }
             "journeyCompleted flag is set to true" in {
-              mockSingleBISWithCurrentYearAsMigrationYear()
 
+              mockSingleBISWithCurrentYearAsMigrationYear()
+              mockItsaStatusRetrievalAction()
               when(mockDateService.getCurrentDate).thenReturn(endOfTaxYear)
               when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any())).thenReturn(Future(Right(())))
               when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(None, newPoaAmount = Some(5000), journeyCompleted = true)))))
@@ -90,6 +96,7 @@ class PoaAdjustedControllerSpec extends MockAuthActions
           }
 
           "return an error 500" when {
+
             "Error setting journey completed flag in mongo session" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))

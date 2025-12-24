@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
@@ -24,7 +25,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.CalculationService
+import services.{CalculationService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
@@ -36,7 +37,10 @@ class IncomeSummaryControllerSpec extends MockAuthActions
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[CalculationService].toInstance(mockCalculationService)
+      api.inject.bind[CalculationService].toInstance(mockCalculationService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSummaryController]
@@ -58,6 +62,7 @@ class IncomeSummaryControllerSpec extends MockAuthActions
           "render the income summary page" when {
             "the given tax year is present in ETMP" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessIncome2018and2019)
               mockCalculationSuccessWithFlag(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
@@ -76,6 +81,7 @@ class IncomeSummaryControllerSpec extends MockAuthActions
           "render the error page" when {
             "given a tax year which can not be found in ETMP" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessIncome2018and2019)
               mockCalculationSuccessWithFlagNotFound(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
@@ -83,6 +89,7 @@ class IncomeSummaryControllerSpec extends MockAuthActions
             }
             "there is a downstream error which return NOT_FOUND" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessIncome2018and2019)
               mockCalculationSuccessWithFlagNotFound(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
@@ -91,6 +98,7 @@ class IncomeSummaryControllerSpec extends MockAuthActions
 
             "there is a downstream error which return INTERNAL_SERVER_ERROR" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessIncome2018and2019)
               mockCalculationSuccessWithFlagError(testMtditid)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
               val result = action(fakeRequest)
@@ -99,7 +107,7 @@ class IncomeSummaryControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }

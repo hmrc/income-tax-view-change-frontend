@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
@@ -23,16 +24,20 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{charset, contentType, defaultAwaitTimeout, status}
-import services.CalculationService
+import services.{CalculationService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
 class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalculationService {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[CalculationService].toInstance(mockCalculationService)
-    ).build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[CalculationService].toInstance(mockCalculationService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[ForecastTaxCalcSummaryController]
 
@@ -41,16 +46,21 @@ class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalc
   }
 
   mtdAllRoles.foreach { mtdUserRole =>
+
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showAgent(testTaxYear) else testController.show(testTaxYear)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+
     s"show${if (isAgent) "Agent"}" when {
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
         } else {
+
           "render the forecast tax calc summary page" in {
+
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             mockCalculationSuccessfulNew(testMtditid)
             setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
@@ -91,6 +101,7 @@ class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalc
           }
         }
       }
+
       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }

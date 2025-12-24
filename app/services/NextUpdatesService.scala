@@ -46,8 +46,10 @@ class NextUpdatesService @Inject()(
     getOpenObligations().map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         Right(deadlines.obligations.flatMap(_.obligations.map(_.due)))
-      case ObligationsModel(obligations) if obligations.isEmpty || obligations.forall(_.obligations.isEmpty) => Right(Seq.empty)
-      case error: ObligationsErrorModel => Left(new Exception(s"${error.message}"))
+      case ObligationsModel(obligations) if obligations.isEmpty || obligations.forall(_.obligations.isEmpty) =>
+        Right(Seq.empty)
+      case error: ObligationsErrorModel =>
+        Left(new Exception(s"${error.message}"))
       case _ =>
         Left(new Exception("Unexpected Exception getting next deadline due and Overdue Obligations"))
     }

@@ -16,20 +16,30 @@
 
 package controllers.triggeredMigration
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
+import play.api
 import play.api.Application
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
 import scala.concurrent.Future
 
 class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings.build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      )
+      .build()
 
   private lazy val controller =
     app.injector.instanceOf[CheckActiveBusinessesConfirmController]
@@ -52,9 +62,10 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       s"the user is authenticated as a $mtdRole" should {
 
         "render the page when the TriggeredMigration FS is enabled" in {
+
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
-
+          mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(fakeRequest)
@@ -63,9 +74,10 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
 
         "redirect to the home page when the TriggeredMigration FS is disabled" in {
+
           disable(TriggeredMigration)
           setupMockSuccess(mtdRole)
-
+          mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(fakeRequest)
@@ -74,7 +86,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
       }
 
-      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
     s"submit(isAgent = $isAgent)" when {
@@ -83,9 +95,11 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       s"the user is authenticated as a $mtdRole" should {
 
         "redirect back to the page when form is valid and 'Yes' is selected" in {
-          enable(TriggeredMigration)
-          setupMockSuccess(mtdRole)
 
+          enable(TriggeredMigration)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
@@ -100,9 +114,10 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
 
         "redirect back to the page when form is valid and 'No' is selected" in {
+
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
-
+          mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
@@ -117,9 +132,10 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
 
         "return BadRequest when no option is selected" in {
+
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
-
+          mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
@@ -132,9 +148,10 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
 
         "redirect to the home page when the TriggeredMigration FS is disabled" in {
+
           disable(TriggeredMigration)
           setupMockSuccess(mtdRole)
-
+          mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
@@ -147,7 +164,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
       }
 
-      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

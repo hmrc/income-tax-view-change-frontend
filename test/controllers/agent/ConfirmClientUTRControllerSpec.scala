@@ -17,6 +17,7 @@
 package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockAuthActions
 import mocks.services.MockITSAStatusService
@@ -30,17 +31,19 @@ import play.api
 import play.api.Application
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
+import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import views.html.agent.ConfirmClientUTRView
 
-class ConfirmClientUTRControllerSpec extends MockAuthActions
-  with MockConfirmClient
-  with MockITSAStatusService {
+class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmClient with MockITSAStatusService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ConfirmClientUTRView].toInstance(mockConfirmClient),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testConfirmClientUTRController = app.injector.instanceOf[ConfirmClientUTRController]
@@ -50,6 +53,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
       "is not authenticated" should {
         "redirect the user to authenticate" in {
           setupMockAgentWithClientAuthorisationException()
+          mockItsaStatusRetrievalAction()
 
           val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
@@ -114,6 +118,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
         "is fully authenticated" should {
           "return OK and display confirm Client details page" in {
             setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             mockConfirmClientResponse(HtmlFormat.empty)
 
             val result = testConfirmClientUTRController.show()(fakeRequest)
@@ -131,6 +136,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
       "is not authenticated" should {
         "redirect the user to authenticate" in {
           setupMockAgentWithClientAuthorisationException()
+          mockItsaStatusRetrievalAction()
 
           val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
@@ -195,6 +201,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
         "is fully authenticated" should {
           "redirect to Home page and relevant data added to session or sent to session data service successfully" in {
             setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
 
             setupMockPostSessionData(Right(SessionDataPostSuccess(OK)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
@@ -221,6 +228,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions
           if (appConfig.isSessionDataStorageEnabled) {
             "throw an error if session data service flag is true and request to session data service is unsuccessful" in {
               setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
+              mockItsaStatusRetrievalAction()
 
               setupMockPostSessionData(Left(SessionDataPostFailure(INTERNAL_SERVER_ERROR, "POST to session data service was unsuccessful TEST")))
 

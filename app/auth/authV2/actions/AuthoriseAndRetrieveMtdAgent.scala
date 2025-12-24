@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunctions,
                                              val appConfig: FrontendAppConfig,
-                                                  mcc: MessagesControllerComponents,
+                                             mcc: MessagesControllerComponents,
                                              errorHandler: AgentItvcErrorHandler)
   extends FeatureSwitching
     with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] {
@@ -47,17 +47,17 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
 
   override protected def refine[A](request: AuthorisedAgentWithClientDetailsRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
 
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter
-      .fromRequestAndSession(request, request.session)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val req: AuthorisedAgentWithClientDetailsRequest[A] = request
 
     val clientMtdItId = request.clientDetails.mtdItId
-    lazy val primaryAgentDelegatedEnrolment = Enrolment(
-      key = mtdEnrolmentName,
-      identifiers = Seq(EnrolmentIdentifier(agentIdentifier, clientMtdItId)),
-      state = "Activated",
-      delegatedAuthRule = Some(primaryAgentAuthRule)
-    )
+    lazy val primaryAgentDelegatedEnrolment =
+      Enrolment(
+        key = mtdEnrolmentName,
+        identifiers = Seq(EnrolmentIdentifier(agentIdentifier, clientMtdItId)),
+        state = "Activated",
+        delegatedAuthRule = Some(primaryAgentAuthRule)
+      )
 
     authorisedFunctions.authorised(primaryAgentDelegatedEnrolment) {
       constructAuthorisedAndEnrolledUser(clientMtdItId, MTDPrimaryAgent)
@@ -69,19 +69,19 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
   }
 
   private def checkIfUserhasSupportingDelegatedEnrolmentPartialFunction[A](clientMtdItId: String)
-                                                                          (implicit hc: HeaderCarrier,
-                                                                           request: AuthorisedAgentWithClientDetailsRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
-    lazy val supportingAgentDelegatedEnrolment = Enrolment(
-      key = secondaryAgentEnrolmentName,
-      identifiers = Seq(EnrolmentIdentifier(agentIdentifier, clientMtdItId)),
-      state = "Activated",
-      delegatedAuthRule = Some(secondaryAgentAuthRule)
-    )
+                                                                          (implicit hc: HeaderCarrier, request: AuthorisedAgentWithClientDetailsRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
+    lazy val supportingAgentDelegatedEnrolment =
+      Enrolment(
+        key = secondaryAgentEnrolmentName,
+        identifiers = Seq(EnrolmentIdentifier(agentIdentifier, clientMtdItId)),
+        state = "Activated",
+        delegatedAuthRule = Some(secondaryAgentAuthRule)
+      )
     authorisedFunctions.authorised(supportingAgentDelegatedEnrolment) {
-       constructAuthorisedAndEnrolledUser(clientMtdItId, MTDSupportingAgent)
-      }.recoverWith {
-        case ex => handleAuthFailure(ex)
-      }
+      constructAuthorisedAndEnrolledUser(clientMtdItId, MTDSupportingAgent)
+    }.recoverWith {
+      case ex => handleAuthFailure(ex)
+    }
   }
 
   private def constructAuthorisedAndEnrolledUser[A](clientMtdItId: String, mtdUserRole: MTDUserRole)(

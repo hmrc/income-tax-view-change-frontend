@@ -17,7 +17,7 @@
 package controllers
 
 import audit.models.InitiatePayNowAuditModel
-import connectors.PayApiConnector
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector, PayApiConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
@@ -26,6 +26,7 @@ import org.mockito.Mockito._
 import play.api
 import play.api.Application
 import play.api.test.Helpers._
+import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
 import testConstants.PaymentDataTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -39,13 +40,15 @@ class PaymentControllerSpec extends MockAuthActions {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[PayApiConnector].toInstance(mockPayApiConnector)
+      api.inject.bind[PayApiConnector].toInstance(mockPayApiConnector),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[PaymentController]
 
   val paymentJourneyModel = PaymentJourneyModel("id", "redirect-url")
-
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
@@ -59,6 +62,7 @@ class PaymentControllerSpec extends MockAuthActions {
           "redirect to the payment api provided by payAPI" when {
             "a successful payments journey is started" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtr), ArgumentMatchers.eq(BigDecimal(10000)),
                 ArgumentMatchers.eq(isAgent))
@@ -86,6 +90,7 @@ class PaymentControllerSpec extends MockAuthActions {
             }
             "an error response is returned by the connector" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtr), ArgumentMatchers.eq(BigDecimal(10000)),
                 ArgumentMatchers.eq(isAgent))
@@ -96,6 +101,7 @@ class PaymentControllerSpec extends MockAuthActions {
 
             "an exception is returned by the connector" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(mockPayApiConnector.startPaymentJourney(ArgumentMatchers.eq(testSaUtr), ArgumentMatchers.eq(BigDecimal(10000)),
                 ArgumentMatchers.eq(isAgent))

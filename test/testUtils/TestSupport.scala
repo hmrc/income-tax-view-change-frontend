@@ -82,10 +82,14 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   lazy val messagesApi: MessagesApi = inject[MessagesApi]
 
-  implicit lazy val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter = mock(classOf[ItvcHeaderCarrierForPartialsConverter])
+  implicit lazy val mockItvcHeaderCarrierForPartialsConverter: ItvcHeaderCarrierForPartialsConverter =
+    mock(classOf[ItvcHeaderCarrierForPartialsConverter])
 
-  implicit val headerCarrier: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("session-123456")), deviceID = Some("some device Id")).withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
-  implicit val hcwc: HeaderCarrierForPartials = HeaderCarrierForPartials(headerCarrier)
+  implicit val headerCarrier: HeaderCarrier =
+    HeaderCarrier(sessionId = Some(SessionId("session-123456")), deviceID = Some("some device Id")).withExtraHeaders(HeaderNames.REFERER -> testReferrerUrl)
+
+  implicit val hcwc: HeaderCarrierForPartials =
+    HeaderCarrierForPartials(headerCarrier)
 
   implicit val conf: Configuration = app.configuration
   implicit val environment: Environment = app.injector.instanceOf[Environment]
@@ -123,7 +127,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
 
-  def commonAuditDetails(af:AffinityGroup, isSupportingAgent: Boolean = false): JsObject = {
+  def commonAuditDetails(af: AffinityGroup, isSupportingAgent: Boolean = false): JsObject = {
     val commonDetails = Json.obj(
       "mtditid" -> testMtditid,
       "nino" -> testNino,
@@ -131,11 +135,11 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       "credId" -> testCredId,
       "userType" -> af
     )
-    if(af == Agent) commonDetails ++ Json.obj(
+    if (af == Agent) commonDetails ++ Json.obj(
       "isSupportingAgent" -> isSupportingAgent,
       "agentReferenceNumber" -> testArn,
     )
-     else commonDetails
+    else commonDetails
   }
 
   def getIndividualUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = {
@@ -146,7 +150,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAligned, request)
 
   def getIndividualUserIncomeSourcesConfigurable(request: FakeRequest[AnyContentAsEmpty.type], incomeSources: IncomeSourceDetailsModel)
-  : MtdItUser[_] =     defaultMTDITUser(Some(testUserTypeIndividual), incomeSources, request)
+  : MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual), incomeSources, request)
 
   def getIndividualUserWithTwoActiveForeignProperties(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeIndividual), twoActiveForeignPropertyIncomes, request)
@@ -158,11 +162,11 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   }
 
   implicit class Ops[A](a: A) {
-    def ~[B](b: B): A ~ B = new ~(a, b)
+    def ~[B](b: B): A ~ B = new~(a, b)
   }
 
   type AuthRetrievals =
-    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup]  ~ ConfidenceLevel
+    Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
 
   def fakeGetRequestBasedOnMTDUserType(mtdUserRole: MTDUserRole): FakeRequest[AnyContentAsEmpty.type] = {
     mtdUserRole match {
@@ -315,7 +319,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
 
   override def enable(featureSwitchNames: FeatureSwitchName*): Unit = {
-    featureSwitchNames.foreach{ featureSwitch =>
+    featureSwitchNames.foreach { featureSwitch =>
       if (appConfig.readFeatureSwitchesFromMongo)
         Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, true), 5.seconds)
       else
@@ -329,7 +333,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     else
       sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
 
-  def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
+  def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
     case x if x.remainingToPayByChargeOrInterest > 0 => x
   }
 }

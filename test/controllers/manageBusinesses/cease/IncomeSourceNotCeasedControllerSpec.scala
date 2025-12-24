@@ -16,21 +16,31 @@
 
 package controllers.manageBusinesses.cease
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api
+import play.api.Application
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
+import services.DateServiceInterface
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
 
 import scala.concurrent.Future
 
 class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
 
-  override lazy val app = applicationBuilderWithAuthBindings
-    .build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceNotCeasedController]
 
@@ -39,6 +49,7 @@ class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
     case UkProperty => messages("incomeSources.cease.error.UK.notCeased.text")
     case _ => messages("incomeSources.cease.error.FP.notCeased.text")
   }
+
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
 
   mtdAllRoles.foreach { mtdRole =>
@@ -50,6 +61,7 @@ class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
         s"the user is authenticated as a $mtdRole" should {
           "render the not ceased page" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(ukPropertyIncome)
             mockUKPropertyIncomeSource()
 
             val result: Future[Result] = action(fakeRequest)
@@ -60,7 +72,7 @@ class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
             document.text() should include(getMessage(incomeSourceType))
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

@@ -16,30 +16,47 @@
 
 package controllers.optIn.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.{ReportingFrequencyPage, SignUpFs}
+import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 class OptInErrorControllerSpec extends MockAuthActions {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
+
 
   lazy val testController = app.injector.instanceOf[OptInErrorController]
 
   mtdAllRoles.foreach { mtdRole =>
+
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
+
     s"show(isAgent = $isAgent)" when {
+
       val action = testController.show(isAgent)
+
       s"the user is authenticated as a $mtdRole" should {
+
         s"render the error page" in {
+
           enable(ReportingFrequencyPage, SignUpFs)
+
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
@@ -50,6 +67,7 @@ class OptInErrorControllerSpec extends MockAuthActions {
           enable(ReportingFrequencyPage)
           disable(SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
@@ -67,6 +85,7 @@ class OptInErrorControllerSpec extends MockAuthActions {
           disable(ReportingFrequencyPage)
           disable(SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)

@@ -16,6 +16,7 @@
 
 package controllers.optOut.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
@@ -30,6 +31,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import services.optout.{OptOutProposition, OptOutService}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1
@@ -44,12 +46,16 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
     "feature-switches.read-from-mongo" -> "false"
   )
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[OptOutService].toInstance(mockOptOutService)
-    )
-    .configure(config)
-    .build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[OptOutService].toInstance(mockOptOutService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      )
+      .configure(config)
+      .build()
 
   lazy val testController = app.injector.instanceOf[OptOutCancelledController]
   lazy val optOutCancelledView = app.injector.instanceOf[OptOutCancelledView]
@@ -68,7 +74,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
 
           "render the opt out cancelled page" in {
             enable(OptOutFs)
-
+            mockItsaStatusRetrievalAction()
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
 
@@ -106,7 +112,6 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
         }
 
 
-
         "user hits the cancel page before a tax year is selected for a multi year scenario and no tax year is returned" should {
 
           "render the opt out cancelled page - OK 200" in {
@@ -115,7 +120,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             setupMockSuccess(mtdRole)
-
+            mockItsaStatusRetrievalAction()
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
@@ -188,10 +193,12 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
           }
         }
         "redirect to the home page" when {
+
           "the feature switch is disabled" in {
+
             disable(OptOutFs)
             setupMockSuccess(mtdRole)
-
+            mockItsaStatusRetrievalAction()
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future.successful(IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)))
@@ -209,7 +216,7 @@ class OptOutCancelledControllerSpec extends MockAuthActions with MockOptOutServi
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

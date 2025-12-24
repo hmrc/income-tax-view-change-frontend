@@ -61,23 +61,25 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
   // TODO: we need to identify this on the chargeItem level -> mark as deprecated
   def isReviewAndReconcilePoaOneDebit(documentId: String): Boolean = {
-      financialDetails.exists { fd =>
-        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
-      }
+    financialDetails.exists { fd =>
+      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaOne(fd.mainTransaction)
+    }
   }
 
   // TODO: we need to identify this on the chargeItem level -> mark as deprecated
   def isReviewAndReconcilePoaTwoDebit(documentId: String): Boolean = {
-      financialDetails.exists { fd =>
-        fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
-      }
+    financialDetails.exists { fd =>
+      fd.transactionId.contains(documentId) && isReviewAndReconcilePoaTwo(fd.mainTransaction)
+    }
   }
 
   // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
   def findDocumentDetailByIdWithDueDate(id: String)(implicit dateService: DateServiceInterface): Option[DocumentDetailWithDueDate] = {
-    documentDetails.find(_.transactionId == id)
-      .map(documentDetail => DocumentDetailWithDueDate(
-        documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId)))
+    documentDetails
+      .find(_.transactionId == id)
+      .map(documentDetail =>
+        DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId))
+      )
   }
 
   // TODO: method possibly is not required at all: TaxYearSummaryController -> withTaxYearFinancials
@@ -135,7 +137,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
               val finDetailOfSource = financialDetails.find(_.transactionId == clearingId)
               val (taxYear, isCredit) = finDetailOfSource match {
                 case Some(financialDetail: FinancialDetail) => (Some(financialDetail.taxYear), financialDetail.mainTransaction.exists(cr => creditsWithSummaryPages.contains(cr)))
-                case None => (None ,false)
+                case None => (None, false)
               }
               PaymentHistoryAllocation(
                 dueDate = subItem.dueDate,

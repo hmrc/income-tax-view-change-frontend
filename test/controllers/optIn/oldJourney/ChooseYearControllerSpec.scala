@@ -16,16 +16,18 @@
 
 package controllers.optIn.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import forms.optIn.ChooseTaxYearForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
-import models.admin.{SignUpFs, ReportingFrequencyPage}
+import models.admin.{ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
+import services.DateServiceInterface
 import services.optIn.OptInService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -34,7 +36,10 @@ class ChooseYearControllerSpec extends MockAuthActions
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[OptInService].toInstance(mockOptInService)
+      api.inject.bind[OptInService].toInstance(mockOptInService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ChooseYearController]
@@ -51,6 +56,7 @@ class ChooseYearControllerSpec extends MockAuthActions
         "render the check your answers page" in {
           enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
           mockFetchSavedChosenTaxYear(Some(taxYear2023))
@@ -63,6 +69,7 @@ class ChooseYearControllerSpec extends MockAuthActions
           enable(ReportingFrequencyPage)
           disable(SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
@@ -79,6 +86,7 @@ class ChooseYearControllerSpec extends MockAuthActions
         "render the home page when the feature switch is disabled" in {
           disable(ReportingFrequencyPage)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
@@ -92,7 +100,7 @@ class ChooseYearControllerSpec extends MockAuthActions
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
     s"submit(isAgent = $isAgent)" when {
@@ -102,6 +110,7 @@ class ChooseYearControllerSpec extends MockAuthActions
         "redirect to Check Your Answers" in {
           enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
           mockSaveIntent(taxYear2023)
@@ -117,6 +126,7 @@ class ChooseYearControllerSpec extends MockAuthActions
           "the form is invalid" in {
             enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
             mockSaveIntent(taxYear2023)
@@ -132,6 +142,7 @@ class ChooseYearControllerSpec extends MockAuthActions
           "failed save intent" in {
             enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockAvailableOptInTaxYear(List(taxYear2023, taxYear2023.nextYear))
             mockSaveIntent(taxYear2023, isSuccessful = false)
@@ -148,6 +159,7 @@ class ChooseYearControllerSpec extends MockAuthActions
             enable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -166,6 +178,7 @@ class ChooseYearControllerSpec extends MockAuthActions
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -179,7 +192,7 @@ class ChooseYearControllerSpec extends MockAuthActions
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

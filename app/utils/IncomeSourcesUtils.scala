@@ -24,24 +24,25 @@ import play.api.Logger
 
 trait IncomeSourcesUtils extends FeatureSwitching {
 
-  def getActiveProperty(incomeSourceType: IncomeSourceType)
-                       (implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
+  def selectActiveProperty(incomeSourceType: IncomeSourceType, filter: PropertyDetailsModel => Boolean)(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
 
-    def selectActiveProperty(filter: PropertyDetailsModel => Boolean): Option[PropertyDetailsModel] = {
-      val activeProperty = user.incomeSources.properties.filter(p => !p.isCeased && filter(p))
+    val activeProperty: Seq[PropertyDetailsModel] = user.incomeSources.properties.filter(p => !p.isCeased && filter(p))
 
-      activeProperty match {
-        case property :: Nil => Some(property)
-        case _ =>
-          Logger("application").error(s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
-          None
-      }
-    }
-
-    incomeSourceType match {
-      case SelfEmployment => None
-      case UkProperty => selectActiveProperty(_.isUkProperty)
-      case _ => selectActiveProperty(_.isForeignProperty)
+    activeProperty match {
+      case property :: Nil =>
+        Some(property)
+      case _ =>
+        Logger("application").error(s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
+        None
     }
   }
+
+  def getActiveProperty(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
+    incomeSourceType match {
+      case SelfEmployment => None
+      case UkProperty => selectActiveProperty(UkProperty, _.isUkProperty)
+      case foreignProperty => selectActiveProperty(foreignProperty, _.isForeignProperty)
+    }
+  }
+
 }

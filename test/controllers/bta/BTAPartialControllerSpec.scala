@@ -16,23 +16,37 @@
 
 package controllers.bta
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
+import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
+import services.DateServiceInterface
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
 
 class BTAPartialControllerSpec extends MockAuthActions {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings.build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[BTAPartialController]
+  val action = testController.setupPartial
 
-  "The BTAPartialController.setupPartial action" when {
-    val action = testController.setupPartial
+  ".setupPartial()" when {
+
     "the user is authorised" should {
+
       "render the BTA partial page" in {
+
         setupMockSuccess(MTDIndividual)
+        mockItsaStatusRetrievalAction(businessIncome)
         mockBusinessIncomeSource()
 
         val result = action(fakeRequestWithActiveSession)

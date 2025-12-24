@@ -16,18 +16,26 @@
 
 package controllers.optOut.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.OptOutFs
+import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 class OptOutErrorControllerSpec extends MockAuthActions {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[OptOutErrorController]
 
@@ -40,6 +48,7 @@ class OptOutErrorControllerSpec extends MockAuthActions {
         s"render the opt out error page" in {
           enable(OptOutFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
@@ -50,6 +59,7 @@ class OptOutErrorControllerSpec extends MockAuthActions {
         "redirect to the home page when the feature switch is disabled" in {
           disable(OptOutFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)

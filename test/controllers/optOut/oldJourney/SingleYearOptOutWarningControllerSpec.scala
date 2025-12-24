@@ -16,6 +16,7 @@
 
 package controllers.optOut.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.optOut.ConfirmOptOutSingleTaxYearForm
 import mocks.auth.MockAuthActions
@@ -29,6 +30,7 @@ import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import services.optout.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -38,12 +40,15 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[OptOutService].toInstance(mockOptOutService)
+      api.inject.bind[OptOutService].toInstance(mockOptOutService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testSingleYearOptOutWarningController = app.injector.instanceOf[SingleYearOptOutWarningController]
 
-  mtdAllRoles.foreach{ case mtdUserRole =>
+  mtdAllRoles.foreach { case mtdUserRole =>
 
     val isAgent = mtdUserRole != MTDIndividual
 
@@ -72,6 +77,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
         s"return result with $OK status" in {
           enable(OptOutFs)
           setupMockSuccess(mtdUserRole)
+          mockItsaStatusRetrievalAction()
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -83,6 +89,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
           "there is no tax year eligible for opt out" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
@@ -93,6 +100,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
           "opt out service fails" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
@@ -105,6 +113,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
           "the feature switch is disabled" in {
             disable(OptOutFs)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result: Future[Result] = showAction(requestGET)
@@ -119,7 +128,6 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
-
         if (isAgent)
           testMTDAgentAuthFailures(showAction, mtdUserRole == MTDSupportingAgent)
         else
@@ -134,6 +142,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
           "Yes response is submitted" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -152,6 +161,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
           "No response is submitted" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -162,13 +172,14 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
               ))
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(optOutCancelledUrl)
-        }
           }
+        }
 
         s"return result with $BAD_REQUEST status" when {
           "invalid response is submitted" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(eligibleTaxYearResponse)
 
@@ -184,6 +195,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
           "there is no tax year eligible for opt out" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(noEligibleTaxYearResponse)
 
@@ -194,6 +206,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
           "opt out service fails" in {
             enable(OptOutFs)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRecallNextUpdatesPageOneYearOptOutViewModel(failedResponse)
 
@@ -205,6 +218,7 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
           "the feature switch is disabled" in {
             disable(OptOutFs)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result: Future[Result] = submitAction(requestPOST)
@@ -219,7 +233,6 @@ class SingleYearOptOutWarningControllerSpec extends MockAuthActions with MockOpt
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }
-
         if (isAgent)
           testMTDAgentAuthFailures(submitAction, mtdUserRole == MTDSupportingAgent)
         else

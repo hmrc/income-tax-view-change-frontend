@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
@@ -28,23 +29,24 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.CalculationService
+import services.{CalculationService, DateServiceInterface}
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
 import java.time.LocalDate
 import scala.concurrent.Future
-class FinalTaxCalculationControllerSpec extends MockAuthActions
-  with MockCalculationService
-  with ImplicitDateFormatter {
+
+class FinalTaxCalculationControllerSpec extends MockAuthActions with MockCalculationService with ImplicitDateFormatter {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[CalculationService].toInstance(mockCalculationService)
+      api.inject.bind[CalculationService].toInstance(mockCalculationService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[FinalTaxCalculationController]
-
 
   val testCalcError: LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")
   val testCalcNOCONTENT: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "Test message")
@@ -62,7 +64,9 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
   val taxYear = 2018
 
   mtdAllRoles.foreach { mtdUserRole =>
+
     val isAgent = mtdUserRole != MTDIndividual
+
     s"show${if (isAgent) "Agent"}" when {
       val action = if (isAgent) testController.showAgent(testTaxYear) else testController.show(testTaxYear, None)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
@@ -72,6 +76,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
         } else {
           "render the final tax calculation page" in {
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(businessIncome2018and2019)
             setupMockGetIncomeSourceDetails(businessIncome2018and2019)
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(testCalcResponse))
@@ -96,15 +101,22 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
     }
 
     s"submit${if (isAgent) "Agent"}" when {
+
       val action = if (isAgent) testController.agentSubmit(testTaxYear) else testController.submit(testTaxYear)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdUserRole)
+
       s"the $mtdUserRole is authenticated" should {
+
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
         } else {
+
           "redirect to submissionFrontendFinalDeclaration" in {
+
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(businessIncome2018and2019)
             setupMockGetIncomeSourceDetails(businessIncome2018and2019)
+
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(testCalcResponse))
             val result = action(fakeRequest)
@@ -132,6 +144,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions
           }
         }
       }
+
       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }

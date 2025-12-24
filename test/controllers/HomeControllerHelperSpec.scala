@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.services._
@@ -54,7 +55,10 @@ trait HomeControllerHelperSpec extends MockAuthActions
       api.inject.bind[WhatYouOweService].toInstance(mockWhatYouOweService),
       api.inject.bind[DateService].toInstance(mockDateService),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
-      api.inject.bind[PenaltyDetailsService].toInstance(mockPenaltyDetailsService)
+      api.inject.bind[PenaltyDetailsService].toInstance(mockPenaltyDetailsService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   val updateYear: String = "2018"

@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
@@ -24,7 +25,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 
@@ -36,7 +37,10 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
-      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[WhatYouNeedToKnowController]
@@ -53,6 +57,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
           s"render the Amendable POA page" when {
             "PaymentOnAccount model is returned successfully with PoA tax year crystallized and relevantAmount = totalAmount" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
+              mockItsaStatusRetrievalAction()
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
@@ -63,6 +68,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
             }
             "PaymentOnAccount model is returned successfully with PoA tax year crystallized and relevantAmount > totalAmount" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
+              mockItsaStatusRetrievalAction()
               setupMockGetPaymentsOnAccount(Some(previouslyReducedPaymentOnAccountModel))
               setupMockTaxYearNotCrystallised()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
@@ -75,6 +81,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
 
           "redirect to the You Cannot Go Back page" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
+            mockItsaStatusRetrievalAction()
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
@@ -87,6 +94,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
           "return an error 500" when {
             "PaymentOnAccount model is not built successfully" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
+              mockItsaStatusRetrievalAction()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
               setupMockGetPaymentsOnAccountBuildFailure()
 
@@ -97,6 +105,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
 
             "an Exception is returned from ClaimToAdjustService" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
+              mockItsaStatusRetrievalAction()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
               setupMockGetAmendablePoaViewModelFailure()
 
