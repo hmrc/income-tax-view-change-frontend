@@ -32,22 +32,20 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
-                                   val authActions: AuthActions,
-                                   itvcErrorHandler: ItvcErrorHandler,
-                                   agentItvcErrorHandler: AgentItvcErrorHandler)
-                                  (implicit val appConfig: FrontendAppConfig,
-                                   mcc: MessagesControllerComponents,
-                                   val ec: ExecutionContext,
-                                   val dateService: DateServiceInterface
-                                  ) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
+class TaxYearsController @Inject()(
+                                    val authActions: AuthActions,
+                                    agentItvcErrorHandler: AgentItvcErrorHandler,
+                                    itvcErrorHandler: ItvcErrorHandler,
+                                    taxYearsView: TaxYearsView,
+                                  )(
+                                    implicit val appConfig: FrontendAppConfig,
+                                    mcc: MessagesControllerComponents,
+                                    val ec: ExecutionContext,
+                                    val dateService: DateServiceInterface
+                                  ) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
 
-  def handleRequest(backUrl: String,
-                    isAgent: Boolean,
-                    origin: Option[String] = None)
-                   (implicit user: MtdItUser[_]): Future[Result] = {
+  def handleRequest(backUrl: String, isAgent: Boolean, origin: Option[String] = None)(implicit user: MtdItUser[_]): Future[Result] = {
     Try {
       taxYearsView(
         taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
@@ -62,27 +60,21 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
     } match {
       case Success(taxView) => Future.successful(Ok(taxView))
       case Failure(ex) =>
-        Logger("application").error(
-          s"failed to render view file for taxYears due to ${ex.getMessage}")
-        val errorHandler = if(isAgent) agentItvcErrorHandler else itvcErrorHandler
+        val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
+        Logger("application").error(s"failed to render view file for taxYears due to ${ex.getMessage}")
         Future.successful(errorHandler.showInternalServerError())
     }
   }
 
-  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
-      handleRequest(
-        backUrl = controllers.routes.HomeController.show(origin).url,
-        isAgent = false,
-        origin = origin
-      )
-  }
+  def showTaxYears(origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async {
+      implicit user =>
+        handleRequest(backUrl = controllers.routes.HomeController.show(origin).url, isAgent = false, origin = origin)
+    }
 
-  def showAgentTaxYears: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit mtdItUser =>
-      handleRequest(
-        backUrl = controllers.routes.HomeController.showAgent().url,
-        isAgent = true
-      )
-  }
+  def showAgentTaxYears: Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async {
+      implicit mtdItUser =>
+        handleRequest(backUrl = controllers.routes.HomeController.showAgent().url, isAgent = true)
+    }
 }

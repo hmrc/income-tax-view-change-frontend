@@ -24,17 +24,19 @@ import play.api.mvc._
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
-                            val authoriseAndRetrieve: AuthoriseAndRetrieve,
-                            val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
-                            val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
-                            val authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
-                            val agentHasConfirmedClientAction: AgentHasConfirmedClientAction,
-                            val agentIsPrimaryAction: AgentIsPrimaryAction,
-                            val retrieveNavBar: NavBarRetrievalAction,
-                            val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
-                            val retrieveClientData: RetrieveClientData,
-                            val retrieveFeatureSwitches: FeatureSwitchRetrievalAction) {
+class AuthActions @Inject()(
+                             checkSessionTimeout: SessionTimeoutAction,
+                             authoriseAndRetrieve: AuthoriseAndRetrieve,
+                             authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
+                             authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
+                             authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
+                             agentHasConfirmedClientAction: AgentHasConfirmedClientAction,
+                             agentIsPrimaryAction: AgentIsPrimaryAction,
+                             retrieveNavBar: NavBarRetrievalAction,
+                             retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
+                             retrieveClientData: RetrieveClientData,
+                             retrieveFeatureSwitches: FeatureSwitchRetrievalAction
+                           ) {
 
   def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
@@ -76,7 +78,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
   }
 
   def asMTDIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
-    if(isAgent) {
+    if (isAgent) {
       asMTDAgentWithConfirmedClient
     } else {
       asMTDIndividual
@@ -84,7 +86,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
   }
 
   def asMTDIndividualOrPrimaryAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
-    if(isAgent) {
+    if (isAgent) {
       asMTDPrimaryAgent
     } else {
       asMTDIndividual
