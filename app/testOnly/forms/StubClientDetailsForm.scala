@@ -28,7 +28,7 @@ object StubClientDetailsForm {
   val utrKey: String = "utr"
   val statusKey: String = "status"
 
-  val isNumberConstraint: Constraint[String] = constraint[String] { text =>
+  private val isNumberConstraint: Constraint[String] = constraint[String] { text =>
     try {
       text.toInt
       Valid
@@ -37,14 +37,16 @@ object StubClientDetailsForm {
     }
   }
 
-  def nonEmptyText(msg: String): Mapping[String] = default(text, "").verifying(msg, _.nonEmpty)
+  private def nonEmptyText(msg: String): Mapping[String] = default(text, "").verifying(msg, _.nonEmpty)
 
   val clientDetailsForm: Form[StubClientDetailsModel] = Form(
     mapping(
       ninoKey -> nonEmptyText("Must have an nino"),
       utrKey -> nonEmptyText("Must have a utr"),
       statusKey -> nonEmptyText("Must have a status").verifying(isNumberConstraint).transform[Int](_.toInt, _.toString)
-    )(StubClientDetailsModel.apply)(StubClientDetailsModel.unapply)
+    )
+    ((nino, utr, status) => StubClientDetailsModel(nino, utr, status))
+    (form => Some(form.nino, form.utr, form.status))
   )
 
 }

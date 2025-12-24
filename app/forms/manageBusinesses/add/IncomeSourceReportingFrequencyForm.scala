@@ -39,7 +39,9 @@ object IncomeSourceReportingFrequencyForm extends Constraints {
       mapping(
         yesNoAnswer -> optional(text)
           .verifying(noResponseErrorMessageKey, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
-      )(IncomeSourceReportingFrequencyForm.apply)(IncomeSourceReportingFrequencyForm.unapply)
+      )
+      (yesNoAnswer => IncomeSourceReportingFrequencyForm(yesNoAnswer))
+      (form => Some(form.yesNo))
     )
   }
 }

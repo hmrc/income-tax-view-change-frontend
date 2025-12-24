@@ -140,7 +140,7 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     @if(!isAgent && paymentHistoryAndRefundsEnabled) {
         <div id="refundstatus" class="govuk-inset-text">
             @getMessage("check-refund-1")
-            @link(link =  s"${controllers.routes.PaymentHistoryController.refundStatus.url}",
+            @link(link =  s"${controllers.routes.PaymentHistoryController.refundStatus().url}",
             messageKey = "paymentHistory.check-refund-2", classes = "govuk-link",
             role=Some("button")
             )

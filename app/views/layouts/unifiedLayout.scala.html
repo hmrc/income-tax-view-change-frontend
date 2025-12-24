@@ -90,7 +90,7 @@
         serviceName = if(showServiceName) serviceName else None,
         serviceUrl = serviceUrl,
         language = CurrentLanguage(),
-        signOutHref = Some(controllers.routes.SignOutController.signOut.url),
+        signOutHref = Some(controllers.routes.SignOutController.signOut().url),
         userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
         displayHmrcBanner = false,
         phaseBanner = Some(
@@ -115,7 +115,7 @@
         timeout = Option(900),
         countdown = Option(120),
         keepAliveUrl = Some(controllers.timeout.routes.SessionTimeoutController.keepAlive().url),
-        signOutUrl = Some(controllers.routes.SignOutController.signOut.url),
+        signOutUrl = Some(controllers.routes.SignOutController.signOut().url),
         keepAliveButtonText = Some(messages("button.continue"))
         ))
     }

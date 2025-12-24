@@ -37,9 +37,12 @@ object EnterPoaAmountForm extends Mappings {
   val form: Form[EnterPoaAmountForm] = Form(
     mapping(
       amount -> currency(emptyErrorMessageKey, invalidErrorMessageKey)
-    )(EnterPoaAmountForm.apply)(EnterPoaAmountForm.unapply)
+    )(
+      amount => EnterPoaAmountForm(amount)
+    )(
+      form => Some(form.amount)
+    )
   )
-
 
   def checkValueConstraints(form: Form[EnterPoaAmountForm], totalAmount: BigDecimal, relevantAmount: BigDecimal)
                            (implicit messages: Messages): Form[EnterPoaAmountForm] = {

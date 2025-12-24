@@ -59,9 +59,10 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
                                val optInService: OptInService,
                                val optOutService: OptOutService,
                                auditingService: AuditingService)
-                              (implicit val ec: ExecutionContext,
-                               implicit val itvcErrorHandler: ItvcErrorHandler,
-                               implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                              (implicit
+                               val ec: ExecutionContext,
+                               val itvcErrorHandler: ItvcErrorHandler,
+                               val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 

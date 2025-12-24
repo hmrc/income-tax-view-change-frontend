@@ -34,8 +34,7 @@ class IncomeSourceRetrievalAction @Inject()(val incomeSourceDetailsService: Inco
                                            (implicit val executionContext: ExecutionContext,
                                             val individualErrorHandler: ItvcErrorHandler,
                                             val agentErrorHandler: AgentItvcErrorHandler,
-                                            mcc: MessagesControllerComponents) extends BaseController with
-  ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] {
+                                            mcc: MessagesControllerComponents) extends BaseController with ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] {
 
   override def refine[A](request: AuthorisedAndEnrolledRequest[A]): Future[Either[Result, MtdItUser[A]]] = {
 

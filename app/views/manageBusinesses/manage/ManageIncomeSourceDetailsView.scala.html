@@ -86,7 +86,7 @@
 }
 
 @getSelfEmploymentList = @{
-
+val rows = {
     val maybeTradingNameRow: Option[SummaryListRow] =
         viewModel.tradingName match {
             case Some("nextUpdates.business") =>
@@ -112,19 +112,20 @@
                 ))
         }
 
-        val addressRow = SummaryListRow(
-            key = Key(
-                content = Text(messages("incomeSources.manage.new.business.details.business.address"))
-             ),
-            value = Value(
-                content = getLongAddressFromBusinessAddressDetails(viewModel.address) match {
-                    case Some(x) => HtmlContent(s"""$x""")
-                    case None    => Text(messages("incomeSources.generic.unknown"))
-                }
-            )
+    val addressRow = SummaryListRow(
+        key = Key(
+            content = Text(messages("incomeSources.manage.new.business.details.business.address"))
+        ),
+        value = Value(
+            content = getLongAddressFromBusinessAddressDetails(viewModel.address) match {
+                case Some(x) => HtmlContent(s"""$x""")
+                case None => Text(messages("incomeSources.generic.unknown"))
+            }
         )
-
+    )
     maybeTradingNameRow.toSeq :+ addressRow
+}
+  rows
 }
 
 

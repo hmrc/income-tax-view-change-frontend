@@ -24,7 +24,7 @@ sealed trait OptOutPropositionTypes {
   def state(intent: OptOutTaxYear): Option[OptOutState]
 }
 
-case class OneYearOptOutProposition private(proposition: OptOutProposition) extends OptOutPropositionTypes {
+case class OneYearOptOutProposition (proposition: OptOutProposition) extends OptOutPropositionTypes {
   val intent: OptOutTaxYear = proposition.availableOptOutYears.head
 
   def state(): Option[OneYearOptOutState] = state(intent)
@@ -46,7 +46,7 @@ case class OneYearOptOutProposition private(proposition: OptOutProposition) exte
   }
 }
 
-case class MultiYearOptOutProposition private(proposition: OptOutProposition) extends OptOutPropositionTypes {
+case class MultiYearOptOutProposition (proposition: OptOutProposition) extends OptOutPropositionTypes {
   override def state(intent: OptOutTaxYear): Option[OptOutState] = {
     val OptOutProposition(previousTaxYear, currentTaxYear, nextTaxYear) = proposition
 

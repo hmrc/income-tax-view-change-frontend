@@ -34,7 +34,9 @@ object AddProprertyForm {
       mapping(
         response -> optional(text)
           .verifying(radiosEmptyError, value => value.nonEmpty && (value.contains(responseUK) || value.contains(responseForeign)))
-      )(AddProprertyForm.apply)(AddProprertyForm.unapply)
+      )
+      (response => AddProprertyForm(response))
+      (form => Some(form.response))
     )
   }
 }

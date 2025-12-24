@@ -36,6 +36,14 @@ object StubSchemaForm {
       url -> text.verifying(nonEmpty("URL Regex is Mandatory")),
       method -> text.verifying(nonEmpty("Method is Mandatory")),
       responseSchema -> text.verifying(nonEmpty("Schema Definition is Mandatory") andThen validJson).transform[JsValue](s => Json.parse(s), j => j.toString())
-    )(SchemaModel.apply)(SchemaModel.unapply)
-  )
+    )
+    ((id,
+      url,
+      method,
+      responseSchema) => SchemaModel(id, url, method, responseSchema))
+    (form => Some(form._id,
+      form.url,
+      form.method,
+      form.responseSchema)
+  ))
 }

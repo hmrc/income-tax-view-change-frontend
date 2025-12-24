@@ -34,7 +34,9 @@ object ChangeReportingMethodForm {
       mapping(
         response -> optional(text)
           .verifying(radiosEmptyError, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
-      )(ChangeReportingMethodForm.apply)(ChangeReportingMethodForm.unapply)
+      )
+      (response => ChangeReportingMethodForm(response))
+      (form => Some(form.response))
     )
   }
 }

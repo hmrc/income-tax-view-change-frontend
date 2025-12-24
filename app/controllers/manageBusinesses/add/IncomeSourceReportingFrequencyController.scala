@@ -119,24 +119,36 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
         handleSubmit(isAgent, isChange, incomeSourceType, isEnabled(OptInOptOutContentUpdateR17))
     }
 
-  private def handleSubmit(isAgent: Boolean, isChange: Boolean,
-                           incomeSourceType: IncomeSourceType, isR17ContentEnabled: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData: UIJourneySessionData =>
+  private def handleSubmit(
+                            isAgent: Boolean,
+                            isChange: Boolean,
+                            incomeSourceType: IncomeSourceType,
+                            isR17ContentEnabled: Boolean
+                          )(implicit user: MtdItUser[_]): Future[Result] = {
+
+    withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { (sessionData: UIJourneySessionData) =>
+
       sessionData.addIncomeSourceData.flatMap(_.incomeSourceId) match {
-        case Some(_) => IncomeSourceReportingFrequencyForm(isR17ContentEnabled).bindFromRequest().fold(
-          _ => handleInvalidForm(isAgent, isChange, incomeSourceType, isR17ContentEnabled),
-          valid => handleValidForm(isAgent, isChange, valid, incomeSourceType, sessionData)
-        )
+        case Some(_) =>
+          IncomeSourceReportingFrequencyForm(isR17ContentEnabled)
+            .bindFromRequest()
+            .fold(
+              _ => handleInvalidForm(isAgent, isChange, incomeSourceType, isR17ContentEnabled),
+              valid => handleValidForm(isAgent, isChange, valid, incomeSourceType, sessionData)
+            )
+
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
           Logger("application").error(agentPrefix +
             s"Could not find an incomeSourceId in session data for $incomeSourceType")
+
           Future.successful {
             incomeSourceReportingFrequencyService.errorHandler(isAgent).showInternalServerError()
           }
       }
     }
   }
+
 
   private def handleInvalidForm(isAgent: Boolean, isChange: Boolean, incomeSourceType: IncomeSourceType, isR17ContentEnabled: Boolean)
                                (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
