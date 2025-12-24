@@ -71,7 +71,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
   ".refine()" should {
 
-    "redirect to Home page when only next-year ITSA status exists - Agent" in {
+    "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - Agent" in {
 
       val itsaStatusResponse =
         ITSAStatusResponseModel(
@@ -97,7 +97,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
       result.left.get.header.headers("LOCATION") shouldBe controllers.optIn.routes.YouMustWaitToSignUpController.show(true).url
     }
 
-    "redirect to Home page when only next-year ITSA status exists - Individual" in {
+    "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - Individual" in {
 
       val itsaStatusResponse =
         ITSAStatusResponseModel(
@@ -123,7 +123,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
       result.left.get.header.headers("LOCATION") shouldBe controllers.optIn.routes.YouMustWaitToSignUpController.show(false).url
     }
 
-    "redirect to Home page when only next-year ITSA status exists - SupportingAgent" in {
+    "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - SupportingAgent" in {
 
       val itsaStatusResponse =
         ITSAStatusResponseModel(
@@ -225,7 +225,6 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
       when(mockDateServiceInterface.getCurrentTaxYear)
         .thenReturn(TaxYear(2025, 2026))
 
-      //      val request = authorisedAndEnrolledRequest
       val result = action.refine(mtdUser).futureValue
 
       result match {
