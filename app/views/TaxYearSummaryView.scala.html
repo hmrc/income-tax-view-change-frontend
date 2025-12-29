@@ -51,8 +51,12 @@
     isAgent: Boolean = false,
     origin: Option[String] = None,
     ctaLink: String,
-    taxYearViewScenarios: TaxYearViewScenarios
+    taxYearViewScenarios: TaxYearViewScenarios,
+    viewTaxCalcLink: String,
+    selfAssessmentLink: String,
+    whatYouOweUrl: String
 )(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
+
 @import implicitDateFormatter._
 
 @getTotalDue(model: CalculationSummary) = @{
@@ -68,6 +72,7 @@
         }
     }
 }
+
 @addForecastData(model: CalculationSummary) = @{
     if(viewModel.showForecastData && viewModel.calculationSummary.isDefined) {
         Seq(
@@ -81,6 +86,7 @@
         Seq.empty
     }
 }
+
 @listRows(model: CalculationSummary) = @{
 
     Seq(
@@ -97,40 +103,77 @@
 }
 
 @previousCalculationContent = @{
-    val isAmended = viewModel.calculationSummary.exists(_.isAmended)
+    val isAmended =
+        viewModel.calculationSummary.exists(_.isAmended)
 
-    if (viewModel.pfaEnabled) {
-        if (viewModel.previousCalculationSummary.isEmpty) {
-            None
-        } else {
-            Some(
-                taxCalculationContent(
-                    taxYear,
-                    viewModel.previousCalculationSummary,
-                    isAgent,
-                    viewModel.pfaEnabled,
-                    isAmended,
-                    isPrevious = true
+    val result =
+        if (viewModel.pfaEnabled) {
+            if (viewModel.previousCalculationSummary.isEmpty) {
+                None
+            } else {
+                Some(
+                    taxCalculationContent(
+                    taxYear = taxYear,
+                    calcSummary = viewModel.previousCalculationSummary,
+                    isAgent = isAgent,
+                    pfaEnabled = viewModel.pfaEnabled,
+                    isAmended = isAmended,
+                    isLatest = false,
+                    isPrevious = true,
+                    taxYearViewScenarios = taxYearViewScenarios,
+                    viewTaxCalcLink = viewTaxCalcLink,
+                    selfAssessmentLink = selfAssessmentLink,
+                    whatYouOweUrl = whatYouOweUrl
+                    )
                 )
-            )
+            }
+        } else {
+            None
         }
-    } else {
-        None
-    }
+
+    result
 }
 
 @calculationContent = @{
+
     val isAmended = viewModel.calculationSummary.exists(_.isAmended)
 
     if(viewModel.pfaEnabled && isAmended) {
-        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, isAmended, isLatest = true))
+        Some(taxCalculationContent(
+            taxYear,
+            viewModel.calculationSummary,
+            isAgent,
+            viewModel.pfaEnabled,
+            isAmended,
+            isLatest = true,
+            taxYearViewScenarios = taxYearViewScenarios,
+            viewTaxCalcLink = viewTaxCalcLink,
+            selfAssessmentLink = selfAssessmentLink,
+            whatYouOweUrl = whatYouOweUrl
+        ))
     } else {
-        Some(taxCalculationContent(taxYear, viewModel.calculationSummary, isAgent, viewModel.pfaEnabled, isAmended))
+        Some(taxCalculationContent(
+            taxYear,
+            viewModel.calculationSummary,
+            isAgent,
+            viewModel.pfaEnabled,
+            isAmended,
+            isLatest = false,
+            taxYearViewScenarios = taxYearViewScenarios,
+            viewTaxCalcLink = viewTaxCalcLink,
+            selfAssessmentLink = selfAssessmentLink,
+            whatYouOweUrl = whatYouOweUrl
+        ))
     }
 }
 
-@mainTemplate(pageTitle = messages("tax-year-summary.heading"), backUrl = Some(backUrl), isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial, mainClass = Some("govuk-width-container")) {
+@mainTemplate(
+    pageTitle = messages("tax-year-summary.heading"),
+    backUrl = Some(backUrl), isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    mainClass = Some("govuk-width-container")
+) {
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-three-quarters">
             @h1WithCaption(
@@ -147,9 +190,12 @@
             @viewModel.calculationSummary.map { model =>
                 @if(!model.crystallised && model.messages.isEmpty) {
                     @govukInsetText(InsetText(content = HtmlContent(
-                        p(id = Some("calc-date-info"))(content = Html(
-                            messages(if(isAgent) "tax-year-summary.agent.calc-from-last-time" else "tax-year-summary.calc-from-last-time",
-                                model.timestamp.map(_.toLongDate).get))
+                        p(id = Some("calc-date-info"))(
+                            content = Html(messages(
+                                if(isAgent) "tax-year-summary.agent.calc-from-last-time"
+                                else "tax-year-summary.calc-from-last-time",
+                                model.timestamp.map(_.toLongDate).get
+                            ))
                         )
                     )))
                 }
@@ -163,7 +209,17 @@
 
             @getClaimToAdjustPoaSection(viewModel, ctaLink)
 
-            @taxYearSummaryTabsPartial(viewModel.showForecastData, viewModel.showSubmissions, calculationContent, previousCalculationContent, paymentsContent(viewModel, taxYear, isAgent, origin), forecastContent(viewModel, taxYear, isAgent), submissionsContent(viewModel), viewModel.calculationSummary.exists(_.isAmended), viewModel.pfaEnabled)
+            @taxYearSummaryTabsPartial(
+                viewModel.showForecastData,
+                viewModel.showSubmissions,
+                calculationContent,
+                previousCalculationContent,
+                paymentsContent(viewModel, taxYear, isAgent, origin),
+                forecastContent(viewModel, taxYear, isAgent),
+                submissionsContent(viewModel),
+                viewModel.calculationSummary.exists(_.isAmended),
+                viewModel.pfaEnabled
+            )
         </div>
     </div>
 }

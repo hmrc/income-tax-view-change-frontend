@@ -15,6 +15,7 @@
  *@
 
 @import models.liabilitycalculation.viewmodels.CalculationSummary
+@import models.taxyearsummary._
 @import views.html.components.p
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import views.html.partials.taxYearSummaryBreakdownPartial
@@ -37,20 +38,99 @@
         taxCalculationAmendmentGuidance: TaxCalculationAmendmentGuidance
 )
 
-@(model: CalculationSummary, isAgent: Boolean, taxYear: Int, isLatest: Boolean, isPrevious: Boolean, pfaEnabled: Boolean, isAmended: Boolean)(implicit messages: Messages)
+@(
+    model: CalculationSummary,
+    isAgent: Boolean,
+    taxYear: Int,
+    isLatest: Boolean,
+    isPrevious: Boolean,
+    pfaEnabled: Boolean,
+    isAmended: Boolean,
+    taxYearViewScenarios: TaxYearViewScenarios,
+    viewTaxCalcLink: String,
+    selfAssessmentLink: String,
+    whatYouOweUrl: String,
+)(implicit messages: Messages)
+
+@yourTaxCalculationCannotBeDisplayed = {
+
+    @h3(msg = messages("tax.year.summary.calc.cannot.be.displayed"), optId = Some("your-tax-calculation-cannot-be-displayed-heading"))
+
+    @p(id = Some("not-filed-compatible-software-p"))(content = Html(messages("tax.year.summary.calc.not.filed.compatible.software.p")))
+
+    @link(id = Some("view-your-tax-calculations-link"), link = viewTaxCalcLink, messageKey = "tax.year.summary.calc.view.your.tax.calc.link")
+
+    @p(id = Some("not-compatible-software"))(content = Html(messages("tax.year.summary.calc.not.compatible.software")))
+
+    @p(id = Some("filed-by-post-contact-hmrc")){
+        @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.a"))
+        @link(id = Some("what-you-owe-link-agent"), link = viewTaxCalcLink, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+        @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.b"))
+    }
+}
+
+@yourTaxCalculationCannotBeDisplayedIndividualWithoutIrsaEnrollment = {
+
+    @h3(msg = messages("tax.year.summary.calc.cannot.be.displayed"), optId = Some("your-tax-calculation-cannot-be-displayed-heading"))
+
+    @p(id = Some("not-filed-via-software-compatible"))(content = Html(messages("paragraph1-not-filed-via-software-compatible")))
+
+    @link(id = Some("view-your-tax-calculations-link"), link = viewTaxCalcLink, messageKey = "tax.year.summary.calc.view.your.tax.calc.link")
+
+    @p(id = Some("not-compatible-software"))(content = Html(messages("tax.year.summary.calc.not.compatible.software")))
+
+    @p(id = Some("filed-by-post-contact-hmrc")){
+        @messages("tax.year.summary.calc.filed.by.post.contact.hmrc"))
+        @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+    }
+}
+
+@yourTaxCalculationCannotBeDisplayedAgentCannotBeDeepLinked = {
+
+    @h3(msg = messages("tax.year.summary.calc.cannot.be.displayed"), optId = Some("your-tax-calculation-cannot-be-displayed-heading"))
+
+    @p(id = Some("not-filed-via-software-compatible"))(content = Html(messages("tax.year.summary.calc.not.filed.compatible.software.agent.p")))
+
+    @p(id = Some("filed-by-post-contact-hmrc")){
+        @messages("tax.year.summary.calc.filed.sa.agent.p.a"))
+        @link(id = Some("self-assessment-for-agents-account"), link = selfAssessmentLink, messageKey = "tax.year.summary.calc.filed.sa.agent.link")
+        @messages("tax.year.summary.calc.filed.sa.agent.p.b"))
+    }
+
+    @p(id = Some("not-compatible-software"))(content = Html(messages("tax.year.summary.calc.not.compatible.software.agent.p")))
+
+    @p(id = Some("filed-by-post-contact-hmrc")){
+        @messages("tax.year.summary.calc.filed.by.post.contact.hmrc"))
+        @link(id = Some("what-you-owe-link-agent"), link = whatYouOweUrl, messageKey = "chargeSummary.whatYouOwe.linkText-agent")
+    }
+}
 
 @if(model.messages.exists(_.errorMessages.size > 0)) {
+
     @{
         val key = if(isAgent) "tax-year-summary.agent.message" else "tax-year-summary.message"
         errorMessage(model, key, isAgent)
     }
+
 } else {
+
+    @if("scenarioA" == "scenarioA") {
+        @yourTaxCalculationCannotBeDisplayed
+    }
+
+    @if("scenarioAC5" == "scenarioAC5") {
+        @yourTaxCalculationCannotBeDisplayedIndividualWithoutIrsaEnrollment
+    }
+
+
     @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest)
+
     @if(!model.crystallised && !isLatest && !isPrevious) {
         @govukInsetText(InsetText(content = HtmlContent(
             p(id = Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
         )))
     }
+
     @if(isPrevious) {
         @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
     }

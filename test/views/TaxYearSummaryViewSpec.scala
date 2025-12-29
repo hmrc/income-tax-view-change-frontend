@@ -341,7 +341,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       ctaViewModel = emptyCTAModel,
       LPP2Url = "",
       pfaEnabled = true
-    ),
+    ),tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.a         = To view your tax calculation if you filed the return by post, contact HMRC.
+  tax.year.summary.calc.filed.by.post.contact.hmrc.agent.link        = contact HMRC
+    tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.b         = .
     backUrl = "testBackUrl",
     isAgent = isAgent,
     ctaLink = ctaLink,

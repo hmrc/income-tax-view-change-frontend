@@ -58,7 +58,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
         isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
         earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
         btaNavPartial = user.btaNavPartial,
-        origin = origin)
+        origin = origin
     } match {
       case Success(taxView) => Future.successful(Ok(taxView))
       case Failure(ex) =>
@@ -74,7 +74,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
         backUrl = controllers.routes.HomeController.show(origin).url,
         isAgent = false,
         origin = origin
-      )
+      ))
     }
 
   def showAgentTaxYears: Action[AnyContent] =

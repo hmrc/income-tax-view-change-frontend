@@ -17,11 +17,38 @@
 @import views.html.partials.taxYearSummary.TaxCalculationOverview
 @import views.html.partials.taxYearSummary.TaxCalculationNotPresent
 @import models.liabilitycalculation.viewmodels.CalculationSummary
+@import models.taxyearsummary._
 
-@this(taxCalculationOverview: TaxCalculationOverview,
-        taxCalculationNotPresent: TaxCalculationNotPresent)
+@this(taxCalculationOverview: TaxCalculationOverview, taxCalculationNotPresent: TaxCalculationNotPresent)
 
-@(taxYear: Int, calcSummary: Option[CalculationSummary], isAgent: Boolean, pfaEnabled: Boolean, isAmended: Boolean, isLatest: Boolean = false, isPrevious: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(
+    taxYear: Int,
+    calcSummary: Option[CalculationSummary],
+    isAgent: Boolean,
+    pfaEnabled: Boolean,
+    isAmended: Boolean,
+    isLatest: Boolean = false,
+    isPrevious: Boolean = false,
+    taxYearViewScenarios: TaxYearViewScenarios,
+    viewTaxCalcLink: String,
+    selfAssessmentLink: String,
+    whatYouOweUrl: String
+)(implicit request: Request[_], messages: Messages)
 
-@calcSummary.fold(ifEmpty = taxCalculationNotPresent())(calcOverview => taxCalculationOverview(calcOverview, isAgent, taxYear, isLatest, isPrevious, pfaEnabled, isAmended))
+@calcSummary.fold(ifEmpty = taxCalculationNotPresent())(
+  calcOverview =>
+    taxCalculationOverview(
+        calcOverview,
+        isAgent,
+        taxYear,
+        isLatest,
+        isPrevious,
+        pfaEnabled,
+        isAmended,
+        taxYearViewScenarios = taxYearViewScenarios,
+        viewTaxCalcLink,
+        selfAssessmentLink,
+        whatYouOweUrl
+    )
+)
 

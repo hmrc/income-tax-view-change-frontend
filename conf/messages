@@ -227,7 +227,28 @@ tax-year-summary.heading-secondary                                 = 6 April {0}
 tax-year-summary.calculation-date                                  = Calculation date
 tax-year-summary.calc-from-last-time                               = This is not your final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.agent.calc-from-last-time                         = This is not your client’s final tax bill, it’s only based on figures we’ve already received.
-tax-year-summary.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
+
+tax.year.summary.calc.cannot.be.displayed                          = Your tax calculation cannot be displayed
+tax.year.summary.calc.not.filed.compatible.software.p              = This is because your tax return was not filed using software compatible with Making Tax Digital for Income Tax.
+tax.year.summary.calc.view.your.tax.calc.link                      = View your tax calculation if you filed your tax return using the HMRC online service.
+tax.year.summary.calc.not.compatible.software.p                    = If your return was submitted using software not compatible with Making Tax Digital for Income Tax, your tax calculation will be available in this software.
+tax.year.summary.calc.filed.by.post.contact.hmrc.p                 = To view your tax calculation if you filed your return by post,
+tax.year.summary.calc.filed.by.post.contact.hmrc.link              = contact HMRC.
+tax.year.summary.calc.find.out.more.sa.p                           = If you filed your return using your previous Self Assessment online account, you can find your tax calculation there. Find out more about Self Assessment tax returns.
+tax.year.summary.calc.find.out.more.sa.link                        = Self Assessment tax returns.
+
+tax.year.summary.calc.not.filed.compatible.software.agent.p        = This is because the tax return was not filed using software compatible with Making Tax Digital for Income Tax.
+
+tax.year.summary.calc.filed.sa.agent.p.a                           = You may have filed the tax return using your previous
+tax.year.summary.calc.filed.sa.agent.link                          = Self Assessment for Agents account (opens in new tab).
+tax.year.summary.calc.filed.sa.agent.p.b                           = If so, the calculation will be available there. The account will also use a different Government Gateway ID and password to your agent services account.
+
+tax.year.summary.calc.not.compatible.software.agent.p              = If the return was submitted using software not compatible with Making Tax Digital for Income Tax, your tax calculation will be available in this software.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.a         = To view your tax calculation if you filed the return by post, contact HMRC.
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.link        = contact HMRC
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.b         = .
+
 tax-year-summary.total-due                                         = Total tax bill
 tax-year-summary.tax-calculation.date                              = {0} to {1}
 tax-year-summary.tax-calculation                                   = Calculation
