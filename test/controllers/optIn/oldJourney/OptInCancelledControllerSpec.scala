@@ -16,6 +16,7 @@
 
 package controllers.optIn.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptInService
@@ -31,6 +32,7 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition
 import testConstants.BaseTestConstants._
@@ -49,7 +51,10 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
 
   override def fakeApplication(): Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[OptInService].toInstance(mockOptInService)
+      api.inject.bind[OptInService].toInstance(mockOptInService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     )
     .configure(config)
     .build()
@@ -61,12 +66,14 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
     val isAgent = mtdRole != MTDIndividual
     s"show(isAgent = $isAgent)" when {
       def action: Action[AnyContent] = if (isAgent) testController.showAgent() else testController.show()
+
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         s"render the opt in cancelled page" in {
           enable(ReportingFrequencyPage, SignUpFs)
           val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction()
           when(
             mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
           ).thenReturn(Future(singleBusinessIncome))
@@ -98,6 +105,7 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -124,6 +132,8 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
             enable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
+
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
@@ -145,6 +155,7 @@ class OptInCancelledControllerSpec extends MockAuthActions with MockOptInService
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))

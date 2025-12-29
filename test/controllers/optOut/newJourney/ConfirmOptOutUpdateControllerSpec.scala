@@ -16,6 +16,7 @@
 
 package controllers.optOut.newJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure.defaultFailure
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseSuccess}
 import enums.MTDIndividual
@@ -31,7 +32,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
 import services.optout._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -46,7 +47,10 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
     .overrides(
       api.inject.bind[OptOutSubmissionService].toInstance(mockConfirmOptOutUpdateService),
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController: ConfirmOptOutUpdateController = app.injector.instanceOf[ConfirmOptOutUpdateController]
@@ -74,6 +78,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           "is for one year" in {
             enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -95,6 +100,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           "is for one year in V-M-M scenario with quarterly updates" in {
             enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -116,6 +122,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           "is for one year in V-M-V scenario with quarterly updates" in {
             enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -137,6 +144,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           "is for one year in V-M-A scenario with quarterly updates" in {
             enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutCheckPointPageViewModel(oneYearViewModelResponse)
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -163,6 +171,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             disable(OptOutFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -182,6 +191,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             disable(ReportingFrequencyPage)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -202,6 +212,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             disable(OptInOptOutContentUpdateR17)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -231,6 +242,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
@@ -248,6 +260,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
@@ -263,6 +276,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
         "redirect to the opt out error page if the opt out update request fails (all fail)" in {
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
@@ -279,6 +293,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
         "redirect to the opt out error page if the opt out update request fails (1 fail mid multiyear update loop)" in {
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockConfirmOptOutUpdateService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
@@ -299,6 +314,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             disable(OptOutFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -318,6 +334,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             disable(ReportingFrequencyPage)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -338,6 +355,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             disable(OptInOptOutContentUpdateR17)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)

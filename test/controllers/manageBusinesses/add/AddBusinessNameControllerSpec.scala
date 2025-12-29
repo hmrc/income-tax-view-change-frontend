@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
@@ -33,18 +34,20 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 
 import scala.concurrent.Future
 
 
-class AddBusinessNameControllerSpec extends MockAuthActions
-  with MockSessionService {
+class AddBusinessNameControllerSpec extends MockAuthActions with MockSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testAddBusinessNameController = app.injector.instanceOf[AddBusinessNameController]
@@ -65,13 +68,14 @@ class AddBusinessNameControllerSpec extends MockAuthActions
 
   Seq(CheckMode, NormalMode).foreach { mode =>
     mtdAllRoles.foreach { mtdRole =>
-      s"show${if(mtdRole != MTDIndividual)"Agent"}(mode = $mode)" when {
+      s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
         val action = getAction(mtdRole, mode)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" when {
             "feature switch is enabled" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               if (mode == CheckMode) {
                 setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
@@ -92,6 +96,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
           s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
             "user has already completed the journey" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockNoIncomeSources()
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
 
@@ -107,6 +112,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
 
             "user has already added their income source" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockNoIncomeSources()
               setupMockGetMongo(Right(Some(addedIncomeSourceUIJourneySessionData(SelfEmployment))))
 
@@ -127,14 +133,15 @@ class AddBusinessNameControllerSpec extends MockAuthActions
           testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
         }
       }
-      s"submit${if(mtdRole != MTDIndividual)"Agent"}(mode = $mode)" when {
+      s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
         val action = getAction(mtdRole, mode, true)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
-          if(mode == CheckMode) {
+          if (mode == CheckMode) {
             "return 303 and redirect to check details page" when {
               "the business name entered is valid" in {
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
                 setupMockSetMongoData(true)
@@ -143,7 +150,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
                 val result = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> validBusinessName))
 
-                val redirectUrl = if(mtdRole == MTDIndividual) {
+                val redirectUrl = if (mtdRole == MTDIndividual) {
                   controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
                 } else {
                   controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
@@ -157,6 +164,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
             "return 303 and redirect to add business start date" when {
               "the business name entered is valid" in {
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
                 setupMockSetMongoData(true)
@@ -176,6 +184,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
           "show AddBusinessName with error" when {
             "Business name is empty" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               val invalidBusinessNameEmpty: String = ""
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
@@ -193,6 +202,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
             "Business name is too long" in {
               val invalidBusinessNameLength: String = "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
@@ -207,11 +217,12 @@ class AddBusinessNameControllerSpec extends MockAuthActions
             "Business name has invalid characters" in {
               val invalidBusinessNameEmpty: String = "££"
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
 
-              val result: Future[Result] =action(fakeRequest.withFormUrlEncodedBody(
+              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                 BusinessNameForm.businessName -> invalidBusinessNameEmpty))
 
               status(result) mustBe BAD_REQUEST
@@ -221,6 +232,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
             if (mode == CheckMode) {
               "show invalid error when business name is same as business trade name" in {
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
                 val businessName: String = "Plumbing"
@@ -228,7 +240,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(businessName),
                     businessTrade = Some(businessName)))))))
 
-                val result: Future[Result] =action(fakeRequest.withFormUrlEncodedBody(
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessNameForm.businessName -> businessName))
 
                 status(result) mustBe BAD_REQUEST
