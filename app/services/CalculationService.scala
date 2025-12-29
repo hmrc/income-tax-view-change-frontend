@@ -45,7 +45,6 @@ class CalculationService @Inject()(
     incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString, None)
   }
 
-  // This one
   def getLatestAndPreviousCalculationDetails(
                                               mtditid: String,
                                               nino: String,

@@ -17,11 +17,10 @@
 package services
 
 import auth.MtdItUser
-import authV2.AuthActionsTestData.{agentEnrolment, getAllEnrolmentsAgent, getAuthUserDetails, ninoEnrolment}
+import authV2.AuthActionsTestData.{getAllEnrolmentsAgent, getAuthUserDetails, ninoEnrolment}
 import config.featureswitch.FeatureSwitching
 import connectors.{CalculationListConnector, IncomeTaxCalculationConnector}
-import enums.{Attended, CesaSAReturn, MTDIndividual, MTDPrimaryAgent}
-import models.calculationList.{CalculationListErrorModel, CalculationListModel}
+import enums.{MTDIndividual, MTDPrimaryAgent}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.liabilitycalculation._
 import models.taxyearsummary._
@@ -45,17 +44,78 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
 
   "TaxYearSummaryService" when {
 
+    ".checkSubmissionChannel()" when {
+
+      "submission channel == IsLegacyWithCesa return the LegacyAndCesa view" in {
+
+        val liabilityCalculationResponse =
+          LiabilityCalculationResponse(
+            inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+            metadata = Metadata(
+              calculationTimestamp = Some(""),
+              calculationType = ""
+            ),
+            submissionChannel = Some(IsLegacyWithCesa),
+            messages = None,
+            calculation = None,
+          )
+
+        val actual = service.checkSubmissionChannel(Some(liabilityCalculationResponse))
+        val expected = LegacyAndCesa
+
+        actual shouldBe expected
+      }
+
+      "submission channel == IsLegacy return the LegacyAndCesa view" in {
+
+        val liabilityCalculationResponse =
+          LiabilityCalculationResponse(
+            inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+            metadata = Metadata(
+              calculationTimestamp = Some(""),
+              calculationType = ""
+            ),
+            submissionChannel = Some(IsLegacy),
+            messages = None,
+            calculation = None,
+          )
+
+        val actual = service.checkSubmissionChannel(Some(liabilityCalculationResponse))
+        val expected = LegacyAndCesa
+
+        actual shouldBe expected
+      }
+
+      "submission channel == IsMTD return the MtdSoftwareShowCalc view" in {
+
+        val liabilityCalculationResponse =
+          LiabilityCalculationResponse(
+            inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+            metadata = Metadata(
+              calculationTimestamp = Some(""),
+              calculationType = ""
+            ),
+            submissionChannel = Some(IsMTD),
+            messages = None,
+            calculation = None,
+          )
+
+        val actual = service.checkSubmissionChannel(Some(liabilityCalculationResponse))
+        val expected = MtdSoftwareShowCalc
+
+        actual shouldBe expected
+      }
+    }
+
     ".determineCannotDisplayCalculationContentScenario()" when {
 
       "the tax year is after 2023" when {
 
-        "no IRSA Enrolments and either api returns an error response" should {
+        "no IRSA Enrolments should check the liability response submissionChannel" should {
 
-          "return the NoIrsaAEnrolement view scenario" in {
+          "return the MtdSoftwareShowCalc view scenario when the submissionChannel == None" in {
 
-            val taxYear = TaxYear(2022, 2023)
-
-            val liabilityCalculationError = LiabilityCalculationError(status = 500, message = "some error message")
+            val taxYear = TaxYear(2023, 2024)
 
             val noIRSAEnrolments =
               Enrolments(enrolments = Set(None, Some(ninoEnrolment), None).flatten)
@@ -72,24 +132,113 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 featureSwitches = List()
               )(FakeRequest())
 
-            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationError))
+            val liabilityCalculationResponse =
+              LiabilityCalculationResponse(
+                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+                metadata = Metadata(
+                  calculationTimestamp = Some(""),
+                  calculationType = ""
+                ),
+                submissionChannel = None,
+                messages = None,
+                calculation = None,
+              )
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)(individualUser)
-            val expected = NoIrsaAEnrolement
+            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+              .thenReturn(Future(liabilityCalculationResponse))
+
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
+            val expected = MtdSoftwareShowCalc
+
+            actual shouldBe expected
+          }
+
+          "return the LegacyAndCesa view scenario when the submissionChannel == IsLegacyWithCesa" in {
+
+            val taxYear = TaxYear(2023, 2024)
+
+            val noIRSAEnrolments =
+              Enrolments(enrolments = Set(None, Some(ninoEnrolment), None).flatten)
+
+            val individualUser =
+              MtdItUser(
+                mtditid = testMtditid,
+                nino = testNino,
+                usersRole = MTDIndividual,
+                authUserDetails = getAuthUserDetails(Some(Individual), noIRSAEnrolments, hasUserName = true),
+                clientDetails = None,
+                incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
+                btaNavPartial = None,
+                featureSwitches = List()
+              )(FakeRequest())
+
+            val liabilityCalculationResponse =
+              LiabilityCalculationResponse(
+                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+                metadata = Metadata(
+                  calculationTimestamp = Some(""),
+                  calculationType = ""
+                ),
+                submissionChannel = Some(IsLegacyWithCesa),
+                messages = None,
+                calculation = None,
+              )
+
+            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+              .thenReturn(Future(liabilityCalculationResponse))
+
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
+            val expected = LegacyAndCesa
+
+            actual shouldBe expected
+          }
+
+          "return the LegacyAndCesa view scenario when the submissionChannel == IsLegacy" in {
+
+            val taxYear = TaxYear(2023, 2024)
+
+            val noIRSAEnrolments =
+              Enrolments(enrolments = Set(None, Some(ninoEnrolment), None).flatten)
+
+            val individualUser =
+              MtdItUser(
+                mtditid = testMtditid,
+                nino = testNino,
+                usersRole = MTDIndividual,
+                authUserDetails = getAuthUserDetails(Some(Individual), noIRSAEnrolments, hasUserName = true),
+                clientDetails = None,
+                incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
+                btaNavPartial = None,
+                featureSwitches = List()
+              )(FakeRequest())
+
+            val liabilityCalculationResponse =
+              LiabilityCalculationResponse(
+                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+                metadata = Metadata(
+                  calculationTimestamp = Some(""),
+                  calculationType = ""
+                ),
+                submissionChannel = Some(IsLegacy),
+                messages = None,
+                calculation = None,
+              )
+
+            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+              .thenReturn(Future(liabilityCalculationResponse))
+
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
+            val expected = LegacyAndCesa
 
             actual shouldBe expected
           }
         }
 
-        "user has IRSA Enrolments and either api returns an error response" should {
+        "user has IRSA Enrolments and should check the liability response submissionChannel to determine the status" should {
 
-          "return the IrsaEnrolementHandedOff view scenario" in {
+          "return the MtdSoftwareShowCalc view scenario when the submissionChannel == None" in {
 
-            val taxYear = TaxYear(2022, 2023)
-
-            val liabilityCalculationError =
-              LiabilityCalculationError(status = 500, message = "some error message")
+            val taxYear = TaxYear(2023, 2024)
 
             val irsaEnrolments =
               Enrolments(enrolments = Set(None, Some(ninoEnrolment), Some(saEnrolment)).flatten)
@@ -106,155 +255,117 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 featureSwitches = List()
               )(FakeRequest())
 
-            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationError))
-
-            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)(individualUser)
-            val expected = IrsaEnrolementHandedOff
-
-            actual shouldBe expected
-          }
-        }
-
-        "both success responses" should {
-
-          "return the Default view scenario" in {
-
-            val taxYear = TaxYear(2025, 2026)
-
-            val liabilityCalculationError = LiabilityCalculationError(status = 500, message = "some error message")
-
-            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationError))
-
-            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)
-            val expected = Default
-
-            actual shouldBe expected
-          }
-        }
-      }
-
-      "the tax year is before 2023" when {
-
-        "fix me" should {
-
-          "return the MtdSoftware view scenario" in {
-
-            val taxYear = TaxYear(2022, 2023)
-
-
-            val calculationListModel =
-              CalculationListModel(calculationId = "calc Id", calculationTimestamp = "calc timestamp", calculationType = "calc type", crystallised = Some(true))
-
             val liabilityCalculationResponse =
               LiabilityCalculationResponse(
                 inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
                 metadata = Metadata(
                   calculationTimestamp = Some(""),
-                  calculationType = "",
-                  calculationTrigger = Some(Attended)
+                  calculationType = ""
                 ),
+                submissionChannel = None,
                 messages = None,
                 calculation = None,
               )
 
-            when(mockCalculationListConnector.getLegacyCalculationList(any(), any())(any()))
-              .thenReturn(Future(calculationListModel))
-
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future(liabilityCalculationResponse))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationResponse, taxYear)
-            val expected = MtdSoftware
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
+            val expected = MtdSoftwareShowCalc
 
             actual shouldBe expected
           }
-        }
 
-        ".getLegacyCalculationList() returns an error response" should {
+          "return the LegacyAndCesa view scenario when the submissionChannel == IsLegacyWithCesa" in {
 
-          "return the LegacyAndCesa view scenario" in {
+            val taxYear = TaxYear(2023, 2024)
 
-            val taxYear = TaxYear(2022, 2023)
-
-            val calculationListErrorModel =
-              CalculationListErrorModel(code = 404, message = "some error message")
-
-            val liabilityCalculationResponse =
-              LiabilityCalculationResponse(
-                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
-                metadata = Metadata(
-                  calculationTimestamp = Some(""),
-                  calculationType = "",
-                  calculationTrigger = Some(CesaSAReturn)
-                ),
-                messages = None,
-                calculation = None,
-              )
-
-            when(mockCalculationListConnector.getLegacyCalculationList(any(), any())(any()))
-              .thenReturn(Future(calculationListErrorModel))
-
-            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationResponse))
-
-            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationResponse, taxYear)
-            val expected = LegacyAndCesa
-
-            actual shouldBe expected
-          }
-        }
-
-        ".getCalculationResponse() returns an error response" should {
-
-          "return the LegacyAndCesa view scenario" in {
-
-            val taxYear = TaxYear(2022, 2023)
-
-            val calculationListModel =
-              CalculationListModel(calculationId = "calc Id", calculationTimestamp = "calc timestamp", calculationType = "calc type", crystallised = Some(true))
-
-            val liabilityCalculationError = LiabilityCalculationError(status = 404, message = "some error message")
-
-            val noIRSAEnrolments =
-              Enrolments(enrolments = Set(Some(agentEnrolment), Some(ninoEnrolment), None).flatten)
+            val irsaEnrolments =
+              Enrolments(enrolments = Set(None, Some(ninoEnrolment), Some(saEnrolment)).flatten)
 
             val individualUser =
               MtdItUser(
                 mtditid = testMtditid,
                 nino = testNino,
                 usersRole = MTDIndividual,
-                authUserDetails = getAuthUserDetails(Some(Individual), noIRSAEnrolments, hasUserName = true),
+                authUserDetails = getAuthUserDetails(Some(Individual), irsaEnrolments, hasUserName = true),
                 clientDetails = None,
                 incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
                 btaNavPartial = None,
                 featureSwitches = List()
               )(FakeRequest())
 
-            when(mockCalculationListConnector.getLegacyCalculationList(any(), any())(any()))
-              .thenReturn(Future(calculationListModel))
+            val liabilityCalculationResponse =
+              LiabilityCalculationResponse(
+                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+                metadata = Metadata(
+                  calculationTimestamp = Some(""),
+                  calculationType = ""
+                ),
+                submissionChannel = Some(IsLegacyWithCesa),
+                messages = None,
+                calculation = None,
+              )
 
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationError))
+              .thenReturn(Future(liabilityCalculationResponse))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)(individualUser)
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
             val expected = LegacyAndCesa
 
             actual shouldBe expected
           }
-        }
 
-        "getLegacyCalculationList() or .getCalculationResponse() returns an error  - Agent user" should {
+          "return the LegacyAndCesa view scenario when the submissionChannel == IsLegacy" in {
+
+            val taxYear = TaxYear(2023, 2024)
+
+            val irsaEnrolments =
+              Enrolments(enrolments = Set(None, Some(ninoEnrolment), Some(saEnrolment)).flatten)
+
+            val individualUser =
+              MtdItUser(
+                mtditid = testMtditid,
+                nino = testNino,
+                usersRole = MTDIndividual,
+                authUserDetails = getAuthUserDetails(Some(Individual), irsaEnrolments, hasUserName = true),
+                clientDetails = None,
+                incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
+                btaNavPartial = None,
+                featureSwitches = List()
+              )(FakeRequest())
+
+            val liabilityCalculationResponse =
+              LiabilityCalculationResponse(
+                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+                metadata = Metadata(
+                  calculationTimestamp = Some(""),
+                  calculationType = ""
+                ),
+                submissionChannel = Some(IsLegacy),
+                messages = None,
+                calculation = None,
+              )
+
+            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+              .thenReturn(Future(liabilityCalculationResponse))
+
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
+            val expected = LegacyAndCesa
+
+            actual shouldBe expected
+          }
+
+        }
+      }
+
+      "the tax year is before 2023" when {
+
+        "the user is and Agent user" should {
 
           "return the AgentBefore2023TaxYear view scenario" in {
 
             val taxYear = TaxYear(2022, 2023)
-
-            val calculationListModel =
-              CalculationListModel(calculationId = "calc Id", calculationTimestamp = "calc timestamp", calculationType = "calc type", crystallised = Some(true))
-
-            val liabilityCalculationError = LiabilityCalculationError(status = 500, message = "some error message")
 
             val agentUser =
               MtdItUser(
@@ -268,14 +379,109 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 featureSwitches = List()
               )(FakeRequest())
 
-            when(mockCalculationListConnector.getLegacyCalculationList(any(), any())(any()))
-              .thenReturn(Future(calculationListModel))
+            val liabilityCalculationResponse =
+              LiabilityCalculationResponse(
+                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+                metadata = Metadata(
+                  calculationTimestamp = Some(""),
+                  calculationType = ""
+                ),
+                submissionChannel = Some(IsLegacy),
+                messages = None,
+                calculation = None,
+              )
 
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationError))
+              .thenReturn(Future(liabilityCalculationResponse))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)(agentUser) // Agent user
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(agentUser) // Agent user
             val expected = AgentBefore2023TaxYear
+
+            actual shouldBe expected
+          }
+        }
+
+        "no IRSA Enrolments should not check the liability response submissionChannel and" should {
+
+          "return the NoIrsaAEnrolement view" in {
+
+            val taxYear = TaxYear(2022, 2023)
+
+            val irsaEnrolments =
+              Enrolments(enrolments = Set(None, Some(ninoEnrolment), None).flatten)
+
+            val individualUser =
+              MtdItUser(
+                mtditid = testMtditid,
+                nino = testNino,
+                usersRole = MTDIndividual,
+                authUserDetails = getAuthUserDetails(Some(Individual), irsaEnrolments, hasUserName = true),
+                clientDetails = None,
+                incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
+                btaNavPartial = None,
+                featureSwitches = List()
+              )(FakeRequest())
+
+            val liabilityCalculationResponse =
+              LiabilityCalculationResponse(
+                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+                metadata = Metadata(
+                  calculationTimestamp = Some(""),
+                  calculationType = ""
+                ),
+                submissionChannel = Some(IsLegacy),
+                messages = None,
+                calculation = None,
+              )
+
+            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+              .thenReturn(Future(liabilityCalculationResponse))
+
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
+            val expected = NoIrsaAEnrolement
+
+            actual shouldBe expected
+          }
+        }
+
+        "has IRSA Enrolments should not check the liability response submissionChannel and" should {
+
+          "return the IrsaEnrolementHandedOff view" in {
+
+            val taxYear = TaxYear(2022, 2023)
+
+            val irsaEnrolments =
+              Enrolments(enrolments = Set(None, Some(ninoEnrolment), Some(saEnrolment)).flatten)
+
+            val individualUser =
+              MtdItUser(
+                mtditid = testMtditid,
+                nino = testNino,
+                usersRole = MTDIndividual,
+                authUserDetails = getAuthUserDetails(Some(Individual), irsaEnrolments, hasUserName = true),
+                clientDetails = None,
+                incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
+                btaNavPartial = None,
+                featureSwitches = List()
+              )(FakeRequest())
+
+            val liabilityCalculationResponse =
+              LiabilityCalculationResponse(
+                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+                metadata = Metadata(
+                  calculationTimestamp = Some(""),
+                  calculationType = ""
+                ),
+                submissionChannel = Some(IsLegacy),
+                messages = None,
+                calculation = None,
+              )
+
+            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+              .thenReturn(Future(liabilityCalculationResponse))
+
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
+            val expected = IrsaEnrolementHandedOff
 
             actual shouldBe expected
           }

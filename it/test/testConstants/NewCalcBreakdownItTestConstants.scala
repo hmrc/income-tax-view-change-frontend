@@ -17,7 +17,7 @@
 package testConstants
 
 import controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
-import enums.{CesaSAReturn, MTDIndividual, MTDUserRole}
+import enums.{MTDIndividual, MTDUserRole}
 import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
 
@@ -36,9 +36,9 @@ object NewCalcBreakdownItTestConstants {
         calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
         calculationType = "crystallisation",
         calculationReason = Some("customerRequest"),
-        calculationTrigger = Some(CesaSAReturn)
       ),
-      messages = None
+      messages = None,
+      submissionChannel = None
     )
 
   val liabilityCalculationModelSuccessful: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -303,8 +303,8 @@ object NewCalcBreakdownItTestConstants {
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
       calculationReason = Some("customerRequest"),
-      calculationTrigger = Some(CesaSAReturn)
-    )
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessfulExpected: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -553,24 +553,24 @@ object NewCalcBreakdownItTestConstants {
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
       calculationReason = Some("customerRequest"),
-      calculationTrigger = Some(CesaSAReturn)
-    )
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessfulNotCrystallised: LiabilityCalculationResponse = liabilityCalculationModelSuccessful.copy(
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "inYear",
-      calculationTrigger = Some(CesaSAReturn)
-    )
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessfulWithAmendment: LiabilityCalculationResponse = liabilityCalculationModelSuccessful.copy(
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "CA",
-      calculationTrigger = Some(CesaSAReturn)
-    )
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelErrorMessages = liabilityCalculationModelDeductionsMinimal.copy(messages = Some(Messages(

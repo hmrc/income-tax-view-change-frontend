@@ -16,7 +16,6 @@
 
 package models.liabilitycalculation
 
-import enums.CalculationTrigger
 import enums.TaxYearSummary.CalcType.{amendmentTypes, crystallisedTypes}
 import implicits.ImplicitDateFormatter
 import play.api.i18n.{Lang, MessagesApi}
@@ -38,7 +37,8 @@ case class LiabilityCalculationResponse(
                                          inputs: Inputs,
                                          metadata: Metadata,
                                          messages: Option[Messages],
-                                         calculation: Option[Calculation]
+                                         calculation: Option[Calculation],
+                                         submissionChannel: Option[SubmissionChannel]
                                        ) extends LiabilityCalculationResponseModel
 
 object LiabilityCalculationResponse {
@@ -50,8 +50,7 @@ case class Metadata(
                      calculationType: String,
                      calculationReason: Option[String] = None,
                      periodFrom: Option[LocalDate] = None,
-                     periodTo: Option[LocalDate] = None,
-                     calculationTrigger: Option[CalculationTrigger]
+                     periodTo: Option[LocalDate] = None
                    ) {
 
   def isCalculationCrystallised: Boolean = crystallisedTypes.contains(calculationType)

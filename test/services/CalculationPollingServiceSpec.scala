@@ -17,7 +17,6 @@
 package services
 
 import config.FrontendAppConfig
-import enums.CesaSAReturn
 import mocks.services.{LockServiceDidNotAcquireMongoLock, MockCalculationService}
 import models.liabilitycalculation._
 import org.scalatest.time.{Seconds, Span}
@@ -34,8 +33,10 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
       taxRegime = "UK", class2VoluntaryContributions = None
     )),
     messages = None,
-    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest"), calculationTrigger = Some(CesaSAReturn)),
-    calculation = None)
+    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest")),
+    calculation = None,
+    submissionChannel = None
+  )
 
   val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "no content")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")

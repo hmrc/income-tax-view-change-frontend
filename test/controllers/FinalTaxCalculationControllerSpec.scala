@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{CesaSAReturn, MTDIndividual, MTDSupportingAgent}
+import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
@@ -61,9 +61,10 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions with MockCalcula
         calculationType = "inYear",
         calculationReason = Some("customerRequest"),
         periodFrom = Some(LocalDate.of(2022, 1, 1)),
-        periodTo = Some(LocalDate.of(2023, 1, 1)),
-        calculationTrigger = Some(CesaSAReturn)
-      ))
+        periodTo = Some(LocalDate.of(2023, 1, 1))
+      ),
+      submissionChannel = None
+    )
   val taxYear = 2018
 
   mtdAllRoles.foreach { mtdUserRole =>

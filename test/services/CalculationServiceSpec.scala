@@ -17,7 +17,6 @@
 package services
 
 import config.featureswitch.FeatureSwitching
-import enums.CesaSAReturn
 import enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import models.admin.PostFinalisationAmendmentsR18
@@ -33,11 +32,13 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
       taxRegime = "UK", class2VoluntaryContributions = None
     )),
     messages = None,
-    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest"), calculationTrigger = Some(CesaSAReturn)),
-    calculation = None)
+    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest")),
+    calculation = None,
+    submissionChannel = None
+  )
 
-  val calcResponseWithAmendmentCa = liabilityCalculationSuccessResponse.copy(metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "CA", Some("customerRequest"), calculationTrigger = Some(CesaSAReturn)))
-  val calcResponseWithAmendmentAm = liabilityCalculationSuccessResponse.copy(metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "AM", Some("customerRequest"), calculationTrigger = Some(CesaSAReturn)))
+  val calcResponseWithAmendmentCa = liabilityCalculationSuccessResponse.copy(metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "CA", Some("customerRequest")))
+  val calcResponseWithAmendmentAm = liabilityCalculationSuccessResponse.copy(metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "AM", Some("customerRequest")))
 
   val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "not found")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")

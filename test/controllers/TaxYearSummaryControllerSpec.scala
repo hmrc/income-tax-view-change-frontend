@@ -28,7 +28,7 @@ import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, Message, Messages}
 import models.obligations._
-import models.taxyearsummary.{MtdSoftware, TaxYearSummaryChargeItem}
+import models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -154,7 +154,7 @@ class TaxYearSummaryControllerSpec
                   .thenReturn(Future.successful(singleBusinessIncome))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 mockGetNextUpdates(
                   fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -182,7 +182,7 @@ class TaxYearSummaryControllerSpec
                   .thenReturn(Future.successful(singleBusinessIncome))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -207,7 +207,7 @@ class TaxYearSummaryControllerSpec
                   .thenReturn(Future.successful(singleBusinessIncome))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -236,7 +236,7 @@ class TaxYearSummaryControllerSpec
                   .thenReturn(Future.successful(singleBusinessIncome))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -257,7 +257,11 @@ class TaxYearSummaryControllerSpec
                     testTaxYear, taxYearSummary,
                     taxYearsBackLink(isAgent),
                     ctaLink = ctaLink(isAgent),
-                    isAgent = isAgent
+                    isAgent = isAgent,
+                    taxYearViewScenarios = MtdSoftwareShowCalc,
+                    viewTaxCalcLink = Some("some fake url"),
+                    selfAssessmentLink = "some fake url",
+                    contactHmrcLink = "some fake url",
                   ).toString
 
                 val result = action(fakeRequest)
@@ -287,7 +291,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
@@ -300,7 +304,11 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftwareShowCalc,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = ""
                 ).toString
 
                 val result = action(fakeRequest)
@@ -329,7 +337,7 @@ class TaxYearSummaryControllerSpec
                 )
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
@@ -343,7 +351,11 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftwareShowCalc,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
                 ).toString
 
                 val result = action(fakeRequest)
@@ -372,7 +384,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val result = action(fakeRequest)
 
@@ -418,7 +430,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val result = action(fakeRequest)
 
@@ -443,7 +455,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val result = action(fakeRequest)
 
@@ -466,7 +478,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
@@ -491,7 +503,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
@@ -517,7 +529,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val result = action(fakeRequest)
 
@@ -557,7 +569,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val result = action(fakeRequest)
 
@@ -598,7 +610,7 @@ class TaxYearSummaryControllerSpec
                 )
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val result = action(fakeRequest)
 
@@ -625,7 +637,7 @@ class TaxYearSummaryControllerSpec
               setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
               when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                .thenReturn(MtdSoftware)
+                .thenReturn(MtdSoftwareShowCalc)
 
               val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
               val expectedContent: String =
@@ -641,7 +653,13 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   backUrl = homeBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftwareShowCalc,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
+
+
                 ).toString
 
               val result = action(fakeGetRequestBasedOnMTDUserType(mtdUserRole))
@@ -675,7 +693,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
@@ -688,7 +706,13 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftwareShowCalc,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
+
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -722,7 +746,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
@@ -735,7 +759,11 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftwareShowCalc,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = ""
                 ).toString
 
                 val result = action(fakeRequest)
@@ -763,7 +791,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val mfaCharges: List[TaxYearSummaryChargeItem] = List(
                   chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None),
@@ -785,7 +813,11 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftwareShowCalc,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
                 ).toString
 
                 val result = action(fakeRequest)
@@ -811,7 +843,7 @@ class TaxYearSummaryControllerSpec
                 )
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
@@ -824,7 +856,13 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftwareShowCalc,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
+
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -865,7 +903,11 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftwareShowCalc,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
                 ).toString()).text()
 
                 val result = action(fakeRequest)
@@ -896,7 +938,7 @@ class TaxYearSummaryControllerSpec
                 )
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val errorMessageVariableValues = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = false)(messages)
                 val calcOverview: CalculationSummary = CalculationSummary(errorMessageVariableValues)
@@ -911,7 +953,13 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftwareShowCalc,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
+
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -936,7 +984,7 @@ class TaxYearSummaryControllerSpec
                 .thenReturn(Future.successful(singleBusinessIncome))
 
               when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                .thenReturn(MtdSoftware)
+                .thenReturn(MtdSoftwareShowCalc)
 
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -964,7 +1012,7 @@ class TaxYearSummaryControllerSpec
                 .thenReturn(Future.successful(singleBusinessIncome))
 
               when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                .thenReturn(MtdSoftware)
+                .thenReturn(MtdSoftwareShowCalc)
 
               mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -982,7 +1030,7 @@ class TaxYearSummaryControllerSpec
                 mockPropertyIncomeSource()
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftware)
+                  .thenReturn(MtdSoftwareShowCalc)
 
                 val invalidTaxYearAction =
                   if (isAgent) {
@@ -1028,7 +1076,7 @@ class TaxYearSummaryControllerSpec
                 .thenReturn(Future.successful(singleBusinessIncome))
 
               when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                .thenReturn(MtdSoftware)
+                .thenReturn(MtdSoftwareShowCalc)
 
               mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -1050,6 +1098,7 @@ class TaxYearSummaryControllerSpec
         s"the $mtdUserRole is authenticated" that {
           "has liability Calculation error messages" should {
             "filter out the variable value from messages" in {
+
               val actual = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = isAgent)(messages)
 
               actual shouldBe

@@ -16,7 +16,6 @@
 
 package testConstants
 
-import enums.CesaSAReturn
 import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
 import models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDeductedAtSourceViewModel, TaxDueSummaryViewModel}
@@ -39,9 +38,9 @@ object NewCalcBreakdownUnitTestConstants {
       calculationType = "crystallisation",
       calculationReason = calculationReason,
       periodFrom = None,
-      periodTo = None,
-      calculationTrigger = Some(CesaSAReturn)
-    )
+      periodTo = None
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessful: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -299,9 +298,9 @@ object NewCalcBreakdownUnitTestConstants {
       calculationType = "crystallisation",
       calculationReason = Some("customerRequest"),
       periodFrom = Some(LocalDate.of(2018, 1, 1)),
-      periodTo = Some(LocalDate.of(2019, 1, 1)),
-      calculationTrigger = Some(CesaSAReturn)
-    )
+      periodTo = Some(LocalDate.of(2019, 1, 1))
+    ),
+    submissionChannel = None
   )
 
   val metadataWithAmendment =
@@ -310,8 +309,7 @@ object NewCalcBreakdownUnitTestConstants {
       calculationType = "CA",
       calculationReason = Some("customerRequest"),
       periodFrom = Some(LocalDate.of(2018, 1, 1)),
-      periodTo = Some(LocalDate.of(2019, 1, 1)),
-      calculationTrigger = Some(CesaSAReturn)
+      periodTo = Some(LocalDate.of(2019, 1, 1))
     )
 
   val liabilityCalculationModelErrorMessagesForIndividual = liabilityCalculationModelDeductionsMinimal().copy(messages = Some(Messages(
@@ -337,8 +335,7 @@ object NewCalcBreakdownUnitTestConstants {
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "inYear",
       periodFrom = Some(LocalDate.of(2018, 1, 1)),
-      periodTo = Some(LocalDate.of(2019, 1, 1)),
-      calculationTrigger = Some(CesaSAReturn)
+      periodTo = Some(LocalDate.of(2019, 1, 1))
     )
 
   )
@@ -498,7 +495,9 @@ object NewCalcBreakdownUnitTestConstants {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"), calculationTrigger = Some(CesaSAReturn))
+      calculationReason = Some("customerRequest")
+    ),
+    submissionChannel = None
   )
 
   val taxDueSummaryViewModelStandard = TaxDueSummaryViewModel(

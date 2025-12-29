@@ -16,7 +16,6 @@
 
 package connectors
 
-import enums.CesaSAReturn
 import enums.TaxYearSummary.CalculationRecord
 import enums.TaxYearSummary.CalculationRecord.PREVIOUS
 import mocks.MockHttpV2
@@ -53,11 +52,14 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
   val taxYearAsInt: Int = taxYear.toInt
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
-  val calculation: LiabilityCalculationResponse = LiabilityCalculationResponse(
-    inputs = Inputs(PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
-    messages = None,
-    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest"), calculationTrigger = Some(CesaSAReturn)),
-    calculation = None)
+  val calculation: LiabilityCalculationResponse =
+    LiabilityCalculationResponse(
+      inputs = Inputs(PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+      messages = None,
+      metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest")),
+      calculation = None,
+      submissionChannel = None
+    )
   val calculationJson: JsObject =
     Json.obj(
       "inputs" -> Json.obj("personalInformation" -> Json.obj("taxRegime" -> "UK")),

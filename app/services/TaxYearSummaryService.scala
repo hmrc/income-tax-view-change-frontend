@@ -17,39 +17,57 @@
 package services
 
 import auth.MtdItUser
-import enums.CesaSAReturn
 import models.incomeSourceDetails.TaxYear
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
+import models.liabilitycalculation._
 import models.taxyearsummary._
+import play.api.Logger
 
 import javax.inject.Inject
 
-
+//noinspection ScalaStyle
 class TaxYearSummaryService @Inject()() {
 
+  def checkSubmissionChannel(liabilityCalculationResponse: Option[LiabilityCalculationResponseModel]): TaxYearViewScenarios = {
+    liabilityCalculationResponse match {
+      case Some(LiabilityCalculationError(status, message)) =>
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationError - LegacyAndCesa, status: $status, error message: $message")
+        LegacyAndCesa
+      case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsLegacyWithCesa))) =>
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsLegacyWithCesa")
+        LegacyAndCesa
+      case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsLegacy))) =>
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsLegacy")
+        LegacyAndCesa
+      case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsMTD))) =>
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsMTD - show MtdSoftwareShowCalc calc panel")
+        MtdSoftwareShowCalc
+      case _ =>
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] Catch all - show MtdSoftwareShowCalc calc panel")
+        MtdSoftwareShowCalc
+    }
+  }
+
   def determineCannotDisplayCalculationContentScenario(
-                                                        latestCalcResponse: LiabilityCalculationResponseModel,
+                                                        liabilityCalculationResponse: Option[LiabilityCalculationResponseModel],
                                                         taxYear: TaxYear
-                                                      )(implicit user: MtdItUser[_]): TaxYearViewScenarios = {
+                                                      )(implicit mtdItUser: MtdItUser[_]): TaxYearViewScenarios = {
 
     lazy val taxYear2023 = TaxYear(2023, 2024)
-    val irsaEnrolement = user.authUserDetails.saUtr
+    val irsaEnrolement: Option[String] = mtdItUser.authUserDetails.saUtr
 
-    latestCalcResponse match {
-      case response: LiabilityCalculationResponse if response.metadata.calculationTrigger == Some(CesaSAReturn) =>
-        LegacyAndCesa
-      case response: LiabilityCalculationError if user.isAgent() && response.status != 404 && taxYear.isBefore(taxYear2023) =>
+    (liabilityCalculationResponse, irsaEnrolement) match {
+      case (Some(LiabilityCalculationError(_, _)), _) if mtdItUser.isAgent() && taxYear.isBefore(taxYear2023) =>
+        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] AgentBefore2023TaxYear")
         AgentBefore2023TaxYear
-      case response: LiabilityCalculationError if irsaEnrolement.isDefined && response.status != 404 && taxYear.isBefore(taxYear2023) =>
+      case (Some(LiabilityCalculationError(_, _)), Some(_)) if taxYear.isBefore(taxYear2023) =>
+        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] IrsaEnrolementHandedOff")
         IrsaEnrolementHandedOff
-      case response: LiabilityCalculationError if response.status == 404 && taxYear.isBefore(taxYear2023) =>
-        LegacyAndCesa
-      case _: LiabilityCalculationError if irsaEnrolement.isEmpty && taxYear.isBefore(taxYear2023) =>
+      case (Some(LiabilityCalculationError(_, _)), None) if taxYear.isBefore(taxYear2023) =>
+        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] NoIrsaAEnrolement")
         NoIrsaAEnrolement
-      case response: LiabilityCalculationResponse if response.metadata.calculationTrigger != Some(CesaSAReturn) =>
-        MtdSoftware
       case _ =>
-        Default
+        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] checkSubmissionChannel")
+        checkSubmissionChannel(liabilityCalculationResponse)
     }
   }
 }
