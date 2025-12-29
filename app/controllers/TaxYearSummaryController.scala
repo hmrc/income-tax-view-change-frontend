@@ -32,7 +32,7 @@ import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.obligations.ObligationsModel
-import models.taxyearsummary.TaxYearSummaryChargeItem
+import models.taxyearsummary.{TaxYearSummaryChargeItem, TaxYearViewScenarios}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
@@ -47,25 +47,54 @@ import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+//scalastyle:off
 @Singleton
-class TaxYearSummaryController @Inject()(authActions: AuthActions,
-                                         taxYearSummaryView: TaxYearSummaryView,
-                                         taxYearSummaryService: TaxYearSummaryService,
-                                         calculationService: CalculationService,
-                                         financialDetailsService: FinancialDetailsService,
-                                         itvcErrorHandler: ItvcErrorHandler,
-                                         agentItvcErrorHandler: AgentItvcErrorHandler,
-                                         nextUpdatesService: NextUpdatesService,
-                                         messagesApi: MessagesApi,
-                                         val languageUtils: LanguageUtils,
-                                         val auditingService: AuditingService,
-                                         claimToAdjustService: ClaimToAdjustService)
-                                        (
+class TaxYearSummaryController @Inject()(
+                                          authActions: AuthActions,
+                                          taxYearSummaryView: TaxYearSummaryView,
+                                          taxYearSummaryService: TaxYearSummaryService,
+                                          calculationService: CalculationService,
+                                          financialDetailsService: FinancialDetailsService,
+                                          itvcErrorHandler: ItvcErrorHandler,
+                                          agentItvcErrorHandler: AgentItvcErrorHandler,
+                                          nextUpdatesService: NextUpdatesService,
+                                          messagesApi: MessagesApi,
+                                          val languageUtils: LanguageUtils,
+                                          val auditingService: AuditingService,
+                                          claimToAdjustService: ClaimToAdjustService
+                                        )(
                                           implicit val appConfig: FrontendAppConfig,
                                           dateService: DateServiceInterface,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext
                                         ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
+
+  // Individual back urls
+  private def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
+
+  def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
+
+  def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
+
+  // Agent back urls
+  private lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
+  private lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
+  private lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
+
+
+  def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi, isAgent: Boolean)
+                         (implicit messages: Messages): LiabilityCalculationResponse = {
+
+    if (liabilityCalc.messages.isDefined) {
+      val errorMessages = liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty, isAgent)
+      val translatedDateMessages = {
+        models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages, this)
+      }
+      liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedDateMessages))))
+    } else {
+      liabilityCalc
+    }
+  }
 
   private def showForecast(calculationSummary: Option[CalculationSummary]): Boolean = {
     val isCrystallised = calculationSummary.exists(_.crystallised)
@@ -164,16 +193,21 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
     Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with Calc data")
 
-    Future(
-      Ok(taxYearSummaryView(
-        taxYear = taxYear,
-        viewModel = taxYearSummaryViewModel,
-        backUrl = backUrl,
-        origin = origin,
-        isAgent = isAgent,
-        ctaLink = ctaLink
-      ))
-    )
+    val taxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(latestCalc, TaxYear(taxYear, taxYear + 1))
+    val selfAssessmentLink: Option[String] = mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
+
+    Future(Ok(taxYearSummaryView(
+      taxYear = taxYear,
+      viewModel = taxYearSummaryViewModel,
+      backUrl = backUrl,
+      origin = origin,
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = taxYearViewScenarios,
+      viewTaxCalcLink = selfAssessmentLink,
+      selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
+      contactHmrcLink = appConfig.findHmrcContactsSALink()
+    )))
   }
 
   private def handleCalcError(error: LiabilityCalculationError,
@@ -218,6 +252,10 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
       Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with No Calc data")
 
+
+      val scenarios: TaxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(error, TaxYear(taxYear, taxYear + 1))
+      val selfAssessmentLink: Option[String] = mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
+
       Future(
         Ok(taxYearSummaryView(
           taxYear = taxYear,
@@ -225,7 +263,11 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
           backUrl = backUrl,
           origin = origin,
           isAgent = isAgent,
-          ctaLink = ctaLink
+          ctaLink = ctaLink,
+          taxYearViewScenarios = scenarios,
+          viewTaxCalcLink = selfAssessmentLink,
+          selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
+          contactHmrcLink = appConfig.findHmrcContactsSALink()
         ))
       )
     } else {
@@ -251,6 +293,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
       case None => Some("")
     }
   }
+
 
   private def withTaxYearFinancials(taxYear: Int, isAgent: Boolean)(f: List[TaxYearSummaryChargeItem] => Future[Result])
                                    (implicit user: MtdItUser[_]): Future[Result] = {
@@ -362,9 +405,6 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
         for {
           viewModel <- claimToAdjustViewModel(nino = Nino(value = user.nino), taxYear = taxYear)
           (latestCalcResponse: LiabilityCalculationResponseModel, previousResponse: Option[LiabilityCalculationResponseModel]) <- calculationService.getLatestAndPreviousCalculationDetails(mtdItId, nino, taxYear)
-//          _ = println("\n" + latestCalcResponse + "*****************\n")
-          taxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(latestCalcResponse, TaxYear(taxYear, taxYear + 1)) // TODO use this to determine calc tab content
-//          _ = println("000000 " + taxYearViewScenarios)
           backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin)
           view <- renderView(
             liabilityCalc = latestCalcResponse,
@@ -389,33 +429,6 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
       val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
       Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause} - ")
       errorHandler.showInternalServerError()
-  }
-
-  // Individual back urls
-  private def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
-
-  def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
-
-  def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
-
-  // Agent back urls
-  private lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
-  private lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
-  private lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
-
-
-  def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi, isAgent: Boolean)
-                         (implicit messages: Messages): LiabilityCalculationResponse = {
-
-    if (liabilityCalc.messages.isDefined) {
-      val errorMessages = liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty, isAgent)
-      val translatedDateMessages = {
-        models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages, this)
-      }
-      liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedDateMessages))))
-    } else {
-      liabilityCalc
-    }
   }
 
   private def claimToAdjustViewModel(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[TYSClaimToAdjustViewModel] = {
@@ -447,3 +460,4 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
     }
 
 }
+//scalastyle:on

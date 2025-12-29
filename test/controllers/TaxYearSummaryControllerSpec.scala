@@ -257,7 +257,11 @@ class TaxYearSummaryControllerSpec
                     testTaxYear, taxYearSummary,
                     taxYearsBackLink(isAgent),
                     ctaLink = ctaLink(isAgent),
-                    isAgent = isAgent
+                    isAgent = isAgent,
+                    taxYearViewScenarios = MtdSoftware,
+                    viewTaxCalcLink = Some("some fake url"),
+                    selfAssessmentLink = "some fake url",
+                    contactHmrcLink = "some fake url",
                   ).toString
 
                 val result = action(fakeRequest)
@@ -300,7 +304,11 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = ""
                 ).toString
 
                 val result = action(fakeRequest)
@@ -343,7 +351,11 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
                 ).toString
 
                 val result = action(fakeRequest)
@@ -641,7 +653,13 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   backUrl = homeBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
+
+
                 ).toString
 
               val result = action(fakeGetRequestBasedOnMTDUserType(mtdUserRole))
@@ -688,7 +706,13 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
+
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -735,7 +759,11 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = ""
                 ).toString
 
                 val result = action(fakeRequest)
@@ -785,7 +813,11 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
                 ).toString
 
                 val result = action(fakeRequest)
@@ -824,7 +856,13 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
+
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -865,7 +903,11 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
                 ).toString()).text()
 
                 val result = action(fakeRequest)
@@ -911,7 +953,13 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware,
+                  viewTaxCalcLink = Some("some fake url"),
+                  selfAssessmentLink = "some fake url",
+                  contactHmrcLink = "some fake url",
+
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -1050,6 +1098,7 @@ class TaxYearSummaryControllerSpec
         s"the $mtdUserRole is authenticated" that {
           "has liability Calculation error messages" should {
             "filter out the variable value from messages" in {
+
               val actual = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = isAgent)(messages)
 
               actual shouldBe
