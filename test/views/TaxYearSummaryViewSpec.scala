@@ -236,6 +236,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
+  val testObligationsChronologicalModel: ObligationsModel = ObligationsModel(Seq(obligationsModelDataSucessful))
+
   val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = None)
 
   val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2023, 2024)))
@@ -423,6 +425,77 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val previousCalculationExample: String = "For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."
     val previousCalculationContactHmrc: String = "If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC (opens in new tab)."
     val previousCalculationBill: String = "Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund."
+    val expectedSubmissionsHTMLFragment = """<div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="submissions">
+                                            | <h2 class="govuk-heading-l">Submissions</h2>
+                                            | <p class="govuk-body" id="submissions-tab-description">This is a record of what you have submitted for the tax year.</p>
+                                            | <div class="govuk-tax-years-submissions-table">
+                                            |  <h3 class="govuk-heading-m"><span class="govuk-tax-years-submissions-table__section-title" id="table-default-content-2016-07-30"> Due 30 July 2016 </span></h3>
+                                            |  <table class="govuk-table govuk-table">
+                                            |   <caption class="govuk-table__caption govuk-table__caption">
+                                            |    The update period from 1 May 2016 to 30 Jul 2016
+                                            |   </caption>
+                                            |   <thead class="govuk-table__head">
+                                            |    <tr class="govuk-table__row">
+                                            |     <th scope="col" class="govuk-table__header govuk-table__header">Submission</th>
+                                            |     <th scope="col" class="govuk-table__header govuk-table__header">Income source</th>
+                                            |     <th scope="col" class="govuk-table__header govuk-table__header">Date submitted</th>
+                                            |    </tr>
+                                            |   </thead>
+                                            |   <tbody class="govuk-table__body">
+                                            |    <tr class="govuk-table__row">
+                                            |     <td class="govuk-table__cell govuk-table__header govuk-!-font-weight-regular">Quarterly update</td>
+                                            |     <td class="govuk-table__cell govuk-table__cell">Business income</td>
+                                            |     <td class="govuk-table__cell govuk-table__cell">30 Jul 2016</td>
+                                            |    </tr>
+                                            |   </tbody>
+                                            |  </table>
+                                            | </div>
+                                            | <div class="govuk-tax-years-submissions-table">
+                                            |  <h3 class="govuk-heading-m"><span class="govuk-tax-years-submissions-table__section-title" id="table-default-content-2017-03-30"> Due 30 March 2017 </span></h3>
+                                            |  <table class="govuk-table govuk-table">
+                                            |   <caption class="govuk-table__caption govuk-table__caption">
+                                            |    The update period from 1 Jan 2017 to 30 Mar 2017
+                                            |   </caption>
+                                            |   <thead class="govuk-table__head">
+                                            |    <tr class="govuk-table__row">
+                                            |     <th scope="col" class="govuk-table__header govuk-table__header">Submission</th>
+                                            |     <th scope="col" class="govuk-table__header govuk-table__header">Income source</th>
+                                            |     <th scope="col" class="govuk-table__header govuk-table__header">Date submitted</th>
+                                            |    </tr>
+                                            |   </thead>
+                                            |   <tbody class="govuk-table__body">
+                                            |    <tr class="govuk-table__row">
+                                            |     <td class="govuk-table__cell govuk-table__header govuk-!-font-weight-regular">Quarterly update</td>
+                                            |     <td class="govuk-table__cell govuk-table__cell">Business income</td>
+                                            |     <td class="govuk-table__cell govuk-table__cell">30 Mar 2017</td>
+                                            |    </tr>
+                                            |   </tbody>
+                                            |  </table>
+                                            | </div>
+                                            | <div class="govuk-tax-years-submissions-table">
+                                            |  <h3 class="govuk-heading-m"><span class="govuk-tax-years-submissions-table__section-title" id="table-default-content-2017-11-30"> Due 30 November 2017 </span></h3>
+                                            |  <table class="govuk-table govuk-table">
+                                            |   <caption class="govuk-table__caption govuk-table__caption">
+                                            |    The update period from 1 Sept 2017 to 30 Nov 2017
+                                            |   </caption>
+                                            |   <thead class="govuk-table__head">
+                                            |    <tr class="govuk-table__row">
+                                            |     <th scope="col" class="govuk-table__header govuk-table__header">Submission</th>
+                                            |     <th scope="col" class="govuk-table__header govuk-table__header">Income source</th>
+                                            |     <th scope="col" class="govuk-table__header govuk-table__header">Date submitted</th>
+                                            |    </tr>
+                                            |   </thead>
+                                            |   <tbody class="govuk-table__body">
+                                            |    <tr class="govuk-table__row">
+                                            |     <td class="govuk-table__cell govuk-table__header govuk-!-font-weight-regular">Quarterly update</td>
+                                            |     <td class="govuk-table__cell govuk-table__cell">Business income</td>
+                                            |     <td class="govuk-table__cell govuk-table__cell">30 Nov 2017</td>
+                                            |    </tr>
+                                            |   </tbody>
+                                            |  </table>
+                                            | </div>
+                                            |</div>""".stripMargin
+
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
@@ -905,6 +978,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
               row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
           }
         }
+      }
+
+      "display submissions by due-date should be in chronological order" in new Setup(estimateView(obligations = testObligationsChronologicalModel)) {
+        s"${document.getElementById("submissions")}" shouldBe expectedSubmissionsHTMLFragment
       }
 
       "display the latest calculation tab when pfa is enabled and the user has an amended latest calculation" in new Setup(calculationWithLatestAmendmentsView(false)) {
