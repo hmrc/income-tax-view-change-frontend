@@ -53,7 +53,8 @@ class TaxYearsController @Inject()(
               isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
               earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
               btaNavPartial = user.btaNavPartial,
-              origin = origin)
+              origin = origin
+            )
           )
         )
     }
