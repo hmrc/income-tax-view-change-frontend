@@ -106,9 +106,14 @@ trait MockClaimToAdjustService extends UnitSpec with BeforeAndAfterEach {
         )
       )
 
-  def setupMockGetPoaTaxYearForEntryPointCall(response: Either[Throwable, Option[TaxYear]]): Unit = {
+  def setupMockGetPoaTaxYearForEntryPointCall(response: Option[TaxYear]): Unit = {
     when(mockClaimToAdjustService
       .getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
       .thenReturn(Future.successful(response))
+  }
+  def setupMockGetPoaTaxYearForEntryPointCallFailure(ex: Throwable): Unit = {
+    when(mockClaimToAdjustService
+      .getPoaTaxYearForEntryPoint(Nino(any()))(any(), any()))
+      .thenReturn(Future.failed(new Exception("There was an error when getting the POA Entry point")))
   }
 }
