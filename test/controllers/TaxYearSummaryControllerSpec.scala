@@ -127,7 +127,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -145,7 +145,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -163,7 +163,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -183,7 +183,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
                 val taxYearSummary = TaxYearSummaryViewModel(
                   Some(CalculationSummary(liabilityCalculationModelSuccessfulNotCrystallised)),
                   None,
@@ -218,7 +218,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
 
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
@@ -245,7 +245,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
                 mockLatestAndPreviousNotFound(testMtditid, taxYear = testTaxYear)
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -282,7 +282,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+                setupMockGetPoaTaxYearForEntryPointCall(Some(TaxYear(2017, 2018)))
 
                 val result = action(fakeRequest)
 
@@ -300,7 +300,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+                setupMockGetPoaTaxYearForEntryPointCall(Some(TaxYear(2017, 2018)))
 
                 val result = action(fakeRequest)
 
@@ -317,7 +317,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+                setupMockGetPoaTaxYearForEntryPointCall(Some(TaxYear(2017, 2018)))
 
                 val result = action(fakeRequest)
 
@@ -335,7 +335,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+                setupMockGetPoaTaxYearForEntryPointCall(Some(TaxYear(2017, 2018)))
 
                 val result = action(fakeRequest)
 
@@ -351,7 +351,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
 
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
@@ -368,7 +368,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+                setupMockGetPoaTaxYearForEntryPointCall(Some(TaxYear(2017, 2018)))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
@@ -387,7 +387,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   response = testObligtionsModel
                 )
 
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+                setupMockGetPoaTaxYearForEntryPointCall(Some(TaxYear(2017, 2018)))
 
                 val result = action(fakeRequest)
                 def chargeSummaryUrl(id: String) = if(isAgent) {
@@ -416,7 +416,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   response = testObligtionsModel
                 )
 
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+                setupMockGetPoaTaxYearForEntryPointCall(Some(TaxYear(2017, 2018)))
 
                 val result = action(fakeRequest)
                 def chargeSummaryUrl(id: String) = if(isAgent) {
@@ -464,7 +464,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
                 response = testObligtionsModel
               )
-              setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+              setupMockGetPoaTaxYearForEntryPointCall(None)
 
               val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
               val expectedContent: String = taxYearSummaryView(
@@ -504,7 +504,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   response = testObligtionsModel
                 )
 
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
@@ -540,7 +540,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
@@ -571,7 +571,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
 
                 val mfaCharges: List[TaxYearSummaryChargeItem] = List(
                   chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None),
@@ -608,7 +608,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockSingleBusinessIncomeSource()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsNotFound()
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
@@ -647,7 +647,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
 
                 val expectedContent: String = Jsoup.parse(taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
@@ -677,7 +677,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 disable(NavBarFs)
                 setupMockSuccess(mtdUserRole)
                 mockSingleBusinessIncomeSource()
-                setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+                setupMockGetPoaTaxYearForEntryPointCall(None)
                 mockLatestAndPreviousWithErrorMessages(testMtditid)
                 mockFinancialDetailsSuccess()
                 mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -713,7 +713,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             "getPoaTaxYearForEntryPoint returns an error" in {
               setupMockSuccess(mtdUserRole)
               mockSingleBusinessIncomeSource()
-              setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("TEST")))
+              setupMockGetPoaTaxYearForEntryPointCallFailure(new Exception("TEST"))
               mockFinancialDetailsSuccess()
 
               val result = action(fakeRequest)
