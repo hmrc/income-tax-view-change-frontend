@@ -59,9 +59,13 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
       handleRequest(isAgent = true, mode = mode)(implicitly, itvcErrorHandlerAgent)
   }
 
-  def handleRequest(isAgent: Boolean, mode: Mode)
-                   (implicit user: MtdItUser[_],
-                    errorHandler: ShowInternalServerError): Future[Result] = {
+  private def addressLookupConfirmUrl(id: String): String = {
+    s"${appConfig.addressLookupService}/lookup-address/$id/confirm"
+  }
+
+  private def initialiseJourney(isAgent: Boolean, mode: Mode)
+                               (implicit user: MtdItUser[_],
+                                errorHandler: ShowInternalServerError): Future[Result] = {
     addressLookupService.initialiseAddressJourney(
       isAgent = isAgent,
       mode = mode
@@ -77,6 +81,26 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     }
   }
 
+  def handleRequest(isAgent: Boolean, mode: Mode)
+                   (implicit user: MtdItUser[_],
+                    errorHandler: ShowInternalServerError): Future[Result] = {
+
+    val journeyType = IncomeSourceJourneyType(Add, SelfEmployment)
+
+    sessionService.getMongo(journeyType).flatMap {
+      case Right(Some(sessionData)) =>
+        sessionData.addIncomeSourceData.flatMap(_.addressLookupId) match {
+          case Some(addressLookupId) =>
+            Future.successful(Redirect(addressLookupConfirmUrl(addressLookupId)))
+          case None =>
+            initialiseJourney(isAgent = isAgent, mode = mode)(user, errorHandler)
+        }
+
+      case _ =>
+        initialiseJourney(isAgent = isAgent, mode = mode)(user, errorHandler)
+    }
+  }
+
   private def getRedirectUrl(isAgent: Boolean)(implicit user: MtdItUser[_]): String = {
     (if (isAgent) {
       routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
@@ -85,7 +109,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel])
+  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel], id: Option[IncomeSourceId])
                           (implicit request: Request[_]): Future[Boolean] = {
     addressLookUpResult match {
       case Right(value) =>
@@ -93,7 +117,11 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
         sessionService.getMongo(journeyType).flatMap {
           case Right(Some(sessionData)) =>
             val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-            val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))
+            val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(
+              address = Some(value.address),
+              countryCode = Some("GB"),
+              addressLookupId = id.map(_.value)
+            )
             val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
             sessionService.setMongoData(uiJourneySessionData)
@@ -110,7 +138,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     val redirectUrl = getRedirectUrl(isAgent = isAgent)
     val redirect = Redirect(redirectUrl)
 
-    addressLookupService.fetchAddress(id).flatMap(setUpSession(_).flatMap {
+    addressLookupService.fetchAddress(id).flatMap(setUpSession(_, id).flatMap {
       case true => Future.successful(redirect)
       case false => Future.failed(new Exception("failed to set session data"))
     })
