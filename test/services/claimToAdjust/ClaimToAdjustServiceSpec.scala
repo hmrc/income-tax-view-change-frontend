@@ -97,7 +97,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
 
-        result.futureValue shouldBe Right(Some(TaxYear(startYear = 2022, endYear = 2023)))
+        result.futureValue shouldBe Some(TaxYear(startYear = 2022, endYear = 2023))
 
       }
       "a user has two sets of document details relating to PoA data. The second year is a CTA amendable year. Only the second year is non-crystallised" in {
@@ -109,7 +109,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
 
-        result.futureValue shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
+        result.futureValue shouldBe Some(TaxYear(startYear = 2023, endYear = 2024))
 
       }
       "a user has only one CTA amendable year. This year has POA data and is not crystallised" in {
@@ -119,7 +119,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val f = fixture(LocalDate.of(2024, 4, 1))
         val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
 
-        result.futureValue shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
+        result.futureValue shouldBe Some(TaxYear(startYear = 2023, endYear = 2024))
 
       }
     }
@@ -133,25 +133,11 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val f = fixture(LocalDate.of(2023, 8, 27))
         val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
 
-        result.futureValue shouldBe Right(None)
+        result.futureValue shouldBe None
 
       }
     }
-    "return an exception" when {
-      "financialDetailsConnector returns an error model" in {
-        setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
-        setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
 
-        setupMockGetFinancialDetails(2024, testNino)(financialDetailsErrorModel(500))
-        setupMockGetFinancialDetails(2023, testNino)(financialDetailsErrorModel(500))
-
-        val f = fixture(LocalDate.of(2023, 8, 27))
-        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
-
-        result.futureValue.toString shouldBe Left(new Exception("There was an error whilst fetching financial details data")).toString
-
-      }
-    }
   }
 
   "getPoaForNonCrystallisedTaxYear method" should {
