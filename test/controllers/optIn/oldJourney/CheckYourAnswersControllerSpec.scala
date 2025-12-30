@@ -17,6 +17,7 @@
 package controllers.optIn.oldJourney
 
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.routes
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -30,6 +31,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
+import services.DateServiceInterface
 import services.optIn.OptInService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -40,7 +42,10 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[OptInService].toInstance(mockOptInService)
+      api.inject.bind[OptInService].toInstance(mockOptInService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[OptInCheckYourAnswersController]
@@ -57,6 +62,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
         "render the check your answers page" in {
           enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
@@ -74,6 +80,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "there is no check your answers view model" in {
             enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.getMultiYearCheckYourAnswersViewModel(any())(any(), any(), any()))
@@ -89,6 +96,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
             disable(SignUpFs)
             enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -108,6 +116,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -133,6 +142,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
         "redirect to OptInCompletedController" in {
           enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.makeOptInCall()(any(), any(), any()))
@@ -148,6 +158,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "the optInCall fails" in {
             enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.makeOptInCall()(any(), any(), any()))
@@ -164,6 +175,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
             disable(SignUpFs)
             enable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -183,6 +195,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)

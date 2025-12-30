@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
@@ -28,7 +29,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -36,7 +37,10 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ReportingMethodSetBackErrorController]
@@ -62,9 +66,11 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
   }
 
 
-  val incomeSourceTypes: Seq[IncomeSourceType with Serializable] = List(SelfEmployment, UkProperty, ForeignProperty)
+  val incomeSourceTypes: Seq[IncomeSourceType with Serializable] =
+    List(SelfEmployment, UkProperty, ForeignProperty)
 
-  def sessionData(journeyType: JourneyType): UIJourneySessionData = UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"))))
+  def sessionData(journeyType: JourneyType): UIJourneySessionData =
+    UIJourneySessionData(testSessionId, journeyType.toString, Some(AddIncomeSourceData(incomeSourceId = Some("1234"))))
 
   def mockMongo(journeyType: JourneyType): Unit = {
     setupMockGetMongo(Right(Some(sessionData(journeyType))))
@@ -80,6 +86,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
         s"the user is authenticated as a $mtdRole" should {
           "render the you cannot go back error page" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             mockMongo(IncomeSourceJourneyType(Add, incomeSourceType))
@@ -92,7 +99,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
             document.getElementById("subheading").text() shouldBe getSubHeading(incomeSourceType)
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

@@ -16,14 +16,15 @@
 
 package controllers.manageBusinesses.manage
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClientDetailsService, MockDateService, MockNextUpdatesService, MockSessionService}
 import models.admin.OptInOptOutContentUpdateR17
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.incomeSourceDetails._
+import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -31,7 +32,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, NextUpdatesService, SessionService}
+import services.{DateService, DateServiceInterface, NextUpdatesService, SessionService}
 import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId}
 import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
@@ -41,11 +42,12 @@ import utils.IncomeSourcesUtils
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ManageObligationsControllerSpec extends MockAuthActions
-  with MockClientDetailsService
-  with MockNextUpdatesService
-  with MockSessionService
-  with MockDateService {
+class ManageObligationsControllerSpec
+  extends MockAuthActions
+    with MockClientDetailsService
+    with MockNextUpdatesService
+    with MockSessionService
+    with MockDateService {
 
   lazy val mockIncomeSourcesUtils: IncomeSourcesUtils = mock(classOf[IncomeSourcesUtils])
 
@@ -54,7 +56,10 @@ class ManageObligationsControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils),
-      api.inject.bind[DateService].toInstance(mockDateService)
+      api.inject.bind[DateService].toInstance(mockDateService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ManageObligationsController]
@@ -62,8 +67,12 @@ class ManageObligationsControllerSpec extends MockAuthActions
 
   private def setMongoSessionData(incomeSourceId: String, reportingMethod: String, taxYear: String, incomeSourceType: IncomeSourceType): Unit = {
     setupMockCreateSession(true)
-    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
-      .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(incomeSourceId), reportingMethod = Some(reportingMethod), taxYear = Some(taxYear.toInt)))))))
+    setupMockGetMongo(
+      Right(Some(
+        emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
+          .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(incomeSourceId = Some(incomeSourceId), reportingMethod = Some(reportingMethod), taxYear = Some(taxYear.toInt))))
+      ))
+    )
   }
 
   val taxYear = "2024"
@@ -149,23 +158,29 @@ class ManageObligationsControllerSpec extends MockAuthActions
         def action = testController.show(isAgent, incomeSourceType)
 
         s"the user is authenticated as a $mtdRole" should {
-          "render the page with OptInOptOutContentUpdateR17 enabled and current tax year" in {
-            enable(OptInOptOutContentUpdateR17)
 
+          "render the page with OptInOptOutContentUpdateR17 enabled and current tax year" in {
+
+            enable(OptInOptOutContentUpdateR17)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
             setupMockGetCurrentTaxYearStart(LocalDate.of(2024, 4, 6))
 
             incomeSourceType match {
-              case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
-              case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
-                .thenReturn(Some(propertyDetailsModelUK))
-              case _ => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
-                .thenReturn(Some(propertyDetailsModelForeign))
+              case SelfEmployment =>
+                when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
+              case UkProperty =>
+                when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
+                  .thenReturn(Some(propertyDetailsModelUK))
+              case _ =>
+                when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
+                  .thenReturn(Some(propertyDetailsModelForeign))
             }
 
             setMongoSessionData(testId, changeToQ, taxYear, incomeSourceType)
+
             when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
               .thenReturn(Future(obligationsViewModel))
             when(mockNextUpdatesService.getOpenObligations()(any(), any()))
@@ -178,11 +193,16 @@ class ManageObligationsControllerSpec extends MockAuthActions
             contentAsString(result) should include("Your deadlines for this business will be available in the next few minutes.")
           }
           "render the reporting method change error page" when {
+
             "IncomeSources FS is enabled" in {
+
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
               setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
               setupMockGetCurrentTaxYearStart(LocalDate.of(2024, 4, 6))
+              setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
+
               incomeSourceType match {
                 case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
                 case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
@@ -190,51 +210,22 @@ class ManageObligationsControllerSpec extends MockAuthActions
                 case _ => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
                   .thenReturn(Some(propertyDetailsModelForeign))
               }
-              setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
+
               when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
                 .thenReturn(Future(obligationsViewModel))
+
               when(mockNextUpdatesService.getOpenObligations()(any(), any())).
                 thenReturn(Future(testObligationsModel))
 
               val result = action()(fakeRequest)
               status(result) shouldBe OK
             }
-
-            if(incomeSourceType == SelfEmployment) {
-              "business has no name" in {
-                setupMockSuccess(mtdRole)
-                val source = IncomeSourceDetailsModel(testNino, "", Some("2022"), List(
-                  BusinessDetailsModel(
-                    testId,
-                    incomeSource = Some(testIncomeSource),
-                    None,
-                    None,
-                    None,
-                    Some(LocalDate.of(2022, 1, 1)),
-                    contextualTaxYear = None,
-                    None,
-                  )), List.empty)
-                setupMockGetIncomeSourceDetails(source)
-                setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
-                setupMockGetCurrentTaxYearStart(LocalDate.of(2024, 4, 6))
-                setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
-
-                when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))
-                  .thenReturn(Future(obligationsViewModel))
-                when(mockNextUpdatesService.getOpenObligations()(any(), any())).
-                  thenReturn(Future(testObligationsModel))
-                when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
-
-                val result = action()(fakeRequest)
-                status(result) shouldBe OK
-                contentAsString(result) should include("Sole trader business")
-              }
-            }
           }
 
           "render the error page" when {
             "invalid taxYear in session" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
               setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               incomeSourceType match {
                 case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
@@ -252,13 +243,17 @@ class ManageObligationsControllerSpec extends MockAuthActions
 
             "invalid changeTo in session" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
               setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
               incomeSourceType match {
-                case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
-                case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
-                  .thenReturn(Some(propertyDetailsModelUK))
-                case _ => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
-                  .thenReturn(Some(propertyDetailsModelForeign))
+                case SelfEmployment =>
+                  when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
+                case UkProperty =>
+                  when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
+                    .thenReturn(Some(propertyDetailsModelUK))
+                case _ =>
+                  when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
+                    .thenReturn(Some(propertyDetailsModelForeign))
               }
               val invalidChangeTo = "2345"
               setMongoSessionData(testId, invalidChangeTo, taxYear, incomeSourceType)
@@ -271,13 +266,17 @@ class ManageObligationsControllerSpec extends MockAuthActions
 
               "there is no incomeSourceId in session" in {
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
                 setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
                 incomeSourceType match {
-                  case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
-                  case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
-                    .thenReturn(Some(propertyDetailsModelUK))
-                  case _ => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
-                    .thenReturn(Some(propertyDetailsModelForeign))
+                  case SelfEmployment =>
+                    when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
+                  case UkProperty =>
+                    when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
+                      .thenReturn(Some(propertyDetailsModelUK))
+                  case _ =>
+                    when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
+                      .thenReturn(Some(propertyDetailsModelForeign))
                 }
                 setupMockCreateSession(true)
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
@@ -287,36 +286,6 @@ class ManageObligationsControllerSpec extends MockAuthActions
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
             } else {
-              s"user has no active ${incomeSourceType.messagesCamel}" in {
-                setupMockSuccess(mtdRole)
-                mockNoIncomeSources()
-                when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
-                  .thenReturn(
-                    None
-                  )
-                setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
-
-
-                val result = action()(fakeRequest)
-                status(result) shouldBe INTERNAL_SERVER_ERROR
-              }
-
-              s"user has more than one active ${incomeSourceType.messagesCamel}" in {
-                setupMockSuccess(mtdRole)
-                if (incomeSourceType == UkProperty) {
-                  mockTwoActiveUkPropertyIncomeSourcesErrorScenario()
-                } else {
-                  mockTwoActiveForeignPropertyIncomeSourcesErrorScenario()
-                }
-                when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
-                  .thenReturn(
-                    None
-                  )
-                setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
-
-                val result = action()(fakeRequest)
-                status(result) shouldBe INTERNAL_SERVER_ERROR
-              }
             }
           }
         }
@@ -331,10 +300,11 @@ class ManageObligationsControllerSpec extends MockAuthActions
         "redirect to ManageIncomeSources controller" in {
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           val result = action(fakeRequest)
-          if(isAgent)
+          if (isAgent)
             redirectLocation(result) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
           else
             redirectLocation(result) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url)

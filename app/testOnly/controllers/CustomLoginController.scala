@@ -75,12 +75,12 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                 val redirectURL = if (postedUser.isAgent)
                   s"report-quarterly/income-and-expenses/view/test-only/stub-client/nino/${user.nino}/utr/" + user.utr
                 else {
-                  val origin = if(postedUser.usePTANavBar) "PTA" else "BTA"
+                  val origin = if (postedUser.usePTANavBar) "PTA" else "BTA"
                   s"report-quarterly/income-and-expenses/view?origin=$origin"
                 }
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
-                if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes)) {
+                if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes) && user.nino != "OP000009A") {
                   updateTestDataForOptOut(
                     nino = user.nino,
                     crystallisationStatus = postedUser.cyMinusOneCrystallisationStatus.get,
@@ -88,8 +88,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                     cyItsaStatus = postedUser.cyItsaStatus.get,
                     cyPlusOneItsaStatus = postedUser.cyPlusOneItsaStatus.get
                   ).map {
-                    _ =>
-                      successRedirect(bearer, auth, homePage)
+                    _ => successRedirect(bearer, auth, homePage)
                   }.recover {
                     case ex =>
                       val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -117,8 +116,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,
-                                      cyItsaStatus: String, cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier)
-  : Future[Unit] = {
+                                      cyItsaStatus: String, cyPlusOneItsaStatus: String)(implicit hc: HeaderCarrier): Future[Unit] = {
 
     // TODO: maybe make crystallisationStatus and itsaStatus value classes, using Scala Request Binders or Scala Actions composition perhaps
 

@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
@@ -27,20 +28,20 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 
 import scala.concurrent.Future
 
-class SelectYourReasonControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService
-  with MockCalculationListService {
+class SelectYourReasonControllerSpec extends MockAuthActions with MockClaimToAdjustService with MockPaymentOnAccountSessionService with MockCalculationListService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
-      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[SelectYourReasonController]
@@ -94,6 +95,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                     setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(AllowanceOrReliefHigher)
 
                     setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction()
                     val result = action(fakeRequest)
                     status(result) shouldBe OK
                     Jsoup.parse(contentAsString(result)).select("#value-3[checked]").toArray should have length 1
@@ -107,6 +109,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                       claimToAdjustResponse = testPoa1Maybe)
 
                     setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction()
                     val result = action(fakeRequest)
                     status(result) shouldBe OK
                     Jsoup.parse(contentAsString(result)).select("#value-3[checked]").toArray should have length 0
@@ -121,6 +124,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                     setupMockGetSessionDataSuccess()
                     setupMockGetClientDetailsSuccess()
                     setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction()
                     val result = action(fakeRequest)
                     status(result) shouldBe OK
                     Jsoup.parse(contentAsString(result)).select("#value-4[checked]").toArray should have length 1
@@ -138,6 +142,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                 setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe SEE_OTHER
                 redirectLocation(result) shouldBe Some(routes.CheckYourAnswersController.show(isAgent).url)
@@ -153,6 +158,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                 setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(Increase)
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe SEE_OTHER
                 redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(isAgent).url)
@@ -165,6 +171,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                   claimToAdjustResponse = testPoa1Maybe)
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
@@ -175,6 +182,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                   claimToAdjustResponse = None)
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
@@ -185,6 +193,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                   claimToAdjustResponse = testPoa1Maybe)
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
@@ -212,6 +221,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                   setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
 
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
                   val result = action(fakeRequest.withFormUrlEncodedBody("value" -> "MainIncomeLower"))
                   status(result) shouldBe SEE_OTHER
                   redirectLocation(result) shouldBe Some(routes.CheckYourAnswersController.show(isAgent).url)
@@ -227,6 +237,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                 setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest.withFormUrlEncodedBody("value" -> "MainIncomeLower"))
                 status(result) shouldBe SEE_OTHER
                 redirectLocation(result) shouldBe Some(routes.CheckYourAnswersController.show(isAgent).url)
@@ -243,6 +254,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                   setupMockPaymentOnAccountSessionServiceSetAdjustmentReason(MainIncomeLower)
 
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
                   val result = action(fakeRequest.withFormUrlEncodedBody("value" -> "MainIncomeLower"))
                   status(result) shouldBe SEE_OTHER
                   redirectLocation(result) shouldBe Some(routes.EnterPoaAmountController.show(isAgent, NormalMode).url)
@@ -257,6 +269,7 @@ class SelectYourReasonControllerSpec extends MockAuthActions
                   claimToAdjustResponse = testPoa1Maybe)
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 val result = action(fakeRequest)
                 status(result) shouldBe BAD_REQUEST
               }

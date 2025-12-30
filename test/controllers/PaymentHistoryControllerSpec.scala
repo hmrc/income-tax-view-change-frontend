@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
@@ -30,7 +31,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import services.PaymentHistoryService.PaymentHistoryError
-import services.{PaymentHistoryService, RepaymentService}
+import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
 
 import scala.concurrent.Future
 
@@ -43,17 +44,18 @@ class PaymentHistoryControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentHistoryService].toInstance(paymentHistoryService),
-      api.inject.bind[RepaymentService].toInstance(mockRepaymentService)
+      api.inject.bind[RepaymentService].toInstance(mockRepaymentService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[PaymentHistoryController]
 
 
   val testPayments: List[Payment] = List(
-    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"),
-      "2019-12-25", Some("DOCID01")),
-    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"),
-      "2007-03-23", Some("DOCID02"))
+    Payment(Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"), "2019-12-25", Some("DOCID01")),
+    Payment(Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"), "2007-03-23", Some("DOCID02"))
   )
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -68,6 +70,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
           "render the payment history page" when {
             "the user has payment history but no repayment history" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(paymentHistoryService.getPaymentHistory(any(), any()))
                 .thenReturn(Future.successful(Right(testPayments)))
@@ -85,6 +88,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
           "render the error page" when {
             "payment history returns an error" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(paymentHistoryService.getPaymentHistory(any(), any()))
                 .thenReturn(Future.successful(Right(testPayments)))
@@ -98,6 +102,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
 
             "repayment history returns an error" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(paymentHistoryService.getPaymentHistory(any(), any()))
                 .thenReturn(Future.successful(Left(PaymentHistoryError)))
@@ -121,6 +126,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
         "repayment service call is successful and PaymentHistoryRefunds Fs enabled" in {
           enable(PaymentHistoryRefunds)
           setupMockSuccess(MTDIndividual)
+          mockItsaStatusRetrievalAction()
           mockSingleBISWithCurrentYearAsMigrationYear()
 
           when(mockRepaymentService.view(any())(any()))
@@ -136,6 +142,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
         "PaymentHistoryRefunds Fs is disabled" in {
           disable(PaymentHistoryRefunds)
           setupMockSuccess(MTDIndividual)
+          mockItsaStatusRetrievalAction()
           mockSingleBISWithCurrentYearAsMigrationYear()
           val result = testController.refundStatus(fakeRequestWithActiveSession)
           status(result) shouldBe Status.OK
@@ -147,6 +154,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
         "the repayment service returns an error" in {
           enable(PaymentHistoryRefunds)
           setupMockSuccess(MTDIndividual)
+          mockItsaStatusRetrievalAction()
           mockSingleBISWithCurrentYearAsMigrationYear()
 
           when(mockRepaymentService.view(any())(any()))
@@ -157,6 +165,6 @@ class PaymentHistoryControllerSpec extends MockAuthActions
         }
       }
     }
-    testMTDAuthFailuresForRole(testController.refundStatus, MTDIndividual)(fakeRequestWithActiveSession)
+testMTDAuthFailuresForRole(testController.refundStatus, MTDIndividual)(fakeRequestWithActiveSession)
   }
 }
