@@ -410,7 +410,8 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 //          Future.failed(ex)
 //      }
     claimToAdjustService.getPoaTaxYearForEntryPoint(nino).map{
-      value => TYSClaimToAdjustViewModel(value)
+      case Some(value) if value.endYear == taxYear => TYSClaimToAdjustViewModel(Some(value))
+      case _ => TYSClaimToAdjustViewModel(None)
     }
   }
 }
