@@ -17,6 +17,7 @@
 package controllers
 
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
@@ -29,17 +30,19 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.PaymentAllocationsService
+import services.{DateServiceInterface, PaymentAllocationsService}
 import testConstants.PaymentAllocationsTestConstants._
 
 import scala.concurrent.Future
 
-class PaymentAllocationControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter with MockPaymentAllocationsService {
+class PaymentAllocationControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockPaymentAllocationsService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService)
+      api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[PaymentAllocationsController]
@@ -64,6 +67,7 @@ class PaymentAllocationControllerSpec extends MockAuthActions
             "the user has payment allocations" in {
               val successfulResponse = Right(paymentAllocationViewModel)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
                 .thenReturn(Future.successful(successfulResponse))
@@ -73,6 +77,7 @@ class PaymentAllocationControllerSpec extends MockAuthActions
             }
             "the user has late payment charges" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
                 .thenReturn(Future.successful(Right(paymentAllocationViewModelLpi)))
@@ -82,6 +87,7 @@ class PaymentAllocationControllerSpec extends MockAuthActions
 
             "the user has no late payment charges (HMRC adjustment)" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
                 .thenReturn(Future.successful(Right(paymentAllocationViewModelHmrcAdjustment)))
@@ -93,6 +99,7 @@ class PaymentAllocationControllerSpec extends MockAuthActions
           "render the error page" when {
             "retrieving the users payment allocation fails" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               when(mockPaymentAllocationsService.getPaymentAllocation(Nino(any()), any())(any(), any()))
                 .thenReturn(Future.successful(Left(PaymentAllocationError())))
@@ -103,7 +110,7 @@ class PaymentAllocationControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }

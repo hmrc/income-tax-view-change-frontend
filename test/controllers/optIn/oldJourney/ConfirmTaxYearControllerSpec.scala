@@ -16,6 +16,7 @@
 
 package controllers.optIn.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.routes
 import enums.MTDIndividual
@@ -30,7 +31,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.DateService
+import services.{DateService, DateServiceInterface}
 import services.optIn.OptInService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -42,7 +43,10 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptInService].toInstance(mockOptInService),
-      api.inject.bind[DateService].toInstance(mockDateService)
+      api.inject.bind[DateService].toInstance(mockDateService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ConfirmTaxYearController]
@@ -62,6 +66,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
         "render the confirm tax year page for current tax year" in {
           enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
@@ -77,6 +82,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
         "render the confirm tax year page for next tax year" in {
           enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
@@ -93,6 +99,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
           "getConfirmTaxYearViewModel fails" in {
             enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.getConfirmTaxYearViewModel(any())(any(), any(), any()))
@@ -108,6 +115,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
             enable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -128,6 +136,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
             disable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -153,6 +162,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
         "redirect to OptInCompletedController" in {
           enable(ReportingFrequencyPage, SignUpFs)
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
           when(mockOptInService.makeOptInCall()(any(), any(), any()))
@@ -168,6 +178,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
           "the optInCall fails" in {
             enable(ReportingFrequencyPage, SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             when(mockOptInService.makeOptInCall()(any(), any(), any()))
@@ -184,6 +195,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
             enable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
@@ -204,6 +216,7 @@ class ConfirmTaxYearControllerSpec extends MockAuthActions
             disable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)

@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
@@ -29,19 +30,20 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
 import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}
 
 import scala.util.{Failure, Success}
 
-class AddIncomeSourceControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter
-  with MockSessionService {
+class AddIncomeSourceControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val controller = app.injector.instanceOf[AddIncomeSourceController]
@@ -55,6 +57,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
           "the user has a Sole Trader Business, a UK property and a Foreign Property" in {
             ukPlusForeignPropertyWithSoleTraderIncomeSource()
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             setupMockDeleteSession(true)
             when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any(), any()))
               .thenReturn(Success(AddIncomeSourcesViewModel(
@@ -74,6 +77,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
             disableAllSwitches()
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             setupMockDeleteSession(true)
             when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any(), any()))
               .thenReturn(Success(AddIncomeSourcesViewModel(Nil, None, None, Nil, true)))
@@ -98,6 +102,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
           "user has a ceased business, sole trader business and uk/foreign property" in {
             mockBothPropertyBothBusiness()
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
 
             setupMockDeleteSession(true)
             when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any(), any()))
@@ -129,6 +134,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions
           s"failed to return incomeSourceViewModel" in {
             mockUkPropertyWithSoleTraderBusiness()
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
 
             when(mockIncomeSourceDetailsService.getAddIncomeSourceViewModel(any(), any()))
               .thenReturn(Failure(new Exception("UnknownError")))

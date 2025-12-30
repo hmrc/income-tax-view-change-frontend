@@ -16,6 +16,7 @@
 
 package controllers.optOut.newJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -30,6 +31,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import services.optout._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -42,7 +44,10 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
-      api.inject.bind[OptOutSubmissionService].toInstance(mockOptOutSubmissionService)
+      api.inject.bind[OptOutSubmissionService].toInstance(mockOptOutSubmissionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController: OptOutTaxYearQuestionController = app.injector.instanceOf[OptOutTaxYearQuestionController]
@@ -92,6 +97,8 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
           mockSaveIntent(Future.successful(true))
@@ -110,6 +117,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(None))
           mockUpdateOptOutJourneyStatusInSessionData()
@@ -129,6 +137,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockUpdateOptOutJourneyStatusInSessionData()
           mockFetchOptOutJourneyCompleteStatus()
@@ -147,6 +156,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockUpdateOptOutJourneyStatusInSessionData()
           mockFetchOptOutJourneyCompleteStatus()
@@ -167,6 +177,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
           mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
@@ -191,6 +202,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(
             numberOfQuarterlyUpdates = 2,
@@ -218,6 +230,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
 
@@ -229,7 +242,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
         }
 
         "redirect the user to the opt out error page when they select 'Yes' and the submit fails " in {
@@ -239,6 +252,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
 
@@ -255,7 +269,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent).url)
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
         }
 
         "redirect to the reporting obligations page when the user selects 'No'" in {
@@ -265,6 +279,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
           mockUpdateOptOutJourneyStatusInSessionData()
@@ -287,6 +302,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
           mockUpdateOptOutJourneyStatusInSessionData()

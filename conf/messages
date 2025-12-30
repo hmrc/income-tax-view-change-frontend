@@ -1258,6 +1258,12 @@ upliftFailure.bullet.1                                          = you took too l
 upliftFailure.bullet.2                                          = you have failed to answer enough questions correctly
 upliftFailure.bullet.3                                          = we could not match your details to our system
 
+## Cannot Update Reporting Obligations
+cannotUpdateReportingObligations.title                          = Sorry, there is a problem with the service
+cannotUpdateReportingObligations.p1                             = We were unable to change your reporting obligations for one or more tax years.
+cannotUpdateReportingObligations.p2                             = Check which tax years have been updated or try again on
+cannotUpdateReportingObligations.link                           = your reporting obligations
+cannotUpdateReportingObligations.p3                             = page.
 
 ## Payment History Page ##
 paymentHistory.heading                                          = Payment history
@@ -2678,42 +2684,39 @@ optout.cancelled.p3                                 = to change how often you wa
 
 optout.taxYearQuestion.heading.previousYear.multiYear       = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
 optout.taxYearQuestion.title.previousYear.multiYear         = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
-optout.taxYearQuestion.desc1.previousYear.multiYear         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
-optout.taxYearQuestion.inset.previousYear.multiYear         = Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return.
-optout.taxYearQuestion.desc2.previousYear.multiYear         = You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
-optout.taxYearQuestion.desc3.previousYear.multiYear         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.desc1.previousYear.multiYear         = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
+optout.taxYearQuestion.inset.previousYear.multiYear         = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.taxYearQuestion.desc2.previousYear.multiYear         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.previousYear.multiYear = Do you want to opt out from the {0} to {1} tax year?
 
 optout.taxYearQuestion.heading.currentYear.multiYear                   = Opt out of Making Tax Digital for Income Tax from the current tax year
 optout.taxYearQuestion.title.currentYear.multiYear                     = Opt out of Making Tax Digital for Income Tax from the current tax year
-optout.taxYearQuestion.desc1.currentYear.multiYear                     = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
-optout.taxYearQuestion.inset.currentYear.multiYear                     = Quarterly updates that you’ve submitted will be deleted from our records if you opt out from that tax year. You’ll need to include any income from these updates in your tax return.
-optout.taxYearQuestion.desc2.currentYear.multiYear                     = You would need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
-optout.taxYearQuestion.desc3.currentYear.multiYear                     = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.desc1.currentYear.multiYear                     = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
+
+optout.taxYearQuestion.inset.currentYear.multiYear                     = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+
+
+optout.taxYearQuestion.desc2.currentYear.multiYear                     = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.currentYear.multiYear             = Do you want to opt out from the current tax year?
 
 optout.taxYearQuestion.heading.nextYear.multiYear                      = Opt out of Making Tax Digital for Income Tax from the next tax year
 optout.taxYearQuestion.title.nextYear.multiYear                        = Opt out of Making Tax Digital for Income Tax from the next tax year
-optout.taxYearQuestion.desc1.nextYear.multiYear                        = From 6 April {0}, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.desc1.nextYear.multiYear                        = From 6 April {0} this would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
 optout.taxYearQuestion.desc2.nextYear.multiYear                        = You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
-optout.taxYearQuestion.desc3.nextYear.multiYear                        = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.desc2.nextYear.multiYear                        = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = Do you want to opt out from the next tax year?
 
 optout.taxYearQuestion.heading.currentYear.multiYearCYFollowedByAnnual                   = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
 optout.taxYearQuestion.title.currentYear.multiYearCYFollowedByAnnual                     = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year
-optout.taxYearQuestion.desc1.currentYear.multiYearCYFollowedByAnnual                     = From 6 April {0}, this would mean you would no longer need to use software compatible with Making Tax Digital for Income Tax.
-optout.taxYearQuestion.desc2.currentYear.multiYearCYFollowedByAnnual                     = You will also need to go back to the way you have filed your tax return previously for all of your current businesses and any that you add in future.
-optout.taxYearQuestion.desc3.currentYear.multiYearCYFollowedByAnnual                     = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.desc1.currentYear.multiYearCYFollowedByAnnual                     = From 6 April {0} this would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
+optout.taxYearQuestion.desc2.currentYear.multiYearCYFollowedByAnnual                     = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual             = Do you want to opt out for the {0} to {1} tax year?
 
 ## opt out single year - followed by mandated
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
-optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
-optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = You have
-optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByMandated     = {0} quarterly updates submitted
-optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByMandated        = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
-optout.taxYearQuestion.desc2.previousYear.singleYearFollowedByMandated         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
+optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated         = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
+optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByMandated = Do you still want to opt out for the {0} to {1} tax year?
 
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByMandated       = Opt out of Making Tax Digital for Income Tax for a single tax year
@@ -2732,26 +2735,22 @@ optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByMandatedWit
 ## opt out single year - followed by annual
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByAnnual       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByAnnual         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
-optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByAnnual         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
-optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = You have
-optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByAnnual     = {0} quarterly updates submitted
-optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByAnnual        = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByAnnual         = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
+optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 optout.taxYearQuestion.desc2.previousYear.singleYearFollowedByAnnual         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByAnnual = Do you still want to opt out for the {0} to {1} tax year?
 
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByAnnual       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.title.currentYear.singleYearFollowedByAnnual         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
-optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnual         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnual         = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnual         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnual = Do you want to opt out for the {0} to {1} tax year?
 
 ## opt out single year - followed by annual with quarterly updates
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByAnnualWithUpdates       = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.title.currentYear.singleYearFollowedByAnnualWithUpdates         = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
-optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnualWithUpdates         = This would mean you no longer need to use software compatible with Making Tax Digital for Income Tax.
-optout.taxYearQuestion.inset.currentYear.singleYearFollowedByAnnualWithUpdates         = You have
-optout.taxYearQuestion.insetBold.currentYear.singleYearFollowedByAnnualWithUpdates     = {0} quarterly updates submitted
-optout.taxYearQuestion.inset2.currentYear.singleYearFollowedByAnnualWithUpdates        = for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
+optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnualWithUpdates         = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
+optout.taxYearQuestion.inset.currentYear.singleYearFollowedByAnnualWithUpdates         = You have <b>{0} quarterly updates submitted</b> for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return.
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates         = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = Do you want to opt out for the {0} to {1} tax year?
 
@@ -2764,7 +2763,7 @@ optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutDefault     = Do you
 ## opt out of CY+1 - CY Mandated
 optout.taxYearQuestion.heading.nextYear.nextYearOptOutMandated           = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
 optout.taxYearQuestion.title.nextYear.nextYearOptOutMandated             = Opt out of Making Tax Digital for Income Tax from the {0} to {1} tax year onwards
-optout.taxYearQuestion.desc1.nextYear.nextYearOptOutMandated             = From 6 April {0}, this would mean you would not need to use software compatible with Making Tax Digital for Income Tax.
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutMandated             = From 6 April {0} this would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
 optout.taxYearQuestion.desc2.nextYear.nextYearOptOutMandated             = In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know.
 optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutMandated     = Do you want to opt out from the {0} to {1} tax year?
 
@@ -3449,12 +3448,14 @@ signUpOptOut.cannotGoBack.linkText2     = go back to the home page
 
 ###You Must Wait To Use This Service Page
 #Individual:
+youMustWait.title            = You can access this service from 6 April {0}
 youMustWait.heading            = You can access this service from 6 April {0}
 youMustWait.text               = This is because you are signed up to use Making Tax Digital for Income Tax from the next tax year, which starts 6 April {0}.
 youMustWait.text2              = Find more about
 youMustWait.linkText           = Making Tax Digital for Income Tax
 
 #Agent:
+youMustWait.agent.title        = You can view this client from 6 April {0}
 youMustWait.agent.heading      = You can view this client from 6 April {0}
 youMustWait.agent.text         = This is because your client is signed up to use Making Tax digital for Income Tax from the next tax year, which starts 6 April {0}.
 youMustWait.agent.button.text  = Enter another UTR

@@ -31,7 +31,9 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import java.time.LocalDate
 
 class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers with TestSupport {
+
   val mockDateService: DateService = app.injector.instanceOf[DateService]
+
   val ceaseEndDateForm: CeaseIncomeSourceEndDateFormProvider = app.injector.instanceOf[CeaseIncomeSourceEndDateFormProvider]
 
   val testUser: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), ukPlusForeignPropertyWithSoleTraderIncomeSource, false, fakeRequestNoSession)
@@ -60,7 +62,7 @@ class CeaseIncomeSourceEndDateFormProviderSpec extends AnyWordSpec with Matchers
 
   def setupBindFutureDateTest(incomeSourceType: IncomeSourceType): Unit = {
     val form: Form[LocalDate] = ceaseEndDateForm(incomeSourceType, setupTestId(incomeSourceType))(dateService = mockDateService, user = testUser, messages = messages)
-    val futureYear = dateService.getCurrentTaxYearEnd + 1
+    val futureYear = mockDateService.getCurrentTaxYearEnd + 1
     val formData = Map("value.day" -> "20", "value.month" -> "12", "value.year" -> s"$futureYear")
     val completedForm = form.bind(formData)
 

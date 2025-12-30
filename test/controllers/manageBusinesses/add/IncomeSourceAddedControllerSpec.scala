@@ -18,6 +18,7 @@ package controllers.manageBusinesses.add
 
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
@@ -27,6 +28,7 @@ import models.UIJourneySessionData
 import models.incomeSourceDetails._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
@@ -43,7 +45,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdatesService with MockSessionService with MockITSAStatusService {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings.build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   val authActions: AuthActions = app.injector.instanceOf(classOf[AuthActions])
   val incomeSourceAddedObligationsView: IncomeSourceAddedObligationsView = app.injector.instanceOf(classOf[IncomeSourceAddedObligationsView])
@@ -424,7 +432,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
     }
   }
 
-
   ".show()" when {
 
     Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
@@ -447,6 +454,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
            disableAllSwitches()
            setupMockSuccess(MTDIndividual)
+           mockItsaStatusRetrievalAction(businessIncome)
 
            when(
              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -509,6 +517,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDIndividual)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -575,6 +584,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDIndividual)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -641,6 +651,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDIndividual)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -707,6 +718,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDIndividual)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -776,6 +788,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDIndividual)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -843,6 +856,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDIndividual)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -907,6 +921,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDIndividual)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -984,6 +999,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
+            mockItsaStatusRetrievalAction(businessIncome)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1048,6 +1064,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1114,6 +1131,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1180,6 +1198,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1246,6 +1265,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1315,6 +1335,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1382,6 +1403,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1445,6 +1467,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1518,6 +1541,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1584,6 +1608,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1650,6 +1675,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1716,6 +1742,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1785,6 +1812,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1852,6 +1880,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -1916,6 +1945,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
             disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
+            mockItsaStatusRetrievalAction()
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))

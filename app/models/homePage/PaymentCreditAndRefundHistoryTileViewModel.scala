@@ -21,13 +21,11 @@ import play.api.i18n.Messages
 
 case class PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges: List[FinancialDetailsResponseModel],
                                                       creditsRefundsRepayEnabled: Boolean, paymentHistoryRefundsEnabled: Boolean,
-                                                      claimARefundR18enabled: Boolean, isUserMigrated: Boolean = false) {
+                                                      isUserMigrated: Boolean = false) {
   val creditInAccount: Option[BigDecimal] =
     if (creditsRefundsRepayEnabled) {
       Some(unpaidCharges.collectFirst {
-        case fdm: FinancialDetailsModel =>
-          if (claimARefundR18enabled) fdm.balanceDetails.getAbsoluteTotalCreditAmount.getOrElse(BigDecimal(0.00))
-          else fdm.balanceDetails.getAbsoluteAvailableCreditAmount.getOrElse(BigDecimal(0.00))
+        case fdm: FinancialDetailsModel => fdm.balanceDetails.getAbsoluteTotalCreditAmount.getOrElse(BigDecimal(0.00))
       }.getOrElse(BigDecimal(0.00)))
     } else None
 

@@ -37,6 +37,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
   }
 
   val dateNow = LocalDate.now()
+
   def taxYearEnd: Int = if(dateNow.isAfter(LocalDate.of(dateNow.getYear, 4, 5))) dateNow.getYear + 1 else dateNow.getYear
 
   mtdAllRoles.foreach { mtdUserRole =>
