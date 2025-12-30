@@ -476,7 +476,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
                                             |  <h3 class="govuk-heading-m"><span class="govuk-tax-years-submissions-table__section-title" id="table-default-content-2017-11-30"> Due 30 November 2017 </span></h3>
                                             |  <table class="govuk-table govuk-table">
                                             |   <caption class="govuk-table__caption govuk-table__caption">
-                                            |    The update period from 1 Sept 2017 to 30 Nov 2017
+                                            |    The update period from 1 Sep 2017 to 30 Nov 2017
                                             |   </caption>
                                             |   <thead class="govuk-table__head">
                                             |    <tr class="govuk-table__row">
