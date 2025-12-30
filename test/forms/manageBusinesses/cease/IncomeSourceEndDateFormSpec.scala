@@ -70,7 +70,7 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
     completedForm.data.get("income-source-end-date.day") shouldBe Some("20")
     completedForm.data.get("income-source-end-date.month") shouldBe Some("12")
     completedForm.data.get("income-source-end-date.year") shouldBe Some(s"$futureYear")
-    completedForm.errors shouldBe List()
+    completedForm.errors shouldBe List(FormError("income-source-end-date", List(s"incomeSources.cease.endDate.${incomeSourceType.messagesCamel}.future"), List()))
   }
 
   def setupBindBeforeStartDateTest(incomeSourceType: IncomeSourceType): Unit = {
