@@ -24,8 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
-import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{IncomeSourceId, Mode}
+import models.core.Mode
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -109,7 +108,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel], id: Option[IncomeSourceId])
+  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel], id: Option[String])
                           (implicit request: Request[_]): Future[Boolean] = {
     addressLookUpResult match {
       case Right(value) =>
@@ -120,7 +119,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
             val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(
               address = Some(value.address),
               countryCode = Some("GB"),
-              addressLookupId = id.map(_.value)
+              addressLookupId = id
             )
             val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
@@ -133,7 +132,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
   }
 
 
-  def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], mode: Mode)
+  def handleSubmitRequest(isAgent: Boolean, id: Option[String], mode: Mode)
                          (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     val redirectUrl = getRedirectUrl(isAgent = isAgent)
     val redirect = Redirect(redirectUrl)
@@ -151,15 +150,12 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
   }
 
   def submit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user => {
-        val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-        handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, mode = mode)(implicitly, itvcErrorHandler)
-      }
+    implicit user =>
+      handleSubmitRequest(isAgent = false, id, mode = mode)(implicitly, itvcErrorHandler)
   }
 
   def agentSubmit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, mode = mode)(implicitly, itvcErrorHandlerAgent)
+      handleSubmitRequest(isAgent = true, id, mode = mode)(implicitly, itvcErrorHandlerAgent)
   }
 }
