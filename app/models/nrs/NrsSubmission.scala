@@ -16,8 +16,7 @@
 
 package models.nrs
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, OWrites}
+import play.api.libs.json.{Json, OWrites}
 
 import java.util.Base64
 
@@ -29,8 +28,11 @@ object NrsSubmission {
 
   private def encodeBase64(rawPayload: RawPayload) = encoder.encodeToString(rawPayload.byteArray)
 
-  implicit val writes: OWrites[NrsSubmission] = (
-    (JsPath \ "payload").write[String].contramap(encodeBase64) and
-      (JsPath \ "metadata").write[NrsMetadata]
-    )(unlift(NrsSubmission.unapply))
+  implicit val writes: OWrites[NrsSubmission] = OWrites { submission =>
+    Json.obj(
+      "payload" -> encodeBase64(submission.rawPayload),
+      "metadata" -> submission.metadata
+    )
+  }
+
 }

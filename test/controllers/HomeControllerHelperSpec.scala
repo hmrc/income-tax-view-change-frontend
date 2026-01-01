@@ -46,13 +46,14 @@ trait HomeControllerHelperSpec extends MockAuthActions
   with MockPenaltyDetailsService {
 
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
+  override implicit val dateService: DateService = mockDateService
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
       api.inject.bind[WhatYouOweService].toInstance(mockWhatYouOweService),
-      api.inject.bind[DateService].toInstance(mockDateService),
+      api.inject.bind[DateService].toInstance(dateService),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
       api.inject.bind[PenaltyDetailsService].toInstance(mockPenaltyDetailsService)
     ).build()
@@ -103,7 +104,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
           case _ => setupMockGetSessionDataSuccess()
             setupMockAgentWithClientAuth(true)
         }
-        when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+        when(dateService.getCurrentDate).thenReturn(fixedDate)
         mockSingleBusinessIncomeSource()
         mockGetDueDates(Left(new Exception("obligation test exception")))
         setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)

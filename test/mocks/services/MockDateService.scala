@@ -24,7 +24,7 @@ import testUtils.UnitSpec
 
 trait MockDateService extends UnitSpec with BeforeAndAfterEach {
 
-  lazy val mockDateService: DateService = mock(classOf[DateService])
+   val mockDateService: DateService = mock(classOf[DateService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

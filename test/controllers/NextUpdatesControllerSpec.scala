@@ -216,7 +216,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           "return Status ISE (500) with error page" in {
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
-            mockErrorIncomeSourceWithDeadlines()
+            mockSingleBusinessIncomeSourceWithDeadlines()
             val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -226,7 +226,6 @@ class NextUpdatesControllerSpec extends MockAuthActions
         }
 
         "doesn't have any Income Source" should {
-
           setupMockUserAuth
           mockNoIncomeSources()
           mockSingleBusinessIncomeSourceWithDeadlines()
@@ -296,10 +295,9 @@ class NextUpdatesControllerSpec extends MockAuthActions
       s"the $agentType has all correct details" should {
         "return Status OK (200) when we have obligations" in {
           disableAllSwitches()
-
-          setupMockAgentWithClientAuth(isSupportingAgent)
-          mockSingleBusinessIncomeSourceWithDeadlines()
           mockSingleBusinessIncomeSource()
+          mockSingleBusinessIncomeSourceWithDeadlines()
+          setupMockAgentWithClientAuth(isSupportingAgent)
           mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, Some(optOutViewModel), optOutProposition)))
           mockViewModel
           mockObligations

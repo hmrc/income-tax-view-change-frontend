@@ -51,10 +51,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
                                        chargesList: WhatYouOweChargesList = whatYouOwePartialChargesListX,
                                       ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
     user = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, yearOfMigration, List.empty, List.empty)),
-    whatYouOweChargesList = chargesList,
-    dateService,
-
-  )
+    whatYouOweChargesList = chargesList) (dateService)
 
   "The WhatYouOweResponseAuditModel" should {
 

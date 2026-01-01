@@ -46,7 +46,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                   val financialDetailsConnector: FinancialDetailsConnector,
                                   val outstandingChargesConnector: OutstandingChargesConnector,
                                   implicit val dateService: DateServiceInterface)
-                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig)
+                                 (implicit ec: ExecutionContext,
+                                  val appConfig: FrontendAppConfig)
   extends TransactionUtils with FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -168,7 +169,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         None
       case (Right(startUrl), Some(lpp2Url)) =>
 
-        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
+        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList) (dateService))
 
         Some(WhatYouOweViewModel(
           currentDate = dateService.getCurrentDate,

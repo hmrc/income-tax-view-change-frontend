@@ -20,8 +20,6 @@ import audit.Utilities._
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import enums.MTDSupportingAgent
 import play.api.libs.json.{JsValue, Json}
-import utils.Utilities._
-
 case class IncomeSourceDetailsResponseAuditModel(
                                                   mtdItUser: AuthorisedAndEnrolledRequest[_],
                                                   nino: String,
@@ -37,11 +35,11 @@ case class IncomeSourceDetailsResponseAuditModel(
     Json.obj("mtditid" -> mtdItUser.mtditId,
       "selfEmploymentIncomeSourceIds" -> selfEmploymentIds,
       "propertyIncomeSourceIds" -> propertyIncomeIds) ++
-      ("agentReferenceNumber", mtdItUser.authUserDetails.agentReferenceNumber) ++
-      ("saUtr", mtdItUser.saUtr) ++
+      Json.obj("agentReferenceNumber"-> mtdItUser.authUserDetails.agentReferenceNumber) ++
+      Json.obj("saUtr"-> mtdItUser.saUtr) ++
       userType(mtdItUser.authUserDetails.affinityGroup, mtdItUser.mtdUserRole == MTDSupportingAgent) ++
-      ("credId", mtdItUser.authUserDetails.credId) ++
-      ("nino", Some(nino)) ++
-      ("dateOfMigration", yearOfMigration)
+      Json.obj("credId"-> mtdItUser.authUserDetails.credId) ++
+      Json.obj("nino"-> Some(nino)) ++
+      Json.obj("dateOfMigration"-> yearOfMigration)
   }
 }

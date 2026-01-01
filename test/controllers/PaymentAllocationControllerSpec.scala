@@ -17,7 +17,7 @@
 package controllers
 
 
-import enums.{MTDIndividual, MTDSupportingAgent}
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockPaymentAllocationsService
@@ -51,7 +51,9 @@ class PaymentAllocationControllerSpec extends MockAuthActions
 
   val docNumber = "docNumber1"
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  def mtdRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
+
+  mtdRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.viewPaymentAllocationAgent(docNumber) else testController.viewPaymentAllocation(docNumber)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)

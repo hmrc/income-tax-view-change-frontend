@@ -20,7 +20,6 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import models.financialDetails._
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.Utilities.JsonUtil
 
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: Seq[Payment]) extends ExtendedAuditModel {
@@ -28,9 +27,13 @@ case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
   override val transactionName: String = enums.TransactionName.PaymentHistoryResponse
   override val auditType: String = enums.AuditType.PaymentHistoryResponse
 
-  private def getPayment(payment: Payment, desc: String): JsObject = Json.obj("description" -> desc) ++
-    ("paymentDate", if (payment.creditType.contains(MfaCreditType)) Some(payment.documentDate) else payment.dueDate) ++
-    ("amount", payment.amount)
+  private def getPayment(payment: Payment, desc: String): JsObject = {
+    val date = if (payment.creditType.contains(MfaCreditType)) Some(payment.documentDate) else payment.dueDate
+    Json.obj("description" -> desc) ++
+      Json.obj("paymentDate" -> date
+    ) ++
+    Json.obj("amount" -> payment.amount)
+  }
 
   private def paymentHistoryMapper(payment: Payment): Option[JsObject] = {
     val hasCredit = payment.credit.isDefined

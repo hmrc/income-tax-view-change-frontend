@@ -96,18 +96,6 @@ case class SensitiveUIJourneySessionData(
 object SensitiveUIJourneySessionData {
 
   implicit def format(implicit crypto: Encrypter with Decrypter): OFormat[SensitiveUIJourneySessionData] =
+    Json.format[SensitiveUIJourneySessionData]
 
-    ((__ \ "sessionId").format[String]
-      ~ (__ \ "journeyType").format[String]
-      ~ (__ \ "addIncomeSourceData").formatNullable[SensitiveAddIncomeSourceData]
-      ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
-      ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
-      ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
-      ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
-      ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
-      ~ (__ \ "triggeredMigrationSessionData").formatNullable[TriggeredMigrationSessionData]
-      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      ~ (__ \ "journeyIsComplete").formatNullable[Boolean]
-      )(SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
-    )
 }

@@ -20,7 +20,7 @@ import forms.validation.CustomConstraints
 import play.api.data.Form
 import play.api.data.Forms._
 
-object IncomeSourceReportingMethodForm extends CustomConstraints {
+object IncomeSourceReportingMethodFormMapping extends CustomConstraints {
   val newTaxYear1ReportingMethod = "new_tax_year_1_reporting_method"
   val newTaxYear2ReportingMethod = "new_tax_year_2_reporting_method"
   val taxYear1 = s"${newTaxYear1ReportingMethod}_tax_year"
@@ -74,11 +74,11 @@ case class IncomeSourceReportingMethodForm(newTaxYear1ReportingMethod: Option[St
                                            taxYear2ReportingMethod: Option[String]) {
 
   def toFormMap: Map[String, Option[String]] = Map(
-    IncomeSourceReportingMethodForm.newTaxYear1ReportingMethod -> newTaxYear1ReportingMethod,
-    IncomeSourceReportingMethodForm.newTaxYear2ReportingMethod -> newTaxYear2ReportingMethod,
-    IncomeSourceReportingMethodForm.taxYear1 -> taxYear1,
-    IncomeSourceReportingMethodForm.taxYear2 -> taxYear2,
-    IncomeSourceReportingMethodForm.taxYear1ReportingMethod -> taxYear1ReportingMethod,
-    IncomeSourceReportingMethodForm.taxYear2ReportingMethod -> taxYear2ReportingMethod)
+    IncomeSourceReportingMethodFormMapping.newTaxYear1ReportingMethod -> newTaxYear1ReportingMethod,
+    IncomeSourceReportingMethodFormMapping.newTaxYear2ReportingMethod -> newTaxYear2ReportingMethod,
+    IncomeSourceReportingMethodFormMapping.taxYear1 -> taxYear1,
+    IncomeSourceReportingMethodFormMapping.taxYear2 -> taxYear2,
+    IncomeSourceReportingMethodFormMapping.taxYear1ReportingMethod -> taxYear1ReportingMethod,
+    IncomeSourceReportingMethodFormMapping.taxYear2ReportingMethod -> taxYear2ReportingMethod)
 
 }

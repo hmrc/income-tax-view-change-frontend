@@ -883,7 +883,7 @@ object NewCalcBreakdownUnitTestConstants {
   )
   val taxDueSummaryViewModelVoluntaryNic2 = TaxDueSummaryViewModel(
     class2VoluntaryContributions = true,
-    class2NicsAmount = Some(10000)
+    class2NicsAmount = Some(BigDecimal(10000))
   )
 
   val taxDueSummaryViewModelGiftAid = TaxDueSummaryViewModel(

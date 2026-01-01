@@ -37,10 +37,12 @@ import scala.concurrent.Future
 
 class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Injecting {
 
-  lazy val testHomeController = app.injector.instanceOf[HomeController]
+  lazy val testHomeController: HomeController = app.injector.instanceOf[HomeController]
 
   trait Setup {
     val controller = testHomeController
+    mockSingleBusinessIncomeSource()
+    setupMockUserAuth
     when(mockDateService.getCurrentDate) thenReturn fixedDate
     when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
@@ -64,8 +66,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page with a Next Payments due tile" that {
         "has payments due" when {
           "the user has overdue payments and does not owe any charges" in new Setup {
-            setupMockUserAuth
-            mockSingleBusinessIncomeSource()
+            
+           
             mockGetDueDates(Right(futureDueDates))
             val financialDetails = List(FinancialDetailsModel(
               balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
@@ -94,8 +96,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           }
 
           "the user has payments due and has overdue payments" in new Setup {
-            setupMockUserAuth
-            mockSingleBusinessIncomeSource()
+            
+           
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
@@ -119,8 +121,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         "has the number of payments due" when {
           "the user has multiple overdue payments with dunning locks and does not owe any charges" in new Setup {
-            setupMockUserAuth
-            mockSingleBusinessIncomeSource()
+            
+           
             mockGetDueDates(Right(futureDueDates))
             val financialDetails = List(
               FinancialDetailsModel(
@@ -163,8 +165,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           }
 
           "the user has multiple overdue payments without dunning locks and does not owe any charges" in new Setup {
-            setupMockUserAuth
-            mockSingleBusinessIncomeSource()
+            
+           
             mockGetDueDates(Right(futureDueDates))
             val financialDetails = List(
               FinancialDetailsModel(
@@ -215,8 +217,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         "shows the daily interest accruing warning and tag" when {
           "the user has payments accruing interest" in new Setup {
-            setupMockUserAuth
-            mockSingleBusinessIncomeSource()
+            
+           
             mockGetDueDates(Right(futureDueDates))
 
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -256,8 +258,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         "does not show the daily interest accruing warning and tag" when {
           "the user has overdue payments accruing interest" in new Setup {
-            setupMockUserAuth
-            mockSingleBusinessIncomeSource()
+            
+           
             mockGetDueDates(Right(futureDueDates))
 
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -297,8 +299,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
       "render the home page without a Next Payments due tile" when {
         "there is a problem getting financial details" in new Setup {
-          setupMockUserAuth
-          mockSingleBusinessIncomeSource()
+          
+         
           mockGetDueDates(Right(futureDueDates))
 
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -322,8 +324,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
 
         "There are no financial detail" in new Setup {
-          setupMockUserAuth
-          mockSingleBusinessIncomeSource()
+          
+         
           mockGetDueDates(Right(futureDueDates))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None), List(), List(), List()))))
@@ -347,8 +349,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
 
         "All financial detail bill are paid" in new Setup {
-          setupMockUserAuth
-          mockSingleBusinessIncomeSource()
+          
+         
           mockGetDueDates(Right(futureDueDates))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
@@ -542,8 +544,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
       "render the home without the Next Updates tile" when {
         "the user has no updates due" in new Setup {
-          setupMockUserAuth
-          mockSingleBusinessIncomeSource()
+          
+         
           mockGetDueDates(Right(Seq()))
           mockGetAllUnpaidFinancialDetails()
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
@@ -565,7 +567,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
       "render the home page with the Your Businesses tile with link" when {
         "using the manage businesses journey" in new Setup {
-          setupMockUserAuth
+          
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -596,11 +598,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page with Payment history and refunds tile" that {
         "contains the available credit" when {
           "CreditsAndRefundsRepay FS is enabled and credit is available" in new Setup{
-            setupMockUserAuth
+            
             enable(CreditsRefundsRepay)
             enable(ClaimARefundR18)
             mockGetDueDates(Right(Seq.empty))
-            mockSingleBusinessIncomeSource()
+           
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, Some(796), None, None, None),
@@ -626,10 +628,10 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           }
 
           "CreditsAndRefundsRepay FS is enabled and credit is not available" in new Setup{
-            setupMockUserAuth
+            
             enable(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
-            mockSingleBusinessIncomeSource()
+           
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
@@ -658,9 +660,9 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         "does not contain available credit" when {
           "CreditsAndRefundsRepay FS is disabled" in new Setup {
             disable(CreditsRefundsRepay)
-            setupMockUserAuth
+            
             mockGetDueDates(Right(Seq.empty))
-            mockSingleBusinessIncomeSource()
+           
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, Some(786), None, None, None, None, None, None),
@@ -691,7 +693,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
             enable(ReportingFrequencyPage)
-            setupMockUserAuth
+            
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
@@ -699,7 +701,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
-            mockSingleBusinessIncomeSource()
+           
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
 
@@ -716,12 +718,12 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         "states that the user is reporting quarterly" when {
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
             enable(ReportingFrequencyPage)
-            setupMockUserAuth
+            
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
             mockGetDueDates(Right(Seq.empty))
-            mockSingleBusinessIncomeSource()
+           
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -740,7 +742,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
             enable(ReportingFrequencyPage)
-            setupMockUserAuth
+            
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
@@ -748,7 +750,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
             mockGetDueDates(Right(Seq.empty))
-            mockSingleBusinessIncomeSource()
+           
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
 

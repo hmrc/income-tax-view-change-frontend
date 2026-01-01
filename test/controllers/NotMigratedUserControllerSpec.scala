@@ -16,7 +16,7 @@
 
 package controllers
 
-import enums.{MTDIndividual, MTDSupportingAgent}
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import org.mockito.Mockito.mock
@@ -38,7 +38,9 @@ class NotMigratedUserControllerSpec extends MockAuthActions
 
   lazy val testController = app.injector.instanceOf[NotMigratedUserController]
 
-  mtdAllRoles.foreach{ case mtdUserRole =>
+  def mtdRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
+
+  mtdRoles.foreach{ case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showAgent() else testController.show()
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)

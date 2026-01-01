@@ -22,7 +22,6 @@ import models.financialDetails.{ChargeItem, CodingOutDetails, WhatYouOweChargesL
 import models.outstandingCharges.OutstandingChargesModel
 import play.api.libs.json._
 import services.DateServiceInterface
-import utils.Utilities.JsonUtil
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList)
@@ -54,10 +53,10 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
 
     val fields: JsObject = {
       Json.obj() ++
-        ("balanceDueWithin30Days", onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
-        ("overDueAmount", onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
-        ("totalBalance", onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance)) ++
-        ("creditAmount", whatYouOweChargesList.balanceDetails.unallocatedCredit)
+        Json.obj("balanceDueWithin30Days"-> onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
+        Json.obj("overDueAmount"-> onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
+        Json.obj("totalBalance"-> onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance)) ++
+        Json.obj("creditAmount"-> whatYouOweChargesList.balanceDetails.unallocatedCredit)
     }
 
     val secondOrMoreYearOfMigration = user.incomeSources.yearOfMigration.exists(currentTaxYear > _.toInt)
@@ -73,8 +72,8 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
       "chargeUnderReview" -> chargeItem.dunningLock,
       "outstandingAmount" -> chargeItem.remainingToPayByChargeOrInterest
     ) ++
-      ("chargeType", getChargeType(chargeItem, chargeItem.isAccruingInterest)) ++
-      ("dueDate", chargeItem.dueDate) ++
+      Json.obj("chargeType"-> getChargeType(chargeItem, chargeItem.isAccruingInterest)) ++
+      Json.obj("dueDate"-> chargeItem.dueDate) ++
       accruingInterestJson(chargeItem) ++
       Json.obj("endTaxYear" -> chargeItem.taxYear.endYear) ++
       Json.obj("overDue" -> chargeItem.isOverdue())
@@ -83,10 +82,10 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   private def accruingInterestJson(chargeItem: ChargeItem): JsObject = {
     if (chargeItem.hasAccruingInterest) {
       Json.obj() ++
-        ("accruingInterest", chargeItem.interestOutstandingAmount) ++
-        ("interestRate", chargeItem.interestRate.map(ratePctString)) ++
-        ("interestFromDate", chargeItem.interestFromDate) ++
-        ("interestEndDate", chargeItem.interestEndDate)
+        Json.obj("accruingInterest"-> chargeItem.interestOutstandingAmount) ++
+        Json.obj("interestRate"-> chargeItem.interestRate.map(ratePctString)) ++
+        Json.obj("interestFromDate"-> chargeItem.interestFromDate) ++
+        Json.obj("interestEndDate"-> chargeItem.interestEndDate)
     } else {
       Json.obj()
     }
@@ -95,9 +94,9 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   private def outstandingChargeDetails(outstandingCharge: OutstandingChargesModel) = Json.obj(
     "chargeType" -> "Remaining balance"
   ) ++
-    ("outstandingAmount", outstandingCharge.bcdChargeType.map(_.chargeAmount)) ++
-    ("dueDate", outstandingCharge.bcdChargeType.map(_.relevantDueDate)) ++
-    ("accruingInterest", outstandingCharge.aciChargeType.map(_.chargeAmount))
+    Json.obj ("outstandingAmount"-> outstandingCharge.bcdChargeType.map(_.chargeAmount)) ++
+    Json.obj("dueDate"-> outstandingCharge.bcdChargeType.map(_.relevantDueDate)) ++
+    Json.obj("accruingInterest"-> outstandingCharge.aciChargeType.map(_.chargeAmount))
 
   private def codingOut(chargeItem: CodingOutDetails): JsObject = {
       Json.obj(

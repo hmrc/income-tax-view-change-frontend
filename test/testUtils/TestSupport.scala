@@ -98,7 +98,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   def multiYearRange: TaxYearRange = TaxYearRange(fixedTaxYear.previousYear, fixedTaxYear)
 
-  implicit lazy val dateService: DateService = new DateService {
+  implicit val dateService: DateService = new DateService {
 
     override def getCurrentDate: LocalDate = fixedDate
 

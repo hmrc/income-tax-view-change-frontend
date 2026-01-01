@@ -26,6 +26,7 @@ import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService,
 import org.jsoup.Jsoup
 import org.mockito.Mockito.{mock, reset}
 import play.api
+import play.api.Application
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
@@ -37,15 +38,15 @@ import testConstants.BaseTestConstants.{testMtditid, testRetrievedUserName}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core._
 
-trait MockAuthActions extends
-  TestSupport with
-  MockIncomeSourceDetailsService with
-  MockAgentAuthorisedFunctions with
-  MockUserAuthorisedFunctions with
-  MockAuditingService with
-  MockSessionDataService with
-  MockClientDetailsService with
-  FeatureSwitching {
+trait MockAuthActions
+  extends TestSupport
+    with MockIncomeSourceDetailsService
+    with MockAgentAuthorisedFunctions
+    with MockUserAuthorisedFunctions
+    with MockAuditingService
+    with MockSessionDataService
+    with MockClientDetailsService
+    with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -59,7 +60,7 @@ trait MockAuthActions extends
 
   lazy val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 
-  lazy val mockAuthService: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
+  val mockAuthService: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
 
   lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
@@ -79,13 +80,13 @@ trait MockAuthActions extends
   }
 
   def setupMockUserAuth: Unit = {
-    val allEnrolments = getAllEnrolmentsIndividual(true, true)
+    val allEnrolments = getAllEnrolmentsIndividual(hasNino = true, hasSA = true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
     setupMockUserAuthSuccess(retrievalValue)
   }
 
   def setupMockUserAuthNoSAUtr: Unit = {
-    val allEnrolments = getAllEnrolmentsIndividual(true, false)
+    val allEnrolments = getAllEnrolmentsIndividual(hasNino = true, hasSA = false)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
     setupMockUserAuthSuccess(retrievalValue)
   }
@@ -107,7 +108,7 @@ trait MockAuthActions extends
     mockSingleBusinessIncomeSource()
   }
 
-  def setupMockUserAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
+  final def setupMockUserAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
     setupMockUserAuthException(exception)
   }
 

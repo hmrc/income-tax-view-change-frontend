@@ -22,7 +22,7 @@ import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import play.api.Logger
 import play.api.http.Status.OK
-import play.api.libs.json.{JsValue, Json, Writes}
+import play.api.libs.json.{JsValue, Json, OWrites, Writes}
 import services.DateServiceInterface
 import testOnly.models.{DataModel, Nino}
 import testOnly.utils.OptOutCustomDataUploadHelper
@@ -32,9 +32,47 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfig,
-                                        implicit val dateService: DateServiceInterface,
-                                        implicit val dynamicStubService: DynamicStubService) extends OptOutCustomDataUploadHelper {
+                                        val dateService: DateServiceInterface,
+                                        val dynamicStubService: DynamicStubService) extends OptOutCustomDataUploadHelper {
 
+  implicit val hipStatusDetailWriter: Writes[StatusDetail] = new Writes[StatusDetail] {
+    override def writes(statusDetail: StatusDetail): JsValue = {
+      Json.obj(
+        "submittedOn" -> statusDetail.submittedOn,
+        "status" -> Json.toJson(statusDetail.status match {
+          case ITSAStatus.NoStatus => "00"
+          case ITSAStatus.Mandated => "01"
+          case ITSAStatus.Voluntary => "02"
+          case ITSAStatus.Annual => "03"
+          case ITSAStatus.DigitallyExempt => "04"
+          case ITSAStatus.Dormant => "05"
+          case ITSAStatus.Exempt => "99"
+          case _ => ""
+        }),
+        "statusReason" -> Json.toJson(statusDetail.statusReason match {
+          case StatusReason.SignupReturnAvailable => "00"
+          case StatusReason.SignupNoReturnAvailable => "01"
+          case StatusReason.ItsaFinalDeclaration => "02"
+          case StatusReason.ItsaQ4lDeclaration => "03"
+          case StatusReason.CesaSaReturn => "04"
+          case StatusReason.Complex => "05"
+          case StatusReason.CeasedIncomeSource => "06"
+          case StatusReason.ReinstatedIncomeSource => "07"
+          case StatusReason.Rollover => "08"
+          case StatusReason.IncomeSourceLatencyChanges => "09"
+          case StatusReason.MtdItsaOptOut => "10"
+          case StatusReason.MtdItsaOptIn => "11"
+          case StatusReason.DigitallyExempt => "12"
+          case _ => ""
+        })
+      ) ++ (statusDetail.businessIncomePriorTo2Years match {
+        case Some(value) => Json.obj("businessIncomePriorTo2Years" -> value)
+        case None => Json.obj()
+      })
+    }
+  }
+
+  implicit val hipStatusResponseWrites: OWrites[ITSAStatusResponseModel] = Json.writes[ITSAStatusResponseModel]
   def uploadCalculationListData(nino: Nino, taxYear: TaxYear, status: String)(implicit hc: HeaderCarrier)
   : Future[Unit] = {
     handleDefaultValues(status = status) {
@@ -97,45 +135,6 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
     )
 
     dynamicStubService.addData(dataModel = ifPayload)
-
-    implicit val hipStatusDetailWriter: Writes[StatusDetail] = new Writes[StatusDetail] {
-      override def writes(statusDetail: StatusDetail): JsValue = {
-        Json.obj(
-          "submittedOn" -> statusDetail.submittedOn,
-          "status" -> Json.toJson(statusDetail.status match {
-            case ITSAStatus.NoStatus => "00"
-            case ITSAStatus.Mandated => "01"
-            case ITSAStatus.Voluntary => "02"
-            case ITSAStatus.Annual => "03"
-            case ITSAStatus.DigitallyExempt => "04"
-            case ITSAStatus.Dormant => "05"
-            case ITSAStatus.Exempt => "99"
-            case _ => ""
-          }),
-          "statusReason" -> Json.toJson(statusDetail.statusReason match {
-            case StatusReason.SignupReturnAvailable => "00"
-            case StatusReason.SignupNoReturnAvailable => "01"
-            case StatusReason.ItsaFinalDeclaration => "02"
-            case StatusReason.ItsaQ4lDeclaration => "03"
-            case StatusReason.CesaSaReturn => "04"
-            case StatusReason.Complex => "05"
-            case StatusReason.CeasedIncomeSource => "06"
-            case StatusReason.ReinstatedIncomeSource => "07"
-            case StatusReason.Rollover => "08"
-            case StatusReason.IncomeSourceLatencyChanges => "09"
-            case StatusReason.MtdItsaOptOut => "10"
-            case StatusReason.MtdItsaOptIn => "11"
-            case StatusReason.DigitallyExempt => "12"
-            case _ => ""
-          })
-        ) ++ (statusDetail.businessIncomePriorTo2Years match {
-          case Some(value) => Json.obj("businessIncomePriorTo2Years" -> value)
-          case None => Json.obj()
-        })
-      }
-    }
-
-    implicit val hipStatusResponseWrites = Json.writes[ITSAStatusResponseModel]
     val hipWriter = implicitly[Writes[List[ITSAStatusResponseModel]]]
 
 

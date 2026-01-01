@@ -125,24 +125,10 @@ object SensitiveAddIncomeSourceData {
   implicit def sensitiveBooleanFormat(implicit crypto: Encrypter with Decrypter): Format[SensitiveBoolean] =
     JsonEncryption.sensitiveEncrypterDecrypter(SensitiveBoolean.apply)
 
-  implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddIncomeSourceData] = {
+  import play.api.libs.json.{Json, Format}
 
-    ((__ \ "businessName"                           ).formatNullable[SensitiveString]
-      ~ (__ \ "businessTrade"                       ).formatNullable[SensitiveString]
-      ~ (__ \ "dateStarted"                         ).formatNullable[SensitiveInstant]
-      ~ (__ \ "accountingPeriodStartDate"           ).formatNullable[SensitiveInstant]
-      ~ (__ \ "accountingPeriodEndDate"             ).formatNullable[SensitiveInstant]
-      ~ (__ \ "incomeSourceId"                      ).formatNullable[SensitiveString]
-      ~ (__ \ "address"                             ).formatNullable[SensitiveAddress]
-      ~ (__ \ "countryCode"                         ).formatNullable[SensitiveString]
-      ~ (__ \ "changeReportingFrequency"            ).formatNullable[SensitiveBoolean]
-      ~ (__ \ "reportingMethodTaxYear1"             ).formatNullable[SensitiveString]
-      ~ (__ \ "reportingMethodTaxYear2"             ).formatNullable[SensitiveString]
-      ~ (__ \ "incomeSourceAdded"                   ).formatNullable[SensitiveBoolean]
-      ~ (__ \ "incomeSourceCreatedJourneyComplete"  ).formatNullable[SensitiveBoolean]
-      ~ (__ \ "incomeSourceRFJourneyComplete"       ).formatNullable[SensitiveBoolean]
-      )(SensitiveAddIncomeSourceData.apply, unlift(SensitiveAddIncomeSourceData.unapply)
-    )
-  }
+  implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddIncomeSourceData] =
+    Json.format[SensitiveAddIncomeSourceData]
+
 }
 

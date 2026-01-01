@@ -16,7 +16,6 @@
 
 package models.claimToAdjustPoa
 
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
 
 import scala.math.BigDecimal.RoundingMode
@@ -35,10 +34,7 @@ object ClaimToAdjustPoaRequest {
     }
   }
 
-  implicit val claimToAdjustPoaRequestWrites: Writes[ClaimToAdjustPoaRequest] = (
-    (__ \ "nino").write[String] and
-      (__ \ "taxYear").write[String] and
-      (__ \ "amount").write[BigDecimal](currencyWrites) and
-      (__ \ "poaAdjustmentReason").write[SelectYourReason]
-    )(unlift(ClaimToAdjustPoaRequest.unapply))
+  implicit val claimToAdjustPoaRequestWrites: Writes[ClaimToAdjustPoaRequest] =
+    Json.writes[ClaimToAdjustPoaRequest]
+
 }

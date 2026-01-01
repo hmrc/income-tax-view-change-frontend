@@ -26,8 +26,7 @@ import uk.gov.hmrc.hmrcfrontend.views.Utils.urlEncode
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
-import play.api.libs.ws.writeableOf_JsValue
-
+import play.api.libs.ws.DefaultBodyWritables.writeableOf_urlEncodedForm
 import java.net.{URI, URL}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

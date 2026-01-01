@@ -16,7 +16,7 @@
 
 package controllers
 
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails.PoaTwoReconciliationCredit
@@ -50,8 +50,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
   def codedOutAdjustmentHistory: AdjustmentHistoryModel =
     AdjustmentHistoryModel(AdjustmentModel(2500.00, Some(LocalDate.of(2018,3,29)), AdjustmentReversalReason), List(AdjustmentModel(2000.00, Some(LocalDate.of(2019,3,30)), AmendedReturnReversalReason)))
 
+  def setupMtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 
-  mtdAllRoles.foreach { mtdUserRole =>
+  setupMtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
 
     def action(id: String, isInterestCharge: Boolean = false) = if (isAgent) {
@@ -130,7 +131,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
-              "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+              "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()
@@ -146,7 +147,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+              "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockBothIncomeSources()

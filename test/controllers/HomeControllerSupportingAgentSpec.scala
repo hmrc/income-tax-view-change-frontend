@@ -39,6 +39,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
   trait Setup {
     val controller = testHomeController
+    setupMockAgentWithClientAuth(true)
     when(mockDateService.getCurrentDate) thenReturn fixedDate
     when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
@@ -53,17 +54,19 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
     disableAllSwitches()
   }
 
+  def setupSingleBusinessIncomeSource(): Unit = {
+    mockSingleBusinessIncomeSource()
+  }
 
   "show()" when {
     val agentType = MTDSupportingAgent
-    val isSupportingAgent = true
     val fakeRequest = fakeRequestConfirmedClient(isSupportingAgent = true)
     s"the user is authenticated $agentType" should {
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
-          setupMockAgentWithClientAuth(true)
+          
           mockGetDueDates(Right(futureDueDates))
-          mockSingleBusinessIncomeSource()
+          setupSingleBusinessIncomeSource()
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -77,9 +80,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         }
 
         "there is an overdue update date to display" in new Setup {
-          setupMockAgentWithClientAuth(true)
+          
           mockGetDueDates(Right(overdueDueDates))
-          mockSingleBusinessIncomeSource()
+          setupSingleBusinessIncomeSource()
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -91,9 +94,8 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         }
 
         "there are no updates to display" in new Setup {
-          setupMockAgentWithClientAuth(true)
           mockGetDueDates(Right(Seq()))
-          mockSingleBusinessIncomeSource()
+          setupSingleBusinessIncomeSource()
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -107,8 +109,8 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
       "render the home without the Next Updates tile" when {
         "the user has no updates due" in new Setup {
-          setupMockAgentWithClientAuth(true)
-          mockSingleBusinessIncomeSource()
+          
+          setupSingleBusinessIncomeSource()
           mockGetDueDates(Right(Seq()))
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
@@ -123,7 +125,6 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
         enable(OptInOptOutContentUpdateR17)
-        setupMockAgentWithClientAuth(isSupportingAgent)
 
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
@@ -154,11 +155,11 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
       "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
         enable(OptInOptOutContentUpdateR17)
-        setupMockAgentWithClientAuth(isSupportingAgent)
+        
 
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
-        val overdue1 = LocalDate.of(2000, 1, 1)
-        val overdue2 = LocalDate.of(2000, 2, 1)
+        val overdue1: LocalDate = LocalDate.of(2000, 1, 1)
+        val overdue2: LocalDate = LocalDate.of(2000, 2, 1)
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
 
@@ -175,7 +176,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
 
-        val tile = document.select("#updates-tile")
+        val tile: Elements = document.select("#updates-tile")
         tile.select("h2").text shouldBe "Your updates and deadlines"
         tile.select("p").get(0).select("span.govuk-tag").text should include("2 Overdue updates")
         tile.select("p").get(1).text shouldBe "Next update due: 5 February 2024"
@@ -188,7 +189,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
         enable(OptInOptOutContentUpdateR17)
-        setupMockAgentWithClientAuth(isSupportingAgent)
+        
 
         val currentTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
@@ -211,14 +212,14 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         tile.text should not include "Next update due"
         tile.select("p").get(0).text shouldBe "Next tax return due: 31 January 2025"
 
-        val link = tile.select("a")
+        val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
         link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
       }
 
       "render the home page with the Your Businesses tile with link" when {
         "using the manage businesses journey" in new Setup {
-          setupMockAgentWithClientAuth(isSupportingAgent)
+          
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -237,11 +238,11 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
             enable(ReportingFrequencyPage)
-            setupMockAgentWithClientAuth(isSupportingAgent)
+            
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
             mockGetDueDates(Right(Seq.empty))
-            mockSingleBusinessIncomeSource()
+            setupSingleBusinessIncomeSource()
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -254,11 +255,11 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         "states that the user is reporting quarterly" when {
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
             enable(ReportingFrequencyPage)
-            setupMockAgentWithClientAuth(isSupportingAgent)
+            
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
 
             mockGetDueDates(Right(Seq.empty))
-            mockSingleBusinessIncomeSource()
+            setupSingleBusinessIncomeSource()
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -270,10 +271,10 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
             enable(ReportingFrequencyPage)
-            setupMockAgentWithClientAuth(isSupportingAgent)
+            
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
             mockGetDueDates(Right(Seq.empty))
-            mockSingleBusinessIncomeSource()
+            setupSingleBusinessIncomeSource()
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -286,9 +287,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       }
 
       "render the home page without a Next Payments due tile" in new Setup {
-        setupMockAgentWithClientAuth(true)
+        
         mockGetDueDates(Right(overdueDueDates))
-        mockSingleBusinessIncomeSource()
+        setupSingleBusinessIncomeSource()
         setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -302,9 +303,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       }
 
       "render the home page without a Payment history tile" in new Setup {
-        setupMockAgentWithClientAuth(true)
+        
         mockGetDueDates(Right(overdueDueDates))
-        mockSingleBusinessIncomeSource()
+        setupSingleBusinessIncomeSource()
         setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -318,9 +319,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       }
 
       "render the home page without a returns tile" in new Setup {
-        setupMockAgentWithClientAuth(true)
+        
         mockGetDueDates(Right(overdueDueDates))
-        mockSingleBusinessIncomeSource()
+        setupSingleBusinessIncomeSource()
         setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -335,9 +336,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
       "render the home page without a reporting obligations tile" in new Setup {
         disable(ReportingFrequencyPage)
-        setupMockAgentWithClientAuth(true)
+        
         mockGetDueDates(Right(overdueDueDates))
-        mockSingleBusinessIncomeSource()
+        setupSingleBusinessIncomeSource()
         setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -351,6 +352,6 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       }
     }
 
-    testMTDAgentAuthFailures(testHomeController.showAgent(), true)
+    testMTDAgentAuthFailures(testHomeController.showAgent(), isSupportingAgent = true)
   }
 }

@@ -66,31 +66,31 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
           ))
       ))
 
-    val testFulfilledObligationsModel: ObligationsModel =
-      ObligationsModel(
-        Seq(
-          GroupedObligationsModel(testSelfEmploymentId,
-            List(
-              SingleObligationModel(
-                start = LocalDate.of(2022, 7, 1),
-                end = LocalDate.of(2022, 7, 2),
-                due = LocalDate.of(2022, 8, 2),
-                obligationType = "Quarterly",
-                dateReceived = None,
-                periodKey = "#001",
-                status = StatusFulfilled
-              ),
-              SingleObligationModel(
-                start = LocalDate.of(2022, 7, 1),
-                end = LocalDate.of(2022, 7, 2),
-                due = LocalDate.of(2022, 8, 2),
-                obligationType = "Quarterly",
-                dateReceived = None,
-                periodKey = "#002",
-                status = StatusFulfilled
-              )
-            ))
-        ))
+  val testFulfilledObligationsModel: ObligationsModel =
+    ObligationsModel(
+      Seq(
+        GroupedObligationsModel(testSelfEmploymentId,
+          List(
+            SingleObligationModel(
+              start = LocalDate.of(2022, 7, 1),
+              end = LocalDate.of(2022, 7, 2),
+              due = LocalDate.of(2022, 8, 2),
+              obligationType = "Quarterly",
+              dateReceived = None,
+              periodKey = "#001",
+              status = StatusFulfilled
+            ),
+            SingleObligationModel(
+              start = LocalDate.of(2022, 7, 1),
+              end = LocalDate.of(2022, 7, 2),
+              due = LocalDate.of(2022, 8, 2),
+              obligationType = "Quarterly",
+              dateReceived = None,
+              periodKey = "#002",
+              status = StatusFulfilled
+            )
+          ))
+      ))
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(

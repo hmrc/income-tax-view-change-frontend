@@ -212,46 +212,46 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       .sortBy(_.toEpochDay())
   }
 
-private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
+  private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
                                       (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
-  whatYouOweService.getWhatYouOweChargesList(
-    unpaidCharges,
-    isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
-    isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-    mainChargeIsNotPaidFilter,
-    isEnabled(ClaimARefundR18)
-  ) map {
-    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _, _) =>
-      outstandingCharges.filter(_.isBalancingChargeDebit)
-        .filter(_.relevantDueDate.isDefined)
-    case _ => Nil
+    whatYouOweService.getWhatYouOweChargesList(
+      unpaidCharges,
+      isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
+      isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+      mainChargeIsNotPaidFilter,
+      isEnabled(ClaimARefundR18)
+    ) map {
+      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _, _) =>
+        outstandingCharges.filter(_.isBalancingChargeDebit)
+          .filter(_.relevantDueDate.isDefined)
+      case _ => Nil
   }
 
-private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
-  val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
-  val overdueChargesCount = outstandingChargesModel.flatMap(_.relevantDueDate).count(_.isBefore(dateService.getCurrentDate))
-  overduePaymentsCountFromDate + overdueChargesCount
-}
+  private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
+    val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
+    val overdueChargesCount = outstandingChargesModel.flatMap(_.relevantDueDate).count(_.isBefore(dateService.getCurrentDate))
+    overduePaymentsCountFromDate + overdueChargesCount
+  }
 
-private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] =
-  (paymentsDue ::: outstandingChargesDueDate)
-    .sortWith(_ isBefore _)
-    .headOption
+  private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] =
+    (paymentsDue ::: outstandingChargesDueDate)
+      .sortWith(_ isBefore _)
+      .headOption
 
-private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
-  financialDetails
-    .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
-    .getOrElse(false)
+  private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
+    financialDetails
+      .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
+      .getOrElse(false)
 
-private def getRelevantDates(outstandingCharges: List[OutstandingChargeModel]): List[LocalDate] =
-  outstandingCharges
-    .collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate }
-    .flatten
+  private def getRelevantDates(outstandingCharges: List[OutstandingChargeModel]): List[LocalDate] =
+    outstandingCharges
+      .collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate }
+      .flatten
 
-private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-  val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-  errorHandler.showInternalServerError()
-}
+  private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
+    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+    errorHandler.showInternalServerError()
+  }
 
   private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
     ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)

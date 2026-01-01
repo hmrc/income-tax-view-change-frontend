@@ -23,7 +23,6 @@ import play.api.libs.json.JsValue
 import play.api.mvc._
 import testOnly.connectors.PenaltiesStubConnector
 import testOnly.models.PenaltiesDataModel
-import testOnly.views.html.StubDataView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -31,9 +30,9 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class StubPenaltiesDataController @Inject()()
                                            (implicit val appConfig: FrontendAppConfig,
-                                   implicit val mcc: MessagesControllerComponents,
-                                   implicit val executionContext: ExecutionContext,
-                                   val penaltiesStubConnector: PenaltiesStubConnector
+                                            val mcc: MessagesControllerComponents,
+                                            val executionContext: ExecutionContext,
+                                            val penaltiesStubConnector: PenaltiesStubConnector
                                   ) extends BaseController with I18nSupport {
 
   val submitStubbedPenaltyDetails: Action[JsValue] = Action.async(parse.json) {

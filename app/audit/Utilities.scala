@@ -25,11 +25,11 @@ import utils.Utilities.JsonUtil
 
 object Utilities {
 
-  private def getBaseDetails(user: MtdItUser[_]): JsObject = Json.obj(
-    "mtditid" -> user.mtditid) ++
-    ("agentReferenceNumber", user.arn) ++
-    ("saUtr", user.saUtr) ++
-    ("credId", user.credId) ++
+  private def getBaseDetails(user: MtdItUser[_]): JsObject =
+    Json.obj( "mtditid" -> user.mtditid) ++
+    Json.obj("agentReferenceNumber"->user.arn) ++
+    Json.obj("saUtr"-> user.saUtr) ++
+    Json.obj("credId"-> user.credId) ++
     userType(user.userType, user.isSupportingAgent)
 
   def userAuditDetails(user: MtdItUser[_]): JsObject =

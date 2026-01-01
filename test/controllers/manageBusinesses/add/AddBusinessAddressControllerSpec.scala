@@ -25,7 +25,6 @@ import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddress
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
@@ -83,7 +82,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some("Sample location")
+              redirectLocation(result) shouldBe Some("Sample location")
             }
           }
 
@@ -137,7 +136,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some(checkAnswersUrl)
+              redirectLocation(result) shouldBe Some(checkAnswersUrl)
               verifySetMongoData()
             }
           }

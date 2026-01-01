@@ -50,7 +50,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   implicit val executionContext: ExecutionContext = mcc.executionContext
   lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
 
-  lazy val logger = Logger(getClass)
+  val logger = Logger(getClass)
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
 

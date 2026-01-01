@@ -63,7 +63,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
   val form: Form[SingleTaxYearOptInWarningForm] = SingleTaxYearOptInWarningForm(taxYear)
 
-  mtdAllRoles.foreach { mtdRole: MTDUserRole =>
+  mtdAllRoles.foreach ( (mtdRole: MTDUserRole) => {
     val isAgent = mtdRole != MTDIndividual
 
     s".show(isAgent = $isAgent)" when {
@@ -267,7 +267,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
           "user answers No - false" should {
 
-            "handle the submit request and redirect to the Opt In Cancelled page"  in {
+            "handle the submit request and redirect to the Opt In Cancelled page" in {
               enable(ReportingFrequencyPage, SignUpFs)
 
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
@@ -458,4 +458,5 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
+    )
 }

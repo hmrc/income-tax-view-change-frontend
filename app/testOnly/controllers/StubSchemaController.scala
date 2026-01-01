@@ -33,8 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class StubSchemaController @Inject()(stubSchemaView: StubSchemaView)
                                     (implicit val appConfig: FrontendAppConfig,
-                                     implicit val mcc: MessagesControllerComponents,
-                                     implicit val executionContext: ExecutionContext,
+                                     val mcc: MessagesControllerComponents,
+                                     val executionContext: ExecutionContext,
                                      val dynamicStubConnector: DynamicStubConnector
                                     ) extends BaseController with I18nSupport {
 

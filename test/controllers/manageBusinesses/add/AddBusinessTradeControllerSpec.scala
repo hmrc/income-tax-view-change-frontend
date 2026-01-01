@@ -24,7 +24,6 @@ import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -132,13 +131,13 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> validBusinessTrade))
 
-                status(result) mustBe SEE_OTHER
+                status(result) shouldBe SEE_OTHER
                 val expectedRedirectUrl = if(mtdRole == MTDIndividual) {
                   controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
                 } else {
                   controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
                 }
-                redirectLocation(result) mustBe Some(expectedRedirectUrl)
+                redirectLocation(result) shouldBe Some(expectedRedirectUrl)
               }
             }
           } else {
@@ -153,13 +152,13 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> validBusinessTrade))
-                status(result) mustBe SEE_OTHER
+                status(result) shouldBe SEE_OTHER
                 val expectedRedirectUrl = if(mtdRole == MTDIndividual) {
                   controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode).url
                 } else {
                   controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode).url
                 }
-                redirectLocation(result) mustBe Some(expectedRedirectUrl)
+                redirectLocation(result) shouldBe Some(expectedRedirectUrl)
               }
             }
           }
@@ -178,8 +177,8 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                 BusinessTradeForm.businessTrade -> businessNameAsTrade))
 
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Trade and business name cannot be the same")
+              status(result) shouldBe BAD_REQUEST
+              contentAsString(result) should include("Trade and business name cannot be the same")
             }
 
             "trade name contains invalid characters" in {
@@ -194,8 +193,8 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                 BusinessTradeForm.businessTrade -> invalidBusinessTradeChar))
 
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Trade cannot include !, &quot;&quot;, * or ?")
+              status(result) shouldBe BAD_REQUEST
+              contentAsString(result) should include("Trade cannot include !, &quot;&quot;, * or ?")
             }
 
             "trade name is empty" in {
@@ -210,8 +209,8 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                 BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty))
 
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Enter the trade of your business")
+              status(result) shouldBe BAD_REQUEST
+              contentAsString(result) should include("Enter the trade of your business")
             }
 
             "trade name is too short" in {
@@ -226,8 +225,8 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                 BusinessTradeForm.businessTrade -> invalidBusinessTradeShort))
 
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Trade must be 2 characters or more")
+              status(result) shouldBe BAD_REQUEST
+              contentAsString(result) should include("Trade must be 2 characters or more")
             }
 
             "trade name is too long" in {
@@ -242,8 +241,8 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                 BusinessTradeForm.businessTrade -> invalidBusinessTradeLong))
 
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Trade must be 35 characters or fewer")
+              status(result) shouldBe BAD_REQUEST
+              contentAsString(result) should include("Trade must be 35 characters or fewer")
             }
           }
         }

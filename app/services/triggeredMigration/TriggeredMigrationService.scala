@@ -16,7 +16,7 @@
 
 package services.triggeredMigration
 
-import enums.TriggeredMigration.{TriggeredMigrationCeased, TriggeredMigrationState}
+import enums.TriggeredMigration.TriggeredMigrationState
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
