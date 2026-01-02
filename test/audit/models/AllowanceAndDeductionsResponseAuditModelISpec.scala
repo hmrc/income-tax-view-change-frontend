@@ -69,10 +69,10 @@ class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {
       }
 
       "information for the audit has minimal details" in {
-        AllowanceAndDeductionsResponseAuditModel(testMtdItUserMinimal, AllowancesAndDeductionsViewModel()).detail shouldBe Json.obj(
+       assertJsonEquals( AllowanceAndDeductionsResponseAuditModel(testMtdItUserMinimal, AllowancesAndDeductionsViewModel()).detail, Json.obj(
           "mtditid" -> testMtditid,
           "nino" -> testNino
-        )
+        ))
       }
     }
   }

@@ -41,21 +41,36 @@
 }
 
 @bulletPoints = @{
-    if(yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Mandated || yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Voluntary) {
+    if (yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Mandated ||
+            yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Voluntary) {
+
         bulletList(
             Seq(
                 "home.reportingObligations.quarterly.bullet1",
                 "home.reportingObligations.quarterly.bullet2"
             )
         )
+    } else {
+        Html("")
     }
 }
 
+
 @ITSAText = @{
-    if(yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Annual) {
-        messages("home.reportingObligations.annual.text", yourReportingObligationsTileViewModel.currentTaxYear.startYear.toString, yourReportingObligationsTileViewModel.currentTaxYear.endYear.toString)
-    } else if (yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Voluntary || yourReportingObligationsTileViewModel.currentYearITSAStatus == ITSAStatus.Mandated) {
-        messages("home.reportingObligations.quarterly.text", yourReportingObligationsTileViewModel.currentTaxYear.startYear.toString, yourReportingObligationsTileViewModel.currentTaxYear.endYear.toString)
+    yourReportingObligationsTileViewModel.currentYearITSAStatus match {
+        case ITSAStatus.Annual =>
+            messages(
+                "home.reportingObligations.annual.text",
+                yourReportingObligationsTileViewModel.currentTaxYear.startYear.toString,
+                yourReportingObligationsTileViewModel.currentTaxYear.endYear.toString
+            )
+
+        case ITSAStatus.Voluntary | ITSAStatus.Mandated =>
+            messages(
+                "home.reportingObligations.quarterly.text",
+                yourReportingObligationsTileViewModel.currentTaxYear.startYear.toString,
+                yourReportingObligationsTileViewModel.currentTaxYear.endYear.toString
+            )
     }
 }
 

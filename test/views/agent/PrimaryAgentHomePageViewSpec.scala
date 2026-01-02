@@ -338,7 +338,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         "displays the correct content" in new TestSetup {
           val langSwitchScript: Option[Element] = getElementById("language-switch")
           langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
-          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith ir Gymraeg Cymraeg")
+          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith i’r Gymraeg Cymraeg")
         }
       }
 

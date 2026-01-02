@@ -120,23 +120,23 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   "have the correct detail for the audit event" when {
     "user is an Individual and when income source type is Self Employment" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).detail shouldBe detailIndividualSE
+      assertJsonEquals(getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).detail, detailIndividualSE)
     }
 
     "user is an primary Agent and when income source type is Self Employment" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, MTDPrimaryAgent, isError = false).detail shouldBe detailAgentSE(false)
+      assertJsonEquals(getCreateIncomeSourceAuditModel(SelfEmployment, MTDPrimaryAgent, isError = false).detail, detailAgentSE(false))
     }
 
     "user is an supporting Agent and when income source type is Self Employment" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, MTDSupportingAgent, isError = false).detail shouldBe detailAgentSE(true)
+      assertJsonEquals(getCreateIncomeSourceAuditModel(SelfEmployment, MTDSupportingAgent, isError = false).detail, detailAgentSE(true))
     }
 
     "error while updating income source" in {
-      getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = true).detail shouldBe detailOutcomeError
+      assertJsonEquals(getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = true).detail, detailOutcomeError)
     }
 
     "user is an Individual and when income source type is Property" in {
-      getCreateIncomeSourceAuditModel(UkProperty, MTDIndividual, isError = false).detail shouldBe detailProperty
+      assertJsonEquals(getCreateIncomeSourceAuditModel(UkProperty, MTDIndividual, isError = false).detail, detailProperty)
     }
   }
 }
