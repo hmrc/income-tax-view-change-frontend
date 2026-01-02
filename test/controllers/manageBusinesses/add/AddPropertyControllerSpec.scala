@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.MTDIndividual
 import forms.manageBusinesses.add.AddProprertyForm
@@ -32,13 +33,17 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 
 class AddPropertyControllerSpec extends MockAuthActions with MockSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[AddPropertyController]
@@ -67,6 +72,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
         "display the add property page" when {
           "using the manage businesses journey" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(noIncomeDetails)
             mockNoIncomeSources()
             val result = action(fakeRequest)
 
@@ -78,16 +84,18 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
     s"submit($isAgent)" when {
       val action = testController.submit(isAgent)
+      val actionTrigMig = testController.submit(isAgent, isTrigMig = true)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
       s"the user is authenticated as a $mtdRole" should {
         s"return ${Status.SEE_OTHER}: redirect to the correct Add Start Date Page" when {
           "foreign property selected" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(noIncomeDetails)
 
             mockNoIncomeSources()
 
@@ -101,6 +109,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
           }
           "uk property selected" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(noIncomeDetails)
 
             mockNoIncomeSources()
 
@@ -114,9 +123,41 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
           }
         }
 
+        s"return ${Status.SEE_OTHER}: redirect to the correct Add Start Date Page when accessed via Triggered Migration" when {
+          "foreign property selected" in {
+            setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(noIncomeDetails)
+
+            mockNoIncomeSources()
+
+            val result = actionTrigMig(fakeRequest.withFormUrlEncodedBody(
+              AddProprertyForm.response -> responseUK
+            ))
+
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = true).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+          "uk property selected" in {
+            setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(noIncomeDetails)
+
+            mockNoIncomeSources()
+
+            val result = actionTrigMig(fakeRequest.withFormUrlEncodedBody(
+              AddProprertyForm.response -> responseForeign
+            ))
+
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = true).url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+
         s"return ${Status.BAD_REQUEST}" when {
           "an invalid form is submitted" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(noIncomeDetails)
 
             mockNoIncomeSources()
 
@@ -129,7 +170,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
           }
           "an empty form is submitted" in {
             setupMockSuccess(mtdRole)
-
+            mockItsaStatusRetrievalAction(noIncomeDetails)
             mockNoIncomeSources()
 
             val result = action(fakeRequest.withFormUrlEncodedBody("" -> ""))
@@ -141,6 +182,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
           }
           "no form is submitted" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(noIncomeDetails)
 
             mockNoIncomeSources()
 
@@ -150,7 +192,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

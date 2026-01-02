@@ -29,7 +29,7 @@ import play.api.mvc._
 import services.optout.{OptOutService, OptOutSubmissionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerOptOut
-import views.html.optOut.newJourney.CheckOptOutUpdateAnswers
+import views.html.optOut.newJourney.CheckOptOutUpdateAnswersView
 
 import javax.inject.Inject
 import scala.annotation.unused
@@ -38,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmOptOutUpdateController @Inject()(
                                                authActions: AuthActions,
                                                optOutSubmissionService: OptOutSubmissionService,
-                                               view: CheckOptOutUpdateAnswers,
+                                               view: CheckOptOutUpdateAnswersView,
                                                val optOutService: OptOutService,
                                                val itvcErrorHandler: ItvcErrorHandler,
                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler
@@ -96,11 +96,11 @@ class ConfirmOptOutUpdateController @Inject()(
             updateTaxYearsITSAStatusRequest: List[ITSAStatusUpdateResponse] <- optOutSubmissionService.updateTaxYearsITSAStatusRequest()
             result = updateTaxYearsITSAStatusRequest match {
               case List() =>
-                Redirect(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent))
+                Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
               case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
                 Redirect(controllers.optOut.routes.ConfirmedOptOutController.show(isAgent))
               case listOfUpdateRequestsMade if listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
-                Redirect(controllers.optOut.oldJourney.routes.OptOutErrorController.show(isAgent))
+                Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
               case _ =>
                 itvcErrorHandler.showInternalServerError()
             }

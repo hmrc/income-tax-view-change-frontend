@@ -209,7 +209,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                     Json.obj("taxYear" -> 2018,
                                       "transactionId" -> "1040001234",
                                       "documentDueDate" -> "2019-03-29",
-                                      "documentDescription" -> "ITSA - POA 2",
+                                      "documentDescription" -> "ITSA- POA 2",
                                       "outstandingAmount" -> 0.0,
                                       "originalAmount" -> 10.34,
                                       "documentDate" -> "2018-03-29",

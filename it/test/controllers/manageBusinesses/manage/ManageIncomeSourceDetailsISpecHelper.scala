@@ -57,7 +57,6 @@ class ManageIncomeSourceDetailsISpecHelper extends ControllerISpecHelper {
   val addressAsString: String = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
   val businessTradingName: String = "business"
   val businessStartDate: String = "1 January 2017"
-  val businessAccountingMethod: String = "Cash basis accounting"
   val thisTestSelfEmploymentId = "ABC123456789"
   val thisTestSelfEmploymentIdHashed: String = mkIncomeSourceId(thisTestSelfEmploymentId).toHash.hash
   val messagesAnnually: String = messagesAPI("incomeSources.manage.business-manage-details.annually")

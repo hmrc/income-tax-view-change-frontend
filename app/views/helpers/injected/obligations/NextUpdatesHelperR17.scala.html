@@ -29,6 +29,7 @@
 @this(
         govukTabs: GovukTabs,
         h2: h2,
+        h3: h3,
         p: p,
         detailsDropdown: detailsDropdown,
         bulletList: bulletPointList,
@@ -95,7 +96,7 @@
         @p(id = Some("active-quarterly-desc")) { @getMessage("quarterly.text") }
     }
 
-    @h2(getMessage("quarterly.subheading"), optId = Some("active-quarterly-subheading"))
+    @h3(getMessage("quarterly.subheading"), optId = Some("active-quarterly-subheading"))
     @p(id = Some("active-quarterly-subdesc")){ @getMessage("quarterly.text2") }
 
     @detailsDropdown(getMessage("quarterly.dropdown.heading"), quarterlyDropdownContent)
@@ -114,7 +115,7 @@
         }
     }
 
-    @h2(getMessage("quarterly.subheading2"), optId = Some("active-quarterly-return-due-heading"))
+    @h3(getMessage("quarterly.subheading2"), optId = Some("active-quarterly-return-due-heading"))
     @p(id = Some("active-quarterly-return-due-desc")) {
         @getMessage("quarterly.text3")
         @link(link = appConfig.compatibleSoftwareLink, target = Some("_blank"), messageKey = getMessage("quarterly.text4"), id = Some("quarterly-compatible-software-link"), outerMessage = ".")
@@ -131,7 +132,7 @@
 @currentYearTabContentAnnual = {
     @h2(getMessage("annual.heading", currentTaxYearStart, currentTaxYearEnd), classes = "govuk-heading-l", optId = Some("current-year-heading"))
     @p(id = Some("current-year-desc")){@getMessage("annual.text1")}
-    @h2(getMessage("annual.subHeading"), optId = Some("current-year-subheading"))
+    @h3(getMessage("annual.subHeading"), optId = Some("current-year-subheading"))
     @p(id = Some("current-year-compatible-software-desc")) {
         @HtmlFormat.fill(Seq(
             Html(if(Set(ITSAStatus.Exempt, ITSAStatus.DigitallyExempt).contains(currentTaxYearStatus)) {
@@ -200,7 +201,7 @@
         case Nil => HtmlFormat.empty
         case deadlines =>
             HtmlFormat.fill(Seq(
-                h2(getMessage("quarterly.table.heading"), optId = Some("active-quarterly-table-heading")),
+                h3(getMessage("quarterly.table.heading"), optId = Some("active-quarterly-table-heading")),
                 govukTable(Table(
                     head = Some(List(
                         HeadCell(
@@ -227,7 +228,7 @@
             HtmlFormat.fill(Seq(
                 govukWarningText(WarningText(content = Text(getMessage("quarterly.missed.deadlines.warning")), attributes = Map("id" -> "missed-deadlines-warning"))),
                 missedDeadlinesText,
-                h2(getMessage("quarterly.missed.deadlines.table.heading"), optId = Some("missed-deadlines-table-heading")),
+                h3(getMessage("quarterly.missed.deadlines.table.heading"), optId = Some("missed-deadlines-table-heading")),
                 govukTable(Table(
                     head = Some(List(
                         HeadCell(

@@ -23,7 +23,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.admin.{ClaimARefundR18, CreditsRefundsRepay}
+import models.admin.CreditsRefundsRepay
 import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -32,15 +32,15 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.ErrorRecovery
-import views.html.CreditAndRefunds
-import views.html.errorPages.CustomNotFoundError
+import views.html.CreditAndRefundsView
+import views.html.errorPages.CustomNotFoundErrorView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val creditService: CreditService,
-                                          val view: CreditAndRefunds,
+                                          val view: CreditAndRefundsView,
                                           val repaymentService: RepaymentService,
                                           val auditingService: AuditingService,
                                           mcc: MessagesControllerComponents)
@@ -49,7 +49,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val agentErrorHandler: AgentItvcErrorHandler,
                                           val languageUtils: LanguageUtils,
                                           val ec: ExecutionContext,
-                                          val customNotFoundErrorView: CustomNotFoundError)
+                                          val customNotFoundErrorView: CustomNotFoundErrorView)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
@@ -67,7 +67,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case creditsModel: CreditsModel =>
-        val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel, isEnabled(ClaimARefundR18))
+        val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel)
         auditClaimARefund(creditsModel)
         Ok(view(viewModel, isAgent, backUrl)(user, user, messages))
       case _ => logAndRedirect("Invalid response from financial transactions")

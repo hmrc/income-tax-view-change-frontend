@@ -24,14 +24,16 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-case class AllocationDetail(transactionId: Option[String],
-                            from: Option[LocalDate],
-                            to: Option[LocalDate],
-                            chargeType: Option[String],
-                            mainType: Option[String],
-                            amount: Option[BigDecimal],
-                            clearedAmount: Option[BigDecimal],
-                            chargeReference: Option[String]) {
+case class AllocationDetail(
+                             transactionId: Option[String],
+                             from: Option[LocalDate],
+                             to: Option[LocalDate],
+                             chargeType: Option[String],
+                             mainType: Option[String],
+                             amount: Option[BigDecimal],
+                             clearedAmount: Option[BigDecimal],
+                             chargeReference: Option[String]
+                           ) {
 
   def getPaymentAllocationKeyInPaymentAllocations: String = {
     FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
@@ -43,7 +45,6 @@ case class AllocationDetail(transactionId: Option[String],
   }
 
   def getTaxYear: Int = {
-
     AccountingPeriodModel.determineTaxYearFromPeriodEnd(
       to.getOrElse(throw new Exception("Missing tax period end date")))
   }
@@ -53,6 +54,7 @@ case class AllocationDetail(transactionId: Option[String],
   }
 
   def transactionIdActual: String = transactionId.getOrElse(throw MissingFieldException("Document ID"))
+
   def amountActual: BigDecimal = amount.getOrElse(throw MissingFieldException("Payment Amount"))
 }
 

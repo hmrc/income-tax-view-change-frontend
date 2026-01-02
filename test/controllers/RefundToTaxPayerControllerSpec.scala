@@ -17,7 +17,7 @@
 package controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
-import connectors.RepaymentHistoryConnector
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector, RepaymentHistoryConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.connectors.MockRepaymentHistoryConnector
@@ -28,33 +28,36 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
+import services.DateServiceInterface
 import testConstants.BaseTestConstants.testMtditid
-import views.html.RefundToTaxPayer
+import views.html.RefundToTaxPayerView
 
 import java.time.LocalDate
 
-class RefundToTaxPayerControllerSpec extends MockAuthActions
-  with MockRepaymentHistoryConnector {
+class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentHistoryConnector {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[RepaymentHistoryConnector].toInstance(mockRepaymentHistoryConnector)
+      api.inject.bind[RepaymentHistoryConnector].toInstance(mockRepaymentHistoryConnector),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[RefundToTaxPayerController]
+  lazy val testController: RefundToTaxPayerController = app.injector.instanceOf[RefundToTaxPayerController]
 
   val repaymentRequestNumber: String = "023942042349"
   val testNino: String = "AB123456C"
 
   lazy val paymentRefundHistoryBackLink: Boolean => String = isAgent => {
-    if(isAgent) {
+    if (isAgent) {
       "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
     } else {
       "/report-quarterly/income-and-expenses/view/payment-refund-history"
     }
   }
 
-  lazy val refundToTaxPayerView: RefundToTaxPayer = app.injector.instanceOf[RefundToTaxPayer]
+  lazy val refundToTaxPayerView: RefundToTaxPayerView = app.injector.instanceOf[RefundToTaxPayerView]
 
   val testRepaymentHistory: RepaymentHistory = RepaymentHistory(
     Some(705.2),
@@ -129,7 +132,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
     )
   )
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showAgent(repaymentRequestNumber) else testController.show(repaymentRequestNumber)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
@@ -142,6 +145,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
             "PaymentHistoryRefunds FS is enabled" in {
               enable(PaymentHistoryRefunds)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
 
@@ -166,11 +170,12 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
             "PaymentHistoryRefunds FS is disabled" in {
               disable(PaymentHistoryRefunds)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.SEE_OTHER
-              val homeUrl = if(isAgent) routes.HomeController.showAgent() else routes.HomeController.show()
+              val homeUrl = if (isAgent) routes.HomeController.showAgent() else routes.HomeController.show()
               redirectLocation(result) shouldBe Some(homeUrl.url)
             }
           }
@@ -179,6 +184,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
             "Failing to retrieve a user's re-payments history" in {
               enable(PaymentHistoryRefunds)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               setupGetRepaymentHistoryByRepaymentIdError(testNino, repaymentRequestNumber)(RepaymentHistoryErrorModel(404, "Not found"))
 
@@ -188,7 +194,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

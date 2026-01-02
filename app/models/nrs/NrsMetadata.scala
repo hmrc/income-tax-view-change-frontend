@@ -32,7 +32,7 @@ case class NrsMetadata(
   userSubmissionTimestamp:  Instant,
   identityData:             IdentityData,
   userAuthToken:            String,
-  headerData:               JsValue,
+  headerData:               Map[String, String],
   searchKeys:               SearchKeys
 )
 
@@ -56,13 +56,14 @@ object NrsMetadata extends InstantFormatter {
     ): NrsMetadata =
     NrsMetadata(
       businessId              = "income-tax-view-change",
-      notableEvent            = "adjust-payment-on-account",
+      notableEvent            = "income-tax-view-change-adjust-payment-on-account",
       payloadContentType      = MimeTypes.XML,
       payloadSha256Checksum   = checkSum,
       userSubmissionTimestamp = userSubmissionTimestamp,
       userAuthToken           = request.headers.get("Authorization").getOrElse(""),
-      headerData              = JsObject(request.headers.toMap.map(x => x._1 -> JsString(x._2 mkString ","))),
+      headerData              = request.headers.toMap.map(x => x._1 -> (x._2 mkString ",")),
       searchKeys              = searchKeys,
       identityData            = identityData
     )
+
 }

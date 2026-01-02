@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys
 import mocks.auth.MockAuthActions
@@ -24,14 +25,19 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.CalculationPollingService
+import services.{CalculationPollingService, DateServiceInterface}
 import testConstants.BaseTestConstants.testTaxYear
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
+
 @deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingControllerSpec extends MockAuthActions with MockCalculationPollingService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[CalculationPollingService].toInstance(mockCalculationPollingService)
+      api.inject.bind[CalculationPollingService].toInstance(mockCalculationPollingService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[CalculationPollingController]
@@ -53,6 +59,7 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
           s"redirect to Tax summary controller" when {
             "the session key contains calculationId, request is not final calc" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessIncome)
               mockBusinessIncomeSource()
               mockCalculationPollingSuccess()
               val result = action()(fakeRequest.addingToSession(SessionKeys.calculationId -> testCalcId))
@@ -69,6 +76,7 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
           s"redirect to Final Tax Calculation controller" when {
             "the session key contains calculationId, and request is final calc" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessIncome)
               mockBusinessIncomeSource()
               mockCalculationPollingSuccess()
               val result = action(true)(fakeRequest.addingToSession(SessionKeys.calculationId -> testCalcId))
@@ -85,6 +93,7 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
           "render the error page" when {
             "the calculationId is missing from the session" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessIncome)
               mockBusinessIncomeSource()
 
               val result = action()(fakeRequest)
@@ -94,6 +103,7 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
 
             "the calculation returned from the calculation service was not found" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessIncome)
               mockBusinessIncomeSource()
               mockCalculationPollingRetryableError()
               val result = action(true)(fakeRequest)
@@ -103,6 +113,7 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
 
             "the calculation returned from the calculation service was an error" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessIncome)
               mockBusinessIncomeSource()
               mockCalculationPollingNonRetryableError()
               val result = action(true)(fakeRequest)

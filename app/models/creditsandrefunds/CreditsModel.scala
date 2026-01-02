@@ -25,7 +25,6 @@ import java.time.LocalDate
 
 
 case class CreditsModel(availableCreditForRepayment: BigDecimal,
-                        allocatedCredit: BigDecimal,
                         allocatedCreditForFutureCharges: BigDecimal,
                         unallocatedCredit: BigDecimal,
                         totalCredit: BigDecimal,

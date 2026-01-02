@@ -16,14 +16,41 @@
 
 package enums.TriggeredMigration
 
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
-sealed trait TriggeredMigrationState
+sealed trait TriggeredMigrationState {
+  val messageKeyValue: String
+  val anchorLinkId: String
+}
 
 case object TriggeredMigrationCeased extends TriggeredMigrationState {
   override val toString = "CEASED"
+  override val messageKeyValue: String = ""
+  override val anchorLinkId: String = "#ceased-section-heading"
 }
 
 case class TriggeredMigrationAdded(incomeSourceType: IncomeSourceType) extends TriggeredMigrationState {
   override val toString = s"${incomeSourceType.key}-ADDED"
+  override val messageKeyValue = s"${incomeSourceType.key}"
+  override val anchorLinkId: String = incomeSourceType match {
+    case SelfEmployment  => "#sole-trader-heading"
+    case UkProperty      => "#uk-property-heading"
+    case ForeignProperty => "#foreign-property-heading"
+  }
+}
+
+object TriggeredMigrationState {
+  def getStateFromString(state: Option[String]): Option[TriggeredMigrationState] = {
+    state.flatMap {
+      case TriggeredMigrationCeased.toString => Some(TriggeredMigrationCeased)
+      case trigState if trigState.endsWith("-ADDED") =>
+        trigState.stripSuffix("-ADDED") match {
+          case SelfEmployment.key  => Some(TriggeredMigrationAdded(SelfEmployment))
+          case UkProperty.key      => Some(TriggeredMigrationAdded(UkProperty))
+          case ForeignProperty.key => Some(TriggeredMigrationAdded(ForeignProperty))
+          case _                   => None
+        }
+      case _ => None
+    }
+  }
 }

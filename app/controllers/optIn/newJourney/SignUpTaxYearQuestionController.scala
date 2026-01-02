@@ -19,7 +19,7 @@ package controllers.optIn.newJourney
 import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import forms.optIn.SignUpTaxYearQuestionForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -94,11 +94,11 @@ class SignUpTaxYearQuestionController @Inject()(
                   case Some(SignUpTaxYearQuestionForm.responseYes) =>
                     signUpSubmissionService.triggerSignUpRequest().map {
                       case Seq() =>
-                        Redirect(controllers.optIn.oldJourney.routes.OptInErrorController.show(isAgent))
+                        Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
                       case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
                         Redirect(controllers.optIn.newJourney.routes.SignUpCompletedController.show(isAgent))
                       case _ =>
-                        Redirect(controllers.optIn.oldJourney.routes.OptInErrorController.show(isAgent))
+                        Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
                     }
                   case Some(SignUpTaxYearQuestionForm.responseNo) =>
                     Future(Redirect(controllers.routes.ReportingFrequencyPageController.show(isAgent).url))

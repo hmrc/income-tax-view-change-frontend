@@ -1286,7 +1286,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
   private val poa1Description: String = "ITSA- POA 1"
-  private val poa2Description: String = "ITSA - POA 2"
+  private val poa2Description: String = "ITSA- POA 2"
 
   def testChargeHistoryJson(mtdBsa: String, documentId: String, amount: BigDecimal): JsValue = Json.obj(
     "idType" -> "MTDBSA",
@@ -1316,6 +1316,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00,
       "totalCreditAvailableForRepayment" -> 5.00,
+      "totalCredit" -> 5.00,
       "firstPendingAmountRequested" -> 3.00,
       "secondPendingAmountRequested" -> 2.00
     ),
@@ -1495,6 +1496,7 @@ object IncomeSourceIntegrationTestConstants {
       "overDueAmount" -> 2.00,
       "totalBalance" -> 3.00,
       "totalCreditAvailableForRepayment" -> 5.00,
+      "totalCredit" -> 5.00,
       "firstPendingAmountRequested" -> 3.00,
       "secondPendingAmountRequested" -> 2.00
     ),

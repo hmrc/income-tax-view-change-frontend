@@ -19,12 +19,12 @@ package views
 import play.twirl.api.Html
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import testUtils.ViewSpec
-import views.html.errorPages.UpliftFailed
+import views.html.errorPages.UpliftFailedView
 
 
 class UpliftFailedViewSpec extends ViewSpec {
 
-  def upliftFailedView: Html = app.injector.instanceOf[UpliftFailed].apply()
+  def upliftFailedView: Html = app.injector.instanceOf[UpliftFailedView].apply()
 
   "The Uplift Failed Error page" should {
 

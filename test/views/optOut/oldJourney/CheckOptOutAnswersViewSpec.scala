@@ -24,19 +24,19 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import testConstants.BaseTestConstants.taxYear
 import testUtils.TestSupport
-import views.html.optOut.oldJourney.CheckOptOutAnswers
+import views.html.optOut.oldJourney.CheckOptOutAnswersView
 
 class CheckOptOutAnswersViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  val optOutCheckAnswers: CheckOptOutAnswers = app.injector.instanceOf[CheckOptOutAnswers]
+  val optOutCheckAnswers: CheckOptOutAnswersView = app.injector.instanceOf[CheckOptOutAnswersView]
 
   val checkAnswersViewModel: MultiYearOptOutCheckpointViewModel = MultiYearOptOutCheckpointViewModel(TaxYear.forYearEnd(taxYear))
   val intentStartTaxYear: String = checkAnswersViewModel.startYear
   val intentEndTaxYear: String = checkAnswersViewModel.endYear
 
   class Setup(isAgent: Boolean = true) {
-    val cancelURL = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
+    val cancelURL: String = if (isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url
     val pageDocument: Document = Jsoup.parse(contentAsString(optOutCheckAnswers(checkAnswersViewModel, isAgent, cancelURL)))
   }
 

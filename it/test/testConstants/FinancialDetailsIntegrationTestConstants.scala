@@ -249,8 +249,8 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(currentDate.plusDays(30))
 
   val financialDetailsDueInMoreThan30Days: FinancialDetailsModel = testFinancialDetailsModel(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
+    mainType = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
@@ -278,8 +278,8 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   )
 
   val financialDetailsDueIn30Days: FinancialDetailsModel = testFinancialDetailsModel(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
+    mainType = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
@@ -308,8 +308,8 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   )
 
   def financialDetailsOverdueData(dunningLock: List[String] = noDunningLock, interestLock: List[String] = noInterestLock): FinancialDetailsModel = testFinancialDetailsModel(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
+    mainType = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
@@ -337,8 +337,8 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   )
 
   val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
+    mainType = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
@@ -364,8 +364,8 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   )
 
   val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
+    mainType = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),
@@ -391,8 +391,8 @@ object FinancialDetailsIntegrationTestConstants  extends ComponentSpecBase {
   )
 
   val financialDetailsDueIn30DaysWithAZeroOutstandingAmount: FinancialDetailsModel = testFinancialDetailsModel(
-    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
-    mainType = List(Some("ITSA- POA 1"), Some("ITSA - POA 2")),
+    documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
+    mainType = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainTransaction = List(None, None),
     transactionIds = List(Some("transId1"), Some("transId2")),
     transactionDate = Some(LocalDate.parse("2020-08-16")),

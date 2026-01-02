@@ -57,8 +57,6 @@ object FeatureSwitchName {
       JsSuccess(ReportingFrequencyPage)
     case JsString(DisplayBusinessStartDate.name) =>
       JsSuccess(DisplayBusinessStartDate)
-    case JsString(AccountingMethodJourney.name) =>
-      JsSuccess(AccountingMethodJourney)
     case JsString(PenaltiesAndAppeals.name) =>
       JsSuccess(PenaltiesAndAppeals)
     case JsString(PenaltiesBackendEnabled.name) =>
@@ -69,8 +67,6 @@ object FeatureSwitchName {
       JsSuccess(SelfServeTimeToPayR17)
     case JsString(TriggeredMigration.name) =>
       JsSuccess(TriggeredMigration)
-    case JsString(ClaimARefundR18.name) =>
-      JsSuccess(ClaimARefundR18)
     case JsString(SubmitClaimToAdjustToNrs.name) =>
       JsSuccess(SubmitClaimToAdjustToNrs)
     case JsString(PostFinalisationAmendmentsR18.name) =>
@@ -110,15 +106,13 @@ object FeatureSwitchName {
       FilterCodedOutPoas,
       ReportingFrequencyPage,
       DisplayBusinessStartDate,
-      AccountingMethodJourney,
       PenaltiesAndAppeals,
       PenaltiesBackendEnabled,
       OptInOptOutContentUpdateR17,
       SubmitClaimToAdjustToNrs,
       SelfServeTimeToPayR17,
       TriggeredMigration,
-      PostFinalisationAmendmentsR18,
-      ClaimARefundR18
+      PostFinalisationAmendmentsR18
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -184,11 +178,6 @@ case object DisplayBusinessStartDate extends FeatureSwitchName {
   override val toString: String = "Display Business Start Date"
 }
 
-case object AccountingMethodJourney extends FeatureSwitchName {
-  override val name: String = "accounting-method-journey"
-  override val toString: String = "Accounting Method Journey"
-}
-
 case object PenaltiesAndAppeals extends FeatureSwitchName {
   override val name: String = "penalties-and-appeals"
   override val toString: String = "Penalties and Appeals"
@@ -217,11 +206,6 @@ case object TriggeredMigration extends FeatureSwitchName {
 case object SubmitClaimToAdjustToNrs extends FeatureSwitchName {
   override val name: String = "submit-claim-to-adjust-to-nrs"
   override val toString: String = "Submit Claim to Adjust to NRS"
-}
-
-case object ClaimARefundR18 extends FeatureSwitchName {
-  override val name: String = "claim-a-refund-r18"
-  override val toString: String = "Claim A Refund R18"
 }
 
 case object PostFinalisationAmendmentsR18 extends FeatureSwitchName {

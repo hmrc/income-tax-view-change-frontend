@@ -28,6 +28,7 @@ case class NextUpdatesTileViewModel(dueDates: Seq[LocalDate],
                                     currentYearITSAStatus: ITSAStatus,
                                     nextQuarterlyUpdateDueDate: Option[LocalDate],
                                     nextTaxReturnDueDate: Option[LocalDate]) {
+
   def getNextDeadline: Option[LocalDate] = {
     dueDates.sortWith(_ isBefore _).headOption
   }

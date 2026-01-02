@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
@@ -32,9 +33,9 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CreateBusinessDetailsService, SessionService}
+import services.{CreateBusinessDetailsService, DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData}
 
 import scala.concurrent.Future
 
@@ -46,7 +47,10 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService)
+      api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testCheckDetailsController = app.injector.instanceOf[IncomeSourceCheckDetailsController]
@@ -85,6 +89,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           "render the check details page" when {
             "the session contains full business details and FS enabled" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
 
               mockNoIncomeSources()
               setupMockCreateSession(true)
@@ -98,13 +103,14 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
               status(result) shouldBe OK
               document.title shouldBe getTitle(incomeSourceType, mtdRole != MTDIndividual)
               document.select("h1:nth-child(1)").text shouldBe getHeading(incomeSourceType)
-              changeDetailsLinks.first().text shouldBe getLink(incomeSourceType)
+              changeDetailsLinks.first().ownText() shouldBe getLink(incomeSourceType)
             }
           }
 
           s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
             s"user has already completed the journey" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
 
               mockNoIncomeSources()
               setupMockGetMongo(Right(Some(sessionDataCompletedJourney(IncomeSourceJourneyType(Add, incomeSourceType)))))
@@ -119,6 +125,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           s"return ${Status.SEE_OTHER}: redirect to IncomeSourceAddedBackErrorController" when {
             s"user has already added their income source" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
 
               mockNoIncomeSources()
               setupMockGetMongo(Right(Some(sessionDataISAdded(IncomeSourceJourneyType(Add, incomeSourceType)))))
@@ -134,6 +141,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           "return 500 INTERNAL_SERVER_ERROR" when {
             "there is session data missing" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
 
               mockNoIncomeSources()
               setupMockCreateSession(true)
@@ -153,6 +161,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           "redirect to IncomeSourceReportingFrequencyController" when {
             "data is correct and redirect next page" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
               mockNoIncomeSources()
               when(mockBusinessDetailsService.createRequest(any())(any(), any(), any()))
                 .thenReturn(Future {
@@ -175,6 +184,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           "redirect to custom error page" when {
             "unable to create business" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
 
               mockNoIncomeSources()
               when(mockBusinessDetailsService.createRequest(any())(any(), any(), any()))

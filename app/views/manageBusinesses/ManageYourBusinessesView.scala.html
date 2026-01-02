@@ -137,15 +137,11 @@
             @for((business, index) <- soleTraderBusinesses.zipWithIndex) {
                 <div class="govuk-summary-card">
                     <div class="govuk-summary-card__title-wrapper">
-                        <h2 class="govuk-summary-card__title govuk-!-text-break-word govuk-grid-column-one-half govuk-!-padding-0" id="@{s"business-type-$index"}">@business.incomeSource.getOrElse(getMessage("unknown-field"))</h2>
+                        <h3 class="govuk-summary-card__title govuk-!-text-break-word govuk-grid-column-one-half govuk-!-padding-0" id="@{s"business-type-$index"}">@business.incomeSource.getOrElse(getMessage("unknown-field"))</h3>
                         <ul class="govuk-summary-card__actions govuk-grid-column-one-half govuk-!-display-block">
-                            <li class="govuk-summary-card__action" id="@{s"view-manage-link-$index"}"> <a class="govuk-link" href=@incomeSourceDetailsURL(SelfEmployment, Some(business.incomeSourceId.toHash.hash))>
-                                @getMessage("view.manage")
-                            </a>
+                            <li class="govuk-summary-card__action" id="@{s"view-manage-link-$index"}"> <a class="govuk-link" href=@incomeSourceDetailsURL(SelfEmployment, Some(business.incomeSourceId.toHash.hash))>@getMessage("view.manage")<span class="govuk-visually-hidden"> @business.incomeSource.getOrElse(getMessage("unknown-field"))</span></a>
                             </li>
-                            <li class="govuk-summary-card__action" id="@{s"cease-link-$index"}"> <a class="govuk-link" href=@ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)>
-                                @getMessage("cease")
-                            </a>
+                            <li class="govuk-summary-card__action" id="@{s"cease-link-$index"}"> <a class="govuk-link" href=@ceaseSoleTraderBusinessURL(business.incomeSourceId.toHash.hash)>@getMessage("cease")<span class="govuk-visually-hidden"> @business.incomeSource.getOrElse(getMessage("unknown-field"))</span></a>
                             </li>
                         </ul>
                     </div>
@@ -193,16 +189,12 @@
 
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title govuk-!-text-break-word govuk-grid-column-one-half govuk-!-padding-0" id="uk-property-title">@getMessage("UK")</h2>
+                    <h3 class="govuk-summary-card__title govuk-!-text-break-word govuk-grid-column-one-half govuk-!-padding-0" id="uk-property-title">@getMessage("UK")</h3>
                     <ul class="govuk-summary-card__actions govuk-grid-column-one-half govuk-!-display-block">
-                        <li class="govuk-summary-card__action" id="uk-view-manage-link"> <a class="govuk-link" href=@incomeSourceDetailsURL(UkProperty, None)>
-                            @getMessage("view.manage")
-                        </a>
+                        <li class="govuk-summary-card__action" id="uk-view-manage-link"> <a class="govuk-link" href=@incomeSourceDetailsURL(UkProperty, None)>@getMessage("view.manage")<span class="govuk-visually-hidden"> @getMessage("UK")</span></a>
                         </li>
-                        <li class="govuk-summary-card__action" id="uk-cease-link"> <a class="govuk-link" href=@ceaseUkPropertyURL>
-                            @getMessage("cease")
-                        </a>
-                        </li>
+                        <li class="govuk-summary-card__action" id="uk-cease-link"> <a class="govuk-link" href=@ceaseUkPropertyURL>@getMessage("cease")<span class="govuk-visually-hidden"> @getMessage("UK")</span></a>
+                            </li>
                     </ul>
                 </div>
                 @if(sources.displayStartDate) {
@@ -228,15 +220,11 @@
 
             <div class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
-                    <h2 class="govuk-summary-card__title govuk-!-text-break-word govuk-grid-column-one-half govuk-!-padding-0" id="foreign-property-title">@getMessage("Foreign")</h2>
+                    <h3 class="govuk-summary-card__title govuk-!-text-break-word govuk-grid-column-one-half govuk-!-padding-0" id="foreign-property-title">@getMessage("Foreign")</h3>
                     <ul class="govuk-summary-card__actions govuk-grid-column-one-half govuk-!-display-block">
-                        <li class="govuk-summary-card__action" id="foreign-view-manage-link"> <a class="govuk-link" href=@incomeSourceDetailsURL(ForeignProperty, None)>
-                            @getMessage("view.manage")
-                        </a>
+                        <li class="govuk-summary-card__action" id="foreign-view-manage-link"> <a class="govuk-link" href=@incomeSourceDetailsURL(ForeignProperty, None)>@getMessage("view.manage")<span class="govuk-visually-hidden"> @getMessage("Foreign")</span></a>
                         </li>
-                        <li class="govuk-summary-card__action" id="foreign-cease-link"> <a class="govuk-link" href=@ceaseForeignPropertyURL>
-                            @getMessage("cease")
-                        </a>
+                        <li class="govuk-summary-card__action" id="foreign-cease-link"> <a class="govuk-link" href=@ceaseForeignPropertyURL>@getMessage("cease")<span class="govuk-visually-hidden"> @getMessage("Foreign")</span></a>
                         </li>
                     </ul>
                 </div>

@@ -46,8 +46,7 @@
         postAction: Call,
         isAgent: Boolean,
         backUrl: String,
-        origin: Option[String] = None,
-        displayAccountingMethod: Boolean
+        origin: Option[String] = None
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
@@ -163,7 +162,8 @@
                         ActionItem(
                             href = changeBusinessNameURL,
                             content = Text(getMessage("change")),
-                            attributes = Map("id" -> "change-business-name-link")
+                            attributes = Map("id" -> "change-business-name-link"),
+                            visuallyHiddenText = Some(getMessage("business-name"))
                         )
                     )
                 ))
@@ -186,7 +186,8 @@
                     ActionItem(
                         href = changeStartDateURL,
                         content = Text(getMessage("change")),
-                        attributes = Map("id" -> "change-business-start-date-link")
+                        attributes = Map("id" -> "change-business-start-date-link"),
+                        visuallyHiddenText = Some(getMessage("start-date"))
                     )
                 )
             ))
@@ -209,7 +210,8 @@
                         ActionItem(
                             href = changeBusinessTradeURL,
                             content = Text(getMessage("change")),
-                            attributes = Map("id" -> "change-business-trade-link")
+                            attributes = Map("id" -> "change-business-trade-link"),
+                            visuallyHiddenText = Some(getMessage("trade"))
                         )
                     )
                 ))
@@ -233,7 +235,8 @@
                         ActionItem(
                             href = changeBusinessAddressURL,
                             content = Text(getMessage("change")),
-                            attributes = Map("id" -> "change-business-address-link")
+                            attributes = Map("id" -> "change-business-address-link"),
+                            visuallyHiddenText = Some(getMessage("address"))
                         )
                     )
                 ))

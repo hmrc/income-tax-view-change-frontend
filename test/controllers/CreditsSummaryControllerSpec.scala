@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService}
@@ -24,10 +25,10 @@ import play.api
 import play.api.Application
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers._
-import services.{CalculationService, CreditHistoryService}
+import services.{CalculationService, CreditHistoryService, DateServiceInterface}
 import testConstants.BaseTestConstants.{calendarYear2018, testSaUtr}
 import testConstants.FinancialDetailsTestConstants._
-import views.html.CreditsSummary
+import views.html.CreditsSummaryView
 
 
 class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationService
@@ -37,10 +38,13 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService),
-      api.inject.bind[CreditHistoryService].toInstance(mockCreditHistoryService)
+      api.inject.bind[CreditHistoryService].toInstance(mockCreditHistoryService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[CreditsSummaryController]
+  lazy val testController: CreditsSummaryController = app.injector.instanceOf[CreditsSummaryController]
 
   val testCharges: List[DocumentDetail] = List(
     documentDetailModel(
@@ -56,9 +60,12 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
     disableAllSwitches()
   }
 
-  lazy val creditsSummaryView = app.injector.instanceOf[CreditsSummary]
+  lazy val creditsSummaryView: CreditsSummaryView = app.injector.instanceOf[CreditsSummaryView]
+
   mtdAllRoles.foreach { mtdUserRole =>
+
     val isAgent = mtdUserRole != MTDIndividual
+
     s"show${if (isAgent) "AgentCreditsSummary"}" when {
       val action = if (isAgent) testController.showAgentCreditsSummary(calendarYear2018) else testController.showCreditsSummary(calendarYear2018)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
@@ -71,6 +78,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
               "all calls are returned correctly and Referer was a Payment Refund History page" in {
                 val chargesList = creditAndRefundCreditDetailListMFAWithCutoverAndBCC
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
 
                 mockSingleBusinessIncomeSource()
                 mockCreditHistoryService(chargesList)
@@ -105,6 +113,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val emptyBalanceDetails = BalanceDetails(0.00, 0.00, 0.00, Some(0.0), None, None, None, None, None, None)
                 val chargesList = creditAndRefundCreditDetailListMFA.map(_.copy(availableCredit = emptyBalanceDetails.totalCreditAvailableForRepayment))
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 mockSingleBusinessIncomeSource()
                 mockCreditHistoryService(chargesList)
 
@@ -136,6 +145,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
               "show the Credits Summary Page and back link should be to the Credit and Refund page" in {
                 val chargesList = creditAndRefundCreditDetailListMFA
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 mockSingleBusinessIncomeSource()
                 mockCreditHistoryService(chargesList)
                 val backUrl = if (isAgent) {
@@ -165,6 +175,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
               "show the Credits Summary Page and back link should be to the Credits Summary page" in {
                 val chargesList = creditAndRefundCreditDetailListMFA
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 mockSingleBusinessIncomeSource()
                 mockCreditHistoryService(chargesList)
                 val backUrl = if (isAgent) {
@@ -192,6 +203,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
               "show the Credits Summary Page with multiple records ordered properly and back link should be to the Payment Refund History page" in {
                 val chargesList = creditAndRefundCreditDetailListMultipleChargesMFA
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 mockSingleBusinessIncomeSource()
                 mockCreditHistoryService(chargesList)
 
@@ -223,6 +235,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
           "render the error page" when {
             "getCreditsHistory returns an error" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               mockCreditHistoryFailed()
 
@@ -233,7 +246,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+            testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

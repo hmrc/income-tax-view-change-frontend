@@ -28,11 +28,11 @@ import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
 import testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testIncomeSource, testTradeName}
 import testUtils.TestSupport
-import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetails
+import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
 
 class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
 
-  val ceaseCheckIncomeSourceDetailsView: CeaseCheckIncomeSourceDetails = app.injector.instanceOf[CeaseCheckIncomeSourceDetails]
+  val ceaseCheckIncomeSourceDetailsView: CeaseCheckIncomeSourceDetailsView = app.injector.instanceOf[CeaseCheckIncomeSourceDetailsView]
 
   val viewModelSE: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
     mkIncomeSourceId(testSelfEmploymentId), Some(testTradeName), Some(testIncomeSource), Some(testBizAddress), testEndDate, SelfEmployment)
@@ -52,7 +52,7 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, viewModel: CheckCeaseIncomeSourceDetailsViewModel) {
 
-    val messagesPrefix = incomeSourceType.ceaseCheckAnswersPrefix
+    val messagesPrefix: String = incomeSourceType.ceaseCheckAnswersPrefix
 
     val redirectAction: Call = (isAgent, incomeSourceType) match {
       case (true, SelfEmployment) => routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment)

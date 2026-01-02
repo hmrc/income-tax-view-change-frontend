@@ -124,7 +124,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers with Fina
 
     val dd2 = DocumentDetail(taxYear = 2018,
       transactionId = "transid2",
-      documentDescription = Some("ITSA - POA 2"),
+      documentDescription = Some("ITSA- POA 2"),
       documentText = Some("documentText2"),
       outstandingAmount = 0,
       originalAmount = 0,
@@ -148,7 +148,7 @@ class FinancialDetailsResponseModelSpec extends UnitSpec with Matchers with Fina
 
     "validate a list of documents with valid descriptions" in {
       val documentDescriptions: List[DocumentDetail] = List(documentDetailModel(documentDescription = Some("ITSA- POA 1"))
-        , documentDetailModel(documentDescription = Some("ITSA - POA 2"))
+        , documentDetailModel(documentDescription = Some("ITSA- POA 2"))
         , documentDetailModel(documentDescription = Some("TRM New Charge"))
         , documentDetailModel(documentDescription = Some("TRM Amend Charge"))
       )

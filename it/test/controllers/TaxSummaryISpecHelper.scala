@@ -247,7 +247,7 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
       DocumentDetail(
         taxYear = getCurrentTaxYearEnd.getYear,
         transactionId = "testDunningTransactionId2",
-        documentDescription = Some("ITSA - POA 2"),
+        documentDescription = Some("ITSA- POA 2"),
         documentText = Some("documentText"),
         documentDate = LocalDate.of(2018, 3, 29),
         originalAmount = 2000.00,

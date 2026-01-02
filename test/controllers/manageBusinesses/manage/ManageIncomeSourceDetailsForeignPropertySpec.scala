@@ -16,33 +16,54 @@
 
 package controllers.manageBusinesses.manage
 
+import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.ForeignProperty
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.Mockito.{mock, reset}
 import play.api.http.Status
 import play.api.test.Helpers._
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTrader2023WithUnknowns, ukPlusForeignPropertyAndSoleTraderNoLatency, ukPlusForeignPropertyAndSoleTraderWithLatency, ukPlusForeignPropertyAndSoleTraderWithLatencyExpired}
+
 
 class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDetailsHelper {
 
+  override lazy val mockBusinessDetailsConnector: BusinessDetailsConnector = mock(classOf[BusinessDetailsConnector])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockBusinessDetailsConnector)
+  }
+
   mtdAllRoles.foreach { mtdUserRole =>
+
     val isAgent = mtdUserRole != MTDIndividual
+
     List(false, true).foreach { isChange =>
+
       s"show${if (isChange) "Change"}($isAgent, $ForeignProperty)" when {
+
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-        val action = if(isChange) {
-          testController.showChange(ForeignProperty, isAgent)
-        } else {
-          testController.show(isAgent, ForeignProperty, None)
-        }
+
+        val action =
+          if (isChange) {
+            testController.showChange(ForeignProperty, isAgent)
+          } else {
+            testController.show(isAgent, ForeignProperty, None)
+          }
+
         s"the user is authenticated as a $mtdUserRole" should {
+
           "render the appropriate IncomeSourceDetails page" when {
+
             "the user has a valid id parameter and no latency information" in {
-              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+
+              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2024)
@@ -60,13 +81,14 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
               Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
             "the user has a valid id parameter and latency information expired" in {
-              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+
+              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2024)
@@ -87,8 +109,9 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
             "the user does not have Reporting frequency content/link" in {
-              enable(DisplayBusinessStartDate, AccountingMethodJourney)
+              enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2024)
@@ -110,34 +133,11 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasReportingFrequencyContent(document) shouldBe false
             }
 
-            "the user has a valid id parameter and AccountingMethodJourney is disabled" in {
-              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
-              disable(AccountingMethodJourney)
-
-              setupMockSuccess(mtdUserRole)
-              setupMockCreateSession(true)
-
-              setupMockGetCurrentTaxYearEnd(2024)
-              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
-              mockUkPlusForeignPlusSoleTraderNoLatency()
-              setupMockCreateSession(true)
-              setupMockSetSessionKeyMongo(Right(true))
-
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty)))))
-
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
-              val document: Document = Jsoup.parse(contentAsString(result))
-
-              val summaryKeys = getManageDetailsSummaryKeys(document).eachText()
-              summaryKeys should not contain messages("incomeSources.manage.foreign-property-manage-details.accounting-method")
-            }
-
             "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
-              enable(DisplayBusinessStartDate,
-                AccountingMethodJourney, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
               setupMockGetCurrentTaxYearEnd(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -166,7 +166,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               val summaryKeys = getManageDetailsSummaryKeys(document)
 
               summaryKeys.eq(1).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
-              summaryKeys.eq(2).text() shouldBe  "Using Making Tax Digital for Income Tax for 2023 to 2024"
+              summaryKeys.eq(2).text() shouldBe "Using Making Tax Digital for Income Tax for 2023 to 2024"
 
               val summaryValues = getManageDetailsSummaryValues(document).eachText()
               summaryValues should contain("No")
@@ -177,8 +177,9 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
 
 
             "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
-              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2023)
@@ -208,9 +209,9 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
 
             "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
-
-              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2023)
@@ -237,6 +238,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
               enable(ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2023)
@@ -260,11 +262,11 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               manageDetailsSummaryValues.eq(3).size() shouldBe 0
             }
 
-            "the user has a valid id parameter, but non eligable itsa status" in {
-
-              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+            "the user has a valid id parameter, but non eligible itsa status" in {
+              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
 
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2023)
@@ -290,8 +292,9 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
 
             "the user has a valid id parameter, latency expired" in {
-              enable(DisplayBusinessStartDate, AccountingMethodJourney, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
 
               setupMockGetCurrentTaxYearEnd(2025)
@@ -310,13 +313,13 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
-              val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
             }
           }
 
           "render the error page" when {
             "the user has no income source of the called type" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessIncome)
               setupMockCreateSession(true)
               mockBusinessIncomeSource()
 
@@ -330,7 +333,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
             }
           }
         }
-        testMTDAuthFailuresForRole(action, mtdUserRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdUserRole)(fakeRequest)
       }
     }
   }

@@ -16,31 +16,37 @@
 
 package controllers.agent
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import mocks.auth.MockAuthActions
 import mocks.views.agent.MockEnterClientsUTR
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
+import services.DateServiceInterface
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import views.html.agent.EnterClientsUTR
+import views.html.agent.EnterClientsUTRView
 
 class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
   with MockEnterClientsUTR {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[EnterClientsUTR].toInstance(enterClientsUTR)
+      api.inject.bind[EnterClientsUTRView].toInstance(enterClientsUTR),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testRemoveClientDetailsSessionsController = app.injector.instanceOf[RemoveClientDetailsSessionsController]
-
 
   ".show" when {
     s"there is a user" that {
       "is not authenticated" should {
         "redirect the user to authenticate" in {
+
           setupMockAgentWithClientAuthorisationException()
+          mockItsaStatusRetrievalAction()
 
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
@@ -50,8 +56,11 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
       }
 
       "the user has timed out" should {
+
         "redirect to the session timeout page" in {
+
           setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired())
+          mockItsaStatusRetrievalAction()
 
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
@@ -67,7 +76,9 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
       s"the user is a $agentType" should {
 
         "remove client details session keys and redirect to the enter client UTR page" in {
+
           setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent = isSupportingAgent)
+          mockItsaStatusRetrievalAction()
 
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequest)
 
@@ -85,7 +96,6 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-utr")
-
         }
       }
     }

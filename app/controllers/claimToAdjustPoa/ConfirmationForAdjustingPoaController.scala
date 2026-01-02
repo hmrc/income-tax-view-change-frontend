@@ -28,7 +28,7 @@ import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, Recalculat
 import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.WithSessionAndPoa
-import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoa
+import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -39,7 +39,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
                                                       val poaSessionService: PaymentOnAccountSessionService,
                                                       val nrsService: NrsService,
                                                       val ctaCalculationService: ClaimToAdjustPoaCalculationService,
-                                                      val view: ConfirmationForAdjustingPoa,
+                                                      val view: ConfirmationForAdjustingPoaView,
                                                       val auditingService: AuditingService)
                                                      (implicit val appConfig: FrontendAppConfig,
                                                       val individualErrorHandler: ItvcErrorHandler,
@@ -63,15 +63,16 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
       } recover logAndRedirect
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
-    implicit user =>
-      handleSubmitPoaData(
-        claimToAdjustService = claimToAdjustService,
-        ctaCalculationService = ctaCalculationService,
-        poaSessionService = poaSessionService,
-        nrsService = nrsService,
-        auditingService = auditingService
-      ) recover logAndRedirect
-  }
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
+      implicit user =>
+        handleSubmitPoaData(
+          claimToAdjustService = claimToAdjustService,
+          ctaCalculationService = ctaCalculationService,
+          poaSessionService = poaSessionService,
+          nrsService = nrsService,
+          auditingService = auditingService
+        ) recover logAndRedirect
+    }
 
 }

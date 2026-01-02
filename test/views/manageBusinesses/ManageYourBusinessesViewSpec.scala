@@ -23,13 +23,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.manageBusinesses.ManageYourBusinesses
+import views.html.manageBusinesses.ManageYourBusinessesView
 
 import java.time.LocalDate
 
 class ManageYourBusinessesViewSpec extends TestSupport {
 
-  val view: ManageYourBusinesses = app.injector.instanceOf[ManageYourBusinesses]
+  val view: ManageYourBusinessesView = app.injector.instanceOf[ManageYourBusinessesView]
 
   val businessDetailsViewModel: ViewBusinessDetailsViewModel = ViewBusinessDetailsViewModel(
     IncomeSourceId("ID"),
@@ -38,11 +38,11 @@ class ManageYourBusinessesViewSpec extends TestSupport {
     Some(LocalDate.of(2024, 1, 1))
   )
 
-  val propertyDetailsViewModel = ViewPropertyDetailsViewModel(
+  val propertyDetailsViewModel: ViewPropertyDetailsViewModel = ViewPropertyDetailsViewModel(
     Some(LocalDate.of(2024, 1, 1))
   )
 
-  val ceasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
+  val ceasedBusinessDetailsViewModel: CeasedBusinessDetailsViewModel = CeasedBusinessDetailsViewModel(
     Some("Trading-Name"),
     SelfEmployment,
     Some(LocalDate.of(2024, 1, 1)),
@@ -433,7 +433,10 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
   def checkSoleTraderComponents(pageDocument: Document): Unit = {
     pageDocument.getElementById("business-type-0").text() shouldBe "Income-Source"
-    pageDocument.getElementById("cease-link-0").text() shouldBe "Cease"
+    pageDocument.getElementById("view-manage-link-0").text() shouldBe "View and manage Income-Source"
+    pageDocument.getElementById("cease-link-0").text() shouldBe "Cease Income-Source"
+    /* Adding test below which checks for the visually hidden content */
+    pageDocument.select("#view-manage-link-0 > a > span").text() shouldBe "Income-Source"
     pageDocument.getElementById("business-date-started-text-0").text() shouldBe "Date started"
     pageDocument.getElementById("business-date-0").text() shouldBe "1 January 2024"
     pageDocument.getElementById("business-trade-name-0").text() shouldBe "Trading-Name"
@@ -442,16 +445,20 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
   def checkUkPropertyComponents(pageDocument: Document): Unit = {
     pageDocument.getElementById("uk-property-title").text() shouldBe "UK property"
-    pageDocument.getElementById("uk-view-manage-link").text() shouldBe "View and manage"
-    pageDocument.getElementById("uk-cease-link").text() shouldBe "Cease"
+    pageDocument.getElementById("uk-view-manage-link").text() shouldBe "View and manage UK property"
+    pageDocument.getElementById("uk-cease-link").text() shouldBe "Cease UK property"
+    /* Adding test below which checks for the visually hidden content */
+    pageDocument.select("#uk-view-manage-link > a > span").text() shouldBe "UK property"
     pageDocument.getElementById("uk-date-text").text() shouldBe "Start date"
     pageDocument.getElementById("uk-date").text() shouldBe "1 January 2024"
   }
 
   def checkForeignPropertyComponents(pageDocument: Document): Unit = {
     pageDocument.getElementById("foreign-property-title").text() shouldBe "Foreign property"
-    pageDocument.getElementById("foreign-view-manage-link").text() shouldBe "View and manage"
-    pageDocument.getElementById("foreign-cease-link").text() shouldBe "Cease"
+    pageDocument.getElementById("foreign-view-manage-link").text() shouldBe "View and manage Foreign property"
+    pageDocument.getElementById("foreign-cease-link").text() shouldBe "Cease Foreign property"
+    /* Adding test below which checks for the visually hidden content */
+    pageDocument.select("#foreign-view-manage-link > a > span").text() shouldBe "Foreign property"
     pageDocument.getElementById("foreign-date-text").text() shouldBe "Start date"
     pageDocument.getElementById("foreign-date").text() shouldBe "1 January 2024"
   }

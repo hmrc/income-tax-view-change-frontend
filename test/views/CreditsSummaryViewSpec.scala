@@ -30,7 +30,7 @@ import services.helpers.CreditHistoryDataHelper
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
-import views.html.CreditsSummary
+import views.html.CreditsSummaryView
 
 import java.net.URL
 
@@ -38,7 +38,7 @@ import java.net.URL
 class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
   with ImplicitDateFormatter with ViewSpec with CreditHistoryDataHelper {
 
-  val creditsSummaryView: CreditsSummary = app.injector.instanceOf[CreditsSummary]
+  val creditsSummaryView: CreditsSummaryView = app.injector.instanceOf[CreditsSummaryView]
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testCalendarYear: Int = 2018
@@ -71,8 +71,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
   val moneyInYourAccountHeading: String = messages("credits.money-in-your-account-section.name")
   val moneyInYourAccountAgentHeading: String = messages("credits.money-in-your-account-section.agent.name")
   val moneyInYourAccountMoneyClaimARefundLinkText: String = messages("credits.money-in-your-account-section.claim-a-refund-link")
-  val moneyInYourAccountContent: String = s"""${messages("credits.money-in-your-account-section.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
-  val moneyInYourAccountAgentContent: String = s"""${messages("credits.money-in-your-account-section.agent.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} ${moneyInYourAccountMoneyClaimARefundLinkText}."""
+  val moneyInYourAccountContent: String = s"""${messages("credits.money-in-your-account-section.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} $moneyInYourAccountMoneyClaimARefundLinkText."""
+  val moneyInYourAccountAgentContent: String = s"""${messages("credits.money-in-your-account-section.agent.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} $moneyInYourAccountMoneyClaimARefundLinkText."""
   val moneyInYourAccountMoneyClaimARefundLink: String = "/report-quarterly/income-and-expenses/view/claim-refund"
   val moneyInYourAccountMoneyClaimARefundAgentLink: String = "/report-quarterly/income-and-expenses/view/agents/claim-refund"
 

@@ -16,6 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services._
@@ -25,19 +26,17 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 
-class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
-  with MockClaimToAdjustService
-  with MockPaymentOnAccountSessionService
-  with MockClaimToAdjustPoaCalculationService {
+class ConfirmationForAdjustingPoaControllerSpec
+  extends MockAuthActions
+    with MockClaimToAdjustService
+    with MockPaymentOnAccountSessionService
+    with MockClaimToAdjustPoaCalculationService {
 
-  val poa: PoaAmendmentData = PoaAmendmentData(
-    None,
-    Some(20.0)
-  )
+  val poa: PoaAmendmentData = PoaAmendmentData(None, Some(20.0))
 
   val validSession: PoaAmendmentData = PoaAmendmentData(Some(MainIncomeLower), Some(BigDecimal(1000.00)))
   val emptySession: PoaAmendmentData = PoaAmendmentData(None, None)
@@ -46,7 +45,10 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
     .overrides(
       api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
       api.inject.bind[ClaimToAdjustPoaCalculationService].toInstance(mockClaimToAdjustPoaCalculationService),
-      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService)
+      api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ConfirmationForAdjustingPoaController]
@@ -62,6 +64,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
         } else {
           s"render the conformation for adjusting POA page" when {
             "PoA tax year crystallized" in {
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
               setupMockGetPaymentsOnAccount()
@@ -74,6 +77,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
 
           "redirect to the You Cannot Go Back page" when {
             "the journeyCompleted flag is set to true in session" in {
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
               setupMockGetPaymentsOnAccount()
@@ -116,7 +120,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
 
     s"submit(isAgent = $isAgent)" when {
@@ -129,6 +133,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
           "redirect to PoaAdjustedController page" when {
             "data to API 1773 successfully sent" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
+              mockItsaStatusRetrievalAction()
               setupMockGetPaymentsOnAccount()
               setupMockRecalculateSuccess()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
@@ -142,6 +147,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
           "redirect to API error page" when {
             "data to API 1773 failed to be sent" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
+              mockItsaStatusRetrievalAction()
               setupMockGetPaymentsOnAccount()
               setupMockRecalculateFailure()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
@@ -171,7 +177,7 @@ class ConfirmationForAdjustingPoaControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

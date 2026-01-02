@@ -70,7 +70,7 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
       .thenReturn(response)
   }
 
-  def mockgetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: ObligationsResponseModel): Unit = {
+  def mockGetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: ObligationsResponseModel): Unit = {
     when(mockNextUpdatesService.getAllObligationsWithinDateRange(matches(fromDate), matches(toDate))(any(), any()))
       .thenReturn(Future.successful(response))
   }

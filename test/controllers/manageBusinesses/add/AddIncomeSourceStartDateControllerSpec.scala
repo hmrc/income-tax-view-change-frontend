@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
@@ -32,9 +33,9 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSessionId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{noIncomeDetails, notCompletedUIJourneySessionData}
 
 import java.time.LocalDate
 
@@ -45,7 +46,10 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[AddIncomeSourceStartDateController]
@@ -129,6 +133,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"return ${Status.OK}: render the Add ${incomeSourceType.key} start date page" when {
               "using the manage businesses journey" in {
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 mockNoIncomeSources()
                 if(mode == CheckMode) {
                   val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
@@ -155,6 +160,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               s"return ${Status.OK}: render the Add Business start date Check page with form filled " when {
                 s"session contains key: $dateStartedField (${incomeSourceType.key})" in {
                   setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction()
 
                   mockNoIncomeSources()
                   setupMockCreateSession(true)
@@ -179,6 +185,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
               s"user has already completed the journey (${incomeSourceType.key})" in {
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
 
                 mockNoIncomeSources()
                 setupMockGetMongo(Right(Some(sessionDataCompletedJourney(IncomeSourceJourneyType(Add, incomeSourceType)))))
@@ -191,6 +198,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               }
               s"user has already added their income source (${incomeSourceType.key})" in {
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 mockNoIncomeSources()
                 setupMockGetMongo(Right(Some(sessionDataISAdded(IncomeSourceJourneyType(Add, incomeSourceType)))))
 
@@ -211,9 +219,11 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
           s"the user is authenticated as a $mtdRole" should {
             s"redirect to the Add Business Start Date Check page" when {
               "a valid form is submitted" in {
-                setupMockSuccess(mtdRole)
 
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(noIncomeDetails)
                 mockNoIncomeSources()
+
                 setupMockCreateSession(true)
                 setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
                 setupMockSetMongoData(true)
@@ -230,12 +240,12 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
             }
             s"return ${Status.BAD_REQUEST}" when {
               "an invalid form is submitted" in {
-                setupMockSuccess(mtdRole)
 
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(noIncomeDetails)
                 mockNoIncomeSources()
 
                 val result = action(fakeRequest.withFormUrlEncodedBody("INVALID" -> "INVALID"))
-
                 status(result) shouldBe BAD_REQUEST
 
                 val document: Document = Jsoup.parse(contentAsString(result))
@@ -243,11 +253,10 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
               }
               "an empty form is submitted" in {
                 setupMockSuccess(mtdRole)
-
+                mockItsaStatusRetrievalAction(noIncomeDetails)
                 mockNoIncomeSources()
 
                 val result = action(fakeRequest.withFormUrlEncodedBody("" -> ""))
-
                 status(result) shouldBe BAD_REQUEST
 
                 val document: Document = Jsoup.parse(contentAsString(result))
@@ -255,12 +264,12 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
                 document.getElementsByClass("govuk-list govuk-error-summary__list").text() shouldBe s"Enter the date your ${getHintText(incomeSourceType)}"
               }
               "no form is submitted" in {
-                setupMockSuccess(mtdRole)
 
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(noIncomeDetails)
                 mockNoIncomeSources()
 
                 val result = action(fakeRequest)
-
                 status(result) shouldBe BAD_REQUEST
               }
             }

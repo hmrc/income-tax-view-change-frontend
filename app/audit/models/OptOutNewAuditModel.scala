@@ -18,8 +18,6 @@ package audit.models
 
 import audit.Utilities
 import auth.MtdItUser
-import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.libs.json.{JsValue, Json}
 
 case class OptOutNewAuditModel(optOutTaxYear: Seq[String])(implicit user: MtdItUser[_]) extends ExtendedAuditModel {

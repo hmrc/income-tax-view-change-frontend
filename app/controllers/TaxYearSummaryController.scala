@@ -39,7 +39,7 @@ import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.TaxYearSummary
+import views.html.TaxYearSummaryView
 
 import java.net.URI
 import java.time.LocalDate
@@ -48,7 +48,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxYearSummaryController @Inject()(authActions: AuthActions,
-                                         taxYearSummaryView: TaxYearSummary,
+                                         taxYearSummaryView: TaxYearSummaryView,
                                          calculationService: CalculationService,
                                          financialDetailsService: FinancialDetailsService,
                                          itvcErrorHandler: ItvcErrorHandler,
@@ -372,16 +372,16 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
   }
 
   // Individual back urls
-  def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
+  private def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
 
   def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
 
   def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 
   // Agent back urls
-  lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
-  lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
-  lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
+  private lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
+  private lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
+  private lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
 
   def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi, isAgent: Boolean)

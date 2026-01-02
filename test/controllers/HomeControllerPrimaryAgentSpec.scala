@@ -38,28 +38,23 @@ import scala.concurrent.Future
 class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injecting {
 
   lazy val testHomeController = app.injector.instanceOf[HomeController]
+  val controller = testHomeController
 
-  trait Setup {
-    val controller = testHomeController
-    when(mockDateService.getCurrentDate) thenReturn fixedDate
-    when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
-
-    lazy val homePageTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
-    lazy val homePageCaption = "You are signed in as a main agent"
-    lazy val homePageHeading = s"${messages("home.agent.headingWithClientName", "Test User")}"
-
-    val overdueWarningMessageDunningLockTrue: String = messages("home.agent.overdue.message.dunningLock.true")
-    val overdueWarningMessageDunningLockFalse: String = messages("home.agent.overdue.message.dunningLock.false")
-    val expectedOverDuePaymentsText = s"${messages("home.overdue.date")} 31 January 2019"
-    lazy val expectedAvailableCreditText: String => String = (amount: String) => messages("home.paymentHistoryRefund.availableCredit", amount)
-    val threeOverduePayments: String = messages("home.overdue.date.payment.count", "3")
-  }
+  val homePageTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
+  val homePageCaption = "You are signed in as a main agent"
+  val homePageHeading = s"${messages("home.agent.headingWithClientName", "Test User")}"
+  val overdueWarningMessageDunningLockTrue: String = messages("home.agent.overdue.message.dunningLock.true")
+  val overdueWarningMessageDunningLockFalse: String = messages("home.agent.overdue.message.dunningLock.false")
+  val expectedOverDuePaymentsText = s"${messages("home.overdue.date")} 31 January 2019"
+  val expectedAvailableCreditText: String => String = (amount: String) => messages("home.paymentHistoryRefund.availableCredit", amount)
+  val threeOverduePayments: String = messages("home.overdue.date.payment.count", "3")
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
+    when(mockDateServiceInterface.getCurrentDate) thenReturn fixedDate
+    when(mockDateServiceInterface.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
   }
-
 
   "show()" when {
     val agentType = MTDPrimaryAgent
@@ -67,10 +62,12 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
     val fakeRequest = fakeRequestConfirmedClient()
 
     s"the user is authenticated $agentType" should {
+
       "render the home page with a Next Payments due tile" that {
         "has payments due" when {
-          "the user has overdue payments and does not owe any charges" in new Setup {
+          "the user has overdue payments and does not owe any charges" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
             val financialDetailsModels = List(FinancialDetailsModel(
@@ -98,13 +95,14 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             document.select("#payments-tile p:nth-child(2)").text shouldBe expectedOverDuePaymentsText
           }
 
-          "the user has payments due and has overdue payments" in new Setup {
+          "the user has payments due and has overdue payments" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-            when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any(), any())(any(), any()))
+            when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future.successful(oneOverdueBCDPaymentInWhatYouOweChargesList))
             setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
@@ -121,8 +119,9 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         }
 
         "has the number of payments due" when {
-          "the user has multiple overdue payments with dunning locks and does not owe any charges" in new Setup {
+          "the user has multiple overdue payments with dunning locks and does not owe any charges" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
             val financialDetailsModels = List(
@@ -140,7 +139,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString), dunningLock = Some("Stand over order"))))))),
               FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
-                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA- POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                   documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
                 financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
                   transactionId = Some("testId3"),
@@ -163,8 +162,9 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             document.select("#overdue-warning").text shouldBe s"! Warning $overdueWarningMessageDunningLockTrue"
           }
 
-          "the user has multiple overdue payments without dunning locks and does not owe any charges" in new Setup {
+          "the user has multiple overdue payments without dunning locks and does not owe any charges" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
             val financialDetailsModels = List(
@@ -188,7 +188,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                   items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate2.toString))))))),
               FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
-                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA - POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+                documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("ITSA- POA 2"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
                   documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
                 financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA Payment on Account 2"), mainTransaction = Some("4930"),
                   transactionId = Some("testId3"),
@@ -213,8 +213,9 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         }
 
         "shows the daily interest accruing warning and tag" when {
-          "the user has payments accruing interest" in new Setup {
+          "the user has payments accruing interest" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
 
@@ -252,8 +253,9 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
 
         "does not show the daily interest accruing warning and tag" when {
-          "the user has overdue payments accruing interest" in new Setup {
+          "the user has overdue payments accruing interest" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
             mockGetDueDates(Right(futureDueDates))
 
@@ -291,15 +293,16 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       }
 
       "render the home page without a Next Payments due tile" when {
-        "there is a problem getting financial details" in new Setup {
+        "there is a problem getting financial details" in {
           setupMockAgentWithClientAuth(isSupportingAgent)
+          mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(futureDueDates))
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
 
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
@@ -314,13 +317,14 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         }
 
-        "There are no financial detail" in new Setup {
+        "There are no financial detail" in {
           setupMockAgentWithClientAuth(isSupportingAgent)
+          mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(futureDueDates))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None), List(), List(), List()))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -336,8 +340,9 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           document.select("#overdue-warning").text shouldBe ""
         }
 
-        "All financial detail bill are paid" in new Setup {
+        "All financial detail bill are paid" in {
           setupMockAgentWithClientAuth(isSupportingAgent)
+          mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(futureDueDates))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -347,7 +352,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               financialDetails = List(FinancialDetail(nextPaymentYear, transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))
             ))))
-          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any(), any())(any(), any()))
+          when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -365,7 +370,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       }
 
       "render the home page controller with the next updates tile" when {
-        "there is a future update date to display" in new Setup {
+        "there is a future update date to display" in {
           setupNextUpdatesTests(futureDueDates, None, None, agentType)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
@@ -380,7 +385,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2100"
         }
 
-        "there is an overdue update date to display" in new Setup {
+        "there is an overdue update date to display" in {
           setupNextUpdatesTests(overdueDueDates, None, None, agentType)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
@@ -395,7 +400,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           document.select("#updates-tile p:nth-child(2)").text() shouldBe "Overdue 1 January 2018"
         }
 
-        "there are no updates to display" in new Setup {
+        "there are no updates to display" in {
           setupNextUpdatesTests(Seq(), None, None, agentType)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
@@ -411,7 +416,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         }
       }
 
-      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
+      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in {
         enable(OptInOptOutContentUpdateR17)
 
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
@@ -446,7 +451,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
       }
 
-      "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
+      "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in {
         enable(OptInOptOutContentUpdateR17)
 
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
@@ -484,7 +489,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
       }
 
-      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
+      "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in {
         enable(OptInOptOutContentUpdateR17)
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
@@ -519,8 +524,9 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       }
 
       "render the home without the Next Updates tile" when {
-        "the user has no updates due" in new Setup {
+        "the user has no updates due" in {
           setupMockAgentWithClientAuth(isSupportingAgent)
+          mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(Seq()))
           mockGetAllUnpaidFinancialDetails()
@@ -540,8 +546,9 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       }
 
       "render the home page with the Your Businesses tile with link" when {
-        "using the manage businesses journey" in new Setup {
+        "using the manage businesses journey" in {
           setupMockAgentWithClientAuth(isSupportingAgent)
+          mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -569,10 +576,10 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
       "render the home page with Payment history and refunds tile" that {
         "contains the available credit" when {
-          "CreditsAndRefundsRepay FS is enabled and credit is available" in new Setup {
+          "CreditsAndRefundsRepay FS is enabled and credit is available" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             enable(CreditsRefundsRepay)
-            enable(ClaimARefundR18)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -597,8 +604,9 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             document.getElementById("available-credit").text shouldBe expectedAvailableCreditText("£796.00")
           }
 
-          "CreditsAndRefundsRepay FS is enabled and credit is not available" in new Setup {
+          "CreditsAndRefundsRepay FS is enabled and credit is not available" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             enable(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
@@ -626,9 +634,10 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         }
 
         "does not contain available credit" when {
-          "CreditsAndRefundsRepay FS is disabled" in new Setup {
+          "CreditsAndRefundsRepay FS is disabled" in {
             disable(CreditsRefundsRepay)
             setupMockAgentWithClientAuth(isSupportingAgent)
+            mockItsaStatusRetrievalAction()
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))

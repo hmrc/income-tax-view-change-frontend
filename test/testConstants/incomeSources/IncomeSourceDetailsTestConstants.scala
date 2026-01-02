@@ -30,11 +30,11 @@ import testConstants.PropertyDetailsTestConstants._
 import java.time.LocalDate
 
 object IncomeSourceDetailsTestConstants {
+
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(business1, business2), List(propertyDetails))
   val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(ceasedBusiness), List(ceasedPropertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
   val dualBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1, business1), Nil)
-  val singleBusinessWithNoCashOrAccuralsFlag = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(businessWithNoCashOrAccrualsFlag), Nil)
   val singleBusinessIncomeNoLatency = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1NoLatency), Nil)
   val singleBusinessIncomeWithLatency2019 = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(businessWithLatency2019), Nil)
   val singleBusinessIncome2023 = IncomeSourceDetailsModel(testNino, testMtditid, Some("2023"), List(businessWithLatency1), Nil)

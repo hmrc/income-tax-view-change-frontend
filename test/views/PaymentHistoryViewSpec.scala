@@ -27,7 +27,7 @@ import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
 import services.DateServiceInterface
 import testUtils.ViewSpec
-import views.html.PaymentHistory
+import views.html.PaymentHistoryView
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -36,7 +36,7 @@ import java.time.Month.APRIL
 class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  lazy val paymentHistoryView: PaymentHistory = app.injector.instanceOf[PaymentHistory]
+  lazy val paymentHistoryView: PaymentHistoryView = app.injector.instanceOf[PaymentHistoryView]
 
   implicit val dateServiceInterface: DateServiceInterface = new DateServiceInterface {
 
@@ -94,7 +94,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
 
 
-  val paymentEntriesMFA = List(
+  val paymentEntriesMFA: List[(Int, List[PaymentHistoryEntry])] = List(
     (2020, List(
       PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
         linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
@@ -114,20 +114,20 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val repaymentRequestNumber = "000000003135"
 
-  val groupedRepayments = List(
+  val groupedRepayments: List[(Int, List[PaymentHistoryEntry])] = List(
     (2021, List(PaymentHistoryEntry("2021-08-22", Repayment, None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
       PaymentHistoryEntry("2021-08-21", Repayment, Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
       PaymentHistoryEntry("2021-08-20", Repayment, Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface)))
   )
 
-  val expectedDatesOrder = List("25 December 2020", "13 April 2020", "25 December 2019", "25 September 2019", "25 April 2019", "25 April 2018")
+  val expectedDatesOrder: List[String] = List("25 December 2020", "13 April 2020", "25 December 2019", "25 September 2019", "25 April 2019", "25 April 2018")
 
-  val emptyPayments = List(
+  val emptyPayments: List[(Int, List[PaymentHistoryEntry])] = List(
     (2021, List(PaymentHistoryEntry(date = "2019-09-25", creditType = PaymentType, amount = None, transactionId = Some("TRANS123"),
       linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)))
   )
 
-  val viewModel = PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false)
+  val viewModel: PaymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false)
 
   class PaymentHistorySetup(testPayments: List[(Int, List[PaymentHistoryEntry])] = groupedRepayments, paymentCreditAndRefundHistoryViewModel: PaymentCreditAndRefundHistoryViewModel = viewModel, saUtr: Option[String] = Some("1234567890"), isAgent: Boolean = false) extends Setup(
     paymentHistoryView(testPayments, paymentCreditAndRefundHistoryViewModel, paymentHistoryAndRefundsEnabled = true, "testBackURL", saUtr, isAgent = isAgent)(FakeRequest(), implicitly)
@@ -143,7 +143,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
-  val entry = PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+  val entry: PaymentHistoryEntry = PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
     linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)
 
   def getContent(row: Int)(implicit layoutContent: Element): String = {
@@ -185,22 +185,22 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
         }
 
         "has payment and refund history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in
-          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(false, true)) {
+          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(creditsRefundsRepayEnabled = false, paymentHistoryAndRefundsEnabled = true)) {
             document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentAndRefundHistory.heading"))
             layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentAndRefundHistory.heading")
           }
         "has payment and credit history title when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in
-          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(true, false)) {
+          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(creditsRefundsRepayEnabled = true, paymentHistoryAndRefundsEnabled = false)) {
             document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentAndCreditHistory"))
             layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentAndCreditHistory")
           }
         "has payment, credit and refund history title when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in
-          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(true, true)) {
+          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(creditsRefundsRepayEnabled = true, paymentHistoryAndRefundsEnabled = true)) {
             document.title() shouldBe messages("htmlTitle", messages("paymentHistory.paymentCreditAndRefundHistory.heading"))
             layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.paymentCreditAndRefundHistory.heading")
           }
         "has payment history title when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in
-          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(false, false)) {
+          new PaymentHistorySetup(paymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(creditsRefundsRepayEnabled = false, paymentHistoryAndRefundsEnabled = false)) {
             document.title() shouldBe messages("htmlTitle", messages("paymentHistory.heading"))
             layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.heading")
           }
@@ -252,7 +252,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments) {
-        val tbody = layoutContent.selectHead("table > tbody")
+        val tbody: Element = layoutContent.selectHead("table > tbody")
 
         tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 Aug 2021"
         tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"
@@ -274,7 +274,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"should have a amount column right aligned" in new PaymentHistorySetup(groupedRepayments) {
-        val tbody = layoutContent.selectHead("table > tbody")
+        val tbody: Element = layoutContent.selectHead("table > tbody")
 
         tbody.selectNth("tr", 1).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
         tbody.selectNth("tr", 2).selectNth("td", 3).hasClass("govuk-table__cell--numeric")
@@ -307,7 +307,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
       }
 
       s"should have a refund block with correct relative link" in new PaymentHistorySetup(groupedRepayments, saUtr = None, isAgent = true) {
-        val tbody = layoutContent.selectHead("table > tbody")
+        val tbody: Element = layoutContent.selectHead("table > tbody")
 
         tbody.selectNth("tr", 1).selectNth("td", 1).text() shouldBe "22 Aug 2021"
         tbody.selectNth("tr", 1).selectNth("td", 2).text() shouldBe "Refund issued 000000003135 Item 1"

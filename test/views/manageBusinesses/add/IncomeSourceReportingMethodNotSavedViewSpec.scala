@@ -23,10 +23,10 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
-import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSaved
+import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSavedView
 
 class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
-  val incomeSourceReportingMethodNotSaved: IncomeSourceReportingMethodNotSaved = app.injector.instanceOf[IncomeSourceReportingMethodNotSaved]
+  val incomeSourceReportingMethodNotSaved: IncomeSourceReportingMethodNotSavedView = app.injector.instanceOf[IncomeSourceReportingMethodNotSavedView]
 
   val getManageBusinessUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val getManageBusinessAgentUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url

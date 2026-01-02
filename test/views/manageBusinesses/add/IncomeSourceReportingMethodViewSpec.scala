@@ -28,11 +28,11 @@ import play.api.mvc.Call
 import play.test.Helpers.contentAsString
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.IncomeSourceReportingMethod
+import views.html.manageBusinesses.add.IncomeSourceReportingMethodView
 
 class IncomeSourceReportingMethodViewSpec extends TestSupport {
 
-  val IncomeSourceReportingMethodView: IncomeSourceReportingMethod = app.injector.instanceOf[IncomeSourceReportingMethod]
+  val IncomeSourceReportingMethodView: IncomeSourceReportingMethodView = app.injector.instanceOf[IncomeSourceReportingMethodView]
 
   def getMessage(incomeSourceType: IncomeSourceType, key:String): String = {
     incomeSourceType match {
@@ -64,7 +64,7 @@ class IncomeSourceReportingMethodViewSpec extends TestSupport {
     val viewModelOneLatencyYear: IncomeSourceReportingMethodViewModel = IncomeSourceReportingMethodViewModel(None, Some(latencyYear2))
 
     //TODO: Defaulting to false but need to add tests for isChange true
-    val postAction: Call = controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, false, incomeSourceType)
+    val postAction: Call = controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.submit(isAgent, isChange = false, incomeSourceType)
 
     lazy val viewTwoLatencyYears: HtmlFormat.Appendable = IncomeSourceReportingMethodView(incomeSourceType ,form, viewModelTwoLatencyYears, postAction, isAgent)
     lazy val viewOneLatencyYear: HtmlFormat.Appendable = IncomeSourceReportingMethodView(incomeSourceType, form, viewModelOneLatencyYear, postAction, isAgent)

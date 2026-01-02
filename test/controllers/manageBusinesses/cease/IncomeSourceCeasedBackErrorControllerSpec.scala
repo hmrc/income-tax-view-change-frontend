@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.cease
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -23,14 +24,18 @@ import mocks.services.MockSessionService
 import play.api
 import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
 
 class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
-  override lazy val app = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
-    ).build()
+  override lazy val app =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[SessionService].toInstance(mockSessionService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceCeasedBackErrorController]
 
@@ -43,12 +48,13 @@ class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with Moc
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" in {
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction()
             mockUKPropertyIncomeSourceWithLatency2024()
             val result = action(fakeRequest)
             status(result) shouldBe OK
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

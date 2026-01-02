@@ -33,7 +33,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.TaxCalcFallBackBackLink
-import views.html.DeductionBreakdown
+import views.html.DeductionBreakdownView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeductionsSummaryController @Inject()(val authActions: AuthActions,
                                             val calculationService: CalculationService,
                                             val auditingService: AuditingService,
-                                            val deductionBreakdownView: DeductionBreakdown,
+                                            val deductionBreakdownView: DeductionBreakdownView,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                            (implicit val appConfig: FrontendAppConfig,

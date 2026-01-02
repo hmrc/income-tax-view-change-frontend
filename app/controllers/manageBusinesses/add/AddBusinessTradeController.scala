@@ -31,7 +31,7 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.add.AddBusinessTrade
+import views.html.manageBusinesses.add.AddBusinessTradeView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class AddBusinessTradeController @Inject()(val authActions: AuthActions,
-                                           val addBusinessTradeView: AddBusinessTrade,
+                                           val addBusinessTradeView: AddBusinessTradeView,
                                            val sessionService: SessionService)
                                           (implicit val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: ItvcErrorHandler,
@@ -73,12 +73,12 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
 
   def show(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit user =>
-      handleRequest(false, mode)
+      handleRequest(isAgent = false, mode)
   }
 
   def showAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit user =>
-      handleRequest(true, mode)
+      handleRequest(isAgent = true, mode)
   }
 
   def handleRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
@@ -103,12 +103,12 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
 
   def submit(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
     implicit request =>
-      handleSubmitRequest(false, mode)(implicitly, itvcErrorHandler)
+      handleSubmitRequest(isAgent = false, mode)(implicitly, itvcErrorHandler)
   }
 
   def submitAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit request =>
-      handleSubmitRequest(true, mode)(implicitly, itvcErrorHandlerAgent)
+      handleSubmitRequest(isAgent = true, mode)(implicitly, itvcErrorHandlerAgent)
   }
 
   def handleSubmitRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {

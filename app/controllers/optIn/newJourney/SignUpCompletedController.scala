@@ -21,7 +21,6 @@ import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.JourneyCompleted
 import models.itsaStatus.ITSAStatus
 import models.optin.newJourney.SignUpCompletedViewModel
 import play.api.Logger

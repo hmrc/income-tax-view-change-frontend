@@ -30,7 +30,9 @@ import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 class AddPropertyControllerISpec extends ControllerISpecHelper {
 
   val startDateUkPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = UkProperty, mode = NormalMode).url
+  val startDateUkPropertyTrigMigUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = UkProperty, mode = NormalMode, isTriggeredMigration = true).url
   val startDateForeignPropertyUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = ForeignProperty, mode = NormalMode).url
+  val startDateForeignPropertyTrigMigUrl = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = true, incomeSourceType = ForeignProperty, mode = NormalMode, isTriggeredMigration = true).url
 
   val continueButtonText: String = messagesAPI("base.continue")
 

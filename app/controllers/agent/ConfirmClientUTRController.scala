@@ -30,13 +30,13 @@ import play.api.mvc._
 import services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.agent.confirmClient
+import views.html.agent.ConfirmClientUTRView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
+class ConfirmClientUTRController @Inject()(confirmClient: ConfirmClientUTRView,
                                            val authActions: AuthActions,
                                            val auditingService: AuditingService,
                                            val sessionDataService: SessionDataService)
@@ -46,14 +46,15 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
                                            val ec: ExecutionContext)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
 
-  def show: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
-    Ok(confirmClient(
-      clientName = user.optClientNameAsString,
-      clientUtr = user.saUtr,
-      postAction = routes.ConfirmClientUTRController.submit(),
-      backUrl = backUrl
-    ))
-  }
+  def show: Action[AnyContent] =
+    authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
+      Ok(confirmClient(
+        clientName = user.optClientNameAsString,
+        clientUtr = user.saUtr,
+        postAction = routes.ConfirmClientUTRController.submit(),
+        backUrl = backUrl
+      ))
+    }
 
   def submit: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient.async { implicit user =>
     val clientName = user.optClientNameAsString.getOrElse("")
@@ -73,7 +74,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: confirmClient,
 
       Future.successful(Redirect(controllers.routes.HomeController.showAgent().url).addingToSession(SessionKeys.confirmedClient -> "true"))
 
-      }
+    }
   }
 
   lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url

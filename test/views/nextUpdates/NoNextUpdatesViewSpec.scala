@@ -24,13 +24,13 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import testConstants.NextUpdatesTestConstants
 import testUtils.TestSupport
-import views.html.nextUpdates.NoNextUpdates
+import views.html.nextUpdates.NoNextUpdatesView
 
 class NoNextUpdatesViewSpec extends TestSupport {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val NoNextUpdatesView: NoNextUpdates = app.injector.instanceOf[NoNextUpdates]
+  val NoNextUpdatesView: NoNextUpdatesView = app.injector.instanceOf[NoNextUpdatesView]
 
   val heading: String = NextUpdatesTestConstants.noNextUpdatesHeading
 

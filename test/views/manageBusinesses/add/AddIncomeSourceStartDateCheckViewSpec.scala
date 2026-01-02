@@ -25,7 +25,7 @@ import play.api.data.FormError
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheck
+import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
 
 import java.time.LocalDate
 
@@ -33,7 +33,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, hasError: Boolean, incomeSourceType: IncomeSourceType, mode: Mode = NormalMode) {
 
-    val addIncomeSourceStartDateCheck: AddIncomeSourceStartDateCheck = app.injector.instanceOf[AddIncomeSourceStartDateCheck]
+    val addIncomeSourceStartDateCheck: AddIncomeSourceStartDateCheckView = app.injector.instanceOf[AddIncomeSourceStartDateCheckView]
     val startDate: String = "2022-06-30"
     val formattedStartDate: String = mockImplicitDateFormatter.longDate(LocalDate.parse(startDate)).toLongDate
 
@@ -61,7 +61,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
     s"${if (isAgent) "Agent" else "Individual"}: AddIncomeSourceStartDateCheckView - $incomeSourceType" should {
       "render the heading" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementsByClass("govuk-caption-xl").text() shouldBe getCaption(incomeSourceType)
-        document.getElementById("start-date-heading").text() shouldBe s"Is $formattedStartDate the correct date?"
+        document.getElementsByClass("start-date-heading").text() shouldBe s"Is $formattedStartDate the correct date?"
       }
       "render the radio form" in new Setup(isAgent, hasError = false, incomeSourceType) {
         document.getElementsByClass("govuk-label govuk-radios__label").eq(0).text() shouldBe "Yes"
@@ -80,7 +80,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         document.getElementById("continue-button").text() shouldBe "Continue"
       }
       "render the input error" in new Setup(isAgent, hasError = true, incomeSourceType) {
-        val errorMessage = incomeSourceType match {
+        val errorMessage: String = incomeSourceType match {
           case SelfEmployment => "Select yes if your business start date is correct"
           case UkProperty => "Select yes if your UK property business start date is correct"
           case ForeignProperty => "Select yes if your foreign property business start date is correct"
@@ -89,7 +89,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
         document.getElementById("start-date-check-error").text() shouldBe "Error:" + " " + errorMessage
       }
       "render the error summary" in new Setup(isAgent, hasError = true, incomeSourceType) {
-        val errorMessage = incomeSourceType match {
+        val errorMessage: String = incomeSourceType match {
           case SelfEmployment => "Select yes if your business start date is correct"
           case UkProperty => "Select yes if your UK property business start date is correct"
           case ForeignProperty => "Select yes if your foreign property business start date is correct"

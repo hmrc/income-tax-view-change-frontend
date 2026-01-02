@@ -35,13 +35,13 @@ import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.agent.EnterClientsUTR
+import views.html.agent.EnterClientsUTRView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
+class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
                                           clientDetailsService: ClientDetailsService,
                                           val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val authActions: AuthActions,
@@ -75,31 +75,27 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
         postAction = routes.EnterClientsUTRController.submit()
       ))),
       validUTR => {
-        clientDetailsService.checkClientDetails(
-          utr = validUTR
-        ) flatMap {
-          case Right(clientDetails) =>
-            checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap { userRole =>
+        clientDetailsService.checkClientDetails(utr = validUTR)
+          .flatMap {
+            case Right(clientDetails) =>
+              checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap { userRole =>
                 val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent).toSessionCookieSeq
                 sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId, Some(userRole == MTDSupportingAgent))
                 Future.successful(Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*))
-            }.recover {
-              case ex =>
-                Logger("application")
-                  .error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
-                sendAudit(false, user, validUTR, clientDetails.nino, clientDetails.mtdItId, None)
-                Redirect(controllers.agent.routes.UTRErrorController.show())
-            }
+              }.recover {
+                case ex =>
+                  Logger("application").error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
+                  sendAudit(false, user, validUTR, clientDetails.nino, clientDetails.mtdItId, None)
+                  Redirect(controllers.agent.routes.UTRErrorController.show())
+              }
 
-          case Left(CitizenDetailsNotFound | BusinessDetailsNotFound)
-          =>
-            val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
-            Future.successful(Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*))
-          case Left(_)
-          =>
-            Logger("application").error(s"[EnterClientsUTRController] - Error response received from API")
-            Future.successful(itvcErrorHandler.showInternalServerError())
-        }
+            case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>
+              val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
+              Future.successful(Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*))
+            case Left(_) =>
+              Logger("application").error(s"[EnterClientsUTRController] - Error response received from API")
+              Future.successful(itvcErrorHandler.showInternalServerError())
+          }
       }
     )
   }
@@ -113,7 +109,8 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTR,
       }.recoverWith { case e =>
         authorisedFunctions
           .authorised(Enrolment(secondaryAgentEnrolmentName).withIdentifier(agentIdentifier, mtdItId)
-            .withDelegatedAuthRule(secondaryAgentAuthRule)){Future.successful(MTDSupportingAgent)
+            .withDelegatedAuthRule(secondaryAgentAuthRule)) {
+            Future.successful(MTDSupportingAgent)
           }
       }
   }

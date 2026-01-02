@@ -47,7 +47,6 @@
         viewModel: ManageIncomeSourceDetailsViewModel,
         isAgent: Boolean,
         showStartDate: Boolean,
-        showAccountingMethod: Boolean,
         showOptInOptOutContentUpdateR17: Boolean,
         showReportingFrequencyLink: Boolean,
         backUrl: String
@@ -75,14 +74,6 @@
     content match {
         case Some(x) => x
         case None => messages("incomeSources.generic.unknown")
-    }
-}
-
-@getAccountingMethodMessage = @{
-    viewModel.incomeSourceType match {
-        case SelfEmployment => messages("incomeSources.manage.new.business.details.accounting.method")
-        case UkProperty => messages("incomeSources.manage.new.uk.property.manage.details.accounting.method")
-        case ForeignProperty => messages("incomeSources.manage.new.foreign.property.manage.details.accounting.method")
     }
 }
 
@@ -282,42 +273,6 @@
     }
 }
 
-
-
-@getQuarterlyType = @{
-    viewModel.quarterReportingType match {
-        case Some(quarterType) =>
-            Seq(
-                SummaryListRow(
-                    key = Key(
-                        content = Text(messages("incomeSources.manage.new.quarterly.update.period"))
-                    ),
-                    value = Value(
-                        content = Text(messages(s"incomeSources.manage.new.quarterly.period.${quarterType.value.toLowerCase}"))
-                    )
-                )
-            )
-        case None => Seq.empty
-    }
-}
-
-@quarterlyPeriodDropDown = @{
-    val messagePrefix = "incomeSources.manage.quarterly-period"
-
-    val p1 = p(id = Some("expandable-standard-update-period"))(Html(messages(s"incomeSources.manage.new.quarterly.period.content.p1")))
-    val p2 = p(id = Some("software-support"))(Html(messages(s"incomeSources.manage.new.quarterly.period.content.p2")))
-
-    val anchor = link( id = Some("learn-about-quarters-link"), target = Some("_blank"), link = ExternalUrlHelper.quarterlyUpdatesGuidanceUrl, messageKey = s"incomeSources.manage.new.quarterly.period.content.p3.link" )
-    val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
-
-    govukDetails(Details(
-        id = Some("standard-update-period-dropdown"),
-        summary = Text(messages(s"incomeSources.manage.new.quarterly.period.summary")),
-        content = content
-    ))
-
-}
-
 @reportingFrequencyURL(isAgent: Boolean) = @{
     controllers.routes.ReportingFrequencyPageController.show(isAgent).url
 }
@@ -404,7 +359,6 @@
                         )
                     } else Seq.empty
                 }
-                ++ (getQuarterlyType)
                 ++(
                     if (viewModel.isBusinessInLatency) {
                         if (showOptInOptOutContentUpdateR17) {
@@ -417,11 +371,6 @@
             attributes = Map("id" -> "manage-details-table")
         )
     )
-
-
-    @if(!viewModel.isBusinessInLatency){
-        @quarterlyPeriodDropDown
-    }
 
     </div>
 }

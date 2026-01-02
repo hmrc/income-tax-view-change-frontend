@@ -36,13 +36,13 @@ import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTyp
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
-import views.html.WhatYouOwe
+import views.html.WhatYouOweView
 
 import java.time.LocalDate
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with ChargeConstants {
 
-  val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
+  val whatYouOweView: WhatYouOweView = app.injector.instanceOf[WhatYouOweView]
   val whatYouOweTitle: String = messages("htmlTitle", messages("whatYouOwe.heading"))
   val whatYouOweHeading: String = messages("whatYouOwe.heading")
   val whatYouOweAgentHeading: String = messages("whatYouOwe.heading-agent")
@@ -98,10 +98,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val hmrcAdjustmentHeading: String = messages("whatYouOwe.hmrcAdjustment.heading")
   val hmrcAdjustmentLine1: String = messages("whatYouOwe.hmrcAdjustment.line1")
   val itsaPOA1: String = "ITSA- POA 1"
-  val itsaPOA2: String = "ITSA - POA 2"
+  val itsaPOA2: String = "ITSA- POA 2"
   val cancelledPayeSelfAssessment: String = messages("whatYouOwe.cancelledPayeSelfAssessment.text")
-  val poa1CollectedCodedOut = messages("whatYouOwe.poa1CodedOut.text")
-  val poa2CollectedCodedOut = messages("whatYouOwe.poa2CodedOut.text")
+  val poa1CollectedCodedOut: String = messages("whatYouOwe.poa1CodedOut.text")
+  val poa2CollectedCodedOut: String = messages("whatYouOwe.poa2CodedOut.text")
 
 
   val interestEndDateFuture: LocalDate = LocalDate.of(2100, 1, 1)
@@ -139,7 +139,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       IncomeSourceDetailsModel(testNino, "testMtditid", Some(migrationYear.toString), List(), List())
     )
 
-    val defaultClaimToAdjustViewModel = ctaViewModel
+    val defaultClaimToAdjustViewModel: WYOClaimToAdjustViewModel = ctaViewModel
 
     val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = dateService.getCurrentDate,
@@ -187,7 +187,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        adjustPaymentsOnAccountFSEnabled: Boolean = false,
                        claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None) {
 
-    val defaultClaimToAdjustViewModel = ctaViewModel
+    val defaultClaimToAdjustViewModel: WYOClaimToAdjustViewModel = ctaViewModel
 
     val agentUser: MtdItUser[_] =
       defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel("AA111111A", "testMtditid", Some(migrationYear.toString), List(), List()))
@@ -196,7 +196,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       Option(pageDocument.getElementById(id))
     }
 
-    val whatYouOweView: WhatYouOwe = app.injector.instanceOf[WhatYouOwe]
+    val whatYouOweView: WhatYouOweView = app.injector.instanceOf[WhatYouOweView]
     private val currentDateIs: LocalDate = dateService.getCurrentDate
 
     val wyoViewModelAgent: WhatYouOweViewModel = WhatYouOweViewModel(
@@ -579,21 +579,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
         }
 
-        "money in your account section with available credits with totalCredit when ClaimARefundR18 FS is true" in
+        "money in your account section with available credits with totalCredit" in
           new TestSetup(charges = whatYouOweDataWithAvailableCredits()) {
           pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount") + " " +
             messages("whatYouOwe.moneyOnAccount-1") + " £350.00" + " " +
             messages("whatYouOwe.moneyOnAccount-2") + " " +
             messages("whatYouOwe.moneyOnAccount-3") + "."
         }
-
-        "money in your account section with available credits with availableCredit when ClaimARefundR18 FS is false" in
-          new TestSetup(charges = whatYouOweDataWithAvailableCredits(claimARefundR18Enabled = false)) {
-            pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount") + " " +
-              messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
-              messages("whatYouOwe.moneyOnAccount-2") + " " +
-              messages("whatYouOwe.moneyOnAccount-3") + "."
-          }
 
         "money in your account section with no available credits" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
           findElementById("money-in-your-account") shouldBe None
@@ -1263,20 +1255,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findAgentElementById("payment-button") shouldBe None
       }
 
-      "money in your account section with available credits with totalCredit when ClaimARefundR18 FS is true" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
+      "money in your account section with available credits with totalCredit" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
         pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
           messages("whatYouOwe.moneyOnAccount-1") + " £350.00" + " " +
           messages("whatYouOwe.moneyOnAccount-agent-2") + " " +
           messages("whatYouOwe.moneyOnAccount-3") + "."
       }
-
-      "money in your account section with available credits with availableCredit when ClaimARefundR18 FS is false" in
-        new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits(claimARefundR18Enabled = false)) {
-          pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
-            messages("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
-            messages("whatYouOwe.moneyOnAccount-agent-2") + " " +
-            messages("whatYouOwe.moneyOnAccount-3") + "."
-        }
 
       "money in your account section with no available credits" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         findAgentElementById("money-in-your-account") shouldBe None

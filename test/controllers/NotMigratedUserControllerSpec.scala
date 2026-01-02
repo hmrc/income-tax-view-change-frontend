@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
@@ -24,7 +25,8 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.PaymentHistoryService
+import services.{DateServiceInterface, PaymentHistoryService}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeNotMigrated
 
 class NotMigratedUserControllerSpec extends MockAuthActions
   with ImplicitDateFormatter {
@@ -34,6 +36,9 @@ class NotMigratedUserControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[NotMigratedUserController]
@@ -50,6 +55,7 @@ class NotMigratedUserControllerSpec extends MockAuthActions
           "render the not migrated page" when {
             "the user has not migrated to ETMP" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncomeNotMigrated)
               mockSingleBusinessIncomeSource(userMigrated = false)
 
               val result = action(fakeRequest)
@@ -60,6 +66,7 @@ class NotMigratedUserControllerSpec extends MockAuthActions
           "render the error page" when {
             "the user has already migrated to ETMP" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
 
               val result = action(fakeRequest)
@@ -68,7 +75,7 @@ class NotMigratedUserControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }

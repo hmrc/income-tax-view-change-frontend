@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney._
 import enums.InitialPage
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import models.admin.{AccountingMethodJourney, DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -153,7 +153,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         viewModel = viewModel,
         isAgent = isAgent,
         showStartDate = isEnabled(DisplayBusinessStartDate),
-        showAccountingMethod = isEnabled(AccountingMethodJourney),
         showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
         showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
         backUrl = backUrl
@@ -182,7 +181,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
           viewModel = viewModel,
           isAgent = isAgent,
           showStartDate = isEnabled(DisplayBusinessStartDate),
-          showAccountingMethod = isEnabled(AccountingMethodJourney),
           showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
           showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
           backUrl = backUrl
@@ -211,23 +209,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       case Left(_) => Future.failed(new Error(s"Unexpected exception incomeSourceIdHash: <$incomeSourceIdHash>"))
       case Right(incomeSourceId: IncomeSourceId) => Future.successful(incomeSourceId)
     }
-  }
-
-  private def getQuarterType(latencyDetails: Option[LatencyDetails],
-                             quarterTypeElection: Option[QuarterTypeElection]): Option[QuarterReportingType] = {
-    quarterTypeElection.flatMap(quarterTypeElection => {
-      latencyDetails match {
-        case Some(latencyDetails: LatencyDetails) =>
-          val quarterIndicator = "Q"
-          val currentTaxYearEnd = dateService.getCurrentTaxYearEnd.toString
-          val showForLatencyTaxYear1 = (latencyDetails.taxYear1 == currentTaxYearEnd) && latencyDetails.latencyIndicator1.equals(quarterIndicator)
-          val showForLatencyTaxYear2 = (latencyDetails.taxYear2 == currentTaxYearEnd) && latencyDetails.latencyIndicator2.equals(quarterIndicator)
-          val showIfLatencyExpired = latencyDetails.taxYear2 < currentTaxYearEnd
-          val showQuarterReportingType = showForLatencyTaxYear1 || showForLatencyTaxYear2 || showIfLatencyExpired
-          if (showQuarterReportingType) quarterTypeElection.isStandardQuarterlyReporting else None
-        case None => quarterTypeElection.isStandardQuarterlyReporting
-      }
-    })
   }
 
   private def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
@@ -262,7 +243,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
       currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }
@@ -283,7 +263,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsCrystallised = latencyYearsCrystallised,
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
       currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     )
   }

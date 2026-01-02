@@ -20,12 +20,12 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import play.twirl.api.Html
-import views.html.agent.EnterClientsUTR
+import views.html.agent.EnterClientsUTRView
 
 trait MockEnterClientsUTR extends BeforeAndAfterEach {
   self: Suite =>
 
-  lazy val enterClientsUTR: EnterClientsUTR = mock(classOf[EnterClientsUTR])
+  lazy val enterClientsUTR: EnterClientsUTRView = mock(classOf[EnterClientsUTRView])
 
   override def beforeEach(): Unit = {
     super.beforeEach()

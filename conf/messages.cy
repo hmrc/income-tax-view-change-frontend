@@ -1257,6 +1257,12 @@ upliftFailure.bullet.1                                          = gwnaethoch gym
 upliftFailure.bullet.2                                          = rydych wedi methu ag ateb digon o gwestiynau’n gywir
 upliftFailure.bullet.3                                          = nid oeddem yn gallu paru’ch manylion â’r hyn sydd ar ein system
 
+## Cannot Update Reporting Obligations
+cannotUpdateReportingObligations.title                          = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
+cannotUpdateReportingObligations.p1                             = Nid oeddem yn gallu newid eich ymrwymiadau o ran adrodd ar gyfer un neu fwy o flynyddoedd treth.
+cannotUpdateReportingObligations.p2                             = Gwiriwch pa flynyddoedd treth sydd wedi eu diweddaru neu rhowch gynnig arall arni ar dudalen
+cannotUpdateReportingObligations.link                           = eich ymrwymiadau o ran adrodd.
+cannotUpdateReportingObligations.p3                             =
 
 ## Payment History Page ##
 paymentHistory.heading                                          = Hanes taliadau
@@ -1781,27 +1787,18 @@ check-details.business-name                             = Enw’r busnes
 check-details.start-date                                = Dyddiad dechrau masnachu
 check-details.trade                                     = Math o fasnach
 check-details.address                                   = Cyfeiriad
-check-details.accounting-method                         = Dull cyfrifydd
-check-details.cash-accounting                           = Cyfrifyddu ar sail arian parod
-check-details.traditional-accounting                    = Cyfrifyddu traddodiadol
 check-details.change                                    = Newid
 check-details.description                               = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
 check-details-uk.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-uk.heading                                = Eiddo yn y DU
 check-details-uk.start-date                             = Dyddiad dechrau
-check-details-uk.accounting-method                      = Dull cyfrifyddu
-check-details-uk.cash-accounting                        = Cyfrifyddu ar sail arian parod
-check-details-uk.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-uk.change                                 = Newid
 check-details-uk.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
 check-details-fp.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-fp.heading                                = Eiddo tramor
 check-details-fp.start-date                             = Dyddiad dechrau
-check-details-fp.accounting-method                      = Dull cyfrifyddu
-check-details-fp.cash-accounting                        = Cyfrifyddu ar sail arian parod
-check-details-fp.traditional-accounting                 = Cyfrifyddu traddodiadol
 check-details-fp.change                                 = Newid
 check-details-fp.description                            = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
@@ -2178,75 +2175,46 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property
 
 ####### Manage journey manage income source
 
-incomeSources.manage.quarterly-period                                 =   Cyfnod diweddaru
-incomeSources.manage.quarterly-period.standard                        =   Safonol
-incomeSources.manage.quarterly-period.calendar                        =   Calendr
-incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
-incomeSources.manage.quarterly-period.calendar.summary                =   Beth yw cyfnod chwarterol calendr?
-incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r busnes yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
-incomeSources.manage.quarterly-period.standard.content.p2             =   Os yw eich meddalwedd yn ei gefnogi gallwch newid hyn i gyflwyno adroddiadau o 1af y mis yn ôl chwarterau calendr.
-incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r busnes yn cyflwyno adroddiadau o 1 Ebrill yn ôl chwarterau calendr.
-incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
-incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
-
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
 incomeSources.manage.business-manage-details.sole-trader-section      =   Unig fasnachwr
 incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes
 incomeSources.manage.business-manage-details.business-address         =   Cyfeiriad
 incomeSources.manage.business-manage-details.date-started             =   Dyddiad cychwyn
-incomeSources.manage.business-manage-details.accounting-method        =   Dull cyfrifyddu
 incomeSources.manage.business-manage-details.reporting-method         =   Amlder cyflwyno {0} i {1}
 incomeSources.manage.business-manage-details.change                   =   Newid
 incomeSources.manage.business-manage-details.quarterly                =   Bob chwarter
 incomeSources.manage.business-manage-details.annually                 =   Blynyddol
 incomeSources.manage.business-manage-details.quarterly.graceperiod    =   Bob chwarter
 incomeSources.manage.business-manage-details.annually.graceperiod     =   Blynyddol
-incomeSources.manage.business-manage-details.cash-accounting          =   Cyfrifyddu ar sail arian parod
-incomeSources.manage.business-manage-details.traditional-accounting   =   Cyfrifyddu traddodiadol
 incomeSources.manage.business-manage-details.tradetype                =   Math o fasnach
 incomeSources.manage.business-manage-details.reportingFrequency       =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
 incomeSources.manage.business-manage-details.insetText                =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
 
 incomeSources.manage.uk-property-manage-details.uk-property-section              =   Eiddo yn y DU
-incomeSources.manage.uk-property-manage-details.accounting-method                =   Dull cyfrifyddu
 incomeSources.manage.foreign-property-manage-details.foreign-property-section    =   Eiddo tramor
-incomeSources.manage.foreign-property-manage-details.accounting-method           =   Dull cyfrifyddu
 
 ##################### New - Manage journey manage income source #####################
 
 incomeSources.manage.new.business-manage-details.heading                  =   Manage your details
-
-incomeSources.manage.new.quarterly.update.period                          =   Cyfnod diweddaru
-incomeSources.manage.new.quarterly.period.standard                        =   Safonol
-incomeSources.manage.new.quarterly.period.calendar                        =   Calendr
-incomeSources.manage.new.quarterly.period.summary                         =   Beth yw cyfnod chwarterol safonol?
-incomeSources.manage.new.quarterly.period.content.p1                      =   Mae’r busnes hwn yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth – enw arall ar hyn yw ‘defnyddio cyfnodau diweddaru safonol’.
-incomeSources.manage.new.quarterly.period.content.p2                      =   Gallwch ddewis adrodd gan ddefnyddio cyfnodau diweddaru calendr sy’n dod i ben ar ddiwrnod olaf y mis, os yw’ch meddalwedd yn caniatáu hyn.
-incomeSources.manage.new.quarterly.period.content.p3.link                 =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
 
 incomeSources.manage.new.business.details.heading                         =   Gwirio’ch manylion
 incomeSources.manage.new.business.details.sole.trader.section             =   Unig fasnachwr
 incomeSources.manage.new.business.details.business.name                   =   Enw’r busnes
 incomeSources.manage.new.business.details.business.address                =   Cyfeiriad
 incomeSources.manage.new.business.details.date.started                    =   Dyddiad cychwyn
-incomeSources.manage.new.business.details.accounting.method               =   Dull cyfrifyddu
 incomeSources.manage.new.business.details.reporting.method                =   Amlder cyflwyno {0} i {1}
 incomeSources.manage.new.business.details.change                          =   Newid
 incomeSources.manage.new.business.details.quarterly                       =   Bob chwarter
 incomeSources.manage.new.business.details.annually                        =   Blynyddol
 incomeSources.manage.new.business.details.quarterly.grace.period          =   Bob chwarter
 incomeSources.manage.new.business.details.annually.grace.period           =   Blynyddol
-incomeSources.manage.new.business.details.cash.accounting                 =   Cyfrifyddu ar sail arian parod
-incomeSources.manage.new.business.details.traditional.accounting          =   Cyfrifyddu traddodiadol
 incomeSources.manage.new.business.details.trade.type                      =   Math o fasnach
 incomeSources.manage.new.business.details.reporting.frequency             =   Bwrw golwg dros a newid amlder eich adroddiadau ar gyfer eich holl fusnesau
 incomeSources.manage.new.business.details.insetText                       =   Gan mai busnes newydd yw hwn o hyd, gallwch newid pa mor aml rydych yn cyflwyno adroddiadau ar ei gyfer am hyd at ddwy flwyddyn dreth. O fis Ebrill {0} ymlaen, gallai fod yn ofynnol i chi gyflwyno adroddiadau chwarterol.
 
 
 incomeSources.manage.new.uk.property.manage.details.uk.property.section              =   Eiddo yn y DU
-incomeSources.manage.new.uk.property.manage.details.accounting.method                =   Dull cyfrifyddu
 incomeSources.manage.new.foreign.property.manage.details.foreign.property.section    =   Eiddo tramor
-incomeSources.manage.new.foreign.property.manage.details.accounting.method           =   Dull cyfrifyddu
 
 
 # Used when OptInOptOutContentUpdateR17 feature switch is enabled
@@ -2708,42 +2676,35 @@ optout.cancelled.p3                                 = i newid pa mor aml rydych 
 
 optout.taxYearQuestion.heading.previousYear.multiYear       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.previousYear.multiYear         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth {0} i {1}
-optout.taxYearQuestion.desc1.previousYear.multiYear         = Byddai hyn yn golygu na fydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.taxYearQuestion.inset.previousYear.multiYear         = Bydd diweddariadau chwarterol yr ydych wedi’u cyflwyno yn cael eu dileu o’n cofnodion os ydych yn optio allan o’r flwyddyn dreth honno. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
-optout.taxYearQuestion.desc2.previousYear.multiYear         = Yn ogystal â hyn, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech yn cyflwyno’ch Ffurflenni Treth yn y gorffennol ar gyfer pob un o’ch busnesau cyfredol, ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
-optout.taxYearQuestion.desc3.previousYear.multiYear         = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.desc1.previousYear.multiYear         = Bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
+optout.taxYearQuestion.inset.previousYear.multiYear         = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.desc2.previousYear.multiYear         = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.previousYear.multiYear = A ydych am optio allan o’r flwyddyn dreth {0} i {1}?
 
 optout.taxYearQuestion.heading.currentYear.multiYear                   = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r  flwyddyn dreth bresennol ymlaen
 optout.taxYearQuestion.title.currentYear.multiYear                     = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r  flwyddyn dreth bresennol ymlaen
-optout.taxYearQuestion.desc1.currentYear.multiYear                     = Byddai hyn yn golygu na fydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.taxYearQuestion.inset.currentYear.multiYear                     = Bydd diweddariadau chwarterol yr ydych wedi’u cyflwyno yn cael eu dileu o’n cofnodion os ydych yn optio allan o’r flwyddyn dreth honno. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
-optout.taxYearQuestion.desc2.currentYear.multiYear                     = Byddai angen i chi fynd yn ôl i’r ffordd yr oeddech yn cyflwyno’ch Ffurflenni Treth yn y gorffennol ar gyfer pob un o’ch busnesau cyfredol, ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
-optout.taxYearQuestion.desc3.currentYear.multiYear                     = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.desc1.currentYear.multiYear                     = Bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
+optout.taxYearQuestion.inset.currentYear.multiYear                     = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.desc2.currentYear.multiYear                     = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.currentYear.multiYear             = A ydych am optio allan o’r flwyddyn dreth bresennol ymlaen?
 
 optout.taxYearQuestion.heading.nextYear.multiYear                      = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf ymlaen
 optout.taxYearQuestion.title.nextYear.multiYear                        = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf ymlaen
-optout.taxYearQuestion.desc1.nextYear.multiYear                        = O 6 Ebrill {0} ymlaen, byddai hyn yn golygu na fydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.taxYearQuestion.desc2.nextYear.multiYear                        = Yn ogystal â hyn, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech yn cyflwyno’ch Ffurflenni Treth yn y gorffennol ar gyfer pob un o’ch busnesau cyfredol, ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
-optout.taxYearQuestion.desc3.nextYear.multiYear                        = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.desc1.nextYear.multiYear                        = O 6 Ebrill {0} ymlaen,  bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
+optout.taxYearQuestion.desc2.nextYear.multiYear                        = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.nextYear.multiYear                = A ydych am optio allan o’r flwyddyn dreth nesaf ymlaen?
 
 optout.taxYearQuestion.heading.currentYear.multiYearCYFollowedByAnnual                   = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.currentYear.multiYearCYFollowedByAnnual                     = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
-optout.taxYearQuestion.desc1.currentYear.multiYearCYFollowedByAnnual                     = O 6 Ebrill {0} ymlaen, byddai hyn yn golygu na fydd angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.taxYearQuestion.desc2.currentYear.multiYearCYFollowedByAnnual                     = Yn ogystal â hyn, bydd angen i chi fynd yn ôl i’r ffordd yr oeddech yn cyflwyno’ch Ffurflenni Treth yn y gorffennol ar gyfer pob un o’ch busnesau cyfredol, ac unrhyw fusnesau eraill y byddwch yn eu hychwanegu yn y dyfodol.
-optout.taxYearQuestion.desc3.currentYear.multiYearCYFollowedByAnnual                     = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.desc1.currentYear.multiYearCYFollowedByAnnual                     = O 6 Ebrill {0} ymlaen,  bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
+optout.taxYearQuestion.desc2.currentYear.multiYearCYFollowedByAnnual                     = Yn y dyfodol, efallai y bydd angen i chi fynd yn ôl i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual             = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
 ## opt out single year - followed by mandated
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated         = Byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = Mae gennych
-optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByMandated     = {0} ddiweddariad chwarterol wedi’u cyflwyno
-optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByMandated        = ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
-optout.taxYearQuestion.desc2.previousYear.singleYearFollowedByMandated         = Yn y dyfodol, gallai fod gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
+optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated         = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByMandated = A ydych am optio allan o flwyddyn dreth {0} i {1} o hyd?
 
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByMandated       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth unigol
@@ -2762,26 +2723,22 @@ optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByMandatedWit
 ## opt out single year - followed by annual
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByAnnual       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByAnnual         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
-optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByAnnual         = Byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = Mae gennych
-optout.taxYearQuestion.insetBold.previousYear.singleYearFollowedByAnnual     = {0} ddiweddariad chwarterol wedi’u cyflwyno
-optout.taxYearQuestion.inset2.previousYear.singleYearFollowedByAnnual        = ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByAnnual         = Bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
+optout.taxYearQuestion.inset.previousYear.singleYearFollowedByAnnual         = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 optout.taxYearQuestion.desc2.previousYear.singleYearFollowedByAnnual         = Yn y dyfodol, gallai fod gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByAnnual = A ydych am optio allan o flwyddyn dreth {0} i {1} o hyd?
 
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByAnnual       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.currentYear.singleYearFollowedByAnnual         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
-optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnual         = Byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
+optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnual         = Bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnual         = Yn y dyfodol, gallai fod gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnual = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
 ## opt out single year - followed by annual with quarterly updates
 optout.taxYearQuestion.heading.currentYear.singleYearFollowedByAnnualWithUpdates       = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
 optout.taxYearQuestion.title.currentYear.singleYearFollowedByAnnualWithUpdates         = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm am flwyddyn dreth {0} i {1}
-optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnualWithUpdates         = Byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm mwyach.
-optout.taxYearQuestion.inset.currentYear.singleYearFollowedByAnnualWithUpdates         = Mae gennych
-optout.taxYearQuestion.insetBold.currentYear.singleYearFollowedByAnnualWithUpdates     = {0} ddiweddariad chwarterol wedi’u cyflwyno
-optout.taxYearQuestion.inset2.currentYear.singleYearFollowedByAnnualWithUpdates        = ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
+optout.taxYearQuestion.desc1.currentYear.singleYearFollowedByAnnualWithUpdates         = Bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
+optout.taxYearQuestion.inset.currentYear.singleYearFollowedByAnnualWithUpdates         = Mae gennych <b>{0} ddiweddariad chwarterol wedi’u cyflwyno</b> ar gyfer y flwyddyn dreth hon. Os byddwch yn parhau, bydd y diweddariadau hyn yn cael eu dileu o’ch cofnodion. Bydd angen i chi gynnwys unrhyw incwm o’r diweddariadau hyn yn eich Ffurflen Dreth.
 optout.taxYearQuestion.desc2.currentYear.singleYearFollowedByAnnualWithUpdates         = Yn y dyfodol, gallai fod gofyn i chi fynd yn ôl at ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.currentYear.singleYearFollowedByAnnualWithUpdates = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
@@ -2794,7 +2751,7 @@ optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutDefault     = A ydyc
 ## opt out of CY+1 - CY Mandated
 optout.taxYearQuestion.heading.nextYear.nextYearOptOutMandated           = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
 optout.taxYearQuestion.title.nextYear.nextYearOptOutMandated             = Optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o flwyddyn dreth {0} i {1} ymlaen
-optout.taxYearQuestion.desc1.nextYear.nextYearOptOutMandated             = O 6 Ebrill {0} ymlaen, byddai hyn yn golygu na fyddai angen i chi ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+optout.taxYearQuestion.desc1.nextYear.nextYearOptOutMandated             = O 6 Ebrill {0} ymlaen, bydd hyn yn golygu nad oes angen i chi ddefnyddio meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, ond gallwch barhau i’w defnyddio os yw’n well gennych.
 optout.taxYearQuestion.desc2.nextYear.nextYearOptOutMandated             = Yn y dyfodol, gallai fod gofyn i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Os bydd hyn yn digwydd, byddwn yn ysgrifennu atoch i roi gwybod i chi.
 optout.taxYearQuestion.radioQuestion.nextYear.nextYearOptOutMandated     = A ydych am optio allan o flwyddyn dreth {0} i {1}?
 
@@ -3388,14 +3345,31 @@ income-sources.check-details-reporting-frequency.r17.change-choose-tax-year-key 
 #######################################################################################################################
 
 # Check HMRC records page
+triggered-migration.check-hmrc-records.add-banner.heading            = Wedi ychwanegu
+triggered-migration.check-hmrc-records.add-banner.text1.SE           = Busnes Unig fasnachwr wedi’i ychwanegu
+triggered-migration.check-hmrc-records.add-banner.text1.UK           = Busnes Eiddo yn y DU wedi’i ychwanegu
+triggered-migration.check-hmrc-records.add-banner.text1.FP           = Busnes Eiddo Tramor wedi’i ychwanegu
+triggered-migration.check-hmrc-records.add-banner.text2              = Bwrw golwg dros eich
+triggered-migration.check-hmrc-records.add-banner.link.SE            = busnes unig fasnachwr sydd wedi’i ychwanegu
+triggered-migration.check-hmrc-records.add-banner.link.UK            = busnes eiddo yn y DU
+triggered-migration.check-hmrc-records.add-banner.link.FP            = busnes eiddo Tramor
 
-triggered-migration.check-hmrc-records.heading     = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
-triggered-migration.check-hmrc-records.title       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
-triggered-migration.check-hmrc-records.desc        = Nawr, mae’ch dyddiadau cau chwarterol ar gyfer eich busnesau fel unig fasnachwr a/neu eich busnesau eiddo wedi’u rhestru yma.
-triggered-migration.check-hmrc-records.inset       = Bydd sicrhau bod y manylion ar y dudalen hon yn gywir yn eich helpu chi i osgoi colli dyddiadau cau ar gyfer eich busnesau cyfredol, ac yn osgoi rhoi dyddiadau cau i chi ar gyfer ffynonellau incwm y gallech fod wedi’u cau neu eu gwerthu.
-triggered-migration.check-hmrc-records.bulletStart = Bydd yn rhaid i chi wneud y canlynol, os oes angen:
-triggered-migration.check-hmrc-records.bullet1     = ychwanegu unrhyw fusnesau sydd ar goll
-triggered-migration.check-hmrc-records.bullet2     = dod ag unrhyw fusnesau, nad ydynt bellach yn rhoi incwm i chi, i ben
+triggered-migration.check-hmrc-records.cessation-banner.heading      = Wedi dod i ben
+triggered-migration.check-hmrc-records.cessation-banner.text1        = Rydych chi wedi dod â busnes i ben
+triggered-migration.check-hmrc-records.cessation-banner.text2        = Gweld
+triggered-migration.check-hmrc-records.cessation-banner.link         = eich busnesau sydd wedi dod i ben
+
+triggered-migration.check-hmrc-records.cessation-section.heading     = Eich busnesau sydd wedi dod i ben
+triggered-migration.check-hmrc-records.cessation-section.text        = Mae un neu ragor o fusnesau wedi dod i ben.
+triggered-migration.check-hmrc-records.cessation-section.text-link   = Gweld eich holl fusnesau sydd wedi dod i ben.
+
+triggered-migration.check-hmrc-records.heading                       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.title                         = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
+triggered-migration.check-hmrc-records.desc                          = Nawr, mae’ch dyddiadau cau chwarterol ar gyfer eich busnesau fel unig fasnachwr a/neu eich busnesau eiddo wedi’u rhestru yma.
+triggered-migration.check-hmrc-records.inset                         = Bydd sicrhau bod y manylion ar y dudalen hon yn gywir yn eich helpu chi i osgoi colli dyddiadau cau ar gyfer eich busnesau cyfredol, ac yn osgoi rhoi dyddiadau cau i chi ar gyfer ffynonellau incwm y gallech fod wedi’u cau neu eu gwerthu.
+triggered-migration.check-hmrc-records.bulletStart                   = Bydd yn rhaid i chi wneud y canlynol, os oes angen:
+triggered-migration.check-hmrc-records.bullet1                       = ychwanegu unrhyw fusnesau sydd ar goll
+triggered-migration.check-hmrc-records.bullet2                       = dod ag unrhyw fusnesau, nad ydynt bellach yn rhoi incwm i chi, i ben
 
 triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Eich busnesau cyfredol
 triggered-migration.check-hmrc-records.soleTrader.heading            = Busnesau unig fasnachwr
@@ -3412,7 +3386,6 @@ triggered-migration.check-hmrc-records.ukProperty.heading            = Eiddo yn 
 triggered-migration.check-hmrc-records.ukProperty.cease.link         = Wedi dod i ben
 triggered-migration.check-hmrc-records.ukProperty.businessState      = Statws y busnes
 triggered-migration.check-hmrc-records.ukProperty.active             = Cyfredol
-triggered-migration.check-hmrc-records.ukProperty.add.link           = Ychwanegu busnes eiddo
 triggered-migration.check-hmrc-records.foreignProperty.heading       = Eiddo Tramor
 triggered-migration.check-hmrc-records.foreignProperty.cease.link    = Wedi dod i ben
 triggered-migration.check-hmrc-records.foreignProperty.businessState = Statws y busnes
@@ -3457,3 +3430,17 @@ signUpOptOut.cannotGoBack.h2.signUp     = Rydych wedi cofrestru ar gyfer y cynll
 signUpOptOut.cannotGoBack.ul.heading    = Gallwch wneud y canlynol:
 signUpOptOut.cannotGoBack.linkText1     = bwrw golwg dros eich dyddiadau cau sydd ar ddod
 signUpOptOut.cannotGoBack.linkText2     = mynd yn ôl i’r hafan
+
+###You Must Wait To Use This Service Page
+#Individual:
+youMustWait.title              = Gallwch gael mynediad at y gwasanaeth hwn o 6 Ebrill {0} ymlaen
+youMustWait.heading            = Gallwch gael mynediad at y gwasanaeth hwn o 6 Ebrill {0} ymlaen
+youMustWait.text               = Mae hyn oherwydd eich bod wedi cofrestru i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf, sy’n dechrau 6 Ebrill {0}.
+youMustWait.text2              = Dysgwch ragor am
+youMustWait.linkText           = Troi Treth yn Ddigidol ar gyfer Treth Incwm
+
+#Agent:
+youMustWait.agent.title        = Gallwch fwrw golwg dros y cleient hwn o 6 Ebrill {0} ymlaen
+youMustWait.agent.heading      = Gallwch fwrw golwg dros y cleient hwn o 6 Ebrill {0} ymlaen
+youMustWait.agent.text         = Mae hyn oherwydd bod eich cleient wedi’i gofrestru i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf, sy’n dechrau ar 6 Ebrill {0}.
+youMustWait.agent.button.text  = Nodwch UTR arall

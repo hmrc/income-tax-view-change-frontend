@@ -35,7 +35,7 @@ import testConstants.BaseTestConstants._
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import views.html.agent.PrimaryAgentHome
+import views.html.agent.PrimaryAgentHomeView
 
 import java.time.{LocalDate, Month}
 import scala.util.Try
@@ -93,14 +93,13 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   penaltiesAndAppealsIsEnabled: Boolean = true,
                   submissionFrequency: String = "Annual",
                   penaltyPoints: Int = 0,
-                  currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary,
-                  claimARefundR18Enabled: Boolean = true,
+                  currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary
                  ) {
 
-    val agentHome: PrimaryAgentHome = app.injector.instanceOf[PrimaryAgentHome]
+    val agentHome: PrimaryAgentHomeView = app.injector.instanceOf[PrimaryAgentHomeView]
 
     val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()),
-      creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined, claimARefundR18enabled = claimARefundR18Enabled)
+      creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
@@ -398,11 +397,8 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           link.map(_.text) shouldBe Some("Payment history")
         }
 
-        s"has the available credit using totalCredit when ClaimToAdjustR18 FS is true" in new TestSetup(creditAndRefundEnabled = true) {
+        s"has the available credit using totalCredit" in new TestSetup(creditAndRefundEnabled = true) {
           getTextOfElementById("available-credit") shouldBe Some("£200.00 is in your account")
-        }
-        s"has the available credit using availableCredit when ClaimToAdjustR18 FS is false" in new TestSetup(creditAndRefundEnabled = true, claimARefundR18Enabled = false) {
-          getTextOfElementById("available-credit") shouldBe Some("£100.00 is in your account")
         }
       }
 

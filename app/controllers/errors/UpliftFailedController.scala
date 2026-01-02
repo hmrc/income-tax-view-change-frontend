@@ -20,12 +20,12 @@ import audit.AuditingService
 import audit.models.IvOutcomeFailureAuditModel
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.UpliftFailed
+import views.html.errorPages.UpliftFailedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class UpliftFailedController @Inject()(upliftFailedView: UpliftFailed,
+class UpliftFailedController @Inject()(upliftFailedView: UpliftFailedView,
                                        mcc: MessagesControllerComponents,
                                        auditingService: AuditingService)
                                       (implicit ec: ExecutionContext) extends FrontendController(mcc) {
