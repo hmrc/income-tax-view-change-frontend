@@ -98,12 +98,12 @@ object NextUpdatesTestConstants {
     StatusFulfilled
   )
 
-  val quarterlyObligation2017Third = SingleObligationModel(
-    start = LocalDate.of(2017, 9, 1),
-    end = LocalDate.of(2017, 11, 30),
-    due = LocalDate.of(2017, 11, 30),
+  val quarterlyObligation2017Second = SingleObligationModel(
+    start = LocalDate.of(2017, 4, 1),
+    end = LocalDate.of(2017, 6, 30),
+    due = LocalDate.of(2017, 6, 30),
     obligationType = "Quarterly",
-    dateReceived = Some(LocalDate.of(2017, 11, 30)),
+    dateReceived = Some(LocalDate.of(2017, 6, 30)),
     periodKey = "#004",
     StatusFulfilled
   )
@@ -130,7 +130,7 @@ object NextUpdatesTestConstants {
 
   val nextUpdatesDataSelfEmploymentSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(overdueObligation, openObligation))
 
-  val obligationsModelDataSucessful: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(quarterlyObligation2016, quarterlyObligation2017First, quarterlyObligation2017Third))
+  val obligationsModelDataSucessful: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(quarterlyObligation2016, quarterlyObligation2017First, quarterlyObligation2017Second))
 
   val nextUpdatesDataPropertySuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(overdueObligation, openObligation))
 

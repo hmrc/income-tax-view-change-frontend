@@ -938,10 +938,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         submissions.select(".govuk-table tbody td:nth-child(3)").get(1).text() shouldBe "30 Mar 2017"
 
         submissions.select(".govuk-table").last().selectHead("caption").text() shouldBe
-          updatePeriod("1 Sep 2017", "30 Nov 2017")
+          updatePeriod("1 Apr 2017", "30 Jun 2017")
         submissions.select(".govuk-table tbody td:nth-child(1)").last().text() shouldBe quarterlyUpdate
         submissions.select(".govuk-table tbody td:nth-child(2)").last().text() shouldBe businessIncome
-        submissions.select(".govuk-table tbody td:nth-child(3)").last().text() shouldBe "30 Nov 2017"
+        submissions.select(".govuk-table tbody td:nth-child(3)").last().text() shouldBe "30 Jun 2017"
       }
 
       "display the latest calculation tab when pfa is enabled and the user has an amended latest calculation" in new Setup(calculationWithLatestAmendmentsView(false)) {
