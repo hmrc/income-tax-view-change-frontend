@@ -36,33 +36,35 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)
 
   override val detail: JsValue = {
-    (whatYouOweChargesList.codedOutDetails.map(chargeItem => Json.obj("codingOut" -> codingOut(chargeItem)))) match {
-      case Some(codingOutJson) => userAuditDetails(user) ++
-        balanceDetailsJson ++
-        Json.obj("charges" -> docDetailsListJson) ++
-        codingOutJson
-      case _ =>
-        userAuditDetails(user) ++
-          balanceDetailsJson ++
-          Json.obj("charges" -> docDetailsListJson)
+    val base = userAuditDetails(user) ++ Json.obj("charges" -> docDetailsListJson)
+
+    val withBalance = balanceDetailsJson match {
+      case Some(js) => base ++ js
+      case None => base
+    }
+
+    whatYouOweChargesList.codedOutDetails.map(chargeItem => Json.obj("codingOut" -> codingOut(chargeItem))) match {
+      case Some(js) => withBalance ++ js
+      case None => withBalance
     }
   }
 
-  private lazy val balanceDetailsJson: JsObject = {
-    def onlyIfPositive(amount: BigDecimal): Option[BigDecimal] = Some(amount).filter(_ > 0)
+  private lazy val balanceDetailsJson: Option[JsObject] = {
+    def onlyIfPositive(name: String, amount: BigDecimal): Option[(String, JsValue)] =
+      if (amount > 0) Some(name -> JsNumber(amount)) else None
 
-    val fields: JsObject = {
-      Json.obj() ++
-        Json.obj("balanceDueWithin30Days"-> onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
-        Json.obj("overDueAmount"-> onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
-        Json.obj("totalBalance"-> onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance)) ++
-        Json.obj("creditAmount"-> whatYouOweChargesList.balanceDetails.unallocatedCredit)
-    }
+    val fields: Seq[(String, JsValue)] = Seq(
+      onlyIfPositive("balanceDueWithin30Days", whatYouOweChargesList.balanceDetails.balanceDueWithin30Days),
+      onlyIfPositive("overDueAmount", whatYouOweChargesList.balanceDetails.overDueAmount),
+      onlyIfPositive("totalBalance", whatYouOweChargesList.balanceDetails.totalBalance),
+      whatYouOweChargesList.balanceDetails.unallocatedCredit.map("creditAmount" -> JsNumber(_))
+    ).flatten
 
     val secondOrMoreYearOfMigration = user.incomeSources.yearOfMigration.exists(currentTaxYear > _.toInt)
 
-    if (secondOrMoreYearOfMigration && fields.values.nonEmpty) Json.obj("balanceDetails" -> fields)
-    else Json.obj()
+    if (secondOrMoreYearOfMigration && fields.nonEmpty)
+      Some(Json.obj("balanceDetails" -> JsObject(fields)))
+    else None
   }
 
 
