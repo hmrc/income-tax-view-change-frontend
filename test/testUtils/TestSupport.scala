@@ -71,26 +71,34 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   def normalise(js: JsValue): JsValue = js match {
 
     case JsObject(fields) =>
-      JsObject(
-        fields.collect { case (k, v) if v != JsNull => k -> normalise(v) }
-          .toSeq.sortBy(_._1)
-      )
+      val filteredFields = fields.collect {
+        case (k, v) if v != JsNull =>
+          normalise(v) match {
+            case JsObject(inner) if inner.isEmpty => None // remove empty object
+            case JsArray(inner) if inner.isEmpty => None // remove empty array
+            case n => Some(k -> n)
+          }
+      }.flatten
+
+      JsObject(filteredFields.toSeq.sortBy(_._1))
 
     case JsArray(values) =>
       val normValues = values.collect { case v if v != JsNull => normalise(v) }
-      if (normValues.forall(_.isInstanceOf[JsObject])) {
-        JsArray(normValues.sortBy(_.toString))
-      } else {
-        JsArray(normValues)
+      val filteredValues = normValues.filter {
+        case JsObject(inner) if inner.isEmpty => false
+        case JsArray(inner) if inner.isEmpty => false
+        case _ => true
       }
-    case JsNumber(n) =>
-      JsNumber(n.bigDecimal.stripTrailingZeros())
+      if (filteredValues.forall(_.isInstanceOf[JsObject])) JsArray(filteredValues.sortBy(_.toString))
+      else JsArray(filteredValues)
 
+    case JsNumber(n) => JsNumber(n.bigDecimal.stripTrailingZeros())
     case other => other
   }
 
   def assertJsonEquals(actual: JsValue, expected: JsValue): Assertion =
     normalise(actual) shouldEqual normalise(expected)
+
   val featureSwitchRepository = app.injector.instanceOf[FeatureSwitchRepository]
 
   implicit val timeout: PatienceConfig = PatienceConfig(5.seconds)
