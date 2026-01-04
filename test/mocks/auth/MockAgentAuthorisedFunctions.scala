@@ -16,7 +16,6 @@
 
 package mocks.auth
 
-import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.delegatedEnrolmentPredicate
 import forms.IncomeSourcesFormsSpec.AuthRetrievals
 import org.mockito.Mockito._
@@ -29,37 +28,46 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
-  self: Suite =>
+  self: Suite with MockAuthServiceSupport =>
 
-  val mockAuthService: FrontendAuthorisedFunctions
   lazy val isAgentPredicate: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
   lazy val isNotAgentPredicate: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
   lazy val authPredicateForAgent: Predicate = isAgentPredicate or isNotAgentPredicate
 
 
-  def setupMockAgentAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
+  def setupMockAgentAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit =
     when(mockAuthService.authorised(authPredicateForAgent))
       .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
-            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = body.apply(retrievalValue.asInstanceOf[A])
-          }
-        })
-  }
+        new authService.AuthorisedFunction(EmptyPredicate) {
+          override def retrieve[A](retrieval: Retrieval[A]) =
+            new authService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+              override def apply[B](body: A => Future[B])
+                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] =
+                body(retrievalValue.asInstanceOf[A])
+            }
+        }
+      )
 
-  def setupMockAgentWithoutARNAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit = {
+  def setupMockAgentWithoutARNAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit =
     when(mockAuthService.authorised(EmptyPredicate))
       .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
-            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] = body.apply(retrievalValue.asInstanceOf[A])
-          }
-        })
-  }
+        new authService.AuthorisedFunction(EmptyPredicate) {
+          override def retrieve[A](retrieval: Retrieval[A]) =
+            new authService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+              override def apply[B](body: A => Future[B])
+                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] =
+                body(retrievalValue.asInstanceOf[A])
+            }
+        }
+      )
 
-  def setupMockAgentWithClientAuthSuccess[X, Y](retrievalValue: X ~ Y, mtdItId: String, isSupportingAgent: Boolean = false): Unit = {
+  def setupMockAgentWithClientAuthSuccess[X, Y](
+                                                 retrievalValue: X ~ Y,
+                                                 mtdItId: String,
+                                                 isSupportingAgent: Boolean = false
+                                               ): Unit = {
     setupMockAgentAuthSuccess(retrievalValue)
-    if(isSupportingAgent) {
+    if (isSupportingAgent) {
       setupMockNoPrimaryDelegatedEnrolmentForMTDItId(mtdItId)
       setupMockSecondaryAgentAuthRetrievalSuccess(mtdItId)
     } else {
@@ -67,31 +75,45 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
     }
   }
 
-  def setupMockAgentWithMissingDelegatedMTDEnrolment(retrievalValue: AuthRetrievals, mtdItId: String): Unit = {
+  def setupMockAgentWithMissingDelegatedMTDEnrolment(
+                                                      retrievalValue: AuthRetrievals,
+                                                      mtdItId: String
+                                                    ): Unit = {
     setupMockAgentAuthSuccess(retrievalValue)
     setupMockNoPrimaryDelegatedEnrolmentForMTDItId(mtdItId)
     setupMockNoSecondaryDelegatedEnrolmentForMTDItId(mtdItId)
   }
 
-  def setupMockAgentAuthException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
+  def setupMockAgentAuthException(exception: AuthorisationException = new InvalidBearerToken): Unit =
     when(mockAuthService.authorised(authPredicateForAgent))
       .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(exception)
+        new authService.AuthorisedFunction(EmptyPredicate) {
 
-          override def retrieve[A](retrieval: Retrieval[A]) = new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
-            override def apply[B](body: A => Future[B])(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[B] = Future.failed(exception)
-          }
+          override def apply[A](body: => Future[A])
+                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+            Future.failed(exception)
+
+          override def retrieve[A](retrieval: Retrieval[A]) =
+            new authService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+              override def apply[B](body: A => Future[B])
+                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] =
+                Future.failed(exception)
+            }
         }
       )
-  }
 
-  def setupMockAgentWithClientAuthException(exception: AuthorisationException = new InvalidBearerToken, mtdItId: String, isSupportingAgent: Boolean = false): Unit = {
+  def setupMockAgentWithClientAuthException(
+                                             exception: AuthorisationException = new InvalidBearerToken,
+                                             mtdItId: String,
+                                             isSupportingAgent: Boolean = false
+                                           ): Unit = {
     val predicate = delegatedEnrolmentPredicate(mtdItId, isSupportingAgent)
     when(mockAuthService.authorised(predicate))
       .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(exception)
+        new authService.AuthorisedFunction(EmptyPredicate) {
+          override def apply[A](body: => Future[A])
+                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+            Future.failed(exception)
         }
       )
   }
@@ -100,38 +122,47 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
     val predicate = delegatedEnrolmentPredicate(mtdItId, false)
     when(mockAuthService.authorised(predicate))
       .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = body
-        })
+        new authService.AuthorisedFunction(EmptyPredicate) {
+          override def apply[A](body: => Future[A])
+                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+            body
+        }
+      )
   }
 
   def setupMockNoPrimaryDelegatedEnrolmentForMTDItId(mtdItId: String): Unit = {
-
     val predicate = delegatedEnrolmentPredicate(mtdItId, false)
     when(mockAuthService.authorised(predicate))
       .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(InsufficientEnrolments())
-        })
+        new authService.AuthorisedFunction(EmptyPredicate) {
+          override def apply[A](body: => Future[A])
+                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+            Future.failed(InsufficientEnrolments())
+        }
+      )
   }
 
   def setupMockSecondaryAgentAuthRetrievalSuccess(mtdItId: String): Unit = {
     val predicate = delegatedEnrolmentPredicate(mtdItId, true)
     when(mockAuthService.authorised(predicate))
       .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = body
-        })
+        new authService.AuthorisedFunction(EmptyPredicate) {
+          override def apply[A](body: => Future[A])
+                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+            body
+        }
+      )
   }
 
   def setupMockNoSecondaryDelegatedEnrolmentForMTDItId(mtdItId: String): Unit = {
-
     val predicate = delegatedEnrolmentPredicate(mtdItId, true)
-
     when(mockAuthService.authorised(predicate))
       .thenReturn(
-        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
-          override def apply[A](body: => Future[A])(implicit hc: HeaderCarrier, executionContext: ExecutionContext) = Future.failed(InsufficientEnrolments())
-        })
+        new authService.AuthorisedFunction(EmptyPredicate) {
+          override def apply[A](body: => Future[A])
+                               (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+            Future.failed(InsufficientEnrolments())
+        }
+      )
   }
 }

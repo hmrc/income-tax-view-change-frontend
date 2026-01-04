@@ -40,6 +40,7 @@ import uk.gov.hmrc.auth.core._
 
 trait MockAuthActions
   extends TestSupport
+    with MockAuthServiceSupport
     with MockIncomeSourceDetailsService
     with MockAgentAuthorisedFunctions
     with MockUserAuthorisedFunctions
@@ -48,10 +49,11 @@ trait MockAuthActions
     with MockClientDetailsService
     with FeatureSwitching {
 
+
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
-    reset(mockAuthService)
+    reset(authService)
   }
 
   override def afterEach() = {
@@ -60,9 +62,7 @@ trait MockAuthActions
 
   lazy val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 
-  val mockAuthService: FrontendAuthorisedFunctions = mock(classOf[FrontendAuthorisedFunctions])
-
-  lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
+  lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockAuthService),
@@ -71,7 +71,7 @@ trait MockAuthActions
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
         api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService)
       )
-  }
+
 
   def setupMockSuccess(mtdUserRole: MTDUserRole): Unit = mtdUserRole match {
     case MTDIndividual => setupMockUserAuth
