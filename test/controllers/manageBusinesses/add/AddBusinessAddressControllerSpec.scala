@@ -133,12 +133,15 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
           }
 
           "redirect to the address lookup confirmation page" when {
-            "addressLookupId exists in session data" in {
+            "addressLookupId exists in session data and is still valid" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               setupMockGetMongo(Right(Some(testUIJourneySessionData)))
+
+              when(mockAddressLookupService.fetchAddress(any())(any()))
+                .thenReturn(Future(Right(testBusinessAddressModel)))
 
               val expectedUrl = s"${frontendAppConfig.addressLookupService}/lookup-address/123/confirm"
 
@@ -149,6 +152,26 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               redirectLocation(result) mustBe Some(expectedUrl)
 
               verify(mockAddressLookupService, never).initialiseAddressJourney(any(), any())(any(), any())
+            }
+          }
+
+          "redirect to the address lookup service" when {
+            "addressLookupId exists in session data but journey is expired/invalid" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Right(Some(testUIJourneySessionData)))
+
+              when(mockAddressLookupService.fetchAddress(any())(any()))
+                .thenReturn(Future(Left(AddressError("Not found"))))
+
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+                .thenReturn(Future(Right(Some("Sample location"))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) mustBe Some("Sample location")
             }
           }
 

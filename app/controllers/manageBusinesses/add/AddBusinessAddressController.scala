@@ -90,7 +90,14 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
       case Right(Some(sessionData)) =>
         sessionData.addIncomeSourceData.flatMap(_.addressLookupId) match {
           case Some(addressLookupId) =>
-            Future.successful(Redirect(addressLookupConfirmUrl(addressLookupId)))
+            addressLookupService.fetchAddress(Some(addressLookupId)).flatMap {
+              case Right(_) =>
+                Future.successful(Redirect(addressLookupConfirmUrl(addressLookupId)))
+              case Left(_) =>
+                Logger("application").info(s"[AddBusinessAddressController] - addressLookupId expired/invalid, starting new ALF journey")
+                initialiseJourney(isAgent = isAgent, mode = mode)(user, errorHandler)
+            }
+
           case None =>
             initialiseJourney(isAgent = isAgent, mode = mode)(user, errorHandler)
         }
