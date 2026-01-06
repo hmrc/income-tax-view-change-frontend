@@ -24,7 +24,7 @@ import controllers.BaseController
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.DateServiceInterface
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -80,6 +80,9 @@ class ItsaStatusRetrievalAction @Inject()(
           case Some(Agent) =>
             Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Agent YouMustWaitToSignUp page")
             Left(Redirect(controllers.optIn.routes.YouMustWaitToSignUpController.show(isAgent = true)))
+          case Some(Organisation) =>
+            Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] User has passed in as organisation affinity group, redirecting to internal server error page for user")
+            Left(internalServerErrorFor(req, "affinity-group", None))
           case None =>
             Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
             Left(internalServerErrorFor(req, "affinity-group", None))
