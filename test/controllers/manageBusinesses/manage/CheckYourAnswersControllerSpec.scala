@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.manage
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
@@ -31,23 +32,28 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{SessionService, UpdateIncomeSourceService}
+import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
 
 import scala.concurrent.Future
 
-class CheckYourAnswersControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter
-  with MockSessionService {
+class CheckYourAnswersControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService {
 
   lazy val mockUpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService)
+      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
+
+  private lazy val testTaxYear = "2023"
+  private lazy val testChangeToAnnual = "annual"
+  private lazy val testChangeToQuarterly = "quarterly"
 
   lazy val testController = app.injector.instanceOf[CheckYourAnswersController]
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
@@ -62,6 +68,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "render the check your answers page" when {
             "the session contains all relevant data" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusinessWithLatency()
 
               setupMockCreateSession(true)
@@ -81,6 +88,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "redirect to the Cannot Go Back page" when {
             "the journey is complete" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -93,7 +101,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
             }
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
 
       s"submit(isAgent = $isAgent, incomeSourceType = $incomeSourceType)" when {
@@ -103,6 +111,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "redirect to the manage obligations page" when {
             "the reporting method is updated to annual" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
@@ -130,6 +139,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
 
             "the reporting method is updated to quarterly" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
@@ -159,6 +169,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
           "redirect to ReportingMethodChangeErrorController" when {
             "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
@@ -181,12 +192,8 @@ class CheckYourAnswersControllerSpec extends MockAuthActions
             }
           }
         }
-        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }
-
-  private lazy val testTaxYear = "2023"
-  private lazy val testChangeToAnnual = "annual"
-  private lazy val testChangeToQuarterly = "quarterly"
 }

@@ -236,6 +236,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
+  val testObligationsChronologicalModel: ObligationsModel = ObligationsModel(Seq(obligationsModelDataSucessful))
+
   val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = None)
 
   val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2023, 2024)))
@@ -423,6 +425,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val previousCalculationExample: String = "For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."
     val previousCalculationContactHmrc: String = "If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC (opens in new tab)."
     val previousCalculationBill: String = "Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund."
+    val quarterlyUpdate: String = "Quarterly update"
+    val businessIncome: String = "Business income"
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
@@ -441,6 +445,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         case "Crystallisation" => "Final declaration"
         case _ => updateType
       }
+    }
+
+    def updatePeriod(from: String, to: String): String = {
+      s"The update period from $from to $to"
     }
   }
 
@@ -905,6 +913,35 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
               row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
           }
         }
+      }
+
+      "display submissions by due-date should be in chronological order" in new Setup(estimateView(obligations = testObligationsChronologicalModel)) {
+        val submissions: Element = document.getElementById("submissions").selectHead(s"div:nth-of-type(3)")
+        document.getElementById("submissions-tab-description").text() shouldBe submissionsDescription
+
+        submissions.selectHead("thead").selectNth("th", 1).text shouldBe submission
+        submissions.selectHead("thead").selectNth("th", 2).text shouldBe updateIncomeSource
+        submissions.selectHead("thead").selectNth("th", 3).text shouldBe updateDateSubmitted
+
+        submissions.select(".govuk-table tbody tr").size() shouldBe 3
+
+        submissions.select(".govuk-table").first().selectHead("caption").text() shouldBe
+          updatePeriod("1 May 2016", "30 Jul 2016")
+        submissions.select(".govuk-table tbody td:nth-child(1)").first().text() shouldBe quarterlyUpdate
+        submissions.select(".govuk-table tbody td:nth-child(2)").first().text() shouldBe businessIncome
+        submissions.select(".govuk-table tbody td:nth-child(3)").first().text() shouldBe "30 Jul 2016"
+
+        submissions.select(".govuk-table").get(1).selectHead("caption").text() shouldBe
+          updatePeriod("1 Jan 2017", "30 Mar 2017")
+        submissions.select(".govuk-table tbody td:nth-child(1)").get(1).text() shouldBe quarterlyUpdate
+        submissions.select(".govuk-table tbody td:nth-child(2)").get(1).text() shouldBe businessIncome
+        submissions.select(".govuk-table tbody td:nth-child(3)").get(1).text() shouldBe "30 Mar 2017"
+
+        submissions.select(".govuk-table").last().selectHead("caption").text() shouldBe
+          updatePeriod("1 Apr 2017", "30 Jun 2017")
+        submissions.select(".govuk-table tbody td:nth-child(1)").last().text() shouldBe quarterlyUpdate
+        submissions.select(".govuk-table tbody td:nth-child(2)").last().text() shouldBe businessIncome
+        submissions.select(".govuk-table tbody td:nth-child(3)").last().text() shouldBe "30 Jun 2017"
       }
 
       "display the latest calculation tab when pfa is enabled and the user has an amended latest calculation" in new Setup(calculationWithLatestAmendmentsView(false)) {

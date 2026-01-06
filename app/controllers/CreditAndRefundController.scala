@@ -23,7 +23,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.admin.{ClaimARefundR18, CreditsRefundsRepay}
+import models.admin.CreditsRefundsRepay
 import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -67,7 +67,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case creditsModel: CreditsModel =>
-        val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel, isEnabled(ClaimARefundR18))
+        val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel)
         auditClaimARefund(creditsModel)
         Ok(view(viewModel, isAgent, backUrl)(user, user, messages))
       case _ => logAndRedirect("Invalid response from financial transactions")

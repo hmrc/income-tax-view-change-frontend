@@ -45,7 +45,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
       "return a credit history error (~getFinancialDetails failed)" in {
         setupMockGetFinancialDetails(taxYear, nino)(FinancialDetailsErrorModel(500, "ERROR"))
         setupMockGetFinancialDetails(taxYear + 1, nino)(FinancialDetailsErrorModel(500, "ERROR"))
-        TestCreditHistoryService.getCreditsHistory(taxYear, nino, claimARefundR18Enabled = true).futureValue shouldBe Left(CreditHistoryError)
+        TestCreditHistoryService.getCreditsHistory(taxYear, nino).futureValue shouldBe Left(CreditHistoryError)
       }
     }
 
@@ -54,7 +54,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
         "return a list of MFA/BC/CutOver credits" in {
           setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetails)
           setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetails_PlusOneYear)
-          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, claimARefundR18Enabled = true)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))
           }
@@ -62,7 +62,7 @@ class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConn
         "return a list of all credits" in {
           setupMockGetFinancialDetails(taxYear, nino)(taxYearFinancialDetailsAllCredits)
           setupMockGetFinancialDetails(taxYear + 1, nino)(taxYearFinancialDetailsAllCreditsPlusOneYear)
-          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino, claimARefundR18Enabled = true)
+          val futureResult = TestCreditHistoryService.getCreditsHistory(taxYear, nino)
           whenReady(futureResult) { result =>
             result shouldBe Right(List(
               creditDetailModelasSetInterest, creditDetailModelasCutOver, creditDetailModelasMfa, creditDetailModelasBCC))

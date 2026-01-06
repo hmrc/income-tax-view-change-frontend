@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.cease
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationCeased
@@ -31,7 +32,7 @@ import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.UpdateIncomeSourceTestConstants
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
@@ -49,7 +50,10 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService)
+      api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testCeaseCheckIncomeSourceDetailsController =
@@ -97,6 +101,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
           "return 200 OK" when {
             "using the manage businesses journey" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -115,6 +120,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
           "redirect to the Cannot Go Back page" when {
             "the journey is complete" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -150,6 +156,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
           s"return 303 SEE_OTHER and redirect to $expectedRedirect" when {
             "using the manage businesses journey" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
@@ -166,6 +173,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
           s"return 303 SEE_OTHER and redirect to Income Source Not Ceased Controller" when {
             "updating Cessation date fails" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
@@ -184,6 +192,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
           s"return 303 SEE_OTHER and redirect to the triggered migration check hmrc records page" when {
             "using the triggered migration journey" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType), isTriggeredMigration = true))))
 
@@ -202,6 +211,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
           s"return 500 INTERNAL_SERVER_ERROR" when {
             "income source is missing" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
               mockNoIncomeSources()
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 

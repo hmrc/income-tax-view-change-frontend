@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -26,7 +27,8 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.CreateBusinessDetailsService
+import services.{CreateBusinessDetailsService, DateServiceInterface}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, foreignPropertyIncome, ukPropertyIncome}
 
 import scala.concurrent.Future
 
@@ -36,7 +38,10 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService)
+      api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceNotAddedController]
@@ -57,9 +62,9 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
 
   def mockIncomeSource(incomeSourceType: IncomeSourceType) = {
     incomeSourceType match {
-      case SelfEmployment => mockBusinessIncomeSource()
-      case UkProperty => mockUKPropertyIncomeSource()
-      case ForeignProperty => mockForeignPropertyIncomeSource()
+      case SelfEmployment => businessIncome
+      case UkProperty => ukPropertyIncome
+      case ForeignProperty => foreignPropertyIncome
     }
   }
 
@@ -80,8 +85,10 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
         s"the user is authenticated as a $mtdRole" should {
           "return 200 and render Income Source Not Added Error Page" when {
             "user is trying to add SE business" in {
+
               setupMockSuccess(mtdRole)
-              mockIncomeSource(incomeSourceType)
+              mockItsaStatusRetrievalAction(mockIncomeSource(incomeSourceType))
+              setupMockGetIncomeSourceDetails(mockIncomeSource(incomeSourceType))
 
               val result: Future[Result] = action(fakeRequest)
 

@@ -20,6 +20,7 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.getMinimalMTDITUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.models.DateFormElement
+import org.scalatest.Assertion
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
@@ -32,6 +33,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import java.time.LocalDate
 
 class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSupport {
+
   val mockDateService: DateService = app.injector.instanceOf[DateService]
 
   val testUser: MtdItUser[_] = getMinimalMTDITUser(Some(Individual), ukPlusForeignPropertyWithSoleTraderIncomeSource, false, fakeRequestNoSession)
@@ -56,9 +58,12 @@ class IncomeSourceEndDateFormSpec extends AnyWordSpec with Matchers with TestSup
     }
   }
 
-  def setupBindFutureDateTest(incomeSourceType: IncomeSourceType): Unit = {
-    val form: Form[DateFormElement] = new IncomeSourceEndDateForm(mockDateService).apply(incomeSourceType, setupTestId(incomeSourceType))(testUser)
-    val futureYear = dateService.getCurrentTaxYearEnd + 1
+  def setupBindFutureDateTest(incomeSourceType: IncomeSourceType): Assertion = {
+
+    val form: Form[DateFormElement] =
+      new IncomeSourceEndDateForm(mockDateService).apply(incomeSourceType, setupTestId(incomeSourceType))(testUser)
+
+    val futureYear = mockDateService.getCurrentTaxYearEnd + 1
     val formData = Map("income-source-end-date.day" -> "20", "income-source-end-date.month" -> "12", "income-source-end-date.year" -> s"$futureYear")
     val completedForm = form.bind(formData)
 

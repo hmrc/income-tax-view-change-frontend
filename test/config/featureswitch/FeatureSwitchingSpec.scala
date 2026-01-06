@@ -59,7 +59,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     SelfServeTimeToPayR17,
     SubmitClaimToAdjustToNrs,
     TriggeredMigration,
-    ClaimARefundR18,
     PostFinalisationAmendmentsR18
   )
 
