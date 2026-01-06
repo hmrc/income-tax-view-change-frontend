@@ -71,7 +71,7 @@
 }
 @h2(msg = messages("tax-year-summary.submissions"), classes = "govuk-heading-l")
 @p(id = Some("submissions-tab-description"))(Html(messages("submissionsTab.desc")))
-@viewModel.groupedObligations.map { case (due, dueObligations) =>
+@viewModel.groupedObligations.reverse.map { case (due, dueObligations) =>
 
 <div class="govuk-tax-years-submissions-table">
     @h3WithHtml(
