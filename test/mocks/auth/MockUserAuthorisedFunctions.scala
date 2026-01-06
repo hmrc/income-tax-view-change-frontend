@@ -35,12 +35,12 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
 
   lazy val predicate: Predicate = AffinityGroup.Agent or isMTDUserPredicate
 
-  def setupMockUserAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit =
-    when(mockAuthService.authorised(predicate))
+  def setupMockUserAuthSuccess[X, Y](mockFAF: FrontendAuthorisedFunctions)(retrievalValue: X ~ Y): Unit =
+    when(mockFAF.authorised(predicate))
       .thenReturn(
-        new authService.AuthorisedFunction(EmptyPredicate) {
+        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
           override def retrieve[A](retrieval: Retrieval[A]) =
-            new authService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+            new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
               override def apply[B](body: A => Future[B])
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] =
                 body(retrievalValue.asInstanceOf[A])
@@ -51,14 +51,14 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
   def setupMockUserAuthException(exception: AuthorisationException = new InvalidBearerToken): Unit =
     when(mockAuthService.authorised(predicate))
       .thenReturn(
-        new authService.AuthorisedFunction(EmptyPredicate) {
+        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
 
           override def apply[A](body: => Future[A])
                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
             Future.failed(exception)
 
           override def retrieve[A](retrieval: Retrieval[A]) =
-            new authService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+            new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
               override def apply[B](body: A => Future[B])
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] =
                 Future.failed(exception)
@@ -66,12 +66,12 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
         }
       )
 
-  def setupMockAuthorisedUserNoCheckAuthSuccess[X, Y](retrievalValue: X ~ Y): Unit =
-    when(mockAuthService.authorised(EmptyPredicate))
+  def setupMockAuthorisedUserNoCheckAuthSuccess[X, Y](mockFAF: FrontendAuthorisedFunctions)(retrievalValue: X ~ Y): Unit =
+    when(mockFAF.authorised(EmptyPredicate))
       .thenReturn(
-        new authService.AuthorisedFunction(EmptyPredicate) {
+        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
           override def retrieve[A](retrieval: Retrieval[A]) =
-            new authService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+            new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
               override def apply[B](body: A => Future[B])
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] =
                 body(retrievalValue.asInstanceOf[A])
@@ -82,14 +82,14 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
   def setupMockUserAuthNoCheckException(exception: AuthorisationException = new InvalidBearerToken): Unit =
     when(mockAuthService.authorised(EmptyPredicate))
       .thenReturn(
-        new authService.AuthorisedFunction(EmptyPredicate) {
+        new mockAuthService.AuthorisedFunction(EmptyPredicate) {
 
           override def apply[A](body: => Future[A])
                                (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
             Future.failed(exception)
 
           override def retrieve[A](retrieval: Retrieval[A]) =
-            new authService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
+            new mockAuthService.AuthorisedFunctionWithResult[A](EmptyPredicate, retrieval) {
               override def apply[B](body: A => Future[B])
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[B] =
                 Future.failed(exception)

@@ -53,7 +53,7 @@ trait MockAuthActions
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
-    reset(authService)
+    reset(mockAuthService)
   }
 
   override def afterEach() = {
@@ -61,16 +61,18 @@ trait MockAuthActions
   }
 
   lazy val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
+  lazy val mockFAF: FrontendAuthorisedFunctions = mock(mockFrontendAuthorisedFunctions)
 
-  lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder =
+  lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .overrides(
-        api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockAuthService),
+        api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockFAF),
         api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService),
         api.inject.bind[AuditingService].toInstance(mockAuditingService),
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
         api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService)
       )
+  }
 
 
   def setupMockSuccess(mtdUserRole: MTDUserRole): Unit = mtdUserRole match {
@@ -82,13 +84,13 @@ trait MockAuthActions
   def setupMockUserAuth: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(hasNino = true, hasSA = true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
-    setupMockUserAuthSuccess(retrievalValue)
+    setupMockUserAuthSuccess(mockFAF)(retrievalValue)
   }
 
   def setupMockUserAuthNoSAUtr: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(hasNino = true, hasSA = false)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
-    setupMockUserAuthSuccess(retrievalValue)
+    setupMockUserAuthSuccess(mockFAF)(retrievalValue)
   }
 
   def setupMockAgentWithClientAuth(isSupportingAgent: Boolean): Unit = {
