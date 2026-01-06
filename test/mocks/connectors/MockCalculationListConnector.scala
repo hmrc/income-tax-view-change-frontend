@@ -22,6 +22,7 @@ import models.core.Nino
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import testUtils.UnitSpec
 
@@ -36,14 +37,13 @@ trait MockCalculationListConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockCalculationListConnector)
   }
 
-  def setupGetLegacyCalculationList(nino: String, taxYear: String)(response: CalculationListResponseModel): Unit = {
-    when(mockCalculationListConnector.getLegacyCalculationList(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(taxYear))(any()))
+  def setupGetLegacyCalculationList(nino: String, taxYear: String)(response: CalculationListResponseModel): OngoingStubbing[Future[CalculationListResponseModel]] = {
+    when(mockCalculationListConnector.getLegacyCalculationList(any(), ArgumentMatchers.eq(taxYear))(any()))
       .thenReturn(Future.successful(response))
   }
 
-  def setupGetCalculationList(nino: String, taxYearRange: String)(response: CalculationListResponseModel): Unit = {
+  def setupGetCalculationList(nino: String, taxYearRange: String)(response: CalculationListResponseModel): OngoingStubbing[Future[CalculationListResponseModel]] = {
     when(mockCalculationListConnector.getCalculationList(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(taxYearRange))(any()))
       .thenReturn(Future.successful(response))
   }
-
 }

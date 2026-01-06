@@ -36,7 +36,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ConfirmClientUTRController @Inject()(confirmClient: ConfirmClientUTRView,
+class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUTRView,
                                            val authActions: AuthActions,
                                            val auditingService: AuditingService,
                                            val sessionDataService: SessionDataService)
@@ -48,34 +48,48 @@ class ConfirmClientUTRController @Inject()(confirmClient: ConfirmClientUTRView,
 
   def show: Action[AnyContent] =
     authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
-      Ok(confirmClient(
-        clientName = user.optClientNameAsString,
-        clientUtr = user.saUtr,
-        postAction = routes.ConfirmClientUTRController.submit(),
-        backUrl = backUrl
-      ))
+      Ok(
+        confirmClientUTRView(
+          clientName = user.optClientNameAsString,
+          clientUtr = user.saUtr,
+          postAction = routes.ConfirmClientUTRController.submit(),
+          backUrl = backUrl
+        )
+      )
     }
 
-  def submit: Action[AnyContent] = authActions.asMTDAgentWithUnconfirmedClient.async { implicit user =>
-    val clientName = user.optClientNameAsString.getOrElse("")
-    val names = clientName.split(" ")
+  def submit: Action[AnyContent] =
+    authActions.asMTDAgentWithUnconfirmedClient.async { implicit user =>
 
-    handleSessionCookies(SessionCookieData(user.mtditid, user.nino, user.saUtr.getOrElse(""),
-      names.headOption, names.lastOption, user.isSupportingAgent)) { _ =>
-      auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
-        clientName = clientName,
-        nino = user.nino,
-        mtditid = user.mtditid,
-        arn = user.arn.getOrElse(""),
-        saUtr = user.saUtr.getOrElse(""),
-        isSupportingAgent = user.isSupportingAgent,
-        credId = user.credId
-      ))
+      val clientName = user.optClientNameAsString.getOrElse("")
+      val names = clientName.split(" ")
 
-      Future.successful(Redirect(controllers.routes.HomeController.showAgent().url).addingToSession(SessionKeys.confirmedClient -> "true"))
+      handleSessionCookies(
+        SessionCookieData(
+          mtditid = user.mtditid,
+          nino = user.nino,
+          utr = user.saUtr.getOrElse(""),
+          clientFirstName = names.headOption,
+          clientLastName = names.lastOption,
+          isSupportingAgent = user.isSupportingAgent
+        )
+      ) { _ =>
+        auditingService.extendedAudit(ConfirmClientDetailsAuditModel(
+          clientName = clientName,
+          nino = user.nino,
+          mtditid = user.mtditid,
+          arn = user.arn.getOrElse(""),
+          saUtr = user.saUtr.getOrElse(""),
+          isSupportingAgent = user.isSupportingAgent,
+          credId = user.credId
+        ))
 
+        Future(
+          Redirect(controllers.routes.HomeController.showAgent().url)
+            .addingToSession(SessionKeys.confirmedClient -> "true")
+        )
     }
-  }
+    }
 
   lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url
 
@@ -87,7 +101,7 @@ class ConfirmClientUTRController @Inject()(confirmClient: ConfirmClientUTRView,
       sessionDataService.postSessionData(sessionCookieData.toSessionDataModel).flatMap {
         case Left(value: SessionDataPostFailure) =>
           Logger("application").error(s"[Agent] Posting user session data was unsuccessful. Status: ${value.status}, error message: ${value.errorMessage}")
-          Future.successful(itvcErrorHandler.showInternalServerError())
+          Future(itvcErrorHandler.showInternalServerError())
         case Right(value: SessionDataPostSuccess) =>
           Logger("application").info(s"[Agent] Posting user session data was successful. Status: ${value.status}")
           codeBlock(sessionCookieData.toSessionCookieSeq)
