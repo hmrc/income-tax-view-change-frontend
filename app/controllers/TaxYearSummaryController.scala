@@ -28,10 +28,11 @@ import implicits.ImplicitDateFormatter
 import models.admin._
 import models.core.Nino
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.obligations.ObligationsModel
-import models.taxyearsummary.TaxYearSummaryChargeItem
+import models.taxyearsummary.{TaxYearSummaryChargeItem, TaxYearViewScenarios}
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
@@ -49,6 +50,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TaxYearSummaryController @Inject()(authActions: AuthActions,
                                          taxYearSummaryView: TaxYearSummaryView,
+                                         taxYearSummaryService: TaxYearSummaryService,
                                          calculationService: CalculationService,
                                          financialDetailsService: FinancialDetailsService,
                                          itvcErrorHandler: ItvcErrorHandler,
@@ -58,11 +60,12 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                                          val languageUtils: LanguageUtils,
                                          val auditingService: AuditingService,
                                          claimToAdjustService: ClaimToAdjustService)
-                                        (implicit val appConfig: FrontendAppConfig,
-                                         dateService: DateServiceInterface,
-                                         mcc: MessagesControllerComponents,
-                                         val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
+                                        (
+                                          implicit val appConfig: FrontendAppConfig,
+                                          dateService: DateServiceInterface,
+                                          mcc: MessagesControllerComponents,
+                                          val ec: ExecutionContext
+                                        ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
 
   private def showForecast(calculationSummary: Option[CalculationSummary]): Boolean = {
     val isCrystallised = calculationSummary.exists(_.crystallised)
@@ -70,16 +73,16 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
     calculationSummary.isDefined && !isCrystallised && forecastDataPresent
   }
 
-  private def view(liabilityCalc: LiabilityCalculationResponseModel,
-                   previousCalc: Option[LiabilityCalculationResponseModel],
-                   chargeItems: List[TaxYearSummaryChargeItem],
-                   taxYear: Int,
-                   obligations: ObligationsModel,
-                   claimToAdjustViewModel: TYSClaimToAdjustViewModel,
-                   backUrl: String,
-                   origin: Option[String],
-                   isAgent: Boolean
-                  )(implicit mtdItUser: MtdItUser[_]): Result = {
+  private def renderView(liabilityCalc: LiabilityCalculationResponseModel,
+                         previousCalc: Option[LiabilityCalculationResponseModel],
+                         chargeItems: List[TaxYearSummaryChargeItem],
+                         taxYear: Int,
+                         obligations: ObligationsModel,
+                         claimToAdjustViewModel: TYSClaimToAdjustViewModel,
+                         backUrl: String,
+                         origin: Option[String],
+                         isAgent: Boolean
+                        )(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     (liabilityCalc, previousCalc, getLPP2Link(chargeItems, isAgent)) match {
       case (liabilityCalc: LiabilityCalculationResponse, None, Some(lpp2Url)) =>
@@ -98,14 +101,13 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
       case (_, _, None) =>
         if (isAgent) {
-          Logger("application").error(
-            s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-          agentItvcErrorHandler.showInternalServerError()
+          Logger("application").error(s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          Future(agentItvcErrorHandler.showInternalServerError())
         }
         else {
-          Logger("application").error(
-            s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-          itvcErrorHandler.showInternalServerError()
+          Logger("application").error(s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+
+          Future(itvcErrorHandler.showInternalServerError())
         }
     }
   }
@@ -119,44 +121,60 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                                 taxYear: Int,
                                 backUrl: String,
                                 origin: Option[String],
-                                isAgent: Boolean)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]) = {
+                                isAgent: Boolean
+                               )(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Result] = {
     val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
-    val calculationSummary = Some(CalculationSummary(
-      formatErrorMessages(
-        latestCalc,
-        messagesApi,
-        isAgent)(messagesApi.preferred(lang))))
+    val calculationSummary =
+      Some(CalculationSummary(
+        formatErrorMessages(
+          liabilityCalc = latestCalc,
+          messagesProperty = messagesApi,
+          isAgent = isAgent)(messagesApi.preferred(lang))
+      ))
 
-    val previousCalculationSummary = previousCalc.map(calc => CalculationSummary(
-      formatErrorMessages(
-        calc,
-        messagesApi,
-        isAgent)(messagesApi.preferred(lang))))
+    val previousCalculationSummary =
+      previousCalc
+        .map(calc =>
+          CalculationSummary(
+            formatErrorMessages(
+              liabilityCalc = calc,
+              messagesProperty = messagesApi,
+              isAgent = isAgent)(messagesApi.preferred(lang))
+          )
+        )
 
-    val taxYearSummaryViewModel: TaxYearSummaryViewModel = TaxYearSummaryViewModel(
-      calculationSummary,
-      previousCalculationSummary,
-      chargeItems,
-      obligations,
-      showForecastData = showForecast(calculationSummary),
-      ctaViewModel = claimToAdjustViewModel,
-      lpp2Url,
-      isEnabled(PostFinalisationAmendmentsR18)
-    )
+    val taxYearSummaryViewModel: TaxYearSummaryViewModel =
+      TaxYearSummaryViewModel(
+        calculationSummary = calculationSummary,
+        previousCalculationSummary = previousCalculationSummary,
+        charges = chargeItems,
+        obligations = obligations,
+        showForecastData = showForecast(calculationSummary),
+        ctaViewModel = claimToAdjustViewModel,
+        LPP2Url = lpp2Url,
+        pfaEnabled = isEnabled(PostFinalisationAmendmentsR18)
+      )
+
     lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
 
     Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with Calc data")
 
-    Ok(taxYearSummaryView(
-      taxYear = taxYear,
-      viewModel = taxYearSummaryViewModel,
-      backUrl = backUrl,
-      origin = origin,
-      isAgent = isAgent,
-      ctaLink = ctaLink
-    ))
+    for {
+      scenarios <- taxYearSummaryService.determineCannotDisplayCalculationContentScenario(mtdItUser.nino, TaxYear(taxYear, taxYear + 1))
+    } yield {
+      Ok(taxYearSummaryView(
+        taxYear = taxYear,
+        viewModel = taxYearSummaryViewModel,
+        backUrl = backUrl,
+        origin = origin,
+        isAgent = isAgent,
+        ctaLink = ctaLink,
+        taxYearViewScenarios = scenarios
+      ))
+    }
   }
 
   private def handleCalcError(error: LiabilityCalculationError,
@@ -169,7 +187,7 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
                               backUrl: String,
                               origin: Option[String],
                               isAgent: Boolean
-                             )(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]) = {
+                             )(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Result] = {
 
     if (error.status == NO_CONTENT) {
       lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
@@ -200,22 +218,27 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
       Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with No Calc data")
 
-      Ok(taxYearSummaryView(
-        taxYear = taxYear,
-        viewModel = viewModel,
-        backUrl = backUrl,
-        origin = origin,
-        isAgent = isAgent,
-        ctaLink = ctaLink
-      ))
+      for {
+        scenarios: TaxYearViewScenarios <- taxYearSummaryService.determineCannotDisplayCalculationContentScenario(mtdItUser.nino, TaxYear(taxYear, taxYear + 1))
+      } yield {
+        Ok(taxYearSummaryView(
+          taxYear = taxYear,
+          viewModel = viewModel,
+          backUrl = backUrl,
+          origin = origin,
+          isAgent = isAgent,
+          ctaLink = ctaLink,
+          taxYearViewScenarios = scenarios
+        ))
+      }
     } else {
       if (isAgent) {
         Logger("application").error(s"[Agent][$taxYear]] No new calc deductions data error found. Downstream error")
-        agentItvcErrorHandler.showInternalServerError()
+        Future(agentItvcErrorHandler.showInternalServerError())
       }
       else {
         Logger("application").error(s"[$taxYear]] No new calc deductions data error found. Downstream error")
-        itvcErrorHandler.showInternalServerError()
+        Future(itvcErrorHandler.showInternalServerError())
       }
     }
   }
@@ -339,12 +362,20 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
         val mtdItId: String = user.mtditid
         val nino: String = user.nino
         for {
-          viewModel <- claimToAdjustViewModel(Nino(value = user.nino), taxYear)
+          viewModel <- claimToAdjustViewModel(nino = Nino(value = user.nino), taxYear = taxYear)
           (latestCalcResponse, previousResponse) <- calculationService.getLatestAndPreviousCalculationDetails(mtdItId, nino, taxYear)
-        } yield {
-          view(latestCalcResponse, previousResponse, charges, taxYear, obligationsModel, viewModel,
+          view <- renderView(
+            liabilityCalc = latestCalcResponse,
+            previousCalc = previousResponse,
+            chargeItems = charges,
+            taxYear = taxYear,
+            obligations = obligationsModel,
+            claimToAdjustViewModel = viewModel,
             backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin),
-            origin = origin, isAgent = isAgent)
+            origin = origin, isAgent = isAgent
+          )
+        } yield {
+          view
             .addingToSession(gatewayPage -> TaxYearSummaryPage.name)
             .addingToSession(calcPagesBackPage -> "ITVC")
         }
@@ -357,19 +388,20 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
       if (taxYear.toString.matches("[0-9]{4}")) {
         handleRequest(taxYear, origin, isAgent = false)
       } else {
         Future.successful(itvcErrorHandler.showInternalServerError())
       }
-  }
+    }
 
-  def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async { implicit user =>
-    // TODO: restore taxYear validation
-    handleRequest(taxYear, None, isAgent = true)
-  }
+  def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit user =>
+      // TODO: restore taxYear validation
+      handleRequest(taxYear, None, isAgent = true)
+    }
 
   // Individual back urls
   private def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url

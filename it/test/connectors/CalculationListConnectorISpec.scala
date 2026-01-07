@@ -46,7 +46,7 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
 
           WiremockHelper.stubGet(s"/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd", OK, responseBody)
 
-          val result = connector.getLegacyCalculationList(Nino(nino), taxYearEnd).futureValue
+          val result = connector.getLegacyCalculationList(nino, taxYearEnd).futureValue
 
           result shouldBe CalculationListModel("TEST_ID", "TEST_STAMP", "TEST_TYPE", Some(false))
           WiremockHelper.verifyGet(s"/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd")
@@ -56,7 +56,7 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
 
           WiremockHelper.stubGet(s"/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd", INTERNAL_SERVER_ERROR, responseBody)
 
-          val result = connector.getLegacyCalculationList(Nino(nino), taxYearEnd).futureValue
+          val result = connector.getLegacyCalculationList(nino, taxYearEnd).futureValue
 
           result shouldBe CalculationListErrorModel(INTERNAL_SERVER_ERROR, "{}")
           WiremockHelper.verifyGet(s"/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd")

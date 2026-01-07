@@ -36,7 +36,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services.DateServiceInterface
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 
 import scala.concurrent.Future
 
@@ -241,5 +241,40 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
           fail("Expected Agent error page but fell into a Right branch")
       }
     }
+
+    "redirect to error page when user's affinity group is 'Organisation'" in {
+
+      val itsaStatusResponse =
+        ITSAStatusResponseModel(
+          taxYear = "2026-27",
+          itsaStatusDetails = Some(List(
+            StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
+            StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
+            StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
+          ))
+        )
+
+      val mtdUser = getMtdItUser(Organisation)
+
+      when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
+        .thenReturn(Future(Right(List(itsaStatusResponse))))
+
+      when(mockDateServiceInterface.getCurrentTaxYear)
+        .thenReturn(TaxYear(2025, 2026))
+
+      val result = action.refine(mtdUser).futureValue
+
+      result match {
+        case Left(res) =>
+          val body = contentAsString(Future.successful(res))
+          val document = Jsoup.parse(body)
+          val title = document.title()
+          res.header.status shouldBe INTERNAL_SERVER_ERROR
+          title shouldBe "Sorry, there is a problem with the service - GOV.UK"
+        case Right(_) =>
+          fail("Expected Organisation error page but fell into a Right branch")
+      }
+    }
+
   }
 }

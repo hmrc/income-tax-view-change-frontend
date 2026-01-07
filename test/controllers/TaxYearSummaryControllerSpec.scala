@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{BusinessDetailsConnector, CalculationListConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.auth.MockAuthActions
@@ -28,16 +28,16 @@ import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, Message, Messages}
 import models.obligations._
-import models.taxyearsummary.TaxYearSummaryChargeItem
+import models.taxyearsummary.{MtdSoftware, TaxYearSummaryChargeItem}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, _}
-import services._
+import services.{TaxYearSummaryService, _}
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
@@ -51,12 +51,15 @@ import scala.concurrent.Future
 
 class TaxYearSummaryControllerSpec
   extends MockAuthActions
-    with MockCalculationService
-    with MockFinancialDetailsService
-    with MockNextUpdatesService
-    with MockIncomeTaxCalculationConnector
-    with MockClaimToAdjustService
-    with ChargeConstants {
+  with MockCalculationService
+  with MockFinancialDetailsService
+  with MockNextUpdatesService
+  with MockIncomeTaxCalculationConnector
+  with MockClaimToAdjustService
+  with ChargeConstants {
+
+  lazy val mockCalculationListConnector: CalculationListConnector = mock(classOf[CalculationListConnector])
+  lazy val mockTaxYearSummaryService: TaxYearSummaryService = mock(classOf[TaxYearSummaryService])
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
@@ -67,6 +70,8 @@ class TaxYearSummaryControllerSpec
         api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[CalculationListConnector].toInstance(mockCalculationListConnector),
+        api.inject.bind[TaxYearSummaryService].toInstance(mockTaxYearSummaryService),
       ).build()
 
   lazy val taxYearSummaryView: TaxYearSummaryView = app.injector.instanceOf[TaxYearSummaryView]
@@ -148,6 +153,9 @@ class TaxYearSummaryControllerSpec
                 when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                   .thenReturn(Future.successful(singleBusinessIncome))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 mockGetNextUpdates(
                   fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -173,6 +181,9 @@ class TaxYearSummaryControllerSpec
                 when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                   .thenReturn(Future.successful(singleBusinessIncome))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
@@ -194,6 +205,9 @@ class TaxYearSummaryControllerSpec
 
                 when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                   .thenReturn(Future.successful(singleBusinessIncome))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
@@ -221,6 +235,9 @@ class TaxYearSummaryControllerSpec
                 when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                   .thenReturn(Future.successful(singleBusinessIncome))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
@@ -240,7 +257,8 @@ class TaxYearSummaryControllerSpec
                     testTaxYear, taxYearSummary,
                     taxYearsBackLink(isAgent),
                     ctaLink = ctaLink(isAgent),
-                    isAgent = isAgent
+                    isAgent = isAgent,
+                    taxYearViewScenarios = MtdSoftware
                   ).toString
 
                 val result = action(fakeRequest)
@@ -269,6 +287,9 @@ class TaxYearSummaryControllerSpec
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
@@ -280,7 +301,8 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString
 
                 val result = action(fakeRequest)
@@ -308,6 +330,8 @@ class TaxYearSummaryControllerSpec
                   response = testObligtionsModel
                 )
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
@@ -321,7 +345,8 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString
 
                 val result = action(fakeRequest)
@@ -348,6 +373,9 @@ class TaxYearSummaryControllerSpec
                   response = testObligtionsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
 
@@ -392,6 +420,9 @@ class TaxYearSummaryControllerSpec
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val result = action(fakeRequest)
 
                 status(result) shouldBe OK
@@ -414,6 +445,9 @@ class TaxYearSummaryControllerSpec
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val result = action(fakeRequest)
 
                 status(result) shouldBe OK
@@ -434,6 +468,9 @@ class TaxYearSummaryControllerSpec
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
                 contentAsString(result).contains("Adjust payments on account") shouldBe false
@@ -453,7 +490,11 @@ class TaxYearSummaryControllerSpec
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
@@ -478,6 +519,8 @@ class TaxYearSummaryControllerSpec
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
 
@@ -515,6 +558,9 @@ class TaxYearSummaryControllerSpec
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
 
@@ -554,6 +600,9 @@ class TaxYearSummaryControllerSpec
                   response = testObligtionsModel
                 )
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val result = action(fakeRequest)
 
                 Option(Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0")) shouldBe None
@@ -578,6 +627,9 @@ class TaxYearSummaryControllerSpec
 
               setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
+              when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                .thenReturn(Future(MtdSoftware))
+
               val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
               val expectedContent: String =
                 taxYearSummaryView(
@@ -592,7 +644,9 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   backUrl = homeBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
+                ).toString
 
               val result = action(fakeGetRequestBasedOnMTDUserType(mtdUserRole))
               status(result) shouldBe Status.OK
@@ -624,6 +678,9 @@ class TaxYearSummaryControllerSpec
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
@@ -635,7 +692,9 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
+                ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -664,7 +723,11 @@ class TaxYearSummaryControllerSpec
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
@@ -677,7 +740,9 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
+                ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -700,7 +765,11 @@ class TaxYearSummaryControllerSpec
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val mfaCharges: List[TaxYearSummaryChargeItem] = List(
                   chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None),
@@ -722,7 +791,8 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString
 
                 val result = action(fakeRequest)
@@ -747,6 +817,9 @@ class TaxYearSummaryControllerSpec
                   response = testObligtionsModel
                 )
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
@@ -758,7 +831,8 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString
 
                 val result = action(fakeRequest)
@@ -799,7 +873,8 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
                 ).toString()).text()
 
                 val result = action(fakeRequest)
@@ -828,6 +903,10 @@ class TaxYearSummaryControllerSpec
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val errorMessageVariableValues = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = false)(messages)
                 val calcOverview: CalculationSummary = CalculationSummary(errorMessageVariableValues)
 
@@ -841,7 +920,9 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent,
+                  taxYearViewScenarios = MtdSoftware
+                ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -863,6 +944,9 @@ class TaxYearSummaryControllerSpec
 
               when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                 .thenReturn(Future.successful(singleBusinessIncome))
+
+              when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                .thenReturn(Future(MtdSoftware))
 
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
@@ -889,6 +973,9 @@ class TaxYearSummaryControllerSpec
               when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                 .thenReturn(Future.successful(singleBusinessIncome))
 
+              when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                .thenReturn(Future(MtdSoftware))
+
               mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
                 response = ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR")
@@ -903,6 +990,9 @@ class TaxYearSummaryControllerSpec
               "provided with a negative tax year" in {
                 setupMockSuccess(mtdUserRole)
                 mockPropertyIncomeSource()
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val invalidTaxYearAction =
                   if (isAgent) {
@@ -946,6 +1036,9 @@ class TaxYearSummaryControllerSpec
 
               when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                 .thenReturn(Future.successful(singleBusinessIncome))
+
+              when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                .thenReturn(Future(MtdSoftware))
 
               mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
