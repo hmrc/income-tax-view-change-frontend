@@ -37,21 +37,25 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
                                      implicit val dateService: DateServiceInterface)
                                     (implicit ec: ExecutionContext) extends ClaimToAdjustHelper {
 
-//  def getPoaTaxYearForEntryPoint(nino: Nino)
-//                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
-//    {
-//      for {
-//        fdMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
-//        maybeTaxYear <- EitherT.right[Throwable](Future.successful {
-//          fdMaybe.flatMap(_.arePoaPaymentsPresent())
-//        })
-//      } yield maybeTaxYear
-//    }.value
-//  }
-
   def getPoaTaxYearForEntryPoint(nino: Nino)
-                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[TaxYear]] = {
-    checkValidYearsWithPOAs(nino)
+                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
+    val validTaxYearsWithPoas = getPoaAdjustableTaxYears.foldLeft[Future[Either[Exception, List[TaxYear]]]](Future.successful(Right(List.empty))) { (acc, item) =>
+      financialDetailsConnector.getFinancialDetails(item.endYear, nino.value).flatMap {
+        case financialDetails: FinancialDetailsModel if financialDetails.arePoaPaymentsPresent().isDefined => acc.map {
+          case Left(error) => Left(error)
+          case Right(yearsList) => Right(yearsList :+ item)
+        }
+        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Future.successful(Left(new Exception("There was an error whilst fetching financial details data")))
+        case _ => acc
+      }
+    } //this code produces either a Future[Left[Error]] if there was an error getting the finDetails, or a List (of 0-2) valid tax years with POAs
+    validTaxYearsWithPoas.flatMap {
+      case Left(error) => Future.successful(Left(error))
+      case Right(taxYearsList) => checkCrystallisation(nino, taxYearsList)(hc, dateService, calculationListConnector, ec).map {
+        case None => Right(None)
+        case Some(taxYear: TaxYear) => Right(Some(taxYear))
+      }
+    }
   }
 
   def getPoaForNonCrystallisedTaxYear(nino: Nino)
@@ -125,22 +129,6 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
         case _ => Right(None)
       }
-    }
-  }
-
-  private def checkValidYearsWithPOAs(nino: Nino)
-                                                (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[TaxYear]] = {
-   getPoaAdjustableTaxYears.foldLeft[Future[List[TaxYear]]](Future.successful(List.empty)) { (acc, item) =>
-      financialDetailsConnector.getFinancialDetails(item.endYear, nino.value).flatMap {
-        case financialDetails: FinancialDetailsModel if financialDetails.arePoaPaymentsPresent().isDefined => acc.map(list => list :+ item)
-        case _ => acc
-      }
-    }.flatMap {
-      validTaxYearsWithPoas =>
-        checkCrystallisation(nino, validTaxYearsWithPoas)(hc, dateService, calculationListConnector, ec).map {
-          case None => None
-          case Some(taxYear: TaxYear) => Some(taxYear)
-        }
     }
   }
 
