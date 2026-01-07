@@ -27,6 +27,7 @@ import testUtils.TestSupport
 
 
 class CalculationListServiceSpec extends TestSupport with MockCalculationListConnector {
+
   val mockDateService: DateService = mock(classOf[DateService])
 
   object TestCalculationListService extends CalculationListService(mockCalculationListConnector, mockDateService)
@@ -40,13 +41,13 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
     "return a CalculationListModel" when {
       "a success response is received from the connector" in {
         setupGetLegacyCalculationList(testNino, testTaxYear.toString)(CalculationListTestConstants.calculationListFull)
-        TestCalculationListService.getLegacyCalculationList(Nino(testNino), testTaxYear.toString).futureValue shouldBe
+        TestCalculationListService.getLegacyCalculationList(testNino, testTaxYear.toString).futureValue shouldBe
           CalculationListTestConstants.calculationListFull
       }
       "return a CalculationListErrorModel" when {
         "an error response is received from the connector" in {
           setupGetLegacyCalculationList(testNino, testTaxYear.toString)(CalculationListErrorModel(NOT_FOUND, notFoundText))
-          TestCalculationListService.getLegacyCalculationList(Nino(testNino), testTaxYear.toString).futureValue shouldBe
+          TestCalculationListService.getLegacyCalculationList(testNino, testTaxYear.toString).futureValue shouldBe
             CalculationListErrorModel(NOT_FOUND, notFoundText)
         }
       }
