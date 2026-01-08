@@ -17,7 +17,7 @@
 package testConstants
 
 import controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
-import enums.{MTDIndividual, MTDUserRole}
+import enums.{CesaSAReturn, MTDIndividual, MTDUserRole}
 import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
 
@@ -25,18 +25,21 @@ object NewCalcBreakdownItTestConstants {
 
   val liabilityCalculationModelError: LiabilityCalculationError = LiabilityCalculationError(432, "someerrorhere")
 
-  val liabilityCalculationModelDeductionsMinimal: LiabilityCalculationResponse = LiabilityCalculationResponse(
-    inputs = Inputs(personalInformation = PersonalInformation(
-      taxRegime = "UK", class2VoluntaryContributions = None
-    )),
-    calculation = Some(Calculation(
-      allowancesAndDeductions = Some(AllowancesAndDeductions()))),
-    metadata = Metadata(
-      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = "crystallisation",
-      calculationReason = Some("customerRequest")),
-    messages = None
-  )
+  val liabilityCalculationModelDeductionsMinimal: LiabilityCalculationResponse =
+    LiabilityCalculationResponse(
+      inputs = Inputs(personalInformation = PersonalInformation(
+        taxRegime = "UK", class2VoluntaryContributions = None
+      )),
+      calculation = Some(Calculation(
+        allowancesAndDeductions = Some(AllowancesAndDeductions()))),
+      metadata = Metadata(
+        calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+        calculationType = "crystallisation",
+        calculationReason = Some("customerRequest"),
+        calculationTrigger = Some(CesaSAReturn)
+      ),
+      messages = None
+    )
 
   val liabilityCalculationModelSuccessful: LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -299,7 +302,9 @@ object NewCalcBreakdownItTestConstants {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+      calculationTrigger = Some(CesaSAReturn)
+    )
   )
 
   val liabilityCalculationModelSuccessfulExpected: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -547,20 +552,24 @@ object NewCalcBreakdownItTestConstants {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+      calculationTrigger = Some(CesaSAReturn)
+    )
   )
 
   val liabilityCalculationModelSuccessfulNotCrystallised: LiabilityCalculationResponse = liabilityCalculationModelSuccessful.copy(
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = "inYear"
+      calculationType = "inYear",
+      calculationTrigger = Some(CesaSAReturn)
     )
   )
 
   val liabilityCalculationModelSuccessfulWithAmendment: LiabilityCalculationResponse = liabilityCalculationModelSuccessful.copy(
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = "CA"
+      calculationType = "CA",
+      calculationTrigger = Some(CesaSAReturn)
     )
   )
 
@@ -575,11 +584,11 @@ object NewCalcBreakdownItTestConstants {
 
   val liabilityCalculationModelErrorMessagesFormatted: MTDUserRole => LiabilityCalculationResponse = mtdUserRole =>
     liabilityCalculationModelDeductionsMinimal.copy(messages = Some(Messages(
-    errors = Some(List(
-      Message("C55012", "the update must align to the accounting period end date of 5 January 2023."),
-      Message("C15507", s"${if(mtdUserRole == MTDIndividual) "you’ve" else "your client"} claimed £2000 in Property Income Allowance but this is more than turnover for ${if(mtdUserRole == MTDIndividual) "your" else "their"} UK property."),
-      Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
-      Message("C55010", "updates cannot include overlaps.")
-    ))
-  )))
+      errors = Some(List(
+        Message("C55012", "the update must align to the accounting period end date of 5 January 2023."),
+        Message("C15507", s"${if (mtdUserRole == MTDIndividual) "you’ve" else "your client"} claimed £2000 in Property Income Allowance but this is more than turnover for ${if (mtdUserRole == MTDIndividual) "your" else "their"} UK property."),
+        Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+        Message("C55010", "updates cannot include overlaps.")
+      ))
+    )))
 }

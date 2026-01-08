@@ -17,45 +17,39 @@
 package services
 
 import auth.MtdItUser
-import connectors.{CalculationListConnector, IncomeTaxCalculationConnector}
-import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
+import enums.CesaSAReturn
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.taxyearsummary._
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 
-class TaxYearSummaryService @Inject()(
-                                       calculationListConnector: CalculationListConnector,
-                                       incomeTaxCalculationConnector: IncomeTaxCalculationConnector
-                                     ) {
+class TaxYearSummaryService @Inject()() {
 
-  def determineCannotDisplayCalculationContentScenario(nino: String, taxYear: TaxYear)(implicit user: MtdItUser[_], headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[TaxYearViewScenarios] = {
+  def determineCannotDisplayCalculationContentScenario(
+                                                        latestCalcResponse: LiabilityCalculationResponseModel,
+                                                        taxYear: TaxYear
+                                                      )(implicit user: MtdItUser[_]): TaxYearViewScenarios = {
 
     lazy val taxYear2023 = TaxYear(2023, 2024)
     val irsaEnrolement = user.authUserDetails.saUtr
 
-    for {
-      calculationListResponse: CalculationListResponseModel <- calculationListConnector.getLegacyCalculationList(user.nino, taxYear.endYear.toString)
-      getCalculationResponse: LiabilityCalculationResponseModel <- incomeTaxCalculationConnector.getCalculationResponse(user.mtditid, nino, taxYear.toString, None)
-    } yield {
-      (calculationListResponse, getCalculationResponse) match {
-        case (_: CalculationListErrorModel, _: LiabilityCalculationError) | (_: CalculationListErrorModel, _) | (_, _: LiabilityCalculationError) if user.isAgent() && taxYear.isBefore(taxYear2023) =>
-          AgentBefore2023TaxYear
-        case (_: CalculationListErrorModel, _: LiabilityCalculationError) | (_: CalculationListErrorModel, _) | (_, _: LiabilityCalculationError) if taxYear.isBefore(taxYear2023) =>
-          LegacyAndCesa
-        case (_: CalculationListErrorModel, _: LiabilityCalculationError) | (_: CalculationListErrorModel, _) | (_, _: LiabilityCalculationError) if irsaEnrolement.isDefined =>
-          IrsaEnrolementHandedOff
-        case (_: CalculationListErrorModel, _: LiabilityCalculationError) | (_: CalculationListErrorModel, _) | (_, _: LiabilityCalculationError) if irsaEnrolement.isEmpty =>
-          NoIrsaAEnrolement
-        case (_: CalculationListModel, _: LiabilityCalculationResponse) if taxYear.isBefore(taxYear2023) =>
-          MtdSoftware
-        case _ =>
-          Default
-      }
+    latestCalcResponse match {
+      case response: LiabilityCalculationResponse if response.metadata.calculationTrigger == Some(CesaSAReturn) =>
+        LegacyAndCesa
+      case response: LiabilityCalculationError if user.isAgent() && response.status != 404 && taxYear.isBefore(taxYear2023) =>
+        AgentBefore2023TaxYear
+      case response: LiabilityCalculationError if irsaEnrolement.isDefined && response.status != 404 && taxYear.isBefore(taxYear2023) =>
+        IrsaEnrolementHandedOff
+      case response: LiabilityCalculationError if response.status == 404 && taxYear.isBefore(taxYear2023) =>
+        LegacyAndCesa
+      case _: LiabilityCalculationError if irsaEnrolement.isEmpty && taxYear.isBefore(taxYear2023) =>
+        NoIrsaAEnrolement
+      case response: LiabilityCalculationResponse if response.metadata.calculationTrigger != Some(CesaSAReturn) =>
+        MtdSoftware
+      case _ =>
+        Default
     }
   }
 }

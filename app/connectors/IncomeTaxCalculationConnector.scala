@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2, config: FrontendAppConfig) extends RawResponseReads {
 
   val baseUrl: String = config.incomeTaxCalculationService
-
+  
   def getCalculationResponseUrl(nino: String): String = s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calculation-details"
 
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =

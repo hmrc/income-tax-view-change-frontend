@@ -17,6 +17,7 @@
 package services
 
 import config.FrontendAppConfig
+import enums.CesaSAReturn
 import mocks.services.{LockServiceDidNotAcquireMongoLock, MockCalculationService}
 import models.liabilitycalculation._
 import org.scalatest.time.{Seconds, Span}
@@ -25,6 +26,7 @@ import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
 @deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingServiceSpec extends TestSupport with MockCalculationService {
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -32,7 +34,7 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
       taxRegime = "UK", class2VoluntaryContributions = None
     )),
     messages = None,
-    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest")),
+    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest"), calculationTrigger = Some(CesaSAReturn)),
     calculation = None)
 
   val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "no content")

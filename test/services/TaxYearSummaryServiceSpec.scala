@@ -20,7 +20,7 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.{agentEnrolment, getAllEnrolmentsAgent, getAuthUserDetails, ninoEnrolment}
 import config.featureswitch.FeatureSwitching
 import connectors.{CalculationListConnector, IncomeTaxCalculationConnector}
-import enums.{MTDIndividual, MTDPrimaryAgent}
+import enums.{Attended, CesaSAReturn, MTDIndividual, MTDPrimaryAgent}
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.liabilitycalculation._
@@ -41,11 +41,7 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
   val mockCalculationListConnector: CalculationListConnector = mock[CalculationListConnector]
   val mockIncomeTaxCalculationConnector: IncomeTaxCalculationConnector = mock[IncomeTaxCalculationConnector]
 
-  val service =
-    new TaxYearSummaryService(
-      calculationListConnector = mockCalculationListConnector,
-      incomeTaxCalculationConnector = mockIncomeTaxCalculationConnector
-    )
+  val service = new TaxYearSummaryService()
 
   "TaxYearSummaryService" when {
 
@@ -57,13 +53,9 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
 
           "return the NoIrsaAEnrolement view scenario" in {
 
-            val nino = "fakeNino"
-            val taxYear = TaxYear(2025, 2026)
+            val taxYear = TaxYear(2022, 2023)
 
-            val calculationListModel =
-              CalculationListModel(calculationId = "calc Id", calculationTimestamp = "calc timestamp", calculationType = "calc type", crystallised = Some(true))
-
-            val liabilityCalculationError = LiabilityCalculationError(status = 404, message = "some error message")
+            val liabilityCalculationError = LiabilityCalculationError(status = 500, message = "some error message")
 
             val noIRSAEnrolments =
               Enrolments(enrolments = Set(None, Some(ninoEnrolment), None).flatten)
@@ -80,18 +72,13 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 featureSwitches = List()
               )(FakeRequest())
 
-            when(mockCalculationListConnector.getLegacyCalculationList(any(), any())(any()))
-              .thenReturn(Future(calculationListModel))
-
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future(liabilityCalculationError))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(nino, taxYear)(individualUser, headerCarrier, ec)
+            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)(individualUser)
             val expected = NoIrsaAEnrolement
 
-            whenReady(actual) { result =>
-              result shouldBe expected
-            }
+            actual shouldBe expected
           }
         }
 
@@ -99,15 +86,10 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
 
           "return the IrsaEnrolementHandedOff view scenario" in {
 
-            val nino = "fakeNino"
-            val taxYear = TaxYear(2025, 2026)
+            val taxYear = TaxYear(2022, 2023)
 
-            val calculationListModel =
-              CalculationListModel(calculationId = "calc Id", calculationTimestamp = "calc timestamp", calculationType = "calc type", crystallised = Some(true))
-
-            val liabilityCalculationError = LiabilityCalculationError(status = 404, message = "some error message")
-
-
+            val liabilityCalculationError =
+              LiabilityCalculationError(status = 500, message = "some error message")
 
             val irsaEnrolments =
               Enrolments(enrolments = Set(None, Some(ninoEnrolment), Some(saEnrolment)).flatten)
@@ -124,18 +106,13 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 featureSwitches = List()
               )(FakeRequest())
 
-            when(mockCalculationListConnector.getLegacyCalculationList(any(), any())(any()))
-              .thenReturn(Future(calculationListModel))
-
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future(liabilityCalculationError))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(nino, taxYear)(individualUser, headerCarrier, ec)
+            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)(individualUser)
             val expected = IrsaEnrolementHandedOff
 
-            whenReady(actual) { result =>
-              result shouldBe expected
-            }
+            actual shouldBe expected
           }
         }
 
@@ -143,46 +120,29 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
 
           "return the Default view scenario" in {
 
-            val nino = "fakeNino"
             val taxYear = TaxYear(2025, 2026)
 
-            val calculationListModel =
-              CalculationListModel(calculationId = "calc Id", calculationTimestamp = "calc timestamp", calculationType = "calc type", crystallised = Some(true))
-
-            val liabilityCalculationResponse =
-              LiabilityCalculationResponse(
-                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
-                metadata = Metadata(
-                  calculationTimestamp = Some(""),
-                  calculationType = ""
-                ),
-                messages = None,
-                calculation = None,
-              )
-
-            when(mockCalculationListConnector.getLegacyCalculationList(any(), any())(any()))
-              .thenReturn(Future(calculationListModel))
+            val liabilityCalculationError = LiabilityCalculationError(status = 500, message = "some error message")
 
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationResponse))
+              .thenReturn(Future(liabilityCalculationError))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(nino, taxYear)
+            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)
             val expected = Default
-            whenReady(actual) { result =>
-              result shouldBe expected
-            }
+
+            actual shouldBe expected
           }
         }
       }
 
       "the tax year is before 2023" when {
 
-        "both apis return success responses" should {
+        "fix me" should {
 
           "return the MtdSoftware view scenario" in {
 
-            val nino = "fakeNino"
             val taxYear = TaxYear(2022, 2023)
+
 
             val calculationListModel =
               CalculationListModel(calculationId = "calc Id", calculationTimestamp = "calc timestamp", calculationType = "calc type", crystallised = Some(true))
@@ -192,7 +152,8 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
                 metadata = Metadata(
                   calculationTimestamp = Some(""),
-                  calculationType = ""
+                  calculationType = "",
+                  calculationTrigger = Some(Attended)
                 ),
                 messages = None,
                 calculation = None,
@@ -204,12 +165,10 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future(liabilityCalculationResponse))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(nino, taxYear)
+            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationResponse, taxYear)
             val expected = MtdSoftware
 
-            whenReady(actual) { result =>
-              result shouldBe expected
-            }
+            actual shouldBe expected
           }
         }
 
@@ -217,7 +176,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
 
           "return the LegacyAndCesa view scenario" in {
 
-            val nino = "fakeNino"
             val taxYear = TaxYear(2022, 2023)
 
             val calculationListErrorModel =
@@ -228,7 +186,8 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
                 metadata = Metadata(
                   calculationTimestamp = Some(""),
-                  calculationType = ""
+                  calculationType = "",
+                  calculationTrigger = Some(CesaSAReturn)
                 ),
                 messages = None,
                 calculation = None,
@@ -240,12 +199,10 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future(liabilityCalculationResponse))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(nino, taxYear)
+            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationResponse, taxYear)
             val expected = LegacyAndCesa
 
-            whenReady(actual) { result =>
-              result shouldBe expected
-            }
+            actual shouldBe expected
           }
         }
 
@@ -253,7 +210,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
 
           "return the LegacyAndCesa view scenario" in {
 
-            val nino = "fakeNino"
             val taxYear = TaxYear(2022, 2023)
 
             val calculationListModel =
@@ -282,12 +238,10 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future(liabilityCalculationError))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(nino, taxYear)(individualUser, headerCarrier, ec)
+            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)(individualUser)
             val expected = LegacyAndCesa
 
-            whenReady(actual) { result =>
-              result shouldBe expected
-            }
+            actual shouldBe expected
           }
         }
 
@@ -295,13 +249,12 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
 
           "return the AgentBefore2023TaxYear view scenario" in {
 
-            val nino = "fakeNino"
             val taxYear = TaxYear(2022, 2023)
 
             val calculationListModel =
               CalculationListModel(calculationId = "calc Id", calculationTimestamp = "calc timestamp", calculationType = "calc type", crystallised = Some(true))
 
-            val liabilityCalculationError = LiabilityCalculationError(status = 404, message = "some error message")
+            val liabilityCalculationError = LiabilityCalculationError(status = 500, message = "some error message")
 
             val agentUser =
               MtdItUser(
@@ -321,12 +274,10 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
             when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
               .thenReturn(Future(liabilityCalculationError))
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(nino, taxYear)(agentUser, headerCarrier, ec) // Agent user
+            val actual = service.determineCannotDisplayCalculationContentScenario(liabilityCalculationError, taxYear)(agentUser) // Agent user
             val expected = AgentBefore2023TaxYear
 
-            whenReady(actual) { result =>
-              result shouldBe expected
-            }
+            actual shouldBe expected
           }
         }
       }

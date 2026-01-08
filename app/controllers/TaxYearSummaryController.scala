@@ -28,6 +28,7 @@ import implicits.ImplicitDateFormatter
 import models.admin._
 import models.core.Nino
 import models.financialDetails._
+import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.obligations.ObligationsModel
@@ -111,17 +112,19 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
     }
   }
 
-  private def handleCalcSuccess(latestCalc: LiabilityCalculationResponse,
-                                previousCalc: Option[LiabilityCalculationResponse],
-                                chargeItems: List[TaxYearSummaryChargeItem],
-                                obligations: ObligationsModel,
-                                lpp2Url: String,
-                                claimToAdjustViewModel: TYSClaimToAdjustViewModel,
-                                taxYear: Int,
-                                backUrl: String,
-                                origin: Option[String],
-                                isAgent: Boolean
+  private def handleCalcSuccess(
+                                 latestCalc: LiabilityCalculationResponse,
+                                 previousCalc: Option[LiabilityCalculationResponse],
+                                 chargeItems: List[TaxYearSummaryChargeItem],
+                                 obligations: ObligationsModel,
+                                 lpp2Url: String,
+                                 claimToAdjustViewModel: TYSClaimToAdjustViewModel,
+                                 taxYear: Int,
+                                 backUrl: String,
+                                 origin: Option[String],
+                                 isAgent: Boolean
                                )(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Result] = {
+
     val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
     val calculationSummary =
@@ -199,16 +202,17 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
         case _ => None
       }
 
-      val viewModel = TaxYearSummaryViewModel(
-        calculationSummary,
-        None,
-        chargeItems,
-        obligations,
-        showForecastData = true,
-        claimToAdjustViewModel,
-        lpp2Url,
-        isEnabled(PostFinalisationAmendmentsR18)
-      )
+      val viewModel =
+        TaxYearSummaryViewModel(
+          calculationSummary = calculationSummary,
+          previousCalculationSummary = None,
+          charges = chargeItems,
+          obligations = obligations,
+          showForecastData = true,
+          ctaViewModel = claimToAdjustViewModel,
+          LPP2Url = lpp2Url,
+          pfaEnabled = isEnabled(PostFinalisationAmendmentsR18)
+        )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))
 
@@ -318,7 +322,8 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
       fromDate = LocalDate.of(taxYear - 1, 4, 6),
       toDate = LocalDate.of(taxYear, 4, 5)
     ) flatMap {
-      case obligationsModel: ObligationsModel => f(obligationsModel)
+      case obligationsModel: ObligationsModel =>
+        f(obligationsModel)
       case _ =>
         if (isAgent) {
           Logger("application").error(s"Could not retrieve obligations for year: $taxYear")
@@ -356,7 +361,11 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
         val nino: String = user.nino
         for {
           viewModel <- claimToAdjustViewModel(nino = Nino(value = user.nino), taxYear = taxYear)
-          (latestCalcResponse, previousResponse) <- calculationService.getLatestAndPreviousCalculationDetails(mtdItId, nino, taxYear)
+          (latestCalcResponse: LiabilityCalculationResponseModel, previousResponse: Option[LiabilityCalculationResponseModel]) <- calculationService.getLatestAndPreviousCalculationDetails(mtdItId, nino, taxYear)
+//          _ = println("\n" + latestCalcResponse + "*****************\n")
+          taxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(latestCalcResponse, TaxYear(taxYear, taxYear + 1)) // TODO use this to determine calc tab content
+//          _ = println("000000 " + taxYearViewScenarios)
+          backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin)
           view <- renderView(
             liabilityCalc = latestCalcResponse,
             previousCalc = previousResponse,
@@ -364,8 +373,9 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
             taxYear = taxYear,
             obligations = obligationsModel,
             claimToAdjustViewModel = viewModel,
-            backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin),
-            origin = origin, isAgent = isAgent
+            backUrl = backUrl,
+            origin = origin,
+            isAgent = isAgent
           )
         } yield {
           view
@@ -380,21 +390,6 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
       Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause} - ")
       errorHandler.showInternalServerError()
   }
-
-  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async { implicit user =>
-      if (taxYear.toString.matches("[0-9]{4}")) {
-        handleRequest(taxYear, origin, isAgent = false)
-      } else {
-        Future.successful(itvcErrorHandler.showInternalServerError())
-      }
-    }
-
-  def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] =
-    authActions.asMTDPrimaryAgent.async { implicit user =>
-      // TODO: restore taxYear validation
-      handleRequest(taxYear, None, isAgent = true)
-    }
 
   // Individual back urls
   private def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
@@ -435,4 +430,20 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
         Future.failed(ex)
     }
   }
+
+  def renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual.async { implicit user =>
+      if (taxYear.toString.matches("[0-9]{4}")) {
+        handleRequest(taxYear, origin, isAgent = false)
+      } else {
+        Future.successful(itvcErrorHandler.showInternalServerError())
+      }
+    }
+
+  def renderAgentTaxYearSummaryPage(taxYear: Int): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent.async { implicit user =>
+      // TODO: restore taxYear validation
+      handleRequest(taxYear, None, isAgent = true)
+    }
+
 }

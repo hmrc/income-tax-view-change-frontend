@@ -37,11 +37,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SensitiveUIJourneySessionDataRepository @Inject()(
-                                                mongoComponent: MongoComponent,
-                                                appConfig: FrontendAppConfig,
-                                                config: Configuration,
-                                                clock: Clock
-                                              )(implicit ec: ExecutionContext)
+                                                         mongoComponent: MongoComponent,
+                                                         appConfig: FrontendAppConfig,
+                                                         config: Configuration,
+                                                         clock: Clock
+                                                       )(implicit ec: ExecutionContext)
   extends PlayMongoRepository[SensitiveUIJourneySessionData](
     collectionName = "ui-journey-session-data",
     mongoComponent = mongoComponent,
