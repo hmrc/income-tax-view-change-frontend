@@ -24,14 +24,15 @@ import models.taxyearsummary.TaxYearSummaryChargeItem
 
 import java.time.LocalDate
 
-case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary],
-                                   previousCalculationSummary: Option[CalculationSummary],
-                                   charges: List[TaxYearSummaryChargeItem],
-                                   obligations: ObligationsModel,
-                                   showForecastData: Boolean = false,
-                                   ctaViewModel: TYSClaimToAdjustViewModel,
-                                   LPP2Url: String,
-                                   pfaEnabled: Boolean
+case class TaxYearSummaryViewModel(
+                                    calculationSummary: Option[CalculationSummary],
+                                    previousCalculationSummary: Option[CalculationSummary],
+                                    charges: List[TaxYearSummaryChargeItem],
+                                    obligations: ObligationsModel,
+                                    showForecastData: Boolean = false,
+                                    ctaViewModel: TYSClaimToAdjustViewModel,
+                                    LPP2Url: String,
+                                    pfaEnabled: Boolean
                                   ) {
 
   def showSubmissions: Boolean = {
@@ -64,7 +65,6 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
   val forecastIncome = calculationSummary.flatMap(model => model.forecastIncome).getOrElse(0)
   val forecastTotalTaxableIncome = calculationSummary.flatMap(model => model.forecastTotalTaxableIncome).getOrElse(0)
   val forecastIncomeAndNics = calculationSummary.flatMap(model => model.forecastIncomeTaxAndNics).getOrElse(BigDecimal(0))
-
   val forecastDeductions = calculationSummary.flatMap(model => model.forecastAllowancesAndDeductions).getOrElse(BigDecimal(0))
 
   private def validateCalculationSummary(calculationSummary: Option[CalculationSummary]): Unit = {
@@ -78,7 +78,7 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
   validateCalculationSummary(previousCalculationSummary)
 
   def getForecastSummaryHref(taxYear: Int, isAgent: Boolean): String = {
-    if(isAgent) {
+    if (isAgent) {
       controllers.routes.ForecastIncomeSummaryController.showAgent(taxYear).url
     } else {
       controllers.routes.ForecastIncomeSummaryController.show(taxYear).url
@@ -86,7 +86,7 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
   }
 
   def getForecastTaxDueHref(taxYear: Int, isAgent: Boolean): String = {
-    if(isAgent) {
+    if (isAgent) {
       controllers.routes.ForecastTaxCalcSummaryController.showAgent(taxYear).url
     } else {
       controllers.routes.ForecastTaxCalcSummaryController.show(taxYear).url
@@ -97,10 +97,10 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
                            taxYear: Int,
                            isAgent: Boolean,
                            origin: Option[String]): String = {
-    if(chargeItem.transactionType == SecondLatePaymentPenalty) {
+    if (chargeItem.transactionType == SecondLatePaymentPenalty) {
       LPP2Url
     } else {
-      if(isAgent) {
+      if (isAgent) {
         controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest).url
       } else {
         controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin).url

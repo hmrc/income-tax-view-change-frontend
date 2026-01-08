@@ -18,14 +18,14 @@ package models.taxyearsummary
 
 sealed trait TaxYearViewScenarios
 
+case object NoCalculationDetails extends TaxYearViewScenarios
+
 case object LegacyAndCesa extends TaxYearViewScenarios
 
-case object MtdSoftware extends TaxYearViewScenarios
+case object MtdSoftwareShowCalc extends TaxYearViewScenarios
 
 case object IrsaEnrolementHandedOff extends TaxYearViewScenarios
 
 case object NoIrsaAEnrolement extends TaxYearViewScenarios
 
 case object AgentBefore2023TaxYear extends TaxYearViewScenarios
-
-case object Default extends TaxYearViewScenarios

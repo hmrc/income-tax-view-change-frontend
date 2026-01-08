@@ -101,7 +101,7 @@
     @if(!viewModel.isCurrentYear && viewModel.isCurrentYearAnnual) {
         @p(id = Some("submit-updates-desc-2")) {
             @getMessage("submitUpdates.desc2.text1")
-            @link(appConfig.selfAssessmentTaxReturnLink, messageKey = getMessage("submitUpdates.desc2.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
+            @link(appConfig.logInFileSelfAssessmentTaxReturnLink, messageKey = getMessage("submitUpdates.desc2.link"), target=Some("_blank"), outerMessage = messages("base.fullstop"))
         }
     }
 }

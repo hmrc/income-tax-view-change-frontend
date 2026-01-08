@@ -16,9 +16,8 @@
 
 package testConstants
 
-
-import models.liabilitycalculation._
-import models.liabilitycalculation.taxcalculation._
+import models.liabilitycalculation.*
+import models.liabilitycalculation.taxcalculation.*
 import models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDeductedAtSourceViewModel, TaxDueSummaryViewModel}
 
 import java.time.LocalDate
@@ -39,7 +38,9 @@ object NewCalcBreakdownUnitTestConstants {
       calculationType = "crystallisation",
       calculationReason = calculationReason,
       periodFrom = None,
-      periodTo = None)
+      periodTo = None
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessful: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -300,15 +301,18 @@ object NewCalcBreakdownUnitTestConstants {
       calculationReason = Some("customerRequest"),
       periodFrom = Some(LocalDate.of(2018, 1, 1)),
       periodTo = Some(LocalDate.of(2019, 1, 1))
-    )
+    ),
+    submissionChannel = None
   )
 
-  val metadataWithAmendment = Metadata(
-    calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-    calculationType = "CA",
-    calculationReason = Some("customerRequest"),
-    periodFrom = Some(LocalDate.of(2018, 1, 1)),
-    periodTo = Some(LocalDate.of(2019, 1, 1)))
+  val metadataWithAmendment =
+    Metadata(
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      calculationType = "CA",
+      calculationReason = Some("customerRequest"),
+      periodFrom = Some(LocalDate.of(2018, 1, 1)),
+      periodTo = Some(LocalDate.of(2019, 1, 1))
+    )
 
   val liabilityCalculationModelErrorMessagesForIndividual = liabilityCalculationModelDeductionsMinimal().copy(messages = Some(Messages(
     errors = Some(List(
@@ -328,15 +332,16 @@ object NewCalcBreakdownUnitTestConstants {
     ))
   )))
 
-  val liabilityCalculationModelSuccessfulNotCrystallised = liabilityCalculationModelSuccessful.copy(metadata =
-    Metadata(
-      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = "inYear",
-      periodFrom = Some(LocalDate.of(2018, 1, 1)),
-      periodTo = Some(LocalDate.of(2019, 1, 1))
+  val liabilityCalculationModelSuccessfulNotCrystallised =
+    liabilityCalculationModelSuccessful.copy(
+      metadata =
+        Metadata(
+          calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+          calculationType = "inYear",
+          periodFrom = Some(LocalDate.of(2018, 1, 1)),
+          periodTo = Some(LocalDate.of(2019, 1, 1))
+        )
     )
-
-  )
 
   val arrayTestFull = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -495,7 +500,9 @@ object NewCalcBreakdownUnitTestConstants {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest")
+    ),
+    submissionChannel = None
   )
 
   val taxDueSummaryViewModelStandard = TaxDueSummaryViewModel(

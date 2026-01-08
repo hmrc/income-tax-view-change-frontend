@@ -78,7 +78,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         isAgent = isAgent,
         showReportingFrequencyContent = true,
         confirmedOptOutViewScenarios = CurrentYearNYQuarterlyOrAnnualScenario,
-        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        selfAssessmentTaxReturnLink = mockAppConfig.logInFileSelfAssessmentTaxReturnLink,
         compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
       )))
 
@@ -127,7 +127,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         showReportingFrequencyContent = true,
         confirmedOptOutViewScenarios = CurrentYearNYMandatedScenario,
         selfAssessmentTaxReturnLink = mockAppConfig.compatibleSoftwareLink,
-        compatibleSoftwareLink = mockAppConfig.selfAssessmentTaxReturnLink
+        compatibleSoftwareLink = mockAppConfig.logInFileSelfAssessmentTaxReturnLink
       )))
 
       "show the green panel" in {
@@ -175,7 +175,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         isAgent = isAgent,
         showReportingFrequencyContent = true,
         confirmedOptOutViewScenarios = NextYearCYMandatedOrQuarterlyScenario,
-        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        selfAssessmentTaxReturnLink = mockAppConfig.logInFileSelfAssessmentTaxReturnLink,
         compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
       )))
 
@@ -223,7 +223,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         isAgent = isAgent,
         showReportingFrequencyContent = true,
         confirmedOptOutViewScenarios = NextYearCYAnnualScenario,
-        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        selfAssessmentTaxReturnLink = mockAppConfig.logInFileSelfAssessmentTaxReturnLink,
         compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
       )))
 
@@ -272,7 +272,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         isAgent = isAgent,
         showReportingFrequencyContent = true,
         confirmedOptOutViewScenarios = PreviousAndNoStatusValidScenario,
-        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        selfAssessmentTaxReturnLink = mockAppConfig.logInFileSelfAssessmentTaxReturnLink,
         compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
       )))
 
@@ -320,7 +320,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
         isAgent = isAgent,
         showReportingFrequencyContent = true,
         confirmedOptOutViewScenarios = DefaultValidScenario,
-        selfAssessmentTaxReturnLink = mockAppConfig.selfAssessmentTaxReturnLink,
+        selfAssessmentTaxReturnLink = mockAppConfig.logInFileSelfAssessmentTaxReturnLink,
         compatibleSoftwareLink = mockAppConfig.compatibleSoftwareLink,
       )))
 
