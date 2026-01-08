@@ -40,7 +40,9 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
         metadata = Metadata(
           calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
           calculationType = "crystallisation",
-          calculationReason = Some("customerRequest"))
+          calculationReason = Some("customerRequest")
+        ),
+        submissionChannel = None
       )
       val expectedJson =
         s"""
@@ -73,7 +75,7 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
       }
       "should convert from json to model" in {
         val calcModel = Json.fromJson[LiabilityCalculationResponse](Json.parse(arraysTestJson))
-        assertJsonEquals(Json.toJson(calcModel.get), Json.parse( arraysTestJson))
+        assertJsonEquals(Json.toJson(calcModel.get), Json.parse(arraysTestJson))
       }
     }
 
@@ -160,7 +162,7 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
 
     "translate date variable values from messages for individual" in {
       val values = Messages(errors = errorMessagesIndividual).getErrorMessageVariables(messagesApi, isAgent = false)
-      Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))),mockImplicitDateFormatter) shouldBe Seq(
+      Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))), mockImplicitDateFormatter) shouldBe Seq(
         Message("C55012", "5 Ionawr 2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
@@ -169,7 +171,7 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
     }
     "translate date variable values from messages for agent" in {
       val values = Messages(errors = errorMessagesAgent).getErrorMessageVariables(messagesApi, isAgent = true)
-      Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))),mockImplicitDateFormatter) shouldBe Seq(
+      Messages.translateMessageDateVariables(values)(messagesApi.preferred(Seq(Lang("cy"))), mockImplicitDateFormatter) shouldBe Seq(
         Message("C55012", "5 Ionawr 2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
@@ -202,7 +204,9 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
           metadata = Metadata(
             calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
             calculationType = "AM",
-            calculationReason = Some("customerRequest"))
+            calculationReason = Some("customerRequest"),
+          ),
+          submissionChannel = None
         )
 
         successModelMinimal.metadata.hasAnAmendment shouldBe true
@@ -215,7 +219,9 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
           metadata = Metadata(
             calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
             calculationType = "CA",
-            calculationReason = Some("customerRequest"))
+            calculationReason = Some("customerRequest"),
+          ),
+          submissionChannel = None
         )
 
         successModelMinimal.metadata.hasAnAmendment shouldBe true
@@ -231,7 +237,9 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
           metadata = Metadata(
             calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
             calculationType = "DF",
-            calculationReason = Some("customerRequest"))
+            calculationReason = Some("customerRequest"),
+          ),
+          submissionChannel = None
         )
 
         successModelMinimal.metadata.hasAnAmendment shouldBe false

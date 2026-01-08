@@ -25,6 +25,7 @@ import testConstants.BaseTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
 @deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingServiceSpec extends TestSupport with MockCalculationService {
   val liabilityCalculationSuccessResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -33,7 +34,9 @@ class CalculationPollingServiceSpec extends TestSupport with MockCalculationServ
     )),
     messages = None,
     metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest")),
-    calculation = None)
+    calculation = None,
+    submissionChannel = None
+  )
 
   val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "no content")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")

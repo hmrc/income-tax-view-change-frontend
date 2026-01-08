@@ -33,10 +33,12 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
     )),
     messages = None,
     metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest")),
-    calculation = None)
+    calculation = None,
+    submissionChannel = None
+  )
 
-  val calcResponseWithAmendmentCa = liabilityCalculationSuccessResponse.copy( metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "CA", Some("customerRequest")))
-  val calcResponseWithAmendmentAm = liabilityCalculationSuccessResponse.copy( metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "AM", Some("customerRequest")))
+  val calcResponseWithAmendmentCa = liabilityCalculationSuccessResponse.copy(metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "CA", Some("customerRequest")))
+  val calcResponseWithAmendmentAm = liabilityCalculationSuccessResponse.copy(metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "AM", Some("customerRequest")))
 
   val liabilityCalculationNoContentResponse: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "not found")
   val liabilityCalculationErrorResponse: LiabilityCalculationError = LiabilityCalculationError(Status.INTERNAL_SERVER_ERROR, "Internal server error")
@@ -76,7 +78,7 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
         enable(PostFinalisationAmendmentsR18)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(liabilityCalculationSuccessResponse)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (liabilityCalculationSuccessResponse, None)
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(liabilityCalculationSuccessResponse, None)
       }
 
       "return a successful response when the latest calculation is an amendment - Calc Type CA" in {
@@ -84,7 +86,7 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(calcResponseWithAmendmentCa)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(PREVIOUS))(liabilityCalculationSuccessResponse)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (calcResponseWithAmendmentCa, Some(liabilityCalculationSuccessResponse))
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(calcResponseWithAmendmentCa, Some(liabilityCalculationSuccessResponse))
       }
 
       "return a successful response when the latest calculation is an amendment - Calc Type AM" in {
@@ -92,21 +94,21 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(calcResponseWithAmendmentAm)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(PREVIOUS))(liabilityCalculationSuccessResponse)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (calcResponseWithAmendmentAm, Some(liabilityCalculationSuccessResponse))
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(calcResponseWithAmendmentAm, Some(liabilityCalculationSuccessResponse))
       }
 
       "return a LiabilityCalculationError when no calculation is returned" in {
         enable(PostFinalisationAmendmentsR18)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(liabilityCalculationNoContentResponse)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (liabilityCalculationNoContentResponse, None)
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(liabilityCalculationNoContentResponse, None)
       }
 
       "return a LiabilityCalculationError when an error response is returned from the connector" in {
         enable(PostFinalisationAmendmentsR18)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(liabilityCalculationErrorResponse)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (liabilityCalculationErrorResponse, None)
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(liabilityCalculationErrorResponse, None)
       }
     }
 
@@ -115,35 +117,35 @@ class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationCo
         disable(PostFinalisationAmendmentsR18)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(liabilityCalculationSuccessResponse)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (liabilityCalculationSuccessResponse, None)
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(liabilityCalculationSuccessResponse, None)
       }
 
       "return a successful response when the latest calculation is an amendment - Calc Type CA" in {
         disable(PostFinalisationAmendmentsR18)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(calcResponseWithAmendmentCa)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (calcResponseWithAmendmentCa, None)
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(calcResponseWithAmendmentCa, None)
       }
 
       "return a successful response when the latest calculation is an amendment - Calc Type AM" in {
         disable(PostFinalisationAmendmentsR18)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(calcResponseWithAmendmentAm)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (calcResponseWithAmendmentAm, None)
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(calcResponseWithAmendmentAm, None)
       }
 
       "return a LiabilityCalculationError when no calculation is returned" in {
         disable(PostFinalisationAmendmentsR18)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(liabilityCalculationNoContentResponse)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (liabilityCalculationNoContentResponse, None)
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(liabilityCalculationNoContentResponse, None)
       }
 
       "return a LiabilityCalculationError when an error response is returned from the connector" in {
         disable(PostFinalisationAmendmentsR18)
         mockGetCalculationResponse(testMtditid, testNino, "2018", Some(LATEST))(liabilityCalculationErrorResponse)
 
-        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe (liabilityCalculationErrorResponse, None)
+        TestCalculationService.getLatestAndPreviousCalculationDetails(testMtditid, testNino, testTaxYear).futureValue shouldBe(liabilityCalculationErrorResponse, None)
       }
     }
   }

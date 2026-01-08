@@ -18,16 +18,16 @@ package testOnly.connectors
 
 import play.api.Logger
 import play.api.http.Status.{CREATED, TOO_MANY_REQUESTS}
-import play.api.libs.json._
+import play.api.libs.json.*
+import play.api.libs.ws.writeableOf_JsValue
 import testOnly.models.Nino
-import testOnly.utils.FileUtil._
-import testOnly.utils.LoginUtil._
+import testOnly.utils.FileUtil.*
+import testOnly.utils.LoginUtil.*
 import testOnly.utils.UserRepository
 import uk.gov.hmrc.auth.core.PlayAuthConnector
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps, TooManyRequestException}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import play.api.libs.ws.writeableOf_JsValue
 
 import javax.inject.{Inject, Singleton}
 import scala.collection.Seq
@@ -51,19 +51,22 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
                                     val http: HttpClientV2)
                                    (implicit ec: ExecutionContext) extends PlayAuthConnector {
   override val serviceUrl: String = servicesConfig.baseUrl("auth-login")
+
   override def httpClientV2: HttpClientV2 = http
 
   def login(nino: String, isAgent: Boolean, isSupporting: Boolean)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
-    val createdPayload = if(nino.contains("No Nino")) {
+    val createdPayload = if (nino.contains("No Nino")) {
       createPayloadNoNino(nino)
     } else {
       createPayload(Nino(nino), isAgent, isSupporting)
     }
 
-    createdPayload flatMap {
-      payload =>
-        loginRequest(payload)
-    }
+    createdPayload
+      .flatMap {
+        payload =>
+          println(payload)
+          loginRequest(payload)
+      }
   }
 
   def loginRequest(payload: JsValue)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
@@ -72,7 +75,8 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
       val headerNames = List(headerName, headerName.take(1).toUpperCase() + headerName.drop(1))
       headerNames.flatMap(name => headers.get(name)).headOption.map(_.mkString)
     }
-    val sessionUrl=s"$serviceUrl/government-gateway/session/login"
+
+    val sessionUrl = s"$serviceUrl/government-gateway/session/login"
 
     http
       .post(url"$sessionUrl")
@@ -105,24 +109,26 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
       userCredentials =>
         Json.obj(
           "credId" -> userCredentials.credId,
-          "affinityGroup" -> {"Individual"},
+          "affinityGroup" -> {
+            "Individual"
+          },
           "confidenceLevel" -> userCredentials.confidenceLevel,
           "credentialStrength" -> userCredentials.credentialStrength,
           "credentialRole" -> userCredentials.Role,
           "usersName" -> "usersName",
           "enrolments" -> getEnrolmentData(false, userCredentials.enrolmentData)
         ) ++ {
-            removeEmptyValues(
-              "groupIdentifier" -> Some("groupIdentifier"),
-              "gatewayToken" -> Some("gatewayToken"),
-              "agentId" -> Some("agentId"),
-              "agentCode" -> Some("agentCode"),
-              "agentFriendlyName" -> Some("agentFriendlyName"),
-              "email" -> Some("email")
-            )
-          }
+          removeEmptyValues(
+            "groupIdentifier" -> Some("groupIdentifier"),
+            "gatewayToken" -> Some("gatewayToken"),
+            "agentId" -> Some("agentId"),
+            "agentCode" -> Some("agentCode"),
+            "agentFriendlyName" -> Some("agentFriendlyName"),
+            "email" -> Some("email")
+          )
         }
     }
+  }
 
   private def createPayload(nino: Nino, isAgent: Boolean, isSupporting: Boolean): Future[JsValue] = {
     getUserCredentials(nino.nino, userRepository) map {
