@@ -16,6 +16,7 @@
 
 package models.helpers
 
+import enums.CesaSAReturn
 import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
 
@@ -638,7 +639,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+      calculationTrigger = Some(CesaSAReturn)
+    )
   )
 
   val liabilityCalculationModelSuccessfulConversionSB = LiabilityCalculationResponse(
@@ -654,7 +657,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+      calculationTrigger = Some(CesaSAReturn)
+    )
   )
   val liabilityCalculationModelSuccessfulConversionDB = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -669,7 +674,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+      calculationTrigger = Some(CesaSAReturn)
+    )
   )
   val liabilityCalculationModelSuccessfulConversionLS = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -684,7 +691,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+      calculationTrigger = Some(CesaSAReturn)
+    )
   )
   val liabilityCalculationModelSuccessfulConversionGLP = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -699,7 +708,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+      calculationTrigger = Some(CesaSAReturn)
+    )
   )
 
   val liabilityCalculationModelSuccessfulWithNoCalc = liabilityCalculationModelSuccessfulConversionPB.copy(

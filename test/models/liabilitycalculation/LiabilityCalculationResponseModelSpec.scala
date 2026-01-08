@@ -17,6 +17,7 @@
 package models.liabilitycalculation
 
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
+import enums.CesaSAReturn
 import models.helpers.LiabilityCalculationDataHelper
 import models.liabilitycalculation.taxcalculation.TaxBands
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
@@ -40,7 +41,9 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
         metadata = Metadata(
           calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
           calculationType = "crystallisation",
-          calculationReason = Some("customerRequest"))
+          calculationReason = Some("customerRequest"),
+          calculationTrigger = Some(CesaSAReturn)
+        )
       )
       val expectedJson =
         s"""
@@ -49,7 +52,8 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
            |  "metadata" : {
            |    "calculationTimestamp" : "2019-02-15T09:35:15.094Z",
            |    "calculationType" : "crystallisation",
-           |    "calculationReason" : "customerRequest"
+           |    "calculationReason" : "customerRequest",
+           |    "calculationTrigger" : "CesaSAReturn"
            |  }
            |}
            |""".stripMargin.trim
@@ -202,7 +206,9 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
           metadata = Metadata(
             calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
             calculationType = "AM",
-            calculationReason = Some("customerRequest"))
+            calculationReason = Some("customerRequest"),
+            calculationTrigger = Some(CesaSAReturn)
+          )
         )
 
         successModelMinimal.metadata.hasAnAmendment shouldBe true
@@ -215,7 +221,9 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
           metadata = Metadata(
             calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
             calculationType = "CA",
-            calculationReason = Some("customerRequest"))
+            calculationReason = Some("customerRequest"),
+            calculationTrigger = Some(CesaSAReturn)
+          )
         )
 
         successModelMinimal.metadata.hasAnAmendment shouldBe true
@@ -231,7 +239,9 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
           metadata = Metadata(
             calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
             calculationType = "DF",
-            calculationReason = Some("customerRequest"))
+            calculationReason = Some("customerRequest"),
+            calculationTrigger = Some(CesaSAReturn)
+          )
         )
 
         successModelMinimal.metadata.hasAnAmendment shouldBe false

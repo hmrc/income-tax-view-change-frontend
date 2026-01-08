@@ -16,6 +16,7 @@
 
 package models.liabilitycalculation
 
+import enums.CalculationTrigger
 import enums.TaxYearSummary.CalcType.{amendmentTypes, crystallisedTypes}
 import implicits.ImplicitDateFormatter
 import play.api.i18n.{Lang, MessagesApi}
@@ -44,11 +45,14 @@ object LiabilityCalculationResponse {
   implicit val format: OFormat[LiabilityCalculationResponse] = Json.format[LiabilityCalculationResponse]
 }
 
-case class Metadata(calculationTimestamp: Option[String],
-                    calculationType: String,
-                    calculationReason: Option[String] = None,
-                    periodFrom: Option[LocalDate] = None,
-                    periodTo: Option[LocalDate] = None) {
+case class Metadata(
+                     calculationTimestamp: Option[String],
+                     calculationType: String,
+                     calculationReason: Option[String] = None,
+                     periodFrom: Option[LocalDate] = None,
+                     periodTo: Option[LocalDate] = None,
+                     calculationTrigger: Option[CalculationTrigger]
+                   ) {
 
   def isCalculationCrystallised: Boolean = crystallisedTypes.contains(calculationType)
 
@@ -102,7 +106,7 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
   def getErrorMessageVariables(messagesProperty: MessagesApi, isAgent: Boolean): Seq[Message] = {
     val lang = Lang("GB")
     val errMessages = errorMessages.map(msg => {
-      val key = if(isAgent) "tax-year-summary.agent.message." + msg.id else "tax-year-summary.message." + msg.id
+      val key = if (isAgent) "tax-year-summary.agent.message." + msg.id else "tax-year-summary.message." + msg.id
       if (messagesProperty.isDefinedAt(key)(lang)) {
         val regex = "\\d{2}/\\d{2}/\\d{4}|£\\d+,\\d+|\\d+|£\\d+".r
         val variable: String = regex.findFirstIn(msg.text).getOrElse("")
