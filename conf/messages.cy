@@ -914,7 +914,7 @@ paymentDue.tax-year                                             = Blwyddyn dreth
 ## What you owe
 whatYouOwe.heading                                              = Yr hyn sydd arnoch
 whatYouOwe.heading-agent                                        = Yr hyn sydd ar eich cleient
-whatYouOwe.no-payments-due                                      = Nid oes gennych taliadau sy’n ddyledus.
+whatYouOwe.no-payments-due                                      = Dim taliadau’n ddyledus.
 whatYouOwe.no-payments-due-agent                                = Nid oes gan eich cleient daliadau sy’n ddyledus.
 whatYouOwe.payments-made-heading                                = Taliadau sy’n cael eu gwneud drwy’ch cod treth TWE
 whatYouOwe.payments-made-body-1                                 = Rydych chi’n talu {0} drwy’ch cod treth TWE ar gyfer y flwyddyn dreth {1} i {2}. Gallwch
