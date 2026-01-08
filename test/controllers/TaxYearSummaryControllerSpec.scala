@@ -257,8 +257,7 @@ class TaxYearSummaryControllerSpec
                     testTaxYear, taxYearSummary,
                     taxYearsBackLink(isAgent),
                     ctaLink = ctaLink(isAgent),
-                    isAgent = isAgent,
-                    taxYearViewScenarios = MtdSoftware
+                    isAgent = isAgent
                   ).toString
 
                 val result = action(fakeRequest)
@@ -301,8 +300,7 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftware
+                  isAgent = isAgent
                 ).toString
 
                 val result = action(fakeRequest)
@@ -345,8 +343,7 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftware
+                  isAgent = isAgent
                 ).toString
 
                 val result = action(fakeRequest)
@@ -644,8 +641,7 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   backUrl = homeBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftware
+                  isAgent = isAgent
                 ).toString
 
               val result = action(fakeGetRequestBasedOnMTDUserType(mtdUserRole))
@@ -692,8 +688,7 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftware
+                  isAgent = isAgent
                 ).toString
 
                 val result = action(fakeRequest)
@@ -740,8 +735,7 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftware
+                  isAgent = isAgent
                 ).toString
 
                 val result = action(fakeRequest)
@@ -791,8 +785,7 @@ class TaxYearSummaryControllerSpec
                   ),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftware
+                  isAgent = isAgent
                 ).toString
 
                 val result = action(fakeRequest)
@@ -831,8 +824,7 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftware
+                  isAgent = isAgent
                 ).toString
 
                 val result = action(fakeRequest)
@@ -873,8 +865,7 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftware
+                  isAgent = isAgent
                 ).toString()).text()
 
                 val result = action(fakeRequest)
@@ -920,8 +911,7 @@ class TaxYearSummaryControllerSpec
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftware
+                  isAgent = isAgent
                 ).toString
 
                 val result = action(fakeRequest)

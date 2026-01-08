@@ -28,11 +28,10 @@ import implicits.ImplicitDateFormatter
 import models.admin._
 import models.core.Nino
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import models.obligations.ObligationsModel
-import models.taxyearsummary.{TaxYearSummaryChargeItem, TaxYearViewScenarios}
+import models.taxyearsummary.TaxYearSummaryChargeItem
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc._
@@ -162,19 +161,16 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
     Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with Calc data")
 
-    for {
-      scenarios <- taxYearSummaryService.determineCannotDisplayCalculationContentScenario(mtdItUser.nino, TaxYear(taxYear, taxYear + 1))
-    } yield {
+    Future(
       Ok(taxYearSummaryView(
         taxYear = taxYear,
         viewModel = taxYearSummaryViewModel,
         backUrl = backUrl,
         origin = origin,
         isAgent = isAgent,
-        ctaLink = ctaLink,
-        taxYearViewScenarios = scenarios
+        ctaLink = ctaLink
       ))
-    }
+    )
   }
 
   private def handleCalcError(error: LiabilityCalculationError,
@@ -218,19 +214,16 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
 
       Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with No Calc data")
 
-      for {
-        scenarios: TaxYearViewScenarios <- taxYearSummaryService.determineCannotDisplayCalculationContentScenario(mtdItUser.nino, TaxYear(taxYear, taxYear + 1))
-      } yield {
+      Future(
         Ok(taxYearSummaryView(
           taxYear = taxYear,
           viewModel = viewModel,
           backUrl = backUrl,
           origin = origin,
           isAgent = isAgent,
-          ctaLink = ctaLink,
-          taxYearViewScenarios = scenarios
+          ctaLink = ctaLink
         ))
-      }
+      )
     } else {
       if (isAgent) {
         Logger("application").error(s"[Agent][$taxYear]] No new calc deductions data error found. Downstream error")
