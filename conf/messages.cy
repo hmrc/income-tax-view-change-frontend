@@ -621,7 +621,6 @@ taxCal_breakdown.table.vctSubscriptions                                      = R
 taxCal_breakdown.table.eisSubscriptions                                      = Rhyddhad Cynllun Buddsoddiad Menter
 taxCal_breakdown.table.seedEnterpriseInvestment                              = Rhyddhad Cynllun Buddsoddiad Menter Seed
 taxCal_breakdown.table.communityInvestment                                   = Rhyddhad Treth am Fuddsoddiad Cymunedol
-taxCal_breakdown.table.socialEnterpriseInvestment                            = Rhyddhad Treth am Fuddsoddiad Menter Gymdeithasol
 taxCal_breakdown.table.maintenancePayments                                   = Cynhaliaeth ac alimoni a dalwyd
 taxCal_breakdown.table.property_finance_relief                               = Rhyddhad am gostau ariannol
 taxCal_breakdown.table.total_notional_tax                                    = Treth dybiannol o enillion ar bolisïau bywyd ac ati

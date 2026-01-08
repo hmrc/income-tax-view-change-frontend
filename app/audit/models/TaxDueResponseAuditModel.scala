@@ -113,7 +113,6 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
       case "eisSubscriptions" => "Enterprise Investment Scheme relief"
       case "seedEnterpriseInvestment" => "Seed Enterprise Investment Scheme relief"
       case "communityInvestment" => "Community Investment Tax Relief"
-      case "socialEnterpriseInvestment" => "Social Enterprise Investment Tax Relief"
       case "maintenancePayments" => "Maintenance and alimony paid"
       case "qualifyingDistributionRedemptionOfSharesAndSecurities" => "Relief claimed on a qualifying distribution"
       case "nonDeductibleLoanInterest" => "Non deductible loan interest"
