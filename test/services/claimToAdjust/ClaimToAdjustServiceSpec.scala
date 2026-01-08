@@ -20,11 +20,12 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
-import models.calculationList.{CalculationListModel, CalculationListResponseModel}
+import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import play.api.http.Status.NOT_FOUND
 import services.{ClaimToAdjustService, DateService}
 import testConstants.BaseTestConstants.{testNino, testUserNino}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants._
@@ -73,6 +74,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
     crystallised = None
   )
 
+  val calculationListNotFound: CalculationListResponseModel = CalculationListErrorModel(NOT_FOUND, "Not found")
+
   val financialDetailsModelBothPoas: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None, None, None),
     documentDetails = List.empty,
@@ -113,6 +116,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       }
       "a user has only one CTA amendable year. This year has POA data and is not crystallised" in {
+        setupGetCalculationList(testNino, "22-23")(calculationListNotFound)
         setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
         setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
 
