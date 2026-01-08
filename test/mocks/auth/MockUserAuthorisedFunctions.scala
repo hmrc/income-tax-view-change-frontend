@@ -79,8 +79,8 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
         }
       )
 
-  def setupMockUserAuthNoCheckException(exception: AuthorisationException = new InvalidBearerToken): Unit =
-    when(mockAuthService.authorised(EmptyPredicate))
+  def setupMockUserAuthNoCheckException(mockFAF: FrontendAuthorisedFunctions)(exception: AuthorisationException = new InvalidBearerToken): Unit =
+    when(mockFAF.authorised(EmptyPredicate))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
 

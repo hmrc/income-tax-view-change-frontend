@@ -194,7 +194,7 @@ class FeedbackControllerSpec extends MockAuthActions
   private def testAuthFailures(action: Action[AnyContent])(fakeRequest: FakeRequest[AnyContentAsEmpty.type]) = {
     "redirect to sign in" when {
       "the user is not authenticated" in {
-        setupMockUserAuthNoCheckException(new InvalidBearerToken)
+        setupMockUserAuthNoCheckException(mockFAF)(new InvalidBearerToken)
 
         val result: Future[Result] = action(fakeRequest)
 
