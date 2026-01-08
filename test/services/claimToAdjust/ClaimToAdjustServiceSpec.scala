@@ -20,12 +20,11 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
-import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
+import models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import play.api.http.Status.NOT_FOUND
 import services.{ClaimToAdjustService, DateService}
 import testConstants.BaseTestConstants.{testNino, testUserNino}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants._
