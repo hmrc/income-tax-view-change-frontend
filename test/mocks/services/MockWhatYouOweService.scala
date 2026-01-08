@@ -29,7 +29,8 @@ import scala.concurrent.Future
 
 trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAndAfterEach {
 
-  implicit val dateService: DateService = mockDateService
+  implicit val dateService: DateService
+
   lazy val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
   val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None, None, None))

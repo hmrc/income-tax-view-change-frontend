@@ -54,6 +54,7 @@ trait MockAuthActions
     super.beforeEach()
     disableAllSwitches()
     reset(mockAuthService)
+    reset(mockFAF)
   }
 
   override def afterEach() = {
@@ -98,7 +99,7 @@ trait MockAuthActions
     setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-    setupMockAgentWithClientAuthSuccess(retrievalValue, testMtditid, isSupportingAgent)
+    setupMockAgentWithClientAuthSuccess(mockFAF)(retrievalValue, testMtditid, isSupportingAgent)
   }
 
   def setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent: Boolean): Unit = {
@@ -106,12 +107,12 @@ trait MockAuthActions
     setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-    setupMockAgentWithClientAuthSuccess(retrievalValue, testMtditid, isSupportingAgent)
+    setupMockAgentWithClientAuthSuccess(mockFAF)(retrievalValue, testMtditid, isSupportingAgent)
     mockSingleBusinessIncomeSource()
   }
 
   final def setupMockUserAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
-    setupMockUserAuthException(exception)
+    setupMockUserAuthException(mockFAF)(exception)
   }
 
   def setupMockAgentWithoutMTDEnrolmentForClient(): Unit = {
@@ -119,19 +120,19 @@ trait MockAuthActions
     setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-    setupMockAgentWithMissingDelegatedMTDEnrolment(retrievalValue, testMtditid)
+    setupMockAgentWithMissingDelegatedMTDEnrolment(mockFAF)(retrievalValue, testMtditid)
   }
 
   def setupMockAgentSuccess(): Unit = {
     val allEnrolments = getAllEnrolmentsAgent(true, true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
-    setupMockAgentAuthSuccess(retrievalValue)
+    setupMockAgentAuthSuccess(mockFAF)(retrievalValue)
   }
 
   def setupMockAgentWithClientAuthorisationException(exception: AuthorisationException = new InvalidBearerToken): Unit = {
     setupMockGetSessionDataSuccess()
     setupMockGetClientDetailsSuccess()
-    setupMockAgentAuthException(exception)
+    setupMockAgentAuthException(mockFAF)(exception)
   }
 
   def testMTDAuthFailuresForRole(action: Action[AnyContent],
@@ -211,7 +212,7 @@ trait MockAuthActions
         "redirect to signin" in {
           setupMockGetSessionDataSuccess()
           setupMockGetClientDetailsSuccess()
-          setupMockAgentAuthException(new InvalidBearerToken)
+          setupMockAgentAuthException(mockFAF)(new InvalidBearerToken)
 
           val result = action(fakeRequest)
 
@@ -224,7 +225,7 @@ trait MockAuthActions
         "redirect to timeout controller" in {
           setupMockGetSessionDataSuccess()
           setupMockGetClientDetailsSuccess()
-          setupMockAgentAuthException(new BearerTokenExpired)
+          setupMockAgentAuthException(mockFAF)(new BearerTokenExpired)
 
           val result = action(fakeRequest)
 
@@ -237,7 +238,7 @@ trait MockAuthActions
         "redirect to AgentError controller" in {
           setupMockGetSessionDataSuccess()
           setupMockGetClientDetailsSuccess()
-          setupMockAgentAuthException(InsufficientEnrolments("missing HMRC-AS-AGENT enrolment"))
+          setupMockAgentAuthException(mockFAF)(InsufficientEnrolments("missing HMRC-AS-AGENT enrolment"))
 
           val result = action(fakeRequest)
 

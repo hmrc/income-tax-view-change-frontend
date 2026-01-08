@@ -48,8 +48,8 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
         }
       )
 
-  def setupMockUserAuthException(exception: AuthorisationException = new InvalidBearerToken): Unit =
-    when(mockAuthService.authorised(predicate))
+  def setupMockUserAuthException(mockFAF: FrontendAuthorisedFunctions)(exception: AuthorisationException = new InvalidBearerToken): Unit =
+    when(mockFAF.authorised(predicate))
       .thenReturn(
         new mockAuthService.AuthorisedFunction(EmptyPredicate) {
 

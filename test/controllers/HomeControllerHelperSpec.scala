@@ -46,7 +46,6 @@ trait HomeControllerHelperSpec extends MockAuthActions
   with MockPenaltyDetailsService {
 
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
-  override implicit val dateService: DateService = mockDateService
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
