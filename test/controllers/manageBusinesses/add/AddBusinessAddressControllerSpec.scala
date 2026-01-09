@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import config.FrontendAppConfig
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
@@ -25,7 +26,7 @@ import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, verify, when}
+import org.mockito.Mockito.{clearInvocations, mock, never, verify, when}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api
 import play.api.Application
@@ -57,10 +58,15 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
     ).build()
 
   lazy val testAddBusinessAddressController = app.injector.instanceOf[AddBusinessAddressController]
+  lazy val frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
-  val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = Some(testBusinessAddressModel.address), countryCode = Some("GB")))
+  val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = Some(testBusinessAddressModel.address), countryCode = Some("GB"), addressLookupId = Some("123")))
   val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData("", "", testAddIncomeSourceSessionData)
+
+  val testUIJourneySessionDataNoLookupId: UIJourneySessionData = testUIJourneySessionData.copy(
+    addIncomeSourceData = testAddIncomeSourceSessionData.map(_.copy(addressLookupId = None))
+  )
 
   def verifySetMongoData(): Unit = {
     val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
@@ -85,6 +91,81 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
+              setupMockGetMongo(Right(None))
+
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+                .thenReturn(Future(Right(Some("Sample location"))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) mustBe Some("Sample location")
+            }
+
+            "session data exists but addressLookupId is missing" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Right(Some(testUIJourneySessionDataNoLookupId)))
+
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+                .thenReturn(Future(Right(Some("Sample location"))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) mustBe Some("Sample location")
+            }
+
+            "mongo call fails" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Left(AddressError("mongo failure")))
+
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+                .thenReturn(Future(Right(Some("Sample location"))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) mustBe Some("Sample location")
+            }
+          }
+
+          "redirect to the address lookup confirmation page" when {
+            "addressLookupId exists in session data and is still valid" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Right(Some(testUIJourneySessionData)))
+
+              when(mockAddressLookupService.fetchAddress(any())(any()))
+                .thenReturn(Future(Right(testBusinessAddressModel)))
+
+              val expectedUrl = s"${frontendAppConfig.addressLookupService}/lookup-address/123/confirm"
+
+              clearInvocations(mockAddressLookupService)
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) mustBe Some(expectedUrl)
+
+              verify(mockAddressLookupService, never).initialiseAddressJourney(any(), any())(any(), any())
+            }
+          }
+
+          "redirect to the address lookup service" when {
+            "addressLookupId exists in session data but journey is expired/invalid" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Right(Some(testUIJourneySessionData)))
+
+              when(mockAddressLookupService.fetchAddress(any())(any()))
+                .thenReturn(Future(Left(AddressError("Not found"))))
+
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
 
@@ -99,6 +180,9 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Right(None))
+
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Right(None)))
 
@@ -110,6 +194,9 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Right(None))
+
               when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
                 .thenReturn(Future(Left(AddressError("Test status"))))
 
@@ -163,6 +250,20 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               when(mockAddressLookupService.fetchAddress(any())(any()))
                 .thenReturn(Future(Left(AddressError("Test status"))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe INTERNAL_SERVER_ERROR
+            }
+
+            "session data not found" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Right(None))
+
+              when(mockAddressLookupService.fetchAddress(any())(any()))
+                .thenReturn(Future(Right(testBusinessAddressModel)))
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
