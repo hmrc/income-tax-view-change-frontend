@@ -150,7 +150,8 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
         businessAddressLine3 = address.lines.lift(2),
         businessAddressLine4 = address.lines.lift(3),
         businessPostalCode = address.postcode,
-        businessCountryCode = addIncomeSourceData.countryCode
+        businessCountryCode = addIncomeSourceData.countryCode,
+        addressId = addIncomeSourceData.addressId
       )
     }
   }

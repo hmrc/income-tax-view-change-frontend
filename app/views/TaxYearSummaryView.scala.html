@@ -50,8 +50,7 @@
     backUrl: String,
     isAgent: Boolean = false,
     origin: Option[String] = None,
-    ctaLink: String,
-    taxYearViewScenarios: TaxYearViewScenarios
+    ctaLink: String
 )(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
 @import implicitDateFormatter._
 
