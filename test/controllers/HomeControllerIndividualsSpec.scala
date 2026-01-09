@@ -43,8 +43,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
     val controller = testHomeController
     mockSingleBusinessIncomeSource()
     setupMockUserAuth
-    when(mockDateService.getCurrentDate) thenReturn fixedDate
-    when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
+    when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
+    when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
     lazy val homePageTitle = s"${messages("htmlTitle", messages("home.heading"))}"
 

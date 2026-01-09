@@ -16,6 +16,7 @@
 
 package mocks.services
 
+import auth.FrontendAuthorisedFunctions
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -24,22 +25,23 @@ import testUtils.UnitSpec
 
 trait MockDateService extends UnitSpec with BeforeAndAfterEach {
 
-   lazy val mockDateService: DateService = mock(classOf[DateService])
+  lazy val classOfDateService: Class[DateService] = classOf[DateService]
+  lazy val mockDateService: DateService = mock(classOfDateService)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockDateService)
   }
 
-  def setupMockGetCurrentTaxYear(taxYear: TaxYear): Unit = {
+  def setupMockGetCurrentTaxYear(mockDateService : DateService)(taxYear: TaxYear): Unit = {
     when(mockDateService.getCurrentTaxYear).thenReturn(taxYear)
   }
 
-  def setupMockGetCurrentTaxYearEnd(taxYearEnd: Int): Unit = {
+  def setupMockGetCurrentTaxYearEnd(mockDateService : DateService)(taxYearEnd: Int): Unit = {
     when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
   }
 
-  def setupMockGetCurrentTaxYearStart(startDate: java.time.LocalDate): Unit = {
+  def setupMockGetCurrentTaxYearStart(mockDateService : DateService)(startDate: java.time.LocalDate): Unit = {
     when(mockDateService.getCurrentTaxYearStart).thenReturn(startDate)
   }
 

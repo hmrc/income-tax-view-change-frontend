@@ -22,6 +22,7 @@ import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear}
+import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -34,10 +35,12 @@ import scala.concurrent.Future
 
 class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService with MockSessionService with MockIncomeSourceRFService {
 
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
+  
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[IncomeSourceRFService].toInstance(mockIncomeSourceRFService),
-      api.inject.bind[DateService].toInstance(mockDateService),
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[SessionService].toInstance(mockSessionService)
     ).build()
 
@@ -63,8 +66,8 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               s"$displayYears - isChange" in {
                 setupMockSuccess(mtdRole)
                 setupMockIncomeSourceDetailsCall(incomeSourceType)
-                setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
-                setupMockGetCurrentTaxYearEnd(2025)
+                setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
+                setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2025)
                 mockRedirectChecksForIncomeSourceRF()
                 setupMockGetMongo(Right(Some(UIJourneySessionData("", "", incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(displayYears._1, displayYears._2, true, true))))))
 
@@ -77,7 +80,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
             s"no change" in {
               setupMockSuccess(mtdRole)
               setupMockIncomeSourceDetailsCall(incomeSourceType)
-              setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
+              setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
               mockRedirectChecksForIncomeSourceRF()
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
 
@@ -108,7 +111,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
 
               setupMockSuccess(mtdRole)
               setupMockIncomeSourceDetailsCall(incomeSourceType)
-              setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
+              setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
               setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
               setupMockSetMongoData(true)
 
@@ -129,7 +132,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
 
               setupMockSuccess(mtdRole)
               setupMockIncomeSourceDetailsCall(incomeSourceType)
-              setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
+              setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
               setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
               setupMockSetMongoData(true)
 
@@ -145,7 +148,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
 
               setupMockSuccess(mtdRole)
               mockSingleBusinessIncomeSourceError()
-              setupMockGetCurrentTaxYear(TaxYear(2024, 2025))
+              setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
               setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
               setupMockSetMongoData(true)
 

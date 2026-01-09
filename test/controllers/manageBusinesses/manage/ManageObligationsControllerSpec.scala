@@ -48,13 +48,14 @@ class ManageObligationsControllerSpec extends MockAuthActions
   with MockDateService {
 
   lazy val mockIncomeSourcesUtils: IncomeSourcesUtils = mock(classOf[IncomeSourcesUtils])
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils),
-      api.inject.bind[DateService].toInstance(mockDateService)
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ManageObligationsController]
@@ -154,8 +155,8 @@ class ManageObligationsControllerSpec extends MockAuthActions
 
             setupMockSuccess(mtdRole)
             setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
-            setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
-            setupMockGetCurrentTaxYearStart(LocalDate.of(2024, 4, 6))
+            setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear.forYearEnd(2024))
+            setupMockGetCurrentTaxYearStart(mockDateServiceInjected)(LocalDate.of(2024, 4, 6))
 
             incomeSourceType match {
               case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
@@ -181,8 +182,8 @@ class ManageObligationsControllerSpec extends MockAuthActions
             "IncomeSources FS is enabled" in {
               setupMockSuccess(mtdRole)
               setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
-              setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
-              setupMockGetCurrentTaxYearStart(LocalDate.of(2024, 4, 6))
+              setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear.forYearEnd(2024))
+              setupMockGetCurrentTaxYearStart(mockDateServiceInjected)(LocalDate.of(2024, 4, 6))
               incomeSourceType match {
                 case SelfEmployment => when(mockSessionService.getMongoKey(any(), any())(any(), any())).thenReturn(Future(Right(Some(testId))))
                 case UkProperty => when(mockIncomeSourcesUtils.getActiveProperty(any())(any()))
@@ -215,8 +216,8 @@ class ManageObligationsControllerSpec extends MockAuthActions
                     None,
                   )), List.empty)
                 setupMockGetIncomeSourceDetails(source)
-                setupMockGetCurrentTaxYear(TaxYear.forYearEnd(2024))
-                setupMockGetCurrentTaxYearStart(LocalDate.of(2024, 4, 6))
+                setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear.forYearEnd(2024))
+                setupMockGetCurrentTaxYearStart(mockDateServiceInjected)(LocalDate.of(2024, 4, 6))
                 setMongoSessionData(testId, changeToA, taxYear, incomeSourceType)
 
                 when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any()))

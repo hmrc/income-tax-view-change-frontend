@@ -21,8 +21,6 @@ import org.mockito.Mockito.mock
 import org.scalatest.Suite
 
 trait MockAuthServiceSupport { self: Suite =>
-  lazy val mockFrontendAuthorisedFunctions = classOf[FrontendAuthorisedFunctions]
-  
-  final val mockAuthService: FrontendAuthorisedFunctions =
-    mock(mockFrontendAuthorisedFunctions)
+  lazy val classFAF = classOf[FrontendAuthorisedFunctions]
+  final val mockAuthService: FrontendAuthorisedFunctions = mock(classFAF)
 }

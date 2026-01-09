@@ -62,7 +62,7 @@ trait MockAuthActions
   }
 
   lazy val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
-  lazy val mockFAF: FrontendAuthorisedFunctions = mock(mockFrontendAuthorisedFunctions)
+  lazy val mockFAF: FrontendAuthorisedFunctions = mock(classFAF)
 
   lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
