@@ -243,9 +243,9 @@ object ClaimToAdjustHelper {
 
   val poaDocumentDescriptions: List[String] = List(POA1, POA2)
 
-  val isPoaOne: DocumentDetail => Boolean = _.documentDescription.contains(POA1)
+  val isPoaOne: DocumentDetail => Boolean = _.documentDescription.exists(poa1 => poa1.replace(" ", "") == POA1.replace(" ", ""))
 
-  val isPoaTwo: DocumentDetail => Boolean = _.documentDescription.contains(POA2)
+  val isPoaTwo: DocumentDetail => Boolean = _.documentDescription.exists(poa2 => poa2.replace(" ", "") == POA2.replace(" ", ""))
 
   val isPoaDocumentDescription: String => Boolean = poaDocumentDescriptions.contains(_)
 }
