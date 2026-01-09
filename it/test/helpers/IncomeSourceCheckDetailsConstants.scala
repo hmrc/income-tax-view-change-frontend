@@ -51,7 +51,8 @@ object IncomeSourceCheckDetailsConstants {
       businessAddressLine3 = None,
       businessAddressLine4 = None,
       businessPostalCode = Some(testBusinessPostCode),
-      businessCountryCode = Some(testCountryCode)
+      businessCountryCode = Some(testCountryCode),
+      addressId = None
     )
 
   val testUKPropertyViewModel =

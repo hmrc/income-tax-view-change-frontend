@@ -35,7 +35,8 @@ case class CheckBusinessDetailsViewModel(
                                           businessAddressLine3: Option[String],
                                           businessAddressLine4: Option[String],
                                           businessPostalCode: Option[String],
-                                          businessCountryCode: Option[String]
+                                          businessCountryCode: Option[String],
+                                          addressId: Option[String]
                                         ) extends CheckDetailsViewModel {
 
   override val incomeSourceType: IncomeSourceType = SelfEmployment
