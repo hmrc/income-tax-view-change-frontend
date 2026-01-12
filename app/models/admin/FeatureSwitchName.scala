@@ -218,7 +218,7 @@ case object PostFinalisationAmendmentsR18 extends FeatureSwitchName {
 
 case object YouMustWaitToSignUpPageEnabled extends FeatureSwitchName {
   override val name: String = "you-must-wait-to-sign-up-page"
-  override val toString: String = "YouMustWaitToSignUpPageEnabled"
+  override val toString: String = "You Must Wait To Sign Up Page Enabled"
 }
 
 
