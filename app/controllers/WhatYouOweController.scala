@@ -53,7 +53,6 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
 
     whatYouOweService.createWhatYouOweViewModel(backUrl, getCreditAndRefundUrl, getTaxYearSummaryUrl(origin), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
       case Some(viewModel) =>
-        println("BEEP "+viewModel.whatYouOweChargesList.balanceDetails)
         Ok(whatYouOwe(viewModel, origin))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
       case None =>
