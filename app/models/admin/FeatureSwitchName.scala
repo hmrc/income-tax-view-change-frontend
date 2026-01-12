@@ -78,7 +78,6 @@ object FeatureSwitchName {
       JsSuccess(InvalidFS)
   }
 
-
   implicit val formats: Format[FeatureSwitchName] =
     Format(reads, writes)
 
