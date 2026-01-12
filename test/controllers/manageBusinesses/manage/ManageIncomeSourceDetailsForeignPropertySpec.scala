@@ -28,10 +28,16 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJour
 
 class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDetailsHelper {
 
-  mtdAllRoles.foreach { mtdUserRole =>
+  for {
+    mtdUserRole <- mtdAllRoles
+    (isChange, label) <- Seq(
+      false -> "show",
+      true -> "showChange"
+    )
+  } {
     val isAgent = mtdUserRole != MTDIndividual
-    List(false, true).foreach { isChange =>
-      s"show${if (isChange) "Change"}($isAgent, $ForeignProperty)" when {
+
+    s"$label(role=$mtdUserRole, isAgent=$isAgent, ForeignProperty)" when {
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
         val action = if(isChange) {
           testController.showChange(ForeignProperty, isAgent)
@@ -306,4 +312,3 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
       }
     }
   }
-}
