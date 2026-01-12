@@ -141,7 +141,7 @@ class AddressLookupServiceSpec extends TestSupport
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Left(UnexpectedGetStatusFailure(418))))
 
-        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress( Some(mkIncomeSourceId("")))
+        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some("some-address-id"))
         result map {
           case Left(AddressError(value)) => value shouldBe "status: 418"
           case Right(_) => Fail("Error not returned")
@@ -169,7 +169,7 @@ class AddressLookupServiceSpec extends TestSupport
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Right(None)))
 
-        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some(mkIncomeSourceId("")))
+        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some("some-address-id"))
         result map {
           case Left(AddressError(value)) => value shouldBe "Not found"
           case Right(_) => Fail("Error not returned")
@@ -183,7 +183,7 @@ class AddressLookupServiceSpec extends TestSupport
         when(mockAddressLookupConnector.getAddressDetails(any())(any()))
           .thenReturn(Future(Right(Some(testBusinessAddressModel))))
 
-        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some(mkIncomeSourceId("")))
+        val result: Future[Either[Throwable, BusinessAddressModel]] = TestAddressLookupService.fetchAddress(Some("some-address-id"))
         result map {
           case Left(_) => Fail("Error returned from connector")
           case Right(BusinessAddressModel(auditRef, address)) =>

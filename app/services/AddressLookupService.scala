@@ -19,7 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
-import models.core.{IncomeSourceId, Mode}
+import models.core.Mode
 import models.incomeSourceDetails.BusinessAddressModel
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
@@ -49,10 +49,10 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
     }
   }
 
-  def fetchAddress(id: Option[IncomeSourceId])(implicit hc: HeaderCarrier): Future[Either[Throwable, BusinessAddressModel]] = {
+  def fetchAddress(id: Option[String])(implicit hc: HeaderCarrier): Future[Either[Throwable, BusinessAddressModel]] = {
     id match {
-      case Some(incomeSourceId: IncomeSourceId) =>
-        addressLookupConnector.getAddressDetails(incomeSourceId.value) map {
+      case Some(addressLookupId: String) =>
+        addressLookupConnector.getAddressDetails(addressLookupId) map {
           case Left(UnexpectedGetStatusFailure(status)) =>
             Logger("application").error(s"failed to get details for $id with status $status")
             Left(AddressError("status: " + status))

@@ -416,7 +416,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     codedOutDetails = Some(codedOutDetails)
   )
 
-  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None), codedOutDetails = Some(balancingCodedOut))
+  val noChargesButCodedOutModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None), codedOutDetails = Some(balancingCodedOut))
+  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None))
 
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None),
@@ -1168,11 +1169,45 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
     }
 
-    "the user has no charges" should {
+    "the user has no charges but is coded out" should {
+
+      s"have the title $whatYouOweTitle and page header and notes" in new TestSetup(charges = noChargesButCodedOutModel) {
+        pageDocument.title() shouldBe whatYouOweTitle
+        pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote2)
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
+
+      }
+
+      "have the link to their previous Self Assessment online account in the sa-note" in new TestSetup(charges = noChargesButCodedOutModel) {
+        verifySelfAssessmentLink()
+      }
+
+      "not have button Pay now" in new TestSetup(charges = noChargesButCodedOutModel) {
+        findElementById("payment-button") shouldBe None
+      }
+      "not have payment made paragraph" in new TestSetup(charges = noChargesButCodedOutModel) {
+        findElementById("payments-made") shouldBe None
+        findElementById("payments-made-bullets") shouldBe None
+        findElementById("sa-tax-bill") shouldBe None
+        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+        pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+        pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+        pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+        pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+        pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
+      }
+    }
+
+    "the user has no charges at all" should {
 
       s"have the title $whatYouOweTitle and page header and notes" in new TestSetup(charges = noChargesModel) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
+        pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
@@ -1192,11 +1227,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findElementById("payments-made") shouldBe None
         findElementById("payments-made-bullets") shouldBe None
         findElementById("sa-tax-bill") shouldBe None
-        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
         pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
         pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
         pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-        pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote2Heading
         pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
       }
     }
@@ -1272,7 +1306,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url
       }
 
-      "not have button Pay now with no chagres" in new AgentTestSetup(charges = noChargesModel) {
+      "not have button Pay now with no charges but coded out" in new AgentTestSetup(charges = noChargesButCodedOutModel) {
         findAgentElementById("payment-button") shouldBe None
       }
       "not have button Pay now with charges" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
@@ -1310,10 +1344,23 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
     }
 
-    "the user has no charges" should {
+    "the user has no charges but is coded out" should {
+      s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading-agent"))} and page header and notes" in new AgentTestSetup(charges = noChargesButCodedOutModel) {
+        pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
+        pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote2)
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
+      }
+    }
+
+    "the user has no charges at all" should {
       s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading-agent"))} and page header and notes" in new AgentTestSetup(charges = noChargesModel) {
         pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
         pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
+        pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
