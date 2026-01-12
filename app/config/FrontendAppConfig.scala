@@ -187,19 +187,14 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   def selfAssessmentTaxReturnLink(isAgent: Boolean)(implicit messages: Messages): String =
     messages.lang.code match {
-      case "en" if isAgent => "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
-      case "cy" if isAgent => "https://www.gov.uk/ffurflenni-treth-hunanasesiad/trosolwg" //TODO: Find out agent link
+      case _ if isAgent => "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
       case "en" => "https://www.gov.uk/self-assessment-tax-returns"
       case "cy" => "https://www.gov.uk/ffurflenni-treth-hunanasesiad/trosolwg"
       case _ => "https://www.gov.uk/self-assessment-tax-returns"
     }
 
-  def findHmrcContactsSALink()(implicit messages: Messages): String =
-    messages.lang.code match {
-      case "en" => "https://www.gov.uk/find-hmrc-contacts/self-assessment-general-enquiries"
-      case "cy" => "https://www.gov.uk/cyflwyno-ch-ffurflen-dreth-hunanasesiad-ar-lein" // TODO find out welsh contact hmrc link
-      case _ => "https://www.gov.uk/find-hmrc-contacts/self-assessment-general-enquiries"
-    }
+  def findHmrcContactsSALink(): String =
+    "https://www.gov.uk/find-hmrc-contacts/self-assessment-general-enquiries"
 
 
   def compatibleSoftwareLink(implicit messages: Messages): String =
