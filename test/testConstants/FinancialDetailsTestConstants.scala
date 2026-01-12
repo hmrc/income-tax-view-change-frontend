@@ -52,7 +52,7 @@ object FinancialDetailsTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),
@@ -164,7 +164,7 @@ object FinancialDetailsTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),
@@ -552,7 +552,7 @@ object FinancialDetailsTestConstants {
   val balanceDetails: BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
     overDueAmount = 2.00,
-    balanceNotDueIn30Days = 0.00,
+    balanceNotDuein30Days = 0.00,
     totalBalance = 3.00,
     totalCreditAvailableForRepayment = Some(100.00),
     None,
@@ -2311,7 +2311,7 @@ object CreditAndRefundConstants {
                           unallocatedCredit: Option[BigDecimal] = None): BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
     overDueAmount = 2.00,
-    balanceNotDueIn30Days = 0.00,
+    balanceNotDuein30Days = 0.00,
     totalBalance = 3.00,
     totalCreditAvailableForRepayment = availableCredit,
     allocatedCredit = allocatedCreditOverdue,

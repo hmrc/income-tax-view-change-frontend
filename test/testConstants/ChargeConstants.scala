@@ -1215,7 +1215,7 @@ trait ChargeConstants {
     )
 
   val whatYouOwePartialChargesListX: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, balanceNotDueIn30Days = 4.00, totalBalance = 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, balanceNotDuein30Days = 4.00, totalBalance = 3.00, None, None, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = List(Some(LocalDate.of(2019, 6, 25)), Some(LocalDate.of(2023, 12, 14))),
       documentDate = List(LocalDate.of(2018, 3, 29), LocalDate.of(2018, 3, 29)),
@@ -1257,7 +1257,7 @@ trait ChargeConstants {
   )
 
   val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, balanceNotDueIn30Days = 4.00, totalBalance = 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, balanceNotDuein30Days = 4.00, totalBalance = 3.00, None, None, None, None, None, None, None),
     chargesList = testFinancialDetailsChargeItems(
       dueDate = dueDateOverdue,
       dunningLock = oneDunningLock,

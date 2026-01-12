@@ -411,7 +411,7 @@ object IncomeSourceIntegrationTestConstants {
   val testEmptyFinancialDetailsModelJson: JsValue = Json.obj("balanceDetails" -> Json.obj(
     "balanceDueWithin30Days" -> 0.00,
     "overDueAmount" -> 0.00,
-    "balanceNotDueIn30Days" -> 0.00,
+    "balanceNotDuein30Days" -> 0.00,
     "totalBalance" -> 0.00
   ), "codingDetails" -> Json.arr(), "documentDetails" -> Json.arr(), "financialDetails" -> Json.arr())
 
@@ -426,7 +426,7 @@ object IncomeSourceIntegrationTestConstants {
 
   def testValidFinancialDetailsModelJsonSingleCharge(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                                      taxYear: String = "2018", dueDate: String = "2018-02-14"): JsValue = Json.obj(
-    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDueIn30Days" -> 4.00, "totalBalance" -> 3.00),
+    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
     "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
@@ -521,7 +521,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),
@@ -653,7 +653,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),
@@ -779,7 +779,7 @@ object IncomeSourceIntegrationTestConstants {
   def testValidFinancialDetailsModelJsonAccruingInterest(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                                          taxYear: String = "2018", dueDate: String = "2018-04-14",
                                                          accruingInterestAmount: Option[BigDecimal] = Some(0)): JsValue = Json.obj(
-    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDueIn30Days" -> 4.00, "totalBalance" -> 3.00),
+    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
     "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
@@ -874,7 +874,7 @@ object IncomeSourceIntegrationTestConstants {
   def testValidFinancialDetailsModelJsonLPI(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                             taxYear: String = "2018", dueDate: String = "2018-04-14",
                                             accruingInterestAmount: BigDecimal = 0, interestDueDate: String = "2019-01-01"): JsValue = Json.obj(
-    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDueIn30Days" -> 4.00, "totalBalance" -> 3.00),
+    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
     "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
       Json.obj(
@@ -963,7 +963,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),
@@ -1006,7 +1006,7 @@ object IncomeSourceIntegrationTestConstants {
                                                   taxYear: String = "2018", dueDate: String = "2018-04-14",
                                                   accruingInterestAmount: BigDecimal = 0,
                                                   payeSaTaxYear: String = "2018", totalLiabilityAmount: BigDecimal = 0): JsValue = Json.obj(
-    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDueIn30Days" -> 4.00, "totalBalance" -> 3.00),
+    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
     "codingDetails" -> Json.arr(Json.obj(
       "totalLiabilityAmount" -> totalLiabilityAmount,
       "taxYearReturn" -> taxYear
@@ -1153,7 +1153,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),
@@ -1319,7 +1319,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00,
       "totalCreditAvailableForRepayment" -> 5.00,
       "totalCredit" -> 5.00,
@@ -1500,7 +1500,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00,
       "totalCreditAvailableForRepayment" -> 5.00,
       "totalCredit" -> 5.00,
@@ -1653,7 +1653,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),
@@ -1770,7 +1770,7 @@ object IncomeSourceIntegrationTestConstants {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
-      "balanceNotDueIn30Days" -> 4.00,
+      "balanceNotDuein30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),
