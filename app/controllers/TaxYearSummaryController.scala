@@ -362,9 +362,6 @@ class TaxYearSummaryController @Inject()(authActions: AuthActions,
         for {
           viewModel <- claimToAdjustViewModel(nino = Nino(value = user.nino), taxYear = taxYear)
           (latestCalcResponse: LiabilityCalculationResponseModel, previousResponse: Option[LiabilityCalculationResponseModel]) <- calculationService.getLatestAndPreviousCalculationDetails(mtdItId, nino, taxYear)
-//          _ = println("\n" + latestCalcResponse + "*****************\n")
-          taxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(latestCalcResponse, TaxYear(taxYear, taxYear + 1)) // TODO use this to determine calc tab content
-//          _ = println("000000 " + taxYearViewScenarios)
           backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER)) else getBackURL(user.headers.get(REFERER), origin)
           view <- renderView(
             liabilityCalc = latestCalcResponse,
