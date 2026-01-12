@@ -24,7 +24,7 @@ import models.admin.{NavBarFs, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import repositories.UIJourneySessionDataRepository
@@ -121,6 +121,41 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "optout.confirmedOptOut.heading")
               )
+            }
+
+            s"redirect to cannot-go-back page when session data are invalid" in {
+              enable(OptOutFs)
+              disable(NavBarFs)
+              stubAuthorised(mtdUserRole)
+
+              helper.stubOptOutInitialState(
+                currentTaxYear = currentTaxYear,
+                previousYearCrystallised = false,
+                previousYearStatus = Annual,
+                currentYearStatus = Annual,
+                nextYearStatus = Annual,
+                selectedOptOutYear = Some("2021-2022")
+              )
+
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+              val responseBody = Json.arr(successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023)
+
+              val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+
+              WiremockHelper.stubGet(url, OK, responseBody.toString())
+
+              val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
+              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+              val isAgent = mtdUserRole != MTDIndividual
+              val expectedRedirectPath = controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)).url
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(expectedRedirectPath)
+              )
+
             }
           }
           testAuthFailures(path, mtdUserRole)
