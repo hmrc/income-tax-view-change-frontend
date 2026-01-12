@@ -113,7 +113,8 @@ trait IncomeSourcesDataHelper {
       businessAddressLine2 = Some(""),
       businessAddressLine3 = Some(""),
       businessAddressLine4 = None,
-      businessCountryCode = Some("GB")
+      businessCountryCode = Some("GB"),
+      addressId = None
     )
 
   val createForeignPropertyViewModel: CheckPropertyViewModel = CheckPropertyViewModel(tradingStartDate = LocalDate.of(2011, 1, 1), incomeSourceType = ForeignProperty)
