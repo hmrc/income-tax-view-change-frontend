@@ -29,12 +29,13 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with MockitoSugar {
 
-  override val appConfig: FrontendAppConfig = new FrontendAppConfig(
-    app.injector.instanceOf[ServicesConfig],
-    app.injector.instanceOf[Configuration]
-  ) {
-    override lazy val readFeatureSwitchesFromMongo: Boolean = false
-  }
+  override val appConfig: FrontendAppConfig =
+    new FrontendAppConfig(
+      app.injector.instanceOf[ServicesConfig],
+      app.injector.instanceOf[Configuration]
+    ) {
+      override lazy val readFeatureSwitchesFromMongo: Boolean = false
+    }
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -59,15 +60,17 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     SelfServeTimeToPayR17,
     SubmitClaimToAdjustToNrs,
     TriggeredMigration,
-    PostFinalisationAmendmentsR18
+    PostFinalisationAmendmentsR18,
+    YouMustWaitToSignUpPageEnabled
   )
 
   "FeatureSwitchName" when {
+
     ".allFeatureSwitches" should {
+
       "return a list of all feature switches" in {
 
         enable(ReportingFrequencyPage)
-
         val featureSwitchList = FeatureSwitchName.allFeatureSwitches
 
         featureSwitchList shouldBe allFeatureSwitches
