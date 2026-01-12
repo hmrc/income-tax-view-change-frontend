@@ -23,7 +23,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.admin.CreditsRefundsRepay
+import models.admin.{CreditsRefundsRepay, `CY+1YouMustWaitToSignUpPageEnabled`}
 import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -50,7 +50,10 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
                                           val languageUtils: LanguageUtils,
                                           val ec: ExecutionContext,
                                           val customNotFoundErrorView: CustomNotFoundErrorView)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ErrorRecovery {
+  extends FrontendController(mcc)
+    with FeatureSwitching
+    with I18nSupport
+    with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
     authActions.asMTDIndividual.async {
