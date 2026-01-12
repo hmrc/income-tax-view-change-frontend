@@ -83,12 +83,12 @@ class ItsaStatusRetrievalAction @Inject()(
             case Some(Individual) =>
               Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Non-Agent/Individual's YouMustWaitToSignUp page")
               Left(Redirect(controllers.optIn.routes.YouMustWaitToSignUpController.show(isAgent = false)))
+            case Some(Organisation) =>
+              Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Non-Agent/Organisation's YouMustWaitToSignUp page")
+              Left(Redirect(controllers.optIn.routes.YouMustWaitToSignUpController.show(isAgent = false)))
             case Some(Agent) =>
               Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Agent YouMustWaitToSignUp page")
               Left(Redirect(controllers.optIn.routes.YouMustWaitToSignUpController.show(isAgent = true)))
-            case Some(Organisation) =>
-              Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] User has passed in as organisation affinity group, redirecting to internal server error page for user")
-              Left(internalServerErrorFor(req, "affinity-group", None))
             case None =>
               Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
               Left(internalServerErrorFor(req, "affinity-group", None))

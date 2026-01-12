@@ -287,19 +287,12 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
         val result = action.refine(mtdUser).futureValue
 
-        result match {
-          case Left(res) =>
-            val body = contentAsString(Future.successful(res))
-            val document = Jsoup.parse(body)
-            val title = document.title()
-            res.header.status shouldBe INTERNAL_SERVER_ERROR
-            title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-          case Right(_) =>
-            fail("Expected Organisation error page but fell into a Right branch")
-        }
+        result.left.get.header.status shouldBe SEE_OTHER
+        result.left.get.header.headers("LOCATION") shouldBe controllers.optIn.routes.YouMustWaitToSignUpController.show(false).url
       }
-    }
 
+
+    }
     "CY+1YouMustWaitToSignUpPageEnabled feature switch is Disabled" should {
 
       "return the request unmodified" in {
@@ -318,6 +311,5 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
           .getITSAStatusDetail(any(), any(), anyBoolean(), anyBoolean())(any())
       }
     }
-
   }
 }
