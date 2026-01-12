@@ -235,7 +235,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                 val mixedJson = Json.obj(
-                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDueIn30Days" -> 4.00, "totalBalance" -> 3.00),
                   "codingDetails" -> Json.arr(),
                   "documentDetails" -> Json.arr(
                     documentDetailJson(3400.00, 1000.00, testTaxYear - 1, "ITSA- POA 1", transactionId = "transId1"),
@@ -455,7 +455,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                   val mixedJson = Json.obj(
-                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDueIn30Days" -> 4.00, "totalBalance" -> 3.00),
                     "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                     ),
@@ -497,7 +497,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   val mixedJson = Json.obj(
-                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDueIn30Days" -> 4.00, "totalBalance" -> 3.00),
                     "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                       documentDetailJson(3400.00, 1000.00, testTaxYear, transactionId = "transId1"),
@@ -724,7 +724,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                         stubAuthorised(mtdUserRole)
                         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                         val mixedJson = Json.obj(
-                          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "totalCreditAvailableForRepayment" -> 300.00, "totalCredit" -> 300.00),
+                          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDueIn30Days" -> 4.00, "totalBalance" -> 3.00, "totalCreditAvailableForRepayment" -> 300.00, "totalCredit" -> 300.00),
                           "codingDetails" -> Json.arr(),
                           "documentDetails" -> Json.arr(
                             documentDetailJson(3400.00, 1000.00, testTaxYear, "ITSA- POA 1", transactionId = "transId1"),

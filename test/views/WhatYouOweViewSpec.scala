@@ -338,14 +338,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusDays(15).toString, 0.00)
 
   val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList =
       List(financialDetailsWithMixedData3Ci(1)) ++ List(financialDetailsWithMixedData3Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
-  val whatYouOweDataWithWithAciValueZeroAndFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+  val whatYouOweDataWithWithPaymentsWithin30Days: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 0.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    chargesList = List(financialDetailsWithMixedData1Ci(1))
+      ++ List(financialDetailsWithMixedData1Ci.head),
+    outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
+  )
+
+  val whatYouOweDataWithWithFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(0.00, 0.00, 4.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData1Ci(1))
       ++ List(financialDetailsWithMixedData1Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
@@ -969,11 +976,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           findElementById(".interest-rate") shouldBe None
         }
 
-        "have payments data with button" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
+        "have payments data with button with overdue charges" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
-
-          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
-
+          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(300).url
+        }
+        "have payments data with button with charges due within 30 days" in new TestSetup(charges = whatYouOweDataWithOverdueData().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00))) {
+          pageDocument.getElementById("payment-button").text shouldBe payNow
+          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(100).url
+        }
+        "have payments data with button with charges due after 30 days" in new TestSetup(charges = whatYouOweDataWithOverdueData().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00, balanceDueWithin30Days = 0.00))) {
+          pageDocument.getElementById("payment-button").text shouldBe payNow
+          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(400).url
         }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
@@ -1069,12 +1082,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
       }
-      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithMixedData1()) {
-
+      s"have payment data with button with overdue charges" in new TestSetup(charges = whatYouOweDataWithMixedData1()) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
-
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(10000).url
-
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(200).url
+        findElementById("pre-mtd-payments-heading") shouldBe None
+      }
+      s"have payment data with button with charges due within 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData1().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00))) {
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(100).url
+        findElementById("pre-mtd-payments-heading") shouldBe None
+      }
+      s"have payment data with button with charges due after 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData1().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(balanceDueWithin30Days = 0.00, overDueAmount = 0.00))) {
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(400).url
         findElementById("pre-mtd-payments-heading") shouldBe None
       }
     }
@@ -1134,14 +1154,18 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
       }
 
-      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
-
+      s"have payment data with button when charges overdue" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
-
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
-
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(200).url
       }
-
+      s"have payment data with button when charges due in next 30 days" in new TestSetup(charges = whatYouOweDataWithWithPaymentsWithin30Days) {
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(100).url
+      }
+      s"have payment data with button when charges due in more than 30 days" in new TestSetup(charges = whatYouOweDataWithWithFuturePayments) {
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(400).url
+      }
     }
 
     "the user has no charges" should {

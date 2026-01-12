@@ -1173,7 +1173,7 @@ object FinancialDetailsTestConstants {
                                         mainTransaction: List[Option[String]] = List(Some("4920"), Some("4930")),
                                         outstandingAmount: List[BigDecimal] = List(50, 75),
                                         taxYear: String = fixedDate.getYear.toString,
-                                        balanceDetails: BalanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None)): FinancialDetailsModel =
+                                        balanceDetails: BalanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None)): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = balanceDetails,
       documentDetails = List(
@@ -1468,7 +1468,7 @@ object FinancialDetailsTestConstants {
                                                      chargeReference: List[Option[String]] = List(Some("ABCD1234"), Some("ABCD1234"))
                                                     ): FinancialDetailsModel =
     FinancialDetailsModel(
-      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+      balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear = taxYear.toInt,
           transactionId = id1040000123,
@@ -1780,7 +1780,7 @@ object FinancialDetailsTestConstants {
 //  )
 
 
-  val whatYouOweEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 0.0, 3.0, None, None, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
+  val whatYouOweEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 4.0, 3.0, None, None, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
 
   val creditDocumentDetailList = List(
     documentDetailModel(originalAmount = BigDecimal(-100.00), paymentLotItem = None, paymentLot = None),
