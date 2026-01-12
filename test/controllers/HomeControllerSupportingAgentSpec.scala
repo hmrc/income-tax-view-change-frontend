@@ -16,6 +16,9 @@
 
 package controllers
 
+import audit.AuditingService
+import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.MTDSupportingAgent
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
@@ -23,22 +26,57 @@ import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers.*
 import play.api.test.Injecting
+import services.NextUpdatesService
+import services.optIn.OptInService
+import services.optout.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import views.html.HomeView
+import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with Injecting {
 
-  lazy val testHomeController: HomeController = app.injector.instanceOf[HomeController]
+  val application: Application = applicationBuilderWithAuthBindings.build()
+
+  val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
+  val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
+  val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
+  val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
+  val optInService: OptInService = application.injector.instanceOf(classOf[OptInService])
+  val optOutService: OptOutService = application.injector.instanceOf(classOf[OptOutService])
+  val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
+
+  given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
+  given ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
+  given AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
+  given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
 
   trait Setup {
-    val controller: HomeController = testHomeController
+    val controller: HomeController = HomeController(
+      homeView,
+      primaryAgentHomeView,
+      supportingAgentHomeView,
+      authActions,
+      mockedNextUpdatesService,
+      mockIncomeSourceDetailsService,
+      mockFinancialDetailsService,
+      mockDateServiceInjected,
+      mockWhatYouOweService,
+      mockITSAStatusService,
+      mockPenaltyDetailsService,
+      optInService,
+      optOutService,
+      auditingService
+    )
+    
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
@@ -347,7 +385,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         document.getElementById("reporting-obligations-tile") shouldBe null
       }
     }
-
-    testMTDAgentAuthFailures(testHomeController.showAgent(), isSupportingAgent = true)
+    
+    "test MTD Supporting Agent Auth Failures" in new Setup {
+      testMTDAgentAuthFailures(controller.showAgent(), isSupportingAgent = true)
+    }
   }
 }

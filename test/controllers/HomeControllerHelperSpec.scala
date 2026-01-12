@@ -19,6 +19,7 @@ package controllers
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.services.*
+import _root_.config.ItvcErrorHandler
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
@@ -28,9 +29,11 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
+import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import play.twirl.api.Html
 import services.*
 
 import java.time.{LocalDate, Month}
@@ -73,7 +76,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
   def setupNextUpdatesTests(allDueDates: Seq[LocalDate],
                             nextQuarterlyUpdateDueDate: Option[LocalDate],
                             nextTaxReturnDueDate: Option[LocalDate],
-                            mtdUserRole: MTDUserRole = MTDIndividual): Unit = {
+                            mtdUserRole: MTDUserRole = MTDIndividual)(using NextUpdatesService): Unit = {
     mtdUserRole match {
       case MTDIndividual => setupMockUserAuth
       case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
@@ -95,7 +98,9 @@ trait HomeControllerHelperSpec extends MockAuthActions
     setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
   }
 
-  def testMTDObligationsDueFailures(action: Action[AnyContent], mtdUserRole: MTDUserRole = MTDIndividual)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+  def testMTDObligationsDueFailures(action: Action[AnyContent], mtdUserRole: MTDUserRole = MTDIndividual)
+                                   (fakeRequest: FakeRequest[AnyContentAsEmpty.type])
+                                   (using nextUpdatesService: NextUpdatesService, itvcErrorHandler: ItvcErrorHandler): Unit = {
     s"the ${mtdUserRole.toString} is authenticated but the call to get obligations fails" should {
       "render the internal error page" in {
         mtdUserRole match {
@@ -109,6 +114,8 @@ trait HomeControllerHelperSpec extends MockAuthActions
         mockSingleBusinessIncomeSource()
         mockGetDueDates(Left(new Exception("obligation test exception")))
         setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+        when(itvcErrorHandler.showInternalServerError()(any()))
+          .thenReturn(InternalServerError(Html("<title>Sorry, there is a problem with the service - GOV.UK</title>")))
 
         val result = action(fakeRequest)
 

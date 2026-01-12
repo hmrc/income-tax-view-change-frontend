@@ -65,26 +65,17 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
 
   def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(ObligationsErrorModel(500, "error"))
 
-  def mockGetObligationDueDates(response: Future[Either[(LocalDate, Boolean), Int]]): Unit = {
-    when(mockNextUpdatesService.getObligationDueDates(any(), any(), any()))
-      .thenReturn(response)
-  }
-
   def mockgetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: ObligationsResponseModel): Unit = {
     when(mockNextUpdatesService.getAllObligationsWithinDateRange(matches(fromDate), matches(toDate))(any(), any()))
       .thenReturn(Future.successful(response))
   }
 
-  def mockGetObligationsViewModel(response: ObligationsViewModel): Unit = {
-    when(mockNextUpdatesService.getObligationsViewModel(any(), any())(any(), any(), any())) thenReturn Future.successful(response)
+  def mockGetDueDates(response: Either[Exception, Seq[LocalDate]])(using mockNextUpdateServ: NextUpdatesService): Unit = {
+    when(mockNextUpdateServ.getDueDates()(any(), any())) thenReturn Future.successful(response)
   }
 
-  def mockGetDueDates(response: Either[Exception, Seq[LocalDate]]): Unit = {
-    when(mockNextUpdatesService.getDueDates()(any(), any())) thenReturn Future.successful(response)
-  }
-
-  def mockGetNextDueDates(response: (Option[LocalDate], Option[LocalDate])): Unit = {
-    when(mockNextUpdatesService.getNextDueDates()(any(), any()))
+  def mockGetNextDueDates(response: (Option[LocalDate], Option[LocalDate]))(using mockNextUpdateServ: NextUpdatesService): Unit = {
+    when(mockNextUpdateServ.getNextDueDates()(any(), any()))
       .thenReturn(Future.successful(response))
   }
 }

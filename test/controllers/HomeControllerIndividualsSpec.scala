@@ -16,31 +16,77 @@
 
 package controllers
 
+import audit.AuditingService
+import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.sessionUtils.SessionKeys
-import models.admin._
-import models.financialDetails._
+import models.admin.*
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers.*
 import play.api.test.Injecting
+import play.twirl.api.Html
+import services.NextUpdatesService
+import services.optIn.OptInService
+import services.optout.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import views.html.HomeView
+import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import views.html.helpers.injected.home.YourReportingObligationsTile
+import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Injecting {
 
-  lazy val testHomeController: HomeController = app.injector.instanceOf[HomeController]
+  given mockedYourReportingObligationsTile: YourReportingObligationsTile = mock(classOf[YourReportingObligationsTile])
+
+  val application: Application = applicationBuilderWithAuthBindings.overrides(
+    api.inject.bind[YourReportingObligationsTile].toInstance(mockedYourReportingObligationsTile),
+  ).build()
+
+  val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
+  val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
+  val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
+  val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
+  val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
+
+  given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
+  given mockedOptInService: OptInService = mock(classOf[OptInService])
+  given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
+  given ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
+  given AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
+  given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
 
   trait Setup {
-    val controller: HomeController = testHomeController
+    val controller: HomeController = HomeController(
+      homeView,
+      primaryAgentHomeView,
+      supportingAgentHomeView,
+      authActions,
+      mockedNextUpdatesService,
+      mockIncomeSourceDetailsService,
+      mockFinancialDetailsService,
+      mockDateServiceInjected,
+      mockWhatYouOweService,
+      mockITSAStatusService,
+      mockPenaltyDetailsService,
+      mockedOptInService,
+      mockedOptOutService,
+      auditingService
+    )
+
     mockSingleBusinessIncomeSource()
     setupMockUserAuth
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
@@ -84,6 +130,13 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+
+            when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+              .thenReturn(Future.successful(true))
+            when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
+              .thenReturn(Future.successful(true))
+            when(mockedYourReportingObligationsTile.apply(any(), any())(any()))
+              .thenReturn(Html(""))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -766,7 +819,10 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       }
     }
 
-    testMTDIndividualAuthFailures(testHomeController.show())
-    testMTDObligationsDueFailures(testHomeController.show())(fakeRequestWithActiveSession)
+    val authSetup: Setup = new Setup {}
+    val authSetupController: HomeController = authSetup.controller
+
+    testMTDIndividualAuthFailures(authSetupController.show())
+    testMTDObligationsDueFailures(authSetupController.show())(fakeRequestWithActiveSession)
   }
 }
