@@ -74,7 +74,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
   )
 
   val financialDetailsModelBothPoas: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.0, 0.0, 0.0, 0.0, None, None, None, None, None, None, None),
     documentDetails = List.empty,
     financialDetails = List.empty
   )

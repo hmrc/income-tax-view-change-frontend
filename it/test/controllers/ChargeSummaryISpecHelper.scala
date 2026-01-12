@@ -59,6 +59,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
+      "balanceNotDueIn30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),
@@ -95,6 +96,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
+      "balanceNotDueIn30Days" -> 4.00,
       "totalBalance" -> 3.00
     ),
     "codingDetails" -> Json.arr(),

@@ -72,7 +72,7 @@ case class WhatYouOweChargesList(
   def getDefaultPaymentAmount: Option[BigDecimal] = {
     if (balanceDetails.overDueAmount != 0) Some(balanceDetails.overDueAmount)
     else if(balanceDetails.balanceDueWithin30Days != 0) Some(balanceDetails.balanceDueWithin30Days)
-    else if(balanceDetails.balanceNotDuein30Days != 0) Some(balanceDetails.balanceNotDuein30Days)
+    else if(balanceDetails.balanceNotDueIn30Days != 0) Some(balanceDetails.balanceNotDueIn30Days)
     else None
   }
 }
