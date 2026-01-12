@@ -105,7 +105,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
           case _ => setupMockGetSessionDataSuccess()
             setupMockAgentWithClientAuth(true)
         }
-        when(dateService.getCurrentDate).thenReturn(fixedDate)
+        when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
         mockSingleBusinessIncomeSource()
         mockGetDueDates(Left(new Exception("obligation test exception")))
         setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)

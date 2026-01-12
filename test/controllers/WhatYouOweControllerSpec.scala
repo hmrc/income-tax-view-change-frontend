@@ -20,6 +20,7 @@ import controllers.routes.{ChargeSummaryController, CreditAndRefundController, P
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
+import mocks.services.MockDateService
 import models.admin.{ClaimARefundR18, CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.financialDetails.WhatYouOweViewModel
@@ -33,25 +34,25 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DateService, WhatYouOweService}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class WhatYouOweControllerSpec extends MockAuthActions
-  with ChargeConstants {
+  with ChargeConstants with MockDateService{
 
   lazy val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
   implicit val hc: HeaderCarrier = HeaderCarrier()
-
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
-      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
     ).build()
 
   lazy val testController = app.injector.instanceOf[WhatYouOweController]
@@ -126,7 +127,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                    hasOverdueOrAccruingInterestCharges: Boolean = false,
                    poaTaxYear: Option[TaxYear] = None
                   ): WhatYouOweViewModel = WhatYouOweViewModel(
-    currentDate = dateService.getCurrentDate,
+    currentDate = mockDateServiceInjected.getCurrentDate,
     hasOverdueOrAccruingInterestCharges = hasOverdueOrAccruingInterestCharges,
     whatYouOweChargesList = charges,
     hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -175,7 +176,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(whatYouOweService.createWhatYouOweViewModel(any(),  any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
-
+                when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
+                when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")

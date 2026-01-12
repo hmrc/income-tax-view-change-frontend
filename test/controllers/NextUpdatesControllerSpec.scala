@@ -217,6 +217,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
             setupMockUserAuth
             mockSingleBusinessIncomeSource()
             mockSingleBusinessIncomeSourceWithDeadlines()
+            mockGetNextUpdatesPageChecksAndProposition(Future.failed(new Exception("api failure")))
             val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR

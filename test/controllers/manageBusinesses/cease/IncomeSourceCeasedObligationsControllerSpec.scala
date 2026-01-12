@@ -16,15 +16,15 @@
 
 package controllers.manageBusinesses.cease
 
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockNextUpdatesService, MockSessionService}
+import mocks.services.{MockDateService, MockNextUpdatesService, MockSessionService}
 import models.UIJourneySessionData
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.obligations._
+import models.obligations.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -43,16 +43,17 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
-  with MockSessionService with MockNextUpdatesService {
+  with MockDateService with MockSessionService with MockNextUpdatesService {
 
   lazy val mockIncomeSourcesUtils: IncomeSourcesUtils = mock(classOf[IncomeSourcesUtils])
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils),
-      api.inject.bind[DateService].toInstance(dateService)
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceCeasedObligationsController]

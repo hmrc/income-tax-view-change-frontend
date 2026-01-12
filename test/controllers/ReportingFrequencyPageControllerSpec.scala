@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockOptInService, MockOptOutService}
+import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
 import models.ReportingFrequencyViewModel
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -27,7 +27,7 @@ import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.optout.OptOutMultiYearViewModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock => mMock, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api
 import play.api.Application
@@ -46,15 +46,16 @@ import scala.concurrent.Future
 
 
 class ReportingFrequencyPageControllerSpec extends MockAuthActions
-  with MockOptOutService with MockOptInService with MockitoSugar {
+  with MockOptOutService with MockOptInService with MockDateService with MockitoSugar {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  lazy val mockDateServiceInjected: DateService = mMock(classOfDateService)
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[OptInService].toInstance(mockOptInService),
-      api.inject.bind[DateService].toInstance(dateService)
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected)
     ).configure(Map("feature-switches.read-from-mongo" -> "false"))
     .build()
 
@@ -70,6 +71,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
       s"the user is authenticated as a $mtdRole" should {
         "render the reporting frequency page" when {
           "the reporting frequency feature switch is enabled" in {
+            when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(fixedTaxYear)
+            when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
             enable(ReportingFrequencyPage, SignUpFs, OptOutFs)
             setupMockSuccess(mtdRole)
             mockUpdateOptOutJourneyStatusInSessionData()

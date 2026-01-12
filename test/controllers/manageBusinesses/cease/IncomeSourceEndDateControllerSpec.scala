@@ -16,33 +16,36 @@
 
 package controllers.manageBusinesses.cease
 
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
+import mocks.services.{MockDateService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{CheckMode, Mode, NormalMode}
+import models.core.*
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.mvc._
+import play.api.http.Status.*
+import play.api.mvc.*
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
 
-class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService {
+class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService with MockDateService{
+
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
     ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceEndDateController]
@@ -176,6 +179,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
           s"the user is authenticated as a $mtdRole" should {
             "redirect to CheckIncomeSourceDetails" when {
               "form is completed successfully" in {
+                when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
                 setupMockSuccess(mtdRole)
                 mockBothPropertyBothBusiness()
                 setupMockCreateSession(true)
@@ -245,7 +249,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 }
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
-                  "value.year" -> (dateService.getCurrentDate.getYear + 1).toString))
+                  "value.year" -> (mockDateServiceInjected.getCurrentDate.getYear + 1).toString))
 
                 val expectedErrorMessage: (String, String) = incomeSourceType match {
                   case SelfEmployment => (

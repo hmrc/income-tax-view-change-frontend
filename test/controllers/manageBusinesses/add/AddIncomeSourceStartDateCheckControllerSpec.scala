@@ -22,7 +22,7 @@ import enums.MTDIndividual
 import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
+import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -31,25 +31,28 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.verify
+import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.OK
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DateService, SessionService}
 import testConstants.BaseTestConstants.testSessionId
 
 import java.time.LocalDate
 
 
-class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService {
+class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService with MockDateService{
+
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
-        api.inject.bind[DateService].toInstance(dateService)
+        api.inject.bind[DateService].toInstance(mockDateServiceInjected)
       ).build()
 
   lazy val testAddIncomeSourceStartDateCheckController: AddIncomeSourceStartDateCheckController =

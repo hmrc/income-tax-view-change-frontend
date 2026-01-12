@@ -16,7 +16,6 @@
 
 package mocks.services
 
-import auth.FrontendAuthorisedFunctions
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach

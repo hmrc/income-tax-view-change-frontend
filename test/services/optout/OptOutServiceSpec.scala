@@ -114,7 +114,7 @@ class OptOutServiceSpec
   }
 
   private def stubCurrentTaxYear(currentYear: TaxYear): Unit = {
-    when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+    when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(currentYear)
   }
 
   private def stubItsaStatuses(previousYear: TaxYear, previousYearStatus: Value,
@@ -586,7 +586,7 @@ class OptOutServiceSpec
 
           val taxYear = TaxYear(2025, 2026)
 
-          when(mockDateService.getCurrentTaxYear).thenReturn(taxYear)
+          when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(taxYear)
 
           when(mockCalculationListService.isTaxYearCrystallised(any())(any(), any()))
             .thenReturn(Future.successful(false))
@@ -617,7 +617,7 @@ class OptOutServiceSpec
 
         val taxYear = TaxYear(2025, 2026)
 
-        when(mockDateService.getCurrentTaxYear).thenReturn(taxYear)
+        when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(taxYear)
 
         when(mockCalculationListService.isTaxYearCrystallised(any())(any(), any()))
           .thenReturn(Future.successful(false))
