@@ -192,7 +192,6 @@ class TaxYearSummaryController @Inject()(
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
 
     Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with Calc data")
-    println("******** " + latestCalc)
 
     val taxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(latestCalc, TaxYear(taxYear, taxYear + 1))
     val selfAssessmentLink: Option[String] = mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
