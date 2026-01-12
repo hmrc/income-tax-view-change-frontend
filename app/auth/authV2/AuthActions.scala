@@ -89,22 +89,12 @@ class AuthActions @Inject()(
   }
 
   def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
-    if (isEnabledFromConfig(YouMustWaitToSignUpPageEnabled)) {
-      checkSessionTimeout andThen
-        authoriseAndRetrieveAgent.authorise() andThen
-        retrieveClientData.authorise(useCookies = true) andThen
-        authoriseAndRetrieveMtdAgent andThen
-        incomeSourceRetrievalAction andThen
-        itsaStatusRetrievalAction andThen
-        retrieveFeatureSwitches
-    } else {
-      checkSessionTimeout andThen
-        authoriseAndRetrieveAgent.authorise() andThen
-        retrieveClientData.authorise(useCookies = true) andThen
-        authoriseAndRetrieveMtdAgent andThen
-        incomeSourceRetrievalAction andThen
-        retrieveFeatureSwitches
-    }
+    checkSessionTimeout andThen
+      authoriseAndRetrieveAgent.authorise() andThen
+      retrieveClientData.authorise(useCookies = true) andThen
+      authoriseAndRetrieveMtdAgent andThen
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches
   }
 
   def asMTDPrimaryAgent: ActionBuilder[MtdItUser, AnyContent] = {
