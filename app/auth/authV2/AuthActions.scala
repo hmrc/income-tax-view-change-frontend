@@ -16,7 +16,7 @@
 
 package auth.authV2
 
-import _root_.models.admin.YouMustWaitToSignUpPageEnabled
+import _root_.models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
 import auth.MtdItUser
 import auth.authV2.actions._
 import auth.authV2.models.AuthorisedUserRequest
@@ -48,7 +48,7 @@ class AuthActions @Inject()(
   // Note: Auth feature switching will be config driven and feature switch page only, not synced with mongo
 
   def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
-    if (isEnabledFromConfig(YouMustWaitToSignUpPageEnabled)) {
+    if (isEnabledFromConfig(`CY+1YouMustWaitToSignUpPageEnabled`)) {
       checkSessionTimeout andThen
         authoriseAndRetrieveIndividual andThen
         incomeSourceRetrievalAction andThen
@@ -68,7 +68,7 @@ class AuthActions @Inject()(
     checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
-    if (isEnabledFromConfig(YouMustWaitToSignUpPageEnabled)) {
+    if (isEnabledFromConfig(`CY+1YouMustWaitToSignUpPageEnabled`)) {
       checkSessionTimeout andThen
         authoriseAndRetrieveAgent.authorise() andThen
         retrieveClientData.authorise() andThen
@@ -98,7 +98,7 @@ class AuthActions @Inject()(
   }
 
   def asMTDPrimaryAgent: ActionBuilder[MtdItUser, AnyContent] = {
-    if (isEnabledFromConfig(YouMustWaitToSignUpPageEnabled)) {
+    if (isEnabledFromConfig(`CY+1YouMustWaitToSignUpPageEnabled`)) {
       checkSessionTimeout andThen
         authoriseAndRetrieveAgent.authorise() andThen
         retrieveClientData.authorise() andThen

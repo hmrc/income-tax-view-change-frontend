@@ -23,7 +23,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.admin.{CreditsRefundsRepay, YouMustWaitToSignUpPageEnabled}
+import models.admin.{CreditsRefundsRepay, `CY+1YouMustWaitToSignUpPageEnabled`}
 import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
