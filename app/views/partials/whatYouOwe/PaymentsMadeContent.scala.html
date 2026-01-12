@@ -75,7 +75,10 @@
     @{
         viewModel.whatYouOweChargesList.getDefaultPaymentAmount match {
             case Some(value) => insetTextAndButton(value)
-            case None =>
+            case None => viewModel.whatYouOweChargesList.outstandingChargesModel match {
+                case Some(outstandingModel) => insetTextAndButton(outstandingModel.outstandingCharges.head.chargeAmount)
+                case None =>
+            }
         }
     }
 }
