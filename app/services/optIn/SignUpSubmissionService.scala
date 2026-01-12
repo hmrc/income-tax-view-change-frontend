@@ -51,8 +51,7 @@ class SignUpSubmissionService @Inject()(
     }
   }
 
-
-  private[services] def filterTaxYearsForSignUp(
+  private[services] def getAllSignUpTaxYears(
                                                     currentYearItsaStatus: ITSAStatus,
                                                     nextYearItsaStatus: ITSAStatus,
                                                     intentTaxYear: Option[TaxYear]
@@ -67,26 +66,18 @@ class SignUpSubmissionService @Inject()(
     }
   }
 
-  private[services] def synchronousITSAStatusUpdates(
-                                         taxYears: Seq[TaxYear],
-                                         nino: String
-                                       )(implicit headerCarrier: HeaderCarrier, executionContext: ExecutionContext): Future[Seq[ITSAStatusUpdateResponse]] = {
-    taxYears.foldLeft(Future.successful(Seq.empty[ITSAStatusUpdateResponse])) { (accumulatorFuture, year) =>
-      accumulatorFuture.flatMap { acc =>
-        if (acc.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure])) {
-          logger.warn(s"Failed to (sign up) update ITSA status for tax year ${year.toString}")
-          Future.successful(acc)
-        } else {
-          itsaStatusUpdateConnector.optIn(taxYear = year, taxableEntityId = nino).map { response =>
-            logger.info(s"Successfully (signed up) updated ITSA status for tax year ${year.toString}")
-            acc :+ response
-          }
-        }
-      }
+  private[services] def sendSignUpRequest(signUpTaxYears: Seq[TaxYear], nino: String)
+                                        (implicit hc: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+    signUpTaxYears.headOption match {
+      case Some(taxYear) =>
+        itsaStatusUpdateConnector.optIn(taxYear, nino)
+      case None =>
+        logger.error(s"[SignUpSubmissionService][sendSignUpRequest] No tax years to sign up for.")
+        Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
     }
   }
 
-  def triggerSignUpRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ITSAStatusUpdateResponse]] = {
+  def triggerSignUpRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
     for {
       optInSessionData: Option[OptInSessionData] <- getOptInSessionData()
       selectedSignUpYear: Option[TaxYear] = optInSessionData.flatMap(_.selectedOptInYear).flatMap(TaxYear.`fromStringYYYY-YYYY`)
@@ -100,9 +91,9 @@ class SignUpSubmissionService @Inject()(
           s"[SignUpSubmissionService][triggerSignUpRequest] selectedSignUpYear: $selectedSignUpYear \n" +
           s"[SignUpSubmissionService][triggerSignUpRequest] optInProposition: $optInProposition"
       )
-      taxYearsToSignUp = filterTaxYearsForSignUp(currentYearItsaStatus, nextYearItsaStatus, selectedSignUpYear)
+      taxYearsToSignUp = getAllSignUpTaxYears(currentYearItsaStatus, nextYearItsaStatus, selectedSignUpYear)
       _ = logger.info(s"\n[SignUpSubmissionService][triggerSignUpRequest] taxYearsToSignUp: $taxYearsToSignUp")
-      updateResponse <- synchronousITSAStatusUpdates(taxYearsToSignUp, nino = user.nino)
+      updateResponse <- sendSignUpRequest(taxYearsToSignUp, user.nino)
       _ = logger.info(s"\n[SignUpSubmissionService][triggerSignUpRequest] Sign Up update response: $updateResponse")
       _ <- auditingService.extendedAudit(SignUpAuditModel(taxYearsToSignUp.map(_.toString)))
     } yield {
