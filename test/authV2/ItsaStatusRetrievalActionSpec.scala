@@ -60,6 +60,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
   val action =
     new ItsaStatusRetrievalAction(
+      appConfig,
       mockItsaStatusConnector,
       mockDateServiceInterface
     )(
