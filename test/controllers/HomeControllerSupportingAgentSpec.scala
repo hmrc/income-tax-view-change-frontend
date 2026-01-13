@@ -26,34 +26,42 @@ import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
+import play.twirl.api.Html
 import services.NextUpdatesService
 import services.optIn.OptInService
 import services.optout.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.HomeView
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import views.html.helpers.injected.home.YourReportingObligationsTile
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with Injecting {
 
-  val application: Application = applicationBuilderWithAuthBindings.build()
+  given mockedYourReportingObligationsTile: YourReportingObligationsTile = mock(classOf[YourReportingObligationsTile])
+
+  val application: Application = applicationBuilderWithAuthBindings.overrides(
+    api.inject.bind[YourReportingObligationsTile].toInstance(mockedYourReportingObligationsTile),
+  ).build()
 
   val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
   val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
   val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
   val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
-  val optInService: OptInService = application.injector.instanceOf(classOf[OptInService])
-  val optOutService: OptOutService = application.injector.instanceOf(classOf[OptOutService])
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
 
+  given mockedOptInService: OptInService = mock(classOf[OptInService])
+  given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
   given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   given ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
   given AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
@@ -72,8 +80,8 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       mockWhatYouOweService,
       mockITSAStatusService,
       mockPenaltyDetailsService,
-      optInService,
-      optOutService,
+      mockedOptInService,
+      mockedOptOutService,
       auditingService
     )
     
@@ -102,7 +110,10 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           mockGetDueDates(Right(futureDueDates))
           mockSingleBusinessIncomeSource()
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+          when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+            .thenReturn(Future.successful(true))
+          when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
+            .thenReturn(Future.successful(true))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -277,6 +288,8 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
+            when(mockedYourReportingObligationsTile.apply(any(), any())(any()))
+              .thenReturn(Html(""))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -385,8 +398,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         document.getElementById("reporting-obligations-tile") shouldBe null
       }
     }
-    
-    "test MTD Supporting Agent Auth Failures" in new Setup {
+  }
+  new Setup {
+    "test MTD Supporting Agent Auth Failures" should {
       testMTDAgentAuthFailures(controller.showAgent(), isSupportingAgent = true)
     }
   }
