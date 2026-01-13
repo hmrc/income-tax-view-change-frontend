@@ -27,8 +27,9 @@ import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.MtdItsaOptOut
 import models.itsaStatus.{ITSAStatusResponseError, ITSAStatusResponseModel, StatusDetail}
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.{any, anyBoolean}
+import org.mockito.Mockito.{never, reset, verify, when}
+import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.Application
@@ -71,6 +72,11 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
       agentErrorHandler,
       mcc
     )
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockItsaStatusConnector)
+  }
 
   ".refine()" when {
 
@@ -161,8 +167,6 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
       }
 
       "return an MtdItUser when valid ITSA status exists for current and future years" in {
-
-        enable(`CY+1YouMustWaitToSignUpPageEnabled`)
 
         val itsaStatusResponses = List(
           ITSAStatusResponseModel(
@@ -306,9 +310,12 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
         val result: Either[Result, MtdItUser[Any]] = action.refine(mtdAgentUser).futureValue
 
-        result.foreach(user =>
+        result.foreach { user =>
           user shouldBe mtdAgentUser
-        )
+        }
+
+        verify(mockItsaStatusConnector, never())
+          .getITSAStatusDetail(any(), any(), anyBoolean(), anyBoolean())(any())
       }
     }
 
