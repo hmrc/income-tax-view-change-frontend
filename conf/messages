@@ -620,7 +620,6 @@ taxCal_breakdown.table.vctSubscriptions                                      = V
 taxCal_breakdown.table.eisSubscriptions                                      = Enterprise Investment Scheme relief
 taxCal_breakdown.table.seedEnterpriseInvestment                              = Seed Enterprise Investment Scheme relief
 taxCal_breakdown.table.communityInvestment                                   = Community Investment Tax Relief
-taxCal_breakdown.table.socialEnterpriseInvestment                            = Social Enterprise Investment Tax Relief
 taxCal_breakdown.table.maintenancePayments                                   = Maintenance and alimony paid
 taxCal_breakdown.table.property_finance_relief                               = Relief for finance costs
 taxCal_breakdown.table.total_notional_tax                                    = Notional tax from gains on life policies etc.
