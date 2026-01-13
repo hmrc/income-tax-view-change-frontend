@@ -743,6 +743,50 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         }
       }
 
+      "submit the answer to the opt out tax year question - opt out followed by mandated redirects to check your answers" in {
+        val currentYear = "2022"
+        val taxYear = TaxYear(2022, 2023)
+        enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
+
+        stubAuthorised(mtdUserRole)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+          taxYear = taxYear,
+          `itsaStatusCY-1` = NoStatus,
+          itsaStatusCY = Voluntary,
+          `itsaStatusCY+1` = Mandated
+        )
+
+        helper.stubOptOutInitialState(
+          currentTaxYear(dateService),
+          previousYearCrystallised = false,
+          previousYearStatus = NoStatus,
+          currentYearStatus = Voluntary,
+          nextYearStatus = Mandated
+        )
+
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(
+          CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+        )
+
+        IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+
+        val expectedURI =
+          controllers.optOut.newJourney.routes.ConfirmOptOutUpdateController
+            .show(isAgent = mtdUserRole != MTDIndividual, taxYear = currentYear)
+            .url
+
+        whenReady(
+          buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("opt-out-tax-year-question" -> Seq("Yes")))
+        ) { result =>
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(expectedURI)
+          )
+        }
+      }
+
       "get an error message if the user incorrectly submits to the form" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)

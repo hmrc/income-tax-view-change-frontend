@@ -131,6 +131,22 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
       }
     }
 
+    ".redirectToConfirmUpdatesPage" should {
+      "return true when optOutState is OneYearOptOutFollowedByMandated and there are 0 updates" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 0, Voluntary, Mandated)
+        model.redirectToConfirmUpdatesPage shouldBe true
+      }
+
+      "return true when optOutState is OneYearOptOutFollowedByMandated and there are updates" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 2, Voluntary, Mandated)
+        model.redirectToConfirmUpdatesPage shouldBe true
+      }
+
+      "return false when optOutState is not OneYearOptOutFollowedByMandated" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Annual)
+        model.redirectToConfirmUpdatesPage shouldBe false
+      }
+    }
 
     "messageSuffix" should {
       val cases = Seq(
