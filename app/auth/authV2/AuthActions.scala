@@ -16,7 +16,6 @@
 
 package auth.authV2
 
-import _root_.models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
 import auth.MtdItUser
 import auth.authV2.actions._
 import auth.authV2.models.AuthorisedUserRequest
@@ -45,47 +44,27 @@ class AuthActions @Inject()(
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
 
-  // Note: Auth feature switching will be config driven and feature switch page only, not synced with mongo
-
   def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
-    if (isEnabledFromConfig(`CY+1YouMustWaitToSignUpPageEnabled`)) {
-      checkSessionTimeout andThen
-        authoriseAndRetrieveIndividual andThen
-        incomeSourceRetrievalAction andThen
-        itsaStatusRetrievalAction andThen
-        retrieveFeatureSwitches andThen
-        retrieveNavBar
-    } else {
-      checkSessionTimeout andThen
-        authoriseAndRetrieveIndividual andThen
-        incomeSourceRetrievalAction andThen
-        retrieveFeatureSwitches andThen
-        retrieveNavBar
-    }
+    checkSessionTimeout andThen
+      authoriseAndRetrieveIndividual andThen
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
+      itsaStatusRetrievalAction andThen
+      retrieveNavBar
   }
 
   def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] =
     checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
-    if (isEnabledFromConfig(`CY+1YouMustWaitToSignUpPageEnabled`)) {
-      checkSessionTimeout andThen
-        authoriseAndRetrieveAgent.authorise() andThen
-        retrieveClientData.authorise() andThen
-        authoriseAndRetrieveMtdAgent andThen
-        agentHasConfirmedClientAction andThen
-        incomeSourceRetrievalAction andThen
-        itsaStatusRetrievalAction andThen
-        retrieveFeatureSwitches
-    } else {
-      checkSessionTimeout andThen
-        authoriseAndRetrieveAgent.authorise() andThen
-        retrieveClientData.authorise() andThen
-        authoriseAndRetrieveMtdAgent andThen
-        agentHasConfirmedClientAction andThen
-        incomeSourceRetrievalAction andThen
-        retrieveFeatureSwitches
-    }
+    checkSessionTimeout andThen
+      authoriseAndRetrieveAgent.authorise() andThen
+      retrieveClientData.authorise() andThen
+      authoriseAndRetrieveMtdAgent andThen
+      agentHasConfirmedClientAction andThen
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
+      itsaStatusRetrievalAction
   }
 
   def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
@@ -98,24 +77,14 @@ class AuthActions @Inject()(
   }
 
   def asMTDPrimaryAgent: ActionBuilder[MtdItUser, AnyContent] = {
-    if (isEnabledFromConfig(`CY+1YouMustWaitToSignUpPageEnabled`)) {
-      checkSessionTimeout andThen
-        authoriseAndRetrieveAgent.authorise() andThen
-        retrieveClientData.authorise() andThen
-        authoriseAndRetrieveMtdAgent andThen
-        agentIsPrimaryAction andThen
-        incomeSourceRetrievalAction andThen
-        itsaStatusRetrievalAction andThen
-        retrieveFeatureSwitches
-    } else {
-      checkSessionTimeout andThen
-        authoriseAndRetrieveAgent.authorise() andThen
-        retrieveClientData.authorise() andThen
-        authoriseAndRetrieveMtdAgent andThen
-        agentIsPrimaryAction andThen
-        incomeSourceRetrievalAction andThen
-        retrieveFeatureSwitches
-    }
+    checkSessionTimeout andThen
+      authoriseAndRetrieveAgent.authorise() andThen
+      retrieveClientData.authorise() andThen
+      authoriseAndRetrieveMtdAgent andThen
+      agentIsPrimaryAction andThen
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
+      itsaStatusRetrievalAction
   }
 
   def asMTDIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
