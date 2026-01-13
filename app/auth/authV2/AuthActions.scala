@@ -48,7 +48,7 @@ class AuthActions @Inject()(
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
-      retrieveFeatureSwitches andThen
+      retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
       itsaStatusRetrievalAction andThen
       retrieveNavBar
   }
