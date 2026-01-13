@@ -112,7 +112,7 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
           } yield {
             (viewScenarioContent, viewModel) match {
               case (_, None) =>
-                Logger("application").error(s"[ConfirmedOptOutController][show] Cannot create opt-out confrimation view model. Redirecting to cannot-go-back page")
+                Logger("application").error(s"[ConfirmedOptOutController][show] Cannot create opt-out confirmation view model. Redirecting to cannot-go-back page")
                 Redirect(controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)))
               case (viewScenario, Some(viewModel)) =>
                 Logger("application").debug(s"[ConfirmedOptOutController][show] Success, showing ConfirmedOptOutView for scenario: $viewScenario")
