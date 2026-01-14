@@ -15,7 +15,7 @@ val catsVersion = "2.13.0"
 val jsoupVersion = "1.21.2"
 val mockitoVersion = "5.21.0"
 val scalaMockVersion = "7.5.2"
-val wiremockVersion = "3.8.0"
+val wiremockVersion = "3.0.0-beta-7"
 val hmrcMongoVersion = "2.11.0"
 val currentScalaVersion = "3.3.6"
 val playVersion = "play-30"
@@ -131,9 +131,7 @@ lazy val it = project
     testForkedParallel := true
   )
   .settings(
-    libraryDependencies ++= appDependenciesIt,
-    dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.15.0"
-  )
+    libraryDependencies ++= appDependenciesIt)
 
 addCommandAlias("compileAll", "compile ; test:compile ; it/test:compile")
 

@@ -59,8 +59,64 @@ case class UIJourneySessionData(
 
 object UIJourneySessionData {
 
-  implicit val format: OFormat[UIJourneySessionData] =
-    Json.format[UIJourneySessionData]
+  implicit val format: OFormat[UIJourneySessionData] = {
+
+    (
+      (__ \ "sessionId").format[String] ~
+        (__ \ "journeyType").format[String] ~
+        (__ \ "addIncomeSourceData").formatNullable[AddIncomeSourceData] ~
+        (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData] ~
+        (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData] ~
+        (__ \ "optOutSessionData").formatNullable[OptOutSessionData] ~
+        (__ \ "optInSessionData").formatNullable[OptInSessionData] ~
+        (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData] ~
+        (__ \ "triggeredMigrationSessionData").formatNullable[TriggeredMigrationSessionData] ~
+        (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat) ~
+        (__ \ "journeyIsComplete").formatNullable[Boolean]
+      ).apply(
+      (
+        sessionId,
+        journeyType,
+        addIncomeSourceData,
+        manageIncomeSourceData,
+        ceaseIncomeSourceData,
+        optOutSessionData,
+        optInSessionData,
+        incomeSourceReportingFrequencyData,
+        triggeredMigrationSessionData,
+        lastUpdated,
+        journeyIsComplete
+      ) =>
+        UIJourneySessionData(
+          sessionId,
+          journeyType,
+          addIncomeSourceData,
+          manageIncomeSourceData,
+          ceaseIncomeSourceData,
+          optOutSessionData,
+          optInSessionData,
+          incomeSourceReportingFrequencyData,
+          triggeredMigrationSessionData,
+          lastUpdated,
+          journeyIsComplete
+        ),
+      u =>
+        (
+          u.sessionId,
+          u.journeyType,
+          u.addIncomeSourceData,
+          u.manageIncomeSourceData,
+          u.ceaseIncomeSourceData,
+          u.optOutSessionData,
+          u.optInSessionData,
+          u.incomeSourceReportingFrequencyData,
+          u.triggeredMigrationSessionData,
+          u.lastUpdated,
+          u.journeyIsComplete
+        )
+    )
+  }
+
 }
 
 case class SensitiveUIJourneySessionData(
