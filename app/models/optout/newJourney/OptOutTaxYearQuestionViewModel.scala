@@ -58,7 +58,8 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
     case _                        => false
   }
 
-  // TODO MISUV-10629: show inset text when opt out followed by mandated
+  def showFollowedByMandatedInset: Boolean =
+    optOutState.contains(OneYearOptOutFollowedByMandated)
 
   def showQuarterlyUpdatesInset: Boolean = optOutState match {
     case Some(OneYearOptOutFollowedByMandated) => false
@@ -74,6 +75,12 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
 
   val messageSuffix = s"$taxYearMessageSuffix.$optOutStateMessageSuffix"
 
-  //TODO MISUV-10629: update redirection for both scenarios with and without updates when op out followed by mandated
-  val redirectToConfirmUpdatesPage: Boolean = optOutState.contains(OneYearOptOutFollowedByMandated)
+  def mandatedInsetMessageSuffix: String =
+    (taxYearMessageSuffix, hasNoQuarterlyUpdatesSubmitted) match {
+      case (tySuffix, true)  => s"$tySuffix.singleYearFollowedByMandated"
+      case (tySuffix, false) => s"$tySuffix.singleYearFollowedByMandatedWithUpdates"
+    }
+
+  val redirectToConfirmUpdatesPage: Boolean =
+    optOutState.contains(OneYearOptOutFollowedByMandated)
 }

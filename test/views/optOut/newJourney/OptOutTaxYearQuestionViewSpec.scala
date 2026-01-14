@@ -160,19 +160,22 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
     }
 
     "opting out for a previous single year followed by Mandated - No updates" should {
-      "have the correct title" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Mandated) {
+      "have the correct title" in new Setup("previous", OneYearOptOutFollowedByMandated, 0, Voluntary, Mandated, Mandated) {
         pageDocument.title() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearTitle
       }
-      "have the correct heading" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Mandated) {
+      "have the correct heading" in new Setup("previous", OneYearOptOutFollowedByMandated, 0, Voluntary, Mandated, Mandated) {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearHeading
       }
-      "have the correct description" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Mandated) {
+      "have the correct description" in new Setup("previous", OneYearOptOutFollowedByMandated, 0, Voluntary, Mandated, Mandated) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
       }
-      "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Mandated) {
+      "show the followed-by-mandated inset paragraph" in new Setup("previous", OneYearOptOutFollowedByMandated, 0, Voluntary, Mandated, Mandated) {
+        pageDocument.getElementById("opt-out-question-mandated-inset").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearFollowedByMandatedInset
+      }
+      "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByMandated, 0, Voluntary, Mandated, Mandated) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearQuestion
       }
-      "display the correct error message when form has errors" in new Setup("previous", OneYearOptOutFollowedByMandated, 2, Voluntary, Mandated, Mandated, withError = true) {
+      "display the correct error message when form has errors" in new Setup("previous", OneYearOptOutFollowedByMandated, 0, Voluntary, Mandated, Mandated, withError = true) {
         pageDocument.getElementsByClass("govuk-error-summary__title").text() shouldBe "There is a problem"
         pageDocument.getElementsByClass("govuk-error-summary__body").text() shouldBe "Select yes to opt out for the 2024 to 2025 tax year"
       }
@@ -187,6 +190,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedDesc1
+      }
+      "show the followed-by-mandated inset paragraph" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Mandated) {
+        pageDocument.getElementById("opt-out-question-mandated-inset").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedInset
       }
       "have the correct radio question" in new Setup("current", OneYearOptOutFollowedByMandated, 0, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedQuestion
@@ -206,6 +212,9 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       }
       "have the correct description" in new Setup("current", OneYearOptOutFollowedByMandated, 1, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesDesc1
+      }
+      "show the followed-by-mandated inset paragraph with the 'If you continue' content" in new Setup("current", OneYearOptOutFollowedByMandated, 1, NoStatus, Voluntary, Mandated) {
+        pageDocument.getElementById("opt-out-question-mandated-inset").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesInset
       }
       "have the correct radio question" in new Setup("current", OneYearOptOutFollowedByMandated, 1, NoStatus, Voluntary, Mandated) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByMandatedUpdatesQuestion

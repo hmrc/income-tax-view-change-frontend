@@ -58,6 +58,14 @@
             @getMessage("desc1", startTaxYear, endTaxYear)
         }
 
+        @if(viewModel.showFollowedByMandatedInset) {
+            @govukInsetText(InsetText(
+                id = Some("opt-out-question-mandated-inset"),
+                content = HtmlContent(
+                    messages(s"optout.taxYearQuestion.inset.${viewModel.mandatedInsetMessageSuffix}", endTaxYear)
+                )
+            ))
+        }
 
         @if(viewModel.showQuarterlyUpdatesInset) {
             @govukInsetText(InsetText(
