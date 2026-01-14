@@ -157,7 +157,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
     val submission = NrsSubmission(RawPayload(jsonBytes, user.charset), metadata)
 
     nrsService.submit(submission).map {
-      case Some(resp) => logger.info(s"NRS submission accepted: ${resp.nrsSubmissionId}")
+      case Some(resp) => logger.info(s"NRS submission accepted: ${resp.nrSubmissionId}")
       case None       => logger.error("NRS submission failed or was not accepted")
     }
   }
