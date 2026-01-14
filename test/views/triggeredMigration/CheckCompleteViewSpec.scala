@@ -51,7 +51,7 @@ class CheckCompleteViewSpec extends TestSupport {
     val submitUpdatesP1 = "In your account you can see which quarterly updates are due and what information you need to provide. Then you must use your compatible software to:"
     val submitUpdatesUlLi1 = "create a digital record of your property and sole trader income and expenses"
     val submitUpdatesUlLi2 = "send your quarterly update(s) to HMRC"
-    val submitUpdatesLinkText = "Check your latest updates and deadlines"
+    val submitUpdatesLinkText = "Check your latest submission deadlines"
 
   }
 

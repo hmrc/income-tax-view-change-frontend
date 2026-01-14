@@ -34,7 +34,7 @@ class SignUpCompletedViewSpec extends TestSupport {
 
     val currentYearYourRevisedDeadlinesHeading = "Your revised deadlines"
     val currentYearYourRevisedDeadlinesDesc = "Your revised deadlines will be available in the next few minutes."
-    val currentYearYourRevisedDeadlinesDesc2 = "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+    val currentYearYourRevisedDeadlinesDesc2 = "Even if they are not displayed right away on the submission deadlines page, your account has been updated."
     val currentYearYourRevisedDeadlinesDesc3 = "You can decide at any time to opt out of Making Tax Digital for Income Tax for all your businesses on your reporting obligations page."
 
     val currentYearSubmitUpdatesHeading = "Submit updates in software"
@@ -62,7 +62,7 @@ class SignUpCompletedViewSpec extends TestSupport {
 
     val nextYearYourRevisedDeadlinesHeading = "Your revised deadlines"
     val nextYearYourRevisedDeadlinesDesc = "Your deadlines for this business will be available in the next few minutes."
-    val nextYearYourRevisedDeadlinesDesc2 = "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+    val nextYearYourRevisedDeadlinesDesc2 = "Even if they are not displayed right away on the submission deadlines page, your account has been updated."
     val nextYearYourRevisedDeadlinesDesc3 = "You can decide at any time to opt out of Making Tax Digital for Income Tax for all your businesses on your reporting obligations page."
 
     val nextYearSubmitUpdatesHeading = "Submit updates in software"

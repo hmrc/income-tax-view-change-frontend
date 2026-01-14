@@ -374,7 +374,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       ) {
         val tile: Element = getElementById("updates-tile").get
 
-        tile.text().trim shouldBe "Your updates and deadlines View deadlines and manage how you report"
+        tile.text().trim shouldBe "Your submission deadlines View deadlines and manage how you report"
         tile.select("span.govuk-tag--red") shouldBe empty
         tile.select("p.govuk-body") shouldBe empty
       }

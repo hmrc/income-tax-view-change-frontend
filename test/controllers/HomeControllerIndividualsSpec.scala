@@ -467,7 +467,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         document.title shouldBe homePageTitle
 
         val tile: Elements = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.select("p").get(0).text shouldBe "Next update due: 5 February 2024"
         tile.select("p").get(1).text shouldBe "Next tax return due: 31 January 2025"
 
@@ -503,7 +503,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         val document: Document = Jsoup.parse(contentAsString(result))
         val tile: Elements = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.select("span.govuk-tag.govuk-tag--red").text should include("2 Overdue updates")
         tile.select("p").get(1).text shouldBe "Next update due: 5 February 2024"
         tile.select("p").get(2).text shouldBe "Next tax return due: 31 January 2025"
@@ -538,7 +538,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         val document: Document = Jsoup.parse(contentAsString(result))
         val tile: Elements = document.select("#updates-tile")
 
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.text should not include "Next update due:"
         tile.select("p").get(0).text shouldBe "Next tax return due: 31 January 2025"
 
