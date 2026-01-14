@@ -45,7 +45,7 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
       Seq(TOO_MANY_REQUESTS, CLIENT_CLOSED_REQUEST).contains(response.status)
 
   def submit(nrsSubmission: NrsSubmission, remainingAttempts: Int = numberOfRetries)
-            (implicit headerCarrier: HeaderCarrier): Future[NrsSubmissionResponse] =
+            (implicit headerCarrier: HeaderCarrier): Future[NrsSubmissionResponse] = {
     http
       .post(url"$nrsOrchestratorSubmissionUrl")
       .withBody(Json.toJson(nrsSubmission))
@@ -69,4 +69,5 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
           logger.info(s"NRS submission failed with exception: $e")
           Left(NrsExceptionThrown)
       }
+  }
 }
