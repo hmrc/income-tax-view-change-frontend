@@ -131,7 +131,8 @@ lazy val it = project
     testForkedParallel := true
   )
   .settings(
-    libraryDependencies ++= appDependenciesIt
+    libraryDependencies ++= appDependenciesIt,
+    dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-databind" % "2.15.0"
   )
 
 addCommandAlias("compileAll", "compile ; test:compile ; it/test:compile")
