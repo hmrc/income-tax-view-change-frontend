@@ -41,7 +41,8 @@ class AuthActions @Inject()(
                              val retrieveClientData: RetrieveClientData,
                              val retrieveFeatureSwitches: FeatureSwitchRetrievalAction,
                              val authoriseAndRetrieveIndividualForNrs: AuthoriseAndRetrieveIndividualForNrs,
-                             val authoriseAndRetrieveAgentForNrs: AuthoriseAndRetrieveAgentForNrs
+                             val authoriseAndRetrieveAgentForNrs: AuthoriseAndRetrieveAgentForNrs,
+                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction
                            ) extends FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
