@@ -59,12 +59,7 @@
             <div class="govuk-checkboxes" data-module="govuk-checkboxes">
             @for((switch, state) <- switchNames) {
                 <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" type="checkbox" id="feature-switch.enable-@switch.name" name="@switch.name"
-                    value="true" @{
-                        if(state) {
-                            "Checked"
-                        }
-                    }>
+                    <input class="govuk-checkboxes__input" type="checkbox" id="feature-switch.enable-@switch.name" name="@switch.name" value="true" @if(state){checked} >
                     <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.toString</label>
                 </div>
             }
