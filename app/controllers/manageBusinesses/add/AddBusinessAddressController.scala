@@ -49,11 +49,11 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
                                             )
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
+  def show(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     handleRequest(isAgent = false, mode = mode)(implicitly, itvcErrorHandler)
   }
 
-  def showAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleRequest(isAgent = true, mode = mode)(implicitly, itvcErrorHandlerAgent)
   }
@@ -156,12 +156,12 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def submit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleSubmitRequest(isAgent = false, id, mode = mode)(implicitly, itvcErrorHandler)
   }
 
-  def agentSubmit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def agentSubmit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleSubmitRequest(isAgent = true, id, mode = mode)(implicitly, itvcErrorHandlerAgent)
   }

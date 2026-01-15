@@ -70,12 +70,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleShowRequest(origin)
   }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleShowRequest()
   }

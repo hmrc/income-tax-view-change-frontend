@@ -40,7 +40,7 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
                                            implicit val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
-  def show(isAgent: Boolean, state: Option[String] = None): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def show(isAgent: Boolean, state: Option[String] = None): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
     //TODO: Redirect the user back to the triggered migration page if they press the backlink (Requires the data from the API to know if the user has to stay in the journey)
     withTriggeredMigrationFS {
       if (state.isDefined) {

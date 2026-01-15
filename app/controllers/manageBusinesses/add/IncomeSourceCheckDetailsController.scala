@@ -58,7 +58,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
     if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType, isTriggeredMigration).url
     else routes.IncomeSourceNotAddedController.show(incomeSourceType, isTriggeredMigration).url
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -67,7 +67,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
       )(implicitly, itvcErrorHandler)
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleRequest(
         sources = mtdItUser.incomeSources,
@@ -157,12 +157,12 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleSubmit(isAgent = false, incomeSourceType)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleSubmit(isAgent = true, incomeSourceType)
   }

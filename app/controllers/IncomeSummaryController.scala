@@ -79,7 +79,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdownView
     }
   }
 
-  def showIncomeSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def showIncomeSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         origin = origin,
@@ -90,7 +90,7 @@ class IncomeSummaryController @Inject()(val incomeBreakdown: IncomeBreakdownView
       )
   }
 
-  def showIncomeSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showIncomeSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,
