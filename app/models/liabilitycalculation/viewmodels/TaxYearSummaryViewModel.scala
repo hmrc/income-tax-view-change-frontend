@@ -38,6 +38,21 @@ case class TaxYearSummaryViewModel(calculationSummary: Option[CalculationSummary
     obligations.obligations.exists(_.obligations.nonEmpty)
   }
 
+  def getLastUpdatedObligationEndDate: Option[LocalDate] = {
+    val obligationsSortedDateDescending = obligations.obligations
+      .filter(_.obligations.nonEmpty)
+      .maxByOption(_.obligations.flatMap(obligation => Some(obligation.end)).max)
+
+    obligationsSortedDateDescending.flatMap { obligationsGroup =>
+      val filteredObligations = obligationsGroup.obligations.filter(_.dateReceived.nonEmpty)
+      if (filteredObligations.nonEmpty) {
+        Some(filteredObligations.head.end)
+      } else {
+        None
+      }
+    }
+  }
+
   def groupedObligations(implicit user: MtdItUser[_]) = obligations.allDeadlinesWithSource(previous = true)
     .reverse.groupBy[LocalDate] { nextUpdateWithIncomeType => nextUpdateWithIncomeType.obligation.due }
     .toList

@@ -19,6 +19,7 @@
 @import views.html.components._
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import models.incomeSourceDetails.TaxYear
+@import viewUtils.ExternalUrlHelper
 
 @this(
         appConfig: config.FrontendAppConfig,
@@ -28,6 +29,7 @@
 )
 @(
         utr: Option[String],
+        isAgent: Boolean,
         claimToAdjustTaxYear: Option[TaxYear],
         selfServeTimeToPayStartUrl: String,
         adjustPoaUrl: String,
@@ -64,14 +66,30 @@
                     rel = Some("noreferrer noopener")).toString()))
     }
 
-    @h2(msg = getMessage("sa-note-2-heading"))
-    @p(id = Some("sa-note-2-migrated"))(Html(getMessage("sa-note-2-body") +
-            link(link = appConfig.saViewLandPService(utr),
-                outerMessage = ".",
-                messageKey = getMessage("sa-link-2"),
-                id = Some("sa-note-2-migrated-link"),
-                rel = Some("noreferrer noopener"),
-                target = Some("_blank")).toString()))
+    @if(!isAgent) {
+            @h2(msg = getMessage("sa-note-2-heading"))
+            @p(id = Some("sa-note-2-migrated")){
+                @getMessage("sa-note-2-body")
+                @link(link = appConfig.saViewLandPService(utr),
+                        outerMessage = ".",
+                        messageKey = getMessage("sa-link-2"),
+                        id = Some("sa-note-2-migrated"),
+                        rel = Some("noreferrer noopener"),
+                        target = Some("_blank"))
+            }
+    } else {
+            @h2(msg = getMessage("sa-note-2-heading-agent"))
+            @p(id = Some("sa-note-2-migrated")){
+                @getMessage("sa-note-2-body-agent-1")
+                @link(link = ExternalUrlHelper.saForAgents,
+                        outerMessage = ".",
+                        messageKey = getMessage("sa-link-2-agent"),
+                        id = Some("sa-note-2-migrated-link"),
+                        rel = Some("noreferrer noopener"),
+                        target = Some("_blank"))
+                @getMessage("sa-note-2-body-agent-2")
+            }
+    }
 
     @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
 }
