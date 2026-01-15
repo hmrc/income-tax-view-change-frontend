@@ -32,7 +32,7 @@ class BTAPartialController @Inject()(btaPartial: BtaPartial,
                                     (implicit val executionContext: ExecutionContext,
                                      mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
 
-  def setupPartial: Action[AnyContent] = authActions.asMTDIndividual {
+  def setupPartial: Action[AnyContent] = authActions.asMTDIndividual() {
     implicit request => Ok(btaPartial())
   }
 

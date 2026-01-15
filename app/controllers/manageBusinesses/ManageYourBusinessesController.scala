@@ -46,7 +46,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
                                                val appConfig: FrontendAppConfig) extends FrontendController(mcc)
   with FeatureSwitching with IncomeSourcesUtils with I18nSupport {
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
+  def show(): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     handleRequest(
       sources = user.incomeSources,
       isAgent = false,
@@ -54,7 +54,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     )(user, itvcErrorHandler)
   }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
+  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  { implicit user =>
     handleRequest(
       sources = user.incomeSources,
       isAgent = true,

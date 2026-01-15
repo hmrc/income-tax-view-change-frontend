@@ -119,7 +119,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
   }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -127,7 +127,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
@@ -218,14 +218,14 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit request =>
       handleSubmitRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType)(implicitly, itvcErrorHandler)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleSubmitRequest(
         isAgent = true,

@@ -75,7 +75,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def show(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -85,7 +85,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
       )
   }
 
-  def showAgent(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit user =>
       handleRequest(
         isAgent = true,
@@ -113,12 +113,12 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def submit(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit request =>
       handleSubmitRequest(false, mode)(implicitly, itvcErrorHandler)
   }
 
-  def submitAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def submitAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit request =>
       handleSubmitRequest(true, mode)(implicitly, itvcErrorHandlerAgent)
   }

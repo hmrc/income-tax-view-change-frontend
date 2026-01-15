@@ -112,7 +112,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
   }
 
   def showCreditsSummary(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
           calendarYear = calendarYear,
@@ -123,7 +123,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
   }
 
   def showAgentCreditsSummary(calendarYear: Int): Action[AnyContent] = {
-    authActions.asMTDPrimaryAgent.async { implicit mtdItUser =>
+    authActions.asMTDPrimaryAgent().async { implicit mtdItUser =>
       handleRequest(
         calendarYear = calendarYear,
         isAgent = true

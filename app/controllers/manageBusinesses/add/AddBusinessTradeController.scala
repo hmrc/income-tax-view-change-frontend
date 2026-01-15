@@ -71,12 +71,12 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
     controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(mode)
   }
 
-  def show(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(isAgent = false, mode)
   }
 
-  def showAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit user =>
       handleRequest(isAgent = true, mode)
   }
@@ -101,12 +101,12 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def submit(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit request =>
       handleSubmitRequest(isAgent = false, mode)(implicitly, itvcErrorHandler)
   }
 
-  def submitAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def submitAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit request =>
       handleSubmitRequest(isAgent = true, mode)(implicitly, itvcErrorHandlerAgent)
   }

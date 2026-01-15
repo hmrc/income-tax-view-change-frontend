@@ -98,7 +98,7 @@ class OptOutTestDataController @Inject()(val authActions: AuthActions,
     }
   }
 
-  val show: Action[AnyContent] = authActions.asMTDIndividual.async {
+  val show: Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       retrieveData(
         nino = user.nino,
@@ -106,7 +106,7 @@ class OptOutTestDataController @Inject()(val authActions: AuthActions,
       )
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       retrieveData(
         nino = mtdItUser.nino,

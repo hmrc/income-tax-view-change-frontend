@@ -56,7 +56,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
     with ErrorRecovery {
 
   def show(origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
@@ -78,7 +78,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
   }
 
   def showAgent(): Action[AnyContent] = {
-    authActions.asMTDPrimaryAgent async {
+    authActions.asMTDPrimaryAgent() async {
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent().url,
@@ -88,7 +88,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
   }
 
   def startRefund(): Action[AnyContent] =
-    authActions.asMTDIndividual async {
+    authActions.asMTDIndividual() async {
       implicit user =>
         if (isEnabled(CreditsRefundsRepay)) {
           handleRefundRequest(

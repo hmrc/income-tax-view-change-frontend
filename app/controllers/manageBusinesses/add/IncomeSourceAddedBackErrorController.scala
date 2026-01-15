@@ -58,7 +58,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
     }
   }
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -66,7 +66,7 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
@@ -74,12 +74,12 @@ class IncomeSourceAddedBackErrorController @Inject()(val authActions: AuthAction
       )
   }
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleSubmit(isAgent = false, incomeSourceType)(implicitly, itvcErrorHandler)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleSubmit(isAgent = true, incomeSourceType)(implicitly, itvcErrorHandlerAgent)
 

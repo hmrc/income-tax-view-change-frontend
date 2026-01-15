@@ -68,7 +68,7 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
   }
 
 
-  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(taxYear: Int, origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandler,
@@ -78,7 +78,7 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
       )
   }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleShowRequest(
         itvcErrorHandler = itvcErrorHandlerAgent,
@@ -87,14 +87,14 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
       )
   }
 
-  def submit(taxYear: Int): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
+  def submit(taxYear: Int): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     val fullNameOptional = user.userName.map { nameModel =>
       (nameModel.name.getOrElse("") + " " + nameModel.lastName.getOrElse("")).trim
     }
     finalDeclarationSubmit(taxYear, fullNameOptional)
   }
 
-  def agentSubmit(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async { implicit user =>
+  def agentSubmit(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent().async { implicit user =>
     val fullName = user.optClientNameAsString.getOrElse("").trim
     agentFinalDeclarationSubmit(taxYear, fullName)(user, hc)
   }

@@ -58,25 +58,25 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
 
   //TODO: Redirect the user back to the triggered migration page if they access the page with triggered migration as false and they are unconfirmed
   def show(id: Option[String], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(id, isAgent = false, incomeSourceType, isTriggeredMigration)
   }
 
   def showAgent(id: Option[String], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient.async {
+    authActions.asMTDAgentWithConfirmedClient().async  {
       implicit mtdItUser =>
         handleRequest(id, isAgent = true, incomeSourceType, isTriggeredMigration)
   }
 
   def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit request =>
         handleSubmitRequest(id, isAgent = false, mode = NormalMode, incomeSourceType)
   }
 
   def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient.async {
+    authActions.asMTDAgentWithConfirmedClient().async  {
       implicit mtdItUser =>
         handleSubmitRequest(id, isAgent = true, mode = NormalMode, incomeSourceType)
   }
