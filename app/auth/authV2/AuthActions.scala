@@ -39,7 +39,8 @@ class AuthActions @Inject()(
                              val incomeSourceRetrievalAction: IncomeSourceRetrievalAction,
                              val itsaStatusRetrievalAction: ItsaStatusRetrievalAction,
                              val retrieveClientData: RetrieveClientData,
-                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction
+                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction,
+                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction
                            ) extends FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
