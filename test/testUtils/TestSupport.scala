@@ -47,8 +47,8 @@ import testConstants.BaseTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 import testOnly.repository.FeatureSwitchRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name, ~}
+import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole, Enrolments}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
@@ -198,6 +198,10 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   type AuthRetrievals =
     Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
+
+  type NrsIndividualAuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel ~
+    Option[String] ~ Option[String] ~ Option[String] ~ Option[LocalDate] ~ Option[String] ~ Option[String] ~ Option[CredentialRole] ~
+    Option[MdtpInformation] ~ Option[ItmpName] ~ Option[LocalDate] ~ Option[ItmpAddress] ~ Option[String] ~ LoginTimes
 
   def fakeGetRequestBasedOnMTDUserType(mtdUserRole: MTDUserRole): FakeRequest[AnyContentAsEmpty.type] = {
     mtdUserRole match {
