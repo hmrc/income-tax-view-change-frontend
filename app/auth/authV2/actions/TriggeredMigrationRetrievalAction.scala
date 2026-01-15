@@ -29,7 +29,6 @@ import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
