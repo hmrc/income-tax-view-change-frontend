@@ -73,7 +73,11 @@ class TriggeredMigrationRetrievalAction @Inject()(
                 case Left(errorResult) => Future(Left(errorResult))
                 case Right(true) => isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).map {
                   case Right(true) => Right(req)
-                  case Right(false) => Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
+                  case Right(false) => if(isTriggeredMigrationPage) {
+                    Right(req)
+                  } else {
+                    Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
+                  }
                   case Left(errorResult) => Left(errorResult)
                 }
               }

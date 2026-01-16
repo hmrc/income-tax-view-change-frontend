@@ -21,13 +21,16 @@ import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
 import config.featureswitch.FeatureSwitching
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionDataService}
+import mocks.connectors.MockIncomeTaxCalculationConnector
+import mocks.services.{MockClientDetailsService, MockITSAStatusService, MockIncomeSourceDetailsService, MockSessionDataService}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.*
+import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
+import models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -43,7 +46,7 @@ import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
 import scala.concurrent.Future
 import services.agent.ClientDetailsService
-import services.{DateServiceInterface, IncomeSourceDetailsService, SessionDataService}
+import services.{DateServiceInterface, ITSAStatusService, IncomeSourceDetailsService, SessionDataService}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
@@ -77,7 +80,7 @@ trait MockAuthActions
 
   lazy val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
   lazy val mockFAF: FrontendAuthorisedFunctions = mock(classFAF)
-
+  
   lazy val mockItsaStatusConnector = sMock[ITSAStatusConnector]
   lazy val mockBusinessDetailsConnector = sMock[BusinessDetailsConnector]
   lazy val mockDateServiceInterface = sMock[DateServiceInterface]
@@ -137,6 +140,26 @@ trait MockAuthActions
 
     when(mockDateServiceInterface.getCurrentTaxYear)
       .thenReturn(taxYear)
+  }
+
+  def mockTriggeredMigrationRetrievalAction() = {
+    when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+      .thenReturn(Future.successful(List(
+        ITSAStatusResponseModel(
+          taxYear = "2023",
+          itsaStatusDetails = Some(List(
+            StatusDetail("ts", Voluntary, MtdItsaOptOut, None)
+          ))
+        )
+      )))
+
+    when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+      .thenReturn(Future(LiabilityCalculationResponse(
+        metadata = Metadata(None, "IY"),
+        inputs = Inputs(PersonalInformation("")),
+        calculation = None,
+        messages = None
+      )))
   }
 
 
