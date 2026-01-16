@@ -136,7 +136,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                       nino = testNino,
                       selfEmploymentIds = List.empty,
                       propertyIncomeIds = Nil,
-                      yearOfMigration = None
+                      yearOfMigration = Some("2018")
                     ).detail
                   )
 
