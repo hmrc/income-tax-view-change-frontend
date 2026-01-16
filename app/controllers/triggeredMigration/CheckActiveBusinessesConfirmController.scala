@@ -57,7 +57,7 @@ class CheckActiveBusinessesConfirmController @Inject()(
     }
 
   def submit(isAgent: Boolean): Action[AnyContent] =
-    auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+    auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
       withTriggeredMigrationFS {
         CheckActiveBusinessesConfirmForm().bindFromRequest().fold(
           formWithErrors =>

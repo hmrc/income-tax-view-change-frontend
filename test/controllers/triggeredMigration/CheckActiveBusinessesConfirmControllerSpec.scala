@@ -16,7 +16,7 @@
 
 package controllers.triggeredMigration
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
@@ -37,7 +37,8 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+        api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
       )
       .build()
 
@@ -49,7 +50,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       mockIncomeSourceDetailsService.getIncomeSourceDetails()(
         ArgumentMatchers.any(), ArgumentMatchers.any()
       )
-    ).thenReturn(Future(singleBusinessIncome))
+    ).thenReturn(Future(singleBusinessIncome.copy(channel = "2")))
 
 
   mtdAllRoles.foreach { mtdRole =>
@@ -66,6 +67,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(fakeRequest)
@@ -100,6 +102,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
@@ -118,6 +121,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
@@ -136,6 +140,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
