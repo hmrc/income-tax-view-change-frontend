@@ -34,7 +34,7 @@ case class IncomeSourceDetailsModel(
                                      yearOfMigration: Option[String],
                                      businesses: List[BusinessDetailsModel],
                                      properties: List[PropertyDetailsModel],
-                                     channel: String
+                                     channel: String = "1"
                                    ) extends IncomeSourceDetailsResponse with Logging {
 
   val hasPropertyIncome: Boolean = properties.nonEmpty

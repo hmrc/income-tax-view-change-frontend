@@ -40,13 +40,13 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
   def homeAuditFull(userType: Option[AffinityGroup] = Some(Agent),
                     nextPaymentOrOverdue: Either[(LocalDate, Boolean), Int],
                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]): HomeAudit = HomeAudit(
-    defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
+    defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil, "1")),
     nextPaymentOrOverdue = Some(nextPaymentOrOverdue),
     nextUpdateOrOverdue = nextUpdateOrOverdue
   )
 
   val homeAuditMin: HomeAudit = HomeAudit(
-    getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
+    getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil, "1")),
     nextPaymentOrOverdue = None,
     nextUpdateOrOverdue = Right(2)
   )
@@ -102,7 +102,7 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
 
   "applySupportingAgent" should {
     "render the expected audit event" when {
-      val user = defaultMTDITUser(Some(Agent), IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil), isSupportingAgent = true)
+      val user = defaultMTDITUser(Some(Agent), IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil, "1"), isSupportingAgent = true)
       "there are updates due" that {
         "are not overdue" in {
           val nextDetailsTile = NextUpdatesTileViewModel(dueDates = List(fixedDate),

@@ -62,11 +62,16 @@ class TriggeredMigrationRetrievalAction @Inject()(
         lazy val authAction = {
           (confirmedUsers.contains(request.incomeSources.channel), isTriggeredMigrationPage) match {
             case (true, false) => Future(Right(req))
-            case (true, true) => Future(Left(Redirect(controllers.routes.HomeController.show())))
+            case (true, true) => if (req.isAgent()) {
+              Future(Left(Redirect(controllers.routes.HomeController.showAgent())))
+            } else {
+              Future(Left(Redirect(controllers.routes.HomeController.show())))
+            }
             case (false, _) =>
               isItsaStatusVoluntaryOrMandated().flatMap {
-                case false => Future(Right(req))
-                case true => isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).map {
+                case Right(false) => Future(Right(req))
+                case Left(errorResult) => Future(Left(errorResult))
+                case Right(true) => isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).map {
                   case Right(true) => Right(req)
                   case Right(false) => Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
                   case Left(errorResult) => Left(errorResult)
@@ -96,14 +101,20 @@ class TriggeredMigrationRetrievalAction @Inject()(
     }
   }
 
-  private def isItsaStatusVoluntaryOrMandated()(implicit hc: HeaderCarrier, user: MtdItUser[_]) = {
-    ITSAStatusService.getITSAStatusDetail(
-      taxYear = dateService.getCurrentTaxYear,
-      futureYears = false,
-      history = false
-    ).map {
-      case statusDetails if statusDetails.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))) => true
-      case _ => false
+  private def isItsaStatusVoluntaryOrMandated()(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Result, Boolean]] = {
+    def redirectBasedOnUser: Future[Either[Result, Boolean]] =
+      Future(Left(if (user.isAgent()) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
+
+    ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = false, history = false).flatMap {
+      case statusDetail if statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))) =>
+        Future(Right(true))
+      case statusDetail if statusDetail.exists(_.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary))) =>
+        Future(Right(false))
+      case _ =>
+        ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear.nextYear, futureYears = false, history = false).flatMap {
+          case statusDetail if statusDetail.nonEmpty => redirectBasedOnUser
+          case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval")))
+        }
     }
   }
 
