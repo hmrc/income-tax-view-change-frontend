@@ -51,7 +51,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Address lookup service
   lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
-  lazy val addressLookupConfirmationUrl: String = s"$addressLookupService/lookup-address/confirm?id={addressId}"
+  lazy val addressLookupExternalUrl: String = servicesConfig.getString("address-lookup.external-url")
 
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
