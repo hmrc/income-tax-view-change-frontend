@@ -175,10 +175,10 @@ class ForecastIncomeAuditModelSpec extends TestSupport {
   )
 
   val testUserIndividual = defaultMTDITUser(Some(Individual),
-    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil))
+    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil, "1"))
 
   val testUserAgent = defaultMTDITUser(Some(Agent),
-    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil))
+    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil, "1"))
 
   def testForecastIncomeAuditModelIndividual( endOfYearEstimate: EndOfYearEstimate = endOfYearEstimate,
                                             ): ForecastIncomeAuditModel = ForecastIncomeAuditModel(
