@@ -59,7 +59,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
   }
 
   private def addressLookupConfirmUrl(id: String): String = {
-    s"${appConfig.addressLookupExternalUrl}/lookup-address/$id/confirm"
+    s"${appConfig.addressLookupExternalHost}/lookup-address/$id/confirm"
   }
 
   private def initialiseJourney(isAgent: Boolean, mode: Mode)
