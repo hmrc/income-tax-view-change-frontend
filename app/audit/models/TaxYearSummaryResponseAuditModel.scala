@@ -84,7 +84,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
     if (msg.isDefined) {
       Json.obj() ++ Json.obj("errors"-> msg)
     } else {
-      Json.obj()
+      Json.obj() ++ Json.obj("errors"-> Json.arr() )
     }
   }
 
