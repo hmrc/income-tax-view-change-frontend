@@ -38,6 +38,7 @@ import java.time.LocalDate
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
   val testYear: Int = 2018
+  val explanationTestYear: Int = 2017
   val hrefForecastSelector: String = """a[href$="#forecast"]"""
 
   val implicitDateFormatter: ImplicitDateFormatterImpl = app.injector.instanceOf[ImplicitDateFormatterImpl]
@@ -46,7 +47,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   import TaxYearSummaryMessages._
   import implicitDateFormatter._
 
-  def modelComplete(crystallised: Boolean, unattendedCalc: Boolean = false, isAmended: Boolean = false): CalculationSummary =
+  def modelComplete(crystallised: Boolean, unattendedCalc: Boolean = false, isAmended: Boolean = false, testPeriod: Int = testYear): CalculationSummary =
     CalculationSummary(
       timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
       income = 1,
@@ -59,8 +60,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       forecastIncomeTaxAndNics = Some(5000.99),
       forecastAllowancesAndDeductions = Some(4200.00),
       forecastTotalTaxableIncome = Some(8300),
-      periodFrom = Some(LocalDate.of(testYear - 1, 1, 1)),
-      periodTo = Some(LocalDate.of(testYear, 1, 1)),
+      periodFrom = Some(LocalDate.of(testPeriod - 1, 1, 1)),
+      periodTo = Some(LocalDate.of(testPeriod, 1, 1)),
       isAmended = isAmended
     )
 
@@ -245,6 +246,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, chargeItems, obligations, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
 
+  def explanationView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel, isCrystallised: Boolean = false): Html = taxYearSummaryView(
+    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = isCrystallised, testPeriod = 2017)), previousCalculationSummary = None, chargeItems, obligations, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+
   def class2NicsView(isAgent: Boolean = false): Html = taxYearSummaryView(
     testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, class2NicsChargesList
       , testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
@@ -356,6 +360,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val title: String = "Tax year summary - Manage your Self Assessment - GOV.UK"
     val agentTitle: String = "Tax year summary - Manage your Self Assessment - GOV.UK"
     val secondaryHeading: String = "6 April {0} to 5 April {1}"
+    def explanatoryInsetText(date: String): String = s"This calculation is only based on figures we’ve already received to $date. It’s not your final tax bill."
     val calculationDate: String = "Calculation date"
     val calcDate: String = "1 January 2020"
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
@@ -535,6 +540,17 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.selectHead("""a[href$="#taxCalculation"]""").text shouldBe taxCalculationTab
         layoutContent.selectHead("""a[href$="#payments"]""").text shouldBe charges
         layoutContent.selectHead("""a[href$="#submissions"]""").text shouldBe submissions
+      }
+
+      "show the indented explanation text when not crystallised and when there is an updated obligation with a date recieved" in new Setup(explanationView(obligations = testObligationsChronologicalModel)) {
+        val expectedDate: String = implicitDateFormatter.longDate(LocalDate.of(explanationTestYear-1, 7, 30)).toLongDate
+        document.getElementById("calc-explanation-inset").text() shouldBe explanatoryInsetText(expectedDate)
+      }
+      "do not show the indented explanation text when crystallised" in new Setup(explanationView(obligations = testObligationsChronologicalModel, isCrystallised = true)) {
+        document.getOptionalSelector("#calc-explanation-inset") shouldBe None
+      }
+      "do not show the indented explanation text when there is no updated obligation with a date recieved" in new Setup(explanationView()) {
+        document.getOptionalSelector("#calc-explanation-inset") shouldBe None
       }
 
       "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {

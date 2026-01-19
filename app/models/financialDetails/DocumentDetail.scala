@@ -35,6 +35,7 @@ case class DocumentDetail(taxYear: Int,
                           interestOutstandingAmount: Option[BigDecimal] = None,
                           interestRate: Option[BigDecimal] = None,
                           latePaymentInterestId: Option[String] = None,
+                          latePaymentInterestAmount: Option[BigDecimal] = None,
                           interestFromDate: Option[LocalDate] = None,
                           interestEndDate: Option[LocalDate] = None,
                           accruingInterestAmount: Option[BigDecimal] = None,
@@ -217,6 +218,7 @@ object DocumentDetail {
       (__ \ "interestOutstandingAmount").readNullable[BigDecimal] and
       (__ \ "interestRate").readNullable[BigDecimal] and
       (__ \ "latePaymentInterestId").readNullable[String] and
+      (__ \ "latePaymentInterestAmount").readNullable[BigDecimal] and
       (__ \ "interestFromDate").readNullable[LocalDate] and
       (__ \ "interestEndDate").readNullable[LocalDate] and
       (__ \ "accruingInterestAmount").readNullable[BigDecimal] and
