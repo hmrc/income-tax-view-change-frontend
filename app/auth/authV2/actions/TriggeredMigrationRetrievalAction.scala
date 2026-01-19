@@ -23,8 +23,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxCalculationConnector
 import controllers.BaseController
 import enums.TaxYearSummary.CalculationRecord.LATEST
-import enums.TriggeredMigration.Channel
-import enums.TriggeredMigration.Channel.confirmedUsers
 import models.admin.TriggeredMigration
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
@@ -60,25 +58,42 @@ class TriggeredMigrationRetrievalAction @Inject()(
         implicit val req: MtdItUser[A] = request
 
         lazy val authAction = {
-          (confirmedUsers.contains(request.incomeSources.channel), isTriggeredMigrationPage) match {
-            case (true, false) => Future(Right(req))
-            case (true, true) => if (req.isAgent()) {
+          (request.incomeSources.isConfirmedUser, isTriggeredMigrationPage) match {
+            case (true, false) =>
+              println(Console.CYAN_B + "Confirmed user " + request.incomeSources.channel + " accessing non-triggered migration page" + Console.RESET)
+              Future(Right(req))
+            case (true, true) =>
+              println(Console.MAGENTA_B + "Confirmed user " + request.incomeSources.channel + " accessing triggered migration page" + Console.RESET)
+              if (req.isAgent()) {
               Future(Left(Redirect(controllers.routes.HomeController.showAgent())))
             } else {
               Future(Left(Redirect(controllers.routes.HomeController.show())))
             }
             case (false, _) =>
+              println(Console.YELLOW_B + "Unconfirmed user " + request.incomeSources.channel + " accessing page " + (if(isTriggeredMigrationPage) "triggered migration" else "non-triggered migration") + Console.RESET)
               isItsaStatusVoluntaryOrMandated().flatMap {
-                case Right(false) => Future(Right(req))
-                case Left(errorResult) => Future(Left(errorResult))
-                case Right(true) => isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).map {
-                  case Right(true) => Right(req)
+                case Right(false) =>
+                  println(Console.RED_B + "User is not mandated or voluntary" + Console.RESET)
+                  Future(Right(req))
+                case Left(errorResult) =>
+                  println(Console.RED_B + "Error retrieving ITSA status during triggered migration retrieval" + Console.RESET)
+                  Future(Left(errorResult))
+                case Right(true) =>
+                  println(Console.GREEN_B + "User is mandated or voluntary, checking crystallisation status" + Console.RESET)
+                  isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).map {
+                  case Right(true) =>
+                    println(Console.GREEN_B + "Calculation is crystallised" + Console.RESET)
+                    Right(req)
                   case Right(false) => if(isTriggeredMigrationPage) {
+                    println(Console.YELLOW_B + "Calculation is not crystallised" + Console.RESET)
                     Right(req)
                   } else {
+                    println(Console.CYAN_B + "Redirecting to check HMRC records page as calculation is not crystallised" + Console.RESET)
                     Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
                   }
-                  case Left(errorResult) => Left(errorResult)
+                  case Left(errorResult) =>
+                    println(Console.RED_B + "Error retrieving calculation crystallisation status during triggered migration retrieval" + Console.RESET)
+                    Left(errorResult)
                 }
               }
           }

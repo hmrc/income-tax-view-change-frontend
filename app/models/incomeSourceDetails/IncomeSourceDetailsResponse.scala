@@ -34,7 +34,7 @@ case class IncomeSourceDetailsModel(
                                      yearOfMigration: Option[String],
                                      businesses: List[BusinessDetailsModel],
                                      properties: List[PropertyDetailsModel],
-                                     channel: String = "1"
+                                     channel: String = "Customer-led"
                                    ) extends IncomeSourceDetailsResponse with Logging {
 
   val hasPropertyIncome: Boolean = properties.nonEmpty
@@ -122,6 +122,9 @@ case class IncomeSourceDetailsModel(
   def isAnyOfActiveBusinessesLatent: Boolean = businesses.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty) ||
     properties.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
 
+  def isConfirmedUser: Boolean = {
+    Set("Customer-led", "Hmrc-led-confirmed").contains(channel)
+  }
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {
