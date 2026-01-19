@@ -143,7 +143,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               when(mockAddressLookupService.fetchAddress(any())(any()))
                 .thenReturn(Future(Right(testBusinessAddressModel)))
 
-              val expectedUrl = s"${frontendAppConfig.addressLookupService}/lookup-address/123/confirm"
+              val expectedUrl = s"${frontendAppConfig.addressLookupExternalHost}/lookup-address/123/confirm"
 
               clearInvocations(mockAddressLookupService)
 
