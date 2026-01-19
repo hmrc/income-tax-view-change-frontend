@@ -18,7 +18,6 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import enums.TriggeredMigration.{Channel, Confirmed, CustomerLed}
 import models.admin.TriggeredMigration
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
