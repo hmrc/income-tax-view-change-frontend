@@ -55,8 +55,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val saNote1_2: String = s"${messages("whatYouOwe.sa-note-1-body-2")} $saLink1_2 ${messages("whatYouOwe.sa-note-1-body-3")}"
   val saNote1_3: String = s"${messages("whatYouOwe.sa-note-1-body-4")} ${messages("whatYouOwe.sa-link-1-body-3", "2024", "2025")}."
   val saNote2Heading: String = messages("whatYouOwe.sa-note-2-heading")
+  val saNote2HeadingAgent: String = messages("whatYouOwe.sa-note-2-heading-agent")
   val saLink2: String = s"${messages("whatYouOwe.sa-link-2")} ${messages("pagehelp.opensInNewTabText")}"
+  val saLink2Agent: String = s"${messages("whatYouOwe.sa-link-2-agent")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote2: String = s"${messages("whatYouOwe.sa-note-2-body")} $saLink2."
+  val saNote2Agent: String = s"${messages("whatYouOwe.sa-note-2-body-agent-1")} $saLink2Agent. ${messages("whatYouOwe.sa-note-2-body-agent-2")}"
   val osChargesNote: String = messages("whatYouOwe.outstanding-charges-note")
   val paymentUnderReviewPara: String = s"${messages("whatYouOwe.dunningLock.text", s"${messages("whatYouOwe.dunningLock.link")} ${messages("pagehelp.opensInNewTabText")}")}."
   val chargeType: String = messages("tax-year-summary.payments.charge-type")
@@ -1340,8 +1343,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
       pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
       pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-      pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
-      pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
+      pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2HeadingAgent
+      pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2Agent
     }
 
     "the user has no charges but is coded out" should {

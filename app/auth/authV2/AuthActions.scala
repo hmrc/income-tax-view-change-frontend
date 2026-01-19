@@ -19,12 +19,15 @@ package auth.authV2
 import auth.MtdItUser
 import auth.authV2.actions._
 import auth.authV2.models.AuthorisedUserRequest
+import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AuthActions @Inject()(
+                             frontendAppConfig: FrontendAppConfig,
                              val checkSessionTimeout: SessionTimeoutAction,
                              val authoriseAndRetrieve: AuthoriseAndRetrieve,
                              val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
@@ -37,14 +40,16 @@ class AuthActions @Inject()(
                              val itsaStatusRetrievalAction: ItsaStatusRetrievalAction,
                              val retrieveClientData: RetrieveClientData,
                              val retrieveFeatureSwitches: FeatureSwitchRetrievalAction
-                           ) {
+                           ) extends FeatureSwitching {
+
+  override val appConfig: FrontendAppConfig = frontendAppConfig
 
   def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
       itsaStatusRetrievalAction andThen
-      retrieveFeatureSwitches andThen
       retrieveNavBar
   }
 
@@ -58,8 +63,8 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
       incomeSourceRetrievalAction andThen
-      itsaStatusRetrievalAction andThen
-      retrieveFeatureSwitches
+      retrieveFeatureSwitches andThen
+      itsaStatusRetrievalAction
   }
 
   def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
@@ -78,8 +83,8 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
       incomeSourceRetrievalAction andThen
-      itsaStatusRetrievalAction andThen
-      retrieveFeatureSwitches
+      retrieveFeatureSwitches andThen
+      itsaStatusRetrievalAction
   }
 
   def asMTDIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {

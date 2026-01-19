@@ -1178,9 +1178,9 @@ object FinancialDetailsTestConstants {
       balanceDetails = balanceDetails,
       documentDetails = List(
         DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, None, None,
-          None, None, Some(0), None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+          None, None, None, Some(0), None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
         DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, None, None,
-          None, None, None, None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+          None, None, None, None, None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = dunningLock.head)))),
@@ -1198,9 +1198,9 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId1"),
-          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+          None, Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
         DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId2"),
-          Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+          None, Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
@@ -1221,8 +1221,8 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), None, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), None, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate = dueDate.head, dunningLock = dunningLock.head)))),
@@ -1383,8 +1383,8 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), None, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount.head, effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), None,  Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount(1), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head, dunningLock = dunningLock.head)))),
@@ -1404,8 +1404,8 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), None, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), None, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(1000), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
@@ -1425,8 +1425,8 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, interestRate.head, Some("latePaymentInterestId1"), None, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, interestRate(1), Some("latePaymentInterestId2"), None, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), accruingInterestAmount, lpiWithDunningLock = Some(0), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
@@ -1445,8 +1445,8 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
-        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
+        DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), interestOutstandingAmount.head, interestRate.head, Some("latePaymentInterestId1"), None, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+        DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), interestOutstandingAmount(1), interestRate(1), Some("latePaymentInterestId2"), None, Some(LocalDate.parse("2019-05-25")), Some(LocalDate.parse("2019-06-25")), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
       financialDetails = List(
         FinancialDetail(taxYear, mainType.head, mainTransaction.head, Some(id1040000124), Some(LocalDate.parse("2022-08-16")), Some("ABCD1234"), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate.head)))),
@@ -1518,13 +1518,13 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(fixedDateTwo.getYear, id1040000125, Some("ITSA- POA 1"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+        DocumentDetail(fixedDateTwo.getYear, id1040000125, Some("ITSA- POA 1"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"), None,
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
-        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA- POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA- POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"), None,
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
-        DocumentDetail(fixedDateTwo.getYear, id1040000123, Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+        DocumentDetail(fixedDateTwo.getYear, id1040000123, Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"), None,
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
-        DocumentDetail(fixedDateTwo.getYear, id1040000124, Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 75, 12.34, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+        DocumentDetail(fixedDateTwo.getYear, id1040000124, Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 75, 12.34, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"), None,
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30)))
       ),
       financialDetails = List(
@@ -1537,13 +1537,13 @@ object FinancialDetailsTestConstants {
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
-        DocumentDetail(fixedDateTwo.getYear, id1040000125, Some("ITSA- POA 1"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+        DocumentDetail(fixedDateTwo.getYear, id1040000125, Some("ITSA- POA 1"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"), None,
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
-        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA- POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"),
+        DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA- POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"), None,
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
-        DocumentDetail(fixedDateTwo.getYear, id1040000123, Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 0, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), None,
+        DocumentDetail(fixedDateTwo.getYear, id1040000123, Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 0, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), None, None,
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(150), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
-        DocumentDetail(fixedDateTwo.getYear, id1040000124, Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 0, 12.34, LocalDate.of(2018, 3, 29), Some(100), Some(100), None,
+        DocumentDetail(fixedDateTwo.getYear, id1040000124, Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 0, 12.34, LocalDate.of(2018, 3, 29), Some(100), Some(100), None, None,
           Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(150), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30)))
       ),
       financialDetails = List(
@@ -1563,7 +1563,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
         DocumentDetail(taxYear.toInt, id1040000124, documentDescription, Some("documentText"), outstandingAmount, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100),
-          Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"),
+          Some("latePaymentInterestId"), None, Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"),
           effectiveDateOfPayment = dueDate,
           documentDueDate = dueDate)
       ),
@@ -1743,7 +1743,7 @@ object FinancialDetailsTestConstants {
 
   val codedOutDocumentDetailsA = DocumentDetail(2022, id1040000124, Some("documentDescription"), Some("documentText"),
     BigDecimal("5.00"), 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100),
-    Some("latePaymentInterestId"), Some(LocalDate.of(2018, 3, 29)),
+    Some("latePaymentInterestId"), None, Some(LocalDate.of(2018, 3, 29)),
     Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"),
     amountCodedOut = Some(BigDecimal("2500.00")))
 

@@ -696,8 +696,7 @@ object NewCalcBreakdownUnitTestConstants {
     totalRoyaltyPaymentsTaxCharged = Some(240.35),
     reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1000)), ReliefsClaimed("vctSubscriptions", Some(2000)),
       ReliefsClaimed("eisSubscriptions", Some(3000)), ReliefsClaimed("seedEnterpriseInvestment", Some(4000)),
-      ReliefsClaimed("communityInvestment", Some(5000)), ReliefsClaimed("socialEnterpriseInvestment", Some(6000)),
-      ReliefsClaimed("maintenancePayments", Some(7000)),
+      ReliefsClaimed("communityInvestment", Some(5000)), ReliefsClaimed("maintenancePayments", Some(7000)),
       ReliefsClaimed("qualifyingDistributionRedemptionOfSharesAndSecurities", Some(8000)),
       ReliefsClaimed("nonDeductableLoanInterest", Some(9000))
     )),
