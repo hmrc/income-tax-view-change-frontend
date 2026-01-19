@@ -56,6 +56,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
       Json.obj() ++
         ("balanceDueWithin30Days", onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceDueWithin30Days)) ++
         ("overDueAmount", onlyIfPositive(whatYouOweChargesList.balanceDetails.overDueAmount)) ++
+        ("balanceNotDuein30Days", onlyIfPositive(whatYouOweChargesList.balanceDetails.balanceNotDuein30Days)) ++
         ("totalBalance", onlyIfPositive(whatYouOweChargesList.balanceDetails.totalBalance)) ++
         ("creditAmount", whatYouOweChargesList.balanceDetails.unallocatedCredit)
     }

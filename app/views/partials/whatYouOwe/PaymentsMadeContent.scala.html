@@ -72,11 +72,12 @@
 }
 
 @if(viewModel.utr.isDefined && !user.isAgent()) {
-    @(for {
-        (_, amount) <- viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
-    } yield {
-        insetTextAndButton(amount)
-    })
+    @{
+        viewModel.whatYouOweChargesList.getDefaultPaymentAmount match {
+            case Some(value) => insetTextAndButton(value)
+            case None =>
+        }
+    }
 }
 
 @if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {

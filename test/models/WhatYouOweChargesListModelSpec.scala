@@ -36,7 +36,7 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
   val outstandingCharges: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusMonths(13))
 
   def whatYouOweAllData(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsDueIn30DaysCi(dunningLock)
       ++ financialDetailsDueInMoreThan30DaysCi(dunningLock)
       ++ financialDetailsOverdueDataCi(dunningLock),
@@ -44,7 +44,14 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
   )
 
   def whatYouOweFinancialDataWithoutOutstandingCharges(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 0.00, 4.00, 3.00, None, None, None, None, None, None, None),
+    chargesList = financialDetailsDueIn30DaysCi(dunningLock)
+      ++ financialDetailsDueInMoreThan30DaysCi(dunningLock)
+      ++ financialDetailsOverdueDataCi(dunningLock)
+  )
+
+  def whatYouOweFinancialDataWithChargesInMoreThan30Days(dunningLock: List[Option[String]] = noDunningLocks): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(0.00, 0.00, 4.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsDueIn30DaysCi(dunningLock)
       ++ financialDetailsDueInMoreThan30DaysCi(dunningLock)
       ++ financialDetailsOverdueDataCi(dunningLock)
@@ -142,9 +149,8 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
       "isChargesListEmpty is false" in {
         whatYouOweAllData().isChargesListEmpty shouldBe false
       }
-      "getEarliestTaxYearAndAmountByDueDate should have correct values" in {
-        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe fixedDate.minusMonths(13).getYear
-        whatYouOweAllData().getEarliestTaxYearAndAmountByDueDate.get._2 shouldBe 123456.67
+      "getDefaultPaymentAmount should have correct values" in {
+        whatYouOweAllData().getDefaultPaymentAmount shouldBe Some(2.0)
       }
       "hasDunningLock should return false if there are no dunningLocks" in {
         whatYouOweAllData().hasDunningLock shouldBe false
@@ -164,10 +170,9 @@ class WhatYouOweChargesListModelSpec extends UnitSpec with Matchers with ChargeC
       "isChargesListEmpty is false" in {
         whatYouOweFinancialDataWithoutOutstandingCharges().isChargesListEmpty shouldBe false
       }
-      "getEarliestTaxYearAndAmountByDueDate should have correct values" in {
-        whatYouOweFinancialDataWithoutOutstandingCharges()
-          .getEarliestTaxYearAndAmountByDueDate.get._1 shouldBe fixedDate.minusDays(10).getYear
-        whatYouOweFinancialDataWithoutOutstandingCharges().getEarliestTaxYearAndAmountByDueDate.get._2 shouldBe 50.0
+      "getDefaultPaymentAmount should have correct values" in {
+        whatYouOweFinancialDataWithoutOutstandingCharges().getDefaultPaymentAmount shouldBe Some(1.0)
+        whatYouOweFinancialDataWithChargesInMoreThan30Days().getDefaultPaymentAmount shouldBe Some(4.0)
       }
     }
   }
