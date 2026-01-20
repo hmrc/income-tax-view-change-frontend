@@ -58,24 +58,24 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  private def getPostAction(isAgent: Boolean, mode: Mode): Call = {
+  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = {
     if(isAgent) {
-      routes.AddBusinessNameController.submitAgent(mode)
+      routes.AddBusinessNameController.submitAgent(mode, isTriggeredMigration)
     } else {
-      routes.AddBusinessNameController.submit(mode)
+      routes.AddBusinessNameController.submit(mode, isTriggeredMigration)
 
-    }
-    }
-
-  private def getRedirect(isAgent: Boolean, mode: Mode): Call = {
-    (isAgent, mode) match {
-      case (_, NormalMode) => routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, SelfEmployment)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }
   }
 
-  def show(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual().async {
+  private def getRedirect(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = {
+    (isAgent, mode) match {
+      case (_, NormalMode) => routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, SelfEmployment, isTriggeredMigration)
+      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
+      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
+    }
+  }
+
+  def show(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigrationPage = isTriggeredMigration).async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -85,7 +85,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
       )
   }
 
-  def showAgent(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
+  def showAgent(mode: Mode, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigrationPage = isTriggeredMigration).async  {
     implicit user =>
       handleRequest(
         isAgent = true,
@@ -100,7 +100,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
       val businessNameOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessName)
       val filledForm: Form[BusinessNameForm] = businessNameOpt.fold(BusinessNameForm.form)(name =>
         BusinessNameForm.form.fill(BusinessNameForm(name)))
-      val submitAction: Call = getPostAction(isAgent, mode)
+      val submitAction: Call = getPostAction(isAgent, mode, isTriggeredMigration)
 
       Future.successful {
         Ok(addBusinessView(filledForm, isAgent, submitAction, backUrl))
@@ -113,17 +113,17 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def submit(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual().async {
+  def submit(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit request =>
-      handleSubmitRequest(false, mode)(implicitly, itvcErrorHandler)
+      handleSubmitRequest(false, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
   }
 
-  def submitAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
+  def submitAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
     implicit request =>
-      handleSubmitRequest(true, mode)(implicitly, itvcErrorHandlerAgent)
+      handleSubmitRequest(true, mode, isTriggeredMigration)(implicitly, itvcErrorHandlerAgent)
   }
 
-  def handleSubmitRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), InitialPage) { sessionData =>
 
       val businessTradeOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
@@ -133,7 +133,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
           Future.successful {
             BadRequest(addBusinessView(formWithErrors,
               isAgent,
-              getPostAction(isAgent, mode),
+              getPostAction(isAgent, mode, isTriggeredMigration),
               getBackUrl(isAgent, mode)))
           },
         formData => {
@@ -159,7 +159,7 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
                 )
             }
           ) flatMap {
-            case true  => Future.successful(Redirect(getRedirect(isAgent, mode)))
+            case true  => Future.successful(Redirect(getRedirect(isAgent, mode, isTriggeredMigration)))
             case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
           }
         }
