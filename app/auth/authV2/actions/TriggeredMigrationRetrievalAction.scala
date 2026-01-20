@@ -121,16 +121,11 @@ class TriggeredMigrationRetrievalAction @Inject()(
     def redirectBasedOnUser: Future[Either[Result, Boolean]] =
       Future(Left(if (user.isAgent()) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
 
-    ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = false, history = false).flatMap {
-      case statusDetail if statusDetail.exists(_.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary))) =>
-        Future(Right(true))
-      case statusDetail if statusDetail.exists(_.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary))) =>
-        Future(Right(false))
-      case _ =>
-        ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear.nextYear, futureYears = false, history = false).flatMap {
-          case statusDetail if statusDetail.nonEmpty => redirectBasedOnUser
-          case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval")))
-        }
+    ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
+      case List(cyStatus, _) if cyStatus.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)) => Future(Right(true))
+      case List(cyStatus, _) if cyStatus.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary)) => Future(Right(false))
+      case statusDetail if statusDetail.nonEmpty => redirectBasedOnUser
+      case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval")))
     }
   }
 
