@@ -40,7 +40,8 @@
         isAgent: Boolean,
         backUrl: String,
         viewModel: CheckCeaseIncomeSourceDetailsViewModel,
-        messagesPrefix: String
+        messagesPrefix: String,
+        isTriggeredMigration: Boolean
 )(implicit request: auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
@@ -53,15 +54,16 @@
     controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(Some(viewModel.incomeSourceId.toHash.hash),
         SelfEmployment,
         isAgent,
-        mode = CheckMode
+        mode = CheckMode,
+        isTriggeredMigration
     ).url
 }
 
 @getBusinessSubmitHref = @{
     if(isAgent) {
-        controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment)
+        controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(SelfEmployment, isTriggeredMigration)
     } else {
-        controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(SelfEmployment)
+        controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(SelfEmployment, isTriggeredMigration)
     }
 }
 
@@ -87,15 +89,15 @@
 @getPropertySubmitHref = @{
     if(viewModel.incomeSourceType.toString == "UkProperty") {
         if(isAgent) {
-            controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty)
+            controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(UkProperty, isTriggeredMigration)
         } else {
-            controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(UkProperty)
+            controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(UkProperty, isTriggeredMigration)
         }
     } else {
         if(isAgent) {
-            controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty)
+            controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submitAgent(ForeignProperty, isTriggeredMigration)
         } else {
-            controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(ForeignProperty)
+            controllers.manageBusinesses.cease.routes.CeaseCheckIncomeSourceDetailsController.submit(ForeignProperty, isTriggeredMigration)
         }
     }
 }

@@ -81,20 +81,17 @@ class TriggeredMigrationRetrievalAction @Inject()(
                 case Right(true) =>
                   println(Console.GREEN_B + "User is mandated or voluntary, checking crystallisation status" + Console.RESET)
                   isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).map {
-                  case Right(true) =>
-                    println(Console.GREEN_B + "Calculation is crystallised" + Console.RESET)
-                    Right(req)
-                  case Right(false) => if(isTriggeredMigrationPage) {
-                    println(Console.YELLOW_B + "Calculation is not crystallised" + Console.RESET)
-                    Right(req)
-                  } else {
-                    println(Console.CYAN_B + "Redirecting to check HMRC records page as calculation is not crystallised" + Console.RESET)
-                    Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
+                    case Right(true) =>
+                      println(Console.GREEN_B + "Calculation is crystallised" + Console.RESET)
+                      Right(req)
+                    case Right(false) => if(isTriggeredMigrationPage) {
+                      Right(req)
+                    } else {
+                      Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
+                    }
+                    case Left(errorResult) =>
+                      Left(errorResult)
                   }
-                  case Left(errorResult) =>
-                    println(Console.RED_B + "Error retrieving calculation crystallisation status during triggered migration retrieval" + Console.RESET)
-                    Left(errorResult)
-                }
               }
           }
         }
