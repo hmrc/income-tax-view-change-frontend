@@ -53,7 +53,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
-      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)

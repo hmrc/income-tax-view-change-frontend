@@ -57,7 +57,7 @@ class ManageObligationsControllerSpec
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils),
-      api.inject.bind[DateService].toInstance(mockDateService),
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)

@@ -56,7 +56,7 @@ trait ManageIncomeSourceDetailsHelper
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
-        api.inject.bind[DateService].toInstance(mockDateService),
+        api.inject.bind[DateService].toInstance(mockDateServiceInjected),
         api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
         api.inject.bind[CalculationListService].toInstance(mockCalculationListService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),

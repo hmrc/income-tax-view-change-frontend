@@ -50,7 +50,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
-        api.inject.bind[DateService].toInstance(dateService),
+        api.inject.bind[DateService].toInstance(mockDateServiceInjected),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)

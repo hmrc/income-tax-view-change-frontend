@@ -78,12 +78,10 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
   case class AddressError(status: String) extends RuntimeException
 
+
   Seq(CheckMode, NormalMode).foreach { mode =>
-
     mtdAllRoles.foreach { mtdRole =>
-
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-
       s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
         val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(mode) else testAddBusinessAddressController.showAgent(mode)
         s"the user is authenticated as a $mtdRole" should {
