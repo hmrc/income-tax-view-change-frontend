@@ -59,18 +59,18 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
       addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData)
     )
 
-  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): String = {
     val pathStart = if (mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
     incomeSourceType match {
-      case SelfEmployment => s"$pathStart/add-sole-trader/business-check-answers"
-      case UkProperty => s"$pathStart/add-uk-property/check-answers"
-      case ForeignProperty => s"$pathStart/add-foreign-property/check-answers"
+      case SelfEmployment => s"$pathStart/add-sole-trader/business-check-answers?isTriggeredMigration=$isTriggeredMigration"
+      case UkProperty => s"$pathStart/add-uk-property/check-answers?isTriggeredMigration=$isTriggeredMigration"
+      case ForeignProperty => s"$pathStart/add-foreign-property/check-answers?isTriggeredMigration=$isTriggeredMigration"
     }
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val path = getPath(mtdUserRole, incomeSourceType, false)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
 
       s"GET $path" when {
@@ -168,6 +168,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
             "redirect to check hmrc records page" when {
               "user selects 'confirm and continue' and they are in triggered migration" in {
+                val path = getPath(mtdUserRole, incomeSourceType, isTriggeredMigration = true)
+
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))

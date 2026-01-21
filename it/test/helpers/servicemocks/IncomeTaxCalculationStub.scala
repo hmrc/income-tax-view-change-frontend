@@ -22,7 +22,10 @@ import play.api.libs.json.Json
 
 object IncomeTaxCalculationStub {
 
-  def getCalculationResponseUrl(nino: String, taxYear: String): String = s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear"
+  def getCalculationResponseUrl(nino: String, taxYear: String, calculationRecord: Option[String]): String = {
+    val base = s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear"
+    calculationRecord.map(rec => s"$base&calculationRecord=$rec").getOrElse(base)
+  }
 
   def getCalculationResponseWithFlagUrl(nino: String, taxYear: String, calcType: String): String =
     s"/income-tax-calculation/income-tax/nino/$nino/calculation-details?taxYear=$taxYear&calculationRecord=$calcType"
@@ -33,16 +36,16 @@ object IncomeTaxCalculationStub {
   def getCalculationResponseByCalcIdPureUrl(nino: String, calcId: String): String =
     s"/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
-  def stubGetCalculationResponse(nino: String, taxYear: String)(status: Int, body: LiabilityCalculationResponse): Unit = {
-    WiremockHelper.stubGet(getCalculationResponseUrl(nino, taxYear), status, Json.toJson(body).toString())
+  def stubGetCalculationResponse(nino: String, taxYear: String, calculationRecord: Option[String] = None)(status: Int, body: LiabilityCalculationResponse): Unit = {
+    WiremockHelper.stubGet(getCalculationResponseUrl(nino, taxYear, calculationRecord), status, Json.toJson(body).toString())
   }
 
-  def stubGetCalculationErrorResponse(nino: String, taxYear: String)(status: Int, body: LiabilityCalculationError): Unit = {
-    WiremockHelper.stubGet(getCalculationResponseUrl(nino, taxYear), status, Json.toJson(body).toString())
+  def stubGetCalculationErrorResponse(nino: String, taxYear: String, calculationRecord: Option[String] = None)(status: Int, body: LiabilityCalculationError): Unit = {
+    WiremockHelper.stubGet(getCalculationResponseUrl(nino, taxYear, calculationRecord), status, Json.toJson(body).toString())
   }
 
-  def verifyGetCalculationResponse(nino: String, taxYear: String, noOfCalls: Int = 1): Unit = {
-    WiremockHelper.verifyGet(getCalculationResponseUrl(nino, taxYear), noOfCalls)
+  def verifyGetCalculationResponse(nino: String, taxYear: String, noOfCalls: Int = 1, calculationRecord: Option[String] = None): Unit = {
+    WiremockHelper.verifyGet(getCalculationResponseUrl(nino, taxYear, calculationRecord), noOfCalls)
   }
 
   def stubGetCalculationResponseWithFlagResponse(nino: String, taxYear: String, calcType: String)(status: Int, body: LiabilityCalculationResponse): Unit = {
