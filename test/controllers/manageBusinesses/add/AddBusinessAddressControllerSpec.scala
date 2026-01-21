@@ -26,7 +26,7 @@ import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{clearInvocations, mock, never, verify, when, mock as mMock}
+import org.mockito.Mockito.{clearInvocations, never, verify, when, mock}
 import org.scalatest.matchers.must.Matchers
 import services.{DateService, DateServiceInterface}
 import play.api
@@ -48,7 +48,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
   val postAction: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = NormalMode)
   val postActionCheck: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = CheckMode)
   lazy val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
-  lazy val mockDateServiceInjected: DateService = mMock(classOfDateService)
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
