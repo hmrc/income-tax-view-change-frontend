@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCreditService, MockRepaymentService}
@@ -25,59 +26,87 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.{CreditService, RepaymentService}
+import services.{CreditService, DateServiceInterface, RepaymentService}
 import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.testTaxYearTo
 import testConstants.FinancialDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditService with MockRepaymentService {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[CreditService].toInstance(mockCreditService),
-      api.inject.bind[RepaymentService].toInstance(mockRepaymentService)
-    ).build()
+  override lazy val mockBusinessDetailsConnector: BusinessDetailsConnector = mock[BusinessDetailsConnector]
+
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[CreditService].toInstance(mockCreditService),
+        api.inject.bind[RepaymentService].toInstance(mockRepaymentService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[CreditAndRefundController]
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   mtdAllRoles.foreach { mtdUserRole =>
+
     val isAgent = mtdUserRole != MTDIndividual
+
     s"show${if (isAgent) "Agent"}" when {
+
       val action = if (isAgent) testController.showAgent() else testController.show()
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+
       s"the $mtdUserRole is authenticated" should {
+
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
         } else {
+
           "render the credit and refund page" when {
+
             "MFACreditsAndDebits disabled: credit charges are returned" in {
+
               disableAllSwitches()
               enable(CreditsRefundsRepay)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
-                ANewCreditAndRefundModel()
-                  .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
-                  .get()))
+
+              when(mockCreditService.getAllCredits(any(), any()))
+                .thenReturn(
+                  Future(
+                    ANewCreditAndRefundModel()
+                      .withBalancingChargeCredit(LocalDate.parse("2022-08-16"), 100.0)
+                      .get()
+                  )
+                )
 
               val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
+              val body = contentAsString(result)
+              val document = Jsoup.parse(body)
+              val title = document.title()
 
+              status(result) shouldBe Status.OK
+              title shouldBe "Claim a refund - Manage your Self Assessment - GOV.UK"
             }
 
             "credit charges are returned" in {
+
               disableAllSwitches()
               enable(CreditsRefundsRepay)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
@@ -90,8 +119,10 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
             }
 
             "credit charges are returned in sorted order of credits" in {
+
               enable(CreditsRefundsRepay)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
@@ -147,9 +178,12 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
           }
 
           "render the custom not found error page" when {
+
             "CreditsRefundsRepay feature is disabled" in {
+
               disableAllSwitches()
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
@@ -171,15 +205,22 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
 
 
     if (mtdUserRole == MTDIndividual) {
+
       s"startRefund" when {
+
         val action = testController.startRefund()
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+
         s"the $mtdUserRole is authenticated" should {
+
           "render the start refund process" when {
+
             "RepaymentJourneyModel is returned" in {
+
               disableAllSwitches()
               enable(CreditsRefundsRepay)
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncomeWithCurrentYear)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
@@ -196,6 +237,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
           }
 
           "not start refund process" when {
+
             "RepaymentJourneyErrorResponse is returned" in {
               disableAllSwitches()
               enable(CreditsRefundsRepay)
@@ -222,7 +264,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
             }
           }
         }
-        testMTDIndividualAuthFailures(action)
+                testMTDIndividualAuthFailures(action)
       }
     }
   }

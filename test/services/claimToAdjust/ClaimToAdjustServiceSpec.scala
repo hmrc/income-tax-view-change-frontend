@@ -81,7 +81,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
   )
 
   val financialDetailsModelBothPoas: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.0, 0.0, 0.0, 0.0, None, None, None, None, None, None, None),
     documentDetails = List.empty,
     financialDetails = List.empty
   )
@@ -128,6 +128,18 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
         result.futureValue shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
 
+      }
+      "a user has only one CTA amendable year. They have signed up in CY, so CY-1 is not crystallised, but has no POAS, so only CY is amendable" in {
+        setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
+        setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
+
+        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetails(2023, testNino)(userNoPoaDetails)
+
+        val f = fixture(LocalDate.of(2023, 4, 20))
+        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
+
+        result.futureValue shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
       }
     }
     "return a future right which is empty" when {

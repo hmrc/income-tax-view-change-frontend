@@ -16,6 +16,7 @@
 
 package controllers.optOut
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{CurrentTaxYear, MTDIndividual, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
@@ -31,6 +32,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import services.optout._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
@@ -40,7 +42,10 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[OptOutService].toInstance(mockOptOutService)
+      api.inject.bind[OptOutService].toInstance(mockOptOutService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController: ConfirmedOptOutController = app.injector.instanceOf[ConfirmedOptOutController]
@@ -52,6 +57,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
   val failedResponse = Future.failed(new Exception("some error"))
 
   mtdAllRoles.foreach { mtdRole =>
+
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
 
@@ -66,6 +72,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
           enable(OptOutFs)
 
           setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockOptOutConfirmedPageViewModel(eligibleTaxYearResponse)
 
@@ -97,12 +104,16 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
           status(result) shouldBe Status.OK
         }
 
-        s"return result with $INTERNAL_SERVER_ERROR status" when {
+        s"redirect to cannot-go-back page" when {
           "there is no tax year eligible for opt out" in {
             enable(OptOutFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(noEligibleTaxYearResponse)
+
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(0))
 
             when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
               Future(
@@ -121,14 +132,18 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
                 Future(CurrentTaxYear)
               )
 
-            val result = action(fakeRequest)
+            mockUpdateOptOutJourneyStatusInSessionData()
+            mockFetchOptOutJourneyCompleteStatus()
 
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)).url)
           }
 
           "opt out service fails" in {
             enable(OptOutFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(failedResponse)
 
@@ -152,6 +167,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             disable(OptOutFs)
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)

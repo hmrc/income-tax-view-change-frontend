@@ -65,7 +65,7 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
 
   def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(ObligationsErrorModel(500, "error"))
 
-  def mockgetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: ObligationsResponseModel): Unit = {
+  def mockGetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: ObligationsResponseModel): Unit = {
     when(mockNextUpdatesService.getAllObligationsWithinDateRange(matches(fromDate), matches(toDate))(any(), any()))
       .thenReturn(Future.successful(response))
   }

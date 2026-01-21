@@ -203,7 +203,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 stubAuthorised(mtdUserRole)
                                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
-                                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
                                   "codingDetails" -> Json.arr(),
                                   "documentDetails" -> Json.arr(
                                     Json.obj("taxYear" -> 2018,
@@ -247,7 +247,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 stubAuthorised(mtdUserRole)
                                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
-                                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
                                   "codingDetails" -> Json.arr(),
                                   "documentDetails" -> Json.arr(
                                     Json.obj("taxYear" -> 2018,

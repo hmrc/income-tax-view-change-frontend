@@ -16,12 +16,13 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.routes.{ChargeSummaryController, CreditAndRefundController, PaymentController}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockDateService
-import models.admin.{ClaimARefundR18, CreditsRefundsRepay, PenaltiesAndAppeals}
+import models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
 import models.financialDetails.WhatYouOweViewModel
 import models.incomeSourceDetails.TaxYear
@@ -35,7 +36,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.{DateService, WhatYouOweService}
+import services.{DateService, DateServiceInterface, WhatYouOweService}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -52,7 +53,10 @@ class WhatYouOweControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
-      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
+      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val testController = app.injector.instanceOf[WhatYouOweController]
@@ -60,7 +64,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     List(chargeItemModel(TaxYear.forYearEnd(2019)))
       ++ List(chargeItemModel(TaxYear.forYearEnd(2020)))
       ++ List(chargeItemModel(TaxYear.forYearEnd(2021))),
@@ -70,7 +74,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
   )
 
   def whatYouOweChargesListWithReviewReconcile: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsReviewAndReconcileCi,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
@@ -78,17 +82,17 @@ class WhatYouOweControllerSpec extends MockAuthActions
   )
 
   def whatYouOweChargesListWithOverdueCharge: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsOverdueCharges,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 10.23, 1234), OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 1.23, 1234))
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None), List.empty)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None), List.empty)
 
   def whatYouOweChargesListWithBalancingChargeNotOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsBalancingChargeNotOverdue,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("BCD", None, 1.23, 1234))
@@ -96,13 +100,13 @@ class WhatYouOweControllerSpec extends MockAuthActions
   )
 
   def whatYouOweChargesListWithLpp2: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsLPP2,
     Some(OutstandingChargesModel(List()))
   )
 
   def whatYouOweChargesListWithLPP2NoChargeRef: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsLPP2NoChargeRef,
     Some(OutstandingChargesModel(List()))
   )
@@ -158,6 +162,14 @@ class WhatYouOweControllerSpec extends MockAuthActions
   val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
   val interestChargesWarningText = "! Warning Interest charges will keep increasing every day until the charges they relate to are paid in full."
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+
+    when(mockDateServiceInterface.getCurrentDate).thenReturn(fixedDate)
+    when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
+  }
+
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showAgent() else testController.show()
@@ -171,10 +183,11 @@ class WhatYouOweControllerSpec extends MockAuthActions
             "has payments owed" when {
               "the user has a fill list of charges" in {
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
-                when(whatYouOweService.createWhatYouOweViewModel(any(),  any(), any(), any(), any(), any())(any(), any()))
+                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
                 when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
                 when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
@@ -185,6 +198,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
               "the user has no charges" in {
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
@@ -200,11 +214,11 @@ class WhatYouOweControllerSpec extends MockAuthActions
             "displays the money in your account" when {
               "the user has available credit in his account and CreditsRefundsRepay FS enabled" in {
                 def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
-                  BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, Some(350.00), None, None, None), List.empty)
+                  BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(300.00), None, None, Some(350.00), None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 enable(CreditsRefundsRepay)
-                enable(ClaimARefundR18)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
@@ -226,9 +240,10 @@ class WhatYouOweControllerSpec extends MockAuthActions
             "does not display the money in your account" when {
               "the user has available credit in his account but CreditsRefundsRepay FS disabled" in {
                 def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
-                  BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None, None, None), List.empty)
+                  BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(0.00), None, None, None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
@@ -247,6 +262,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
             "contains the adjust POA" when {
               "there are adjustable POA" in {
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
 
                 val poaModel: WYOClaimToAdjustViewModel = ctaViewModel(true, Some(TaxYear(2017, 2018)))
@@ -262,6 +278,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               }
               "there are no adjustable POAs" in {
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
 
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
@@ -280,6 +297,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               "ReviewAndReconcilePoa FS is enabled" in {
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
 
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
@@ -297,6 +315,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               "an overdue charge exists" in {
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
@@ -311,6 +330,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               "Review and Reconcile charge with accruing interest exists" in {
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
@@ -327,6 +347,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               "there are no overdue charges or unpaid Review & Reconcile charges" in {
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
@@ -342,6 +363,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               enable(PenaltiesAndAppeals)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
@@ -356,6 +378,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
           "render the error page" when {
             "PaymentsDueService returns an exception" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
@@ -369,6 +392,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
             "fetching POA entry point fails" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
@@ -384,6 +408,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
               enable(PenaltiesAndAppeals)
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))

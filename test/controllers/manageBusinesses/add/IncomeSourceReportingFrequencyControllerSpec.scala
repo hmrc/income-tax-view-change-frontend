@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
@@ -63,7 +64,10 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService),
       api.inject.bind[CalculationListService].toInstance(mockCalculationListService),
-      api.inject.bind[DateService].toInstance(mockDateService)
+      api.inject.bind[DateService].toInstance(mockDateService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceReportingFrequencyController]
@@ -226,8 +230,9 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
         s"the user is authenticated as a $mtdRole" should {
           "render the reporting frequency page" when {
             s"using the manage businesses journey" in {
-              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
 
+              setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              mockItsaStatusRetrievalAction()
               val result = action(fakeRequest)
 
               status(result) shouldBe OK
@@ -244,6 +249,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
           "return 303 SEE_OTHER and redirect to the check details page" when {
             s"changing answer, yes selected, previous choice was true and RF data exists" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              mockItsaStatusRetrievalAction()
               setupMockGetMongo(Right(Some(sessionWith(previousChoice = true, incomeSourceType))))
 
               val expectedRedirectUrl =
@@ -259,6 +265,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
           "return 303 SEE_OTHER and redirect to the ChooseTaxYear Page" when {
             s"changing answer, yes selected, previous choice was false (or missing) even if RF data exists" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              mockItsaStatusRetrievalAction()
               setupMockGetMongo(Right(Some(sessionWith(previousChoice = false, incomeSourceType))))
 
               val expectedRedirectUrl =
@@ -273,6 +280,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
           "return 303 SEE_OTHER and redirect to the ChooseTaxYear Page" when {
             s"completing the form with yes selected and updates send successfully" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              mockItsaStatusRetrievalAction()
 
               val expectedRedirectUrl = controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent, false, incomeSourceType).url
 
@@ -287,6 +295,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
           "return 303 SEE_OTHER and redirect to the check details page Page" when {
             s"completing the form with no selected and updates send successfully" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              mockItsaStatusRetrievalAction()
 
               val expectedRedirectUrl = controllers.manageBusinesses.add.routes.IncomeSourceRFCheckDetailsController.show(isAgent, incomeSourceType).url
 
@@ -301,6 +310,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
           "return 400 BAD_REQUEST" when {
             s"invalid form input on the ${getTestTitleIncomeSourceType(incomeSourceType)} page" in {
               setupMockCalls(isAgent = isAgent, incomeSourceType = incomeSourceType, mtdRole, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS)
+              mockItsaStatusRetrievalAction()
               val invalidFormData: Map[String, String] = Map("report-quarterly" -> "")
               val result = action(fakeRequest.withFormUrlEncodedBody(invalidFormData.toSeq: _*))
 

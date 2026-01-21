@@ -224,6 +224,7 @@ taxYears.r18.amendment.text                                    = You can view th
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                           = Tax year summary
 tax-year-summary.heading-secondary                                 = 6 April {0} to 5 April {1}
+tax-year-summary.explanatory-text                                  = This calculation is only based on figures we’ve already received to {0}. It’s not your final tax bill.
 tax-year-summary.calculation-date                                  = Calculation date
 tax-year-summary.calc-from-last-time                               = This is not your final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.agent.calc-from-last-time                         = This is not your client’s final tax bill, it’s only based on figures we’ve already received.
@@ -620,7 +621,6 @@ taxCal_breakdown.table.vctSubscriptions                                      = V
 taxCal_breakdown.table.eisSubscriptions                                      = Enterprise Investment Scheme relief
 taxCal_breakdown.table.seedEnterpriseInvestment                              = Seed Enterprise Investment Scheme relief
 taxCal_breakdown.table.communityInvestment                                   = Community Investment Tax Relief
-taxCal_breakdown.table.socialEnterpriseInvestment                            = Social Enterprise Investment Tax Relief
 taxCal_breakdown.table.maintenancePayments                                   = Maintenance and alimony paid
 taxCal_breakdown.table.property_finance_relief                               = Relief for finance costs
 taxCal_breakdown.table.total_notional_tax                                    = Notional tax from gains on life policies etc.
@@ -860,8 +860,8 @@ nextUpdates.r17.tab.quarterly.dropdown.text3                       = any informa
 nextUpdates.r17.tab.quarterly.dropdown.text4                       = This is done using
 nextUpdates.r17.tab.quarterly.dropdown.link.text                   = software compatible with Making Tax Digital for Income Tax
 nextUpdates.r17.tab.quarterly.link.text1                           = To view previously submitted updates visit the
-nextUpdates.r17.tab.quarterly.link.text2                           = tax year
-nextUpdates.r17.tab.quarterly.link.text3                           = summary page.
+nextUpdates.r17.tab.quarterly.link.text2                           = tax year summary
+nextUpdates.r17.tab.quarterly.link.text3                           = page.
 nextUpdates.r17.tab.quarterly.subheading2                          = Tax return due
 nextUpdates.r17.tab.quarterly.text3                                = If you have submitted quarterly updates for the tax year, in your tax return you will also provide any other taxable income. You will then need to file your return using
 nextUpdates.r17.tab.quarterly.text4                                = software compatible with Making Tax Digital for Income Tax
@@ -930,11 +930,12 @@ whatYouOwe.sa-link-1-body-1                                        = set up a Se
 whatYouOwe.sa-link-1-body-2                                        = set up a Budget Payment plan
 whatYouOwe.sa-link-1-body-3                                        = adjust payments on account for the {0} to {1} tax year
 whatYouOwe.sa-note-2-heading                                       = You may still have payments due for your earlier Self Assessment tax years
-whatYouOwe.sa-note-2-body                                          = To view these outstanding payments you need to
-whatYouOwe.sa-note-2-agent-1                                       = Your client may still have payments due for earlier Self Assessment tax years
+whatYouOwe.sa-note-2-body                                          = To view your payment history from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
+whatYouOwe.sa-note-2-body-agent-1                                  = To view your client’s payment history from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
+whatYouOwe.sa-note-2-heading-agent                                 = Your client may still have payments due for earlier Self Assessment tax years
 whatYouOwe.sa-note-2-agent-2                                       = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
-whatYouOwe.sa-note-2-agent-3                                       = This will be a different Government Gateway ID and password to your Agent Services account.
-whatYouOwe.sa-link-2                                               = visit your previous Self Assessment online account
+whatYouOwe.sa-note-2-body-agent-2                                  = This will be a different Government Gateway ID and password to your Agent Services account.
+whatYouOwe.sa-link-2                                               = Self Assessment online account
 whatYouOwe.sa-link-2-agent                                         = Self Assessment for Agents account
 whatYouOwe.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
 whatYouOwe.payNow                                                  = Make a payment
@@ -3448,12 +3449,14 @@ signUpOptOut.cannotGoBack.linkText2     = go back to the home page
 
 ###You Must Wait To Use This Service Page
 #Individual:
+youMustWait.title            = You can access this service from 6 April {0}
 youMustWait.heading            = You can access this service from 6 April {0}
 youMustWait.text               = This is because you are signed up to use Making Tax Digital for Income Tax from the next tax year, which starts 6 April {0}.
 youMustWait.text2              = Find more about
 youMustWait.linkText           = Making Tax Digital for Income Tax
 
 #Agent:
+youMustWait.agent.title        = You can view this client from 6 April {0}
 youMustWait.agent.heading      = You can view this client from 6 April {0}
 youMustWait.agent.text         = This is because your client is signed up to use Making Tax digital for Income Tax from the next tax year, which starts 6 April {0}.
 youMustWait.agent.button.text  = Enter another UTR

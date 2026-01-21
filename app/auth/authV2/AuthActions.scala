@@ -19,32 +19,42 @@ package auth.authV2
 import auth.MtdItUser
 import auth.authV2.actions._
 import auth.authV2.models.AuthorisedUserRequest
+import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
-                            val authoriseAndRetrieve: AuthoriseAndRetrieve,
-                            val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
-                            val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
-                            val authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
-                            val agentHasConfirmedClientAction: AgentHasConfirmedClientAction,
-                            val agentIsPrimaryAction: AgentIsPrimaryAction,
-                            val retrieveNavBar: NavBarRetrievalAction,
-                            val retrieveNinoWithIncomeSources: IncomeSourceRetrievalAction,
-                            val retrieveClientData: RetrieveClientData,
-                            val retrieveFeatureSwitches: FeatureSwitchRetrievalAction) {
+class AuthActions @Inject()(
+                             frontendAppConfig: FrontendAppConfig,
+                             val checkSessionTimeout: SessionTimeoutAction,
+                             val authoriseAndRetrieve: AuthoriseAndRetrieve,
+                             val authoriseAndRetrieveIndividual: AuthoriseAndRetrieveIndividual,
+                             val authoriseAndRetrieveAgent: AuthoriseAndRetrieveAgent,
+                             val authoriseAndRetrieveMtdAgent: AuthoriseAndRetrieveMtdAgent,
+                             val agentHasConfirmedClientAction: AgentHasConfirmedClientAction,
+                             val agentIsPrimaryAction: AgentIsPrimaryAction,
+                             val retrieveNavBar: NavBarRetrievalAction,
+                             val incomeSourceRetrievalAction: IncomeSourceRetrievalAction,
+                             val itsaStatusRetrievalAction: ItsaStatusRetrievalAction,
+                             val retrieveClientData: RetrieveClientData,
+                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction
+                           ) extends FeatureSwitching {
+
+  override val appConfig: FrontendAppConfig = frontendAppConfig
 
   def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
-      retrieveNinoWithIncomeSources andThen
-      retrieveFeatureSwitches andThen
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
+      itsaStatusRetrievalAction andThen
       retrieveNavBar
   }
 
-  def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] = checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
+  def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] =
+    checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
   def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
@@ -52,8 +62,9 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
-      retrieveNinoWithIncomeSources andThen
-      retrieveFeatureSwitches
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
+      itsaStatusRetrievalAction
   }
 
   def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
@@ -61,7 +72,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise(useCookies = true) andThen
       authoriseAndRetrieveMtdAgent andThen
-      retrieveNinoWithIncomeSources andThen
+      incomeSourceRetrievalAction andThen
       retrieveFeatureSwitches
   }
 
@@ -71,12 +82,13 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
       retrieveClientData.authorise() andThen
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
-      retrieveNinoWithIncomeSources andThen
-      retrieveFeatureSwitches
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
+      itsaStatusRetrievalAction
   }
 
   def asMTDIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
-    if(isAgent) {
+    if (isAgent) {
       asMTDAgentWithConfirmedClient
     } else {
       asMTDIndividual
@@ -84,7 +96,7 @@ class AuthActions @Inject()(val checkSessionTimeout: SessionTimeoutAction,
   }
 
   def asMTDIndividualOrPrimaryAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
-    if(isAgent) {
+    if (isAgent) {
       asMTDPrimaryAgent
     } else {
       asMTDIndividual

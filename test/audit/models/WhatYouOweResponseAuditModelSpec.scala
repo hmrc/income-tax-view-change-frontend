@@ -73,6 +73,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
         "balanceDetails" -> Json.obj(
           "balanceDueWithin30Days" -> 1.0,
           "overDueAmount" -> 2.0,
+          "balanceNotDuein30Days" -> 4.0,
           "totalBalance" -> 3.0
         ),
         "charges" -> Json.arr(
@@ -151,7 +152,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
       "user's second or more year of migration and balance details contains all zero amounts" in {
         val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(fixedDate) - 1
         val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
-          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0, None, None, None, None, None, None, None)
+          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, balanceNotDuein30Days = 0, totalBalance = 0, None, None, None, None, None, None, None)
         )
 
         balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(prevTaxYear.toString),
@@ -161,7 +162,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
       "user's second or more year of migration and balance details contains some zero amounts" in {
         val prevTaxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(fixedDate) - 1
         val chargesModelWithSomeBalanceDetails = whatYouOwePartialChargesList.copy(
-          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None, None, None, None, None)
+          balanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, balanceNotDuein30Days = 0, totalBalance = 3, None, None, None, None, None, None, None)
         )
 
         balanceDetailsJson(testWhatYouOweResponseAuditModel(yearOfMigration = Some(prevTaxYear.toString),
@@ -176,7 +177,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
         val auditJson = testWhatYouOweResponseAuditModel(
           chargesList = whatYouOwePartialChargesList.copy(
             balanceDetails = BalanceDetails(
-              balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 3, None, None, None, None, None, None, Some(BigDecimal(-1000.0)))
+              balanceDueWithin30Days = 0, overDueAmount = 0, balanceNotDuein30Days = 0, totalBalance = 3, None, None, None, None, None, None, Some(BigDecimal(-1000.0)))
           )
         )
 

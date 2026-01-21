@@ -44,7 +44,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine2 = None,
       businessAddressLine3 = Some("Cbeebies"),
       businessAddressLine4 = None,
-      businessCountryCode = Some("United Kingdom")
+      businessCountryCode = Some("United Kingdom"),
+      addressId = Some("testAddressId")
     )
 
   def propertyViewModelMax(incomeSourceType: IncomeSourceType): CheckDetailsViewModel =

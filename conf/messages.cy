@@ -225,6 +225,7 @@ taxYears.r18.amendment.text                                    = Gallwch fwrw go
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                       = Crynodeb o’r flwyddyn dreth
 tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}
+tax-year-summary.explanatory-text                              = Mae’r cyfrifiad hwn yn seiliedig yn unig ar y ffigurau sydd wedi dod i law hyd at {0}. Nid dyma’ch bil treth terfynol.
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
@@ -621,7 +622,6 @@ taxCal_breakdown.table.vctSubscriptions                                      = R
 taxCal_breakdown.table.eisSubscriptions                                      = Rhyddhad Cynllun Buddsoddiad Menter
 taxCal_breakdown.table.seedEnterpriseInvestment                              = Rhyddhad Cynllun Buddsoddiad Menter Seed
 taxCal_breakdown.table.communityInvestment                                   = Rhyddhad Treth am Fuddsoddiad Cymunedol
-taxCal_breakdown.table.socialEnterpriseInvestment                            = Rhyddhad Treth am Fuddsoddiad Menter Gymdeithasol
 taxCal_breakdown.table.maintenancePayments                                   = Cynhaliaeth ac alimoni a dalwyd
 taxCal_breakdown.table.property_finance_relief                               = Rhyddhad am gostau ariannol
 taxCal_breakdown.table.total_notional_tax                                    = Treth dybiannol o enillion ar bolisïau bywyd ac ati
@@ -859,8 +859,8 @@ nextUpdates.r17.tab.quarterly.dropdown.text2                       = gwybodaeth 
 nextUpdates.r17.tab.quarterly.dropdown.text3                       = unrhyw wybodaeth ychwanegol yr ydych eisoes wedi’i darparu sydd heb newid
 nextUpdates.r17.tab.quarterly.dropdown.text4                       = Mae hyn yn cael ei wneud drwy
 nextUpdates.r17.tab.quarterly.dropdown.link.text                   = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
-nextUpdates.r17.tab.quarterly.link.text1                           = Er mwyn bwrw golwg dros ddiweddariadau a gyflwynwyd yn flaenorol, ewch i’r dudalen trosolwg ar gyfer
-nextUpdates.r17.tab.quarterly.link.text2                           = blynyddoedd treth.
+nextUpdates.r17.tab.quarterly.link.text1                           = Er mwyn gweld diweddariadau a gyflwynwyd yn flaenorol, ewch i’r dudalen
+nextUpdates.r17.tab.quarterly.link.text2                           = trosolwg ar gyfer blynyddoedd treth.
 nextUpdates.r17.tab.quarterly.link.text3                           =
 nextUpdates.r17.tab.quarterly.subheading2                          = Ffurflen Dreth i’w chyflwyno
 nextUpdates.r17.tab.quarterly.text3                                = Os ydych wedi cyflwyno diweddariadau chwarterol ar gyfer y flwyddyn dreth, byddwch hefyd yn nodi unrhyw incwm drethadwy arall yn eich Ffurflen Dreth. Yna, bydd angen i chi gyflwyno’ch Ffurflen Dreth gan ddefnyddio
@@ -929,10 +929,11 @@ whatYouOwe.sa-link-1-body-1                                     = sefydlu cynllu
 whatYouOwe.sa-link-1-body-2                                     = sefydlu cynllun Taliad Cyllidebol
 whatYouOwe.sa-link-1-body-3                                     = addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
 whatYouOwe.sa-note-2-heading                                    = Gall fod gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol
-whatYouOwe.sa-note-2-body                                       = Er mwyn bwrw golwg dros y taliadau hyn sydd heb eu talu, mae angen i chi fynd i’ch
-whatYouOwe.sa-note-2-agent-1                                    = Mae’n bosibl y bydd gan eich cleient daliadau sy’n ddyledus o hyd ar gyfer blynyddoedd treth Hunanasesiad blaenorol
+whatYouOwe.sa-note-2-body                                       = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
+whatYouOwe.sa-note-2-body-agent-1                               = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
+whatYouOwe.sa-note-2-heading-agent                              = Mae’n bosibl y bydd gan eich cleient daliadau sy’n ddyledus o hyd ar gyfer blynyddoedd treth Hunanasesiad blaenorol
 whatYouOwe.sa-note-2-agent-2                                    = Er mwyn bwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
-whatYouOwe.sa-note-2-agent-3                                    = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+whatYouOwe.sa-note-2-body-agent-2                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 whatYouOwe.sa-link-2                                            = cyfrif Hunanasesiad ar-lein blaenorol
 whatYouOwe.sa-link-2-agent                                      = cyfrif Hunanasesiad ar gyfer Asiantau
 whatYouOwe.outstanding-charges-note                             = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
@@ -3433,12 +3434,14 @@ signUpOptOut.cannotGoBack.linkText2     = mynd yn ôl i’r hafan
 
 ###You Must Wait To Use This Service Page
 #Individual:
+youMustWait.title              = Gallwch gael mynediad at y gwasanaeth hwn o 6 Ebrill {0} ymlaen
 youMustWait.heading            = Gallwch gael mynediad at y gwasanaeth hwn o 6 Ebrill {0} ymlaen
 youMustWait.text               = Mae hyn oherwydd eich bod wedi cofrestru i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf, sy’n dechrau 6 Ebrill {0}.
 youMustWait.text2              = Dysgwch ragor am
 youMustWait.linkText           = Troi Treth yn Ddigidol ar gyfer Treth Incwm
 
 #Agent:
+youMustWait.agent.title        = Gallwch fwrw golwg dros y cleient hwn o 6 Ebrill {0} ymlaen
 youMustWait.agent.heading      = Gallwch fwrw golwg dros y cleient hwn o 6 Ebrill {0} ymlaen
 youMustWait.agent.text         = Mae hyn oherwydd bod eich cleient wedi’i gofrestru i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf, sy’n dechrau ar 6 Ebrill {0}.
 youMustWait.agent.button.text  = Nodwch UTR arall

@@ -34,6 +34,8 @@ case class AddIncomeSourceData(
                                 incomeSourceId:                       Option[String]    = None,
                                 address:                              Option[Address]   = None,
                                 countryCode:                          Option[String]    = None,
+                                addressId:                            Option[String]    = None,
+                                addressLookupId:                      Option[String]    = None,
                                 changeReportingFrequency:             Option[Boolean]   = None,
                                 reportingMethodTaxYear1:              Option[String]    = None,
                                 reportingMethodTaxYear2:              Option[String]    = None,
@@ -52,6 +54,8 @@ case class AddIncomeSourceData(
       incomeSourceId                      .map(SensitiveString),
       address                             .map { case Address(lines, postcode) => SensitiveAddress(lines.map(SensitiveString), postcode.map(SensitiveString)) },
       countryCode                         .map(SensitiveString),
+      addressId                           .map(SensitiveString),
+      addressLookupId                     .map(SensitiveString),
       changeReportingFrequency            .map(SensitiveBoolean),
       reportingMethodTaxYear1             .map(SensitiveString),
       reportingMethodTaxYear2             .map(SensitiveString),
@@ -72,6 +76,8 @@ object AddIncomeSourceData {
   val changeReportingFrequency:                 String = "changeReportingFrequency"
   val incomeSourceCreatedJourneyCompleteField:  String = "incomeSourceCreatedJourneyComplete"
   val incomeSourceAddedField:                   String = "incomeSourceAdded"
+  val addressIdField:                           String = "addressId"
+  val addressLookupIdField:                     String = "addressLookupId"
 
   def getJSONKeyPath(name: String): String = s"addIncomeSourceData.$name"
 
@@ -87,6 +93,8 @@ case class SensitiveAddIncomeSourceData(
                                          incomeSourceId:                      Option[SensitiveString]  = None,
                                          address:                             Option[SensitiveAddress] = None,
                                          countryCode:                         Option[SensitiveString]  = None,
+                                         addressId:                           Option[SensitiveString]  = None,
+                                         addressLookupId:                     Option[SensitiveString]  = None,
                                          changeReportingFrequency:            Option[SensitiveBoolean] = None,
                                          reportingMethodTaxYear1:             Option[SensitiveString]  = None,
                                          reportingMethodTaxYear2:             Option[SensitiveString]  = None,
@@ -105,6 +113,8 @@ case class SensitiveAddIncomeSourceData(
       incomeSourceId                      .map(_.decryptedValue),
       address                             .map(_.decrypted),
       countryCode                         .map(_.decryptedValue),
+      addressId                           .map(_.decryptedValue),
+      addressLookupId                     .map(_.decryptedValue),
       changeReportingFrequency            .map(_.decryptedValue),
       reportingMethodTaxYear1             .map(_.decryptedValue),
       reportingMethodTaxYear2             .map(_.decryptedValue),
@@ -131,4 +141,3 @@ object SensitiveAddIncomeSourceData {
     Json.format[SensitiveAddIncomeSourceData]
 
 }
-

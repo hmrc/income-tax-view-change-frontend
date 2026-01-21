@@ -65,6 +65,7 @@ trait MockUserAuthorisedFunctions extends BeforeAndAfterEach {
             }
         }
       )
+  
 
   def setupMockAuthorisedUserNoCheckAuthSuccess[X, Y](mockFAF: FrontendAuthorisedFunctions)(retrievalValue: X ~ Y): Unit =
     when(mockFAF.authorised(EmptyPredicate))

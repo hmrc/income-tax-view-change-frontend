@@ -22,22 +22,36 @@ import enums.MTDIndividual
 import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.test.Helpers._
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 
 class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDetailsHelper {
 
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+
+    when(mockDateServiceInterface.getCurrentDate).thenReturn(fixedDate)
+    when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
+  }
+
   mtdAllRoles.foreach { mtdUserRole =>
+
     val isAgent = mtdUserRole != MTDIndividual
+
     s"show($isAgent, $SelfEmployment)" when {
+
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
       val action = testController.show(isAgent, SelfEmployment, Some(incomeSourceIdHash))
+
       s"the user is authenticated as a $mtdUserRole" should {
         "render the appropriate IncomeSourceDetails page" when {
           "the user has a valid id parameter and no latency information" in {
             enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
@@ -68,6 +82,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           "the user has a valid id parameter and latency information but user is not in latency period" in {
             enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
@@ -98,6 +113,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
             enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
@@ -136,6 +152,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
 
             enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
@@ -166,6 +183,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is A" in {
             enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyAnnual)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
@@ -196,6 +214,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
             enable(ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
@@ -225,6 +244,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           "the user has a valid id parameter, but non eligible itsa status" in {
             enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
@@ -261,6 +281,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           "the user has a valid id parameter, latency expired" in {
             enable(DisplayBusinessStartDate, ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2025)
@@ -289,6 +310,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             enable(DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
 
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
 
             setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
@@ -320,7 +342,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             val summaryKeys = getManageDetailsSummaryKeys(document)
 
             summaryKeys.eq(4).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
-            summaryKeys.eq(5).text() shouldBe  "Using Making Tax Digital for Income Tax for 2023 to 2024"
+            summaryKeys.eq(5).text() shouldBe "Using Making Tax Digital for Income Tax for 2023 to 2024"
 
             val summaryValues = getManageDetailsSummaryValues(document).eachText()
             summaryValues should contain("No")
@@ -336,6 +358,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
         "render the error page" when {
           "the user has no income source of the called type" in {
             setupMockSuccess(mtdUserRole)
+            mockItsaStatusRetrievalAction(ukPropertyIncome)
             setupMockCreateSession(true)
             mockUKPropertyIncomeSource()
 

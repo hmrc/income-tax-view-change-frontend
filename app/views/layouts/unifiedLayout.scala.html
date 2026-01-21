@@ -72,8 +72,7 @@
 @feedbackBanner = {
     @messages("betaBanner.newService")
     @messages("betaBanner.your")
-    @a(link=feedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback",
-    id=Some("feedback-url"))
+    @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("agent-feedback-url")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("individuals-feedback-url")) }
     @messages("betaBanner.improve")
 }
 

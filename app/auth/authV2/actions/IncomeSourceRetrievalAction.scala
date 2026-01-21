@@ -24,7 +24,7 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetails
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.IncomeSourceDetailsService
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,17 +36,31 @@ class IncomeSourceRetrievalAction @Inject()(val incomeSourceDetailsService: Inco
                                             val agentErrorHandler: AgentItvcErrorHandler,
                                             mcc: MessagesControllerComponents) extends BaseController with ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] {
 
+  private def internalServerErrorFor(request: AuthorisedAndEnrolledRequest[_]): Result = {
+
+    request.authUserDetails.affinityGroup match {
+      case Some(Agent) =>
+        Logger(getClass).error(s"[IncomeSourceRetrievalAction][internalServerErrorFor] Showing Agent error page")
+        agentErrorHandler.showInternalServerError()(request)
+      case Some(Individual) =>
+        Logger(getClass).error(s"[IncomeSourceRetrievalAction][internalServerErrorFor] Showing Individual error page")
+        individualErrorHandler.showInternalServerError()(request)
+      case _ =>
+        Logger(getClass).error(s"[IncomeSourceRetrievalAction][internalServerErrorFor] Unknown user type or unknown error")
+        individualErrorHandler.showInternalServerError()(request)
+    }
+  }
+
   override def refine[A](request: AuthorisedAndEnrolledRequest[A]): Future[Either[Result, MtdItUser[A]]] = {
 
     implicit val req: AuthorisedAndEnrolledRequest[A] = request
 
-    // no caching for now
-    incomeSourceDetailsService.getIncomeSourceDetails() map {
+    incomeSourceDetailsService.getIncomeSourceDetails().map {
       case response: IncomeSourceDetailsModel =>
-        Right(MtdItUser(request.mtditId, response.nino, request.mtdUserRole, request.authUserDetails, request.clientDetails, response))
-      case error: IncomeSourceDetailsError => Left(logWithUserType(s"[${error.status}] ${error.reason}"))
-    } recover logAndRedirect()
-
+        Right(MtdItUser(req.mtditId, response.nino, req.mtdUserRole, req.authUserDetails, req.clientDetails, response))
+      case error: IncomeSourceDetailsError =>
+        Left(internalServerErrorFor(request))
+    }
   }
 
   def logAndRedirect[A]()(implicit req: AuthorisedAndEnrolledRequest[A]): PartialFunction[Throwable, Either[Result, MtdItUser[A]]] = {

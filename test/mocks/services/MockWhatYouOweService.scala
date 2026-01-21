@@ -33,12 +33,32 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
 
   lazy val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
 
-  val emptyWhatYouOweChargesList: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(0.0, 0.0, 0.0, None, None, None, None, None, None, None))
+  val emptyWhatYouOweChargesList: WhatYouOweChargesList =
+    WhatYouOweChargesList(
+      BalanceDetails(
+        balanceDueWithin30Days = 0.0,
+        overDueAmount = 0.0,
+        balanceNotDuein30Days = 0.0,
+        totalBalance = 0.0,
+        totalCreditAvailableForRepayment = None,
+        allocatedCredit = None,
+        allocatedCreditForFutureCharges = None,
+        totalCredit = None,
+        firstPendingAmountRequested = None,
+        secondPendingAmountRequested = None,
+        unallocatedCredit = None
+      )
+    )
 
   val oneOverdueBCDPaymentInWhatYouOweChargesList: WhatYouOweChargesList =
-    emptyWhatYouOweChargesList.copy(
-      outstandingChargesModel = Some(OutstandingChargesModel(List(OutstandingChargeModel("BCD", Some(LocalDate.parse("2019-01-31")), 1.67, 2345))))
-    )
+    emptyWhatYouOweChargesList
+      .copy(outstandingChargesModel =
+        Some(OutstandingChargesModel(List(OutstandingChargeModel(
+          chargeName = "BCD",
+          relevantDueDate = Some(LocalDate.of(2019, 1, 31)),
+          chargeAmount = 1.67,
+          tieBreaker = 2345
+        )))))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -46,7 +66,7 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
   }
 
   def setupMockGetWhatYouOweChargesListFromFinancialDetails(whatYouOweChargesList: WhatYouOweChargesList): Unit = {
-    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any(), any())(any(), any()))
+    when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
       .thenReturn(Future.successful(whatYouOweChargesList))
   }
 

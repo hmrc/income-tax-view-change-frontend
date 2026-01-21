@@ -32,22 +32,21 @@ trait FeatureSwitching {
       appConfig.config.getOptional[String](s"feature-switch.enable-${featureSwitch.name}") contains FEATURE_SWITCH_ON
   }
 
-  def isEnabled(featureSwitch: FeatureSwitchName)
-               (implicit user: MtdItUser[_]): Boolean = {
-    isEnabled(featureSwitch, user.featureSwitches)
+  def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean = {
+    isEnabledMongoOrConfig(featureSwitch, user.featureSwitches)
   }
 
-  def isEnabled(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
+  def isEnabledMongoOrConfig(featureSwitch: FeatureSwitchName, fs: List[FeatureSwitch]): Boolean = {
     if (appConfig.readFeatureSwitchesFromMongo) {
       fs.exists(x => x.name.name == featureSwitch.name && x.isEnabled)
     } else {
       isEnabledFromConfig(featureSwitch)
     }
   }
+
   def areAllEnabled(featureSwitches: FeatureSwitchName*): Boolean = {
-    featureSwitches.foldLeft(false) {
-      (_, switch) =>
-        isEnabledFromConfig(switch)
+    featureSwitches.foldLeft(false) { (_, switch) =>
+      isEnabledFromConfig(switch)
     }
   }
 

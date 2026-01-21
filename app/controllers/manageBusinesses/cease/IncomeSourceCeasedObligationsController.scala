@@ -27,8 +27,8 @@ import models.UIJourneySessionData
 import models.admin.ReportingFrequencyPage
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
 import models.incomeSourceDetails.CeaseIncomeSourceData
+import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -62,73 +62,19 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
   private def getIncomeSourceType(sessionData: UIJourneySessionData, incomeSourceType: IncomeSourceType)
                                  (implicit user: MtdItUser[_]): Option[String] = {
     incomeSourceType match {
-      case SelfEmployment => sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
-      case UkProperty => user.incomeSources.properties.filter(_.isUkProperty)
-        .map(incomeSource => incomeSource.incomeSourceId).headOption
-      case ForeignProperty => user.incomeSources.properties.filter(_.isForeignProperty)
-        .map(incomeSource => incomeSource.incomeSourceId).headOption
+      case SelfEmployment =>
+        sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
+      case UkProperty =>
+        user.incomeSources.properties.filter(_.isUkProperty)
+          .map(incomeSource => incomeSource.incomeSourceId).headOption
+      case ForeignProperty =>
+        user.incomeSources.properties.filter(_.isForeignProperty)
+          .map(incomeSource => incomeSource.incomeSourceId).headOption
     }
   }
 
-  def viewAllBusinessLink(isAgent: Boolean): String = if (isAgent) {
-    controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
-  } else {
-    controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-  }
-
-  def viewUpcomingUpdatesLink(isAgent: Boolean): String = if (isAgent) {
-    controllers.routes.NextUpdatesController.showAgent().url
-  } else {
-    controllers.routes.NextUpdatesController.show().url
-  }
-
-  private def viewReportingObligationsLink(isAgent: Boolean): String = {
+  private def viewReportingObligationsLink(isAgent: Boolean): String =
     routes.ReportingFrequencyPageController.show(isAgent).url
-  }
-
-  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
-      updateMongoCeased(incomeSourceType)
-
-      val businessEndDate: Option[LocalDate] = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
-
-      (getIncomeSourceType(sessionData, incomeSourceType), businessEndDate) match {
-        case (Some(incomeSourceId), Some(_)) =>
-          val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(IncomeSourceId(incomeSourceId)) else None
-          val incomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(
-            user.incomeSources,
-            incomeSourceType,
-            businessName,
-            isAgent
-          )
-
-          Future.successful(Ok(obligationsView(
-            incomeSourceCeasedObligationsViewModel,
-            viewAllBusinessLink(isAgent),
-            viewUpcomingUpdatesLink(isAgent),
-            if(isEnabled(ReportingFrequencyPage)) Some(viewReportingObligationsLink(isAgent)) else None
-          )))
-        case (Some(_), None) => Future.failed(new Error(s"cease session data not found for $incomeSourceType"))
-        case (None, Some(_)) => Future.failed(new Error(s"IncomeSourceId not found for $incomeSourceType"))
-        case _ => Future.failed(new Error(s"missing incomeSourceId and endDate for $incomeSourceType"))
-      }
-    }
-  }.recover {
-    case ex: Exception =>
-      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-      Logger("application").error(s"${if (isAgent) "[Agent]"}${ex.getMessage} - ${ex.getCause}")
-      errorHandler.showInternalServerError()
-  }
-
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
-      handleRequest(isAgent = false, incomeSourceType = incomeSourceType)
-  }
-
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
-    implicit mtdItUser =>
-      handleRequest(isAgent = true, incomeSourceType = incomeSourceType)
-  }
 
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {
@@ -146,7 +92,75 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
 
         sessionService.setMongoData(uiJourneySessionData)
 
-      case _ => Future.failed(new Exception("failed to retrieve session data"))
+      case _ =>
+        Future.failed(new Exception("failed to retrieve session data"))
     }
   }
+
+
+  def viewAllBusinessLink(isAgent: Boolean): String =
+    if (isAgent) {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+    } else {
+      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    }
+
+  def viewUpcomingUpdatesLink(isAgent: Boolean): String =
+    if (isAgent) {
+      controllers.routes.NextUpdatesController.showAgent().url
+    } else {
+      controllers.routes.NextUpdatesController.show().url
+    }
+
+  private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+
+    withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
+
+      updateMongoCeased(incomeSourceType)
+      val businessEndDate: Option[LocalDate] = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
+
+      (getIncomeSourceType(sessionData, incomeSourceType), businessEndDate) match {
+        case (Some(incomeSourceId), Some(_)) =>
+          val businessName = if (incomeSourceType == SelfEmployment) getBusinessName(IncomeSourceId(incomeSourceId)) else None
+          val incomeSourceCeasedObligationsViewModel =
+            IncomeSourceCeasedObligationsViewModel(
+              incomeSourceDetailsModel = user.incomeSources,
+              incomeSourceType = incomeSourceType,
+              businessName = businessName,
+              isAgent = isAgent
+            )
+          Future(
+            Ok(obligationsView(
+              source = incomeSourceCeasedObligationsViewModel,
+              viewAllBusinessLink = viewAllBusinessLink(isAgent),
+              viewUpcomingUpdatesLink = viewUpcomingUpdatesLink(isAgent),
+              reportingObligationsLink = if (isEnabled(ReportingFrequencyPage)) Some(viewReportingObligationsLink(isAgent)) else None
+            )))
+        case (Some(_), None) =>
+          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+          Logger("application").error(s"${if (isAgent) "[Agent] - "}cease session data not found for $incomeSourceType")
+          Future(errorHandler.showInternalServerError())
+
+        case (None, Some(_)) =>
+          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+          Logger("application").error(s"${if (isAgent) "[Agent] - "}IncomeSourceId not found for $incomeSourceType")
+          Future(errorHandler.showInternalServerError())
+        case _ =>
+          val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+          Logger("application").error(s"${if (isAgent) "[Agent] - "}missing incomeSourceId and endDate for $incomeSourceType")
+          Future(errorHandler.showInternalServerError())
+      }
+    }
+  }
+
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+    implicit user =>
+      handleRequest(isAgent = false, incomeSourceType = incomeSourceType)
+  }
+
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+    implicit mtdItUser =>
+      handleRequest(isAgent = true, incomeSourceType = incomeSourceType)
+  }
+
 }

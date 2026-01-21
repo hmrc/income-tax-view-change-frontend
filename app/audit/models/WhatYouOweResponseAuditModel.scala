@@ -56,6 +56,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
     val fields: Seq[(String, JsValue)] = Seq(
       onlyIfPositive("balanceDueWithin30Days", whatYouOweChargesList.balanceDetails.balanceDueWithin30Days),
       onlyIfPositive("overDueAmount", whatYouOweChargesList.balanceDetails.overDueAmount),
+      onlyIfPositive("balanceNotDuein30Days",whatYouOweChargesList.balanceDetails.balanceNotDuein30Days) ++
       onlyIfPositive("totalBalance", whatYouOweChargesList.balanceDetails.totalBalance),
       whatYouOweChargesList.balanceDetails.unallocatedCredit.map("creditAmount" -> JsNumber(_))
     ).flatten

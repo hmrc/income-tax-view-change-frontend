@@ -16,6 +16,7 @@
 
 package controllers.optIn.oldJourney
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDUserRole}
 import forms.optIn.SingleTaxYearOptInWarningForm
 import mocks.auth.MockAuthActions
@@ -33,6 +34,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
 import services.optIn.OptInService
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.business1
@@ -43,15 +45,15 @@ import scala.concurrent.Future
 
 class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockOptInService with MockitoSugar {
 
-  def config: Map[String, Object] = Map(
-    "feature-switches.read-from-mongo" -> "false"
-  )
+  def config: Map[String, Object] = Map("feature-switches.read-from-mongo" -> "false")
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
-        api.
-          inject.bind[OptInService].toInstance(mockOptInService)
+        api.inject.bind[OptInService].toInstance(mockOptInService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       )
       .configure(config)
       .build()
@@ -73,10 +75,12 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
         "a there is a single available tax year" should {
 
           "render the SingleTaxYearWarningView" in {
+
             enable(ReportingFrequencyPage, SignUpFs)
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -84,6 +88,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
 
             when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
               .thenReturn(
@@ -112,6 +117,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -119,6 +125,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
 
             when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
               .thenReturn(
@@ -143,6 +150,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncome)
 
               when(
                 mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -150,6 +158,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncome)
 
               when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
                 .thenReturn(
@@ -171,6 +180,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
             disable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -196,6 +206,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
             enable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -237,6 +248,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncome)
 
               when(
                 mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -273,6 +285,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncome)
 
               when(
                 mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -313,6 +326,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncome)
 
               when(
                 mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -347,6 +361,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -354,6 +369,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
 
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
 
             when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
               .thenReturn(
@@ -379,6 +395,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
               val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncome)
 
               when(
                 mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -386,6 +403,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncome)
 
               when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
                 .thenReturn(
@@ -408,6 +426,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
             enable(ReportingFrequencyPage)
             disable(SignUpFs)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
@@ -432,6 +451,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
           "the ReportingFrequencyPage feature switch is disabled" in {
             disable(ReportingFrequencyPage)
             setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(singleBusinessIncome)
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncome))
@@ -452,7 +472,6 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
           }
         }
       }
-
       val action = testController.submit(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)

@@ -27,9 +27,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchRepository,
-                                      val appConfig: FrontendAppConfig)
-                                    (implicit val ec: ExecutionContext)
-  extends FeatureSwitching {
+                                     val appConfig: FrontendAppConfig)
+                                    (implicit val ec: ExecutionContext) extends FeatureSwitching {
 
   def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
     featureSwitchRepository

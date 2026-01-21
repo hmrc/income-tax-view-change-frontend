@@ -81,8 +81,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
     }
   }
 
-  def uploadITSAStatusData(nino: Nino, taxYear: TaxYear, status: String)(implicit hc: HeaderCarrier)
-  : Future[Unit] = {
+  def uploadITSAStatusData(nino: Nino, taxYear: TaxYear, status: String)(implicit hc: HeaderCarrier): Future[Unit] = {
     handleDefaultValues(status = status) {
       Logger("application").info(s" Attempting to overwrite data for < NINO $nino >, < taxYearRange: ${taxYear.formatAsShortYearRange} > and < status: $status >")
       dynamicStubService.overwriteItsaStatus(nino = nino, taxYearRange = taxYear.formatAsShortYearRange, ITSAStatus = status)
@@ -125,9 +124,11 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
         Some(List(commonStatusDetails(taxYearPlus1, ITSAStatus.withName(cyPlusOneItsaStatus)))))
 
     val itsaStatusCombined: List[ITSAStatusResponseModel] =
-      List(cyPlusOneItsaStatusResponse,
+      List(
+        cyPlusOneItsaStatusResponse,
         cyItsaStatusResponse,
-        cyMinusOneItsaStatusResponse)
+        cyMinusOneItsaStatusResponse
+      )
 
     val ifPayload: DataModel = DataModel(
       _id = s"/income-tax/$nino/person-itd/itsa-status/${taxYear.addYears(-1).formatAsShortYearRange}?futureYears=true&history=false",

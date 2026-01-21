@@ -19,24 +19,36 @@ package mocks.auth
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
-import authV2.AuthActionsTestData._
+import authV2.AuthActionsTestData.*
 import config.featureswitch.FeatureSwitching
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionDataService}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
+import models.itsaStatus.*
+import models.itsaStatus.ITSAStatus.Voluntary
+import models.itsaStatus.StatusReason.*
 import org.jsoup.Jsoup
-import org.mockito.Mockito.{mock, reset}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.*
+import org.mockito.stubbing.OngoingStubbing
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
+import org.scalatestplus.mockito.MockitoSugar.mock => sMock
+
+import scala.concurrent.Future
 import services.agent.ClientDetailsService
-import services.{IncomeSourceDetailsService, SessionDataService}
-import testConstants.BaseTestConstants.{testMtditid, testRetrievedUserName}
+import services.{DateServiceInterface, IncomeSourceDetailsService, SessionDataService}
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+
 import testUtils.TestSupport
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 
 trait MockAuthActions
   extends TestSupport
@@ -64,6 +76,10 @@ trait MockAuthActions
   lazy val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
   lazy val mockFAF: FrontendAuthorisedFunctions = mock(classFAF)
 
+  lazy val mockItsaStatusConnector = sMock[ITSAStatusConnector]
+  lazy val mockBusinessDetailsConnector = sMock[BusinessDetailsConnector]
+  lazy val mockDateServiceInterface = sMock[DateServiceInterface]
+
   lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .overrides(
@@ -81,6 +97,37 @@ trait MockAuthActions
     case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
     case _ => setupMockAgentWithClientAuth(true)
   }
+
+  def mockItsaStatusRetrievalAction(
+                                     incomeSourceDetailsModel: IncomeSourceDetailsResponse = singleBusinessIncome,
+                                     taxYear: TaxYear = TaxYear(2025, 2026)
+                                   ): OngoingStubbing[TaxYear] = {
+
+    val itsaStatusResponses = List(
+      ITSAStatusResponseModel(
+        taxYear = taxYear.previousYear.shortenTaxYearEnd,
+        itsaStatusDetails = Some(List(
+          StatusDetail("ts", Voluntary, MtdItsaOptOut, None)
+        ))
+      ),
+      ITSAStatusResponseModel(
+        taxYear = taxYear.shortenTaxYearEnd,
+        itsaStatusDetails = Some(List(
+          StatusDetail("ts", Voluntary, MtdItsaOptOut, None)
+        ))
+      )
+    )
+
+    when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
+      .thenReturn(Future.successful(incomeSourceDetailsModel))
+
+    when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
+      .thenReturn(Future.successful(Right(itsaStatusResponses)))
+
+    when(mockDateServiceInterface.getCurrentTaxYear)
+      .thenReturn(taxYear)
+  }
+
 
   def setupMockUserAuth: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(hasNino = true, hasSA = true)
@@ -135,12 +182,16 @@ trait MockAuthActions
     setupMockAgentAuthException(mockFAF)(exception)
   }
 
-  def testMTDAuthFailuresForRole(action: Action[AnyContent],
-                                 userRole: MTDUserRole,
-                                 supportingAgentAccessAllowed: Boolean = true)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+  def testMTDAuthFailuresForRole(
+                                  action: Action[AnyContent],
+                                  userRole: MTDUserRole,
+                                  supportingAgentAccessAllowed: Boolean = true
+                                )(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
     userRole match {
-      case MTDIndividual => testMTDAuthFailuresForIndividual(action, userRole)(fakeRequest)
-      case _ => testMTDAuthFailuresForAgent(action, userRole, supportingAgentAccessAllowed)(fakeRequest)
+      case MTDIndividual =>
+        testMTDAuthFailuresForIndividual(action, userRole)(fakeRequest)
+      case _ =>
+        testMTDAuthFailuresForAgent(action, userRole, supportingAgentAccessAllowed)(fakeRequest)
     }
   }
 
@@ -149,9 +200,13 @@ trait MockAuthActions
   }
 
   def testMTDAuthFailuresForIndividual(action: Action[AnyContent], userRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+
     s"the $userRole is not authenticated" should {
+
       "redirect to signin" in {
+
         setupMockUserAuthorisationException()
+        mockItsaStatusRetrievalAction()
 
         val result = action(fakeRequest)
 
@@ -161,8 +216,11 @@ trait MockAuthActions
     }
 
     s"the $userRole has a session that has timed out" should {
+
       "redirect to timeout controller" in {
+
         setupMockUserAuthorisationException(new BearerTokenExpired)
+        mockItsaStatusRetrievalAction()
 
         val result = action(fakeRequest)
 
@@ -172,8 +230,11 @@ trait MockAuthActions
     }
 
     s"the $userRole is not enrolled into HMRC-MTD-IT" should {
+
       "redirect to NotEnrolledController controller" in {
+
         setupMockUserAuthorisationException(InsufficientEnrolments("missing HMRC-MTD-IT enrolment"))
+        mockItsaStatusRetrievalAction()
 
         val result = action(fakeRequest)
 
@@ -183,8 +244,11 @@ trait MockAuthActions
     }
 
     s"the $userRole is not authenticated and enrolled into HMRC-MTD-IT but doesn't have income source" should {
+
       "render the internal error page" in {
+
         setupMockUserAuth
+        mockItsaStatusRetrievalAction(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
         mockErrorIncomeSource()
 
         val result = action(fakeRequest)
@@ -202,15 +266,20 @@ trait MockAuthActions
     testMTDAuthFailuresForAgent(action, mdtUserRole, true)(fakeRequest)
   }
 
-  def testMTDAuthFailuresForAgent(action: Action[AnyContent],
-                                  mtdUserRole: MTDUserRole,
-                                  supportingAgentAccessAllowed: Boolean)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+  def testMTDAuthFailuresForAgent(
+                                   action: Action[AnyContent],
+                                   mtdUserRole: MTDUserRole,
+                                   supportingAgentAccessAllowed: Boolean)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]
+                                 ): Unit = {
+
     val isSupportingAgent = mtdUserRole == MTDSupportingAgent
-    val userType = if(isSupportingAgent) "supporting agent" else "primary agent"
-    if(mtdUserRole == MTDPrimaryAgent) {
+    val userType = if (isSupportingAgent) "supporting agent" else "primary agent"
+    if (mtdUserRole == MTDPrimaryAgent) {
+
       s"the agent is not authenticated" should {
         "redirect to signin" in {
           setupMockGetSessionDataSuccess()
+          mockItsaStatusRetrievalAction()
           setupMockGetClientDetailsSuccess()
           setupMockAgentAuthException(mockFAF)(new InvalidBearerToken)
 
@@ -224,6 +293,7 @@ trait MockAuthActions
       s"the agent has a session that has timed out" should {
         "redirect to timeout controller" in {
           setupMockGetSessionDataSuccess()
+          mockItsaStatusRetrievalAction()
           setupMockGetClientDetailsSuccess()
           setupMockAgentAuthException(mockFAF)(new BearerTokenExpired)
 
@@ -237,6 +307,7 @@ trait MockAuthActions
       s"the agent does not have an arn enrolment" should {
         "redirect to AgentError controller" in {
           setupMockGetSessionDataSuccess()
+          mockItsaStatusRetrievalAction()
           setupMockGetClientDetailsSuccess()
           setupMockAgentAuthException(mockFAF)(InsufficientEnrolments("missing HMRC-AS-AGENT enrolment"))
 
@@ -246,12 +317,11 @@ trait MockAuthActions
           redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
         }
       }
-    }
-
-    else {
+    } else {
       s"the agent does not have a valid delegated MTD enrolment" should {
         "redirect to ClientRelationshipFailureController controller" in {
           setupMockGetSessionDataSuccess()
+          mockItsaStatusRetrievalAction()
           setupMockGetClientDetailsSuccess()
           setupMockAgentWithoutMTDEnrolmentForClient()
           val result = action(fakeRequest)
@@ -267,10 +337,12 @@ trait MockAuthActions
       case _ => true
     }
 
-    if(incomeSourceRequired) {
+    if (incomeSourceRequired) {
       s"the $userType is not authenticated and has delegated enrolment but doesn't have income source" should {
         "render the internal error page" in {
+
           setupMockAgentWithClientAuth(isSupportingAgent)
+          mockItsaStatusRetrievalAction(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
           mockErrorIncomeSource()
 
           val result = action(fakeRequest)
@@ -284,11 +356,12 @@ trait MockAuthActions
   }
 
   def testSupportingAgentDeniedAccess(action: Action[AnyContent])(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+
     "render the supporting agent unauthorised page" in {
+
       setupMockSuccess(MTDSupportingAgent)
-
+      mockItsaStatusRetrievalAction()
       val result = action(fakeRequest)
-
       status(result) shouldBe Status.UNAUTHORIZED
       val unauthorisedPage = Jsoup.parse(contentAsString(result))
       unauthorisedPage.title shouldEqual "You are not authorised to access this page - GOV.UK"

@@ -18,23 +18,20 @@ package models.financialDetails
 
 import exceptions.MissingFieldException
 import models.incomeSourceDetails.TaxYear
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import models.outstandingCharges.OutstandingChargesModel
 import services.DateServiceInterface
 
 import java.time.LocalDate
 
-case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: List[ChargeItem] = List(),
-                                 outstandingChargesModel: Option[OutstandingChargesModel] = None,
-                                 codedOutDetails: Option[CodingOutDetails] = None, claimARefundR18Enabled: Boolean = true)(implicit val dateService: DateServiceInterface) {
+case class WhatYouOweChargesList(
+                                  balanceDetails: BalanceDetails, chargesList: List[ChargeItem] = List(),
+                                  outstandingChargesModel: Option[OutstandingChargesModel] = None,
+                                  codedOutDetails: Option[CodingOutDetails] = None
+                                )(implicit val dateService: DateServiceInterface) {
 
   lazy val overdueChargeList: List[ChargeItem] = chargesList.filter(x => x.isOverdue())
 
-  def overdueOutstandingCharges: List[OutstandingChargeModel] = outstandingChargesModel.toList.flatMap(_.outstandingCharges)
-    .filter(_.relevantDueDate.getOrElse(LocalDate.MAX).isBefore(dateService.getCurrentDate))
-
-  val availableCredit: Option[BigDecimal] =
-    if (claimARefundR18Enabled) this.balanceDetails.totalCredit.flatMap(v => if (v > 0) Some(v) else None)
-    else this.balanceDetails.totalCreditAvailableForRepayment.flatMap(v => if (v > 0) Some(v) else None)
+  val availableCredit: Option[BigDecimal] = this.balanceDetails.totalCredit.flatMap(v => if (v > 0) Some(v) else None)
 
   def sortedChargesList: List[ChargeItem] = chargesList.sortWith((charge1, charge2) =>
     charge1.dueDate.exists(date1 => charge2.dueDate.exists(_.isAfter(date1))))
@@ -45,9 +42,6 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
     else false
 
   def isChargesListEmpty: Boolean = chargesList.isEmpty && !bcdChargeTypeDefinedAndGreaterThanZero
-
-  def hasUnpaidPOAs: Boolean = chargesList.exists(chargeItem =>
-    Seq(PoaOneDebit, PoaTwoDebit).contains(chargeItem.transactionType) && chargeItem.outstandingAmount > 0.0)
 
   def hasDunningLock: Boolean = chargesList.exists(charge => charge.dunningLock)
 
@@ -75,30 +69,11 @@ case class WhatYouOweChargesList(balanceDetails: BalanceDetails, chargesList: Li
     }
   }
 
-  def getEarliestTaxYearAndAmountByDueDate: Option[(Int, BigDecimal)] = {
-
-    implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
-
-    val sortedListOfCharges: Option[ChargeItem] = chargesList.sortBy(charge => charge.dueDate.get).headOption
-
-    if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined && sortedListOfCharges.isDefined) {
-      val bcdDueDate: LocalDate = outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get
-      if (bcdDueDate.isBefore(sortedListOfCharges.get.dueDate.get)) {
-        Some((bcdDueDate.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
-      } else if (sortedListOfCharges.isDefined) {
-          Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrInterest))
-      } else {
-        None
-      }
-    } else {
-      if (outstandingChargesModel.isDefined && outstandingChargesModel.get.bcdChargeType.isDefined) {
-        Some((outstandingChargesModel.get.bcdChargeType.get.relevantDueDate.get.getYear, outstandingChargesModel.get.bcdChargeType.get.chargeAmount))
-      } else if (sortedListOfCharges.isDefined) {
-          Some((sortedListOfCharges.get.dueDate.get.getYear, sortedListOfCharges.get.remainingToPayByChargeOrInterest))
-      } else {
-        None
-      }
-    }
+  def getDefaultPaymentAmount: Option[BigDecimal] = {
+    if (balanceDetails.overDueAmount != 0) Some(balanceDetails.overDueAmount)
+    else if(balanceDetails.balanceDueWithin30Days != 0) Some(balanceDetails.balanceDueWithin30Days)
+    else if(balanceDetails.balanceNotDuein30Days != 0) Some(balanceDetails.balanceNotDuein30Days)
+    else None
   }
 }
 

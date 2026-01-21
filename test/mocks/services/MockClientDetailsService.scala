@@ -38,7 +38,7 @@ trait MockClientDetailsService extends UnitSpec with BeforeAndAfterEach {
   }
 
   def mockClientDetails(utr: String)(response: Either[ClientDetailsFailure, ClientDetails]): Unit = {
-    when(mockClientDetailsService.checkClientDetails(matches(utr))(any()))
+    when(mockClientDetailsService.checkClientDetails(any())(any()))
       .thenReturn(Future.successful(response))
   }
 

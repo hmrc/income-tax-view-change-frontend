@@ -47,7 +47,8 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     businessAddressLine2 = Some("Test Unit"),
     businessAddressLine3 = None,
     businessAddressLine4 = Some("Test City"),
-    businessCountryCode = Some("GB")
+    businessCountryCode = Some("GB"),
+    addressId = None
   )
 
   val createForeignPropertyViewModel = CheckPropertyViewModel(

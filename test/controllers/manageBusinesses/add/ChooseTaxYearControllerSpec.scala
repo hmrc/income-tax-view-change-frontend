@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -29,19 +30,22 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.manageBusinesses.IncomeSourceRFService
-import services.{DateService, SessionService}
+import services.{DateServiceInterface, SessionService}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.errorResponse
 
 import scala.concurrent.Future
 
 class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService with MockSessionService with MockIncomeSourceRFService {
 
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
-  
+
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[IncomeSourceRFService].toInstance(mockIncomeSourceRFService),
-      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val controller = app.injector.instanceOf[ChooseTaxYearController]
@@ -65,9 +69,9 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
             displayList.foreach { displayYears =>
               s"$displayYears - isChange" in {
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(taxYear = TaxYear(2024, 2025))
                 setupMockIncomeSourceDetailsCall(incomeSourceType)
-                setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
-                setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2025)
+                setupMockGetCurrentTaxYearEnd(2025)
                 mockRedirectChecksForIncomeSourceRF()
                 setupMockGetMongo(Right(Some(UIJourneySessionData("", "", incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(displayYears._1, displayYears._2, true, true))))))
 
@@ -79,8 +83,8 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
 
             s"no change" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(taxYear = TaxYear(2024, 2025))
               setupMockIncomeSourceDetailsCall(incomeSourceType)
-              setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
               mockRedirectChecksForIncomeSourceRF()
               setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
 
@@ -93,6 +97,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
           "return 500 internalServerError" when {
             "the request fails" in {
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(errorResponse, taxYear = TaxYear(2024, 2025))
               mockSingleBusinessIncomeSourceError()
 
               val result: Future[Result] = controller.show(isAgent, false, incomeSourceType)(fakeGetRequestBasedOnMTDUserType(mtdRole))
@@ -110,8 +115,8 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               val journeyType = "Journey Type"
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(taxYear = TaxYear(2024, 2025))
               setupMockIncomeSourceDetailsCall(incomeSourceType)
-              setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
               setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
               setupMockSetMongoData(true)
 
@@ -131,8 +136,8 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               val journeyType = "Journey Type"
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(taxYear = TaxYear(2024, 2025))
               setupMockIncomeSourceDetailsCall(incomeSourceType)
-              setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
               setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
               setupMockSetMongoData(true)
 
@@ -147,8 +152,8 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
               val journeyType = "Journey Type"
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(errorResponse, taxYear = TaxYear(2024, 2025))
               mockSingleBusinessIncomeSourceError()
-              setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2024, 2025))
               setupMockGetMongo(Right(Some(UIJourneySessionData(sessionId, journeyType))))
               setupMockSetMongoData(true)
 

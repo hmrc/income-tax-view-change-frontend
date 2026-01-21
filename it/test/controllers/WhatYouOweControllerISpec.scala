@@ -176,7 +176,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                     isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                     isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
-                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
                 }
               }
@@ -202,7 +203,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
@@ -226,7 +227,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     isElementVisibleById(s"sa-note-1-migrated-1")(expectedValue = true),
                     isElementVisibleById(s"sa-note-1-migrated-2")(expectedValue = true),
                     isElementVisibleById(s"sa-note-2-migrated")(expectedValue = true),
-                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
                 }
               }
@@ -236,7 +238,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                 val mixedJson = Json.obj(
-                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
                   "codingDetails" -> Json.arr(),
                   "documentDetails" -> Json.arr(
                     documentDetailJson(3400.00, 1000.00, testTaxYear - 1, "ITSA- POA 1", transactionId = "transId1"),
@@ -274,7 +276,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     isElementVisibleById(s"sa-note-1-migrated-1")(expectedValue = true),
                     isElementVisibleById(s"sa-note-1-migrated-2")(expectedValue = true),
                     isElementVisibleById(s"sa-note-2-migrated")(expectedValue = true),
-                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true)
+                    isElementVisibleById(s"outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
                 }
               }
@@ -299,7 +302,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
@@ -312,7 +315,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   result should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
-                    isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false)
+                    isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false),
+                    isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
                 }
               }
@@ -339,7 +343,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
@@ -352,7 +356,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   result should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
-                    isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
+                    isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
+                    isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
                 }
               }
@@ -376,7 +381,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems)
                   }
                   AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))
@@ -389,7 +394,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   result should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
-                    isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true)
+                    isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
+                    isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
                 }
               }
@@ -417,7 +423,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
-                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                      isElementVisibleById("no-payments-due")(expectedValue = true)
                     )
                   }
                 }
@@ -445,7 +452,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
-                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                      isElementVisibleById("no-payments-due")(expectedValue = true)
                     )
                   }
                 }
@@ -456,7 +464,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                   val mixedJson = Json.obj(
-                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
                     "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                     ),
@@ -485,7 +493,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
-                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                      isElementVisibleById("no-payments-due")(expectedValue = true)
                     )
                   }
                 }
@@ -498,7 +507,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   val mixedJson = Json.obj(
-                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
                     "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                       documentDetailJson(3400.00, 1000.00, testTaxYear, transactionId = "transId1"),
@@ -532,7 +541,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
-                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                      isElementVisibleById("no-payments-due")(expectedValue = false)
                     )
                   }
                 }
@@ -565,7 +575,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
-                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                      isElementVisibleById("no-payments-due")(expectedValue = false)
                     )
                   }
                 }
@@ -598,7 +609,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
-                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+                      isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                      isElementVisibleById("no-payments-due")(expectedValue = false)
                     )
                   }
                 }
@@ -632,7 +644,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                     isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                     isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
-                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true)
+                    isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
+                    isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
                 }
               }
@@ -725,7 +738,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                         stubAuthorised(mtdUserRole)
                         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                         val mixedJson = Json.obj(
-                          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "totalCreditAvailableForRepayment" -> 300.00),
+                          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00, "totalCreditAvailableForRepayment" -> 300.00, "totalCredit" -> 300.00),
                           "codingDetails" -> Json.arr(),
                           "documentDetails" -> Json.arr(
                             documentDetailJson(3400.00, 1000.00, testTaxYear, "ITSA- POA 1", transactionId = "transId1"),

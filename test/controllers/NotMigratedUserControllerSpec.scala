@@ -16,24 +16,31 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector,ITSAStatusConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import mocks.services.MockDateService
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers._
-import services.PaymentHistoryService
+import play.api.test.Helpers.*
+import services.DateService
+import services.{DateServiceInterface, PaymentHistoryService}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeNotMigrated
 
 class NotMigratedUserControllerSpec extends MockAuthActions
-  with ImplicitDateFormatter {
+  with ImplicitDateFormatter with MockDateService {
 
   lazy val mockPaymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
-
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val testController = app.injector.instanceOf[NotMigratedUserController]
@@ -52,6 +59,7 @@ class NotMigratedUserControllerSpec extends MockAuthActions
           "render the not migrated page" when {
             "the user has not migrated to ETMP" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(singleBusinessIncomeNotMigrated)
               mockSingleBusinessIncomeSource(userMigrated = false)
 
               val result = action(fakeRequest)
@@ -62,6 +70,7 @@ class NotMigratedUserControllerSpec extends MockAuthActions
           "render the error page" when {
             "the user has already migrated to ETMP" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
 
               val result = action(fakeRequest)
@@ -70,7 +79,7 @@ class NotMigratedUserControllerSpec extends MockAuthActions
           }
         }
       }
-      testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
+       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
   }
 }

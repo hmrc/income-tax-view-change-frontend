@@ -16,6 +16,7 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, CalculationListConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.auth.MockAuthActions
@@ -27,34 +28,51 @@ import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, Message, Messages}
 import models.obligations._
-import models.taxyearsummary.TaxYearSummaryChargeItem
+import models.taxyearsummary.{MtdSoftware, TaxYearSummaryChargeItem}
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, _}
-import services.{CalculationService, ClaimToAdjustService, FinancialDetailsService, NextUpdatesService}
+import services.{TaxYearSummaryService, _}
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{financialDetails, _}
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import views.html.TaxYearSummaryView
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
-class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationService
-  with MockFinancialDetailsService with MockNextUpdatesService with MockIncomeTaxCalculationConnector
-  with MockClaimToAdjustService with ChargeConstants {
+class TaxYearSummaryControllerSpec
+  extends MockAuthActions
+  with MockCalculationService
+  with MockFinancialDetailsService
+  with MockNextUpdatesService
+  with MockIncomeTaxCalculationConnector
+  with MockClaimToAdjustService
+  with ChargeConstants {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[CalculationService].toInstance(mockCalculationService),
-      api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
-      api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
-      api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService)
-    ).build()
+  lazy val mockCalculationListConnector: CalculationListConnector = mock(classOf[CalculationListConnector])
+  lazy val mockTaxYearSummaryService: TaxYearSummaryService = mock(classOf[TaxYearSummaryService])
+
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[CalculationService].toInstance(mockCalculationService),
+        api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
+        api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
+        api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[CalculationListConnector].toInstance(mockCalculationListConnector),
+        api.inject.bind[TaxYearSummaryService].toInstance(mockTaxYearSummaryService),
+      ).build()
 
   lazy val taxYearSummaryView: TaxYearSummaryView = app.injector.instanceOf[TaxYearSummaryView]
 
@@ -79,57 +97,74 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
     }
   }
   val homeBackLink: Boolean => String = isAgent => {
-    "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents/client-income-tax" else ""}
+    "/report-quarterly/income-and-expenses/view" + {
+      if (isAgent) "/agents/client-income-tax" else ""
+    }
   }
   val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
   val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))
   lazy val ctaLink: Boolean => String = isAgent => {
-    "/report-quarterly/income-and-expenses/view" + {if (isAgent) "/agents" else ""} + "/adjust-poa/start"
+    "/report-quarterly/income-and-expenses/view" + {
+      if (isAgent) "/agents" else ""
+    } + "/adjust-poa/start"
   }
 
-  val testObligtionsModel: ObligationsModel = ObligationsModel(Seq(
-    GroupedObligationsModel(
-      identification = "testId",
-      obligations = List(
-        SingleObligationModel(
-          start = getCurrentTaxYearEnd.minusMonths(3),
-          end = getCurrentTaxYearEnd,
-          due = getCurrentTaxYearEnd,
-          obligationType = "Quarterly",
-          dateReceived = Some(fixedDate),
-          periodKey = "Quarterly",
-          StatusFulfilled
+  val testObligtionsModel: ObligationsModel =
+    ObligationsModel(Seq(
+      GroupedObligationsModel(
+        identification = "testId",
+        obligations = List(
+          SingleObligationModel(
+            start = getCurrentTaxYearEnd.minusMonths(3),
+            end = getCurrentTaxYearEnd,
+            due = getCurrentTaxYearEnd,
+            obligationType = "Quarterly",
+            dateReceived = Some(fixedDate),
+            periodKey = "Quarterly",
+            StatusFulfilled
+          )
         )
       )
-    )
-  ))
+    ))
 
   mtdAllRoles.foreach { mtdUserRole =>
+
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.renderAgentTaxYearSummaryPage(testTaxYear) else testController.renderTaxYearSummaryPage(testTaxYear)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-      .withHeaders(
-        HeaderNames.REFERER -> taxYearsBackLink(isAgent)
-      )
+      .withHeaders(HeaderNames.REFERER -> taxYearsBackLink(isAgent))
+
     s"render${if (isAgent) "Agent"}TaxYearSummaryPage" when {
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
         } else {
           "render the tax year summary page" that {
+
             "shows calculations tabs" when {
+
               "downstream returns only a latest calculation" in {
+
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
+                mockGetNextUpdates(
+                  fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 val result = action(fakeRequest)
+
                 status(result) shouldBe Status.OK
                 contentType(result) shouldBe Some("text/html")
                 result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
@@ -137,11 +172,19 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
 
               "downstream returns both the latest and previous calculations" in {
+
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccessWithAmendment(testMtditid, taxYear = testTaxYear, previousCalc = Some(liabilityCalculationModelSuccessful))
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
@@ -156,10 +199,17 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
               "downstream returns both the latest calculation but the previous calculation doesn't exist" in {
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccessWithAmendment(testMtditid, taxYear = testTaxYear, previousCalc = Some(LiabilityCalculationError(204, "not found")))
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
@@ -174,12 +224,21 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
 
             "shows the Forecast tab before crystallisation" when {
+
               "crystallised is false and the show forecast data is true" in {
+
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousNotCrystallised(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
@@ -193,12 +252,13 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                   pfaEnabled = false
                 )
-                val expectedContent: String = taxYearSummaryView(
-                  testTaxYear, taxYearSummary,
-                  taxYearsBackLink(isAgent),
-                  ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent
-                ).toString
+                val expectedContent: String =
+                  taxYearSummaryView(
+                    testTaxYear, taxYearSummary,
+                    taxYearsBackLink(isAgent),
+                    ctaLink = ctaLink(isAgent),
+                    isAgent = isAgent
+                  ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -209,16 +269,25 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
             }
             "does NOT show the Forecast tab after crystallisation" when {
+
               "crystallisation is true and show forecast data is false" in {
+
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
@@ -240,17 +309,28 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 contentType(result) shouldBe Some("text/html")
               }
             }
+
             "shows the Forecast tab" when {
+
               "no calc data is returned" in {
+
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousNotFound(testMtditid, taxYear = testTaxYear)
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val expectedContent: String = taxYearSummaryView(
                   testTaxYear, TaxYearSummaryViewModel(
                     None,
@@ -272,17 +352,27 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 contentType(result) shouldBe Some("text/html")
               }
             }
+
             "has the poa section" when {
+
               "POAs are for the tax year on the page" in {
+
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess()
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
 
@@ -293,10 +383,14 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               "FilterCodedOutPoas FS is enabled and there are some not coded out" in {
                 enable(FilterCodedOutPoas)
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = None))
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
@@ -310,14 +404,21 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
               "there are coded out POA charges but FilterCodedOutPoas FS disabled" in {
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
 
@@ -328,14 +429,21 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             "doesn't have a the poa section" when {
               "POAs are for the tax year of a different year" in {
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess()
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
 
@@ -344,14 +452,21 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
               "There are no valid POAs" in {
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess()
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
@@ -361,14 +476,22 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               "FilterCodedOutPoas FS is enabled and POA charges are coded out" in {
                 enable(FilterCodedOutPoas)
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
@@ -379,22 +502,31 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             "Review and Reconcile debit charges in the charges table" when {
               "the user has Review and Reconcile debit charges" in {
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val result = action(fakeRequest)
-                def chargeSummaryUrl(id: String) = if(isAgent) {
+
+                def chargeSummaryUrl(id: String) = if (isAgent) {
                   controllers.routes.ChargeSummaryController.showAgent(testTaxYear, id).url
                 } else {
                   controllers.routes.ChargeSummaryController.show(testTaxYear, id).url
                 }
+
                 status(result) shouldBe OK
                 Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "Accrues interest"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
@@ -405,25 +537,36 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
 
             "Penalties in the charges table" when {
+
               "the user has penalties and the penalties FS is enabled" in {
+
                 enable(PenaltiesAndAppeals)
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAllThreePenalties)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val result = action(fakeRequest)
-                def chargeSummaryUrl(id: String) = if(isAgent) {
+
+                def chargeSummaryUrl(id: String) = if (isAgent) {
                   controllers.routes.ChargeSummaryController.showAgent(testTaxYear, id).url
                 } else {
                   controllers.routes.ChargeSummaryController.show(testTaxYear, id).url
                 }
+
                 status(result) shouldBe OK
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "Late submission penalty"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe chargeSummaryUrl("LSP")
@@ -438,16 +581,24 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               }
             }
             "Not show penalties in the charges table" when {
+
               "the penalties FS is disabled" in {
                 disable(PenaltiesAndAppeals)
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAllThreePenalties)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val result = action(fakeRequest)
 
@@ -456,28 +607,42 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
 
             "has a back link to the home page" in {
+
               setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
+              mockItsaStatusRetrievalAction()
               mockLatestAndPreviousSuccess(testMtditid)
               mockFinancialDetailsSuccess()
-              mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+              mockGetNextUpdates(
+                fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
                 response = testObligtionsModel
               )
+
+              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                .thenReturn(Future.successful(singleBusinessIncome))
+
               setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
+              when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                .thenReturn(Future(MtdSoftware))
+
               val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
-              val expectedContent: String = taxYearSummaryView(
-                testTaxYear, TaxYearSummaryViewModel(
-                  Some(calcOverview),
-                  None,
-                  testChargesList,
-                  testObligtionsModel,
-                  ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                  pfaEnabled = false),
-                homeBackLink(isAgent),
-                ctaLink = ctaLink(isAgent),
-                isAgent = isAgent).toString
+              val expectedContent: String =
+                taxYearSummaryView(
+                  taxYear = testTaxYear,
+                  viewModel = TaxYearSummaryViewModel(
+                    calculationSummary = Some(calcOverview),
+                    previousCalculationSummary = None,
+                    charges = testChargesList,
+                    obligations = testObligtionsModel,
+                    ctaViewModel = emptyCTAViewModel,
+                    LPP2Url = "",
+                    pfaEnabled = false),
+                  backUrl = homeBackLink(isAgent),
+                  ctaLink = ctaLink(isAgent),
+                  isAgent = isAgent
+                ).toString
 
               val result = action(fakeGetRequestBasedOnMTDUserType(mtdUserRole))
               status(result) shouldBe Status.OK
@@ -490,7 +655,7 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             "include Class 2 Nics in the charges list" when {
               "Class 2 Nics is present" in {
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(
                   financialDetailsModelResponse = financialDetails(
@@ -499,12 +664,18 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                   )
                 )
 
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
@@ -517,7 +688,8 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent
+                ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -526,21 +698,31 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
 
             "include Paye in the charges list" when {
+
               "Paye is present" in {
+
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(
                   financialDetailsModelResponse = financialDetails(
                     documentDetails = documentDetailPaye.documentDetail,
-                    financialDetails = financialDetail(mainTransaction = "4910",codedOutStatus = Some("I"))
+                    financialDetails = financialDetail(mainTransaction = "4910", codedOutStatus = Some("I"))
                   )
                 )
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
@@ -553,7 +735,8 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent
+                ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -562,16 +745,25 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
 
             "displays MFA debits" when {
+
               "the user has MFA debit charge" in {
+
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = MFADebitsFinancialDetails)
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val mfaCharges: List[TaxYearSummaryChargeItem] = List(
                   chargeItemModel(transactionId = "MFADEBIT01", transactionType = MfaDebitCharge, originalAmount = 100.0, outstandingAmount = 100.0, accruingInterestAmount = None),
@@ -605,14 +797,21 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             "no charges" when {
               "the financial charges returns not found" in {
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsNotFound()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
@@ -638,12 +837,18 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
 
             "does not have calculation summary" when {
+
               "calculation service returned not found" in {
+
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousNotFound(testMtditid)
                 mockFinancialDetailsSuccess()
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
@@ -674,16 +879,25 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
             "show the Tax Year Summary Page with error messages" when {
               "liability Calculation has error messages" in {
+
                 disable(NavBarFs)
                 setupMockSuccess(mtdUserRole)
-                mockSingleBusinessIncomeSource()
+                mockItsaStatusRetrievalAction()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
                 mockLatestAndPreviousWithErrorMessages(testMtditid)
                 mockFinancialDetailsSuccess()
-                mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  .thenReturn(Future.successful(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
                   response = testObligtionsModel
                 )
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
                 val errorMessageVariableValues = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = false)(messages)
                 val calcOverview: CalculationSummary = CalculationSummary(errorMessageVariableValues)
 
@@ -697,7 +911,8 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
                     pfaEnabled = false),
                   taxYearsBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent).toString
+                  isAgent = isAgent
+                ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -711,18 +926,28 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
           "render the error page" when {
             "getPoaTaxYearForEntryPoint returns an error" in {
+
               setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
+              mockItsaStatusRetrievalAction()
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("TEST")))
               mockFinancialDetailsSuccess()
+
+              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                .thenReturn(Future.successful(singleBusinessIncome))
+
+              when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                .thenReturn(Future(MtdSoftware))
 
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
             "getFinancialDetails returns an error" in {
+
               setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
               mockFinancialDetailsFailed()
+
+              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                .thenReturn(Future.successful(singleBusinessIncome))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -730,10 +955,18 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
 
             "getNextUpdates returns an error" in {
+
               setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
+              mockItsaStatusRetrievalAction()
               mockFinancialDetailsNotFound()
-              mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                .thenReturn(Future.successful(singleBusinessIncome))
+
+              when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                .thenReturn(Future(MtdSoftware))
+
+              mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
                 response = ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR")
               )
@@ -743,29 +976,38 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
               contentType(result) shouldBe Some("text/html")
             }
 
-            if(mtdUserRole == MTDIndividual) {
+            if (mtdUserRole == MTDIndividual) {
               "provided with a negative tax year" in {
                 setupMockSuccess(mtdUserRole)
                 mockPropertyIncomeSource()
 
-                val invalidTaxYearAction = if (isAgent) {
-                  testController.renderAgentTaxYearSummaryPage(-testTaxYear)
-                } else {
-                  testController.renderTaxYearSummaryPage(-testTaxYear)
-                }
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                  .thenReturn(Future(MtdSoftware))
+
+                val invalidTaxYearAction =
+                  if (isAgent) {
+                    testController.renderAgentTaxYearSummaryPage(-testTaxYear)
+                  } else {
+                    testController.renderTaxYearSummaryPage(-testTaxYear)
+                  }
 
                 val result = invalidTaxYearAction(fakeRequest)
                 status(result) shouldBe Status.INTERNAL_SERVER_ERROR
               }
             }
             "the calculation returned from the calculation service was an error" in {
-              setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
 
+              setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
               mockFinancialDetailsSuccess()
-              mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-                toDate = LocalDate.of(testTaxYear, 4, 5))(
-                response = testObligtionsModel)
+
+              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                .thenReturn(Future.successful(singleBusinessIncome))
+
+              mockGetNextUpdates(
+                fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+                toDate = LocalDate.of(testTaxYear, 4, 5)
+              )(response = testObligtionsModel)
 
               mockCalculationErrorNew(testMtditid)
 
@@ -775,12 +1017,20 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             }
 
             "user has a second late payment penalty without a chargeReference, so url cannot be generated" in {
+
               enable(PenaltiesAndAppeals)
               setupMockSuccess(mtdUserRole)
-              mockSingleBusinessIncomeSource()
+              mockItsaStatusRetrievalAction()
               mockLatestAndPreviousSuccess(testMtditid)
               mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithLPP2NoChargeRef)
-              mockgetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+
+              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                .thenReturn(Future.successful(singleBusinessIncome))
+
+              when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any(), any(), any()))
+                .thenReturn(Future(MtdSoftware))
+
+              mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
                 response = testObligtionsModel
               )
@@ -802,14 +1052,15 @@ class TaxYearSummaryControllerSpec extends MockAuthActions with MockCalculationS
             "filter out the variable value from messages" in {
               val actual = testController.formatErrorMessages(liabilityCalculationModelErrorMessagesForIndividual, messagesApi, isAgent = isAgent)(messages)
 
-              actual shouldBe liabilityCalculationModelErrorMessagesForIndividual.copy(messages = Some(Messages(
-                errors = Some(List(
-                  Message("C55012", "5 January 2023"),
-                  Message("C15507", "£2000"),
-                  Message("C15510", "10"),
-                  Message("C55009", ""),
-                ))
-              )))
+              actual shouldBe
+                liabilityCalculationModelErrorMessagesForIndividual.copy(messages = Some(Messages(
+                  errors = Some(List(
+                    Message("C55012", "5 January 2023"),
+                    Message("C15507", "£2000"),
+                    Message("C15510", "10"),
+                    Message("C55009", ""),
+                  ))
+                )))
             }
           }
         }

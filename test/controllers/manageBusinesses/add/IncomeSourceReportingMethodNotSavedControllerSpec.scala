@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -27,7 +28,7 @@ import play.api
 import play.api.Application
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import services.SessionService
+import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderNoLatency
 
 import scala.concurrent.Future
@@ -36,7 +37,10 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions 
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService)
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceReportingMethodNotSavedController]
@@ -92,15 +96,24 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions 
   }
 
   mtdAllRoles.foreach { mtdRole =>
+
     val isAgent = mtdRole != MTDIndividual
+
     incomeSourceTypes.foreach { incomeSourceType =>
+
       s"show${if (mtdRole != MTDIndividual) "Agent"}($incomeSourceType)" when {
+
         val action = if (mtdRole == MTDIndividual) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+
         s"the user is authenticated as a $mtdRole" should {
+
           "render the reporting method not saved page" when {
+
             s"using the manage businesses journey" in {
+
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderNoLatency)
 
               val result: Future[Result] = action(fakeRequest)
@@ -114,6 +127,7 @@ class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions 
             }
           }
         }
+
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }

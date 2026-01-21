@@ -81,14 +81,11 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) if user.usersRole == MTDSupportingAgent =>
         buildHomePageForSupportingAgent(nextUpdatesDueDates)
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) => buildHomePage(nextUpdatesDueDates, origin)
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
+        buildHomePage(nextUpdatesDueDates, origin)
       case Left(ex) =>
         Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
         Future.successful(handleErrorGettingDueDates(user.isAgent()))
-    } recover {
-      case ex =>
-        Logger("application").error(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
-        handleErrorGettingDueDates(user.isAgent())
     }
   }
 
@@ -128,7 +125,9 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], origin: Option[String])
                            (implicit user: MtdItUser[_]): Future[Result] = {
 
-    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+    val getCurrentTaxYearEnd = dateService.getCurrentTaxYearEnd
+    val getCurrentDate = dateService.getCurrentDate
+    val currentTaxYear = TaxYear(getCurrentTaxYearEnd - 1, getCurrentTaxYearEnd)
 
     for {
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
@@ -137,7 +136,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
-      accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, dateService.getCurrentDate)
+      accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, getCurrentDate)
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
       penaltiesCount <- penaltyDetailsService.getPenaltiesCount(isEnabled(PenaltiesBackendEnabled))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
@@ -146,90 +145,100 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
     } yield {
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
-        currentDate = dateService.getCurrentDate,
-        isReportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
-        showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
-        currentYearITSAStatus = currentITSAStatus,
-        nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
-        nextTaxReturnDueDate = nextTaxReturnDueDate)
-      val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
+
+      val nextUpdatesTileViewModel =
+        NextUpdatesTileViewModel(
+          dueDates = nextUpdatesDueDates,
+          currentDate = getCurrentDate,
+          isReportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
+          showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
+          currentYearITSAStatus = currentITSAStatus,
+          nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
+          nextTaxReturnDueDate = nextTaxReturnDueDate
+        )
+
+      val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel =
+        PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
 
       val paymentCreditAndRefundHistoryTileViewModel =
-        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), isEnabled(ClaimARefundR18), user.incomeSources.yearOfMigration.isDefined)
+        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
 
-      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
+      val yourBusinessesTileViewModel =
+        YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
 
-      val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
+      val returnsTileViewModel =
+        ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
 
-      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+      val yourReportingObligationsTileViewModel =
+        YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
       NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount).verify match {
 
-        case Right(viewModel: NextPaymentsTileViewModel) => val homeViewModel = HomePageViewModel(
-          utr = user.saUtr,
-          nextPaymentsTileViewModel = viewModel,
-          returnsTileViewModel = returnsTileViewModel,
-          nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-          paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
-          yourBusinessesTileViewModel = yourBusinessesTileViewModel,
-          yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
-          penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
-          dunningLockExists = dunningLockExists,
-          origin = origin
-        )
+        case Right(viewModel: NextPaymentsTileViewModel) =>
+          val homeViewModel = HomePageViewModel(
+            utr = user.saUtr,
+            nextPaymentsTileViewModel = viewModel,
+            returnsTileViewModel = returnsTileViewModel,
+            nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+            paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
+            yourBusinessesTileViewModel = yourBusinessesTileViewModel,
+            yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
+            penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
+            dunningLockExists = dunningLockExists,
+            origin = origin
+          )
 
-        val mandationStatus = if (mandation) SessionKeys.mandationStatus -> "on"
-        else SessionKeys.mandationStatus -> "off"
+          val mandationStatus =
+            if (mandation) SessionKeys.mandationStatus -> "on"
+            else SessionKeys.mandationStatus -> "off"
 
           auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
-          if(user.isAgent()) {
-            Ok(primaryAgentHomeView(
-              homeViewModel
-            )).addingToSession(mandationStatus)
+
+          if (user.isAgent()) {
+            Ok(primaryAgentHomeView(homeViewModel)).addingToSession(mandationStatus)
           } else {
-            Ok(homeView(
-              homeViewModel
-            )).addingToSession(mandationStatus)
+            Ok(homeView(homeViewModel)).addingToSession(mandationStatus)
           }
         case Left(ex: Throwable) =>
           Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
           handleErrorGettingDueDates(user.isAgent())
+      }
     }
-}
   }
 
-  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean,
-                          penaltiesEnabled: Boolean): List[LocalDate] = {
-    val chargesList = unpaidCharges collect {
-      case fdm: FinancialDetailsModel => fdm
-    }
-      whatYouOweService.getFilteredChargesList(chargesList,
-          isFilterOutCodedPoasEnabled,
-          penaltiesEnabled,
-          mainChargeIsNotPaidFilter).flatMap(_.dueDate)
+  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[LocalDate] = {
+
+    val chargesList =
+      unpaidCharges.collect {
+        case fdm: FinancialDetailsModel => fdm
+      }
+    whatYouOweService.getFilteredChargesList(
+        financialDetailsList = chargesList,
+        isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
+        isPenaltiesEnabled = penaltiesEnabled,
+        remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter).flatMap(_.dueDate)
       .sortWith(_ isBefore _)
       .sortBy(_.toEpochDay())
   }
 
   private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
                                       (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
-    whatYouOweService.getWhatYouOweChargesList(
-      unpaidCharges,
-      isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
-      isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-      mainChargeIsNotPaidFilter,
-      isEnabled(ClaimARefundR18)
-    ) map {
-      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _, _) =>
-        outstandingCharges.filter(_.isBalancingChargeDebit)
-          .filter(_.relevantDueDate.isDefined)
-      case _ => Nil
+  whatYouOweService.getWhatYouOweChargesList(
+    unpaidCharges,
+    isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
+    isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+    mainChargeIsNotPaidFilter
+  ) map {
+    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
+      outstandingCharges.filter(_.isBalancingChargeDebit)
+        .filter(_.relevantDueDate.isDefined)
+    case _ => Nil
   }
 
   private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
     val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
     val overdueChargesCount = outstandingChargesModel.flatMap(_.relevantDueDate).count(_.isBefore(dateService.getCurrentDate))
+
     overduePaymentsCountFromDate + overdueChargesCount
   }
 
@@ -260,8 +269,8 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     ).map(detail => detail(taxYear))
   }
 
-  private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem]  = {
-    case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid  => x
+  private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
+    case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
   }
 
   private def getNextDueDatesIfEnabled()

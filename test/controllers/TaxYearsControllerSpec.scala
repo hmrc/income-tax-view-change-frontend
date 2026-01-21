@@ -16,25 +16,37 @@
 
 package controllers
 
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
+import models.incomeSourceDetails.IncomeSourceDetailsError
+import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
+import services.DateServiceInterface
+import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 
 class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter {
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
 
   lazy val testController = app.injector.instanceOf[TaxYearsController]
 
   mtdAllRoles.foreach { case mtdUserRole =>
+
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showAgentTaxYears() else testController.showTaxYears()
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
+
     s"show${if (isAgent) "Agent"}TaxYears" when {
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
@@ -43,6 +55,7 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
           "render the Tax years page" when {
             "income source details contains a business firstAccountingPeriodEndDate" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               val result = action(fakeRequest)
@@ -53,6 +66,7 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
           "render the error page" when {
             "there is no firstAccountingPeriodEndDate for business or property in incomeSources" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(businessIncome2018and2019)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
               val result = action(fakeRequest)
@@ -61,6 +75,7 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
 
             "income source retrieval returns an error" in {
               setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
               mockErrorIncomeSource()
 
               val result = action(fakeRequest)

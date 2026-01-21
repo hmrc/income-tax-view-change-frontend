@@ -67,17 +67,16 @@ object FeatureSwitchName {
       JsSuccess(SelfServeTimeToPayR17)
     case JsString(TriggeredMigration.name) =>
       JsSuccess(TriggeredMigration)
-    case JsString(ClaimARefundR18.name) =>
-      JsSuccess(ClaimARefundR18)
     case JsString(SubmitClaimToAdjustToNrs.name) =>
       JsSuccess(SubmitClaimToAdjustToNrs)
     case JsString(PostFinalisationAmendmentsR18.name) =>
       JsSuccess(PostFinalisationAmendmentsR18)
+    case JsString(`CY+1YouMustWaitToSignUpPageEnabled`.name) =>
+      JsSuccess(`CY+1YouMustWaitToSignUpPageEnabled`)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
   }
-
 
   implicit val formats: Format[FeatureSwitchName] =
     Format(reads, writes)
@@ -115,7 +114,7 @@ object FeatureSwitchName {
       SelfServeTimeToPayR17,
       TriggeredMigration,
       PostFinalisationAmendmentsR18,
-      ClaimARefundR18
+      `CY+1YouMustWaitToSignUpPageEnabled`
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -211,12 +210,14 @@ case object SubmitClaimToAdjustToNrs extends FeatureSwitchName {
   override val toString: String = "Submit Claim to Adjust to NRS"
 }
 
-case object ClaimARefundR18 extends FeatureSwitchName {
-  override val name: String = "claim-a-refund-r18"
-  override val toString: String = "Claim A Refund R18"
-}
-
 case object PostFinalisationAmendmentsR18 extends FeatureSwitchName {
   override val name: String = "post-finalisation-amendments-r18"
   override val toString: String = "Post Finalisation Amendments R18"
 }
+
+case object `CY+1YouMustWaitToSignUpPageEnabled` extends FeatureSwitchName {
+  override val name: String = "cy-plus-one-you-must-wait-to-sign-up-page-enabled"
+  override val toString: String = "CY+1 You Must Wait To Sign Up Page Enabled"
+}
+
+

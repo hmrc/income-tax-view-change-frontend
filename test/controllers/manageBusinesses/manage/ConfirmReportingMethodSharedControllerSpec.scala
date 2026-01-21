@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.manage
 
+import connectors.{ITSAStatusConnector, BusinessDetailsConnector}
 import enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
 import enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
 import enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
@@ -33,8 +34,8 @@ import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, SessionService}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData}
+import services.{DateService, DateServiceInterface, SessionService}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, incomeSourceWithBothYearsInLatency, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderWithLatency}
 
 import scala.concurrent.Future
 
@@ -45,13 +46,18 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
-  override lazy val app: Application = applicationBuilderWithAuthBindings
-    .overrides(
-      api.inject.bind[SessionService].toInstance(mockSessionService),
-      api.inject.bind[DateService].toInstance(mockDateServiceInjected)
-    ).build()
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[SessionService].toInstance(mockSessionService),
+        api.inject.bind[DateService].toInstance(dateService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
+      ).build()
 
-  lazy val testConfirmReportingMethodSharedController: ConfirmReportingMethodSharedController = app.injector.instanceOf[ConfirmReportingMethodSharedController]
+  lazy val testConfirmReportingMethodSharedController: ConfirmReportingMethodSharedController =
+    app.injector.instanceOf[ConfirmReportingMethodSharedController]
 
   trait SetupGET {
     val taxYear: String = "2022-2023"
@@ -59,12 +65,17 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
     val incomeSourceType: IncomeSourceType
     val mtdRole: MTDUserRole
 
-    lazy val action: Action[AnyContent] = if (mtdRole == MTDIndividual) {
-      testConfirmReportingMethodSharedController.show(isAgent = false, taxYear, changeTo, incomeSourceType)
-    } else {
-      testConfirmReportingMethodSharedController.show(isAgent = true, taxYear, changeTo, incomeSourceType)
-    }
+    lazy val action: Action[AnyContent] =
+      if (mtdRole == MTDIndividual) {
+        testConfirmReportingMethodSharedController.show(isAgent = false, taxYear, changeTo, incomeSourceType)
+      } else {
+        testConfirmReportingMethodSharedController.show(isAgent = true, taxYear, changeTo, incomeSourceType)
+      }
   }
+
+  private lazy val invalidTaxYear = "$$$$-££££"
+  private lazy val invalidTaxYearLatency = "2055-2056"
+  private lazy val invalidChangeTo = "randomText"
 
   def provideFormData(isYesResponse: Option[Boolean], formErrorRequiredFor: IncomeSourceType): (String, String) = {
 
@@ -93,6 +104,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val mtdRole: MTDUserRole = testMtdRole
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               enable(OptInOptOutContentUpdateR17)
               mockBothPropertyBothBusinessWithLatency()
 
@@ -101,35 +113,38 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSetMongoData(true)
 
-              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
-                provideFormData(isYesResponse = Some(true), formErrorRequiredFor = testIncomeSourceType))
-              )
+              val result: Future[Result] =
+                action(fakeRequest.withFormUrlEncodedBody(provideFormData(isYesResponse = Some(true), formErrorRequiredFor = testIncomeSourceType)))
               status(result) shouldBe Status.OK
             }
+
             "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in new SetupGET {
+
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               disable(OptInOptOutContentUpdateR17)
               mockBothPropertyBothBusinessWithLatency()
 
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
-
               setupMockSetMongoData(true)
 
               val result: Future[Result] = action(fakeRequest)
-
               status(result) shouldBe Status.OK
             }
           }
           s"return ${Status.BAD_REQUEST}" when {
+
             "No selection was made in the form" in new SetupPOST {
+
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               enable(OptInOptOutContentUpdateR17)
               mockBothPropertyBothBusinessWithLatency()
 
@@ -149,6 +164,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -161,6 +177,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               redirectLocation(result) shouldBe Some(expectedRedirectUrl)
             }
           }
+
           s"return ${Status.INTERNAL_SERVER_ERROR}" when {
             "taxYear parameter has an invalid format " in new SetupGET {
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
@@ -168,6 +185,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val taxYear: String = invalidTaxYear
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockBothPropertyBothBusinessWithLatency()
 
               setupMockCreateSession(true)
@@ -187,6 +205,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val taxYear: String = invalidTaxYearLatency
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockBothPropertyBothBusinessWithLatency()
 
               setupMockCreateSession(true)
@@ -203,6 +222,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val changeTo: String = invalidChangeTo
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockBothPropertyBothBusinessWithLatency()
 
               setupMockCreateSession(true)
@@ -219,6 +239,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
                 override val mtdRole: MTDUserRole = testMtdRole
 
                 setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction()
                 mockBothPropertyBothBusinessWithLatency()
 
                 setupMockCreateSession(true)
@@ -259,6 +280,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val mtdRole: MTDUserRole = testMtdRole
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               enable(OptInOptOutContentUpdateR17)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
@@ -283,6 +305,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val mtdRole: MTDUserRole = testMtdRole
 
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               disable(OptInOptOutContentUpdateR17)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
@@ -307,6 +330,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val mtdRole: MTDUserRole = testMtdRole
               override val changeTo: String = "quarterly"
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               enable(OptInOptOutContentUpdateR17)
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
@@ -316,7 +340,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                 provideFormData(isYesResponse = Some(true), formErrorRequiredFor = testIncomeSourceType))
               )
-              
+
               val expectedEndpoint: String = controllers.manageBusinesses.manage.routes.ManageObligationsController.show(
                 isAgent = mtdRole != MTDIndividual,
                 incomeSourceType
@@ -334,6 +358,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val mtdRole: MTDUserRole = testMtdRole
               override val taxYear: String = invalidTaxYear
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -349,6 +374,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val mtdRole: MTDUserRole = testMtdRole
               override val changeTo: String = invalidChangeTo
               setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction()
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -362,8 +388,4 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
       }
     }
   }
-
-  private lazy val invalidTaxYear = "$$$$-££££"
-  private lazy val invalidTaxYearLatency = "2055-2056"
-  private lazy val invalidChangeTo = "randomText"
 }

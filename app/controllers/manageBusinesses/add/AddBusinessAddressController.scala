@@ -24,8 +24,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
-import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{IncomeSourceId, Mode}
+import models.core.Mode
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -59,9 +58,13 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
       handleRequest(isAgent = true, mode = mode)(implicitly, itvcErrorHandlerAgent)
   }
 
-  def handleRequest(isAgent: Boolean, mode: Mode)
-                   (implicit user: MtdItUser[_],
-                    errorHandler: ShowInternalServerError): Future[Result] = {
+  private def addressLookupConfirmUrl(id: String): String = {
+    s"${appConfig.addressLookupExternalHost}/lookup-address/$id/confirm"
+  }
+
+  private def initialiseJourney(isAgent: Boolean, mode: Mode)
+                               (implicit user: MtdItUser[_],
+                                errorHandler: ShowInternalServerError): Future[Result] = {
     addressLookupService.initialiseAddressJourney(
       isAgent = isAgent,
       mode = mode
@@ -77,6 +80,33 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     }
   }
 
+  def handleRequest(isAgent: Boolean, mode: Mode)
+                   (implicit user: MtdItUser[_],
+                    errorHandler: ShowInternalServerError): Future[Result] = {
+
+    val journeyType = IncomeSourceJourneyType(Add, SelfEmployment)
+
+    sessionService.getMongo(journeyType).flatMap {
+      case Right(Some(sessionData)) =>
+        sessionData.addIncomeSourceData.flatMap(_.addressLookupId) match {
+          case Some(addressLookupId) =>
+            addressLookupService.fetchAddress(Some(addressLookupId)).flatMap {
+              case Right(_) =>
+                Future.successful(Redirect(addressLookupConfirmUrl(addressLookupId)))
+              case Left(_) =>
+                Logger("application").info(s"[AddBusinessAddressController] - addressLookupId expired/invalid, starting new ALF journey")
+                initialiseJourney(isAgent = isAgent, mode = mode)(user, errorHandler)
+            }
+
+          case None =>
+            initialiseJourney(isAgent = isAgent, mode = mode)(user, errorHandler)
+        }
+
+      case _ =>
+        initialiseJourney(isAgent = isAgent, mode = mode)(user, errorHandler)
+    }
+  }
+
   private def getRedirectUrl(isAgent: Boolean)(implicit user: MtdItUser[_]): String = {
     (if (isAgent) {
       routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
@@ -85,7 +115,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel])
+  private def setUpSession(addressLookUpResult: Either[Throwable, BusinessAddressModel], id: Option[String])
                           (implicit request: Request[_]): Future[Boolean] = {
     addressLookUpResult match {
       case Right(value) =>
@@ -93,7 +123,11 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
         sessionService.getMongo(journeyType).flatMap {
           case Right(Some(sessionData)) =>
             val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
-            val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(address = Some(value.address), countryCode = Some("GB"))
+            val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(
+              address = Some(value.address),
+              countryCode = Some("GB"),
+              addressLookupId = id
+            )
             val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
 
             sessionService.setMongoData(uiJourneySessionData)
@@ -105,12 +139,12 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
   }
 
 
-  def handleSubmitRequest(isAgent: Boolean, id: Option[IncomeSourceId], mode: Mode)
+  def handleSubmitRequest(isAgent: Boolean, id: Option[String], mode: Mode)
                          (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     val redirectUrl = getRedirectUrl(isAgent = isAgent)
     val redirect = Redirect(redirectUrl)
 
-    addressLookupService.fetchAddress(id).flatMap(setUpSession(_).flatMap {
+    addressLookupService.fetchAddress(id).flatMap(setUpSession(_, id).flatMap {
       case true => Future.successful(redirect)
       case false => Future.failed(new Exception("failed to set session data"))
     })
@@ -123,15 +157,12 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
   }
 
   def submit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user => {
-        val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-        handleSubmitRequest(isAgent = false, incomeSourceIdMaybe, mode = mode)(implicitly, itvcErrorHandler)
-      }
+    implicit user =>
+      handleSubmitRequest(isAgent = false, id, mode = mode)(implicitly, itvcErrorHandler)
   }
 
   def agentSubmit(id: Option[String], mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
     implicit mtdItUser =>
-      val incomeSourceIdMaybe = id.map(mkIncomeSourceId)
-      handleSubmitRequest(isAgent = true, incomeSourceIdMaybe, mode = mode)(implicitly, itvcErrorHandlerAgent)
+      handleSubmitRequest(isAgent = true, id, mode = mode)(implicitly, itvcErrorHandlerAgent)
   }
 }
