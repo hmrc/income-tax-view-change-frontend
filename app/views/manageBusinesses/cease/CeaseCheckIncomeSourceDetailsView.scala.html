@@ -74,14 +74,16 @@
             None,
             UkProperty,
             isAgent,
-            mode = CheckMode
+            mode = CheckMode,
+            isTriggeredMigration
         ).url
     } else {
         controllers.manageBusinesses.cease.routes.IncomeSourceEndDateController.show(
             None,
             ForeignProperty,
             isAgent,
-            mode = CheckMode
+            mode = CheckMode,
+            isTriggeredMigration
         ).url
     }
 }

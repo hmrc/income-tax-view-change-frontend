@@ -27,7 +27,6 @@ import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.NavBarFs
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
-import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -53,12 +52,11 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
     await(sessionService.deleteSession(Add))
   }
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): UIJourneySessionData =
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData =
     UIJourneySessionData(
       sessionId = testSessionId,
       journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
-      addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData),
-      triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration))
+      addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData)
     )
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
@@ -175,7 +173,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
                 IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, isTriggeredMigration = true)))
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
                 incomeSourceType match {

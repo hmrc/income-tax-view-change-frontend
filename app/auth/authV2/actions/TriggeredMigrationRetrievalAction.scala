@@ -17,7 +17,6 @@
 package auth.authV2.actions
 
 import auth.MtdItUser
-import auth.authV2.models.ItsaStatusRetrievalActionError
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxCalculationConnector
@@ -28,7 +27,7 @@ import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculat
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, ITSAStatusService}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -51,7 +50,6 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
   def apply(isTriggeredMigrationPage: Boolean): ActionRefiner[MtdItUser, MtdItUser] =
     new ActionRefiner[MtdItUser, MtdItUser] {
-
       implicit val executionContext: ExecutionContext = mcc.executionContext
 
       override protected def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
@@ -59,38 +57,24 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
         lazy val authAction = {
           (request.incomeSources.isConfirmedUser, isTriggeredMigrationPage) match {
-            case (true, false) =>
-              println(Console.CYAN_B + "Confirmed user " + request.incomeSources.channel + " accessing non-triggered migration page" + Console.RESET)
-              Future(Right(req))
-            case (true, true) =>
-              println(Console.MAGENTA_B + "Confirmed user " + request.incomeSources.channel + " accessing triggered migration page" + Console.RESET)
-              if (req.isAgent()) {
+            case (true, false) => Future(Right(req))
+            case (true, true) => if (req.isAgent()) {
               Future(Left(Redirect(controllers.routes.HomeController.showAgent())))
             } else {
               Future(Left(Redirect(controllers.routes.HomeController.show())))
             }
             case (false, _) =>
-              println(Console.YELLOW_B + "Unconfirmed user " + request.incomeSources.channel + " accessing page " + (if(isTriggeredMigrationPage) "triggered migration" else "non-triggered migration") + Console.RESET)
               isItsaStatusVoluntaryOrMandated().flatMap {
-                case Right(false) =>
-                  println(Console.RED_B + "User is not mandated or voluntary" + Console.RESET)
-                  Future(Right(req))
-                case Left(errorResult) =>
-                  println(Console.RED_B + "Error retrieving ITSA status during triggered migration retrieval" + Console.RESET)
-                  Future(Left(errorResult))
-                case Right(true) =>
-                  println(Console.GREEN_B + "User is mandated or voluntary, checking crystallisation status" + Console.RESET)
-                  isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).map {
-                    case Right(true) =>
-                      println(Console.GREEN_B + "Calculation is crystallised" + Console.RESET)
-                      Right(req)
+                case Right(false) => Future(Right(req))
+                case Left(errorResult) => Future(Left(errorResult))
+                case Right(true) => isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).map {
+                    case Right(true) => Right(req)
                     case Right(false) => if(isTriggeredMigrationPage) {
                       Right(req)
                     } else {
                       Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
                     }
-                    case Left(errorResult) =>
-                      Left(errorResult)
+                    case Left(errorResult) => Left(errorResult)
                   }
               }
           }
@@ -112,8 +96,8 @@ class TriggeredMigrationRetrievalAction @Inject()(
       Some(LATEST)
     ).map {
       case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT => Right(false)
-      case _: LiabilityCalculationError => Left(internalServerErrorFor(req, "Error retrieving liability calculation during triggered migration retrieval", None))
       case calcResponse: LiabilityCalculationResponse => Right(calcResponse.metadata.isCalculationCrystallised)
+      case _: LiabilityCalculationError => Left(internalServerErrorFor(req, "Error retrieving liability calculation during triggered migration retrieval"))
     }
   }
 
@@ -122,34 +106,27 @@ class TriggeredMigrationRetrievalAction @Inject()(
       Future(Left(if (user.isAgent()) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
 
     ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
-      case List(cyStatus, _) if cyStatus.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)) => Future(Right(true))
-      case List(cyStatus, _) if cyStatus.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary)) => Future(Right(false))
-      case statusDetail if statusDetail.nonEmpty => redirectBasedOnUser
-      case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval")))
+      case itsaStatusList => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.shortenTaxYearEnd) match {
+          case Some(status) if status.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)) => Future(Right(true))
+          case Some(status) if status.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary)) => Future(Right(false))
+          case None => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd) match {
+              case Some(_) => redirectBasedOnUser
+              case None => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
+            }
+        }
+      case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no status found")))
     }
   }
 
   private def internalServerErrorFor(
                                       request: MtdItUser[_],
-                                      context: String,
-                                      optError: Option[ItsaStatusRetrievalActionError] = None
+                                      context: String
                                     ): Result = {
 
-    val logPrefix = s"[TriggeredMigrationRetrievalAction][$context]"
-
-    (request.authUserDetails.affinityGroup, optError) match {
-      case (Some(Agent), Some(error)) =>
-        Logger(getClass).error(s"$logPrefix Agent error: ${error.logMessage}")
-        agentErrorHandler.showInternalServerError()(request)
-      case (Some(Individual), Some(error)) =>
-        Logger(getClass).error(s"$logPrefix Individual error: ${error.logMessage}")
-        individualErrorHandler.showInternalServerError()(request)
-      case (Some(Organisation), Some(error)) =>
-        Logger(getClass).error(s"$logPrefix Organisation error: ${error.logMessage}")
-        individualErrorHandler.showInternalServerError()(request)
-      case _ =>
-        Logger(getClass).error(s"$logPrefix Unknown user type or error")
-        individualErrorHandler.showInternalServerError()(request)
+    Logger(getClass).error(s"[TriggeredMigrationRetrievalAction][$context]")
+    request.authUserDetails.affinityGroup match {
+      case Some(Agent) => agentErrorHandler.showInternalServerError()(request)
+      case _ => individualErrorHandler.showInternalServerError()(request)
     }
   }
 }

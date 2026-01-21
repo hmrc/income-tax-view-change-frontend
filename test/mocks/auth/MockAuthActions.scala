@@ -146,9 +146,9 @@ trait MockAuthActions
     when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
       .thenReturn(Future.successful(List(
         ITSAStatusResponseModel(
-          taxYear = "2023",
+          taxYear = "2023-24",
           itsaStatusDetails = Some(List(
-            StatusDetail("ts", Voluntary, MtdItsaOptOut, None)
+            StatusDetail("", Voluntary, MtdItsaOptOut, None)
           ))
         )
       )))
