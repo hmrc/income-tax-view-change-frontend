@@ -136,8 +136,8 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
         setupMockGetFinancialDetails(2023, testNino)(userNoPoaDetails)
 
-        val f = newFixture(LocalDate.of(2023, 4, 20))
-        val result = f.testClaimToAdjustService.getPoaTaxYearForEntryPoint(testUserNino)
+        val (service, _) = newFixture(LocalDate.of(2023, 4, 20))
+        val result = service.getPoaTaxYearForEntryPoint(testUserNino)
 
         result.futureValue shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
       }
