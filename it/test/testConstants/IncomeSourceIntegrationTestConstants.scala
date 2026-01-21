@@ -1830,7 +1830,7 @@ object IncomeSourceIntegrationTestConstants {
   )
 
 
-  val businessOnlyResponseWithUnknownAddressName: IncomeSourceDetailsResponse = IncomeSourceDetailsModel(
+  val businessOnlyResponseWithUnknownAddressName: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     testNino,
     testMtdItId,
     businesses = List(
