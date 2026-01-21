@@ -37,7 +37,7 @@ import org.scalatest.matchers.must.Matchers
 import scala.concurrent.Future
 
 
-class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionService with Matchers {
+class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionService {
 
   val validBusinessTrade: String = "Test Business Trade"
   val validBusinessName: String = "Test Business Name"
@@ -143,7 +143,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
                 status(result) shouldBe SEE_OTHER
                 val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
-                  status(result) mustBe SEE_OTHER
+                  status(result) shouldBe SEE_OTHER
                   val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
                     controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
                   } else {

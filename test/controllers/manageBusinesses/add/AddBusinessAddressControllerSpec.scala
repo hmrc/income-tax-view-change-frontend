@@ -41,7 +41,7 @@ import scala.concurrent.Future
 
 
 class AddBusinessAddressControllerSpec extends MockAuthActions
-  with MockSessionService with MockDateService with Matchers{
+  with MockSessionService with MockDateService {
 
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
@@ -100,7 +100,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some("Sample location")
+              redirectLocation(result) shouldBe Some("Sample location")
             }
 
             "session data exists but addressLookupId is missing" in {
@@ -115,7 +115,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some("Sample location")
+              redirectLocation(result) shouldBe Some("Sample location")
             }
 
             "mongo call fails" in {
@@ -130,7 +130,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some("Sample location")
+              redirectLocation(result) shouldBe Some("Sample location")
             }
           }
 
@@ -151,7 +151,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some(expectedUrl)
+              redirectLocation(result) shouldBe Some(expectedUrl)
 
               verify(mockAddressLookupService, never).initialiseAddressJourney(any(), any())(any(), any())
             }
