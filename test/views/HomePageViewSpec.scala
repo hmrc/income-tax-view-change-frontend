@@ -197,7 +197,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     "have an updates tile" which {
       "has a heading" in new Setup {
-        getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Next updates due")
+        getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Your submission deadlines")
       }
       "has the date of the next update due" in new Setup {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
@@ -215,7 +215,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "is empty except for the title" when {
         "user has no open obligations" in new Setup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-          getElementById("updates-tile").map(_.text()) shouldBe Some("Next updates due View update deadlines")
+          getElementById("updates-tile").map(_.text()) shouldBe Some("Your submission deadlines View update deadlines")
         }
       }
       "has a link to view and manage updates - Opt Out" in new Setup(nextUpdatesTileViewModel = viewModelOptOut) {

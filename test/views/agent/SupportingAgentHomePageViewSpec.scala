@@ -140,7 +140,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         getElementById("payments-tile") shouldBe None
       }
 
-      "have a next updates due tile" which {
+      "have a your submission deadlines tile" which {
         "has a heading" in new TestSetup {
           getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(messages("home.updates.heading"))
         }
@@ -162,7 +162,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         }
         "is empty except for the title" when {
           "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-            getElementById("updates-tile").map(_.text()) shouldBe Some("Next updates due View update deadlines")
+            getElementById("updates-tile").map(_.text()) shouldBe Some("Your submission deadlines View update deadlines")
           }
         }
         "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {

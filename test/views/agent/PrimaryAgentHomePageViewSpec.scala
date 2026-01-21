@@ -218,9 +218,9 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         getTextOfElementById("accrues-interest-warning") shouldBe Some(dailyInterestMessage)
       }
 
-      "have a next updates due tile" which {
+      "have a your submission deadlines tile" which {
         "has a heading" in new TestSetup {
-          getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Next updates due")
+          getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Your submission deadlines")
         }
         "has content of the next update due" which {
           "is overdue" in new TestSetup(nextUpdatesTileViewModel = viewModelOneOverdue) {
@@ -240,7 +240,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
         "is empty except for the title" when {
           "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-            getElementById("updates-tile").map(_.text()) shouldBe Some("Next updates due View update deadlines")
+            getElementById("updates-tile").map(_.text()) shouldBe Some("Your submission deadlines View update deadlines")
           }
         }
         "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {
