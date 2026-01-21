@@ -60,7 +60,6 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
 
   def show(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit user =>
-      println(Console.MAGENTA + s"[IncomeSourceCheckDetailsController][show] isTriggeredMigration: $isTriggeredMigration" + Console.RESET)
       handleRequest(
         sources = user.incomeSources,
         isAgent = false,
@@ -176,14 +175,11 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val redirectUrl: (Boolean, IncomeSourceType, Boolean) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean) => {
         if (isTriggeredMigration) {
-          println(Console.MAGENTA + s"[IncomeSourceCheckDetailsController][handleSubmit] Redirecting to Check HMRC Records page for triggered migration" + Console.RESET)
           controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent, Some(TriggeredMigrationAdded(incomeSourceType).toString)).url
         } else {
           controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent, isChange = false, incomeSourceType).url
         }
       }
-
-      println(Console.MAGENTA + s"[IncomeSourceCheckDetailsController][handleSubmit] isTriggeredMigration: $isTriggeredMigration" + Console.RESET)
 
       val viewModel = getViewModel(incomeSourceType, sessionData)
 

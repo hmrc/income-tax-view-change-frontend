@@ -84,16 +84,14 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
           }
         case None =>
           Future.successful {
-            //TODO: will need to replace the hard coded false when we have backend data for triggered migration
-            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
+            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType, isTriggeredMigration))
           }
       }
     }.recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent] "}" +
           s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage} - ${ex.getCause}")
-        //TODO: will need to replace the hard coded false when we have backend data for triggered migration
-        Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
+        Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType, isTriggeredMigration))
     }
 
   def getViewModel(incomeSourceType: IncomeSourceType, endDateOpt: Option[LocalDate], incomeSourceIdOpt: Option[String])
@@ -143,13 +141,10 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
     withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
       val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
-      val triggeredMigrationOpt = sessionData.triggeredMigrationSessionData.map(_.isTriggeredMigrationJourney)
-
-      println(Console.CYAN + s"Triggered Migration Opt: $triggeredMigrationOpt" + Console.RESET)
 
       incomeSourceType match {
-        case SelfEmployment => ceaseSelfEmployment(incomeSourceIdOpt, endDateOpt, isAgent, triggeredMigrationOpt)(implicitly, errorHandler)
-        case _ => ceaseProperty(endDateOpt, incomeSourceType, isAgent, triggeredMigrationOpt)(implicitly, errorHandler)
+        case SelfEmployment => ceaseSelfEmployment(incomeSourceIdOpt, endDateOpt, isAgent, isTriggeredMigration)(implicitly, errorHandler)
+        case _ => ceaseProperty(endDateOpt, incomeSourceType, isAgent, isTriggeredMigration)(implicitly, errorHandler)
       }
     }.recover {
       case ex: Exception =>
@@ -158,21 +153,21 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
     }
   }
 
-  private def ceaseSelfEmployment(incomeSourceIdOpt: Option[String], endDateOpt: Option[LocalDate], isAgent: Boolean, triggeredMigrationOpt: Option[Boolean])
+  private def ceaseSelfEmployment(incomeSourceIdOpt: Option[String], endDateOpt: Option[LocalDate], isAgent: Boolean, isTriggeredMigration: Boolean)
                                  (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    (incomeSourceIdOpt, endDateOpt, triggeredMigrationOpt) match {
-      case (Some(incomeSourceId), Some(endDate), Some(isTriggeredMigration)) => updateCessationDate(endDate, SelfEmployment, IncomeSourceId(incomeSourceId), isAgent, isTriggeredMigration)
+    (incomeSourceIdOpt, endDateOpt) match {
+      case (Some(incomeSourceId), Some(endDate)) => updateCessationDate(endDate, SelfEmployment, IncomeSourceId(incomeSourceId), isAgent, isTriggeredMigration)
       case _ => Future.successful {
-        Logger("application").error(s"Missing income source id, end date or triggered migration data")
+        Logger("application").error(s"Missing income source id or end date.")
         errorHandler.showInternalServerError()
       }
     }
   }
 
-  private def ceaseProperty(endDateOpt: Option[LocalDate], incomeSourceType: IncomeSourceType, isAgent: Boolean, triggeredMigrationOpt: Option[Boolean])
+  private def ceaseProperty(endDateOpt: Option[LocalDate], incomeSourceType: IncomeSourceType, isAgent: Boolean, isTriggeredMigration: Boolean)
                            (implicit user: MtdItUser[_],  errorHandler: ShowInternalServerError): Future[Result] = {
-    (endDateOpt, triggeredMigrationOpt) match {
-      case (Some(endDate), Some(isTriggeredMigration)) =>
+    (endDateOpt) match {
+      case (Some(endDate)) =>
         getActiveProperty(incomeSourceType) match {
           case Some(property) =>
             val incomeSourceId = IncomeSourceId(property.incomeSourceId)
@@ -184,7 +179,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
             }
         }
       case _ =>
-        Logger("application").error(s"Missing end date or triggered migration flag.")
+        Logger("application").error(s"Missing end date.")
         Future.successful {
           errorHandler.showInternalServerError()
         }
@@ -195,9 +190,6 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
   def updateCessationDate(cessationDate: LocalDate, incomeSourceType: IncomeSourceType, incomeSourceId: IncomeSourceId, isAgent: Boolean, isTriggeredMigration: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
     val redirectCall = getRedirectCall(isAgent, incomeSourceType, isTriggeredMigration)
-
-    println(Console.MAGENTA + redirectCall + Console.RESET)
-    println(Console.YELLOW + isTriggeredMigration + Console.RESET)
 
     updateIncomeSourceService.updateCessationDate(user.nino, incomeSourceId.value, cessationDate).flatMap {
       case Right(_) =>
@@ -228,7 +220,6 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
 
   def submit(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit request =>
-      println(Console.CYAN + s"Submit called with isTriggeredMigration: $isTriggeredMigration" + Console.RESET)
       handleSubmitRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType,

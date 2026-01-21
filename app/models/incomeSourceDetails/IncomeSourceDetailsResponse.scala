@@ -18,6 +18,7 @@ package models.incomeSourceDetails
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.TriggeredMigration.{CustomerLed, HmrcConfirmed}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import play.api.libs.json.{Format, JsValue, Json}
@@ -123,7 +124,7 @@ case class IncomeSourceDetailsModel(
     properties.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
 
   def isConfirmedUser: Boolean = {
-    Set("Customer-led", "Hmrc-led-confirmed").contains(channel)
+    Set(CustomerLed.value, HmrcConfirmed.value).contains(channel)
   }
 }
 

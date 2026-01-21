@@ -16,7 +16,7 @@
 
 package controllers.triggeredMigration
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.MTDIndividual
 import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
@@ -31,7 +31,7 @@ import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateServiceInterface
 import services.triggeredMigration.TriggeredMigrationService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed}
 
 import scala.concurrent.Future
 
@@ -42,7 +42,8 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
       api.inject.bind[TriggeredMigrationService].toInstance(mockTriggeredMigrationService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+      api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
     ).build()
 
   lazy val testController = app.injector.instanceOf[CheckHmrcRecordsController]
@@ -71,11 +72,12 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             enable(TriggeredMigration)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction()
+            mockTriggeredMigrationRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel)
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-            ).thenReturn(Future(singleBusinessIncome))
+            ).thenReturn(Future(singleBusinessIncomeUnconfirmed))
 
             val result = action(fakeRequest)
 
@@ -87,11 +89,12 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             enable(TriggeredMigration)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction()
+            mockTriggeredMigrationRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationCeased)))
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-            ).thenReturn(Future(singleBusinessIncome))
+            ).thenReturn(Future(singleBusinessIncomeUnconfirmed))
 
             val result = action(fakeRequest)
 
@@ -103,11 +106,12 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             enable(TriggeredMigration)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction()
+            mockTriggeredMigrationRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationAdded(SelfEmployment))))
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-            ).thenReturn(Future(singleBusinessIncome))
+            ).thenReturn(Future(singleBusinessIncomeUnconfirmed))
 
             val result = action(fakeRequest)
 
@@ -123,7 +127,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
 
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
-            ).thenReturn(Future(singleBusinessIncome))
+            ).thenReturn(Future(singleBusinessIncomeUnconfirmed))
 
             val result = action(fakeRequest)
 

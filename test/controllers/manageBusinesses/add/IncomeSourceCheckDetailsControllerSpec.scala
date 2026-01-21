@@ -83,7 +83,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
   List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdRole =>
       s"show${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
-        val action = if (mtdRole == MTDIndividual) testCheckDetailsController.show(incomeSourceType) else testCheckDetailsController.showAgent(incomeSourceType)
+        val action = if (mtdRole == MTDIndividual) testCheckDetailsController.show(incomeSourceType, false) else testCheckDetailsController.showAgent(incomeSourceType, false)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "render the check details page" when {
@@ -155,7 +155,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
       }
 
       s"submit${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
-        val action = if (mtdRole == MTDIndividual) testCheckDetailsController.submit(incomeSourceType) else testCheckDetailsController.submitAgent(incomeSourceType)
+        val action = if (mtdRole == MTDIndividual) testCheckDetailsController.submit(incomeSourceType, false) else testCheckDetailsController.submitAgent(incomeSourceType, false)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           "redirect to IncomeSourceReportingFrequencyController" when {
