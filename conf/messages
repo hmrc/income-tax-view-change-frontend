@@ -2716,7 +2716,7 @@ optout.taxYearQuestion.radioQuestion.currentYear.multiYearCYFollowedByAnnual    
 ## opt out single year - followed by mandated
 optout.taxYearQuestion.heading.previousYear.singleYearFollowedByMandated                  = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
 optout.taxYearQuestion.title.previousYear.singleYearFollowedByMandated                    = Opt out of Making Tax Digital for Income Tax for the {0} to {1} tax year
-optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated                    = This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer.
+optout.taxYearQuestion.desc1.previousYear.singleYearFollowedByMandated                    = You can only opt out for the {0} to {1} tax year.
 optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandated                    = Even if you continue, from 6 April {0}, you will be required to go back to using Making Tax Digital for Income Tax.
 optout.taxYearQuestion.inset.previousYear.singleYearFollowedByMandatedWithUpdates         = If you continue, from 6 April {0}, you will be required to go back to using Making Tax Digital for Income Tax.
 optout.taxYearQuestion.radioQuestion.previousYear.singleYearFollowedByMandated            = Do you still want to opt out for the {0} to {1} tax year?

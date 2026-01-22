@@ -234,8 +234,8 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearHeading
       }
       "have the correct description" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
-        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
-        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc2
+        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc1
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc2
       }
       "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Annual) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearQuestion
@@ -468,8 +468,8 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
         pageDocument.select("h1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearHeading
       }
       "have the correct description" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Voluntary) {
-        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc1
-        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearDesc2
+        pageDocument.getElementById("opt-out-question-desc-1").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc1
+        pageDocument.getElementById("opt-out-question-desc-2").text() shouldBe OptOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc2
       }
       "have the correct radio question" in new Setup("previous", OneYearOptOutFollowedByAnnual, 0, Voluntary, Annual, Voluntary) {
         pageDocument.getElementsByClass("govuk-fieldset__legend--m").text() shouldBe OptOutTaxYearQuestionMessages.previousSingleYearQuestion

@@ -86,7 +86,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
     // Single Year followed by Mandated
     val previousSingleYearHeading = "Opt out of Making Tax Digital for Income Tax for the 2021 to 2022 tax year"
     val previousSingleYearTitle = "Opt out of Making Tax Digital for Income Tax for the 2024 to 2025 tax year - Manage your Self Assessment - GOV.UK"
-    val previousSingleYearDesc1 = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
+    val previousSingleYearDesc1 = "You can only opt out for the 2021 to 2022 tax year."
     val previousSingleYearDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val previousSingleYearQuestion = "Do you still want to opt out for the 2021 to 2022 tax year?"
 
@@ -191,8 +191,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           result should have(
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
-            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc1),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc2),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
         }
@@ -462,8 +462,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           result should have(
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
-            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc1),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc2),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
         }
