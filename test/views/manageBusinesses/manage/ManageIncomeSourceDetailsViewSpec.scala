@@ -21,7 +21,7 @@ import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarter
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import play.twirl.api.HtmlFormat
+import play.twirl.api.{Html, HtmlFormat}
 import testConstants.BusinessDetailsTestConstants._
 import testUtils.{TestSupport, ViewSpec}
 import views.constants.ManageIncomeSourceDetailsViewConstants._
@@ -387,7 +387,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       def insetText()(implicit document: Document) = document.getElementsByClass("up-to-two-tax-years").text()
 
-      insetText shouldBe ""
+      insetText() shouldBe ""
     }
 
     "render the updated reporting frequency sentence when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
@@ -418,7 +418,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       )
 
 
-      val view = manageIncomeSourceDetailsView(
+      val view: Html = manageIncomeSourceDetailsView(
         testViewModel,
         isAgent = false,
         showStartDate = true,
@@ -427,7 +427,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         backUrl = backUrl(false)
       )(messages, implicitly)
 
-      implicit val document = Jsoup.parse(contentAsString(view))
+      implicit val document: Document = Jsoup.parse(contentAsString(view))
 
       val expectedRow1 = s"Using Making Tax Digital for Income Tax for ${taxYear1.toInt - 1} to $taxYear1"
       val expectedRow2 = s"Using Making Tax Digital for Income Tax for ${taxYear2.toInt - 1} to $taxYear2"
@@ -460,7 +460,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       )
 
 
-      val view = manageIncomeSourceDetailsView(
+      val view: Html = manageIncomeSourceDetailsView(
         testViewModel,
         isAgent = false,
         showStartDate = true,
@@ -469,7 +469,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         backUrl = backUrl(false)
       )(messages, implicitly)
 
-      implicit val document = Jsoup.parse(contentAsString(view))
+      val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+      implicit val document: Document = parsedDocument
+
 
       val allRows = summaryListRowKeys().eachText()
 

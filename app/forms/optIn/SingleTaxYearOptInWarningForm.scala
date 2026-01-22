@@ -36,7 +36,9 @@ object SingleTaxYearOptInWarningForm {
       mapping(
         choiceField ->
           optional(boolean).verifying(noSelectionErrorMessage, optionalChoice => optionalChoice.nonEmpty)
-      )(SingleTaxYearOptInWarningForm.apply)(SingleTaxYearOptInWarningForm.unapply)
+      )
+      (choice => SingleTaxYearOptInWarningForm(choice))
+      (form => Some(form.choice))
     )
   }
 }

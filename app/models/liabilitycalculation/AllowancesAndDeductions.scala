@@ -44,7 +44,20 @@ object AllowancesAndDeductions {
       (JsPath \ "paymentsToTradeUnionsForDeathBenefits").writeNullable[BigDecimal] and
       (JsPath \ "grossAnnuityPayments").writeNullable[BigDecimal] and
       (JsPath \ "pensionContributions").writeNullable[BigDecimal]
-    ) (unlift(AllowancesAndDeductions.unapply))
+    ) { a =>
+    (
+      a.personalAllowance,
+      a.marriageAllowanceTransferOut,
+      a.reducedPersonalAllowance,
+      a.giftOfInvestmentsAndPropertyToCharity,
+      a.lossesAppliedToGeneralIncome,
+      a.qualifyingLoanInterestFromInvestments,
+      a.postCessationTradeReceipts,
+      a.paymentsToTradeUnionsForDeathBenefits,
+      a.grossAnnuityPayments,
+      a.pensionContributions
+    )
+  }
 
   implicit val reads: Reads[AllowancesAndDeductions] = (
     (JsPath \ "personalAllowance").readNullable[Int] and

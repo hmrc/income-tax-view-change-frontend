@@ -21,7 +21,7 @@ import testUtils.TestSupport
 
 class IncomeSourceReportingMethodFormSpec extends TestSupport {
 
-  lazy val form: Form[IncomeSourceReportingMethodForm] = IncomeSourceReportingMethodForm.form
+  lazy val form: Form[IncomeSourceReportingMethodForm] = IncomeSourceReportingMethodFormMapping.form
 
   "IncomeSourceReportingMethodForm" should {
 
@@ -78,10 +78,10 @@ class IncomeSourceReportingMethodFormSpec extends TestSupport {
         taxYear2ReportingMethod = Some("A")
       )
 
-      val unapplied = IncomeSourceReportingMethodForm.unapply(formValues)
-
-      unapplied.get shouldBe ((Some("A"), Some("Q"), Some("2021"), None, Some("2022"), Some("A")))
-    }
+      formValues match {
+        case IncomeSourceReportingMethodForm(nt1, nt2, t1, t1rm, t2, t2rm) =>
+          (nt1, nt2, t1, t1rm, t2, t2rm) shouldBe (Some("A"), Some("Q"), Some("2021"), None, Some("2022"), Some("A"))
+    }}
 
     "return None for a case class with None values" in {
       val formValues = IncomeSourceReportingMethodForm(
@@ -93,9 +93,10 @@ class IncomeSourceReportingMethodFormSpec extends TestSupport {
         taxYear2ReportingMethod = None
       )
 
-      val unapplied = IncomeSourceReportingMethodForm.unapply(formValues)
-
-      unapplied.get shouldBe (None, None, None, None, None, None)
+      formValues match {
+        case IncomeSourceReportingMethodForm(nt1, nt2, t1, t1rm, t2, t2rm) =>
+          (nt1, nt2, t1, t1rm, t2, t2rm) shouldBe (None, None, None, None, None, None)
+      }
     }
   }
 

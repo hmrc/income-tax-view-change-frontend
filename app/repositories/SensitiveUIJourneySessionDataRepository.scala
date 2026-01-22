@@ -63,7 +63,7 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
         Indexes.ascending("lastUpdated"),
         IndexOptions()
           .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+          .expireAfter(appConfig.cacheTtl.longValue, TimeUnit.SECONDS)
       )
     ),
     replaceIndexes = true

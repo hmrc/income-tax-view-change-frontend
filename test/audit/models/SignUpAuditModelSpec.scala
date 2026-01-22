@@ -50,14 +50,14 @@ class SignUpAuditModelSpec extends TestSupport {
 
         auditModel.auditType shouldBe "SignUpTaxYearsPage"
         auditModel.transactionName shouldBe "sign-up-tax-years-page"
-        auditModel.detail shouldBe Json.obj(
+       assertJsonEquals(auditModel.detail, Json.obj(
           "nino" -> tsTestUser.nino,
           "mtditid" -> tsTestUser.mtditid,
           "saUtr" -> tsTestUser.saUtr,
           "credId" -> tsTestUser.credId,
           "userType" -> tsTestUser.userType,
           "signUpTaxYears" -> Json.arr("2023-2024", "2024-2025")
-        )
+        ))
       }
 
       "create an audit model for single year" in {
@@ -66,14 +66,14 @@ class SignUpAuditModelSpec extends TestSupport {
 
         auditModel.auditType shouldBe "SignUpTaxYearsPage"
         auditModel.transactionName shouldBe "sign-up-tax-years-page"
-        auditModel.detail shouldBe Json.obj(
+        assertJsonEquals(auditModel.detail, Json.obj(
           "nino" -> tsTestUser.nino,
           "mtditid" -> tsTestUser.mtditid,
           "saUtr" -> tsTestUser.saUtr,
           "credId" -> tsTestUser.credId,
           "userType" -> tsTestUser.userType,
           "signUpTaxYears" -> Json.arr("2023-2024")
-        )
+        ))
       }
     }
   }

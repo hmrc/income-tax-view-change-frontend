@@ -76,23 +76,27 @@ class IncomeSourceEndDateForm @Inject()(dateService: DateService)(implicit val a
     }
 
     Form(
-      mapping("income-source-end-date" ->
-        tuple(
-          "day" -> default(text(), ""),
-          "month" -> default(text(), ""),
-          "year" -> default(text(), "")
-        )
-          .verifying(firstError(
-            checkRequiredFields(incomeSourceType),
-            validDate("dateForm.error.invalid")
-          )).transform[LocalDate](
-            {
-              case (day, month, year) =>
-                LocalDate.of(year.toInt, month.toInt, day.toInt)
-            },
-            date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
-          ).verifying(firstError(dateConstraints: _*))
-      )(DateFormElement.apply)(DateFormElement.unapply))
+      mapping("income-source-end-date" -> tuple(
+        "day" -> default(text(), ""),
+        "month" -> default(text(), ""),
+        "year" -> default(text(), ""))
+        .verifying(firstError(
+          checkRequiredFields(incomeSourceType),
+          validDate("dateForm.error.invalid")
+        )).transform[LocalDate](
+        {
+          case (day, month, year) =>
+            LocalDate.of(year.toInt, month.toInt, day.toInt)
+        },
+        date => (date.getDayOfMonth.toString, date.getMonthValue.toString, date.getYear.toString)
+      ).verifying(firstError(dateConstraints: _*))
+      )(
+        date =>
+          DateFormElement(date)
+      )(
+        form =>
+          Some(form.date)
+      ))
   }
 
   private def dateMustBeCompleteKey(incomeSourceType: IncomeSourceType): String = incomeSourceType match {

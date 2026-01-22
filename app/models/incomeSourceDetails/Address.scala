@@ -59,10 +59,6 @@ object SensitiveAddress {
   implicit def sensitiveStringFormat(implicit crypto: Encrypter with Decrypter): Format[SensitiveString] =
     JsonEncryption.sensitiveEncrypterDecrypter(SensitiveString.apply)
 
-  implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddress] = {
-        ((__ \ "lines"    ).format[Seq[SensitiveString]]
-      ~  (__ \ "postcode" ).formatNullable[SensitiveString]
-      )(SensitiveAddress.apply, unlift(SensitiveAddress.unapply)
-    )
-  }
+  implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddress] =
+    Json.format[SensitiveAddress]
 }

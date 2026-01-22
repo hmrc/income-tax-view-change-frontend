@@ -23,6 +23,7 @@ import helpers.ComponentSpecBase
 import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.mongodb.scala.bson.BsonDocument
+import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 class UIJourneySessionDataISpec extends ComponentSpecBase {

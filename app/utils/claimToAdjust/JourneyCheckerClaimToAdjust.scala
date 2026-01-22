@@ -17,7 +17,6 @@
 package utils.claimToAdjust
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney._
 import enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.Logger

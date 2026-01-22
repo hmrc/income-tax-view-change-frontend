@@ -38,7 +38,9 @@ object SignUpTaxYearQuestionForm {
       mapping(
         response -> optional(text)
           .verifying(noSelectionErrorMessage, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
-      )(SignUpTaxYearQuestionForm.apply)(SignUpTaxYearQuestionForm.unapply)
+      )
+      (response => SignUpTaxYearQuestionForm(response))
+      (form => Some(form.response))
     )
   }
 }

@@ -110,7 +110,7 @@ case class ForecastIncomeAuditModel(user: MtdItUser[_], endOfYearEstimate: EndOf
   override val detail: JsValue = {
     userAuditDetails(user) ++
       Json.obj() ++
-      ("totalForecastIncome", totalEstimatedIncome) ++
+      Json.obj("totalForecastIncome"-> totalEstimatedIncome) ++
       Json.obj("profitFrom" -> getProfitFromIncome) ++
       Json.obj("payFrom" -> getPayFromIncomeType) ++
       getAllOtherIncomeType

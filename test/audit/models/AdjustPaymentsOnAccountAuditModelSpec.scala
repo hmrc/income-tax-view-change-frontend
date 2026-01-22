@@ -71,7 +71,7 @@ class AdjustPaymentsOnAccountAuditModelSpec extends TestSupport {
     }
 
     "have the correct detail for the audit event" in {
-      getAdjustPaymentsOnAccountAuditModel(true,isAgent = false).detail shouldBe detailsAuditDataSuccess(Individual)
+      assertJsonEquals(getAdjustPaymentsOnAccountAuditModel(true,isAgent = false).detail, detailsAuditDataSuccess(Individual))
     }
 
     "have the correct agent detail for the audit event" in {
@@ -89,7 +89,7 @@ class AdjustPaymentsOnAccountAuditModelSpec extends TestSupport {
     }
 
     "have the correct detail for the audit event" in {
-      getAdjustPaymentsOnAccountAuditModel(false,isAgent = false).detail shouldBe detailsAuditDataFailure(Individual)
+      assertJsonEquals(getAdjustPaymentsOnAccountAuditModel(false,isAgent = false).detail, detailsAuditDataFailure(Individual))
     }
 
     "have the correct detail for the agent audit event" in {

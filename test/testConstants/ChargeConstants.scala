@@ -27,7 +27,7 @@ import java.time.LocalDate
 
 trait ChargeConstants {
 
-  implicit val dateService: DateServiceInterface
+  implicit def dateService: DateServiceInterface
 
   def chargeItemModel(taxYear: TaxYear = TaxYear.forYearEnd(2018),
                       transactionId: String = id1040000123,

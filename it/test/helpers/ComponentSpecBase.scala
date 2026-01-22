@@ -120,7 +120,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     override def getCurrentTaxYearEnd: Int = 2023
   }
 
-  override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
+  override val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
   val titleInternalServer: String = "standardError.heading"
   val titleTechError = "Sorry, we are experiencing technical difficulties - 500"

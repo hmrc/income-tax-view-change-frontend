@@ -20,10 +20,17 @@ import controllers.constants.IncomeSourceAddedControllerConstants.testObligation
 import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
 import models.liabilitycalculation.{Message, Messages, ReliefsClaimed, StudentLoan}
-import testConstants.NewCalcBreakdownUnitTestConstants._
-import testUtils.UnitSpec
+import org.scalatest.OptionValues
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.matchers.should.Matchers
+import testConstants.NewCalcBreakdownUnitTestConstants.*
+import org.scalatest.matchers.should.Matchers.*
+import org.scalatest.wordspec.AnyWordSpec
+import scala.language.implicitConversions
 
-class TaxDueSummaryViewModelSpec extends UnitSpec {
+class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionValues with ScalaFutures {
+
+  given CanEqual[TaxDueSummaryViewModel, TaxDueSummaryViewModel] = CanEqual.derived
 
   "TaxDueSummaryViewModel model" when {
     "create a minimal TaxDueSummaryViewModel when there is a minimal Calculation response" in {
@@ -116,7 +123,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxTakenOffTradingIncome = Some(563.12)
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
-          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00)),
+          transitionProfitRow = TransitionProfitRow(Some(BigDecimal(700.00)), Some(BigDecimal(3000.00))),
           finalDeclarationOrTaxReturnIsSubmitted = true
         )
 
@@ -187,7 +194,7 @@ class TaxDueSummaryViewModelSpec extends UnitSpec {
             taxTakenOffTradingIncome = Some(563.12)
           ),
           giftAidTaxChargeWhereBasicRateDiffers = Some(6565.99),
-          transitionProfitRow = TransitionProfitRow(Some(700.00), Some(3000.00)),
+          transitionProfitRow = TransitionProfitRow(Some(BigDecimal(700.00)), Some(BigDecimal(3000.00))),
           finalDeclarationOrTaxReturnIsSubmitted = true
         )
 

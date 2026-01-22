@@ -22,7 +22,7 @@ import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
-import services.agent.ClientDetailsService._
+import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails, ClientDetailsFailure}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -44,7 +44,7 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
             Future.successful(Left(BusinessDetailsNotFound))
           case _ =>
             Logger("application").error(s"[ClientDetailsService][checkClientDetails] error response from Income Source Details")
-            Future.successful(Left(APIError))
+            Future.successful(Left(ClientDetailsService.APIError))
         }
       case CitizenDetailsModel(_, _, None) =>
         Logger("application").warn("[ClientDetailsService][checkClientDetails] - No NINO for this UTR")
@@ -54,7 +54,7 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
         Future.successful(Left(CitizenDetailsNotFound))
       case _ =>
         Logger("application").error("[ClientDetailsService][checkClientDetails] error response from Citizen Details")
-        Future.successful(Left(APIError))
+        Future.successful(Left(ClientDetailsService.APIError))
     }
 }
 
@@ -62,11 +62,11 @@ object ClientDetailsService {
 
   sealed trait ClientDetailsFailure
 
-  final case object BusinessDetailsNotFound extends ClientDetailsFailure
+   case object BusinessDetailsNotFound extends ClientDetailsFailure
 
-  final case object CitizenDetailsNotFound extends ClientDetailsFailure
+   case object CitizenDetailsNotFound extends ClientDetailsFailure
 
-  final case object APIError extends ClientDetailsFailure
+   case object APIError extends ClientDetailsFailure
 
   final case class ClientDetails(firstName: Option[String], lastName: Option[String], nino: String, mtdItId: String)
 

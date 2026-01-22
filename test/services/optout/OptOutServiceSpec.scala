@@ -19,23 +19,23 @@ package services.optout
 import audit.AuditingService
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
-import mocks.services._
+import mocks.services.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus._
+import models.itsaStatus.ITSAStatus.*
 import models.itsaStatus.{StatusDetail, StatusReason}
-import models.optout._
+import models.optout.*
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, same}
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
 import play.mvc.Http.Status.NO_CONTENT
 import repositories.OptOutSessionDataRepository
-import services.NextUpdatesService
+import services.{DateService, NextUpdatesService}
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import services.optout.OptOutProposition.createOptOutProposition
-import services.optout.OptOutTestSupport._
+import services.optout.OptOutTestSupport.*
 import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
@@ -58,6 +58,7 @@ class OptOutServiceSpec
   val mockITSAStatusUpdateConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
   val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val mockRepository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   val mockAuditingService: AuditingService = mock(classOf[AuditingService])
 
@@ -78,7 +79,7 @@ class OptOutServiceSpec
       itsaStatusService = mockITSAStatusService,
       calculationListService = mockCalculationListService,
       nextUpdatesService = mockNextUpdatesService,
-      dateService = mockDateService,
+      dateService = mockDateServiceInjected,
       optOutRepository = mockRepository,
       auditingService = mockAuditingService
     )
@@ -113,7 +114,7 @@ class OptOutServiceSpec
   }
 
   private def stubCurrentTaxYear(currentYear: TaxYear): Unit = {
-    when(mockDateService.getCurrentTaxYear).thenReturn(currentYear)
+    when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(currentYear)
   }
 
   private def stubItsaStatuses(previousYear: TaxYear, previousYearStatus: Value,
@@ -404,7 +405,7 @@ class OptOutServiceSpec
 
         setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
         setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-        setupMockGetCurrentTaxYear(taxYear)
+        setupMockGetCurrentTaxYear(mockDateServiceInjected)(taxYear)
 
         val expected = NextUpdatesQuarterlyReportingContentChecks(
           currentYearItsaStatus = true,
@@ -419,7 +420,7 @@ class OptOutServiceSpec
       "return NextUpdatesQuarterlyReportingContentCheck" in {
         setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.failed(error))
         setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.successful(yearToStatus))
-        setupMockGetCurrentTaxYear(taxYear)
+        setupMockGetCurrentTaxYear(mockDateServiceInjected)(taxYear)
 
         service.nextUpdatesPageChecksAndProposition().failed.map { ex =>
 
@@ -433,7 +434,7 @@ class OptOutServiceSpec
       "return NextUpdatesQuarterlyReportingContentCheck" in {
         setupMockIsTaxYearCrystallisedCall(previousTaxYear)(Future.successful(crystallised))
         setupMockGetStatusTillAvailableFutureYears(previousTaxYear)(Future.failed(error))
-        setupMockGetCurrentTaxYear(taxYear)
+        setupMockGetCurrentTaxYear(mockDateServiceInjected)(taxYear)
 
         service.nextUpdatesPageChecksAndProposition().failed.map { ex =>
           ex shouldBe a[RuntimeException]
@@ -585,7 +586,7 @@ class OptOutServiceSpec
 
           val taxYear = TaxYear(2025, 2026)
 
-          when(mockDateService.getCurrentTaxYear).thenReturn(taxYear)
+          when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(taxYear)
 
           when(mockCalculationListService.isTaxYearCrystallised(any())(any(), any()))
             .thenReturn(Future.successful(false))
@@ -616,7 +617,7 @@ class OptOutServiceSpec
 
         val taxYear = TaxYear(2025, 2026)
 
-        when(mockDateService.getCurrentTaxYear).thenReturn(taxYear)
+        when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(taxYear)
 
         when(mockCalculationListService.isTaxYearCrystallised(any())(any(), any()))
           .thenReturn(Future.successful(false))

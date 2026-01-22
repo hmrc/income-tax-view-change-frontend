@@ -18,14 +18,17 @@ package models
 
 import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus._
+import models.itsaStatus.ITSAStatus.*
+import org.mockito.Mockito.mock
 import org.scalatest.Assertion
+import services.DateService
 import services.optout.{OptOutProposition, OptOutTestSupport}
 import testUtils.{TestSupport, UnitSpec}
 
 class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with TestSupport {
 
   val optOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   val listOfITSAStatusCombinations = List(
     (true, NoStatus, Voluntary, Voluntary, List(None, Some("optOut.currentYear.onwards"), Some("optOut.nextYear"))),
@@ -52,7 +55,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
     ".getChangeLinkText" should {
       "return the opt out message key" when {
         "the suffix contains optOut" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -65,7 +68,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.getChangeLinkText("optOut.previousYear.single") shouldBe "optOut.link.text"
           model.getChangeLinkText("optOut.previousYear.onwards") shouldBe "optOut.link.text"
@@ -73,7 +76,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
           model.getChangeLinkText("optOut.nextYear") shouldBe "optOut.link.text"
         }
         "the suffix contains signUp" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -86,7 +89,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.getChangeLinkText("signUp.currentYear") shouldBe "signUp.link.text"
           model.getChangeLinkText("signUp.nextYear") shouldBe "signUp.link.text"
@@ -96,7 +99,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
     ".getSecondDescText" should {
       "return the correct message key" when {
         "the suffix is for the previous year" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -109,13 +112,13 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.getSecondDescText("optOut.previousYear.single") shouldBe "optOut.previousYear"
           model.getSecondDescText("optOut.previousYear.onwards") shouldBe "optOut.previousYear"
         }
         "the suffix is for the next year" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -128,13 +131,13 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.getSecondDescText("optOut.nextYear") shouldBe "optOut.nextYear"
           model.getSecondDescText("signUp.nextYear") shouldBe "signUp.nextYear"
         }
         "the suffix is for the current year and there is no previous year suffix" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
           val optOutProposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear()
 
           val model = ReportingFrequencyViewModel(
@@ -148,7 +151,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.getSecondDescText("optOut.currentYear.single") shouldBe "optOut.currentYear"
           model.getSecondDescText("optOut.currentYear.onwards") shouldBe "optOut.currentYear"
@@ -156,7 +159,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
           model.getSecondDescText("signUp.currentYear.onwards") shouldBe "signUp.currentYear"
         }
         "the suffix is for the current year and there is a previous year suffix - opt out and multiple tax years" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -169,12 +172,12 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.getSecondDescText("optOut.currentYear.onwards") shouldBe "optOut.currentYear.withDate"
         }
         "the suffix is for the current year and there is a previous year suffix - sign up and multiple tax years" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -187,14 +190,14 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.getSecondDescText("signUp.currentYear.onwards") shouldBe "signUp.currentYear.withDate"
         }
         "the suffix is for the current year and there is a previous year suffix - sign up and single tax year" in {
           val optOutProposition = OptOutTestSupport.buildOneYearOptOutPropositionForCurrentYear()
 
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -207,7 +210,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.getSecondDescText("signUp.currentYear.single") shouldBe "signUp.currentYear"
         }
@@ -216,7 +219,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
     ".taxYearFromSuffix" should {
       "return the correct tax year" when {
         "the suffix is for the previous year" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -229,13 +232,13 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.taxYearFromSuffix("optOut.previousYear.single") shouldBe TaxYear(2024, 2025)
           model.taxYearFromSuffix("optOut.previousYear.onwards") shouldBe TaxYear(2024, 2025)
         }
         "the suffix is for the current year" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -248,7 +251,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.taxYearFromSuffix("optOut.currentYear.single") shouldBe TaxYear(2025, 2026)
           model.taxYearFromSuffix("optOut.currentYear.onwards") shouldBe TaxYear(2025, 2026)
@@ -256,7 +259,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
           model.taxYearFromSuffix("signUp.currentYear.onwards") shouldBe TaxYear(2025, 2026)
         }
         "the suffix is for the next year" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
@@ -269,7 +272,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.taxYearFromSuffix("optOut.nextYear") shouldBe TaxYear(2026, 2027)
           model.taxYearFromSuffix("signUp.nextYear") shouldBe TaxYear(2026, 2027)
@@ -280,7 +283,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
         "return the opt out link" when {
           "the suffix contains optOut" in {
             val currentTaxYear = TaxYear(2025, 2026)
-            setupMockGetCurrentTaxYear(currentTaxYear)
+            setupMockGetCurrentTaxYear(mockDateServiceInjected)(currentTaxYear)
 
             val model = ReportingFrequencyViewModel(
               isAgent = false,
@@ -293,7 +296,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
               proposition = optOutProposition,
               isSignUpEnabled = true,
               isOptOutEnabled = true
-            )(mockDateService)
+            )(mockDateServiceInjected)
 
             model.getOptOutSignUpLink(currentTaxYear, "optOut.previousYear.single") shouldBe "/report-quarterly/income-and-expenses/view/optout?taxYear=2025"
           }
@@ -301,7 +304,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
         "return the sign up link" when {
           "the suffix contains signUp" in {
             val currentTaxYear = TaxYear(2025, 2026)
-            setupMockGetCurrentTaxYear(currentTaxYear)
+            setupMockGetCurrentTaxYear(mockDateServiceInjected)(currentTaxYear)
 
             val model = ReportingFrequencyViewModel(
               isAgent = false,
@@ -314,7 +317,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
               proposition = optOutProposition,
               isSignUpEnabled = true,
               isOptOutEnabled = true
-            )(mockDateService)
+            )(mockDateServiceInjected)
 
             model.getOptOutSignUpLink(currentTaxYear, "signUp.currentYear") shouldBe "/report-quarterly/income-and-expenses/view/sign-up/start?taxYear=2025"
           }
@@ -332,7 +335,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
       "return no cards" when {
         "sign up and opt out are disabled" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val optOutProposition = OptOutProposition.createOptOutProposition(
             currentYear = TaxYear(2025, 2026),
@@ -353,7 +356,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = false,
             isOptOutEnabled = false
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.signUpExistsWhileEnabled shouldBe false
           model.optOutExistsWhileEnabled shouldBe false
@@ -361,7 +364,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
         }
 
         "sign up is disabled and there are no opt out years" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val optOutProposition = OptOutProposition.createOptOutProposition(
             currentYear = TaxYear(2025, 2026),
@@ -382,7 +385,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = false,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.signUpExistsWhileEnabled shouldBe false
           model.optOutExistsWhileEnabled shouldBe false
@@ -390,7 +393,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
         }
 
         "opt out is disabled and there are no sign up years" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val optOutProposition = OptOutProposition.createOptOutProposition(
             currentYear = TaxYear(2025, 2026),
@@ -411,7 +414,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = false
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.signUpExistsWhileEnabled shouldBe false
           model.optOutExistsWhileEnabled shouldBe false
@@ -419,7 +422,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
         }
 
         "there is an exempt status" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val optOutProposition = OptOutProposition.createOptOutProposition(
             currentYear = TaxYear(2025, 2026),
@@ -440,7 +443,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.signUpExistsWhileEnabled shouldBe false
           model.optOutExistsWhileEnabled shouldBe true
@@ -450,7 +453,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
       "return only sign up cards" when {
         "opt out is disabled and there are sign up tax years" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val optOutProposition = OptOutProposition.createOptOutProposition(
             currentYear = TaxYear(2025, 2026),
@@ -471,7 +474,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = true,
             isOptOutEnabled = false
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.signUpExistsWhileEnabled shouldBe true
           model.optOutExistsWhileEnabled shouldBe false
@@ -481,7 +484,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
       "return only opt out cards" when {
         "sign up is disabled and there are opt out tax years" in {
-          setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+          setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
           val optOutProposition = OptOutProposition.createOptOutProposition(
             currentYear = TaxYear(2025, 2026),
@@ -502,7 +505,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
             proposition = optOutProposition,
             isSignUpEnabled = false,
             isOptOutEnabled = true
-          )(mockDateService)
+          )(mockDateServiceInjected)
 
           model.signUpExistsWhileEnabled shouldBe false
           model.optOutExistsWhileEnabled shouldBe true
@@ -513,7 +516,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
     "exemptStatusCount" should {
       "handle no exempt status" in {
-        setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+        setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
         val optOutProposition = OptOutProposition.createOptOutProposition(
           currentYear = TaxYear(2025, 2026),
@@ -534,13 +537,13 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
           proposition = optOutProposition,
           isSignUpEnabled = true,
           isOptOutEnabled = true
-        )(mockDateService)
+        )(mockDateServiceInjected)
 
         model.exemptStatusCount shouldBe(0, 3)
       }
 
       "handle no exempt status with crystallisation" in {
-        setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+        setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
         val optOutProposition = OptOutProposition.createOptOutProposition(
           currentYear = TaxYear(2025, 2026),
@@ -561,13 +564,13 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
           proposition = optOutProposition,
           isSignUpEnabled = true,
           isOptOutEnabled = true
-        )(mockDateService)
+        )(mockDateServiceInjected)
 
         model.exemptStatusCount shouldBe(0, 2)
       }
 
       "handle one exempt status" in {
-        setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+        setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
         val optOutProposition = OptOutProposition.createOptOutProposition(
           currentYear = TaxYear(2025, 2026),
@@ -588,13 +591,13 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
           proposition = optOutProposition,
           isSignUpEnabled = true,
           isOptOutEnabled = true
-        )(mockDateService)
+        )(mockDateServiceInjected)
 
         model.exemptStatusCount shouldBe(1, 2)
       }
 
       "handle multiple exempt status" in {
-        setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+        setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
 
         val optOutProposition = OptOutProposition.createOptOutProposition(
           currentYear = TaxYear(2025, 2026),
@@ -615,7 +618,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
           proposition = optOutProposition,
           isSignUpEnabled = true,
           isOptOutEnabled = true
-        )(mockDateService)
+        )(mockDateServiceInjected)
 
         model.exemptStatusCount shouldBe(2, 1)
       }
@@ -628,7 +631,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
                    nextYearStatus: ITSAStatus,
                    expectedResult: List[Option[String]]): Assertion
   = {
-    setupMockGetCurrentTaxYear(TaxYear(2025, 2026))
+    setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear(2025, 2026))
     val optOutProposition = OptOutProposition.createOptOutProposition(
       currentYear = TaxYear(2025, 2026),
       previousYearCrystallised = previousYearCrystallisation,
@@ -653,7 +656,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
       proposition = optOutProposition,
       isSignUpEnabled = true,
       isOptOutEnabled = true
-    )(mockDateService)
+    )(mockDateServiceInjected)
 
     model.getSummaryCardSuffixes shouldBe expectedResult
   }

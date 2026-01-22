@@ -40,7 +40,13 @@ object ConfirmOptOutSingleTaxYearForm {
         confirmOptOutField -> optional(boolean).verifying(
           noSelectionErrorMessage, response => response.isInstanceOf[Some[Boolean]]),
         csrfToken -> text
-      )(ConfirmOptOutSingleTaxYearForm.apply)(ConfirmOptOutSingleTaxYearForm.unapply)
+      )
+      (
+        (confirmOptOut, csrfToken) => ConfirmOptOutSingleTaxYearForm(confirmOptOut, csrfToken)
+      )
+      (
+        form => Some((form.confirmOptOut, form.csrfToken))
+      )
     )
   }
 }

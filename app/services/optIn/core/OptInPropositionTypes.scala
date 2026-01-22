@@ -19,7 +19,7 @@ package services.optIn.core
 sealed trait OptInPropositionTypes {
   val proposition: OptInProposition
 }
-case class OneYearOptInProposition private(proposition: OptInProposition) extends OptInPropositionTypes {
+case class OneYearOptInProposition (proposition: OptInProposition) extends OptInPropositionTypes {
   val intent: OptInTaxYear = proposition.availableOptInYears.head
 }
-case class MultiYearOptInProposition private(proposition: OptInProposition) extends OptInPropositionTypes
+case class MultiYearOptInProposition (proposition: OptInProposition) extends OptInPropositionTypes
