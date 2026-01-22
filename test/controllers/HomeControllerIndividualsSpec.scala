@@ -56,6 +56,21 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   }
 
   "show()" when {
+    "NewHomePage feature switch is enabled" should {
+      "display new home page" in {
+        enable(NewHomePage)
+        setupMockUserAuth
+        mockItsaStatusRetrievalAction()
+        mockSingleBusinessIncomeSource()
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe homePageTitle
+        document.getElementsByClass("govuk-service-navigation__container").isEmpty shouldBe false
+      }
+    }
     "an authenticated user" should {
       "render the home page with a Next Payments due tile" that {
         "has payments due" when {
