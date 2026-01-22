@@ -109,9 +109,9 @@ class TriggeredMigrationRetrievalAction @Inject()(
       case itsaStatusList => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.shortenTaxYearEnd) match {
           case Some(status) if status.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)) => Future(Right(true))
           case Some(status) if status.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary)) => Future(Right(false))
-          case None => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd) match {
+          case _ => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd) match {
               case Some(_) => redirectBasedOnUser
-              case None => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
+              case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
             }
         }
       case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no status found")))
