@@ -20,8 +20,6 @@ import auth.MtdItUser
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import utils.Utilities.JsonUtil
-
 
 object Utilities {
 
