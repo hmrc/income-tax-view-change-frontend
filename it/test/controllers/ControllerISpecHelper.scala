@@ -22,11 +22,12 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.ComponentSpecBase
 import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
 import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
-import helpers.servicemocks._
+import helpers.servicemocks.*
 import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.extensions.FinancialDetailsModelExtension
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
+import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
 import testOnly.repository.FeatureSwitchRepository
 

@@ -23,18 +23,21 @@ import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear}
+import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.manageBusinesses.IncomeSourceRFService
-import services.{DateServiceInterface, SessionService}
+import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.errorResponse
 
 import scala.concurrent.Future
 
 class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService with MockSessionService with MockIncomeSourceRFService {
+
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -42,7 +45,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val controller = app.injector.instanceOf[ChooseTaxYearController]
@@ -68,7 +71,7 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(taxYear = TaxYear(2024, 2025))
                 setupMockIncomeSourceDetailsCall(incomeSourceType)
-                setupMockGetCurrentTaxYearEnd(2025)
+                setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2025)
                 mockRedirectChecksForIncomeSourceRF()
                 setupMockGetMongo(Right(Some(UIJourneySessionData("", "", incomeSourceReportingFrequencyData = Some(IncomeSourceReportingFrequencySourceData(displayYears._1, displayYears._2, true, true))))))
 

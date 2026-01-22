@@ -112,7 +112,7 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
 
     "have the correct detail for the audit event" when {
       "user is an Individual" in {
-        refundToTaxPayerAuditModelIndividualFull.detail shouldBe refundToTaxPayerAuditModelIndividualJsonFull
+        assertJsonEquals(refundToTaxPayerAuditModelIndividualFull.detail, refundToTaxPayerAuditModelIndividualJsonFull)
       }
 
       "user is an Agent" in {

@@ -91,7 +91,7 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
 
   "have the correct detail for the audit event" when {
     "user is an Individual and when income source type is Self Employment" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).detail shouldBe detailsAuditDataSuccess(MTDIndividual, SelfEmployment)
+      assertJsonEquals(getCeaseIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).detail, detailsAuditDataSuccess(MTDIndividual, SelfEmployment))
     }
 
     "user is an primary Agent and when income source type is Self Employment" in {
@@ -103,11 +103,11 @@ class CeaseIncomeSourceAuditModelSpec extends TestSupport {
     }
 
     "error while updating income source" in {
-      getCeaseIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = true).detail shouldBe detailsAuditDataFailure(MTDIndividual)
+      assertJsonEquals(getCeaseIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = true).detail, detailsAuditDataFailure(MTDIndividual))
     }
 
     "user is an Individual and when income source type is Property" in {
-      getCeaseIncomeSourceAuditModel(UkProperty, MTDIndividual, isError = false).detail shouldBe detailsAuditDataSuccess(MTDIndividual, UkProperty)
+      assertJsonEquals(getCeaseIncomeSourceAuditModel(UkProperty, MTDIndividual, isError = false).detail, detailsAuditDataSuccess(MTDIndividual, UkProperty))
     }
   }
 }

@@ -74,7 +74,7 @@ class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateSe
         )
       }
 
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(hasR17Content, Call("", ""), IncomeSourceReportingFrequencyForm(false), incomeSourceType, mockDateService, hasR17Content, "£50,000")))
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(hasR17Content, Call("", ""), IncomeSourceReportingFrequencyForm(false), incomeSourceType, dateService, hasR17Content, "£50,000")))
   }
 
   def getReportingFrequencyTableMessages(taxYear: Int): (String, String) = {

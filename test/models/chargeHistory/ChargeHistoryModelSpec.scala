@@ -59,7 +59,7 @@ class ChargeHistoryModelSpec extends UnitSpec with Matchers {
           val result = testChargeHistoryModel("Unknown").reasonCode
           inside(result) { case Left(e) =>
             e shouldBe an[Exception]
-            e.leftSideValue.getMessage shouldBe "Unable to resolve reversal reason"
+            e.getMessage shouldBe "Unable to resolve reversal reason"
           }
         }
       }

@@ -182,7 +182,7 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
             val result = connector.makeITSAStatusUpdate(taxYear2024, taxableEntityId, optOutUpdateReason).futureValue
 
             result shouldBe
-              ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to json response: List((/failures,List(JsonValidationError(List(error.path.missing),List()))))")))
+              ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to json response: List((/failures,List(JsonValidationError(List(error.path.missing),ArraySeq()))))")))
 
             WiremockHelper.verifyPut(
               uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
@@ -278,7 +278,7 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
             val result = connector.optIn(taxYear2024, taxableEntityId).futureValue
 
             result shouldBe
-              ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to json response: List((/failures,List(JsonValidationError(List(error.path.missing),List()))))")))
+              ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to json response: List((/failures,List(JsonValidationError(List(error.path.missing),ArraySeq()))))")))
 
             WiremockHelper.verifyPut(
               uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
@@ -374,7 +374,7 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
             val result = connector.optOut(taxYear2024, taxableEntityId).futureValue
 
             result shouldBe
-              ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to json response: List((/failures,List(JsonValidationError(List(error.path.missing),List()))))")))
+              ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to json response: List((/failures,List(JsonValidationError(List(error.path.missing),ArraySeq()))))")))
 
             WiremockHelper.verifyPut(
               uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",

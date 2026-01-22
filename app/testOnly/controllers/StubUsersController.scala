@@ -29,8 +29,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
-                                    implicit val mcc: MessagesControllerComponents,
-                                    implicit val executionContext: ExecutionContext,
+                                    val mcc: MessagesControllerComponents,
+                                    val executionContext: ExecutionContext,
                                     userRepository: UserRepository
                                    ) extends BaseController with I18nSupport {
 

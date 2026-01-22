@@ -115,15 +115,15 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     "Have the correct details for the audit event" when {
       "Audit expected behaviour" when {
         "MFACredits is available" in {
-          paymentHistoryAuditFullTxm().detail shouldBe getExpectedJson()
+          assertJsonEquals(paymentHistoryAuditFullTxm().detail, getExpectedJson())
         }
 
         "the audit is empty" in {
-          paymentHistoryAuditMin.detail shouldBe Json.obj(
+          assertJsonEquals(paymentHistoryAuditMin.detail, Json.obj(
             "mtditid" -> testMtditid,
             "nino" -> testNino,
             "paymentHistory" -> Json.arr()
-          )
+          ))
         }
       }
     }

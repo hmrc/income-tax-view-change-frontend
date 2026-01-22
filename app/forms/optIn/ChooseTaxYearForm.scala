@@ -37,7 +37,9 @@ object ChooseTaxYearForm {
     Form[ChooseTaxYearForm](
       mapping(
         choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
-      )(ChooseTaxYearForm.apply)(ChooseTaxYearForm.unapply)
+      )
+      (choice => ChooseTaxYearForm(choice))
+      (form => Some(form.choice))
     )
 
 

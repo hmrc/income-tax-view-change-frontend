@@ -24,7 +24,8 @@ import org.scalatest.Assertion
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.*
+import scala.concurrent.Future
 
 class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
@@ -81,7 +82,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
 
 
-              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+              whenReady(buildGETMTDClient(path, additionalCookies)) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
 
                 checkActiveSoleTrader(result)
@@ -94,7 +95,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
 
-              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+              whenReady(buildGETMTDClient(path, additionalCookies)) { (result:WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
 
                 checkActiveSoleTrader(result)
@@ -174,7 +175,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
 
-              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+              whenReady(buildGETMTDClient(path, additionalCookies): Future[WSResponse]) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
 
                 result should have(

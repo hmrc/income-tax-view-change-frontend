@@ -53,7 +53,7 @@ trait ControllerISpecBase
     with Eventually
     with SessionCookieBaker {
 
-  override lazy val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
+  override val cookieSigner: DefaultCookieSigner = app.injector.instanceOf[DefaultCookieSigner]
 
   val mockHost = WiremockHelper.wiremockHost
   val mockPort = WiremockHelper.wiremockPort.toString

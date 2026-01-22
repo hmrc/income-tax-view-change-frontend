@@ -19,20 +19,23 @@ package controllers
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import mocks.auth.MockAuthActions
-import mocks.services._
-import models.financialDetails._
+import mocks.services.*
+import _root_.config.ItvcErrorHandler
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
+import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import services._
+import play.api.test.Helpers.*
+import play.twirl.api.Html
+import services.*
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future
@@ -47,13 +50,15 @@ trait HomeControllerHelperSpec extends MockAuthActions
   with MockPenaltyDetailsService {
 
   val agentTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
+  
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
       api.inject.bind[WhatYouOweService].toInstance(mockWhatYouOweService),
-      api.inject.bind[DateService].toInstance(mockDateService),
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
       api.inject.bind[PenaltyDetailsService].toInstance(mockPenaltyDetailsService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
@@ -75,7 +80,7 @@ trait HomeControllerHelperSpec extends MockAuthActions
   def setupNextUpdatesTests(allDueDates: Seq[LocalDate],
                             nextQuarterlyUpdateDueDate: Option[LocalDate],
                             nextTaxReturnDueDate: Option[LocalDate],
-                            mtdUserRole: MTDUserRole = MTDIndividual): Unit = {
+                            mtdUserRole: MTDUserRole = MTDIndividual)(using NextUpdatesService): Unit = {
     mtdUserRole match {
       case MTDIndividual => setupMockUserAuth
       case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
@@ -97,7 +102,9 @@ trait HomeControllerHelperSpec extends MockAuthActions
     setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
   }
 
-  def testMTDObligationsDueFailures(action: Action[AnyContent], mtdUserRole: MTDUserRole = MTDIndividual)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+  def testMTDObligationsDueFailures(action: Action[AnyContent], mtdUserRole: MTDUserRole = MTDIndividual)
+                                   (fakeRequest: FakeRequest[AnyContentAsEmpty.type])
+                                   (using nextUpdatesService: NextUpdatesService, itvcErrorHandler: ItvcErrorHandler): Unit = {
     s"the ${mtdUserRole.toString} is authenticated but the call to get obligations fails" should {
       "render the internal error page" in {
         mtdUserRole match {
@@ -107,10 +114,12 @@ trait HomeControllerHelperSpec extends MockAuthActions
           case _ => setupMockGetSessionDataSuccess()
             setupMockAgentWithClientAuth(true)
         }
-        when(mockDateService.getCurrentDate).thenReturn(fixedDate)
+        when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
         mockSingleBusinessIncomeSource()
         mockGetDueDates(Left(new Exception("obligation test exception")))
         setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+        when(itvcErrorHandler.showInternalServerError()(any()))
+          .thenReturn(InternalServerError(Html("<title>Sorry, there is a problem with the service - GOV.UK</title>")))
 
         val result = action(fakeRequest)
 

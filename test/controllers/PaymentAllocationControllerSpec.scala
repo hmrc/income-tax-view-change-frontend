@@ -17,32 +17,33 @@
 package controllers
 
 
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
-import mocks.services.MockPaymentAllocationsService
+import mocks.services.{MockDateService, MockPaymentAllocationsService}
 import models.core.Nino
+import org.mockito.Mockito.mock
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers._
-import services.{DateServiceInterface, PaymentAllocationsService}
-import testConstants.PaymentAllocationsTestConstants._
+import play.api.test.Helpers.*
+import services.{DateService, DateServiceInterface, PaymentAllocationsService}
+import testConstants.PaymentAllocationsTestConstants.*
 
 import scala.concurrent.Future
 
-class PaymentAllocationControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockPaymentAllocationsService {
-
+class PaymentAllocationControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockPaymentAllocationsService with MockDateService{
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val testController = app.injector.instanceOf[PaymentAllocationsController]
@@ -54,7 +55,9 @@ class PaymentAllocationControllerSpec extends MockAuthActions with ImplicitDateF
 
   val docNumber = "docNumber1"
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  def mtdRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
+
+  mtdRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.viewPaymentAllocationAgent(docNumber) else testController.viewPaymentAllocation(docNumber)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)

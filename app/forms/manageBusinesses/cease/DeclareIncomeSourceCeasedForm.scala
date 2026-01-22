@@ -32,7 +32,22 @@ object DeclareIncomeSourceCeasedForm {
         declaration -> optional(text)
           .verifying(declarationUnselectedError, declaration => declaration.isDefined && declaration.contains("true") && declaration.get.trim.nonEmpty),
         ceaseCsrfToken -> text
-      )(DeclareIncomeSourceCeasedForm.apply)(DeclareIncomeSourceCeasedForm.unapply)
+      )
+      (
+        (declaration, ceaseCsrfToken) =>
+          DeclareIncomeSourceCeasedForm(
+            declaration,
+            ceaseCsrfToken
+          )
+      )(
+        form =>
+          Some(
+            (
+              form.declaration,
+              form.csrfToken
+            )
+          )
+      )
     )
   }
 }
