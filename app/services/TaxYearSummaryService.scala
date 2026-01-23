@@ -28,6 +28,7 @@ import javax.inject.Inject
 class TaxYearSummaryService @Inject()() {
 
   def checkSubmissionChannel(liabilityCalculationResponse: Option[LiabilityCalculationResponseModel]): TaxYearViewScenarios = {
+    
     liabilityCalculationResponse match {
       case Some(LiabilityCalculationError(status, message)) =>
         Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationError - LegacyAndCesa, status: $status, error message: $message")
@@ -41,12 +42,15 @@ class TaxYearSummaryService @Inject()() {
       case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsMTD))) =>
         Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsMTD - show MtdSoftwareShowCalc calc panel")
         MtdSoftwareShowCalc
-      case _ =>
-        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] Catch all - show MtdSoftwareShowCalc calc panel")
+      case response =>
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] Catch all - show MtdSoftwareShowCalc calc panel - $response")
         MtdSoftwareShowCalc
     }
   }
 
+  
+  
+  
   def determineCannotDisplayCalculationContentScenario(
                                                         liabilityCalculationResponse: Option[LiabilityCalculationResponseModel],
                                                         taxYear: TaxYear

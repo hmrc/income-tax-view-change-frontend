@@ -38,7 +38,7 @@
 )
 
 @(
-    model: CalculationSummary,
+    calculationSummaryModel: Option[CalculationSummary],
     isAgent: Boolean,
     taxYear: Int,
     isLatest: Boolean,
@@ -46,6 +46,7 @@
     pfaEnabled: Boolean,
     isAmended: Boolean,
     taxYearViewScenarios: TaxYearViewScenarios,
+    showNoTaxCalc: Boolean,
     viewTaxCalcLink: Option[String],
     selfAssessmentLink: String,
     contactHmrcLink: String,
@@ -170,19 +171,24 @@
         @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
     }
 
-    @if(model.crystallised && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
+    @if(calculationSummaryModel.exists(_.crystallised) && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
         @taxCalculationAmendmentGuidance(taxYear, "calculation")
     }
 }
 
-@if(model.messages.exists(_.errorMessages.size > 0)) {
+@if(calculationSummaryModel.exists(_.messages.exists(_.errorMessages.size > 0))) {
 
     @{
         val key = if(isAgent) "tax-year-summary.agent.message" else "tax-year-summary.message"
-        errorMessage(model, key, isAgent)
+        calculationSummaryModel.map(model => errorMessage(model, key, isAgent))
     }
 
 } else {
+
+    @if(showNoTaxCalc) {
+        @h2(msg = messages("tax-year-summary.tax-calculation.no-calc"), classes = "govuk-heading-l", optId = Some("no-calc-data-header"))
+        @p(id = Some("no-calc-data-note"))(Html(messages("tax-year-summary.tax-calculation.no-calc.note")))
+    }
 
     @if(taxYearViewScenarios == LegacyAndCesa) {
         @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
@@ -210,9 +216,9 @@
 
     @if(taxYearViewScenarios == MtdSoftwareShowCalc) {
 
-        @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest)
+        @calculationSummaryModel.map(model => breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest))
 
-        @if(!model.crystallised && !isLatest && !isPrevious) {
+        @if(!calculationSummaryModel.exists(_.crystallised) && !isLatest && !isPrevious) {
             @govukInsetText(InsetText(content = HtmlContent(
                 p(id = Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
             )))
@@ -222,7 +228,7 @@
             @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
         }
 
-        @if(model.crystallised && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
+        @if(calculationSummaryModel.exists(_.crystallised) && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
             @taxCalculationAmendmentGuidance(taxYear, "calculation")
         }
     }

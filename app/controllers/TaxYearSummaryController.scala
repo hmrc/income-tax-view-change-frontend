@@ -25,9 +25,9 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
-import models.admin._
+import models.admin.*
 import models.core.Nino
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
@@ -35,8 +35,8 @@ import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
-import play.api.mvc._
-import services._
+import play.api.mvc.*
+import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -120,13 +120,12 @@ class TaxYearSummaryController @Inject()(
       case (liabilityCalc: LiabilityCalculationResponse, Some(previousCalc), Some(lpp2Url)) =>
         previousCalc match {
           case previousCalc: LiabilityCalculationResponse =>
-            handleCalcSuccess(mtdItUser.mtditid, mtdItUser.nino, liabilityCalc, Some(previousCalc), chargeItems, obligations, lpp2Url, claimToAdjustViewModel, taxYear, backUrl, origin, isAgent)
+            handleCalcSuccess(mtdItId = mtdItUser.mtditid, nino = mtdItUser.nino, latestCalc = liabilityCalc, previousCalc = Some(previousCalc), chargeItems = chargeItems, obligations = obligations, lpp2Url = lpp2Url, claimToAdjustViewModel = claimToAdjustViewModel, taxYear = taxYear, backUrl = backUrl, origin = origin, isAgent = isAgent)
           case error: LiabilityCalculationError =>
-            handleCalcError(mtdItUser.mtditid, mtdItUser.nino, error, Some(liabilityCalc), chargeItems, obligations, lpp2Url, claimToAdjustViewModel, taxYear, backUrl, origin, isAgent)
+            handleCalcError(mtdItId = mtdItUser.mtditid, nino = mtdItUser.nino, error = error, validLatestCalculation = Some(liabilityCalc), chargeItems = chargeItems, obligations = obligations, lpp2Url = lpp2Url, claimToAdjustViewModel = claimToAdjustViewModel, taxYear = taxYear, backUrl = backUrl, origin = origin, isAgent = isAgent)
         }
-
       case (error: LiabilityCalculationError, _, Some(lpp2Url)) =>
-        handleCalcError(mtdItUser.mtditid, mtdItUser.nino, error, None, chargeItems, obligations, lpp2Url, claimToAdjustViewModel, taxYear, backUrl, origin, isAgent)
+        handleCalcError(mtdItId = mtdItUser.mtditid, nino = mtdItUser.nino, error = error, validLatestCalculation = None, chargeItems = chargeItems, obligations = obligations, lpp2Url = lpp2Url, claimToAdjustViewModel = claimToAdjustViewModel, taxYear = taxYear, backUrl = backUrl, origin = origin, isAgent = isAgent)
 
       case (_, _, None) =>
         if (isAgent) {
@@ -207,6 +206,7 @@ class TaxYearSummaryController @Inject()(
         isAgent = isAgent,
         ctaLink = ctaLink,
         taxYearViewScenarios = taxYearViewScenarios,
+        showNoTaxCalc = false,
         viewTaxCalcLink = selfAssessmentLink,
         selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
         contactHmrcLink = appConfig.findHmrcContactsSALink()
@@ -229,19 +229,19 @@ class TaxYearSummaryController @Inject()(
                                isAgent: Boolean
                              )(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Result] = {
 
+    println("************ " + error)
+
     if (error.status == NO_CONTENT) {
       lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
       val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
-      val calculationSummary = validLatestCalculation match {
-        case Some(calc) =>
-          Some(CalculationSummary(
-            formatErrorMessages(
-              calc,
-              messagesApi,
-              isAgent)(messagesApi.preferred(lang))))
-        case _ => None
-      }
+      val calculationSummary: Option[CalculationSummary] =
+        validLatestCalculation match {
+          case Some(calc) =>
+            Some(CalculationSummary(calc = formatErrorMessages(calc, messagesApi, isAgent)(messagesApi.preferred(lang))))
+          case _ =>
+            None
+        }
 
       val viewModel =
         TaxYearSummaryViewModel(
@@ -260,7 +260,7 @@ class TaxYearSummaryController @Inject()(
       Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with No Calc data")
 
       val selfAssessmentLink: Option[String] = mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
-      val taxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(None, TaxYear(taxYear - 1, taxYear))
+      val taxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
 
       Future(
         Ok(taxYearSummaryView(
@@ -271,6 +271,7 @@ class TaxYearSummaryController @Inject()(
           isAgent = isAgent,
           ctaLink = ctaLink,
           taxYearViewScenarios = taxYearViewScenarios,
+          showNoTaxCalc = !validLatestCalculation.exists(_.calculation.isEmpty),
           viewTaxCalcLink = selfAssessmentLink,
           selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
           contactHmrcLink = appConfig.findHmrcContactsSALink()

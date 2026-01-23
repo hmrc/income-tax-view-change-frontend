@@ -52,6 +52,7 @@
     origin: Option[String] = None,
     ctaLink: String,
     taxYearViewScenarios: TaxYearViewScenarios,
+    showNoTaxCalc: Boolean,
     viewTaxCalcLink: Option[String],
     selfAssessmentLink: String,
     contactHmrcLink: String
@@ -113,17 +114,18 @@
             } else {
                 Some(
                     taxCalculationContent(
-                    taxYear = taxYear,
-                    calcSummary = viewModel.previousCalculationSummary,
-                    isAgent = isAgent,
-                    pfaEnabled = viewModel.pfaEnabled,
-                    isAmended = isAmended,
-                    isLatest = false,
-                    isPrevious = true,
-                    taxYearViewScenarios = taxYearViewScenarios,
-                    viewTaxCalcLink = viewTaxCalcLink,
-                    selfAssessmentLink = selfAssessmentLink,
-                    contactHmrcLink = contactHmrcLink
+                        taxYear = taxYear,
+                        calcSummary = viewModel.previousCalculationSummary,
+                        isAgent = isAgent,
+                        pfaEnabled = viewModel.pfaEnabled,
+                        isAmended = isAmended,
+                        isLatest = false,
+                        isPrevious = true,
+                        taxYearViewScenarios = taxYearViewScenarios,
+                        showNoTaxCalc = showNoTaxCalc,
+                        viewTaxCalcLink = viewTaxCalcLink,
+                        selfAssessmentLink = selfAssessmentLink,
+                        contactHmrcLink = contactHmrcLink
                     )
                 )
             }
@@ -147,6 +149,7 @@
             isAmended,
             isLatest = true,
             taxYearViewScenarios = taxYearViewScenarios,
+            showNoTaxCalc = showNoTaxCalc,
             viewTaxCalcLink = viewTaxCalcLink,
             selfAssessmentLink = selfAssessmentLink,
             contactHmrcLink = contactHmrcLink
@@ -160,6 +163,7 @@
             isAmended,
             isLatest = false,
             taxYearViewScenarios = taxYearViewScenarios,
+            showNoTaxCalc = showNoTaxCalc,
             viewTaxCalcLink = viewTaxCalcLink,
             selfAssessmentLink = selfAssessmentLink,
             contactHmrcLink = contactHmrcLink

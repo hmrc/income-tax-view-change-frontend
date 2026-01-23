@@ -37,7 +37,7 @@ case class CalculationSummary(timestamp: Option[LocalDate],
                               messages: Option[Messages] = None,
                               isAmended: Boolean = false) {
 
-  def errorPresent() = {
+  def errorPresent(): Boolean = {
     messages.exists(_.errorMessages.nonEmpty)
   }
 
