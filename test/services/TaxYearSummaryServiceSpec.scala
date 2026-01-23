@@ -379,22 +379,21 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 featureSwitches = List()
               )(FakeRequest())
 
-            val liabilityCalculationResponse =
-              LiabilityCalculationResponse(
-                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
-                metadata = Metadata(
-                  calculationTimestamp = Some(""),
-                  calculationType = ""
-                ),
-                submissionChannel = Some(IsLegacy),
-                messages = None,
-                calculation = None,
-              )
+            val liabilityCalculationErrorResponse = LiabilityCalculationError(status = 404, message = "some error message")
 
-            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationResponse))
+//            val liabilityCalculationResponse =
+//              LiabilityCalculationResponse(
+//                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+//                metadata = Metadata(
+//                  calculationTimestamp = Some(""),
+//                  calculationType = ""
+//                ),
+//                submissionChannel = Some(IsLegacy),
+//                messages = None,
+//                calculation = None,
+//              )
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(agentUser) // Agent user
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationErrorResponse), taxYear)(agentUser) // Agent user
             val expected = AgentBefore2023TaxYear
 
             actual shouldBe expected
@@ -422,22 +421,24 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 featureSwitches = List()
               )(FakeRequest())
 
-            val liabilityCalculationResponse =
-              LiabilityCalculationResponse(
-                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
-                metadata = Metadata(
-                  calculationTimestamp = Some(""),
-                  calculationType = ""
-                ),
-                submissionChannel = Some(IsLegacy),
-                messages = None,
-                calculation = None,
-              )
+            val liabilityCalculationErrorResponse = LiabilityCalculationError(status = 404, message = "some error message")
 
-            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationResponse))
+//            val liabilityCalculationResponse =
+//              LiabilityCalculationResponse(
+//                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+//                metadata = Metadata(
+//                  calculationTimestamp = Some(""),
+//                  calculationType = ""
+//                ),
+//                submissionChannel = Some(IsLegacy),
+//                messages = None,
+//                calculation = None,
+//              )
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
+//            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+//              .thenReturn(Future(liabilityCalculationErrorResponse))
+
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationErrorResponse), taxYear)(individualUser)
             val expected = NoIrsaAEnrolement
 
             actual shouldBe expected
@@ -465,22 +466,25 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 featureSwitches = List()
               )(FakeRequest())
 
-            val liabilityCalculationResponse =
-              LiabilityCalculationResponse(
-                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
-                metadata = Metadata(
-                  calculationTimestamp = Some(""),
-                  calculationType = ""
-                ),
-                submissionChannel = Some(IsLegacy),
-                messages = None,
-                calculation = None,
-              )
 
-            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
-              .thenReturn(Future(liabilityCalculationResponse))
+            val liabilityCalculationErrorResponse = LiabilityCalculationError(status = 404, message = "some error message")
 
-            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(individualUser)
+//            val liabilityCalculationResponse =
+//              LiabilityCalculationResponse(
+//                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+//                metadata = Metadata(
+//                  calculationTimestamp = Some(""),
+//                  calculationType = ""
+//                ),
+//                submissionChannel = Some(IsLegacy),
+//                messages = None,
+//                calculation = None,
+//              )
+
+//            when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+//              .thenReturn(Future(liabilityCalculationErrorResponse))
+
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationErrorResponse), taxYear)(individualUser)
             val expected = IrsaEnrolementHandedOff
 
             actual shouldBe expected

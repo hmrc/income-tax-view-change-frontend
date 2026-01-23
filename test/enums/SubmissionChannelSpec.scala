@@ -17,23 +17,23 @@
 package enums
 
 import models.liabilitycalculation.SubmissionChannel
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import play.api.libs.json._
+import org.scalatest.matchers.should.Matchers
+import play.api.libs.json.*
 import testUtils.TestSupport
 
-class SubmissionChannelSpec extends TestSupport {
+class SubmissionChannelSpec extends TestSupport with Matchers {
 
   "SubmissionTrigger JSON format" should {
 
     "write all submission channel to their correct string values" in {
       SubmissionChannel.allSubmissionChannels.foreach { trigger =>
-        Json.toJson(trigger) mustBe JsString(trigger.toString)
+        Json.toJson(trigger) shouldBe JsString(trigger.toString)
       }
     }
 
     "read all valid submission channel strings" in {
       SubmissionChannel.allSubmissionChannels.foreach { trigger =>
-        Json.fromJson[SubmissionChannel](JsString(trigger.toString)) mustBe JsSuccess(trigger)
+        Json.fromJson[SubmissionChannel](JsString(trigger.toString)) shouldBe JsSuccess(trigger)
       }
     }
 
@@ -41,14 +41,14 @@ class SubmissionChannelSpec extends TestSupport {
       val result =
         Json.fromJson[SubmissionChannel](JsString("unknownChannel"))
 
-      result mustBe JsError("Unknown SubmissionChannel: unknownChannel")
+      result shouldBe JsError("Unknown SubmissionChannel: unknownChannel")
     }
 
     "fail to read a non-string JSON value" in {
       val result =
         Json.fromJson[SubmissionChannel](JsNumber(123))
 
-      result mustBe JsError("SubmissionChannel must be a string")
+      result shouldBe JsError("SubmissionChannel must be a string")
     }
   }
 }
