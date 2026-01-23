@@ -39,7 +39,9 @@ class AuthActions @Inject()(
                              val incomeSourceRetrievalAction: IncomeSourceRetrievalAction,
                              val itsaStatusRetrievalAction: ItsaStatusRetrievalAction,
                              val retrieveClientData: RetrieveClientData,
-                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction
+                             val retrieveFeatureSwitches: FeatureSwitchRetrievalAction,
+                             val authoriseAndRetrieveIndividualForNrs: AuthoriseAndRetrieveIndividualForNrs,
+                             val authoriseAndRetrieveAgentForNrs: AuthoriseAndRetrieveAgentForNrs
                            ) extends FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
@@ -47,6 +49,15 @@ class AuthActions @Inject()(
   def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
+      itsaStatusRetrievalAction andThen
+      retrieveNavBar
+  }
+
+  def asMTDIndividualForNrs: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      authoriseAndRetrieveIndividualForNrs andThen
       incomeSourceRetrievalAction andThen
       retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
       itsaStatusRetrievalAction andThen
@@ -87,6 +98,17 @@ class AuthActions @Inject()(
       itsaStatusRetrievalAction
   }
 
+  def asMTDPrimaryAgentForNrs: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      authoriseAndRetrieveAgentForNrs.authorise() andThen
+      retrieveClientData.authorise() andThen
+      authoriseAndRetrieveMtdAgent andThen
+      agentIsPrimaryAction andThen
+      incomeSourceRetrievalAction andThen
+      retrieveFeatureSwitches andThen
+      itsaStatusRetrievalAction
+  }
+
   def asMTDIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
     if (isAgent) {
       asMTDAgentWithConfirmedClient
@@ -100,6 +122,14 @@ class AuthActions @Inject()(
       asMTDPrimaryAgent
     } else {
       asMTDIndividual
+    }
+  }
+
+  def asMTDIndividualOrPrimaryAgentWithClientForNrs(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
+    if (isAgent) {
+      asMTDPrimaryAgentForNrs
+    } else {
+      asMTDIndividualForNrs
     }
   }
 
