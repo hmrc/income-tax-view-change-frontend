@@ -28,6 +28,7 @@
 )
 
 @(origin: Option[String] = None,
+        isAgent: Boolean,
         yourTasksUrl: String,
         recentActivityUrl: String,
         overViewUrl: String,
@@ -36,15 +37,32 @@
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
 
+@pageHeading = @{
+    if (isAgent) {
+        user.optClientNameAsString.fold(messages("home.agent.heading")) {
+            clientName => messages("home.agent.headingWithClientName", clientName)
+        }
+    } else messages("home.heading")
+}
+
+@caption = @{
+    if (isAgent) {
+        messages("home.agent.primary.caption")
+    }
+    else {
+        user.userName.fold("")(_.name.getOrElse(""))
+    }
+}
+
 @mainTemplate(
-    pageTitle = messages("home.heading"),
+    pageTitle = if (isAgent) messages("home.agent.heading") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
 ) {
 
     @h1WithCaption(
-        heading = messages("home.heading"),
-        captionMsg = user.userName.fold("")(_.name.getOrElse("")),
+        heading = pageHeading,
+        captionMsg = caption,
         extraClasses = if(user.saUtr.isDefined) { "margin-bottom-zero" } else {""},
         headingId = Some("income-tax-heading"),
         captionId = Some("sub-heading")
