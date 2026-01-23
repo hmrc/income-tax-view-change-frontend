@@ -206,7 +206,7 @@ class TaxYearSummaryController @Inject()(
         isAgent = isAgent,
         ctaLink = ctaLink,
         taxYearViewScenarios = taxYearViewScenarios,
-        showNoTaxCalc = false,
+        showNoTaxCalc = latestCalc.calculation.isDefined,
         viewTaxCalcLink = selfAssessmentLink,
         selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
         contactHmrcLink = appConfig.findHmrcContactsSALink()
@@ -271,7 +271,7 @@ class TaxYearSummaryController @Inject()(
           isAgent = isAgent,
           ctaLink = ctaLink,
           taxYearViewScenarios = taxYearViewScenarios,
-          showNoTaxCalc = !validLatestCalculation.exists(_.calculation.isEmpty),
+          showNoTaxCalc = false,
           viewTaxCalcLink = selfAssessmentLink,
           selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
           contactHmrcLink = appConfig.findHmrcContactsSALink()

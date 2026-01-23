@@ -188,48 +188,49 @@
     @if(showNoTaxCalc) {
         @h2(msg = messages("tax-year-summary.tax-calculation.no-calc"), classes = "govuk-heading-l", optId = Some("no-calc-data-header"))
         @p(id = Some("no-calc-data-note"))(Html(messages("tax-year-summary.tax-calculation.no-calc.note")))
-    }
+    } else {
 
-    @if(taxYearViewScenarios == LegacyAndCesa) {
-        @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
-        @yourTaxCalculationCannotBeDisplayed
-        @amendGuidance
-    }
-
-    @if(taxYearViewScenarios == IrsaEnrolementHandedOff) {
-        @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
-        @irsaEnrollment
-        @amendGuidance
-    }
-
-    @if(taxYearViewScenarios == NoIrsaAEnrolement) {
-        @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
-        @withoutIrsaEnrollment
-        @amendGuidance
-    }
-
-    @if(taxYearViewScenarios == AgentBefore2023TaxYear) {
-        @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
-        @cannotBeDeepLinkedAgent
-        @amendGuidance
-    }
-
-    @if(taxYearViewScenarios == MtdSoftwareShowCalc) {
-
-        @calculationSummaryModel.map(model => breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest))
-
-        @if(!calculationSummaryModel.exists(_.crystallised) && !isLatest && !isPrevious) {
-            @govukInsetText(InsetText(content = HtmlContent(
-                p(id = Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
-            )))
+        @if(taxYearViewScenarios == LegacyAndCesa) {
+            @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
+            @yourTaxCalculationCannotBeDisplayed
+            @amendGuidance
         }
 
-        @if(isPrevious) {
-            @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
+        @if(taxYearViewScenarios == IrsaEnrolementHandedOff) {
+            @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
+            @irsaEnrollment
+            @amendGuidance
         }
 
-        @if(calculationSummaryModel.exists(_.crystallised) && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
-            @taxCalculationAmendmentGuidance(taxYear, "calculation")
+        @if(taxYearViewScenarios == NoIrsaAEnrolement) {
+            @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
+            @withoutIrsaEnrollment
+            @amendGuidance
+        }
+
+        @if(taxYearViewScenarios == AgentBefore2023TaxYear) {
+            @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
+            @cannotBeDeepLinkedAgent
+            @amendGuidance
+        }
+
+        @if(taxYearViewScenarios == MtdSoftwareShowCalc) {
+
+            @calculationSummaryModel.map(model => breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest))
+
+            @if(!calculationSummaryModel.exists(_.crystallised) && !isLatest && !isPrevious) {
+                @govukInsetText(InsetText(content = HtmlContent(
+                    p(id = Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
+                )))
+            }
+
+            @if(isPrevious) {
+                @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
+            }
+
+            @if(calculationSummaryModel.exists(_.crystallised) && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
+                @taxCalculationAmendmentGuidance(taxYear, "calculation")
+            }
         }
     }
 }
