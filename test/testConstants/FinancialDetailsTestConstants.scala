@@ -2231,7 +2231,7 @@ object FinancialDetailsTestConstants {
 
 }
 
-case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0, 0.0, 0.0, Nil)) {
+case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0, 0.0, 0.0, None, None, Nil)) {
 
   def withAvailableCredit(availableCredit: BigDecimal): ANewCreditAndRefundModel = {
     ANewCreditAndRefundModel(model.copy(availableCreditForRepayment = availableCredit))

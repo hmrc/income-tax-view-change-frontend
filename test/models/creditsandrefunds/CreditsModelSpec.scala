@@ -35,6 +35,9 @@ class CreditsModelSpec extends UnitSpec {
 
   val totalCredit: BigDecimal = 35
 
+  val firstPendingAmountRequested: BigDecimal = 100
+  val secondPendingAmountRequested: BigDecimal = 200
+
   val allCreditsJson: String =
     s"""
       |{
@@ -42,6 +45,8 @@ class CreditsModelSpec extends UnitSpec {
       |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
       |  "unallocatedCredit" : ${unallocatedCredit},
       |  "totalCredit" : ${totalCredit},
+      |  "firstPendingAmountRequested": ${firstPendingAmountRequested},
+      |  "secondPendingAmountRequested": ${secondPendingAmountRequested},
       |  "transactions" : [ {
       |    "transactionType" : "refund",
       |    "amount" : 5,
@@ -79,7 +84,7 @@ class CreditsModelSpec extends UnitSpec {
       |""".stripMargin
 
   val allCreditsObj = CreditsModel(availableCreditForRepayment, allocatedCreditForFutureCharges,
-    unallocatedCredit, totalCredit, List(
+    unallocatedCredit, totalCredit, Some(firstPendingAmountRequested), Some(secondPendingAmountRequested), List(
     Transaction(transactionType = Repayment,
       amount = 5,
       taxYear = None,
@@ -169,6 +174,8 @@ class CreditsModelSpec extends UnitSpec {
       (result \ "availableCreditForRepayment").get shouldBe JsNumber(availableCreditForRepayment)
       (result \ "totalCredit").get shouldBe JsNumber(totalCredit)
       (result \ "unallocatedCredit").get shouldBe JsNumber(unallocatedCredit)
+      (result \ "firstPendingAmountRequested").get shouldBe JsNumber(firstPendingAmountRequested)
+      (result \ "secondPendingAmountRequested").get shouldBe JsNumber(secondPendingAmountRequested)
       (result \ "transactions").get match {
         case r: JsArray =>
           r.value.size shouldBe 6
@@ -188,6 +195,8 @@ class CreditsModelSpec extends UnitSpec {
           |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
           |  "unallocatedCredit" : ${unallocatedCredit},
           |  "totalCredit" : ${totalCredit},
+          |  "firstPendingAmountRequested": ${firstPendingAmountRequested},
+          |  "secondPendingAmountRequested": ${secondPendingAmountRequested},
           |  "transactions" : [ {
           |    "transactionType" : "invalid credit type",
           |    "amount" : 5,
