@@ -793,8 +793,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 val result: Future[Result] = testController.show(2020, "CODINGOUT01")(fakeRequest)
 
-                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+                status(result) shouldBe Status.SEE_OTHER
+
+                redirectLocation(result) shouldBe Some(
+                  routes.ChargeSummaryController.show(2018, "CODINGOUT01", origin = None).url
+                )
               }
             }
           }
