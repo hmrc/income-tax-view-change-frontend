@@ -101,7 +101,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             )(
               status = OK,
               response = Json.toJson(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                 documentDetails = List(
                   DocumentDetail(
                     taxYear = getCurrentTaxYearEnd.getYear,
@@ -176,7 +176,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             )(
               status = OK,
               response = Json.toJson(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                 documentDetails = List(
                   DocumentDetail(
                     taxYear = getCurrentTaxYearEnd.getYear,
@@ -249,7 +249,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             )(
               status = OK,
               response = Json.toJson(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                 documentDetails = List(
                   DocumentDetail(
                     taxYear = getCurrentTaxYearEnd.getYear,
@@ -322,7 +322,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             )(
               status = OK,
               response = Json.toJson(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                 documentDetails = List(
                   DocumentDetail(
                     taxYear = getCurrentTaxYearEnd.getYear,
@@ -399,7 +399,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             )(
               status = OK,
               response = Json.toJson(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                 documentDetails = List(
                   DocumentDetail(
                     taxYear = getCurrentTaxYearEnd.getYear,
@@ -493,7 +493,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             )(
               status = OK,
               response = Json.toJson(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                 documentDetails = List(
                   DocumentDetail(
                     taxYear = getCurrentTaxYearEnd.getYear,
@@ -566,7 +566,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             )(
               status = OK,
               response = Json.toJson(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                 documentDetails = List(
                   DocumentDetail(
                     taxYear = getCurrentTaxYearEnd.getYear,
@@ -641,7 +641,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             )(
               status = OK,
               response = Json.toJson(FinancialDetailsModel(
-                balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                 documentDetails = List(
                   DocumentDetail(
                     taxYear = getCurrentTaxYearEnd.getYear,

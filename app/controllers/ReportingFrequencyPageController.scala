@@ -77,7 +77,7 @@ class ReportingFrequencyPageController @Inject()(
             isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
             displayManageYourReportingFrequencySection =
               !(optOutProposition.areAllTaxYearsMandated || user.incomeSources.areAllBusinessesCeased),
-            mtdThreshold = getMtdThreshold,
+            mtdThreshold = getMtdThreshold(),
             proposition = optOutProposition,
             isSignUpEnabled = isEnabled(SignUpFs),
             isOptOutEnabled = isEnabled(OptOutFs)

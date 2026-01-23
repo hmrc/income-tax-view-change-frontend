@@ -20,33 +20,35 @@ import config.FrontendAppConfig
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
+import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{clearInvocations, mock, never, verify, when}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.mockito.Mockito.{clearInvocations, never, verify, when, mock}
+import org.scalatest.matchers.must.Matchers
+import services.{DateService, DateServiceInterface}
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, Result}
-import play.api.test.Helpers._
-import services.{AddressLookupService, DateServiceInterface, IncomeSourceDetailsService, SessionService}
+import play.api.test.Helpers.*
+import services.{AddressLookupService, DateService, IncomeSourceDetailsService, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 
 
 class AddBusinessAddressControllerSpec extends MockAuthActions
-  with MockSessionService {
+  with MockSessionService with MockDateService {
 
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
   val postAction: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = NormalMode)
   val postActionCheck: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = CheckMode)
   lazy val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -54,7 +56,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
       api.inject.bind[AddressLookupService].toInstance(mockAddressLookupService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val testAddBusinessAddressController = app.injector.instanceOf[AddBusinessAddressController]
@@ -76,12 +78,10 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
   case class AddressError(status: String) extends RuntimeException
 
+
   Seq(CheckMode, NormalMode).foreach { mode =>
-
     mtdAllRoles.foreach { mtdRole =>
-
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-
       s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
         val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(mode) else testAddBusinessAddressController.showAgent(mode)
         s"the user is authenticated as a $mtdRole" should {
@@ -98,7 +98,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some("Sample location")
+              redirectLocation(result) shouldBe Some("Sample location")
             }
 
             "session data exists but addressLookupId is missing" in {
@@ -113,7 +113,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some("Sample location")
+              redirectLocation(result) shouldBe Some("Sample location")
             }
 
             "mongo call fails" in {
@@ -128,7 +128,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some("Sample location")
+              redirectLocation(result) shouldBe Some("Sample location")
             }
           }
 
@@ -143,13 +143,13 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               when(mockAddressLookupService.fetchAddress(any())(any()))
                 .thenReturn(Future(Right(testBusinessAddressModel)))
 
-              val expectedUrl = s"${frontendAppConfig.addressLookupService}/lookup-address/123/confirm"
+              val expectedUrl = s"${frontendAppConfig.addressLookupExternalHost}/lookup-address/123/confirm"
 
               clearInvocations(mockAddressLookupService)
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some(expectedUrl)
+              redirectLocation(result) shouldBe Some(expectedUrl)
 
               verify(mockAddressLookupService, never).initialiseAddressJourney(any(), any())(any(), any())
             }
@@ -171,7 +171,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some("Sample location")
+              redirectLocation(result) shouldBe Some("Sample location")
             }
           }
 
@@ -234,7 +234,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
-              redirectLocation(result) mustBe Some(checkAnswersUrl)
+              redirectLocation(result) shouldBe Some(checkAnswersUrl)
               verifySetMongoData()
             }
           }

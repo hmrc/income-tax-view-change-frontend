@@ -61,20 +61,62 @@ object UIJourneySessionData {
 
   implicit val format: OFormat[UIJourneySessionData] = {
 
-    ((__ \ "sessionId").format[String]
-      ~ (__ \ "journeyType").format[String]
-      ~ (__ \ "addIncomeSourceData").formatNullable[AddIncomeSourceData]
-      ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
-      ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
-      ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
-      ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
-      ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
-      ~ (__ \ "triggeredMigrationSessionData").formatNullable[TriggeredMigrationSessionData]
-      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      ~ (__ \ "journeyIsComplete").formatNullable[Boolean]
-      )(UIJourneySessionData.apply, unlift(UIJourneySessionData.unapply)
+    (
+      (__ \ "sessionId").format[String] ~
+        (__ \ "journeyType").format[String] ~
+        (__ \ "addIncomeSourceData").formatNullable[AddIncomeSourceData] ~
+        (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData] ~
+        (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData] ~
+        (__ \ "optOutSessionData").formatNullable[OptOutSessionData] ~
+        (__ \ "optInSessionData").formatNullable[OptInSessionData] ~
+        (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData] ~
+        (__ \ "triggeredMigrationSessionData").formatNullable[TriggeredMigrationSessionData] ~
+        (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat) ~
+        (__ \ "journeyIsComplete").formatNullable[Boolean]
+      ).apply(
+      (
+        sessionId,
+        journeyType,
+        addIncomeSourceData,
+        manageIncomeSourceData,
+        ceaseIncomeSourceData,
+        optOutSessionData,
+        optInSessionData,
+        incomeSourceReportingFrequencyData,
+        triggeredMigrationSessionData,
+        lastUpdated,
+        journeyIsComplete
+      ) =>
+        UIJourneySessionData(
+          sessionId,
+          journeyType,
+          addIncomeSourceData,
+          manageIncomeSourceData,
+          ceaseIncomeSourceData,
+          optOutSessionData,
+          optInSessionData,
+          incomeSourceReportingFrequencyData,
+          triggeredMigrationSessionData,
+          lastUpdated,
+          journeyIsComplete
+        ),
+      u =>
+        (
+          u.sessionId,
+          u.journeyType,
+          u.addIncomeSourceData,
+          u.manageIncomeSourceData,
+          u.ceaseIncomeSourceData,
+          u.optOutSessionData,
+          u.optInSessionData,
+          u.incomeSourceReportingFrequencyData,
+          u.triggeredMigrationSessionData,
+          u.lastUpdated,
+          u.journeyIsComplete
+        )
     )
   }
+
 }
 
 case class SensitiveUIJourneySessionData(
@@ -110,18 +152,6 @@ case class SensitiveUIJourneySessionData(
 object SensitiveUIJourneySessionData {
 
   implicit def format(implicit crypto: Encrypter with Decrypter): OFormat[SensitiveUIJourneySessionData] =
+    Json.format[SensitiveUIJourneySessionData]
 
-    ((__ \ "sessionId").format[String]
-      ~ (__ \ "journeyType").format[String]
-      ~ (__ \ "addIncomeSourceData").formatNullable[SensitiveAddIncomeSourceData]
-      ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
-      ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
-      ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
-      ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
-      ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
-      ~ (__ \ "triggeredMigrationSessionData").formatNullable[TriggeredMigrationSessionData]
-      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      ~ (__ \ "journeyIsComplete").formatNullable[Boolean]
-      )(SensitiveUIJourneySessionData.apply, unlift(SensitiveUIJourneySessionData.unapply)
-    )
 }

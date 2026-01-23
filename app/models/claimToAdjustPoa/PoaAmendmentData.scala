@@ -29,13 +29,7 @@ case class PoaSessionData(
                             )
 
 object PoaSessionData {
-  implicit val format: OFormat[PoaSessionData] = {
-    ((__ \ "sessionId").format[String]
-      ~ (__ \ "poaAmendmentData").formatNullable[PoaAmendmentData]
-      ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
-      )(PoaSessionData.apply, unlift(PoaSessionData.unapply)
-    )
-  }
+  implicit val format: OFormat[PoaSessionData] = Json.format[PoaSessionData]
 }
 
 case class PoaAmendmentData(

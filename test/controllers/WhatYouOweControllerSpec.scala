@@ -21,8 +21,10 @@ import controllers.routes.{ChargeSummaryController, CreditAndRefundController, P
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
+import mocks.services.MockDateService
 import models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
+import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList}
+import models.financialDetails.WhatYouOweViewModel
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -33,27 +35,28 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DateService, DateServiceInterface, WhatYouOweService}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class WhatYouOweControllerSpec extends MockAuthActions with ChargeConstants {
+class WhatYouOweControllerSpec extends MockAuthActions
+  with ChargeConstants with MockDateService{
 
   lazy val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
   implicit val hc: HeaderCarrier = HeaderCarrier()
-
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
-      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val testController = app.injector.instanceOf[WhatYouOweController]
@@ -61,7 +64,7 @@ class WhatYouOweControllerSpec extends MockAuthActions with ChargeConstants {
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 
   def whatYouOweChargesListFull: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     List(chargeItemModel(TaxYear.forYearEnd(2019)))
       ++ List(chargeItemModel(TaxYear.forYearEnd(2020)))
       ++ List(chargeItemModel(TaxYear.forYearEnd(2021))),
@@ -71,7 +74,7 @@ class WhatYouOweControllerSpec extends MockAuthActions with ChargeConstants {
   )
 
   def whatYouOweChargesListWithReviewReconcile: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsReviewAndReconcileCi,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("ACI", None, 1.23, 1234))
@@ -79,17 +82,17 @@ class WhatYouOweControllerSpec extends MockAuthActions with ChargeConstants {
   )
 
   def whatYouOweChargesListWithOverdueCharge: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsOverdueCharges,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 10.23, 1234), OutstandingChargeModel("POA1RR-debit", Some(LocalDate.parse("2010-12-31")), 1.23, 1234))
     ))
   )
 
-  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None), List.empty)
+  def whatYouOweChargesListEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None), List.empty)
 
   def whatYouOweChargesListWithBalancingChargeNotOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsBalancingChargeNotOverdue,
     Some(OutstandingChargesModel(List(
       OutstandingChargeModel("BCD", Some(LocalDate.parse("2020-12-31")), 10.23, 1234), OutstandingChargeModel("BCD", None, 1.23, 1234))
@@ -97,13 +100,13 @@ class WhatYouOweControllerSpec extends MockAuthActions with ChargeConstants {
   )
 
   def whatYouOweChargesListWithLpp2: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsLPP2,
     Some(OutstandingChargesModel(List()))
   )
 
   def whatYouOweChargesListWithLPP2NoChargeRef: WhatYouOweChargesList = WhatYouOweChargesList(
-    BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     financialDetailsLPP2NoChargeRef,
     Some(OutstandingChargesModel(List()))
   )
@@ -128,7 +131,7 @@ class WhatYouOweControllerSpec extends MockAuthActions with ChargeConstants {
                    hasOverdueOrAccruingInterestCharges: Boolean = false,
                    poaTaxYear: Option[TaxYear] = None
                   ): WhatYouOweViewModel = WhatYouOweViewModel(
-    currentDate = dateService.getCurrentDate,
+    currentDate = mockDateServiceInjected.getCurrentDate,
     hasOverdueOrAccruingInterestCharges = hasOverdueOrAccruingInterestCharges,
     whatYouOweChargesList = charges,
     hasLpiWithDunningLock = hasLpiWithDunningLock,
@@ -186,7 +189,8 @@ class WhatYouOweControllerSpec extends MockAuthActions with ChargeConstants {
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
-
+                when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
+                when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
@@ -210,7 +214,7 @@ class WhatYouOweControllerSpec extends MockAuthActions with ChargeConstants {
             "displays the money in your account" when {
               "the user has available credit in his account and CreditsRefundsRepay FS enabled" in {
                 def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
-                  BalanceDetails(1.00, 2.00, 3.00, Some(300.00), None, None, Some(350.00), None, None, None), List.empty)
+                  BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(300.00), None, None, Some(350.00), None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
@@ -236,7 +240,7 @@ class WhatYouOweControllerSpec extends MockAuthActions with ChargeConstants {
             "does not display the money in your account" when {
               "the user has available credit in his account but CreditsRefundsRepay FS disabled" in {
                 def whatYouOweWithZeroAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
-                  BalanceDetails(1.00, 2.00, 3.00, Some(0.00), None, None, None, None, None, None), List.empty)
+                  BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(0.00), None, None, None, None, None, None), List.empty)
 
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()

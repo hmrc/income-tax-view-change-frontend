@@ -51,21 +51,21 @@ case class ForecastTaxCalculationAuditModel(user: MtdItUser[_], endOfYearEstimat
   override val detail: JsValue = {
     userAuditDetails(user) ++
       Json.obj() ++
-      ("totalEstimatedIncome", totalEstimatedIncome) ++
-      ("totalAllowancesAndDeductions", totalAllowancesAndDeductions) ++
-      ("totalTaxableIncome", totalTaxableIncome) ++
-      ("totalIncomeTax", totalIncomeTax) ++
-      ("class4NationalInsurance", class4NationalInsurance) ++
-      ("class2NationalInsurance", class2NationalInsurance) ++
-      ("totalNationalInsuranceContributions", totalNationalInsuranceContributions) ++
-      ("totalTaxDeductedBeforeBalancingPayment", totalTaxDeductedBeforeBalancingPayment) ++
-      ("balancingPaymentCollectedThroughPAYE", balancingPaymentCollectedThroughPAYE) ++
-      ("studentLoanRepayments", studentLoanRepayments) ++
-      ("taxDueOnAnnuityPayments", taxDueOnAnnuityPayments) ++
-      ("taxDueOnRoyaltyPayments", taxDueOnRoyaltyPayments) ++
-      ("totalTaxDeducted", totalTaxDeducted) ++
-      ("incomeTaxAndNationalInsuranceContributionsDue", incomeTaxAndNationalInsuranceContributionsDue) ++
-      ("capitalGainsTax", capitalGainsTax) ++
-      ("forecastSelfAssessmentTaxAmount", forecastSelfAssessmentTaxAmount)
+     Json.obj("totalEstimatedIncome"-> totalEstimatedIncome) ++
+      Json.obj("totalAllowancesAndDeductions"-> totalAllowancesAndDeductions) ++
+      Json.obj("totalTaxableIncome"-> totalTaxableIncome) ++
+      Json.obj("totalIncomeTax"-> totalIncomeTax) ++
+      Json.obj("class4NationalInsurance"-> class4NationalInsurance) ++
+      Json.obj("class2NationalInsurance"-> class2NationalInsurance) ++
+      Json.obj("totalNationalInsuranceContributions"-> totalNationalInsuranceContributions) ++
+      Json.obj("totalTaxDeductedBeforeBalancingPayment"-> totalTaxDeductedBeforeBalancingPayment) ++
+      Json.obj("balancingPaymentCollectedThroughPAYE"-> balancingPaymentCollectedThroughPAYE) ++
+      Json.obj("studentLoanRepayments"-> studentLoanRepayments) ++
+      Json.obj("taxDueOnAnnuityPayments"-> taxDueOnAnnuityPayments) ++
+      Json.obj("taxDueOnRoyaltyPayments"-> taxDueOnRoyaltyPayments) ++
+      Json.obj("totalTaxDeducted"-> totalTaxDeducted) ++
+      Json.obj("incomeTaxAndNationalInsuranceContributionsDue"-> incomeTaxAndNationalInsuranceContributionsDue) ++
+      Json.obj("capitalGainsTax"-> capitalGainsTax) ++
+      Json.obj("forecastSelfAssessmentTaxAmount"-> forecastSelfAssessmentTaxAmount)
   }
 }

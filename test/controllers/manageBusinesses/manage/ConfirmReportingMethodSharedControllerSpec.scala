@@ -16,16 +16,17 @@
 
 package controllers.manageBusinesses.manage
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
-import enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
-import enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
+import connectors.{ITSAStatusConnector, BusinessDetailsConnector}
+import enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
+import enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
+import enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
+import org.mockito.Mockito.mock
+import mocks.services.{MockDateService, MockSessionService}
 import models.admin.OptInOptOutContentUpdateR17
 import play.api
 import play.api.Application
@@ -40,16 +41,19 @@ import scala.concurrent.Future
 
 class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
   with ImplicitDateFormatter
-  with MockSessionService {
+  with MockSessionService
+  with MockDateService {
+
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
-        api.inject.bind[DateService].toInstance(dateService),
+        api.inject.bind[DateService].toInstance(mockDateServiceInjected),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
       ).build()
 
   lazy val testConfirmReportingMethodSharedController: ConfirmReportingMethodSharedController =

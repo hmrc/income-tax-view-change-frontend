@@ -46,14 +46,14 @@ class OptOutNewAuditModelSpec extends TestSupport {
 
         auditModel.auditType shouldBe "OptOutTaxYearsPage"
         auditModel.transactionName shouldBe "opt-out-tax-years-page"
-        auditModel.detail shouldBe Json.obj(
+        assertJsonEquals(auditModel.detail, Json.obj(
           "nino" -> tsTestUser.nino,
           "mtditid" -> tsTestUser.mtditid,
           "saUtr" -> tsTestUser.saUtr,
           "credId" -> tsTestUser.credId,
           "userType" -> tsTestUser.userType,
           "optOutTaxYears" -> Json.arr("2023-2024")
-        )
+        ))
       }
       "create an audit model - multi year" in {
         val intentTaxYear = "2023-2024"
@@ -62,14 +62,14 @@ class OptOutNewAuditModelSpec extends TestSupport {
 
         auditModel.auditType shouldBe "OptOutTaxYearsPage"
         auditModel.transactionName shouldBe "opt-out-tax-years-page"
-        auditModel.detail shouldBe Json.obj(
+        assertJsonEquals(auditModel.detail, Json.obj(
           "nino" -> tsTestUser.nino,
           "mtditid" -> tsTestUser.mtditid,
           "saUtr" -> tsTestUser.saUtr,
           "credId" -> tsTestUser.credId,
           "userType" -> tsTestUser.userType,
           "optOutTaxYears" -> Json.arr("2023-2024", "2024-2025")
-        )
+        ))
       }
     }
   }

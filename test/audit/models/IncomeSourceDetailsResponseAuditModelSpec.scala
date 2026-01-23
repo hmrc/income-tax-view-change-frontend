@@ -55,11 +55,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
                 case MTDIndividual => (Individual, false)
                 case ur => (Agent, ur == MTDSupportingAgent)
               }
-              testIncomeSourceDetailsResponseAuditModel.detail shouldBe commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
+              assertJsonEquals(testIncomeSourceDetailsResponseAuditModel.detail, commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
                 propertyIdsKey -> Json.toJson(List(testPropertyIncomeId, testPropertyIncomeId2)),
                 "dateOfMigration" -> testMigrationYear2019,
                 seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2))
-              )
+              ))
             }
           }
         }
@@ -85,11 +85,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
                 case MTDIndividual => (Individual, false)
                 case ur => (Agent, ur == MTDSupportingAgent)
               }
-              testIncomeSourceDetailsResponseAuditModel.detail shouldBe commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
+              assertJsonEquals(testIncomeSourceDetailsResponseAuditModel.detail, commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
                 propertyIdsKey -> Json.toJson(List(testPropertyIncomeId)),
                 "dateOfMigration" -> testMigrationYear2019,
                 seIdsKey -> Json.toJson(List(testSelfEmploymentId))
-              )
+              ))
             }
           }
         }
@@ -115,11 +115,11 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
                 case MTDIndividual => (Individual, false)
                 case ur => (Agent, ur == MTDSupportingAgent)
               }
-              testIncomeSourceDetailsResponseAuditModel.detail shouldBe commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
+              assertJsonEquals(testIncomeSourceDetailsResponseAuditModel.detail, commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
                 propertyIdsKey -> JsArray(),
                 "dateOfMigration" -> testMigrationYear2019,
                 seIdsKey -> JsArray()
-              )
+              ))
             }
           }
         }
@@ -144,10 +144,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
                 case MTDIndividual => (Individual, false)
                 case ur => (Agent, ur == MTDSupportingAgent)
               }
-              testIncomeSourceDetailsResponseAuditModel.detail shouldBe commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
+              assertJsonEquals(testIncomeSourceDetailsResponseAuditModel.detail, commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
                 propertyIdsKey -> JsArray(),
                 seIdsKey -> Json.toJson(List(testSelfEmploymentId))
-              )
+              ))
             }
           }
         }
@@ -172,10 +172,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
                 case MTDIndividual => (Individual, false)
                 case ur => (Agent, ur == MTDSupportingAgent)
               }
-              testIncomeSourceDetailsResponseAuditModel.detail shouldBe commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
+              assertJsonEquals(testIncomeSourceDetailsResponseAuditModel.detail, commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
                 propertyIdsKey -> JsArray(),
                 seIdsKey -> Json.toJson(List(testSelfEmploymentId, testSelfEmploymentId2))
-              )
+              ))
             }
           }
         }
@@ -201,10 +201,10 @@ class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {
                 case MTDIndividual => (Individual, false)
                 case ur => (Agent, ur == MTDSupportingAgent)
               }
-              testIncomeSourceDetailsResponseAuditModel.detail shouldBe commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
+              assertJsonEquals(testIncomeSourceDetailsResponseAuditModel.detail, commonAuditDetails(af, isSupportingAgent) ++ Json.obj(
                 seIdsKey -> Json.toJson(List.empty[String]),
                 propertyIdsKey -> Json.toJson(List(testPropertyIncomeId, testPropertyIncomeId2))
-              )
+              ))
             }
           }
         }

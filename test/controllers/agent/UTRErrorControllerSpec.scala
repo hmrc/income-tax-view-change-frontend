@@ -41,7 +41,7 @@ class UTRErrorControllerSpec extends MockAuthActions
   "show" when {
     "the user is not authenticated" should {
       "redirect the user to authenticate" in {
-        setupMockAgentAuthException()
+        setupMockAgentAuthException(mockFAF)()
 
         val result = testUTRErrorController.show()(fakeRequestWithActiveSession)
 
@@ -52,7 +52,7 @@ class UTRErrorControllerSpec extends MockAuthActions
 
     "the user has timed out" should {
       "redirect to the session time out page" in {
-        setupMockAgentAuthException(BearerTokenExpired())
+        setupMockAgentAuthException(mockFAF)(BearerTokenExpired())
         val result = testUTRErrorController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
@@ -62,7 +62,7 @@ class UTRErrorControllerSpec extends MockAuthActions
 
     "the user does not have an agent reference number" should {
       "return SEE_OTHER to AgentErrorController" in {
-        setupMockAgentAuthException(InsufficientEnrolments())
+        setupMockAgentAuthException(mockFAF)(InsufficientEnrolments())
 
         val result = testUTRErrorController.show()(fakeRequestWithActiveSession)
 
@@ -72,7 +72,7 @@ class UTRErrorControllerSpec extends MockAuthActions
     }
 
     "return OK and display the UTR Error page" in {
-      setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+      setupMockAgentAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
       mockUTRErrorResponse(HtmlFormat.empty)
 
       val result = testUTRErrorController.show()(fakeRequestWithClientUTR)
@@ -85,7 +85,7 @@ class UTRErrorControllerSpec extends MockAuthActions
   "submit" when {
     "the user is not authenticated" should {
       "redirect the user to authenticate" in {
-        setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+        setupMockAgentAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
 
         val result = testUTRErrorController.submit()(fakeRequestWithActiveSession)
 
@@ -96,7 +96,7 @@ class UTRErrorControllerSpec extends MockAuthActions
 
     "the user has timed out" should {
       "redirect to the session timeout page" in {
-        setupMockAgentAuthException(BearerTokenExpired())
+        setupMockAgentAuthException(mockFAF)(BearerTokenExpired())
         val result = testUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
@@ -106,7 +106,7 @@ class UTRErrorControllerSpec extends MockAuthActions
 
     "the user does not have an agent reference number" should {
       "return SEE_OTHER to AgentErrorController" in {
-        setupMockAgentAuthException(InsufficientEnrolments())
+        setupMockAgentAuthException(mockFAF)(InsufficientEnrolments())
 
         val result = testUTRErrorController.submit()(fakeRequestWithActiveSession)
 
@@ -116,7 +116,7 @@ class UTRErrorControllerSpec extends MockAuthActions
     }
 
     "redirect to the Enter Client UTR page and remove the clientUTR from session" in {
-      setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+      setupMockAgentAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
       mockUTRErrorResponse(HtmlFormat.empty)
 
       val result = testUTRErrorController.submit()(fakeRequestWithClientUTR)

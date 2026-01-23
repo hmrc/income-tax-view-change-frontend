@@ -20,7 +20,7 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.JsValue
-import utils.Utilities._
+import play.api.libs.json.Json
 
 case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUser[_],
                                                     viewModel: AllowancesAndDeductionsViewModel) extends ExtendedAuditModel {
@@ -30,14 +30,14 @@ case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUser[_],
 
   override val detail: JsValue = {
     userAuditDetails(mtdItUser) ++
-      ("personalAllowance", viewModel.personalAllowance) ++
-      ("pensionContributions", viewModel.pensionContributions) ++
-      ("lossRelief", viewModel.lossesAppliedToGeneralIncome) ++
-      ("giftsToCharity", viewModel.giftOfInvestmentsAndPropertyToCharity) ++
-      ("annualPayments", viewModel.grossAnnuityPayments) ++
-      ("qualifyingLoanInterest", viewModel.qualifyingLoanInterestFromInvestments) ++
-      ("postCessationTradeReceipts", viewModel.postCessationTradeReceipts) ++
-      ("tradeUnionPayments", viewModel.paymentsToTradeUnionsForDeathBenefits) ++
-      ("marriageAllowanceTransfer", viewModel.transferredOutAmount)
+      Json.obj("personalAllowance"-> viewModel.personalAllowance) ++
+      Json.obj("pensionContributions"-> viewModel.pensionContributions) ++
+      Json.obj("lossRelief" -> viewModel.lossesAppliedToGeneralIncome) ++
+      Json.obj("giftsToCharity"-> viewModel.giftOfInvestmentsAndPropertyToCharity) ++
+      Json.obj("annualPayments"-> viewModel.grossAnnuityPayments) ++
+      Json.obj("qualifyingLoanInterest"-> viewModel.qualifyingLoanInterestFromInvestments) ++
+      Json.obj("postCessationTradeReceipts"-> viewModel.postCessationTradeReceipts) ++
+      Json.obj("tradeUnionPayments"-> viewModel.paymentsToTradeUnionsForDeathBenefits) ++
+      Json.obj("marriageAllowanceTransfer"-> viewModel.transferredOutAmount)
   }
 }

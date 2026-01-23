@@ -65,8 +65,7 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
 
   val form: Form[SingleTaxYearOptInWarningForm] = SingleTaxYearOptInWarningForm(taxYear)
 
-  mtdAllRoles.foreach { mtdRole: MTDUserRole =>
-
+  mtdAllRoles.foreach ( (mtdRole: MTDUserRole) => {
     val isAgent = mtdRole != MTDIndividual
 
     s".show(isAgent = $isAgent)" when {
@@ -478,4 +477,5 @@ class SingleTaxYearOptInWarningControllerSpec extends MockAuthActions with MockO
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
+    )
 }

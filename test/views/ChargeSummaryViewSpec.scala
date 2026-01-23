@@ -380,8 +380,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
   def subItemWithClearingSapDocument(clearingSAPDocument: String): SubItem = SubItem(dueDate = Some(LocalDate.parse("2017-08-07")), clearingSAPDocument = Some(clearingSAPDocument), paymentLot = Some("lot"), paymentLotItem = Some("lotItem"))
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
-    documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYID01"), items = Some(Seq(
       subItemWithClearingSapDocument("123456789012"),
       subItemWithClearingSapDocument("223456789012"),
@@ -907,14 +907,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           ) {
              document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
              document.select("h1").text() shouldBe s"$balancingCharge"
-            verifySummaryListRowNumeric(1, dueDate, "Overdue 15 May 2019")
-            verifySummaryListRowNumeric(2, fullPaymentAmount, "£2,500.00")
-            verifySummaryListRowNumeric(3, remainingToPay, "£2,500.00")
-            document.select("#coding-out-notice").text() shouldBe ""
-            document.select("#coding-out-message").text() shouldBe ""
-            document.select("#coding-out-notice-link").attr("href") shouldBe ""
-            document.select(".govuk-table").size() shouldBe 1
-            document.select(".govuk-table tbody tr").size() shouldBe 1
+             verifySummaryListRowNumeric(1, dueDate, "Overdue 15 May 2019")
+             verifySummaryListRowNumeric(2, fullPaymentAmount, "£2,500.00")
+             verifySummaryListRowNumeric(3, remainingToPay, "£2,500.00")
+             document.select("#coding-out-notice").text() shouldBe ""
+             document.select("#coding-out-message").text() shouldBe ""
+             document.select("#coding-out-notice-link").attr("href") shouldBe ""
+             document.select(".govuk-table").size() shouldBe 1
+             document.select(".govuk-table tbody tr").size() shouldBe 1
           }
         }
       }

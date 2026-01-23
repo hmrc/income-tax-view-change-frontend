@@ -32,6 +32,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
+import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 

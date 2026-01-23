@@ -42,7 +42,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
     val action = testController.show()
     "the user is not authenticated" should {
       "redirect them to sign in" in {
-        setupMockAgentAuthException()
+        setupMockAgentAuthException(mockFAF)()
 
         val result = action(fakeRequestWithActiveSession)
 
@@ -60,7 +60,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
     }
     "the user does not have an agent reference number" should {
       "redirect them to the error page" in {
-        setupMockAgentAuthException(InsufficientEnrolments())
+        setupMockAgentAuthException(mockFAF)(InsufficientEnrolments())
 
         val result = action(fakeRequestWithActiveSession)
 
@@ -70,7 +70,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
     }
 
     "return OK and display the client relationship failure page" in {
-      setupMockAgentAuthSuccess(agentAuthRetrievalSuccess)
+      setupMockAgentAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
       mockBusinessIncomeSource()
       mockClientRelationshipFailure(HtmlFormat.empty)
 

@@ -51,7 +51,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Address lookup service
   lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
-  lazy val addressLookupConfirmationUrl: String = s"$addressLookupService/lookup-address/confirm?id={addressId}"
+  lazy val addressLookupExternalHost: String = servicesConfig.getString("address-lookup.external-host")
 
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
@@ -185,7 +185,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
       case _ => "https://www.gov.uk/log-in-file-self-assessment-tax-return"
     }
 
-def compatibleSoftwareLink(implicit messages: Messages): String =
+  def compatibleSoftwareLink(implicit messages: Messages): String =
     messages.lang.code match {
       case "en" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
       case "cy" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy"

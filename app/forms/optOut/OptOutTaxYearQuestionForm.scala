@@ -39,7 +39,9 @@ object OptOutTaxYearQuestionForm {
       mapping(
         response -> optional(text)
           .verifying(noSelectionErrorMessage, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
-      )(OptOutTaxYearQuestionForm.apply)(OptOutTaxYearQuestionForm.unapply)
+      )
+      (response => OptOutTaxYearQuestionForm(response))
+      (form => Some(form.response))
     )
   }
 }

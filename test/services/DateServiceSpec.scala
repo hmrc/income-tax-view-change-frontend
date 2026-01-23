@@ -32,6 +32,8 @@ class DateServiceSpec extends TestSupport {
 
   override implicit val appConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
+  final case class DateServiceFixture(fakeTestDateService: DateService)
+
   val mockDateServiceInterface: DateServiceInterface = mock(classOf[DateServiceInterface])
 
   class TestDateService(isTimeMachineEnabled: Boolean = false, addYears: Int = 0, addDays: Int = 0) extends DateService() {
@@ -51,11 +53,14 @@ class DateServiceSpec extends TestSupport {
     reset(appConfig)
   }
 
-  def fixture(date: LocalDate) = new {
-    val fakeTestDateService: DateService = new DateService() {
+  def fixture(date: LocalDate): DateServiceFixture = {
+    val fakeTestDateService: DateService = new DateService {
       override def getCurrentDate: LocalDate = date
     }
+
+    DateServiceFixture(fakeTestDateService)
   }
+
 
   "The getCurrentDate method when TimeMachine FS is off" should {
     "return the current date and time" in {

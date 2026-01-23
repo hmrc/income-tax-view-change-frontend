@@ -20,18 +20,19 @@ import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.admin._
+import models.admin.*
 import models.core.SelfServeTimeToPayJourneyResponseModel
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.WSResponse
 import services.DateServiceInterface
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.OutstandingChargesIntegrationTestConstants._
+import testConstants.FinancialDetailsIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
+import testConstants.OutstandingChargesIntegrationTestConstants.*
 import testConstants.messages.WhatYouOweMessages.hmrcAdjustment
 
 import java.time.LocalDate
@@ -135,7 +136,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                 IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweFinancialDetailsEmptyBCDCharge, testDateService).detail)
+                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweFinancialDetailsEmptyBCDCharge)(testDateService).detail)
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -158,7 +159,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                 IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueIn30DaysIt, dateService).detail)
+                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueIn30DaysIt)(dateService).detail)
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -202,11 +203,11 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
-                  AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList, dateService))
+                  AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -237,7 +238,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                 val mixedJson = Json.obj(
-                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
                   "codingDetails" -> Json.arr(),
                   "documentDetails" -> Json.arr(
                     documentDetailJson(3400.00, 1000.00, testTaxYear - 1, "ITSA- POA 1", transactionId = "transId1"),
@@ -257,7 +258,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                 IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweWithAZeroOutstandingAmount(), dateService).detail)
+                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweWithAZeroOutstandingAmount())(dateService).detail)
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -301,11 +302,11 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
-                  AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList, dateService))
+                  AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -342,11 +343,11 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems
                     )
                   }
-                  AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList, dateService))
+                  AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -380,10 +381,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     val chargeItems = financialDetails.toChargeItem
 
                     WhatYouOweChargesList(
-                      balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+                      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                       chargesList = chargeItems)
                   }
-                  AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList, dateService))
+                  AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -409,7 +410,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList, dateService).detail)
+                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList)(dateService).detail)
 
                     IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
@@ -439,7 +440,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList, dateService).detail)
+                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList)(dateService).detail)
 
                     IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                     result should have(
@@ -463,7 +464,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                   val mixedJson = Json.obj(
-                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
                     "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                     ),
@@ -482,7 +483,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
                     IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
-                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList, dateService).detail)
+                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList)(dateService).detail)
 
                     result should have(
                       httpStatus(OK),
@@ -506,7 +507,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   val mixedJson = Json.obj(
-                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00),
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
                     "codingDetails" -> Json.arr(),
                     "documentDetails" -> Json.arr(
                       documentDetailJson(3400.00, 1000.00, testTaxYear, transactionId = "transId1"),
@@ -525,7 +526,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweOutstandingChargesOnly, dateService).detail)
+                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweOutstandingChargesOnly)(dateService).detail)
 
                     IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                     IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -559,7 +560,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweFinancialDetailsEmptyBCDCharge, dateService).detail)
+                    AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweFinancialDetailsEmptyBCDCharge)(dateService).detail)
 
                     IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                     IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -626,7 +627,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueInSomeDays, dateService).detail)
+                  AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueInSomeDays)(dateService).detail)
 
                   IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
@@ -737,7 +738,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                         stubAuthorised(mtdUserRole)
                         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                         val mixedJson = Json.obj(
-                          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "totalBalance" -> 3.00, "totalCreditAvailableForRepayment" -> 300.00, "totalCredit" -> 300.00),
+                          "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00, "totalCreditAvailableForRepayment" -> 300.00, "totalCredit" -> 300.00),
                           "codingDetails" -> Json.arr(),
                           "documentDetails" -> Json.arr(
                             documentDetailJson(3400.00, 1000.00, testTaxYear, "ITSA- POA 1", transactionId = "transId1"),

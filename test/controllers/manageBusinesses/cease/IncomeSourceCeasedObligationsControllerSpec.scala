@@ -16,16 +16,16 @@
 
 package controllers.manageBusinesses.cease
 
+import enums.IncomeSourceJourney.*
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockNextUpdatesService, MockSessionService}
+import mocks.services.{MockDateService, MockNextUpdatesService, MockSessionService}
 import models.UIJourneySessionData
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.obligations._
+import models.obligations.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -43,18 +43,18 @@ import utils.IncomeSourcesUtils
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class IncomeSourceCeasedObligationsControllerSpec
-  extends MockAuthActions
-    with MockSessionService with MockNextUpdatesService {
+class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
+  with MockDateService with MockSessionService with MockNextUpdatesService {
 
   lazy val mockIncomeSourcesUtils: IncomeSourcesUtils = mock(classOf[IncomeSourcesUtils])
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils),
-      api.inject.bind[DateService].toInstance(dateService),
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
@@ -195,8 +195,8 @@ class IncomeSourceCeasedObligationsControllerSpec
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockIncomeSourceDetailsService)
-    when(mockDateServiceInterface.getCurrentDate) thenReturn fixedDate
-    when(mockDateServiceInterface.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
+    when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
+    when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
     disableAllSwitches()
   }
 

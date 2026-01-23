@@ -29,16 +29,16 @@ object FeedbackForm {
   val feedbackEmail: String = "feedback-email"
   val feedbackComments: String = "feedback-comments"
   val feedbackCsrfToken: String = "csrfToken"
-  val feedbackReferrer: String = "referrer"
+  private val feedbackReferrer: String = "referrer"
 
   val radiosEmptyError: String = "feedback.radiosError"
-  val nameEmptyError: String = "feedback.fullName.error.empty"
-  val nameLengthError: String = "feedback.fullName.error.length"
-  val nameInvalidError: String = "feedback.fullName.error.invalid"
-  val emailInvalidError: String = "feedback.email.error"
-  val emailLengthError: String = "feedback.email.error.length"
-  val commentsEmptyError: String = "feedback.comments.error.empty"
-  val commentsEmptyLength: String = "feedback.comments.error.length"
+  private val nameEmptyError: String = "feedback.fullName.error.empty"
+  private val nameLengthError: String = "feedback.fullName.error.length"
+  private val nameInvalidError: String = "feedback.fullName.error.invalid"
+  private val emailInvalidError: String = "feedback.email.error"
+  private val emailLengthError: String = "feedback.email.error.length"
+  private val commentsEmptyError: String = "feedback.comments.error.empty"
+  private val commentsEmptyLength: String = "feedback.comments.error.length"
 
   def validate(email: String): Boolean =
     email.split("@").toList match {
@@ -84,11 +84,43 @@ object FeedbackForm {
           }
         }
 
-        override def unbind(key: String, value: String): Map[String, String] = Map(key -> value)
-      }).verifying(commentsEmptyLength, comment => comment.length <= 2000),
+        override def unbind(
+                             key: String,
+                             value: String
+                           ): Map[String, String] =
+          Map(key -> value)
+      }).verifying(commentsEmptyLength, _.length <= 2000),
+
       feedbackCsrfToken -> text
-    )(FeedbackForm.apply)(FeedbackForm.unapply)
+    )(
+      (
+        experienceRating,
+        name,
+        email,
+        comments,
+        csrfToken
+      ) =>
+        FeedbackForm(
+          experienceRating,
+          name,
+          email,
+          comments,
+          csrfToken
+        )
+    )(
+      form =>
+        Some(
+          (
+            form.experienceRating,
+            form.name,
+            form.email,
+            form.comments,
+            form.csrfToken
+          )
+        )
+    )
   )
+
 }
 
 case class FeedbackForm(

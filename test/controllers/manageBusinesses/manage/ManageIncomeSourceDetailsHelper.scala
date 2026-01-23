@@ -22,6 +22,7 @@ import mocks.services.{MockCalculationListService, MockDateService, MockITSAStat
 import models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import org.mockito.Mockito.mock
 import play.api
 import services._
 import testConstants.BaseTestConstants.testSelfEmploymentId
@@ -49,16 +50,18 @@ trait ManageIncomeSourceDetailsHelper
   lazy val quarterlyGracePeriod: String = "Quarterly"
   lazy val reportingMethod: String = "Reporting frequency"
 
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
+
   override lazy val app =
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
-        api.inject.bind[DateService].toInstance(mockDateService),
+        api.inject.bind[DateService].toInstance(mockDateServiceInjected),
         api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
         api.inject.bind[CalculationListService].toInstance(mockCalculationListService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
       ).build()
 
   lazy val testController = app.injector.instanceOf[ManageIncomeSourceDetailsController]
