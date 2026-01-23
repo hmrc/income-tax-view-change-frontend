@@ -18,28 +18,21 @@ package enums
 
 import play.api.libs.json._
 
-sealed trait MTDUserRole
-
-case object MTDPrimaryAgent extends MTDUserRole
-
-case object MTDSupportingAgent extends MTDUserRole
-
-case object MTDIndividual extends MTDUserRole
-
-object MTDUserRole {
-
-  implicit val writes: Writes[MTDUserRole] = Writes {
+enum MTDUserRole:
+  case MTDPrimaryAgent, MTDSupportingAgent, MTDIndividual
+  
+object MTDUserRole:
+  given writes: Writes[MTDUserRole] = Writes {
     case MTDPrimaryAgent => JsString("MTDPrimaryAgent")
     case MTDSupportingAgent => JsString("MTDSupportingAgent")
     case MTDIndividual => JsString("MTDIndividual")
   }
 
-  implicit val reads: Reads[MTDUserRole] = Reads {
+  given reads: Reads[MTDUserRole] = Reads {
     case JsString("MTDPrimaryAgent") => JsSuccess(MTDPrimaryAgent)
     case JsString("MTDSupportingAgent") => JsSuccess(MTDSupportingAgent)
     case JsString("MTDIndividual") => JsSuccess(MTDIndividual)
     case other => JsError(s"Unknown MTDUserRole: $other")
   }
 
-  implicit val format: Format[MTDUserRole] = Format(reads, writes)
-}
+  given format: Format[MTDUserRole] = Format(reads, writes)

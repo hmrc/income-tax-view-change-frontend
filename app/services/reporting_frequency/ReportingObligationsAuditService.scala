@@ -16,11 +16,11 @@
 
 package services.reporting_frequency
 
-import audit.reporting_obligations._
+import audit.reporting_obligations.*
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import enums.AuditType.{IncomeSourceDetailsResponse => _}
+import enums.AuditType.IncomeSourceDetailsResponse as _
 import enums.{AuditType, TransactionName}
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
@@ -30,7 +30,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
 import services.DateServiceInterface
 import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
-import services.optout._
+import services.optout.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -150,7 +150,7 @@ class ReportingObligationsAuditService @Inject()(
   def createAuditEvent(
                         optOutProposition: OptOutProposition,
                         summaryCardSuffixes: List[Option[String]]
-                      )(implicit messages: Messages, mtdItUser: MtdItUser[_]): ReportingObligationsAuditModel = {
+                      )(implicit messages: Messages,  mtdItUser: MtdItUser[_]): ReportingObligationsAuditModel = {
 
     val links: List[String] =
       buildCards(summaryCardSuffixes).map(_.auditModelToString())

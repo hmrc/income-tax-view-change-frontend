@@ -16,9 +16,9 @@
 
 package audit.models
 
-import audit.Utilities._
+import audit.Utilities.*
 import auth.authV2.models.AuthorisedAndEnrolledRequest
-import enums.MTDSupportingAgent
+import enums.MTDUserRole.MTDSupportingAgent
 import play.api.libs.json.{JsValue, Json}
 case class IncomeSourceDetailsResponseAuditModel(
                                                   mtdItUser: AuthorisedAndEnrolledRequest[_],

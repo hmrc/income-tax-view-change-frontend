@@ -18,6 +18,7 @@ package models.financialDetails
 
 import enums.CodingOutType._
 import enums._
+import enums.DocumentType.*
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}

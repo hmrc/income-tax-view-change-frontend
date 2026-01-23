@@ -15,7 +15,8 @@
  */
 
 package models.triggeredMigration.viewModels
-import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased, TriggeredMigrationState}
+import enums.TriggeredMigration.TriggeredMigrationState
+import enums.TriggeredMigration.TriggeredMigrationState.{TriggeredMigrationCeased, TriggeredMigrationAdded}
 import models.core.IncomeSourceId
 
 case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecordsSoleTraderDetails],

@@ -18,44 +18,17 @@ package enums
 
 import scala.language.implicitConversions
 
-sealed trait CodingOutType {
-  val name: String
-  val code: String
+enum CodingOutType(val name: String, val code:String):
+  
+  case CODING_OUT_ACCEPTED extends CodingOutType("Balancing payment collected through PAYE tax code", "I")
+  case CODING_OUT_CANCELLED extends CodingOutType("Cancelled PAYE Self Assessment", "C")
+  case CODING_OUT_CLASS2_NICS extends CodingOutType("Class 2 National Insurance", "N/A" )
+  case CODING_OUT_FULLY_COLLECTED extends CodingOutType("Fully Collected", "F")
+  case CODING_OUT_PARTLY_COLLECTED extends CodingOutType("Partly Collected", "P")
+  case CODING_OUT_NOT_COLLECTED extends CodingOutType("Not Collected", "N")
 
-  implicit def codingOutTypeToString(codingOutType: CodingOutType): String = {
-    codingOutType.name
-  }
-}
+  given Conversion[CodingOutType, String] = codingOutType => codingOutType.name
 
-object CodingOutType {
-  case object CODING_OUT_ACCEPTED extends CodingOutType {
-    override val name: String = "Balancing payment collected through PAYE tax code"
-    override val code: String = "I"
-  }
-
-  case object CODING_OUT_CANCELLED extends CodingOutType {
-    override val name: String = "Cancelled PAYE Self Assessment"
-    override val code: String = "C"
-  }
-
-  case object CODING_OUT_CLASS2_NICS extends CodingOutType {
-    override val name: String = "Class 2 National Insurance"
-    override val code: String = "N/A"
-  }
-
-  case object CODING_OUT_FULLY_COLLECTED extends CodingOutType {
-    override val name: String = "Fully Collected"
-    override val code: String = "F"
-  }
-
-  case object CODING_OUT_PARTLY_COLLECTED extends CodingOutType {
-    override val name: String = "Partly Collected"
-    override val code: String = "P"
-  }
-
-  case object CODING_OUT_NOT_COLLECTED extends CodingOutType {
-    override val name: String = "Not Collected"
-    override val code: String = "N"
-  }
-
-}
+/*given codingOutTypeToString: Conversion[CodingOutType, String] with {
+  def apply(codingOutType: CodingOutType): String = codingOutType.name 
+}*/

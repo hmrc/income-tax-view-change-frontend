@@ -22,11 +22,12 @@ import auth.MtdItUser
 import cats.data.OptionT
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
-import enums._
+import enums.*
+import enums.ChosenTaxYear.{CurrentTaxYear, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
-import models.optout._
+import models.optout.*
 import models.optout.newJourney.OptOutTaxYearQuestionViewModel
 import play.api.Logger
 import repositories.OptOutSessionDataRepository

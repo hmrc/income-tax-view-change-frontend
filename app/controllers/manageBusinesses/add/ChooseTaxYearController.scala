@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.ReportingFrequencyPages
+import enums.JourneyState.ReportingFrequencyPages
 import forms.manageBusinesses.add.ChooseTaxYearForm
 import forms.models.ChooseTaxYearFormModel
 import models.UIJourneySessionData

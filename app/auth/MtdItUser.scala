@@ -17,7 +17,8 @@
 package auth
 
 import auth.authV2.models.{AgentClientDetails, AuthUserDetails}
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import enums.MTDUserRole
+import enums.MTDUserRole.{MTDIndividual, MTDSupportingAgent}
 import models.admin.FeatureSwitch
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}

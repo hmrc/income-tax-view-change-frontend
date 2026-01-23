@@ -18,76 +18,23 @@ package enums
 
 import scala.language.implicitConversions
 
-sealed trait ChargeType {
-  val name: String
-
-  implicit def chargeTypeToString(chargeType: ChargeType): String = {
-    chargeType.name
-  }
-}
-
-object ChargeType {
-  case object ITSA_ENGLAND_AND_NI extends ChargeType {
-    override val name: String = "ITSA England & NI"
-  }
-
-  case object ITSA_NI extends ChargeType {
-    override val name: String = "ITSA NI"
-  }
-
-  case object ITSA_SCOTLAND extends ChargeType {
-    override val name: String = "ITSA Scotland"
-  }
-
-  case object ITSA_WALES extends ChargeType {
-    override val name: String = "ITSA Wales"
-  }
-
-  case object NIC4_GB extends ChargeType {
-    override val name: String = "NIC4-GB"
-  }
-
-  case object NIC4_SCOTLAND extends ChargeType {
-    override val name: String = "NIC4 Scotland"
-  }
-
-  case object NIC4_WALES extends ChargeType {
-    override val name: String = "NIC4 Wales"
-  }
-
-  case object NIC4_NI extends ChargeType {
-    override val name: String = "NIC4-NI"
-  }
-
-  case object ITSA_NIC2_INTEREST_GB extends ChargeType {
-    override val name: String = "ITSA NIC2 Interest GB"
-  }
-
-  case object ITSA_NIC4_INTEREST_GB extends ChargeType {
-    override val name: String = "ITSA NIC4 Interest GB"
-  }
-
-  case object NIC2_GB extends ChargeType {
-    override val name: String = "NIC2-GB"
-  }
-
-  case object NIC2_WALES extends ChargeType {
-    override val name: String = "NIC2 Wales"
-  }
-
-  case object VOLUNTARY_NIC2_GB extends ChargeType {
-    override val name: String = "Voluntary NIC2-GB"
-  }
-
-  case object VOLUNTARY_NIC2_NI extends ChargeType {
-    override val name: String = "Voluntary NIC2-NI"
-  }
-
-  case object CGT extends ChargeType {
-    override val name: String = "CGT"
-  }
-
-  case object SL extends ChargeType {
-    override val name: String = "SL"
-  }
-}
+enum ChargeType(val name: String):
+  
+  case ITSA_ENGLAND_AND_NI extends ChargeType("ITSA England & NI")
+  case ITSA_NI extends ChargeType("ITSA NI")
+  case ITSA_SCOTLAND extends ChargeType("ITSA Scotland")
+  case ITSA_WALES extends ChargeType("ITSA Wales")
+  case NIC4_GB extends ChargeType("NIC4_GB")
+  case NIC4_SCOTLAND extends ChargeType("NIC4 Scotland")
+  case NIC4_WALES extends ChargeType("NIC4 Wales")
+  case NIC4_NI extends ChargeType("NIC4-NI")
+  case ITSA_NIC2_INTEREST_GB extends ChargeType("ITSA NIC2 Interest GB")
+  case ITSA_NIC4_INTEREST_GB extends ChargeType("ITSA NIC4 Interest GB")
+  case NIC2_GB extends ChargeType("NIC2-GB")
+  case NIC2_WALES extends ChargeType("NIC2 Wales")
+  case VOLUNTARY_NIC2_GB extends ChargeType("Voluntary NIC2-GB")
+  case VOLUNTARY_NIC2_NI extends ChargeType("Voluntary NIC2-NI")
+  case CGT extends ChargeType("CGT")
+  case SL extends ChargeType("SL")
+  
+  given Conversion[ChargeType, String] = chargeType => chargeType.name

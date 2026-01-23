@@ -23,14 +23,15 @@ import auth.authV2.AuthActions
 import auth.authV2.models.AuthorisedUserRequest
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.AuthUtils._
+import controllers.agent.AuthUtils.*
 import controllers.agent.sessionUtils.SessionKeys
-import enums._
+import enums.*
+import enums.MTDUserRole.{MTDPrimaryAgent, MTDSupportingAgent}
 import forms.agent.ClientsUTRForm
 import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.agent.ClientDetailsService
 import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment

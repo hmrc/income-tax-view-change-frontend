@@ -21,12 +21,13 @@ import auth.authV2.models.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAn
 import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.AuthUtils._
-import enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import controllers.agent.AuthUtils.*
+import enums.MTDUserRole
+import enums.MTDUserRole.{MTDPrimaryAgent, MTDSupportingAgent}
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 

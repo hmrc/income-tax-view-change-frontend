@@ -16,40 +16,13 @@
 
 package enums
 
-sealed trait DocumentType {
-  val key: String
-}
-
-case object Poa1Charge extends DocumentType {
-  override val key: String = "ITSA- POA 1"
-}
-
-case object Poa2Charge extends DocumentType {
-  override val key: String = "ITSA- POA 2"
-}
-
-case object Poa1ReconciliationDebit extends DocumentType {
-  override val key: String = "POA 1 Reconciliation Debit"
-}
-
-case object Poa2ReconciliationDebit extends DocumentType {
-  override val key: String = "POA 2 Reconciliation Debit"
-}
-
-case object BalancingCharge extends DocumentType {
-  override val key: String = "ITSA BCD"
-}
-
-case object TRMNewCharge extends DocumentType {
-  override val key: String = "TRM New Charge"
-}
-
-case object TRMAmendCharge extends DocumentType {
-  override val key: String = "TRM Amend Charge"
-}
-
-//EXTEND WITH OTHER CHARGES
-
-case object OtherCharge extends DocumentType {
-  override val key: String = "Other"
-}
+enum DocumentType(val key: String):
+  case Poa1Charge extends DocumentType("ITSA- POA 1")
+  case Poa2Charge extends DocumentType("ITSA- POA 2")
+  case Poa1ReconciliationDebit extends DocumentType("POA 1 Reconciliation Debit")
+  case Poa2ReconciliationDebit extends DocumentType("POA 2 Reconciliation Debit")
+  case BalancingCharge extends DocumentType("ITSA BCD")
+  case TRMNewCharge extends DocumentType("TRM New Charge")
+  case TRMAmendCharge extends DocumentType("TRM Amend Charge")
+  //EXTEND WITH OTHER CHARGES
+  case OtherCharge extends DocumentType("Other")

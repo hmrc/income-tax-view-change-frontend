@@ -16,36 +16,16 @@
 
 package enums
 
-trait JourneyState {
-  val key: String
-}
-
-case object InitialPage extends JourneyState {
+enum JourneyState(val key:String):
   //for the start page of every Journey (any page the user can hit without an open mongo session)
-  override val key: String = "Initial"
-}
-
-case object CannotGoBackPage extends JourneyState {
+  case InitialPage extends JourneyState("Initial")
   //any You Cannot Go Back page, to prevent infinite redirects
-  override val key: String = "CannotGoBack"
-}
-
-case object BeforeSubmissionPage extends JourneyState {
+  case CannotGoBackPage extends JourneyState("CannotGoBack")
   //for any page before the first (or only) submission of data to an API, including the page which submits the data (on submit)
-  override val key: String = "BeforeSubmission"
-}
-
-case object AfterSubmissionPage extends JourneyState {
+  case BeforeSubmissionPage extends JourneyState("BeforeSubmission")
   //for any page after the first (or only) submission of data to an API
-  override val key: String = "AfterSubmission"
-}
-
-case object ReportingFrequencyPages extends JourneyState {
+  case AfterSubmissionPage extends JourneyState("AfterSubmission")
   //for any page after the first (or only) submission of data to an API
-  override val key: String = "ReportingFrequencyPages"
-}
-
-case object JourneyCompleted extends JourneyState {
+  case ReportingFrequencyPages extends JourneyState("ReportingFrequencyPages")
   //any You Cannot Go Back page, to prevent infinite redirects
-  override val key: String = "JourneyCompleted"
-}
+  case JourneyCompleted extends JourneyState("JourneyCompleted")

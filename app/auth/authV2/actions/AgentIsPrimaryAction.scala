@@ -21,7 +21,7 @@ import audit.models.AccessDeniedForSupportingAgentAuditModel
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import com.google.inject.Singleton
 import config.AgentItvcErrorHandler
-import enums.MTDSupportingAgent
+import enums.MTDUserRole.MTDSupportingAgent
 import play.api.mvc.{ActionRefiner, Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter

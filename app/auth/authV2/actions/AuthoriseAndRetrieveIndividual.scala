@@ -18,20 +18,20 @@ package auth.authV2.actions
 
 import audit.AuditingService
 import audit.models.IvUpliftRequiredAuditModel
-import auth._
+import auth.*
 import auth.authV2.Constants
 import auth.authV2.models.{AuthUserDetails, AuthorisedAndEnrolledRequest}
 import com.google.inject.Singleton
 import config.FrontendAppConfig
 import controllers.agent.AuthUtils.mtdEnrolmentName
-import enums.MTDIndividual
+import enums.MTDUserRole.MTDIndividual
 import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.mvc.Results.Redirect
-import play.api.mvc._
-import uk.gov.hmrc.auth.core._
+import play.api.mvc.*
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
