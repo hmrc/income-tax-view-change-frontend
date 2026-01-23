@@ -18,7 +18,7 @@ package testConstants.incomeSources
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.TriggeredMigration.HmrcUnconfirmed
+import enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import models.UIJourneySessionData
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
@@ -34,7 +34,7 @@ object IncomeSourceDetailsTestConstants {
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(business1, business2), List(propertyDetails))
   val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(ceasedBusiness), List(ceasedPropertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-  val singleBusinessIncomeUnconfirmed = singleBusinessIncome.copy(channel = HmrcUnconfirmed.value)
+  val singleBusinessIncomeUnconfirmed = singleBusinessIncome.copy(channel = HmrcUnconfirmed.getValue)
   val dualBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1, business1), Nil)
   val singleBusinessIncomeNoLatency = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1NoLatency), Nil)
   val singleBusinessIncomeWithLatency2019 = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(businessWithLatency2019), Nil)

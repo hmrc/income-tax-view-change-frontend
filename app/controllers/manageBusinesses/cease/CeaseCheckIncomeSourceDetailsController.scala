@@ -30,7 +30,7 @@ import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}

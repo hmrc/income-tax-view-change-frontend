@@ -16,18 +16,10 @@
 
 package enums.TriggeredMigration
 
-sealed trait Channel {
-  val value: String
-}
-
-case object CustomerLed extends Channel {
-  override val value = "Customer-led"
-}
-
-case object HmrcUnconfirmed extends Channel {
-  override val value = "Hmrc-led-unconfirmed"
-}
-
-case object HmrcConfirmed extends Channel {
-  override val value = "Hmrc-led-confirmed"
+enum Channel(value: String) {
+  case CustomerLed extends Channel("Customer-led")
+  case HmrcUnconfirmed extends Channel("Hmrc-led-unconfirmed")
+  case HmrcConfirmed extends Channel("Hmrc-led-confirmed")
+  
+  def getValue: String = value
 }

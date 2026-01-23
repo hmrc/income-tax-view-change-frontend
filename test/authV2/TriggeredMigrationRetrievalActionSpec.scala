@@ -20,7 +20,7 @@ import auth.authV2.actions.TriggeredMigrationRetrievalAction
 import authV2.AuthActionsTestData.{defaultIncomeSourcesData, getMtdItUser}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.IncomeTaxCalculationConnector
-import enums.TriggeredMigration.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
+import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
 import models.admin.TriggeredMigration
 import models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
@@ -105,7 +105,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "an individual user has a channel of confirmed and is on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
 
         val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("")))
 
@@ -115,7 +115,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "an individual user has a channel of customer led and is on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
 
         val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("")))
 
@@ -125,7 +125,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "an agent user has a channel of confirmed and is on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
 
         val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("")))
 
@@ -135,7 +135,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "an agent user has a channel of customer led and is on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(CustomerLed.value))
+        val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
 
         val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("")))
 
@@ -145,7 +145,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the user is unconfirmed and their CY ITSA status is missing but their CY+1 ITSA status is available" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         when(mockDateServiceInterface.getCurrentTaxYear).thenReturn(TaxYear(2025, 2026))
 
@@ -165,7 +165,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the user is unconfirmed, they have an ITSA status of Voluntary or Mandated and their calculation is not crystallised while being on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val unconfirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val unconfirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
           .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Voluntary, StatusReason.Complex)))))))
@@ -181,7 +181,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the user has a channel of confirmed and is not on the triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
 
         val result = action(false).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
@@ -191,7 +191,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the user has a channel of customer led and is not on the triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
 
         val result = action(false).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
@@ -202,7 +202,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the user is unconfirmed and their ITSA status is not voluntary or mandated and they arent on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
           .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Annual, StatusReason.Complex)))))))
@@ -216,7 +216,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the user is unconfirmed, their ITSA status is voluntary, and their calculation is crystallised and not on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
           .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Voluntary, StatusReason.Complex)))))))
@@ -231,7 +231,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the user is unconfirmed, their ITSA status is mandatory, and their calculation is crystallised and not on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
           .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Mandated, StatusReason.Complex)))))))
@@ -247,7 +247,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the triggered migration feature switch is disabled" in {
         disable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
@@ -260,7 +260,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the user is unconfirmed, their ITSA status is voluntary, and their calculation is not crystallised and they arent on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
           .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Voluntary, StatusReason.Complex)))))))
@@ -276,7 +276,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "the user is unconfirmed, their ITSA status is mandatory, and their calculation is not crystallised and they arent on a triggered migration page" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
           .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Mandated, StatusReason.Complex)))))))
@@ -295,7 +295,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "there is an error retrieving the user's calculation during triggered migration retrieval" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
           .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Mandated, StatusReason.Complex)))))))
@@ -310,7 +310,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
       "The user has no ITSA statuses available" in {
         enable(TriggeredMigration)
 
-        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.value))
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
         when(mockDateServiceInterface.getCurrentTaxYear).thenReturn(TaxYear(2025, 2026))
 

@@ -106,15 +106,14 @@ class TriggeredMigrationRetrievalAction @Inject()(
       Future(Left(if (user.isAgent()) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
 
     ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
-      case itsaStatusList => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.shortenTaxYearEnd) match {
+      itsaStatusList => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.shortenTaxYearEnd) match {
           case Some(status) if status.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)) => Future(Right(true))
           case Some(status) if status.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary)) => Future(Right(false))
           case _ => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd) match {
               case Some(_) => redirectBasedOnUser
               case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
-            }
-        }
-      case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no status found")))
+          }
+      }
     }
   }
 
