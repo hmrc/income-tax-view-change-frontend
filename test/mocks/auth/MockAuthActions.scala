@@ -65,7 +65,9 @@ trait MockAuthActions
     with MockAuditingService
     with MockSessionDataService
     with MockClientDetailsService
-    with FeatureSwitching {
+    with FeatureSwitching
+    with MockITSAStatusService
+    with MockIncomeTaxCalculationConnector {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
