@@ -18,7 +18,7 @@ package utils.reportingObligations
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import models.admin.{FeatureSwitchName, OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
+import models.admin.*
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup

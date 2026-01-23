@@ -33,10 +33,10 @@
     bulletList: bulletPointList
 )
 @(isAgent: Boolean, isSignUp: Boolean)(
-  	implicit request: Request[_],
-	messages: Messages,
-  	user: auth.MtdItUser[_],
-	appConfig: config.FrontendAppConfig
+    implicit request: Request[_],
+    messages: Messages,
+    user: auth.MtdItUser[_],
+    appConfig: config.FrontendAppConfig
 )
 
 @getMessages(messageKey: String) = @{

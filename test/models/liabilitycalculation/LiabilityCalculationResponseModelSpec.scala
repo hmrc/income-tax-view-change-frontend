@@ -69,11 +69,11 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
       val arraysTestJson = try source.mkString finally source.close()
 
       "be translated to Json correctly" in {
-        Json.toJson(arrayTestFull) shouldBe Json.parse(arraysTestJson)
+        assertJsonEquals(Json.toJson(arrayTestFull), Json.parse(arraysTestJson))
       }
       "should convert from json to model" in {
         val calcModel = Json.fromJson[LiabilityCalculationResponse](Json.parse(arraysTestJson))
-        Json.toJson(calcModel.get) shouldBe Json.parse( arraysTestJson)
+        assertJsonEquals(Json.toJson(calcModel.get), Json.parse( arraysTestJson))
       }
     }
 
@@ -83,12 +83,12 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
       val expectedJsonPruned = try source.mkString finally source.close()
 
       "be translated to Json correctly" in {
-        Json.toJson(liabilityCalculationModelSuccessful) shouldBe Json.parse(expectedJsonPruned)
+        assertJsonEquals(Json.toJson(liabilityCalculationModelSuccessful), Json.parse(expectedJsonPruned))
       }
 
       "should convert from json to model" in {
         val calcResponse = Json.fromJson[LiabilityCalculationResponse](Json.parse(expectedJsonPruned))
-        Json.toJson(calcResponse.get) shouldBe Json.parse(expectedJsonPruned)
+        assertJsonEquals(Json.toJson(calcResponse.get), Json.parse(expectedJsonPruned))
       }
     }
 

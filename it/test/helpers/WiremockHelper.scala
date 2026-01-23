@@ -30,6 +30,7 @@ import play.api.http.HeaderNames
 import play.api.libs.json.JsValue
 import play.api.libs.ws.{WSClient, WSResponse}
 import testConstants.BaseIntegrationTestConstants.testSessionId
+import play.api.libs.ws.DefaultBodyWritables._
 
 import scala.concurrent.Future
 

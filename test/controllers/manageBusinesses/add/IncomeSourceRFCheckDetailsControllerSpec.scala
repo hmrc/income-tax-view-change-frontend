@@ -39,11 +39,12 @@ import scala.concurrent.Future
 class IncomeSourceRFCheckDetailsControllerSpec extends MockAuthActions with MockDateService with MockSessionService with MockIncomeSourceRFService {
 
   lazy val mockUpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[IncomeSourceRFService].toInstance(mockIncomeSourceRFService),
-      api.inject.bind[DateService].toInstance(mockDateService),
+      api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
@@ -83,7 +84,7 @@ class IncomeSourceRFCheckDetailsControllerSpec extends MockAuthActions with Mock
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRedirectChecksForIncomeSourceRF()
-            setupMockGetCurrentTaxYearEnd(2025)
+            setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2025)
 
             setupMockGetMongo(Right(Some(UIJourneySessionData("", "", Some(AddIncomeSourceData(incomeSourceId = Some("ID")))))))
 
@@ -107,7 +108,7 @@ class IncomeSourceRFCheckDetailsControllerSpec extends MockAuthActions with Mock
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockRedirectChecksForIncomeSourceRF()
-            setupMockGetCurrentTaxYearEnd(2025)
+            setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2025)
 
             setupMockGetMongo(Right(Some(UIJourneySessionData(
               "",

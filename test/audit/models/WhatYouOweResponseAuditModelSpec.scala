@@ -51,10 +51,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
                                        chargesList: WhatYouOweChargesList = whatYouOwePartialChargesListX,
                                       ): WhatYouOweResponseAuditModel = WhatYouOweResponseAuditModel(
     user = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, yearOfMigration, List.empty, List.empty)),
-    whatYouOweChargesList = chargesList,
-    dateService,
-
-  )
+    whatYouOweChargesList = chargesList) (dateService)
 
   "The WhatYouOweResponseAuditModel" should {
 
@@ -67,7 +64,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
     }
 
     "Have the correct details for the audit event" in {
-      testWhatYouOweResponseAuditModel(Some(Individual)).detail shouldBe Json.obj(
+      assertJsonEquals(testWhatYouOweResponseAuditModel(Some(Individual)).detail, Json.obj(
         "userType" -> "Individual",
         "saUtr" -> testSaUtr,
         "nino" -> testNino,
@@ -128,7 +125,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
         ),
         "codingOut" -> Json.obj("amountCodedOut" -> 100,
           "endTaxYear" -> "2022")
-      )
+      ))
     }
 
     "Have the agent details for the audit event" in {

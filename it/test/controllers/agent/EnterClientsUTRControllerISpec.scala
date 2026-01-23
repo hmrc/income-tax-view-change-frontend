@@ -19,12 +19,13 @@ package controllers.agent
 import audit.models.EnterClientUTRAuditModel
 import controllers.ControllerISpecHelper
 import enums.MTDPrimaryAgent
-import helpers.servicemocks._
-import play.api.http.Status._
+import helpers.servicemocks.*
+import play.api.http.Status.*
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants._
+import play.api.libs.ws.WSResponse
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
-import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.*
 
 class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   
@@ -65,7 +66,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  s"POST ${controllers.agent.routes.EnterClientsUTRController.submit.url}" should {
+  s"POST ${controllers.agent.routes.EnterClientsUTRController.submit().url}" should {
     s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()

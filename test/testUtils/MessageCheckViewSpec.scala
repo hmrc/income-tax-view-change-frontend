@@ -25,22 +25,42 @@ import testOnly.views.html.MessageCheckView
 import scala.language.reflectiveCalls
 
 class MessageCheckViewSpec extends TestSupport {
+
+  final case class LanguageSetupFixture(
+   messageKeys: List[String],
+   messagesMap: Map[String, String],
+   view: Html,
+   document: Document
+ )
+
+
   val messageCheckView: MessageCheckView = app.injector.instanceOf[MessageCheckView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("cy")
 
-  def languageSetupTest(language: String) = new {
-    val messageKeys: List[String] = messagesApi.messages.collect {
-      case (key, values) if key == language => values.keys
-    }.flatten(_.toList).toList
+  def languageSetupTest(language: String): LanguageSetupFixture = {
 
-    val messagesMap = messagesApi.messages.collect {
-      case (key, values) if key == language => values
-    }.flatten(_.toMap).toMap
+    val messageKeys: List[String] =
+      messagesApi.messages.collect {
+        case (key, values) if key == language => values.keys
+      }.flatten(_.toList).toList
+
+    val messagesMap: Map[String, String] =
+      messagesApi.messages.collect {
+        case (key, values) if key == language => values
+      }.flatten(_.toMap).toMap
 
     val view: Html = messageCheckView(messageKeys)
     val document: Document = Jsoup.parse(view.body)
+
+    LanguageSetupFixture(
+      messageKeys = messageKeys,
+      messagesMap = messagesMap,
+      view = view,
+      document = document
+    )
   }
+
 
   "Render Message in correct format" when {
     "message key is given" should {

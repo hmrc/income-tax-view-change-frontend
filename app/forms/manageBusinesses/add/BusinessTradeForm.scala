@@ -50,7 +50,9 @@ object BusinessTradeForm extends CustomConstraints {
       businessTrade.trim() -> text
         .verifying(
           firstError(isNotEmpty andThen isNotTooLong andThen isNotTooShort andThen isValidChars))
-    )(BusinessTradeForm.apply)(BusinessTradeForm.unapply)
+    )
+    (trade => BusinessTradeForm(trade))
+    (form => Some(form.trade))
   )
 
   def checkBusinessTradeWithBusinessName(form: Form[BusinessTradeForm], businessName: Option[String]): Form[BusinessTradeForm] = {

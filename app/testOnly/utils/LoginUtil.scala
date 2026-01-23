@@ -16,7 +16,6 @@
 
 package testOnly.utils
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class KVPair(key: String, value: String)
@@ -31,22 +30,14 @@ case class DelegatedEnrolment(key: String, identifiers: Seq[KVPair], delegatedAu
 
 object LoginUtil {
 
-  implicit val kvPairWrites: Writes[KVPair] = (
-    (JsPath \ "key").write[String] and
-      (JsPath \ "value").write[String]
-    ) (unlift(KVPair.unapply))
+  implicit val kvPairWrites: Writes[KVPair] =
+    Json.writes[KVPair]
 
-  implicit val enrolmentWrites: Writes[Enrolment] = (
-    (JsPath \ "key").write[String] and
-      (JsPath \ "identifiers").write[Seq[KVPair]] and
-      (JsPath \ "state").write[String]
-    ) (unlift(Enrolment.unapply))
+  implicit val enrolmentWrites: Writes[Enrolment] =
+    Json.writes[Enrolment]
 
-  implicit val delegatedEnrolmentWrites: Writes[DelegatedEnrolment] = (
-    (JsPath \ "key").write[String] and
-      (JsPath \ "identifiers").write[Seq[KVPair]] and
-      (JsPath \ "delegatedAuthRule").write[String]
-    ) (unlift(DelegatedEnrolment.unapply))
+  implicit val delegatedEnrolmentWrites: Writes[DelegatedEnrolment] =
+    Json.writes[DelegatedEnrolment]
 
   def getEnrolmentData(isAgent: Boolean, enrolment: EnrolmentValues): JsValue = {
     val es = if (isAgent) {

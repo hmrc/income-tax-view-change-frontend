@@ -45,9 +45,9 @@
     nextUpdatesTileViewModel: NextUpdatesTileViewModel,
     yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel
 )(
-  	implicit request: Request[_],
-	messages: Messages,
-  	user: auth.MtdItUser[_],
+    implicit request: Request[_],
+    messages: Messages,
+    user: auth.MtdItUser[_],
     appConfig: config.FrontendAppConfig)
 
 @pageHeading = @{

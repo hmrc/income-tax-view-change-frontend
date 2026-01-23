@@ -23,7 +23,7 @@ import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.optout.OptOutProposition.createOptOutProposition
-
+import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
 
 class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutures {
 

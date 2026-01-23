@@ -81,6 +81,9 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
     false
   )
 
+  def setupBothIncomeSources(): Unit = {
+    mockBothIncomeSources()
+  }
   def testChargeHistoryModel(): ChargesHistoryModel = ChargesHistoryModel("NINO", "AB123456C", "ITSA", None)
 
   def emptyAdjustmentHistoryModel: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1000, None, AmendedReturnReversalReason), List())
@@ -130,7 +133,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
 
     setupMockGetAdjustmentHistory(adjustmentHistoryModel)
     mockGetReviewAndReconcileCredit(PoaOneReconciliationCredit)
-    mockBothIncomeSources()
+    setupBothIncomeSources()
 
   }
 }

@@ -49,7 +49,7 @@ class OptInAuditModelSpec extends TestSupport {
 
         auditModel.auditType shouldBe "OptInQuarterlyReportingRequest"
         auditModel.transactionName shouldBe "opt-in-quarterly-reporting-request"
-        auditModel.detail shouldBe Json.obj(
+       assertJsonEquals(auditModel.detail, Json.obj(
           "nino" -> tsTestUser.nino,
           "mtditid" -> tsTestUser.mtditid,
           "saUtr" -> tsTestUser.saUtr,
@@ -64,14 +64,14 @@ class OptInAuditModelSpec extends TestSupport {
           "outcome" -> Json.obj(
             "isSuccessful" -> true
           )
-        )
+       ) )
       }
       "generate a outcome when unsuccessful" in {
         val intentTaxYear = TaxYear(23, 24)
         val resolvedResponse: ITSAStatusUpdateResponse = ITSAStatusUpdateResponseFailure.defaultFailure()
         val auditModel = OptInAuditModel(optInProposition, intentTaxYear, resolvedResponse)
 
-        auditModel.detail shouldBe Json.obj(
+        assertJsonEquals(auditModel.detail, Json.obj(
           "nino" -> tsTestUser.nino,
           "mtditid" -> tsTestUser.mtditid,
           "saUtr" -> tsTestUser.saUtr,
@@ -88,7 +88,7 @@ class OptInAuditModelSpec extends TestSupport {
             "failureCategory" -> "INTERNAL_SERVER_ERROR",
             "failureReason" -> "Request failed due to unknown reason"
           )
-        )
+        ))
       }
     }
   }

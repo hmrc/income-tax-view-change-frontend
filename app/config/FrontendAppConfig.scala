@@ -185,7 +185,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
       case _ => "https://www.gov.uk/log-in-file-self-assessment-tax-return"
     }
 
-def compatibleSoftwareLink(implicit messages: Messages): String =
+  def compatibleSoftwareLink(implicit messages: Messages): String =
     messages.lang.code match {
       case "en" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
       case "cy" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy"

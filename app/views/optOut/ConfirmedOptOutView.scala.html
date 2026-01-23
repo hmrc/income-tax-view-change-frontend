@@ -392,7 +392,7 @@
 ) {
 
     @if(confirmedOptOutViewScenarios == CurrentYearNYQuarterlyOrAnnualScenario) {
-        @greenPanelScenario1And4
+        @greenPanelScenario1And4()
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
             @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
@@ -402,7 +402,7 @@
     }
 
     @if(confirmedOptOutViewScenarios == CurrentYearNYMandatedScenario) {
-        @greenPanelScenario2
+        @greenPanelScenario2()
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
             @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
@@ -413,7 +413,7 @@
     }
 
     @if(confirmedOptOutViewScenarios == NextYearCYMandatedOrQuarterlyScenario) {
-        @greenPanelScenario3
+        @greenPanelScenario3()
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
             @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
@@ -424,7 +424,7 @@
     }
 
     @if(confirmedOptOutViewScenarios == NextYearCYAnnualScenario) {
-        @greenPanelScenario1And4
+        @greenPanelScenario1And4()
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
             @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
@@ -434,7 +434,7 @@
     }
 
     @if(confirmedOptOutViewScenarios == PreviousAndNoStatusValidScenario) {
-        @greenPanelScenario5
+        @greenPanelScenario5()
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
             @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))
@@ -444,7 +444,7 @@
     }
 
     @if(confirmedOptOutViewScenarios == DefaultValidScenario) {
-        @greenPanelScenario1And4
+        @greenPanelScenario1And4()
         @revisedDeadlinesBlock
         <div id="submit-tax" class="govuk-!-margin-bottom-7  govuk-!-margin-top-8">
             @h2(msg = "optout.confirmedOptOut.submitTax", optId = Some("submit-your-tax-return-heading"))

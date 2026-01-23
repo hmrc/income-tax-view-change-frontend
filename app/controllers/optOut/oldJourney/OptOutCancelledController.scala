@@ -48,7 +48,7 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
     authActions.asMTDIndividual.async { implicit user =>
       withOptOutFS {
         optOutService.getTaxYearForOptOutCancelled()
-          .map { taxYear: Option[TaxYear] =>
+          .map { (taxYear: Option[TaxYear]) =>
             Ok(view(
               isAgent = false,
               taxYear
@@ -71,7 +71,7 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
     authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
       withOptOutFS {
         optOutService.getTaxYearForOptOutCancelled()
-          .map { taxYear: Option[TaxYear] =>
+          .map { (taxYear: Option[TaxYear]) =>
             Ok(view(
               isAgent = true,
               taxYear

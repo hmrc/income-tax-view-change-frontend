@@ -38,6 +38,14 @@ object StubDataForm {
       status -> text.verifying(isNumeric).transform[Int](_.toInt, _.toString),
       response -> optional(text).verifying(oValidJson).transform[Option[JsValue]](x => x.fold[Option[JsValue]](None)(value => Some(Json.parse(value))),
         y => y.fold[Option[String]](None)(json => Some(json.toString())))
-    )(DataModel.apply)(DataModel.unapply)
+    )
+    ((id,
+      schemaId,
+      method,
+      status,
+      response) => DataModel(id, schemaId, method, status, response))
+    (form => Some(
+      form._id, form.schemaId, form.method, form.status, form.response
+    ))
   )
 }

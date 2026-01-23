@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.ObligationsConnector
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
-import mocks.{MockHttp, MockHttpV2}
+import mocks.MockHttpV2
 import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
 import play.api.Configuration
@@ -45,11 +45,10 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   with MockITSAStatusService
   with MockCalculationListService
   with MockDateService
-  with MockHttp
   with MockHttpV2
   with MockAuditingService {
 
-  implicit override lazy val dateService: DateService = mockDateService
+  implicit override val dateService: DateService = mockDateService
 
   override val appConfig: FrontendAppConfig = new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
     override lazy val itvcProtectedService: String = "http://localhost:9999"
