@@ -2578,7 +2578,7 @@ optout.confirmedOptOut.submitTax.confirmed.bullet2               = using HMRC on
 
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
-optout.confirmedOptOut.next-updates                              = next updates
+optout.confirmedOptOut.next-updates                              = submission deadlines
 
 optout.confirmedOptOut.reportQuarterly                           = Your reporting obligations in the future
 optout.confirmedOptOut.reportQuarterly.desc1                     = You could be required to report quarterly again in the future if:
@@ -2661,8 +2661,8 @@ optout.chooseOptOutTaxYear.deleteUpdates             = This will delete {0} quar
 # opt out error page
 optout.optOutError.heading                           = Sorry, there is a problem with the service
 optout.optOutError.options                           = You can:
-optout.optOutError.nextUpdates-bullet-1              = go back to your
-optout.optOutError.nextUpdates-link                  = next updates
+optout.optOutError.nextUpdates-bullet-1              = go back to
+optout.optOutError.nextUpdates-link                  = your submission deadlines
 optout.optOutError.nextUpdates-bullet-2              = and try again
 optout.optOutError.home-bullet-1                     = go back to the
 optout.optOutError.home-bullet-2                     = homepage
@@ -2877,8 +2877,8 @@ optin.checkAnswers.submissionsMade  = If you have submitted any income and expen
 # opt in error page
 optin.optInError.heading                           = Sorry, there is a problem with the service
 optin.optInError.options                           = You can:
-optin.optInError.nextUpdates-bullet-1              = go back to your
-optin.optInError.nextUpdates-link                  = next updates
+optin.optInError.nextUpdates-bullet-1              = go back to
+optin.optInError.nextUpdates-link                  = your submission deadlines
 optin.optInError.nextUpdates-bullet-2              = and try again
 optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage

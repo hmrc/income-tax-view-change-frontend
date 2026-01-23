@@ -157,7 +157,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         }
         "has a link to view updates" in new TestSetup {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
           link.map(_.text) shouldBe Some(messages("home.updates.view"))
         }
         "is empty except for the title" when {
@@ -167,7 +167,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         }
         "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
           link.map(_.text) shouldBe Some(messages("home.updates.view.reportingFrequency"))
         }
 
@@ -187,7 +187,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
           paragraphs.get(0).text shouldBe "Next update due: 5 November 2099"
           paragraphs.get(1).text shouldBe "Next tax return due: 31 January 2100"
           link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
         }
 
         "has overdue update and tax return when OptInOptOutContentUpdateR17 is enabled and 1 overdue update exists" in new TestSetup(

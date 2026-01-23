@@ -87,11 +87,11 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
   ".getNextUpdatesUrl" should {
 
     "return the correct agent url" in {
-      testIncomeSourceAddedController.getNextUpdatesUrl(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+      testIncomeSourceAddedController.getNextUpdatesUrl(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
     }
 
     "return the correct non-agent url" in {
-      testIncomeSourceAddedController.getNextUpdatesUrl(false) shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+      testIncomeSourceAddedController.getNextUpdatesUrl(false) shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
     }
   }
 

@@ -210,7 +210,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to view updates" in new Setup {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/next-updates")
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/submission-deadlines")
         link.map(_.text) shouldBe Some("View update deadlines")
       }
       "is empty except for the title" when {
@@ -220,7 +220,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to view and manage updates - Opt Out" in new Setup(nextUpdatesTileViewModel = viewModelOptOut) {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/next-updates")
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/submission-deadlines")
         link.map(_.text) shouldBe Some("View deadlines and manage how you report")
       }
 
@@ -247,7 +247,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
           val link: Element = tile.select("a.govuk-link").first()
           link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
 
@@ -276,7 +276,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
           val link: Element = tile.select("a.govuk-link").first()
           link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
 
@@ -309,7 +309,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
           val link: Element = tile.select("a.govuk-link").first()
           link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
 
@@ -336,7 +336,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
           val link: Element = tile.select("a.govuk-link").first()
           link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
 
@@ -360,7 +360,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
         val link: Element = tile.select("a.govuk-link").first()
         link.text shouldBe "View deadlines and manage how you report"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
       }
 
       "has only title when OptInOptOutContentUpdateR17 is enabled and user has no obligations or tax return date" in new Setup(

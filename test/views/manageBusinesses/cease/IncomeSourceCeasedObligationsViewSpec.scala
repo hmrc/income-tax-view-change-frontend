@@ -59,7 +59,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val finalDeclarationDates2: DatesModel = DatesModel(day.plusYears(1), day.plusDays(1).plusYears(1), day.plusDays(2).plusYears(1), "C", isFinalDec = true, obligationType = "Crystallisation")
 
   val viewAllBusinessLink = "/report-quarterly/income-and-expenses/view/manage-your-businesses"
-  val viewUpcomingUpdatesLink = "/report-quarterly/income-and-expenses/view/next-updates"
+  val viewUpcomingUpdatesLink = "/report-quarterly/income-and-expenses/view/submission-deadlines"
   val viewReportingObligationsLink = "/report-quarterly/income-and-expenses/view/reporting-frequency"
 
   val incomeSourceCeasedObligationsViewModel: IncomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(

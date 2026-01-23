@@ -17,8 +17,8 @@ GET         /agents/client-income-tax                                     contro
 GET         /agents                                                       controllers.HomeController.showAgent()
 
 #NextUpdates
-GET         /next-updates                                                 controllers.NextUpdatesController.show(origin: Option[String] ?= None)
-GET         /agents/next-updates                                          controllers.NextUpdatesController.showAgent()
+GET         /submission-deadlines                                         controllers.NextUpdatesController.show(origin: Option[String] ?= None)
+GET         /agents/submission-deadlines                                  controllers.NextUpdatesController.showAgent()
 
 #Reporting Frequency
 GET         /reporting-frequency                                          controllers.ReportingFrequencyPageController.show(isAgent:Boolean = false)

@@ -486,7 +486,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
       }
 
       "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
@@ -524,7 +524,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
@@ -558,7 +558,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
       }
 
       "render the home without the Next Updates tile" when {

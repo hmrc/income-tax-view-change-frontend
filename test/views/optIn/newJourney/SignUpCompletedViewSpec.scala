@@ -120,7 +120,7 @@ class SignUpCompletedViewSpec extends TestSupport {
         pageDocument.getElementById("your-revised-deadlines-heading").text() shouldBe SignUpCompletedViewMessages.currentYearYourRevisedDeadlinesHeading
         pageDocument.getElementById("your-revised-deadlines-desc").text() shouldBe SignUpCompletedViewMessages.currentYearYourRevisedDeadlinesDesc
         pageDocument.getElementById("your-revised-deadlines-desc-2").text() shouldBe SignUpCompletedViewMessages.currentYearYourRevisedDeadlinesDesc2
-        pageDocument.getElementById("your-revised-deadlines-desc-2").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        pageDocument.getElementById("your-revised-deadlines-desc-2").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         pageDocument.getElementById("your-revised-deadlines-desc-3").text() shouldBe SignUpCompletedViewMessages.currentYearYourRevisedDeadlinesDesc3
         pageDocument.getElementById("your-revised-deadlines-desc-3").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/reporting-frequency"
       }
@@ -152,7 +152,7 @@ class SignUpCompletedViewSpec extends TestSupport {
       }
 
       "render the correct links for agents" in new Setup(isAgent = true, taxYear = TaxYear(2025, 2026), isCurrentYear = true) {
-        pageDocument.getElementById("your-revised-deadlines-desc-2").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+        pageDocument.getElementById("your-revised-deadlines-desc-2").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
         pageDocument.getElementById("your-revised-deadlines-desc-3").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
       }
     }
@@ -170,7 +170,7 @@ class SignUpCompletedViewSpec extends TestSupport {
         pageDocument.getElementById("your-revised-deadlines-heading").text() shouldBe SignUpCompletedViewMessages.nextYearYourRevisedDeadlinesHeading
         pageDocument.getElementById("your-revised-deadlines-inset").text() shouldBe SignUpCompletedViewMessages.nextYearYourRevisedDeadlinesDesc
         pageDocument.getElementById("your-revised-deadlines-desc-2").text() shouldBe SignUpCompletedViewMessages.nextYearYourRevisedDeadlinesDesc2
-        pageDocument.getElementById("your-revised-deadlines-desc-2").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        pageDocument.getElementById("your-revised-deadlines-desc-2").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         pageDocument.getElementById("your-revised-deadlines-desc-3").text() shouldBe SignUpCompletedViewMessages.nextYearYourRevisedDeadlinesDesc3
         pageDocument.getElementById("your-revised-deadlines-desc-3").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/reporting-frequency"
       }
@@ -198,7 +198,7 @@ class SignUpCompletedViewSpec extends TestSupport {
       }
 
       "render the correct links for agents" in new Setup(isAgent = true, taxYear = TaxYear(2026, 2027), isCurrentYear = false) {
-        pageDocument.getElementById("your-revised-deadlines-desc-2").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+        pageDocument.getElementById("your-revised-deadlines-desc-2").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
         pageDocument.getElementById("your-revised-deadlines-desc-3").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
       }
     }

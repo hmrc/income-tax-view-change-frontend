@@ -2570,7 +2570,7 @@ optout.confirmedOptOut.submitTax.confirmed.bullet2               = defnyddio gwa
 
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
-optout.confirmedOptOut.next-updates                              = diweddariadau nesaf
+optout.confirmedOptOut.next-updates                              = dyddiadau cau ar gyfer cyflwyno
 
 optout.confirmedOptOut.reportQuarterly                           = Cyflwyno adroddiadau’n chwarterol eto yn y dyfodol
 optout.confirmedOptOut.reportQuarterly.desc1                     = Mae’n bosibl y bydd gofyn i chi gyflwyno adroddiadau’n chwarterol eto yn y dyfodol os yw’r canlynol yn digwydd:
@@ -2654,7 +2654,7 @@ optout.chooseOptOutTaxYear.deleteUpdates             = Bydd hyn yn dileu {0} diw
 optout.optOutError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
 optout.optOutError.options                           = Gallwch wneud y canlynol:
 optout.optOutError.nextUpdates-bullet-1              = mynd yn ôl i’ch tudalen
-optout.optOutError.nextUpdates-link                  = diweddariadau nesaf
+optout.optOutError.nextUpdates-link                  = dyddiadau cau ar gyfer cyflwyno
 optout.optOutError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optout.optOutError.home-bullet-1                     = mynd yn ôl i’r
 optout.optOutError.home-bullet-2                     = hafan
@@ -2866,7 +2866,7 @@ optin.checkAnswers.submissionsMade = Os ydych wedi cyflwyno unrhyw incwm a threu
 optin.optInError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
 optin.optInError.options                           = Gallwch wneud y canlynol:
 optin.optInError.nextUpdates-bullet-1              = mynd yn ôl i’ch tudalen
-optin.optInError.nextUpdates-link                  = diweddariadau nesaf
+optin.optInError.nextUpdates-link                  = dyddiadau cau ar gyfer cyflwyno
 optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
