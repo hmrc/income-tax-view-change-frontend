@@ -18,7 +18,6 @@ package services
 
 import connectors.SelfServeTimeToPayConnector
 import exceptions.SelfServeTimeToPayJourneyException
-import mocks.MockHttp
 import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import org.mockito.Mockito.{mock, when}
 import testUtils.TestSupport
@@ -28,7 +27,7 @@ import testConstants.BaseTestConstants.{expectedJourneyId, testSetUpPaymentPlanU
 
 import scala.concurrent.Future
 
-class SelfServeTimeToPayServiceSpec extends TestSupport with MockHttp {
+class SelfServeTimeToPayServiceSpec extends TestSupport {
 
   val selfServeTimeToPayConnector: SelfServeTimeToPayConnector = mock(classOf[SelfServeTimeToPayConnector])
   val selfServeTimeToPayService = new SelfServeTimeToPayService(selfServeTimeToPayConnector)

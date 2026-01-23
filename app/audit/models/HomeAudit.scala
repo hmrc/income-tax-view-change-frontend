@@ -20,7 +20,6 @@ import audit.Utilities._
 import auth.MtdItUser
 import models.obligations.NextUpdatesTileViewModel
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.Utilities.JsonUtil
 
 import java.time.LocalDate
 
@@ -45,9 +44,9 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     "mtditid" -> mtdItUser.mtditid,
     "nino" -> mtdItUser.nino
   ) ++ userType(mtdItUser.userType, mtdItUser.isSupportingAgent) ++ paymentsInformation ++ updatesInformation ++
-    ("saUtr", mtdItUser.saUtr) ++
-    ("credId", mtdItUser.credId) ++
-    ("agentReferenceNumber", mtdItUser.arn)
+    Json.obj("saUtr"-> mtdItUser.saUtr) ++
+    Json.obj("credId"-> mtdItUser.credId) ++
+    Json.obj("agentReferenceNumber"-> mtdItUser.arn)
 
   override val auditType: String = enums.AuditType.ItsaHomePage
 

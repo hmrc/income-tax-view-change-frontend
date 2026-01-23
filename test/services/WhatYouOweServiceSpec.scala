@@ -173,7 +173,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(0.00, 2.00, 2.00, Some(100), None, None, Some(350), None, None, Some(100)),
+            balanceDetails = BalanceDetails(0.00, 2.00, 4.00, 2.00, Some(100), None, None, Some(350), None, None, Some(100)),
             chargesList = financialDetailsDueInMoreThan30DaysCi()
           )
         }
@@ -189,7 +189,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
             chargesList = financialDetailsBalancingChargesCi
           )
         }
@@ -205,7 +205,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None)
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None)
           )
         }
         "return a success empty response with outstanding amount zero and accruing interest amount zero" in {
@@ -218,7 +218,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None)
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None)
           )
         }
         "return a success POA2 only response with outstanding amount zero and accruing interest amount non-zero" in {
@@ -232,7 +232,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
             chargesList = List(poa2))
         }
       }
@@ -260,7 +260,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsModel(
-              balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+              balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
               codingDetails = List(CodingDetails(Some(2500.00), Some("2021"))),
               documentDetails = List(dd1, dd2, dd3),
               financialDetails = List(
@@ -275,7 +275,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas),
             isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
             chargesList = List(
               balancingChargeNics2.copy(dueDate = Some(LocalDate.parse("2021-08-24")), chargeReference = Some("ABCD1234")),
               balancingChargeCancelled.copy(dueDate =Some(LocalDate.parse("2021-08-25")), chargeReference = Some("ABCD1234"))),
@@ -293,7 +293,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = true,
             isPenaltiesEnabled = true,
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
             chargesList = List())
         }
         "return PoA charges if they have an amount coded out and filtering FS disabled" in {
@@ -306,7 +306,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
           TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled =  false,
             isPenaltiesEnabled = true,
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
             chargesList = List(poa2WithCodedOut, poa1WithCodedOut))
         }
       }

@@ -17,10 +17,11 @@
 package controllers
 
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks._
-import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import helpers.servicemocks.*
+import play.api.http.Status.*
+import play.api.libs.ws.WSResponse
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 class DeductionsSummaryControllerISpec extends ControllerISpecHelper {

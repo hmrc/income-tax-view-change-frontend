@@ -17,7 +17,7 @@
 package views.manageBusinesses.add
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.manageBusinesses.add.IncomeSourceReportingMethodForm
+import forms.manageBusinesses.add.IncomeSourceReportingMethodFormMapping
 import models.incomeSourceDetails.LatencyYear
 import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
 import org.jsoup.Jsoup
@@ -49,13 +49,13 @@ class IncomeSourceReportingMethodViewSpec extends TestSupport {
     val taxYearReporting2 = "new_tax_year_2_reporting_method"
     val radioMustBeSelectedMessageKey = "incomeSources.add.incomeSourceReportingMethod.error"
 
-    val form: Form[_] = IncomeSourceReportingMethodForm.form
+    val form: Form[_] = IncomeSourceReportingMethodFormMapping.form
 
-    val formWithErrorScenario1: Form[_] = IncomeSourceReportingMethodForm.form
+    val formWithErrorScenario1: Form[_] = IncomeSourceReportingMethodFormMapping.form
       .withError(taxYearReporting1, radioMustBeSelectedMessageKey, "2021", "2022")
       .withError(taxYearReporting2, radioMustBeSelectedMessageKey, "2022", "2023")
 
-    val formWithErrorScenario2: Form[_] = IncomeSourceReportingMethodForm.form
+    val formWithErrorScenario2: Form[_] = IncomeSourceReportingMethodFormMapping.form
       .withError(taxYearReporting2, radioMustBeSelectedMessageKey, "2022", "2023")
 
     val latencyYear1: LatencyYear = LatencyYear("2022", "A")

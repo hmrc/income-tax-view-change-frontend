@@ -17,7 +17,7 @@
 package testUtils
 
 import auth.MtdItUser
-import authV2.AuthActionsTestData._
+import authV2.AuthActionsTestData.*
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.sessionUtils
@@ -32,19 +32,19 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.mock
 import org.scalactic.Equality
-import org.scalatest._
-import org.scalatestplus.play.guice._
+import org.scalatest.*
+import org.scalatestplus.play.guice.*
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json._
 import play.api.mvc.{AnyContentAsEmpty, Result}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
 import services.DateService
-import testConstants.BaseTestConstants._
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import testConstants.BaseTestConstants.*
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 import testOnly.repository.FeatureSwitchRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
@@ -54,7 +54,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 
 import java.time.LocalDate
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
@@ -67,6 +67,37 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
         Jsoup.parse(a.toString()).text() == Jsoup.parse(b.toString).text()
       }
     }
+
+  def normalise(js: JsValue): JsValue = js match {
+
+    case JsObject(fields) =>
+      val filteredFields = fields.collect {
+        case (k, v) if v != JsNull =>
+          normalise(v) match {
+            case JsObject(inner) if inner.isEmpty => None // remove empty object
+            case JsArray(inner) if inner.isEmpty => None // remove empty array
+            case n => Some(k -> n)
+          }
+      }.flatten
+
+      JsObject(filteredFields.toSeq.sortBy(_._1))
+
+    case JsArray(values) =>
+      val normValues = values.collect { case v if v != JsNull => normalise(v) }
+      val filteredValues = normValues.filter {
+        case JsObject(inner) if inner.isEmpty => false
+        case JsArray(inner) if inner.isEmpty => false
+        case _ => true
+      }
+      if (filteredValues.forall(_.isInstanceOf[JsObject])) JsArray(filteredValues.sortBy(_.toString))
+      else JsArray(filteredValues)
+
+    case JsNumber(n) => JsNumber(n.bigDecimal.stripTrailingZeros())
+    case other => other
+  }
+
+  def assertJsonEquals(actual: JsValue, expected: JsValue): Assertion =
+    normalise(actual) shouldEqual normalise(expected)
 
   val featureSwitchRepository = app.injector.instanceOf[FeatureSwitchRepository]
 
@@ -102,7 +133,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   def multiYearRange: TaxYearRange = TaxYearRange(fixedTaxYear.previousYear, fixedTaxYear)
 
-  implicit lazy val dateService: DateService = new DateService {
+  implicit val dateService: DateService = new DateService {
 
     override def getCurrentDate: LocalDate = fixedDate
 

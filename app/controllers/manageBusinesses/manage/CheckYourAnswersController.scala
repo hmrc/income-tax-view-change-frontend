@@ -75,36 +75,45 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
       }
   }
 
-  private def handleShowRequest(taxYearStringOpt: Option[Int],
-                                chnageToStringOpt: Option[String],
-                                isAgent: Boolean,
-                                incomeSourceType: IncomeSourceType,
-                                incomeSourceIdOpt: Option[IncomeSourceId],
-                                backUrl: String)(implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleShowRequest(
+                                 taxYearStringOpt: Option[Int],
+                                 changeToStringOpt: Option[String],
+                                 isAgent: Boolean,
+                                 incomeSourceType: IncomeSourceType,
+                                 incomeSourceIdOpt: Option[IncomeSourceId],
+                                 backUrl: String
+                               )(implicit user: MtdItUser[_]): Future[Result] = {
+
     val maybeIncomeSourceId: Option[IncomeSourceId] =
-      user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(m => m.value))
-      Future.successful(
-        (taxYearStringOpt, chnageToStringOpt, maybeIncomeSourceId) match {
-          case (Some(taxYearStringOpt), Some(changeToStringOpt), Some(id)) =>
-            Ok(checkYourAnswers(
-              isAgent,
-              backUrl,
-              CheckYourAnswersViewModel(
-                id,
-                changeToStringOpt,
-                TaxYear(startYear = taxYearStringOpt - 1, endYear = taxYearStringOpt),
-                incomeSourceType
-              ),
+      user.incomeSources.getIncomeSourceId(incomeSourceType, incomeSourceIdOpt.map(_.value))
+
+    val result: Result = (taxYearStringOpt, changeToStringOpt, maybeIncomeSourceId) match {
+      case (Some(taxYear), Some(changeTo), Some(id)) =>
+        Ok(
+          checkYourAnswers(
+            isAgent,
+            backUrl,
+            CheckYourAnswersViewModel(
+              id,
+              changeTo,
+              TaxYear(startYear = taxYear - 1, endYear = taxYear),
               incomeSourceType
-            )
-            )
-          case (_, _, _) =>
-            logAndShowError(isAgent,
-              s"[handleShowRequest]: Could not parse the values from session taxYear," +
-                s" changeTo and incomesourceId: $taxYearStringOpt, $chnageToStringOpt and $maybeIncomeSourceId")
-        }
-      )
+            ),
+            incomeSourceType
+          )
+        )
+
+      case _ =>
+        logAndShowError(
+          isAgent,
+          s"[handleShowRequest]: Could not parse the values from session taxYear, " +
+            s"changeTo and incomeSourceId: $taxYearStringOpt, $changeToStringOpt and $maybeIncomeSourceId"
+        )
+    }
+
+    Future.successful(result)
   }
+
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
     Logger("application").error("[CheckYourAnswersController]" + errorMessage)

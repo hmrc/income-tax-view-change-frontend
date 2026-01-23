@@ -51,8 +51,23 @@ class ChooseTaxYearForm @Inject()(val appConfig: FrontendAppConfig) extends Cons
       mapping(
         currentYearCheckbox -> optional(boolean),
         nextYearCheckbox -> optional(boolean)
-      )(ChooseTaxYearFormModel.apply)(ChooseTaxYearFormModel.unapply)
+      )(
+        (currentYearCheckbox, nextYearCheckbox) =>
+          ChooseTaxYearFormModel(
+            currentYearCheckbox,
+            nextYearCheckbox
+          )
+      )(
+        form =>
+          Some(
+            (
+              form.currentTaxYear,
+              form.nextTaxYear
+            )
+          )
+      )
         .verifying(atLeastOneChecked(isOptInOptOutContentUpdateR17))
     )
+
   }
 }

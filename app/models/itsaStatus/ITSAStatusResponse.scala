@@ -27,9 +27,9 @@ case class ITSAStatusResponseError(status: Int, reason: String) extends ITSAStat
 
 
 object ITSAStatusResponseModel {
-  implicit val format: Format[ITSAStatusResponseModel] = Json.format
+  implicit val format: Format[ITSAStatusResponseModel] = Json.format[ITSAStatusResponseModel]
 }
 
 object ITSAStatusResponseError {
-  implicit val format: Format[ITSAStatusResponseError] = Json.format
+  implicit val format: Format[ITSAStatusResponseError] = Json.format[ITSAStatusResponseError]
 }

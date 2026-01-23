@@ -33,18 +33,18 @@ class AgentErrorControllerSpec extends MockAuthActions {
     lazy val document = Jsoup.parse(contentAsString(result))
 
     "return OK (200)" in {
-      setupMockAgentWithoutARNAuthSuccess(agentAuthRetrievalSuccess)
+      setupMockAgentWithoutARNAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
       status(result) shouldBe OK
     }
 
     "return HTML" in {
-      setupMockAgentWithoutARNAuthSuccess(agentAuthRetrievalSuccess)
+      setupMockAgentWithoutARNAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
       contentType(result) shouldBe Some("text/html")
       charset(result) shouldBe Some("utf-8")
     }
 
     s"have the title ${messages("htmlTitle.agent", messages("agent-error.heading"))}" in {
-      setupMockAgentWithoutARNAuthSuccess(agentAuthRetrievalSuccess)
+      setupMockAgentWithoutARNAuthSuccess(mockFAF)(agentAuthRetrievalSuccess)
       document.title() shouldBe messages("htmlTitle.errorPage", messages("agent-error.heading"))
     }
   }

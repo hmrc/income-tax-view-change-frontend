@@ -23,7 +23,6 @@ import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, Paymen
 import models.paymentAllocations.AllocationDetail
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.Utilities.JsonUtil
 
 import java.time.LocalDate
 
@@ -72,33 +71,33 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
   }
 
   private def paymentAllocationDetail(): JsObject = Json.obj() ++
-    ("paymentMadeDate", paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)) ++
-    ("paymentMadeAmount", getPaymentMadeAmount) ++
+    Json.obj("paymentMadeDate"-> paymentAllocations.paymentAllocationChargeModel.financialDetails.head.items.flatMap(_.head.dueDate)) ++
+    Json.obj("paymentMadeAmount"-> getPaymentMadeAmount) ++
     paymentAllocationType() ++
     paymentAllocationsAudit() ++
-    ("creditOnAccount", getCreditOnAccount)
+    Json.obj("creditOnAccount"-> getCreditOnAccount)
 
   private def paymentAllocationsAudit(): JsObject = {
     if (paymentAllocations.isLpiPayment) {
       Json.obj("paymentAllocations" -> Json.arr(
         paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiad =>
           Json.obj() ++
-            ("paymentAllocationDescription", Some(getAllocationDescriptionFromKey(lpiad.documentDetail.getChargeTypeKey))) ++
-            ("amount", Some(lpiad.amount)) ++
-            ("taxYear", Some(getTaxYearString(LocalDate.parse(s"${lpiad.documentDetail.taxYear}-04-05"))))
+            Json.obj("paymentAllocationDescription"-> Some(getAllocationDescriptionFromKey(lpiad.documentDetail.getChargeTypeKey))) ++
+            Json.obj("amount"-> Some(lpiad.amount)) ++
+            Json.obj("taxYear"-> Some(getTaxYearString(LocalDate.parse(s"${lpiad.documentDetail.taxYear}-04-05"))))
         }
       ))
     } else {
       Json.obj("paymentAllocations" -> paymentAllocations.originalPaymentAllocationWithClearingDate.map {
         case AllocationDetailWithClearingDate(allocationDetail: Option[AllocationDetail], dateAllocated) =>
           Json.obj() ++
-            ("paymentAllocationDescription", allocationDetail.map(ad =>
+            Json.obj("paymentAllocationDescription"-> allocationDetail.map(ad =>
               getAllocationDescriptionFromKey(ad.getPaymentAllocationKeyInPaymentAllocations))) ++
-            ("dateAllocated", dateAllocated) ++
-            ("amount", allocationDetail.flatMap {
+            Json.obj("dateAllocated"-> dateAllocated) ++
+            Json.obj("amount"-> allocationDetail.flatMap {
               _.amount
             }) ++
-            ("taxYear", allocationDetail.flatMap {
+            Json.obj("taxYear"-> allocationDetail.flatMap {
               _.to
             }.map(getTaxYearString))
       })

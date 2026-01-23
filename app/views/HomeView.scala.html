@@ -44,10 +44,10 @@
 @(
 viewModel: HomePageViewModel
 )(
-  	implicit request: Request[_],
-	messages: Messages,
-  	user: auth.MtdItUser[_],
-	appConfig: config.FrontendAppConfig)
+    implicit request: Request[_],
+    messages: Messages,
+    user: auth.MtdItUser[_],
+    appConfig: config.FrontendAppConfig)
 
 @tiles() = {
     <div class="grid-row">

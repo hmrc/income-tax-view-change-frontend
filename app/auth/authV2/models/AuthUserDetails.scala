@@ -32,7 +32,7 @@ case class AuthUserDetails(enrolments: Enrolments,
   val saUtr = getValueFromEnrolment(Constants.saEnrolmentName, Constants.saEnrolmentIdentifierKey)
   val optNino = getValueFromEnrolment(Constants.ninoEnrolmentName, Constants.ninoEnrolmentIdentifierKey)
   private def getEnrolment(key: String): Option[String] = {
-    enrolments.enrolments.find(e => e.key == key && e.identifiers.nonEmpty) map { enr: Enrolment => enr.identifiers.head.value }
+    enrolments.enrolments.find(e => e.key == key && e.identifiers.nonEmpty) map { (enr: Enrolment) => enr.identifiers.head.value }
   }
 
   private def getValueFromEnrolment(enrolment: String, identifier: String): Option[String] =
