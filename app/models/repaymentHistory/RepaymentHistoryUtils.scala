@@ -46,11 +46,19 @@ object RepaymentHistoryUtils {
     }
   }
 
-  def getChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String): String = {
-    if (isAgent) {
-      controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeId).url
-    } else {
-      controllers.routes.ChargeSummaryController.show(taxYear, chargeId).url
+  def getChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String, codedOut: Option[Boolean] = None): String = {
+    val baseUrl =
+      if (isAgent) {
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeId).url
+      } else {
+        controllers.routes.ChargeSummaryController.show(taxYear, chargeId).url
+      }
+
+    codedOut match {
+      case Some(value) =>
+        val joiner = if (baseUrl.contains("?")) "&" else "?"
+        s"${baseUrl}${joiner}codedOut=${value.toString}"
+      case None => baseUrl
     }
   }
 
@@ -169,7 +177,7 @@ object RepaymentHistoryUtils {
       creditType = chargeItem.transactionType,
       amount = Some(chargeItem.originalAmount),
       transactionId = Some(chargeItem.transactionId),
-      linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId),
+      linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId, codedOut = Some(true)),
       visuallyHiddenText = chargeItem.transactionType.toString
     )
   }
