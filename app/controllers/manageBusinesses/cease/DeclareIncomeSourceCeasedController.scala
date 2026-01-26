@@ -63,7 +63,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
   }
 
   def showAgent(id: Option[String], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient().async  {
+    authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
       implicit mtdItUser =>
         handleRequest(id, isAgent = true, incomeSourceType, isTriggeredMigration)
   }
