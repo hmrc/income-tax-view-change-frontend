@@ -17,7 +17,7 @@
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import auth.MtdItUser
-@import models.creditsandrefunds.CreditAndRefundViewModel
+@import models.creditsandrefunds.MoneyInYourAccountViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
@@ -38,7 +38,7 @@
         creditAndRefundList: CreditAndRefundList,
         availableCreditContent: AvailableCreditContent
 )
-@(viewModel: CreditAndRefundViewModel,
+@(viewModel: MoneyInYourAccountViewModel,
         isAgent: Boolean = false,
         backUrl: String)(implicit request: Request[_],
         user: MtdItUser[_],

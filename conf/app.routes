@@ -246,9 +246,9 @@ GET         /:taxYear/forecast-tax-calculation                            contro
 GET         /agents/:taxYear/forecast-tax-calculation                     controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
 
 #Credits and Refunds
-GET          /money-in-your-account                                       controllers.CreditAndRefundController.show(origin: Option[String] ?= None)
-GET          /agents/money-in-your-account                                controllers.CreditAndRefundController.showAgent()
-GET          /start-refund                                                controllers.CreditAndRefundController.startRefund()
+GET          /money-in-your-account                                       controllers.MoneyInYourAccountController.show(origin: Option[String] ?= None)
+GET          /agents/money-in-your-account                                controllers.MoneyInYourAccountController.showAgent()
+GET          /start-refund                                                controllers.MoneyInYourAccountController.startRefund()
 
 
 #Credits

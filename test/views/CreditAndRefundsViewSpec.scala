@@ -19,7 +19,7 @@ package views
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
+import models.creditsandrefunds.{MoneyInYourAccountViewModel, CreditsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames
@@ -67,7 +67,7 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
     } else { messages }
 
-    val viewModel: CreditAndRefundViewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditAndRefundModel)
+    val viewModel: MoneyInYourAccountViewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditAndRefundModel)
 
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(
