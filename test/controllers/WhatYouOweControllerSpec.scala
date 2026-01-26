@@ -189,8 +189,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
                 when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
-                when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
-                when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
+                when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
+                when(mockDateServiceInjected.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
