@@ -53,7 +53,6 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
       override protected def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
         implicit val req: MtdItUser[A] = request
-
         lazy val authAction = {
           (request.incomeSources.isConfirmedUser, isTriggeredMigrationPage) match {
             case (true, false) => Future(Right(req))

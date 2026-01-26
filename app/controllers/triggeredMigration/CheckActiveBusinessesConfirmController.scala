@@ -25,7 +25,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.TriggeredMigrationUtils
 import views.html.triggeredMigration.CheckActiveBusinessesConfirmView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -71,8 +70,13 @@ class CheckActiveBusinessesConfirmController @Inject()(
                 )
               )
             ),
-          _ =>
-            Future.successful(Redirect(routes.CheckActiveBusinessesConfirmController.show(isAgent)))
+
+          value =>
+            if(value.response.contains(CheckActiveBusinessesConfirmForm.responseYes)) {
+              Future.successful(Redirect(routes.CheckCompleteController.show(isAgent)))
+            } else {
+              Future.successful(Redirect(routes.CheckHmrcRecordsController.show(isAgent)))
+            }
         )
       }
     }
