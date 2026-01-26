@@ -579,7 +579,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "the claim a refund feature switch is on" in new Setup(user = testMtdItUserMigrated(), creditAndRefundEnabled = true) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
         link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/money-in-your-account")
-        link.map(_.text) shouldBe Some("Claim a refund")
+        link.map(_.text) shouldBe Some("Money in your account")
       }
     }
 
