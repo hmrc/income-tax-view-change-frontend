@@ -56,8 +56,9 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
+    val viewModel = CustomLoginViewModel(Seq("Customer Led", "HMRC Unconfirmed", "HMRC Confirmed"))
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, testOnlyAppConfig.optOutUserPrefixes))
+      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, testOnlyAppConfig.optOutUserPrefixes, testOnlyAppConfig.customUserPrefix, viewModel))
     )
   }
 
@@ -96,6 +97,21 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                         .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
                       errorHandler.showInternalServerError()
                   }
+                } else if (postedUser.isCustomUser(testOnlyAppConfig.customUserPrefix)) {
+                  updateTestDataForCustomUser(
+                    nino = user.nino,
+                    mtdid = user.mtditid,
+                    channelStatus = postedUser.channel.getOrElse("Customer Led")
+                  ).map {
+                    _ => successRedirect(bearer, auth, homePage)
+                  }.recover {
+                    case ex =>
+                      val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                      Logger("application")
+                        .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+                      errorHandler.showInternalServerError()
+                  }
+
                 } else {
                   Future.successful(successRedirect(bearer, auth, homePage))
                 }
@@ -113,6 +129,12 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       .withSession(
         SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
           sessionAuthorityUri = auth)))
+  }
+
+  private def updateTestDataForCustomUser(nino: String, mtdid: String, channelStatus: String)(implicit headerCarrier: HeaderCarrier) = {
+    val ninoObj = Nino(nino)
+
+    dynamicStubService.overwriteCustomUserData(ninoObj, mtdid, channelStatus)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,

@@ -53,7 +53,8 @@ case class PostedUser(nino: String,
                       cyMinusOneCrystallisationStatus: Option[String],
                       cyMinusOneItsaStatus: Option[String],
                       cyItsaStatus: Option[String],
-                      cyPlusOneItsaStatus: Option[String]
+                      cyPlusOneItsaStatus: Option[String],
+                      channel: Option[String]
                      ) {
 
   def isAgent: Boolean = AgentTypeEnums.apply(this.agentType).isDefined
@@ -62,6 +63,10 @@ case class PostedUser(nino: String,
 
   def isOptOutWhitelisted(optOutUserPrefixes: Seq[String]): Boolean = {
     optOutUserPrefixes.contains(nino.take(2))
+  }
+
+  def isCustomUser(customUserPrefixes: Seq[String]): Boolean = {
+    customUserPrefixes.contains(nino.take(2))
   }
 }
 
@@ -77,7 +82,8 @@ object PostedUser {
       "cyMinusOneCrystallisationStatus" -> optional(text),
       "cyMinusOneItsaStatus" -> optional(text),
       "cyItsaStatus" -> optional(text),
-      "cyPlusOneItsaStatus" -> optional(text)
+      "cyPlusOneItsaStatus" -> optional(text),
+      "ItsaChannel" -> optional(text)
     )(
       (nino,
       agentType,
@@ -85,14 +91,16 @@ object PostedUser {
       cyMinusOneCrystallisationStatus,
       cyMinusOneItsaStatus,
       cyItsaStatus,
-      cyPlusOneItsaStatus) => PostedUser(
+      cyPlusOneItsaStatus,
+      channel) => PostedUser(
         nino,
         agentType,
         usePTANavBar,
         cyMinusOneCrystallisationStatus,
         cyMinusOneItsaStatus,
         cyItsaStatus,
-        cyPlusOneItsaStatus)
+        cyPlusOneItsaStatus,
+        channel)
     )(form => Some(
     form.nino,
     form.agentType,
@@ -100,7 +108,8 @@ object PostedUser {
     form.cyMinusOneCrystallisationStatus,
     form.cyMinusOneItsaStatus,
     form.cyItsaStatus,
-    form.cyPlusOneItsaStatus
+    form.cyPlusOneItsaStatus,
+    form.channel
     ))
   )
 
