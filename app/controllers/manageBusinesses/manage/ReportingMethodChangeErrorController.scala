@@ -44,7 +44,7 @@ class ReportingMethodChangeErrorController @Inject()(val authActions: AuthAction
                                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler)
                                                     (implicit val ec: ExecutionContext,
                                                      val mcc: MessagesControllerComponents,
-                                                     implicit val appConfig: FrontendAppConfig) extends FrontendController(mcc)
+                                                     val appConfig: FrontendAppConfig) extends FrontendController(mcc)
   with I18nSupport with IncomeSourcesUtils {
 
   def show(isAgent: Boolean,

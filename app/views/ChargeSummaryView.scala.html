@@ -214,7 +214,7 @@
 }
 
 @creditAppliedFromText(date: String) = {
-  @if(isPOAReconciliationCredit){
+  @if(isPOAReconciliationCredit()){
       @p(id = Some("rar-credit-date"), classes = "govuk-heading-s") {
           @messages("chargeSummary.credit.date", date)
       }
@@ -275,7 +275,7 @@
 }
 }
 @getCreditAmount(amount: String) = @{
-  if(isPOAReconciliationCredit) {
+  if(isPOAReconciliationCredit()) {
       creditAmountText(amount)
     }
 }
@@ -366,7 +366,7 @@
     }
 
     @if(!viewModel.chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
-    && !isPOAReconciliationCredit) {
+    && !isPOAReconciliationCredit()) {
         @chargeSummaryNotCodingOutAndNotPayeSelfAssessment(
             viewModel.chargeItem,
             viewModel.latePaymentInterestCharge,

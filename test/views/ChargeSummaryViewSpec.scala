@@ -907,14 +907,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           ) {
              document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
              document.select("h1").text() shouldBe s"$balancingCharge"
-            verifySummaryListRowNumeric(1, dueDate, "Overdue 15 May 2019")
-            verifySummaryListRowNumeric(2, fullPaymentAmount, "£2,500.00")
-            verifySummaryListRowNumeric(3, remainingToPay, "£2,500.00")
-            document.select("#coding-out-notice").text() shouldBe ""
-            document.select("#coding-out-message").text() shouldBe ""
-            document.select("#coding-out-notice-link").attr("href") shouldBe ""
-            document.select(".govuk-table").size() shouldBe 1
-            document.select(".govuk-table tbody tr").size() shouldBe 1
+             verifySummaryListRowNumeric(1, dueDate, "Overdue 15 May 2019")
+             verifySummaryListRowNumeric(2, fullPaymentAmount, "£2,500.00")
+             verifySummaryListRowNumeric(3, remainingToPay, "£2,500.00")
+             document.select("#coding-out-notice").text() shouldBe ""
+             document.select("#coding-out-message").text() shouldBe ""
+             document.select("#coding-out-notice-link").attr("href") shouldBe ""
+             document.select(".govuk-table").size() shouldBe 1
+             document.select(".govuk-table tbody tr").size() shouldBe 1
           }
         }
       }

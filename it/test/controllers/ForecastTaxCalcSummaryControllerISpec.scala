@@ -71,7 +71,8 @@ object ForecastTaxSummaryControllerTestConstants {
     totalTaxDeducted = Some(-99999999999.99),
     incomeTaxNicAmount = Some(-99999999999.99),
     cgtAmount = Some(5000.99),
-    incomeTaxNicAndCgtAmount = Some(5000.99)
+    incomeTaxNicAndCgtAmount = Some(5000.99),
+    totalAllowancesAndDeductions = Some(4200)
   )
 }
 

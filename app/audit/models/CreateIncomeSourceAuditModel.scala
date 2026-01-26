@@ -54,20 +54,20 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
         "outcome" -> outcome,
         "journeyType" -> incomeSourceType.journeyType
       ) ++
-      ("addedIncomeSourceID", createIncomeSourceResponse.map(x => x.incomeSourceId))
+     Json.obj ("addedIncomeSourceID" -> createIncomeSourceResponse.map(x => x.incomeSourceId))
 
     val businessDetails = viewModel match {
       case businessDetailsViewModel: CheckBusinessDetailsViewModel =>
         val seDetails = Json.obj() ++
-          ("businessName", Some(businessDetailsViewModel.businessName)) ++
-          ("dateStarted", Some(businessDetailsViewModel.businessStartDate)) ++
+         Json.obj("businessName"-> Some(businessDetailsViewModel.businessName)) ++
+          Json.obj("dateStarted"-> Some(businessDetailsViewModel.businessStartDate)) ++
           Json.obj("businessDescription" -> businessDetailsViewModel.businessTrade) ++
           Json.obj("addressLine1" -> businessDetailsViewModel.businessAddressLine1) ++
-          ("addressLine2", businessDetailsViewModel.businessAddressLine2) ++
-          ("addressLine3", businessDetailsViewModel.businessAddressLine3) ++
-          ("addressTownOrCity", businessDetailsViewModel.businessAddressLine4) ++
-          ("addressPostcode", businessDetailsViewModel.businessPostalCode) ++
-          ("addressCountry", businessDetailsViewModel.businessCountryCode)
+          Json.obj("addressLine2"-> businessDetailsViewModel.businessAddressLine2) ++
+          Json.obj("addressLine3"-> businessDetailsViewModel.businessAddressLine3) ++
+          Json.obj("addressTownOrCity"-> businessDetailsViewModel.businessAddressLine4) ++
+          Json.obj("addressPostcode"-> businessDetailsViewModel.businessPostalCode) ++
+          Json.obj("addressCountry"-> businessDetailsViewModel.businessCountryCode)
 
         seDetails
 

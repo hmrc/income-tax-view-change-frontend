@@ -26,9 +26,10 @@ import models.admin.NavBarFs
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.PaymentAllocationIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.*
+import testConstants.PaymentAllocationIntegrationTestConstants.*
 
 class PaymentAllocationControllerISpec extends ControllerISpecHelper with FeatureSwitching {
 

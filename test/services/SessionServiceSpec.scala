@@ -104,7 +104,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
         "return a future error" in {
           mockRepositorySet(response = true, withFailureResult = true)
           val result= TestSessionService.setMongoData(UIJourneySessionData("session-1", "ADD-SE"))
-          result.failed.futureValue.leftSideValue.getMessage shouldBe "Error while set data"
+          result.failed.futureValue.getMessage shouldBe "Error while set data"
         }
       }
 
@@ -131,7 +131,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
           updateMultipleData(false)
           val result = TestSessionService.setMultipleMongoData(Map("key" -> "value"),
             IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
-          result.failed.futureValue.leftSideValue.getMessage shouldBe "Error returned from mongoDb"
+          result.failed.futureValue.getMessage shouldBe "Error returned from mongoDb"
         }
       }
 

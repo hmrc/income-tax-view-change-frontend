@@ -17,7 +17,7 @@
 package controllers.optIn.oldJourney
 
 import controllers.ControllerISpecHelper
-import controllers.optIn.oldJourney.BeforeYouStartControllerISpec._
+import controllers.optIn.oldJourney.BeforeYouStartControllerISpec.*
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -27,6 +27,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
+import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}

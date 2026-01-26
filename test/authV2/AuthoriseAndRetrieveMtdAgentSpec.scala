@@ -68,7 +68,7 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
     "return the expected MtdItUserOptionNino response" when {
       s"the user is an Agent with a primary delegated enrolment (HMRC-MTD-IT)" in {
         when(mockAuthConnector.authorise(ArgumentMatchers.eq(primaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-          Future.successful(EmptyRetrieval)
+          Future.successful(())
         )
 
         val result = authAction.invokeBlock(
@@ -91,7 +91,7 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         )
 
         when(mockAuthConnector.authorise(ArgumentMatchers.eq(secondaryAgentPredicate()), ArgumentMatchers.eq(EmptyRetrieval))(any(), any())).thenReturn(
-          Future.successful(EmptyRetrieval)
+          Future.successful(())
         )
 
         val result = authAction.invokeBlock(

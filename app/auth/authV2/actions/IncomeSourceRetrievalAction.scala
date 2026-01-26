@@ -31,12 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IncomeSourceRetrievalAction @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService)
-                                           (
-                                             implicit val executionContext: ExecutionContext,
-                                             val individualErrorHandler: ItvcErrorHandler,
-                                             val agentErrorHandler: AgentItvcErrorHandler,
-                                             mcc: MessagesControllerComponents
-                                           ) extends BaseController with ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] {
+                                           (implicit val executionContext: ExecutionContext,
+                                            val individualErrorHandler: ItvcErrorHandler,
+                                            val agentErrorHandler: AgentItvcErrorHandler,
+                                            mcc: MessagesControllerComponents) extends BaseController with ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] {
 
   private def internalServerErrorFor(request: AuthorisedAndEnrolledRequest[_]): Result = {
 

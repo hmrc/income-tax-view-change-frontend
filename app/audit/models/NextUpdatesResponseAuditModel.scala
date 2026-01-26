@@ -20,7 +20,6 @@ import auth.MtdItUser
 import enums.AuditType.ViewObligationsResponse
 import models.obligations.SingleObligationModel
 import play.api.libs.json._
-import utils.Utilities.JsonUtil
 
 case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
                                          incomeSourceId: String,
@@ -35,7 +34,7 @@ case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
     "dueDate" -> nextUpdate.due,
     "obligationType" -> nextUpdate.obligationType,
     "periodKey" -> nextUpdate.periodKey
-  ) ++ ("dateReceived", nextUpdate.dateReceived)
+  ) ++ Json.obj("dateReceived"-> nextUpdate.dateReceived)
 
   private val nextUpdatesJson: Seq[JsObject] = nextUpdates.map(nextUpdateJson)
 
@@ -45,8 +44,8 @@ case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
     "incomeSourceId" -> incomeSourceId,
     "reportDeadlines" -> nextUpdatesJson
   ) ++
-    ("saUtr", mtdItUser.saUtr) ++
-    ("credId", mtdItUser.credId) ++
-    ("userType", mtdItUser.userType) ++
-    ("agentReferenceNumber", mtdItUser.arn)
+    Json.obj("saUtr"-> mtdItUser.saUtr) ++
+    Json.obj("credId"-> mtdItUser.credId) ++
+    Json.obj("userType"-> mtdItUser.userType) ++
+    Json.obj("agentReferenceNumber"-> mtdItUser.arn)
 }

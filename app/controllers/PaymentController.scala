@@ -39,7 +39,7 @@ class PaymentController @Inject()(val authActions: AuthActions,
                                   val itvcAgentErrorHandler: AgentItvcErrorHandler
                                  )(implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
-                                   implicit val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                   val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   def handleHandoff(paymentAmountInPence: Long, origin: Option[String] = None)
                    (implicit mtdItUser: MtdItUser[_]): Future[Result] = {

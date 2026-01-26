@@ -42,16 +42,16 @@ trait CustomConstraints extends Constraints {
     LocalDate.parse(s"${dateTuple._1}-${dateTuple._2}-${dateTuple._3}", DateTimeFormatter.ofPattern("d-M-uuuu").withResolverStyle(ResolverStyle.STRICT))
   }
 
-  protected def validDate(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] = Constraint {
-    input: (String, String, String) =>
-      val date = Try {
+  protected def validDate(errKey: String, args: Seq[String] = Seq()): Constraint[(String, String, String)] =
+    Constraint[(String, String, String)] { input =>
+      val date = scala.util.Try {
         tupleToDate(input)
       }.toOption
       date match {
         case Some(_) => Valid
         case None => Invalid(errKey, args: _*)
       }
-  }
+    }
 
   protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {

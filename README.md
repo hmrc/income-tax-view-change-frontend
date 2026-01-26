@@ -50,7 +50,7 @@ sbt "run 9081 -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"
 To test the application execute:
 
 ```
-sbt clean scalastyle coverage test it/test coverageOff coverageReport
+sbt clean coverage test it/test coverageOff coverageReport
 ```
 
 ## How to run sbt-scoverage plugin for the application

@@ -77,7 +77,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(false)
 
-        when(documentDetail.originalAmount).thenReturn(10)
+        when(documentDetail.originalAmount).thenReturn(BigDecimal(10))
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -103,7 +103,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(10)
+        when(documentDetail.originalAmount).thenReturn(BigDecimal(10))
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -126,7 +126,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(10)
+        when(documentDetail.originalAmount).thenReturn(BigDecimal(10))
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -148,7 +148,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(10)
+        when(documentDetail.originalAmount).thenReturn(BigDecimal(10))
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 
@@ -171,7 +171,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(10)
+        when(documentDetail.originalAmount).thenReturn(BigDecimal(10))
         when(documentDetail.interestEndDate).thenReturn(None)
         when(documentDetail.accruingInterestAmount).thenReturn(None)
         when(documentDetail.interestOutstandingAmount).thenReturn(None)
@@ -199,7 +199,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(true)
 
-        when(documentDetail.originalAmount).thenReturn(10)
+        when(documentDetail.originalAmount).thenReturn(BigDecimal(10))
         when(documentDetail.interestEndDate).thenReturn(Some(interestEndDate))
         when(documentDetail.accruingInterestAmount).thenReturn(Some(BigDecimal.valueOf(10)))
 

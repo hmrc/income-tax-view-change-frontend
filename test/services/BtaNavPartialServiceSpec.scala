@@ -18,7 +18,6 @@ package services
 
 import models.btaNavBar._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.matchers.should.Matchers
 import play.api.i18n.{Lang, Messages}
 import testUtils.TestSupport
@@ -33,57 +32,57 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
     "notificationBadgeCount" should {
       "return a string of 0 when messageCount is 0" in {
         val result: String = mockService.notificationBadgeCount(messageCount = 0)
-        result mustBe "0"
+        result shouldBe "0"
       }
 
       "return a string of 1 when messageCount is 1" in {
         val result: String = mockService.notificationBadgeCount(messageCount = 1)
-        result mustBe "1"
+        result shouldBe "1"
       }
 
       "return a string of 99 when messageCount is 99" in {
         val result: String = mockService.notificationBadgeCount(messageCount = 99)
-        result mustBe "99"
+        result shouldBe "99"
       }
 
       "return a string of +99 when messageCount is 100" in {
         val result: String = mockService.notificationBadgeCount(messageCount = 100)
-        result mustBe "+99"
+        result shouldBe "+99"
       }
 
       "return a string of +99 when messageCount is 1000" in {
         val result: String = mockService.notificationBadgeCount(messageCount = 1000)
-        result mustBe "+99"
+        result shouldBe "+99"
       }
     }
 
     "formsNav" should {
       "return en messages when there is 1 alert and lang is set to eng" in {
-        implicit val lang = messagesApi.preferred(Seq(Lang("en"))).lang
+        implicit val lang: Lang = messagesApi.preferred(Seq(Lang("en"))).lang
         val testNavLinks = NavLinks("testEn", "testCy", "testUrl", Some(1))
         val result = mockService.formsNav(testNavLinks)(lang)
-        result mustBe ListLinks("testEn", "testUrl", Some("1"))
+        result shouldBe ListLinks("testEn", "testUrl", Some("1"))
       }
 
       "return cy messages when there is 1 alert and lang is set to eng" in {
-        implicit val lang = messagesApi.preferred(Seq(Lang("cy"))).lang
+        implicit val lang: Lang = messagesApi.preferred(Seq(Lang("cy"))).lang
         val testNavLinks = NavLinks("testEn", "testCy", "testUrl", Some(1))
         val result = mockService.formsNav(testNavLinks)(lang)
-        result mustBe ListLinks("testCy", "testUrl", Some("1"))
+        result shouldBe ListLinks("testCy", "testUrl", Some("1"))
       }
 
       "return an empty ListLink with showBoolean set true when there are 0 alerts" in {
-        implicit val lang = messages.lang
+        implicit val lang: Lang = messages.lang
         val testNavLinks = NavLinks("testEn", "testCy", "testUrl", Some(0))
         val result = mockService.formsNav(testNavLinks)(lang)
-        result mustBe ListLinks("", "", showBoolean = Some(false))
+        result shouldBe ListLinks("", "", showBoolean = Some(false))
       }
 
       "return an empty ListLink with showBoolean set true when there are no alerts provided" in {
-        implicit val lang = messages.lang
+        implicit val lang: Lang = messages.lang
         val testNavLinks = NavLinks("testEn", "testCy", "testUrl")
         val result = mockService.formsNav(testNavLinks)(lang)
-        result mustBe ListLinks("", "", showBoolean = Some(false))
+        result shouldBe ListLinks("", "", showBoolean = Some(false))
       }
     }
 
@@ -99,7 +98,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
         )
 
         val result = mockService.partialList(Some(navContent))(messages)
-        result mustBe Seq(
+        result shouldBe Seq(
           ListLinks("testEnHome", appConfig.homePageUrl),
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("0")),
@@ -120,7 +119,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
         )
 
         val result = mockService.partialList(Some(navContent))(messages)
-        result mustBe Seq(
+        result shouldBe Seq(
           ListLinks("testCyHome", appConfig.homePageUrl),
           ListLinks("testCyAccount", "testUrl"),
           ListLinks("testCyMessages", "testUrl", Some("0")),
@@ -140,7 +139,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
         )
 
         val result = mockService.partialList(Some(navContent))
-        result mustBe Seq(
+        result shouldBe Seq(
           ListLinks("testEnHome", appConfig.homePageUrl),
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("0")),
@@ -160,7 +159,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
         )
 
         val result = mockService.partialList(Some(navContent))
-        result mustBe Seq(
+        result shouldBe Seq(
           ListLinks("testEnHome", appConfig.homePageUrl),
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("99")),
@@ -180,7 +179,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
         )
 
         val result = mockService.partialList(Some(navContent))
-        result mustBe Seq(
+        result shouldBe Seq(
           ListLinks("testEnHome", appConfig.homePageUrl),
           ListLinks("testEnAccount", "testUrl"),
           ListLinks("testEnMessages", "testUrl", Some("+99")),
@@ -191,7 +190,7 @@ class BtaNavPartialServiceSpec extends TestSupport with ScalaFutures with Matche
 
       "return Seq() when no Navcontent is found" in {
         val result = mockService.partialList(None)
-        result mustBe Seq()
+        result shouldBe Seq()
       }
     }
   }

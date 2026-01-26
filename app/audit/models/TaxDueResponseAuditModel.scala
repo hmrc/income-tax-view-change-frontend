@@ -126,8 +126,8 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
 
   private def taxReductionsJson(taxReductions: ReliefsClaimed): JsObject = Json.obj() ++
-    ("reductionDescription", reductionTypeToString(taxReductions.`type`)) ++
-    ("amount", taxReductions.amountUsed)
+    Json.obj("reductionDescription"-> reductionTypeToString(taxReductions.`type`)) ++
+    Json.obj("amount"-> taxReductions.amountUsed)
 
   private def optReliefClaim(description: String, amount: Option[BigDecimal]): Option[ReliefsClaimed] =
     if (amount.isDefined) {
@@ -169,9 +169,10 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
   )
 
   private def class2NicVoluntary(voluntary: Boolean): String = {
-    voluntary match {
-      case true => "Voluntary Class 2 National Insurance"
-      case false => "Class 2 National Insurance"
+    if (voluntary) {
+      "Voluntary Class 2 National Insurance"
+    } else {
+      "Class 2 National Insurance"
     }
   }
 
@@ -205,12 +206,12 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
   )
 
   private def capitalGainsTaxExtrasJson(cgt: CapitalGainsTaxViewModel): JsObject = Json.obj() ++
-    ("taxableCapitalGains", cgt.totalTaxableGains) ++
-    ("capitalGainsTaxAdjustment", cgt.adjustments) ++
-    ("foreignTaxCreditReliefOnCapitalGains", cgt.foreignTaxCreditRelief) ++
-    ("taxOnGainsAlreadyPaid", cgt.taxOnGainsAlreadyPaid) ++
-    ("capitalGainsTaxDue", cgt.capitalGainsTaxDue) ++
-    ("capitalGainsTaxCalculatedAsOverpaid", cgt.capitalGainsOverpaid)
+    Json.obj("taxableCapitalGains"-> cgt.totalTaxableGains) ++
+    Json.obj("capitalGainsTaxAdjustment"-> cgt.adjustments) ++
+    Json.obj("foreignTaxCreditReliefOnCapitalGains"-> cgt.foreignTaxCreditRelief) ++
+    Json.obj("taxOnGainsAlreadyPaid"-> cgt.taxOnGainsAlreadyPaid) ++
+    Json.obj("capitalGainsTaxDue"-> cgt.capitalGainsTaxDue) ++
+    Json.obj("capitalGainsTaxCalculatedAsOverpaid"-> cgt.capitalGainsOverpaid)
 
   private def capitalGainsTaxRatesJson(cgt: CapitalGainsTaxViewModel): Option[Seq[JsObject]] = {
     val businessAssets: Option[Seq[JsObject]] = businessAssetsTaxBandJson(cgt.businessAssetsDisposalsAndInvestorsRel)
@@ -223,7 +224,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private def capitalGainsTaxJson(cgt: CapitalGainsTaxViewModel): JsObject =
     capitalGainsTaxExtrasJson(cgt) ++
-      ("rates", capitalGainsTaxRatesJson(cgt))
+      Json.obj("rates"-> capitalGainsTaxRatesJson(cgt))
 
 
   private def deductionsString(deduction: String): String =
@@ -249,7 +250,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
   private val taxDeductionsFullSeq: Seq[(String, BigDecimal)] = {
     val totalDeductions = viewModel.totalTaxDeducted
     totalDeductions.fold(viewModel.taxDeductedAtSource.allFields)(total =>
-      viewModel.taxDeductedAtSource.allFields :+ (("Income Tax due after deductions", total)))
+      viewModel.taxDeductedAtSource.allFields :+ ("Income Tax due after deductions", total))
   }
 
   private def optDetail(optDetail: Seq[JsObject]): Option[Seq[JsObject]] =
@@ -297,19 +298,19 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
   override val detail: JsValue =
     userAuditDetails(mtdItUser) ++
-      ("calculationOnTaxableIncome", viewModel.totalTaxableIncome) ++
-      ("selfAssessmentTaxAmount", viewModel.totalIncomeTaxAndNicsDue) ++
-      ("taxCalculationMessage", calculationMessagesDetail) ++
-      ("payPensionsProfit", payPensionsProfitDetail) ++
-      ("savings", savingsDetail) ++
-      ("dividends", dividendsDetail) ++
-      ("employmentLumpSums", employmentLumpSumsDetail) ++
-      ("gainsOnLifePolicies", gainsOnLifePoliciesDetail) ++
-      ("class4NationalInsurance", class4NationInsuranceDetail) ++
-      ("capitalGainsTax", capitalGainsTaxDetail) ++
-      ("taxReductions", taxReductionsDetails) ++
-      ("additionalCharges", additionChargesDetail) ++
-      ("otherCharges", otherChargesDetail) ++
-      ("taxDeductions", taxDeductionsDetail)
+      Json.obj("calculationOnTaxableIncome"-> viewModel.totalTaxableIncome) ++
+      Json.obj("selfAssessmentTaxAmount"-> viewModel.totalIncomeTaxAndNicsDue) ++
+      Json.obj("taxCalculationMessage"-> calculationMessagesDetail) ++
+      Json.obj("payPensionsProfit"-> payPensionsProfitDetail) ++
+      Json.obj("savings"->savingsDetail) ++
+      Json.obj("dividends"->dividendsDetail) ++
+      Json.obj("employmentLumpSums"-> employmentLumpSumsDetail) ++
+      Json.obj("gainsOnLifePolicies"-> gainsOnLifePoliciesDetail) ++
+      Json.obj("class4NationalInsurance"-> class4NationInsuranceDetail) ++
+      Json.obj("capitalGainsTax"-> capitalGainsTaxDetail) ++
+      Json.obj("taxReductions"->taxReductionsDetails) ++
+      Json.obj("additionalCharges"-> additionChargesDetail) ++
+      Json.obj("otherCharges"-> otherChargesDetail) ++
+      Json.obj("taxDeductions"-> taxDeductionsDetail)
 
 }

@@ -39,8 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val testOnlyAppConfig: TestOnlyAppConfig,
-                                      implicit val mcc: MessagesControllerComponents,
-                                      implicit val executionContext: ExecutionContext,
+                                      val mcc: MessagesControllerComponents,
+                                      val executionContext: ExecutionContext,
                                       userRepository: UserRepository,
                                       loginPage: LoginPage,
                                       val dynamicStubConnector: DynamicStubConnector,
@@ -50,7 +50,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val dynamicStubService: DynamicStubService,
                                       val ITSAStatusService: ITSAStatusService,
                                       val itvcErrorHandler: ItvcErrorHandler,
-                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       dateService: DateServiceInterface
                                      ) extends BaseController with I18nSupport with FeatureSwitching {
 

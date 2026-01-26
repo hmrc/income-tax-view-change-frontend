@@ -26,8 +26,6 @@ import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
 import services.DateServiceInterface
 import utils.JsonUtils
-import utils.Utilities._
-
 
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
                               chargeItem: ChargeItem,
@@ -122,9 +120,9 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
     }
 
     paymentAllocation.allocations.map(payment => Json.obj() ++
-      ("date", payment.dueDate) ++
-      ("description", description) ++
-      ("amount", payment.amount.map(_.abs))
+      Json.obj("date"-> payment.dueDate) ++
+      Json.obj("description"-> description) ++
+      Json.obj("amount"-> payment.amount.map(_.abs))
     )
   }
 
@@ -146,14 +144,14 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
 
   private val chargeDetails: JsObject = Json.obj(
     "chargeType" -> getChargeType(chargeItem, chargeItem.isOverdue() && chargeItem.isAccruingInterest)) ++
-    ("interestPeriod", interestPeriod) ++
-    ("dueDate", dueDate) ++
-    ("fullPaymentAmount", fullPaymentAmount) ++
+    Json.obj("interestPeriod" -> interestPeriod) ++
+    Json.obj("dueDate"-> dueDate) ++
+    Json.obj("fullPaymentAmount"-> fullPaymentAmount) ++
     Json.obj("endTaxYear" -> taxYear) ++
     Json.obj("overdue" -> chargeItem.isOverdue()) ++
     Json.obj("remainingToPay" -> remainingToPay)
 
-  def release6Update: JsObject = {
+  private def release6Update: JsObject = {
     Json.obj("paymentBreakdown" -> paymentBreakdowns) ++
       Json.obj("chargeHistory" -> chargeHistory) ++
       Json.obj("paymentAllocationsChargeHistory" -> paymentAllocationsChargeHistory)
