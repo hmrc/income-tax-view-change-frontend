@@ -30,13 +30,22 @@
     form: FormWithCSRF
 )
 
-@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String])(implicit request: Request[_], messages: Messages)
+@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], customUserPrefixes: Seq[String], viewModel: CustomLoginViewModel)(implicit request: Request[_], messages: Messages)
 
 @ITSAOptions = @{
     ITSAStatus.values.unsorted.map { status =>
         SelectItem(
             value = Some(status.toString),
             text = status.toString
+        )
+    }.toSeq
+}
+
+@ChannelOptions = @{
+    viewModel.channelList.map { channel =>
+        SelectItem(
+            value = Some(channel),
+            text = channel
         )
     }.toSeq
 }
@@ -73,14 +82,26 @@
         }
     }
 
+    function customUserCustomData(answer, customPrefixes) {
+        const ninoPrefix = answer.value.substring(0, 2);
+
+        if (customPrefixes.includes(ninoPrefix)) {
+            document.getElementById("CustomUserDataDropdowns").classList.remove("display-none");
+        } else {
+            document.getElementById("CustomUserDataDropdowns").classList.add("display-none");
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         const ninoSelect = document.getElementById("nino");
 
         if (ninoSelect) {
             const customPrefixes = JSON.parse(ninoSelect.getAttribute("data-custom-prefixes"));
+            const customUserPrefixes = JSON.parse(ninoSelect.getAttribute("custom-user-prefixes"));
 
             ninoSelect.addEventListener("change", function () {
                 optOutCustomData(this, customPrefixes);
+                customUserCustomData(this, customUserPrefixes);
             });
         }
     });
@@ -94,7 +115,8 @@
                 NINO
             </label>
             <select class="govuk-select" id="nino" name="nino"
-                    data-custom-prefixes='@Html(Json.toJson(optOutCustomDataUserPrefixes).toString)'>
+                    data-custom-prefixes='@Html(Json.toJson(optOutCustomDataUserPrefixes).toString)'
+                    custom-user-prefixes='@Html(Json.toJson(customUserPrefixes).toString)'>
                 @for(user <- users) {
                 <option value="@user.nino">@user.nino - @user.description</option>
                 }
@@ -165,6 +187,17 @@
                 items = ITSAOptions,
                 label = Label(content = Text("CY+1 ITSA Status"))
             ))
+        </div>
+
+        <div class="display-none" id="CustomUserDataDropdowns">
+
+            @govukSelect(Select(
+                id = "ItsaChannel",
+                name = "ItsaChannel",
+                items = ChannelOptions,
+                label = Label(content = Text("ITSA Channel"))
+            ))
+
         </div>
 
         @govukButton(Button(content = Text("Login")))

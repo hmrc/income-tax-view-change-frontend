@@ -79,6 +79,35 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     s"${appConfig.dynamicStubUrl}/income-tax-view-change/itsa-status/$nino/$taxYearRange/overwrite/$itsaStatus"
   }
 
+  def getOverwriteCustomUserUrl(nino: String, mtdid: String): String = {
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/custom-user/$nino/$mtdid"
+  }
+
+  def overwriteCustomUser(nino: Nino, mtdid: String, channel: String)
+                         (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+
+
+    val url = getOverwriteCustomUserUrl(nino.value, mtdid)
+
+    val requestJson = Json.obj(
+      "channel" -> channel
+    )
+
+    http.post(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .withBody(requestJson)
+      .execute[HttpResponse] map { response =>
+      response.status match {
+        case OK =>
+          (): Unit
+        case _ =>
+          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+      }
+    }
+    Future(())
+  }
+
 
   def overwriteItsaStatus(nino: Nino, taxYearRange: String, itsaStatus: String)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {

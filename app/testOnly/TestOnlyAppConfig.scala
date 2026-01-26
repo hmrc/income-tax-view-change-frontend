@@ -33,4 +33,6 @@ class TestOnlyAppConfig @Inject()(servicesConfig: ServicesConfig, config: Config
 
   lazy val optOutUserPrefixes: Seq[String] = config.get[Seq[String]]("optOutNinoPrefix")
 
+  lazy val customUserPrefix: Seq[String] = config.get[Seq[String]]("customUserNinoPrefix")
+
 }
