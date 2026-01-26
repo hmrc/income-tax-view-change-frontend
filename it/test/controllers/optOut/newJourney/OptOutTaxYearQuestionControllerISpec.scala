@@ -87,12 +87,12 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
     // Single Year followed by Mandated
     val previousSingleYearHeading = "Opt out of Making Tax Digital for Income Tax for the 2021 to 2022 tax year"
     val previousSingleYearTitle = "Opt out of Making Tax Digital for Income Tax for the 2024 to 2025 tax year - Manage your Self Assessment - GOV.UK"
-    val previousSingleYearDesc1 = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
+    val previousSingleYearDesc1 = "You can only opt out for the 2021 to 2022 tax year."
     val previousSingleYearDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
     val previousSingleYearQuestion = "Do you still want to opt out for the 2021 to 2022 tax year?"
 
     val singleYearFollowedByMandatedHeading = "Opt out of Making Tax Digital for Income Tax for a single tax year"
-    val singleYearFollowedByMandatedDesc1 = "You can only opt out for the 2022 to 2023 tax year. This would mean you no longer need software compatible with Making Tax Digital for Income Tax for this tax year."
+    val singleYearFollowedByMandatedDesc1 = "You can only opt out for the 2022 to 2023 tax year."
     val singleYearFollowedByMandatedInset = "Even if you continue, from 6 April 2023, you will be required to go back to using Making Tax Digital for Income Tax."
     val singleYearFollowedByMandatedQuestion = "Do you still want to opt out for the 2022 to 2023 tax year?"
 
@@ -192,8 +192,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           result should have(
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
-            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc1),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc2),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
         }
@@ -463,8 +463,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           result should have(
             httpStatus(OK),
             elementTextByID("opt-out-question-heading")(optOutTaxYearQuestionMessages.previousSingleYearHeading),
-            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.previousSingleYearDesc1),
-            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.previousSingleYearDesc2),
+            elementTextByID("opt-out-question-desc-1")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc1),
+            elementTextByID("opt-out-question-desc-2")(optOutTaxYearQuestionMessages.singleYearFollowedByAnnualDesc2),
             elementTextByClass("govuk-fieldset__legend--m")(optOutTaxYearQuestionMessages.previousSingleYearQuestion),
           )
         }
@@ -741,6 +741,50 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             redirectURI(expectedURI)
           )
         }
+        }
+      }
+
+      "submit the answer to the opt out tax year question - opt out followed by mandated redirects to check your answers" in {
+        val currentYear = "2022"
+        val taxYear = TaxYear(2022, 2023)
+        enable(OptOutFs, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
+
+        stubAuthorised(mtdUserRole)
+        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+
+        ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
+          taxYear = taxYear,
+          `itsaStatusCY-1` = NoStatus,
+          itsaStatusCY = Voluntary,
+          `itsaStatusCY+1` = Mandated
+        )
+
+        helper.stubOptOutInitialState(
+          currentTaxYear(dateService),
+          previousYearCrystallised = false,
+          previousYearStatus = NoStatus,
+          currentYearStatus = Voluntary,
+          nextYearStatus = Mandated
+        )
+
+        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(
+          CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
+        )
+
+        IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+
+        val expectedURI =
+          controllers.optOut.newJourney.routes.ConfirmOptOutUpdateController
+            .show(isAgent = mtdUserRole != MTDIndividual, taxYear = currentYear)
+            .url
+
+        whenReady(
+          buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("opt-out-tax-year-question" -> Seq("Yes")))
+        ) { result =>
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(expectedURI)
+          )
         }
       }
 

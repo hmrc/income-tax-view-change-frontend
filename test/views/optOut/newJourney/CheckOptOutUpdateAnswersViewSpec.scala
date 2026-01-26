@@ -88,7 +88,24 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
       }
     }
 
-    "render the page with different quarterly updates counts" should {
+    "render the page with different quarterly updates counts for opt-out scenarios followed by mandated" should {
+
+      "display page with 0 quarterly updates" in {
+        val reportingObligationsURL: String =
+          controllers.routes.ReportingFrequencyPageController.show(isAgent = false).url
+
+        val pageDocument: Document = Jsoup.parse(
+          contentAsString(
+            checkOptOutUpdateAnswersView(
+              viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2023, 2024), 0),
+              isAgent = false,
+              reportingObligationsURL = reportingObligationsURL
+            )
+          )
+        )
+
+        pageDocument.getElementById("check-opt-out-update-inset") shouldBe null
+      }
 
       "display 2 quarterly updates" in {
         val reportingObligationsURL: String = controllers.routes.ReportingFrequencyPageController.show(isAgent = false).url

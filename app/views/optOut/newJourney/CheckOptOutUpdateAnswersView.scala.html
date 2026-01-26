@@ -54,11 +54,13 @@ formWithCSRF: FormWithCSRF
             @messages("optout.updates.checkAnswers.p1")
         }
 
-        @inset(InsetText(
-                id = Some("check-opt-out-update-inset"),
-                content = HtmlContent(messages("optout.updates.checkAnswers.inset", viewModel.quarterlyUpdatesCount))
+        @if(viewModel.quarterlyUpdatesCount > 0){
+            @inset(InsetText(
+                    id = Some("check-opt-out-update-inset"),
+                    content = HtmlContent(messages("optout.updates.checkAnswers.inset", viewModel.quarterlyUpdatesCount))
+                )
             )
-        )
+        }
 
         <div class="govuk-button-group">
             @govukButton(Button(
