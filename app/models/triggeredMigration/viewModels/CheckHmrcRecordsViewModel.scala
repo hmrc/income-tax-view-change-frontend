@@ -24,6 +24,8 @@ case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecords
                                      triggeredMigrationState: Option[TriggeredMigrationState],
                                      numberOfCeasedBusinesses: Int = 0
                                     ) {
+  def checkActiveBusinessesLink(isAgent: Boolean): String = controllers.triggeredMigration.routes.CheckActiveBusinessesConfirmController.show(isAgent).url
+
   def showCeasedBanner: Boolean = triggeredMigrationState match {
     case Some(TriggeredMigrationCeased) => true
     case _ => false
