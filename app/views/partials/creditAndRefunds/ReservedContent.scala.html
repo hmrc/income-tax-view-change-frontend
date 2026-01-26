@@ -16,7 +16,7 @@
 
 @import views.html.components.{h2, p, link}
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import models.creditsandrefunds.CreditAndRefundViewModel
+@import models.creditsandrefunds.MoneyInYourAccountViewModel
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 @this(
@@ -25,7 +25,7 @@
         link: link,
         govukInsetText: GovukInsetText
 )
-@(viewModel: CreditAndRefundViewModel, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(viewModel: MoneyInYourAccountViewModel, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {

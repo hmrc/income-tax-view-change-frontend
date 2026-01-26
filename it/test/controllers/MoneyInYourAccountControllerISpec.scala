@@ -30,7 +30,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndP
 
 import java.time.LocalDate
 
-class CreditAndRefundControllerISpec extends ControllerISpecHelper {
+class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
 
   lazy val fixedDate : LocalDate = LocalDate.of(2020, 11, 29)
 

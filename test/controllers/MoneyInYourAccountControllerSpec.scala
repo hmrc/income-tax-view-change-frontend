@@ -40,7 +40,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusine
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditService with MockRepaymentService {
+class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditService with MockRepaymentService {
 
   override lazy val mockBusinessDetailsConnector: BusinessDetailsConnector = mock[BusinessDetailsConnector]
 
@@ -54,7 +54,7 @@ class CreditAndRefundControllerSpec extends MockAuthActions with MockCreditServi
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 
-  lazy val testController = app.injector.instanceOf[CreditAndRefundController]
+  lazy val testController = app.injector.instanceOf[MoneyInYourAccountController]
 
   def testFinancialDetail(taxYear: Int): FinancialDetailsModel = financialDetailsModel(taxYear)
 

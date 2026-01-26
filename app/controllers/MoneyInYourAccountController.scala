@@ -24,7 +24,7 @@ import auth.authV2.AuthActions
 import config.featureswitch.*
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.admin.{CreditsRefundsRepay, `CY+1YouMustWaitToSignUpPageEnabled`}
-import models.creditsandrefunds.{CreditAndRefundViewModel, CreditsModel}
+import models.creditsandrefunds.{MoneyInYourAccountViewModel, CreditsModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditService, RepaymentService}
@@ -38,14 +38,14 @@ import views.html.errorPages.CustomNotFoundErrorView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CreditAndRefundController @Inject()(val authActions: AuthActions,
-                                          val creditService: CreditService,
-                                          val view: CreditAndRefundsView,
-                                          val moneyInYourAccountView: MoneyInYourAccountView,
-                                          val repaymentService: RepaymentService,
-                                          val auditingService: AuditingService,
-                                          mcc: MessagesControllerComponents)
-                                         (implicit val appConfig: FrontendAppConfig,
+class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
+                                             val creditService: CreditService,
+                                             val view: CreditAndRefundsView,
+                                             val moneyInYourAccountView: MoneyInYourAccountView,
+                                             val repaymentService: RepaymentService,
+                                             val auditingService: AuditingService,
+                                             mcc: MessagesControllerComponents)
+                                            (implicit val appConfig: FrontendAppConfig,
                                           val individualErrorHandler: ItvcErrorHandler,
                                           val agentErrorHandler: AgentItvcErrorHandler,
                                           val languageUtils: LanguageUtils,
@@ -71,7 +71,7 @@ class CreditAndRefundController @Inject()(val authActions: AuthActions,
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case creditsModel: CreditsModel =>
-        val viewModel = CreditAndRefundViewModel.fromCreditAndRefundModel(creditsModel)
+        val viewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditsModel)
         auditClaimARefund(creditsModel)
         Ok(moneyInYourAccountView(viewModel, isAgent, backUrl)(user, user, messages))
       case _ => logAndRedirect("Invalid response from financial transactions")

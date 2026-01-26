@@ -15,7 +15,7 @@
  *@
 
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import models.creditsandrefunds.CreditAndRefundViewModel
+@import models.creditsandrefunds.MoneyInYourAccountViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import views.html.components.creditandrefund.{creditViewRow, paymentViewRow, refundViewRow}
 @import views.html.components.{h2, p}
@@ -29,7 +29,7 @@
         creditViewRow: creditViewRow,
         refundViewRow: refundViewRow
 )
-@(viewModel: CreditAndRefundViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], messages: Messages)
 
 @p(classes = "govuk-body govuk-!-font-size-27 govuk-body govuk-!-font-weight-bold", id = Some("in-your-account")) {
     @messages("credit-and-refund.in-your-account", viewModel.totalCredit.toCurrencyString)

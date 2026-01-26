@@ -60,13 +60,13 @@ case class RefundRow(amount: BigDecimal) extends CreditRow {
   override val creditType: CreditType = Repayment
 }
 
-case class CreditAndRefundViewModel(availableCredit: BigDecimal,
-                                    allocatedCredit: BigDecimal,
-                                    unallocatedCredit: BigDecimal,
-                                    totalCredit: BigDecimal,
-                                    firstPendingAmountRequested: Option[BigDecimal],
-                                    secondPendingAmountRequested: Option[BigDecimal],
-                                    creditRows: List[CreditRow]) {
+case class MoneyInYourAccountViewModel(availableCredit: BigDecimal,
+                                       allocatedCredit: BigDecimal,
+                                       unallocatedCredit: BigDecimal,
+                                       totalCredit: BigDecimal,
+                                       firstPendingAmountRequested: Option[BigDecimal],
+                                       secondPendingAmountRequested: Option[BigDecimal],
+                                       creditRows: List[CreditRow]) {
   val hasCreditOrRefunds: Boolean = {
     availableCredit > 0 || allocatedCredit > 0 || creditRows.exists(_.amount > 0)
   }
@@ -74,10 +74,10 @@ case class CreditAndRefundViewModel(availableCredit: BigDecimal,
   val hasAllocatedCredit = allocatedCredit != 0
 }
 
-object CreditAndRefundViewModel {
+object MoneyInYourAccountViewModel {
 
-  def fromCreditAndRefundModel(model: CreditsModel): CreditAndRefundViewModel = {
-    CreditAndRefundViewModel(
+  def fromCreditsModel(model: CreditsModel): MoneyInYourAccountViewModel = {
+    MoneyInYourAccountViewModel(
       availableCredit = model.availableCreditForRepayment,
       allocatedCredit = model.allocatedCreditForFutureCharges,
       unallocatedCredit =  model.unallocatedCredit,
