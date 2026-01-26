@@ -40,10 +40,6 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
     if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
     else controllers.routes.NextUpdatesController.show().url
 
-  private def homepageLink(isAgent: Boolean) =
-    if(isAgent) controllers.routes.HomeController.showAgent()
-    else controllers.routes.HomeController.show()
-
   def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
     withTriggeredMigrationFS {
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
@@ -54,7 +50,6 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
           isAgent,
           compatibleSoftwareLink,
           nextUpdatesLink(isAgent),
-          homepageLink(isAgent),
           form,
           postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
         ))
@@ -74,7 +69,6 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
                   isAgent,
                   compatibleSoftwareLink,
                   nextUpdatesLink(isAgent),
-                  homepageLink(isAgent),
                   form = formWithErrors,
                   postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
                 )

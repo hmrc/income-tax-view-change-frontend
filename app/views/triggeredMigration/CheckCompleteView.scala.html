@@ -37,7 +37,7 @@
         bulletList: bulletPointList,
 )
 
-@(isAgent: Boolean, compatSoftwareLink: String, nextUpdatesLink: String, homeLink: Call, form: Form[forms.triggeredMigration.CheckCompleteForm], postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean, compatSoftwareLink: String, nextUpdatesLink: String, form: Form[forms.triggeredMigration.CheckCompleteForm], postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 
 @getMessage(key: String) = @{
