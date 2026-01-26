@@ -35,7 +35,7 @@ class CheckCompleteViewSpec extends TestSupport {
   class Setup(isAgent: Boolean) {
     val homeCall: Call = if(isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
     val postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent), homeCall, CheckCompleteForm(), postAction)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent), CheckCompleteForm(), postAction)))
   }
 
   object CheckCompleteMessages {
