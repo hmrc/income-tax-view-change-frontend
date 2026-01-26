@@ -186,7 +186,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
           paragraphs.get(0).text shouldBe "Next update due: 5 November 2099"
           paragraphs.get(1).text shouldBe "Next tax return due: 31 January 2100"
-          link.text shouldBe "View deadlines and manage how you report"
+          link.text shouldBe "View your deadlines"
           link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
         }
 
@@ -207,7 +207,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
           tag.text() shouldBe "Overdue"
           paragraphs.get(1).text shouldBe "Next update due: 1 October 2024"
           paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2025"
-          link.text shouldBe "View deadlines and manage how you report"
+          link.text shouldBe "View your deadlines"
         }
 
         "has multiple overdue updates and tax return with OptInOptOutContentUpdateR17 enabled" in new TestSetup(
@@ -231,7 +231,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
           tag.text() shouldBe "3 Overdue updates"
           paragraphs.get(1).text shouldBe "Next update due: 5 May 2024"
           paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2025"
-          link.text shouldBe "View deadlines and manage how you report"
+          link.text shouldBe "View your deadlines"
         }
 
         "has only the tax return due when ITSA status is Annual and OptInOptOutContentUpdateR17 is enabled" in new TestSetup(

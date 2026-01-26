@@ -221,7 +221,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has a link to view and manage updates - Opt Out" in new Setup(nextUpdatesTileViewModel = viewModelOptOut) {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/submission-deadlines")
-        link.map(_.text) shouldBe Some("View deadlines and manage how you report")
+        link.map(_.text) shouldBe Some("View your deadlines")
       }
 
       "has next update and tax return dates when OptInOptOutContentUpdateR17 is enabled and ITSA status is Voluntary with no overdue updates" in {
@@ -246,7 +246,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           paragraphs.get(1).text shouldBe "Next tax return due: 31 January 2101"
 
           val link: Element = tile.select("a.govuk-link").first()
-          link.text shouldBe "View deadlines and manage how you report"
+          link.text shouldBe "View your deadlines"
           link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
@@ -275,7 +275,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2101"
 
           val link: Element = tile.select("a.govuk-link").first()
-          link.text shouldBe "View deadlines and manage how you report"
+          link.text shouldBe "View your deadlines"
           link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
@@ -308,7 +308,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2101"
 
           val link: Element = tile.select("a.govuk-link").first()
-          link.text shouldBe "View deadlines and manage how you report"
+          link.text shouldBe "View your deadlines"
           link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
@@ -335,7 +335,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           paragraphs.get(0).text shouldBe "Next tax return due: 31 January 2101"
 
           val link: Element = tile.select("a.govuk-link").first()
-          link.text shouldBe "View deadlines and manage how you report"
+          link.text shouldBe "View your deadlines"
           link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
@@ -359,7 +359,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2026"
 
         val link: Element = tile.select("a.govuk-link").first()
-        link.text shouldBe "View deadlines and manage how you report"
+        link.text shouldBe "View your deadlines"
         link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
       }
 
@@ -374,7 +374,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       ) {
         val tile: Element = getElementById("updates-tile").get
 
-        tile.text().trim shouldBe "Your submission deadlines View deadlines and manage how you report"
+        tile.text().trim shouldBe "Your submission deadlines View your deadlines"
         tile.select("span.govuk-tag--red") shouldBe empty
         tile.select("p.govuk-body") shouldBe empty
       }
