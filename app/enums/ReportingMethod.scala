@@ -16,21 +16,11 @@
 
 package enums
 
-sealed trait ReportingMethod {
-  val name: String
-}
+enum ReportingMethod(val name: String):
+  case AnnualReportingMethod extends ReportingMethod("annual")
+  case QuarterlyReportingMethod extends ReportingMethod("quarterly")
 
-case object AnnualReportingMethod extends ReportingMethod {
-  override val name: String = "annual"
-}
-
-case object QuarterlyReportingMethod extends ReportingMethod {
-  override val name: String = "quarterly"
-}
-
-object ReportingMethod {
-  def apply(method: String): ReportingMethod = method.toLowerCase match {
+object ReportingMethod:
+  def apply(method: String): ReportingMethod = method.toLowerCase match
     case "annual" => AnnualReportingMethod
     case "quarterly" => QuarterlyReportingMethod
-  }
-}

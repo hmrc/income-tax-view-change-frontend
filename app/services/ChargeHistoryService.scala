@@ -18,9 +18,9 @@ package services
 
 import auth.MtdItUser
 import connectors.ChargeHistoryConnector
-import enums.CreateReversalReason
-import models.chargeHistory._
-import models.financialDetails._
+import enums.ReversalReason.CreateReversalReason
+import models.chargeHistory.*
+import models.financialDetails.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate

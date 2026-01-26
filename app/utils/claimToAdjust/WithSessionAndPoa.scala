@@ -18,7 +18,8 @@ package utils.claimToAdjust
 
 import auth.MtdItUser
 import cats.data.EitherT
-import enums.{BeforeSubmissionPage, InitialPage, JourneyState}
+import enums.JourneyState.{BeforeSubmissionPage, InitialPage}
+import enums.JourneyState
 import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
 import models.core.Nino
 import play.api.Logger

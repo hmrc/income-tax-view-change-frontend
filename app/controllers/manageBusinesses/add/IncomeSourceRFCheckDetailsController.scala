@@ -23,7 +23,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.{AfterSubmissionPage, ReportingFrequencyPages}
+import enums.JourneyState.{AfterSubmissionPage, ReportingFrequencyPages}
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.{IncomeSourceId, NormalMode}
 import models.incomeSourceDetails.IncomeSourceDetailsModel

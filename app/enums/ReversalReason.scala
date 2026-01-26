@@ -16,24 +16,11 @@
 
 package enums
 
-sealed trait ReversalReason {
-  val value: String
+enum ReversalReason(val value: String):
+  // Not part of String -> ReversalReason conversion:: do we need this item?
+  case CreateReversalReason extends ReversalReason("create")
+  case AmendedReturnReversalReason extends ReversalReason("amend")
+  case AdjustmentReversalReason extends ReversalReason("adjustment")
+  case CustomerRequestReason extends ReversalReason("request")
+
   override def toString: String = value
-}
-
-// Not part of String -> ReversalReason conversion:: do we need this item?
-case object  CreateReversalReason extends ReversalReason {
-  override val value: String = "create"
-}
-
-case object  AmendedReturnReversalReason extends ReversalReason {
-  override val value: String = "amend"
-}
-
-case object  AdjustmentReversalReason extends ReversalReason {
-  override val value: String = "adjustment"
-}
-
-case object  CustomerRequestReason extends ReversalReason {
-  override val value: String = "request"
-}

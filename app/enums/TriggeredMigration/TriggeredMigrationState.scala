@@ -17,8 +17,38 @@
 package enums.TriggeredMigration
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import TriggeredMigrationState.*
 
-sealed trait TriggeredMigrationState {
+enum TriggeredMigrationState(val messageKeyValue: String, val anchorLinkId: String):
+  case TriggeredMigrationCeased extends TriggeredMigrationState("", "#ceased-section-heading")
+  case TriggeredMigrationAdded(incomeSourceType: IncomeSourceType) extends TriggeredMigrationState(s"${incomeSourceType.key}", TriggeredMigrationState.getAnchorLinkId(incomeSourceType))
+
+object TriggeredMigrationState:
+  def getAnchorLinkId(incomeSourceType: IncomeSourceType): String = incomeSourceType match
+    case SelfEmployment => "#sole-trader-heading"
+    case UkProperty => "#uk-property-heading"
+    case ForeignProperty => "#foreign-property-heading"
+
+  def getStateFromString(state: Option[String]): Option[TriggeredMigrationState] =
+    state.flatMap {
+      case "CEASED" => Some(TriggeredMigrationCeased)
+      case trigState if trigState.endsWith("-ADDED") =>
+        trigState.stripSuffix("-ADDED") match {
+          case SelfEmployment.key => Some(TriggeredMigrationAdded(SelfEmployment))
+          case UkProperty.key => Some(TriggeredMigrationAdded(UkProperty))
+          case ForeignProperty.key => Some(TriggeredMigrationAdded(ForeignProperty))
+          case _ => None
+        }
+      case _ => None
+    }
+
+object TriggeredMigrationCeased:
+  override def toString: String = "CEASED"
+//TODO fix it
+/*object TriggeredMigrationAdded:
+  override def toString = s"${this.incomeSourceType.key}-ADDED"*/
+
+/*sealed trait TriggeredMigrationState {
   val messageKeyValue: String
   val anchorLinkId: String
 }
@@ -53,4 +83,4 @@ object TriggeredMigrationState {
       case _ => None
     }
   }
-}
+}*/

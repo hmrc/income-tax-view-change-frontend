@@ -21,10 +21,10 @@ import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.BeforeSubmissionPage
-import enums.IncomeSourceJourney._
+import enums.JourneyState.BeforeSubmissionPage
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.TriggeredMigration.TriggeredMigrationAdded
+import enums.TriggeredMigration.TriggeredMigrationState.TriggeredMigrationAdded
 import models.UIJourneySessionData
 import models.core.NormalMode
 import models.createIncomeSource.CreateIncomeSourceResponse
@@ -32,7 +32,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{CreateBusinessDetailsService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses

@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import enums.InitialPage
+import enums.JourneyState.InitialPage
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import models.core.IncomeSourceId.mkIncomeSourceId

@@ -21,9 +21,11 @@ import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{AnnualReportingMethod, BeforeSubmissionPage, QuarterlyReportingMethod, ReportingMethod}
+import enums.JourneyState.*
+import enums.ReportingMethod
+import enums.ReportingMethod.{AnnualReportingMethod, QuarterlyReportingMethod}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
@@ -31,7 +33,7 @@ import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

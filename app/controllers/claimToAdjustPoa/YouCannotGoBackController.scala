@@ -20,7 +20,7 @@ import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.CannotGoBackPage
+import enums.JourneyState.CannotGoBackPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.claimToAdjustPoa.RecalculatePoaHelper

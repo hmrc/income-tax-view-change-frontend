@@ -17,7 +17,8 @@
 package utils
 
 import auth.MtdItUser
-import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState, ReportingFrequencyPages}
+import enums.JourneyState
+import enums.JourneyState.*
 import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import models.UIJourneySessionData
 import models.triggeredMigration.TriggeredMigrationSessionData

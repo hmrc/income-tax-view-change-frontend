@@ -21,9 +21,10 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{AfterSubmissionPage, BeforeSubmissionPage, ReportingMethod}
+import enums.{JourneyState, ReportingMethod}
+import enums.JourneyState.*
 import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import models.UIJourneySessionData
 import models.admin.OptInOptOutContentUpdateR17
@@ -33,7 +34,7 @@ import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
