@@ -164,7 +164,7 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
                 "middleName" -> "middleName",
                 "familyName" -> "familyName",
                 "birthdate" -> "1984-08-12",
-                "address" -> Json.obj(  
+                "address" -> Json.obj(
                   "line1" -> "line1",
                   "line2" -> "line2",
                   "line3" -> "line3",
