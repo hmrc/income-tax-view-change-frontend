@@ -171,7 +171,7 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
                   "line4" -> "line4",
                   "postCode" -> "TF34ER",
                   "countryCode" -> "UK",
-                  "countryName" -> "United Kingdom",
+                  "countryName" -> "United Kingdom"
                 )
               )
             )
