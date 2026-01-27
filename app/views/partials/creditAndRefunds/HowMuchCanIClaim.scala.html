@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.creditsandrefunds.CreditAndRefundViewModel
+@import models.creditsandrefunds.MoneyInYourAccountViewModel
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import views.html.components.{h2, p}
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
@@ -26,7 +26,7 @@
         p: p,
         govukInsetText: GovukInsetText
 )
-@(viewModel: CreditAndRefundViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], messages: Messages)
 
 @h2(msg = messages("credit-and-refund.how-much-can-i-claim"), classes = "govuk-heading-l")
 

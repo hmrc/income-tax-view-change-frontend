@@ -353,7 +353,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.ChargeSummaryController.show(2019, "poa1_6").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa1_7").url,
           controllers.routes.ChargeSummaryController.show(2020, "poa1_8").url,
-          controllers.routes.CreditAndRefundController.show().url
+          controllers.routes.MoneyInYourAccountController.show().url
         )
 
         document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
@@ -386,7 +386,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.ChargeSummaryController.show(2019, "poa2_6").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa2_7").url,
           controllers.routes.ChargeSummaryController.show(2020, "poa2_8").url,
-          controllers.routes.CreditAndRefundController.show().url
+          controllers.routes.MoneyInYourAccountController.show().url
         )
 
         document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
@@ -417,7 +417,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.ChargeSummaryController.show(2019, "bcd_4").url,
           controllers.routes.ChargeSummaryController.show(2019, "bcd_5").url,
           controllers.routes.ChargeSummaryController.show(2020, "bcd_6").url,
-          controllers.routes.CreditAndRefundController.show().url
+          controllers.routes.MoneyInYourAccountController.show().url
         )
 
         document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading

@@ -77,11 +77,11 @@
     s"balancing-charge-type-$idx"
 }
 
-@creditAndRefundsControllerURL = @{
+@moneyInYourAccountControllerURL = @{
     if(isAgent) {
-        controllers.routes.CreditAndRefundController.showAgent().url
+        controllers.routes.MoneyInYourAccountController.showAgent().url
     } else {
-        controllers.routes.CreditAndRefundController.show().url
+        controllers.routes.MoneyInYourAccountController.show().url
     }
 }
 
@@ -120,14 +120,14 @@
         @if(isAgent) {
             @p(id = Some("p-money-in-your-account")) {
                 @messages("credits.money-in-your-account-section.agent.content", availableCredit.toCurrencyString)
-                @link(link = creditAndRefundsControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
+                @link(link = moneyInYourAccountControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
                     id = Some("money-in-your-account-claim-a-refund-link"),
                     outerMessage = ".", rel = Some("noreferrer noopener"))
             }
         } else {
             @p(id = Some("p-money-in-your-account")) {
                 @messages("credits.money-in-your-account-section.content", availableCredit.toCurrencyString)
-                @link(link = creditAndRefundsControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
+                @link(link = moneyInYourAccountControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
                     id = Some("money-in-your-account-claim-a-refund-link"),
                     outerMessage = ".", rel = Some("noreferrer noopener"))
             }

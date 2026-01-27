@@ -43,18 +43,18 @@
     )
 }
 
-@creditAndRefundsControllerURL = @{
+@moneyInYourAccountControllerURL = @{
     if(isAgent) {
-        controllers.routes.CreditAndRefundController.showAgent().url
+        controllers.routes.MoneyInYourAccountController.showAgent().url
     } else {
-        controllers.routes.CreditAndRefundController.show().url
+        controllers.routes.MoneyInYourAccountController.show().url
     }
 }
 
 @creditAndRefundsLink = @{
     link(
-        link = creditAndRefundsControllerURL,
-        messageKey = "home.credAndRefund.view"
+        link = moneyInYourAccountControllerURL,
+        messageKey = "home.money-in-your-account"
     )
 }
 

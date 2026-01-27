@@ -29,14 +29,14 @@
     isAgent: Boolean = false)(implicit messages: Messages)
 @import implicitDateFormatter._
 
-@creditAndRefundUrl = @{
-    if(isAgent) controllers.routes.CreditAndRefundController.showAgent().url
-    else controllers.routes.CreditAndRefundController.show().url
+@moneyInYourAccountUrl = @{
+    if(isAgent) controllers.routes.MoneyInYourAccountController.showAgent().url
+    else controllers.routes.MoneyInYourAccountController.show().url
 }
 
 @getLink = @{
     if (creditsRefundsRepayEnabled) {
-        link(id = Some("money-on-account-link"), link = creditAndRefundUrl, messageKey = "paymentAllocation.moneyOnAccount")
+        link(id = Some("money-on-account-link"), link = moneyInYourAccountUrl, messageKey = "paymentAllocation.moneyOnAccount")
     } else {
         messages("paymentAllocation.moneyOnAccount")
     }
