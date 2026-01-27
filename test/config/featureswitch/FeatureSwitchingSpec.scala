@@ -61,7 +61,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     SubmitClaimToAdjustToNrs,
     TriggeredMigration,
     PostFinalisationAmendmentsR18,
-    `CY+1YouMustWaitToSignUpPageEnabled`
+    `CY+1YouMustWaitToSignUpPageEnabled`,
+    NewHomePage
   )
 
   "FeatureSwitchName" when {

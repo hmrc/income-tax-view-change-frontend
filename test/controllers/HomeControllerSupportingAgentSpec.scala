@@ -39,7 +39,7 @@ import services.NextUpdatesService
 import services.optIn.OptInService
 import services.optout.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.HomeView
+import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.helpers.injected.home.YourReportingObligationsTile
 
@@ -57,6 +57,10 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
   val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
   val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
   val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
+  val yourTasksView: NewHomeYourTasksView = application.injector.instanceOf(classOf[NewHomeYourTasksView])
+  val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
+  val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
+  val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
   val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
 
@@ -70,6 +74,10 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
   trait Setup {
     val controller: HomeController = HomeController(
       homeView,
+      yourTasksView,
+      recentActivityView,
+      overviewView,
+      helpView,
       primaryAgentHomeView,
       supportingAgentHomeView,
       authActions,
