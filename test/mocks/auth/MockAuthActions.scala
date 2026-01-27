@@ -151,7 +151,7 @@ trait MockAuthActions
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel ~
       None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~
       LoginTimes(Instant.ofEpochSecond(1000), Some(Instant.ofEpochSecond(500)))
-    setupMockUserAuthSuccess(retrievalValue)
+    setupMockUserAuthSuccess(mockFAF)(retrievalValue)
   }
 
   def setupMockUserAuthNoSAUtr: Unit = {
@@ -175,7 +175,7 @@ trait MockAuthActions
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel ~
       None ~ None ~ None ~ None ~ None ~ None ~ AgentInformation(Some("agentId"), Some("agentCode"), Some("agentName")) ~
       None ~ None ~ None ~ None ~ None ~ None ~ None ~ LoginTimes(Instant.ofEpochSecond(1000), Some(Instant.ofEpochSecond(500)))
-    setupMockAgentWithClientAuthSuccess(retrievalValue, testMtditid, isSupportingAgent)
+    setupMockAgentWithClientAuthSuccess(mockFAF)(retrievalValue, testMtditid, isSupportingAgent)
   }
 
   def setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent: Boolean): Unit = {
@@ -206,7 +206,7 @@ trait MockAuthActions
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel ~
       None ~ None ~ None ~ None ~ None ~ None ~ AgentInformation(Some("agentId"), Some("agentCode"), Some("agentName")) ~
       None ~ None ~ None ~ None ~ None ~ None ~ None ~ LoginTimes(Instant.ofEpochSecond(1000), Some(Instant.ofEpochSecond(500)))
-    setupMockAgentWithMissingDelegatedMTDEnrolmentWithNrs(retrievalValue, testMtditid)
+    setupMockAgentWithMissingDelegatedMTDEnrolmentWithNrs(mockFAF)(retrievalValue, testMtditid)
   }
 
   def setupMockAgentSuccess(): Unit = {

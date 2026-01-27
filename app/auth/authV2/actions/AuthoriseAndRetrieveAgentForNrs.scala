@@ -41,7 +41,7 @@ class AuthoriseAndRetrieveAgentForNrs @Inject()(val authorisedFunctions: Fronten
                                                 mcc: MessagesControllerComponents)
   extends FeatureSwitching with AuthoriseHelper {
 
-  lazy val logger: Logger = Logger(getClass)
+  val logger = Logger(getClass)
 
   def authorise(arnRequired: Boolean = true): ActionRefiner[Request, AuthorisedUserRequest] = new ActionRefiner[Request, AuthorisedUserRequest] {
 

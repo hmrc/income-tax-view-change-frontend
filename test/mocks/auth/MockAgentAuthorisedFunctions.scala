@@ -87,10 +87,10 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
     setupMockNoSecondaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)
   }
   
-  def setupMockAgentWithMissingDelegatedMTDEnrolmentWithNrs(retrievalValue: NrsAgentAuthRetrievals, mtdItId: String): Unit = {
-    setupMockAgentAuthSuccess(retrievalValue)
-    setupMockNoPrimaryDelegatedEnrolmentForMTDItId(mtdItId)
-    setupMockNoSecondaryDelegatedEnrolmentForMTDItId(mtdItId)
+  def setupMockAgentWithMissingDelegatedMTDEnrolmentWithNrs(mockFAF: FrontendAuthorisedFunctions)(retrievalValue: NrsAgentAuthRetrievals, mtdItId: String): Unit = {
+    setupMockAgentAuthSuccess(mockFAF)(retrievalValue)
+    setupMockNoPrimaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)
+    setupMockNoSecondaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)
   }
 
   def setupMockAgentAuthException(mockFAF: FrontendAuthorisedFunctions)(exception: AuthorisationException = new InvalidBearerToken): Unit =
