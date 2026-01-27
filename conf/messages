@@ -133,9 +133,9 @@ home.payments.heading                                           = Next charges d
 home.payments.daily-interest-charges                            = Daily interest charges
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
-home.updates.heading                                            = Next updates due
+home.updates.heading                                            = Your submission deadlines
 home.updates.view                                               = View update deadlines
-home.updates.view.reportingFrequency                            = View deadlines and manage how you report
+home.updates.view.reportingFrequency                            = View your deadlines
 home.paymentHistory.heading                                     = Payment history
 home.paymentHistory.view                                        = Payment history
 home.paymentHistoryRefund.availableCredit                       = {0} is in your account
@@ -178,7 +178,7 @@ home.interest-accruing                                          = You have charg
 home.updates.overdue.charges                                    = {0} Overdue charges
 home.updates.overdue.updates                                    = {0} Overdue updates
 
-home.updates.R17.heading                                        = Your updates and deadlines
+home.updates.R17.heading                                        = Your submission deadlines
 home.updates.R17.nextUpdateDue                                  = Next update due: {0}
 home.updates.R17.nextTaxReturnDue                               = Next tax return due: {0}
 home.updates.R17.linkText                                       = View your deadlines
@@ -812,7 +812,7 @@ obligations.quarterlyUpdates                                       = Quarterly u
 obligations.finalDeclarationUpdate                                 = Final declaration
 
 ## Next updates Page ##
-nextUpdates.heading                                                = Your updates and deadlines
+nextUpdates.heading                                                = Your submission deadlines
 nextUpdates.sub-heading                                            = Updates due by
 nextUpdates.dropdown.info                                          = What are the update types?
 nextUpdates.info                                       			   = All updates need to be sent using your record keeping software by each date shown.
@@ -1857,7 +1857,7 @@ income.source.added.obligation.list.text                                        
 ###### Income Source Added Scenario 1 - SignUpNextYearOnly  #######
 
 income.source.added.scenario.one.account.updated.p.a                                        = Even if they are not displayed right away on the
-income.source.added.scenario.one.account.updated.p.link                                     = updates and deadlines
+income.source.added.scenario.one.account.updated.p.link                                     = submission deadlines
 income.source.added.scenario.one.account.updated.p.b                                        = page, your account has been updated.
 
 income.source.added.scenario.one.view.reporting.obligations.p.a                             = Depending on your circumstances, you may be able to
@@ -1870,7 +1870,7 @@ income.source.added.scenario.one.view.businesses.p                              
 ###### Income Source Added Scenario 2 - NotSigningUp  #######
 
 income.source.added.scenario.two.account.updated.p.a                                        = Even if they are not displayed right away on the
-income.source.added.scenario.two.account.updated.p.link                                     = updates and deadlines
+income.source.added.scenario.two.account.updated.p.link                                     = submission deadlines
 income.source.added.scenario.two.account.updated.p.b                                        = page, your account has been updated.
 
 income.source.added.scenario.two.view.reporting.obligations.p.a                             = This new business is opted out of Making Tax Digital for Income Tax. Find out more about
@@ -1884,7 +1884,7 @@ income.source.added.scenario.two.view.businesses.p                              
 income.source.added.few.minutes.overdue.updates                                             = For this new business you may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
 
 income.source.added.scenario.three.account.updated.p.a                                      = Even if they are not displayed right away on the
-income.source.added.scenario.three.account.updated.p.link                                   = updates and deadlines
+income.source.added.scenario.three.account.updated.p.link                                   = submission deadlines
 income.source.added.scenario.three.account.updated.p.b                                      = page, your account has been updated.
 
 income.source.added.scenario.three.view.reporting.obligations.p.a                           = Depending on your circumstances, you may be able to
@@ -1899,7 +1899,7 @@ income.source.added.scenario.three.view.businesses.p                            
 income.source.added.few.minutes.overdue.updates                                             = For this new business you may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
 
 income.source.added.scenario.four.account.updated.p.a                                       = Even if they are not displayed right away on the
-income.source.added.scenario.four.account.updated.p.link                                    = updates and deadlines
+income.source.added.scenario.four.account.updated.p.link                                    = submission deadlines
 income.source.added.scenario.four.account.updated.p.b                                       = page, your account has been updated.
 
 income.source.added.scenario.four.view.reporting.obligations.p                              = This new business is opted out of Making Tax Digital for Income Tax. Find out more about
@@ -2081,7 +2081,7 @@ business-ceased.obligation.heading2.text                            = Your revis
 business-ceased.obligation.inset.text                               = Your deadlines for this business will be available in the next few minutes.
 business-ceased.obligation.p1.text.1                                = Even if they are not displayed right away on the
 business-ceased.obligation.p1.text.2                                = page, your account has been updated.
-business-ceased.obligation.p1.link                                  = updates and deadlines
+business-ceased.obligation.p1.link                                  = submission deadlines
 business-ceased.obligation.p2.text                                  = to add, manage or cease a business or income source.
 business-ceased.obligation.p2.link                                  = View your businesses
 business-ceased.obligation.remaining-business.text.1                = Because your remaining business is new, it is set to be opted out of Making Tax Digital for Income Tax for up to 2 tax years.
@@ -2166,7 +2166,7 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.optedOut =
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.heading = Your revised deadlines
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.inset = Your deadlines for this business will be available in the next few minutes.
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.beforeLink = Even if they are not displayed right away on the
-incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link = updates and deadlines
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link = submission deadlines
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink = page, your account has been updated.
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para2 = For this new business you may have overdue updates for the {0} to {1} tax year. You must submit these updates with all required income and expenses through your compatible software.
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link = View your businesses
@@ -2578,7 +2578,7 @@ optout.confirmedOptOut.submitTax.confirmed.bullet2               = using HMRC on
 
 optout.confirmedOptOut.updatesDue                                = Your next updates due
 optout.confirmedOptOut.updatesDue.desc                           = Check the {0} page for the current tax year’s deadlines. Deadlines for future years will not be visible until they become the current year.
-optout.confirmedOptOut.next-updates                              = next updates
+optout.confirmedOptOut.next-updates                              = submission deadlines
 
 optout.confirmedOptOut.reportQuarterly                           = Your reporting obligations in the future
 optout.confirmedOptOut.reportQuarterly.desc1                     = You could be required to report quarterly again in the future if:
@@ -2661,8 +2661,8 @@ optout.chooseOptOutTaxYear.deleteUpdates             = This will delete {0} quar
 # opt out error page
 optout.optOutError.heading                           = Sorry, there is a problem with the service
 optout.optOutError.options                           = You can:
-optout.optOutError.nextUpdates-bullet-1              = go back to your
-optout.optOutError.nextUpdates-link                  = next updates
+optout.optOutError.nextUpdates-bullet-1              = go back to
+optout.optOutError.nextUpdates-link                  = your submission deadlines
 optout.optOutError.nextUpdates-bullet-2              = and try again
 optout.optOutError.home-bullet-1                     = go back to the
 optout.optOutError.home-bullet-2                     = homepage
@@ -2879,8 +2879,8 @@ optin.checkAnswers.submissionsMade  = If you have submitted any income and expen
 # opt in error page
 optin.optInError.heading                           = Sorry, there is a problem with the service
 optin.optInError.options                           = You can:
-optin.optInError.nextUpdates-bullet-1              = go back to your
-optin.optInError.nextUpdates-link                  = next updates
+optin.optInError.nextUpdates-bullet-1              = go back to
+optin.optInError.nextUpdates-link                  = your submission deadlines
 optin.optInError.nextUpdates-bullet-2              = and try again
 optin.optInError.home-bullet-1                     = go back to the
 optin.optInError.home-bullet-2                     = homepage
@@ -2905,7 +2905,7 @@ optin.completedOptIn.yourRevisedDeadline.inset                  = Your revised d
 optin.completedOptIn.yourRevisedDeadline.h2                     = Your revised deadlines
 optin.completedOptIn.yourRevisedDeadline.p1.a                   = Even if they are not displayed right away on the
 optin.completedOptIn.yourRevisedDeadline.p1.b                   = page, your account has been updated.
-optin.completedOptIn.yourRevisedDeadline.p1.link                = updates and deadlines
+optin.completedOptIn.yourRevisedDeadline.p1.link                = submission deadlines
 
 optin.completedOptIn.yourRevisedDeadline.p2.a                   = You can decide at any time to opt out of reporting quarterly for all your businesses on
 optin.completedOptIn.yourRevisedDeadline.p2.b                   =  page.
@@ -2943,7 +2943,7 @@ signUp.completedSignUp.cy.inset                               = You may have ove
 signUp.completedSignUp.cy.yourRevisedDeadlines                = Your revised deadlines
 signUp.completedSignUp.cy.yourRevisedDeadlines.text           = Your revised deadlines will be available in the next few minutes.
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text1    = Even if they are not displayed right away on the
-signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.link     = updates and deadlines
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.link     = submission deadlines
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.comma    =
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text2    = page, your account has been updated.
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text1    = You can decide at any time to opt out of Making Tax Digital for Income Tax for all your businesses on
@@ -2981,7 +2981,7 @@ signUp.completedSignUp.ny.heading.desc                     = You need to use Mak
 signUp.completedSignUp.ny.yourRevisedDeadlines             = Your revised deadlines
 signUp.completedSignUp.ny.yourRevisedDeadlines.inset       = Your deadlines for this business will be available in the next few minutes.
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text1 = Even if they are not displayed right away on the
-signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.link  = updates and deadlines
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.link  = submission deadlines
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.comma =
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text2 = page, your account has been updated.
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text1 = You can decide at any time to opt out of Making Tax Digital for Income Tax for all your businesses on
@@ -3040,14 +3040,14 @@ reporting.frequency.different.obligations.li2                               = a 
 reporting.frequency.different.obligations.p2                                = For tax years you are opted out of, you only need to file a tax return.
 reporting.frequency.different.obligations.p2hasExempt                       = For tax years you are opted out of or exempt, you only need to file a tax return.
 reporting.frequency.different.obligations.p3                                = You can see what is due on the
-reporting.frequency.different.obligations.link.text                         = updates and deadlines
+reporting.frequency.different.obligations.link.text                         = submission deadlines
 reporting.frequency.different.obligations.link.text.additional.english      = page.
 
 #your obligations (exempt)
 reporting.frequency.your.obligations.heading                           = What your reporting obligations are
 reporting.frequency.your.obligations.p1                                = For tax years you are exempt, you only need to file a tax return.
 reporting.frequency.your.obligations.p2                                = Find out what is due and when on the
-reporting.frequency.your.obligations.link.text                         = updates and deadlines
+reporting.frequency.your.obligations.link.text                         = submission deadlines
 reporting.frequency.your.obligations.link.text.additional.english      = page.
 
 reporting.frequency.mandatoryReporting.heading    = When reporting quarterly is mandatory
@@ -3439,7 +3439,7 @@ triggered-migration.checkComplete.submitUpdates.heading                         
 triggered-migration.checkComplete.submitUpdates.p1                                      = In your account you can see which quarterly updates are due and what information you need to provide. Then you must use your compatible software to:
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = create a digital record of your property and sole trader income and expenses
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send your quarterly update(s) to HMRC
-triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest updates and deadlines
+triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest submission deadlines
 
 #sign-up/opt-out you can not go back page
 signUpOptOut.cannotGoBack.heading       = You cannot go back

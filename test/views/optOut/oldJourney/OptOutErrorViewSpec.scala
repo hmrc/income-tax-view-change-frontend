@@ -64,7 +64,7 @@ class OptOutErrorViewSpec extends TestSupport {
 
     "render the navigation options" in new Setup(false) {
       pageDocument.getElementById("nextUpdatesBullet").text() shouldBe optOutErrorPageMessages.optOutNextUpdatesTotal
-      pageDocument.getElementById("next-updates-link").attr("href") shouldBe optOutErrorPageMessages.nextUpdatesLink
+      pageDocument.getElementById("submission-deadlines-link").attr("href") shouldBe optOutErrorPageMessages.nextUpdatesLink
       pageDocument.getElementById("homepageBullet").text() shouldBe optOutErrorPageMessages.optOutHomeTotal
       pageDocument.getElementById("home-link").attr("href") shouldBe optOutErrorPageMessages.homePageLink
     }
@@ -86,7 +86,7 @@ class OptOutErrorViewSpec extends TestSupport {
 
     "render the navigation options" in new Setup(true) {
       pageDocument.getElementById("nextUpdatesBullet").text() shouldBe optOutErrorPageMessages.optOutNextUpdatesTotal
-      pageDocument.getElementById("next-updates-link").attr("href") shouldBe optOutErrorPageMessages.nextUpdatesLinkAgent
+      pageDocument.getElementById("submission-deadlines-link").attr("href") shouldBe optOutErrorPageMessages.nextUpdatesLinkAgent
       pageDocument.getElementById("homepageBullet").text() shouldBe optOutErrorPageMessages.optOutHomeTotal
       pageDocument.getElementById("home-link").attr("href") shouldBe optOutErrorPageMessages.homePageLinkAgent
     }

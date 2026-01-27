@@ -458,7 +458,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe "Next updates due View update deadlines"
+          document.select("#updates-tile").text() shouldBe "Your submission deadlines View update deadlines"
         }
       }
 
@@ -488,13 +488,13 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         val document: Document = Jsoup.parse(contentAsString(result))
         val tile: Elements = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.select("p").get(0).text shouldBe "Next update due: 5 February 2024"
         tile.select("p").get(1).text shouldBe "Next tax return due: 31 January 2025"
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
       }
 
       "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
@@ -525,14 +525,14 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         val document: Document = Jsoup.parse(contentAsString(result))
         val tile: Elements = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.select("span.govuk-tag.govuk-tag--red").text should include("2 Overdue updates")
         tile.select("p").get(1).text shouldBe "Next update due: 5 February 2024"
         tile.select("p").get(2).text shouldBe "Next tax return due: 31 January 2025"
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
@@ -560,13 +560,13 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         val document: Document = Jsoup.parse(contentAsString(result))
         val tile: Elements = document.select("#updates-tile")
 
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.text should not include "Next update due:"
         tile.select("p").get(0).text shouldBe "Next tax return due: 31 January 2025"
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
       }
 
       "render the home without the Next Updates tile" when {
@@ -586,7 +586,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe "Next updates due View update deadlines"
+          document.select("#updates-tile").text shouldBe "Your submission deadlines View update deadlines"
         }
       }
 
