@@ -1453,8 +1453,10 @@ money-in-your-account.heading                                           = Arian 
 money-in-your-account.credit                                            = Credit: {0} NEEDS WELSH
 
 money-in-your-account.no-money                                          = Nid oes unrhyw arian yn eich cyfrif ar hyn o bryd.
-money-in-your-account.no-money-one-refund                               = Nid oes unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae ad-daliad ar y gweill.
-money-in-your-account.no-money-two-refunds                              = Nid oes unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae mwy nag un ad-daliad ar y gweill.
+money-in-your-account.no-money-one-refund                               = Nid oes unrhyw arian yn eich cyfrif ar
+money-in-your-account.no-money-one-refund-link-text                     = hyn o bryd, ond mae ad-daliad ar y gweill
+money-in-your-account.no-money-two-refunds                              = Nid oes unrhyw arian yn eich cyfrif ar
+money-in-your-account.no-money-two-refunds-link-text                    = hyn o bryd, ond mae mwy nag un ad-daliad ar y gweill
 
 #######################################################################################################################
 ## Income Sources - Add ##

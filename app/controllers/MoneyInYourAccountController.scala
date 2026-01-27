@@ -71,7 +71,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
       case _ if !isEnabled(CreditsRefundsRepay) =>
         Ok(customNotFoundErrorView()(user, messages))
       case creditsModel: CreditsModel =>
-        val viewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditsModel)
+        val viewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditsModel, appConfig.repaymentsUrl)
         auditClaimARefund(creditsModel)
         Ok(moneyInYourAccountView(viewModel, isAgent, backUrl)(user, user, messages))
       case _ => logAndRedirect("Invalid response from financial transactions")

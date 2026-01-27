@@ -1452,9 +1452,10 @@ money-in-your-account.heading                                           = Money 
 money-in-your-account.credit                                            = Credit: {0} NEEDS WELSH
 
 money-in-your-account.no-money                                          = You do not have any money in your account at the moment.
-money-in-your-account.no-money-one-refund                               = You do not have any money in your account at the moment, but you have a refund in progress.
-money-in-your-account.no-money-two-refunds                              = You do not have any money in your account at the moment, but you have refunds in progress.
-
+money-in-your-account.no-money-one-refund                               = You do not have any money in your account at the moment, but you have a
+money-in-your-account.no-money-one-refund-link-text                     = refund in progress
+money-in-your-account.no-money-two-refunds                              = You do not have any money in your account at the moment, but you have
+money-in-your-account.no-money-two-refunds-link-text                    = refunds in progress
 
 #######################################################################################################################
 ## Income Sources - Add ##
