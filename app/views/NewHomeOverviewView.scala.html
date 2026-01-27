@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.h1WithCaption
@@ -45,10 +46,11 @@
 }
 
 @caption = @{
-    if (isAgent) {
+    if (user.usersRole == MTDSupportingAgent) {
+        messages("home.agent.supporting.caption")
+    } else if (isAgent) {
         messages("home.agent.primary.caption")
-    }
-    else {
+    } else {
         user.userName.fold("")(_.name.getOrElse(""))
     }
 }
