@@ -66,8 +66,10 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     val testMessages: Messages = if(welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
     } else { messages }
+    
+    val testUrl = "testUrl"
 
-    val viewModel: MoneyInYourAccountViewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditAndRefundModel)
+    val viewModel: MoneyInYourAccountViewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditAndRefundModel, testUrl)
 
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(

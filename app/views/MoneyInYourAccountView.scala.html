@@ -63,12 +63,12 @@
             @if(viewModel.secondPendingAmountRequested.getOrElse(BigDecimal(0)) > 0) {
                 @messages("money-in-your-account.no-money-two-refunds")
                 @link(controllers.routes.PaymentHistoryController.refundStatus().url,
-                    messageKey = "money-in-your-account.no-money-two-refunds-link-text", outerMessage = ".")
+                    messageKey = "money-in-your-account.no-money-two-refunds-link-text", outerMessage = ".", id = Some("refunds-link"))
             } else {
                 @if(viewModel.firstPendingAmountRequested.getOrElse(BigDecimal(0)) > 0) {
                     @messages("money-in-your-account.no-money-one-refund")
                     @link(controllers.routes.PaymentHistoryController.refundStatus().url,
-                        messageKey = "money-in-your-account.no-money-one-refund-link-text", outerMessage = ".")
+                        messageKey = "money-in-your-account.no-money-one-refund-link-text", outerMessage = ".", id = Some("refunds-link"))
                 }
             }
         }
