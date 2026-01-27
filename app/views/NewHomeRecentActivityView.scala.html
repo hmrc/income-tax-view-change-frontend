@@ -1,0 +1,100 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components.h1WithCaption
+@import views.html.layouts.unifiedLayout
+
+
+@this(
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        h1WithCaption: h1WithCaption,
+        govukServiceNavigation : GovukServiceNavigation
+)
+
+@(origin: Option[String] = None,
+        isAgent: Boolean,
+        yourTasksUrl: String,
+        recentActivityUrl: String,
+        overViewUrl: String,
+        helpUrl: String
+)(
+        implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
+)
+
+@pageHeading = @{
+    if (isAgent) {
+        user.optClientNameAsString.fold(messages("home.agent.heading")) {
+            clientName => messages("home.agent.headingWithClientName", clientName)
+        }
+    } else messages("home.heading")
+}
+
+@caption = @{
+    if (isAgent) {
+        messages("home.agent.primary.caption")
+    }
+    else {
+        user.userName.fold("")(_.name.getOrElse(""))
+    }
+}
+
+@mainTemplate(
+    pageTitle = if (isAgent) messages("home.agent.heading") else messages("home.heading"),
+    backUrl = None,
+    btaNavPartial = user.btaNavPartial,
+) {
+
+    @h1WithCaption(
+        heading = pageHeading,
+        captionMsg = caption,
+        extraClasses = if(user.saUtr.isDefined) { "margin-bottom-zero" } else {""},
+        headingId = Some("income-tax-heading"),
+        captionId = Some("sub-heading")
+    )
+
+
+    @user.saUtr.map { utr =>
+        <div id="utr-reference-heading" class="form-hint heading-xl-addon">
+            @messages("home.unique.taxpayer.reference", utr)
+        </div>
+    }
+
+    @govukServiceNavigation(ServiceNavigation(
+        navigation = Seq(
+            ServiceNavigationItem(
+                content = Text("Your tasks"),
+                href = yourTasksUrl
+            ),
+            ServiceNavigationItem(
+                content = Text("Recent activity"),
+                href = recentActivityUrl,
+                active = true
+            ),
+            ServiceNavigationItem(
+                content = Text("Overview"),
+                href = overViewUrl
+            ),
+            ServiceNavigationItem(
+                content = Text("Help"),
+                href = helpUrl
+            )
+        ),
+        attributes = Map("style" -> "background-color: white;")
+    ))
+}

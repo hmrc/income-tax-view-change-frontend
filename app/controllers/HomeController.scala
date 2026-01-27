@@ -33,7 +33,7 @@ import models.obligations.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.{Action, _}
 import services._
 import services.optIn.OptInService
 import services.optout.OptOutService
@@ -46,6 +46,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.HomeView,
+                               val newHomeYourTasksView: views.html.NewHomeYourTasksView,
+                               val newHomeRecentActivityView: views.html.NewHomeRecentActivityView,
+                               val newHomeOverviewView: views.html.NewHomeOverviewView,
+                               val newHomeHelpView: views.html.NewHomeHelpView,
                                val primaryAgentHomeView: views.html.agent.PrimaryAgentHomeView,
                                val supportingAgentHomeView: views.html.agent.SupportingAgentHomeView,
                                val authActions: AuthActions,
@@ -78,6 +82,15 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+    if (isEnabled(NewHomePage)){
+      handleYourTasks(origin, user.isAgent())
+    } else {
+      handleOldHomePage(origin)
+    }
+  }
+
+  private def handleOldHomePage(origin: Option[String] = None)
+                               (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     nextUpdatesService.getDueDates().flatMap {
       case Right(nextUpdatesDueDates: Seq[LocalDate]) if user.usersRole == MTDSupportingAgent =>
         buildHomePageForSupportingAgent(nextUpdatesDueDates)
@@ -281,5 +294,31 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       Future.successful((None, None))
     }
   }
+
+  //These should probably each have their own controllers, as they're going to each be calling the APIs independently and will have different ViewModels
+  private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
+                                      (implicit user: MtdItUser[_]): Future[Result] = {
+    Future.successful(Ok(newHomeYourTasksView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+  }
+
+  def handleRecentActivity(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      Future.successful(Ok(newHomeRecentActivityView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+  }
+
+  def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      Future.successful(Ok(newHomeOverviewView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+  }
+
+  def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+  }
+
+  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url
+  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
+  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
+  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
 
 }
