@@ -2249,6 +2249,14 @@ case class ANewCreditAndRefundModel(model: CreditsModel = CreditsModel(0.0, 0.0,
     ANewCreditAndRefundModel(model.copy(unallocatedCredit = unallocatedCredit))
   }
 
+  def firstRefundAmountRequested(firstRefund: BigDecimal): ANewCreditAndRefundModel = {
+    ANewCreditAndRefundModel(model.copy(firstPendingAmountRequested = Some(firstRefund)))
+  }
+
+  def secondRefundAmountRequested(secondRefund: BigDecimal): ANewCreditAndRefundModel = {
+    ANewCreditAndRefundModel(model.copy(secondPendingAmountRequested = Some(secondRefund)))
+  }
+
   def withCutoverCredit(dueDate: LocalDate, outstandingAmount: BigDecimal) = {
     ANewCreditAndRefundModel(model.copy(transactions = model.transactions :+
       Transaction(CutOverCreditType, outstandingAmount, taxYear = Some(TaxYear.getTaxYear(dueDate)), dueDate = Some(dueDate), "cutover")))

@@ -25,6 +25,8 @@ import java.time.LocalDate
 
 class MoneyInYourAccountViewModelSpec extends UnitSpec {
 
+  val testUrl = "testUrl"
+  
   "sorted credit rows" should {
 
    "return credits in reverse date order" in {
@@ -36,7 +38,7 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
        .withRepaymentInterest(dueDate = dateInYear(2022), outstandingAmount = 4.0)
        .get()
 
-     val rows = MoneyInYourAccountViewModel.fromCreditsModel(model).creditRows
+     val rows = MoneyInYourAccountViewModel.fromCreditsModel(model, testUrl).creditRows
 
      rows shouldBe List(
        CreditViewRow(2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024)),
@@ -53,7 +55,7 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
                .withSecondRefund(20.0)
                .get()
 
-      val rows = MoneyInYourAccountViewModel.fromCreditsModel(model).creditRows
+      val rows = MoneyInYourAccountViewModel.fromCreditsModel(model, testUrl).creditRows
 
       rows shouldBe List(
         RefundRow(20.0),
@@ -70,7 +72,7 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
         .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = 2.0)
         .get()
 
-      val rows = MoneyInYourAccountViewModel.fromCreditsModel(model).creditRows
+      val rows = MoneyInYourAccountViewModel.fromCreditsModel(model, testUrl).creditRows
 
       rows shouldBe List(
         CreditViewRow(2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024)),
@@ -89,7 +91,7 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
         .withBalancingChargeCredit(dueDate = dateInYear(2024), outstandingAmount = 2.0)
         .get()
 
-      val rows = MoneyInYourAccountViewModel.fromCreditsModel(model).creditRows
+      val rows = MoneyInYourAccountViewModel.fromCreditsModel(model, testUrl).creditRows
 
       rows shouldBe List(
         CreditViewRow(2.0, BalancingChargeCreditType, TaxYear.forYearEnd(2024)),
