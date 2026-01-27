@@ -66,7 +66,8 @@ case class MoneyInYourAccountViewModel(availableCredit: BigDecimal,
                                        totalCredit: BigDecimal,
                                        firstPendingAmountRequested: Option[BigDecimal],
                                        secondPendingAmountRequested: Option[BigDecimal],
-                                       creditRows: List[CreditRow]) {
+                                       creditRows: List[CreditRow],
+                                       checkRefundStatusLink: String) {
   val hasCreditOrRefunds: Boolean = {
     availableCredit > 0 || allocatedCredit > 0 || creditRows.exists(_.amount > 0)
   }
@@ -76,7 +77,7 @@ case class MoneyInYourAccountViewModel(availableCredit: BigDecimal,
 
 object MoneyInYourAccountViewModel {
 
-  def fromCreditsModel(model: CreditsModel): MoneyInYourAccountViewModel = {
+  def fromCreditsModel(model: CreditsModel, refundsUrl: String): MoneyInYourAccountViewModel = {
     MoneyInYourAccountViewModel(
       availableCredit = model.availableCreditForRepayment,
       allocatedCredit = model.allocatedCreditForFutureCharges,
@@ -87,7 +88,8 @@ object MoneyInYourAccountViewModel {
       creditRows =
         (removeNoRemainingCredit andThen
           orderByDescendingTaxYear andThen
-          orderCreditsFirstRepaymentsSecond).apply(model.transactions).flatMap(CreditRow.fromTransaction)
+          orderCreditsFirstRepaymentsSecond).apply(model.transactions).flatMap(CreditRow.fromTransaction),
+      checkRefundStatusLink = refundsUrl
     )
   }
 
