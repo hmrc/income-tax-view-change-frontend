@@ -23,7 +23,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import testOnly.connectors.DynamicStubConnector
-import testOnly.models.{DataModel, Nino}
+import testOnly.models.{CustomUserRecord, DataModel, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
@@ -75,7 +75,7 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     }
   }
 
-  def overwriteCustomUserData(nino: Nino, mtdid: String, channel: String)(implicit headerCarrier: HeaderCarrier) = {
-    dynamicStubConnector.overwriteCustomUser(nino, mtdid, channel)
+  def overwriteCustomUserData(nino: Nino, mtdid: String, customUserRecord: CustomUserRecord)(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubConnector.overwriteCustomUser(nino, mtdid, customUserRecord)
   }
 }

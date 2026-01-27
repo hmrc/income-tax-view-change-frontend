@@ -204,10 +204,10 @@
         <h2 class="govuk-heading-m display-none CustomUserDataDropdowns" id="business-data-heading">Business Data</h2>
         @LatencyCheckbox
         @channelDropdown
-        <h2 class="govuk-heading-m display-none CustomUserDataDropdowns" id="calculations-data-heading">Calculations Data</h2>
-        @calcTypeDropdown
         @ActivePropertiesInput
         @CeasedPropertiesInput
+        <h2 class="govuk-heading-m display-none CustomUserDataDropdowns" id="calculations-data-heading">Calculations Data</h2>
+        @calcTypeDropdown
 
         @govukButton(Button(content = Text("Login")))
     }
@@ -226,12 +226,19 @@
 
 @calcTypeDropdown = {
     <div class="display-none CustomUserDataDropdowns">
-    @govukSelect(Select(
-        id = "CalculationType",
-        name = "CalculationType",
-        items = CalcTypeOptions,
-        label = Label(content = Text("Calculation Type"))
-    ))
+        @govukSelect(Select(
+            id = "CalculationTypeLatest",
+            name = "CalculationTypeLatest",
+            items = CalcTypeOptions,
+            label = Label(content = Text("Latest Calculation Type"))
+        ))
+
+        @govukSelect(Select(
+            id = "CalculationTypePrevious",
+            name = "CalculationTypePrevious",
+            items = CalcTypeOptions,
+            label = Label(content = Text("Previous Calculation Type"))
+        ))
     </div>
 }
 
@@ -288,12 +295,45 @@
         Input(
             id = "NumberOfActiveBusinesses",
             name = "NumberOfActiveBusinesses",
-            classes = "govuk-!-width-one-quarter display-none CustomUserDataDropdowns",
+            classes = "govuk-input--width-2 display-none CustomUserDataDropdowns",
             label = Label(
                 isPageHeading = false,
                 classes = "display-none CustomUserDataDropdowns",
-                content = Text("Number of Active Businesses")
-            )
+                content = Text("Number of Active Sole Trader Businesses")
+            ),
+            value = Some("0")
+        )
+    )
+
+    @govukCheckboxes(
+        Checkboxes(
+            fieldset = Some(Fieldset(
+                legend = None,
+                classes = "display-none CustomUserDataDropdowns"
+            )),
+            name = "UkPropertyCheckbox",
+            items = Seq(
+                CheckboxItem(
+                    content = Text("Active UK Property"),
+                    value = "true"
+                )
+            ),
+        )
+    )
+
+    @govukCheckboxes(
+        Checkboxes(
+            fieldset = Some(Fieldset(
+                legend = None,
+                classes = "display-none CustomUserDataDropdowns"
+            )),
+            name = "ForeignPropertyCheckbox",
+            items = Seq(
+                CheckboxItem(
+                    content = Text("Active Foreign Property"),
+                    value = "true"
+                )
+            ),
         )
     )
 }
@@ -303,12 +343,13 @@
         Input(
             id = "NumberOfCeasedBusinesses",
             name = "NumberOfCeasedBusinesses",
-            classes = "govuk-!-width-one-quarter display-none CustomUserDataDropdowns",
+            classes = "govuk-input--width-2 display-none CustomUserDataDropdowns",
             label = Label(
                 isPageHeading = false,
                 classes = "display-none CustomUserDataDropdowns",
                 content = Text("Number of Ceased Businesses")
-            )
+            ),
+            value = Some("0")
         )
     )
 }
@@ -323,12 +364,10 @@
             name = "latencyCheckbox",
             items = Seq(
                 CheckboxItem(
-                    content = Text("Business in Latency?"),
+                    content = Text("Businesses in Latency"),
                     value = "true"
                 )
             ),
         )
     )
 }
-
-

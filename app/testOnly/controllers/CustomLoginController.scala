@@ -97,10 +97,26 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                       errorHandler.showInternalServerError()
                   }
                 } else if (postedUser.isCustomUser) {
+
+                  val customUserRecord = CustomUserRecord(
+                    cyMinusOneCrystallisationStatus = postedUser.cyMinusOneCrystallisationStatus.get,
+                    cyMinusOneItsaStatus = postedUser.cyMinusOneItsaStatus.get,
+                    cyItsaStatus = postedUser.cyItsaStatus.get,
+                    cyPlusOneItsaStatus = postedUser.cyPlusOneItsaStatus.get,
+                    channel = postedUser.channel.getOrElse("Customer Led"),
+                    calculationTypeLatest = postedUser.calculationTypeLatest.getOrElse("In Year"),
+                    calculationTypePrevious = postedUser.calculationTypePrevious.getOrElse("In Year"),
+                    numberOfActiveBusinesses = postedUser.numberOfActiveBusinesses.getOrElse(0),
+                    ukPropertyCheckbox = postedUser.ukPropertyCheckbox.getOrElse(false),
+                    foreignPropertyCheckbox = postedUser.foreignPropertyCheckbox.getOrElse(false),
+                    numberOfCeasedBusinesses = postedUser.numberOfCeasedBusinesses.getOrElse(0),
+                    latencyCheckbox = postedUser.latencyCheckbox.getOrElse(false)
+                  )
+
                   updateTestDataForCustomUser(
                     nino = user.nino,
                     mtdid = user.mtditid,
-                    channelStatus = postedUser.channel.getOrElse("Customer Led")
+                    customUserRecord = customUserRecord
                   ).map {
                     _ => successRedirect(bearer, auth, homePage)
                   }.recover {
@@ -130,10 +146,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
           sessionAuthorityUri = auth)))
   }
 
-  private def updateTestDataForCustomUser(nino: String, mtdid: String, channelStatus: String)(implicit headerCarrier: HeaderCarrier) = {
+  private def updateTestDataForCustomUser(nino: String, mtdid: String, customUserRecord: CustomUserRecord)(implicit headerCarrier: HeaderCarrier) = {
     val ninoObj = Nino(nino)
 
-    dynamicStubService.overwriteCustomUserData(ninoObj, mtdid, channelStatus)
+    dynamicStubService.overwriteCustomUserData(ninoObj, mtdid, customUserRecord)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,

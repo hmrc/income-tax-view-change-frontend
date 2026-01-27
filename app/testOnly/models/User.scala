@@ -54,7 +54,14 @@ case class PostedUser(nino: String,
                       cyMinusOneItsaStatus: Option[String],
                       cyItsaStatus: Option[String],
                       cyPlusOneItsaStatus: Option[String],
-                      channel: Option[String]
+                      channel: Option[String],
+                      calculationTypeLatest: Option[String],
+                      calculationTypePrevious: Option[String],
+                      numberOfActiveBusinesses: Option[Int],
+                      ukPropertyCheckbox: Option[Boolean],
+                      foreignPropertyCheckbox: Option[Boolean],
+                      numberOfCeasedBusinesses: Option[Int],
+                      latencyCheckbox: Option[Boolean]
                      ) {
 
   def isAgent: Boolean = AgentTypeEnums.apply(this.agentType).isDefined
@@ -83,7 +90,14 @@ object PostedUser {
       "cyMinusOneItsaStatus" -> optional(text),
       "cyItsaStatus" -> optional(text),
       "cyPlusOneItsaStatus" -> optional(text),
-      "ItsaChannel" -> optional(text)
+      "ItsaChannel" -> optional(text),
+      "CalculationTypeLatest" -> optional(text),
+      "CalculationTypePrevious" -> optional(text),
+      "NumberOfActiveBusinesses" -> optional(number),
+      "UkPropertyCheckbox" -> optional(boolean),
+      "ForeignPropertyCheckbox" -> optional(boolean),
+      "NumberOfCeasedBusinesses" -> optional(number),
+      "latencyCheckbox" -> optional(boolean)
     )(
       (nino,
       agentType,
@@ -92,7 +106,14 @@ object PostedUser {
       cyMinusOneItsaStatus,
       cyItsaStatus,
       cyPlusOneItsaStatus,
-      channel) => PostedUser(
+      channel,
+      calculationTypeLatest,
+      calculationTypePrevious,
+      numberOfActiveBusinesses,
+      ukPropertyCheckbox,
+      foreignPropertyCheckbox,
+      numberOfCeasedBusinesses,
+      latencyCheckbox) => PostedUser(
         nino,
         agentType,
         usePTANavBar,
@@ -100,8 +121,15 @@ object PostedUser {
         cyMinusOneItsaStatus,
         cyItsaStatus,
         cyPlusOneItsaStatus,
-        channel)
-    )(form => Some(
+        channel,
+        calculationTypeLatest,
+        calculationTypePrevious,
+        numberOfActiveBusinesses,
+        ukPropertyCheckbox,
+        foreignPropertyCheckbox,
+        numberOfCeasedBusinesses,
+        latencyCheckbox
+    ))(form => Some(
     form.nino,
     form.agentType,
     form.usePTANavBar,
@@ -109,8 +137,32 @@ object PostedUser {
     form.cyMinusOneItsaStatus,
     form.cyItsaStatus,
     form.cyPlusOneItsaStatus,
-    form.channel
+    form.channel,
+    form.calculationTypeLatest,
+    form.calculationTypePrevious,
+    form.numberOfActiveBusinesses,
+    form.ukPropertyCheckbox,
+    form.foreignPropertyCheckbox,
+    form.numberOfCeasedBusinesses,
+    form.latencyCheckbox
     ))
   )
 
+}
+
+case class CustomUserRecord(cyMinusOneCrystallisationStatus: String,
+                            cyMinusOneItsaStatus: String,
+                            cyItsaStatus: String,
+                            cyPlusOneItsaStatus: String,
+                            channel: String,
+                            calculationTypeLatest: String,
+                            calculationTypePrevious: String,
+                            numberOfActiveBusinesses: Int,
+                            ukPropertyCheckbox: Boolean,
+                            foreignPropertyCheckbox: Boolean,
+                            numberOfCeasedBusinesses: Int,
+                            latencyCheckbox: Boolean)
+
+object CustomUserRecord {
+  implicit val formats: OFormat[CustomUserRecord] = Json.format[CustomUserRecord]
 }

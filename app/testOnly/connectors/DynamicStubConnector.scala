@@ -21,11 +21,12 @@ import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, Nino, SchemaModel}
+import testOnly.models.{CustomUserRecord, DataModel, Nino, SchemaModel}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import play.api.libs.ws.writeableOf_JsValue
 import play.api.libs.ws.writeableOf_urlEncodedForm
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -83,15 +84,13 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/custom-user/$nino/$mtdid"
   }
 
-  def overwriteCustomUser(nino: Nino, mtdid: String, channel: String)
+  def overwriteCustomUser(nino: Nino, mtdid: String, customUserRecord: CustomUserRecord)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
 
     val url = getOverwriteCustomUserUrl(nino.value, mtdid)
 
-    val requestJson = Json.obj(
-      "channel" -> channel
-    )
+    val requestJson = Json.toJson(customUserRecord)
 
     http.post(url"$url")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")

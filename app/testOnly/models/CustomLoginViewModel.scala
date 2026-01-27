@@ -18,5 +18,5 @@ package testOnly.models
 
 case class CustomLoginViewModel() {
   final val listOfChannels: Seq[String] = Seq("Customer Led", "HMRC Unconfirmed", "HMRC Confirmed")
-  final val listOfCalcTypes: Seq[String] = Seq("In Year", "Declare Crystallisation", "Intent to Crystallise", "Correction", "Amendment")
+  final val listOfCalcTypes: Seq[String] = Seq("In Year", "Intent to Finalise", "Intent to Amend", "Declare Finalisation", "Confirm Amendment", "Correction", "No Calculation")
 }
