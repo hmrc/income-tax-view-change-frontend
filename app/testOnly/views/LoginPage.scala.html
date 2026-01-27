@@ -27,7 +27,8 @@
     govukSelect: GovukSelect,
     govukCheckboxes: GovukCheckboxes,
     govukRadios: GovukRadios,
-    form: FormWithCSRF
+    form: FormWithCSRF,
+    govukInput: GovukInput
 )
 
 @(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], customUserPrefixes: Seq[String], viewModel: CustomLoginViewModel)(implicit request: Request[_], messages: Messages)
@@ -42,12 +43,21 @@
 }
 
 @ChannelOptions = @{
-    viewModel.channelList.map { channel =>
+    viewModel.listOfChannels.map { channel =>
         SelectItem(
             value = Some(channel),
             text = channel
         )
-    }.toSeq
+    }
+}
+
+@CalcTypeOptions = @{
+    viewModel.listOfCalcTypes.map { channel =>
+        SelectItem(
+            value = Some(channel),
+            text = channel
+        )
+    }
 }
 
 @displayPTANavBar = @{
@@ -86,7 +96,7 @@
         const ninoPrefix = answer.value.substring(0, 2);
 
         if (customPrefixes.includes(ninoPrefix)) {
-            document.getElementById("CustomUserDataDropdowns").classList.remove("display-none");
+            document.querySelectorAll('.CustomUserDataDropdowns').forEach(el => el.classList.remove('display-none'));
         } else {
             document.getElementById("CustomUserDataDropdowns").classList.add("display-none");
         }
@@ -189,17 +199,136 @@
             ))
         </div>
 
-        <div class="display-none" id="CustomUserDataDropdowns">
-
-            @govukSelect(Select(
-                id = "ItsaChannel",
-                name = "ItsaChannel",
-                items = ChannelOptions,
-                label = Label(content = Text("ITSA Channel"))
-            ))
-
-        </div>
+        <h2 class="govuk-heading-m display-none CustomUserDataDropdowns" id="reporting-obligations-heading">Reporting Obligations Data</h2>
+        @ITSAStatusDropdowns
+        <h2 class="govuk-heading-m display-none CustomUserDataDropdowns" id="business-data-heading">Business Data</h2>
+        @LatencyCheckbox
+        @channelDropdown
+        <h2 class="govuk-heading-m display-none CustomUserDataDropdowns" id="calculations-data-heading">Calculations Data</h2>
+        @calcTypeDropdown
+        @ActivePropertiesInput
+        @CeasedPropertiesInput
 
         @govukButton(Button(content = Text("Login")))
     }
 }
+
+@channelDropdown = {
+    <div class="display-none CustomUserDataDropdowns">
+        @govukSelect(Select(
+            id = "ItsaChannel",
+            name = "ItsaChannel",
+            items = ChannelOptions,
+            label = Label(content = Text("ITSA Channel"))
+        ))
+    </div>
+}
+
+@calcTypeDropdown = {
+    <div class="display-none CustomUserDataDropdowns">
+    @govukSelect(Select(
+        id = "CalculationType",
+        name = "CalculationType",
+        items = CalcTypeOptions,
+        label = Label(content = Text("Calculation Type"))
+    ))
+    </div>
+}
+
+@ITSAStatusDropdowns = {
+    <div class="display-none CustomUserDataDropdowns">
+
+        @govukSelect(Select(
+            id = "cyMinusOneCrystallisationStatus",
+            name = "cyMinusOneCrystallisationStatus",
+            items =
+                Seq(
+                    SelectItem(
+                        value = Some("Default"),
+                        text = "Default"
+                    ),
+                    SelectItem(
+                        value = Some("Crystallised"),
+                        text = "Crystallised"
+                    ),
+                    SelectItem(
+                        value = Some("NonCrystallised"),
+                        text = "Non Crystallised"
+                    )
+                ),
+            label = Label(
+                content = Text("CY-1 Crystallisation"))
+        ))
+
+        @govukSelect(Select(
+            id = "cyMinusOneItsaStatus",
+            name = "cyMinusOneItsaStatus",
+            items = ITSAOptions,
+            label = Label(content = Text("CY-1 ITSA Status"))
+        ))
+
+        @govukSelect(Select(
+            id = "cyItsaStatus",
+            name = "cyItsaStatus",
+            items = ITSAOptions,
+            label = Label(content = Text("CY ITSA Status"))
+        ))
+
+        @govukSelect(Select(
+            id = "cyPlusOneItsaStatus",
+            name = "cyPlusOneItsaStatus",
+            items = ITSAOptions,
+            label = Label(content = Text("CY+1 ITSA Status"))
+        ))
+    </div>
+}
+
+@ActivePropertiesInput = {
+    @govukInput(
+        Input(
+            id = "NumberOfActiveBusinesses",
+            name = "NumberOfActiveBusinesses",
+            classes = "govuk-!-width-one-quarter display-none CustomUserDataDropdowns",
+            label = Label(
+                isPageHeading = false,
+                classes = "display-none CustomUserDataDropdowns",
+                content = Text("Number of Active Businesses")
+            )
+        )
+    )
+}
+
+@CeasedPropertiesInput = {
+    @govukInput(
+        Input(
+            id = "NumberOfCeasedBusinesses",
+            name = "NumberOfCeasedBusinesses",
+            classes = "govuk-!-width-one-quarter display-none CustomUserDataDropdowns",
+            label = Label(
+                isPageHeading = false,
+                classes = "display-none CustomUserDataDropdowns",
+                content = Text("Number of Ceased Businesses")
+            )
+        )
+    )
+}
+
+@LatencyCheckbox = {
+    @govukCheckboxes(
+        Checkboxes(
+            fieldset = Some(Fieldset(
+            legend = None,
+            classes = "display-none CustomUserDataDropdowns"
+            )),
+            name = "latencyCheckbox",
+            items = Seq(
+                CheckboxItem(
+                    content = Text("Business in Latency?"),
+                    value = "true"
+                )
+            ),
+        )
+    )
+}
+
+

@@ -65,9 +65,9 @@ case class PostedUser(nino: String,
     optOutUserPrefixes.contains(nino.take(2))
   }
 
-  def isCustomUser(customUserPrefixes: Seq[String]): Boolean = {
-    customUserPrefixes.contains(nino.take(2))
-  }
+  private final val customUserNino = "CN000001A"
+
+  def isCustomUser: Boolean = customUserNino.equals(nino)
 }
 
 object PostedUser {

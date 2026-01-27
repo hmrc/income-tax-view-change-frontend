@@ -56,9 +56,8 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
-    val viewModel = CustomLoginViewModel(Seq("Customer Led", "HMRC Unconfirmed", "HMRC Confirmed"))
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, testOnlyAppConfig.optOutUserPrefixes, testOnlyAppConfig.customUserPrefix, viewModel))
+      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, testOnlyAppConfig.optOutUserPrefixes, testOnlyAppConfig.customUserPrefix, CustomLoginViewModel()))
     )
   }
 
@@ -97,7 +96,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                         .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
                       errorHandler.showInternalServerError()
                   }
-                } else if (postedUser.isCustomUser(testOnlyAppConfig.customUserPrefix)) {
+                } else if (postedUser.isCustomUser) {
                   updateTestDataForCustomUser(
                     nino = user.nino,
                     mtdid = user.mtditid,
