@@ -20,7 +20,7 @@ import audit.reporting_obligations.*
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import enums.AuditType.IncomeSourceDetailsResponse as _
+import enums.AuditType.AuditType.{IncomeSourceDetailsResponse as _, given}
 import enums.{AuditType, TransactionName}
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
@@ -29,7 +29,6 @@ import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
 import services.DateServiceInterface
-import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
 import services.optout.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
@@ -40,6 +39,7 @@ import viewUtils.ReportingFrequencyViewUtils
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 class ReportingObligationsAuditService @Inject()(
                                                   auditConnector: AuditConnector,
@@ -157,7 +157,7 @@ class ReportingObligationsAuditService @Inject()(
 
     ReportingObligationsAuditModel(
       agentReferenceNumber = mtdItUser.arn,
-      auditType = enums.AuditType.ReportingObligationsPage.name,
+      auditType = enums.AuditType.AuditType.ReportingObligationsPage,
       credId = mtdItUser.credId,
       mtditid = mtdItUser.mtditid,
       nino = mtdItUser.nino,
@@ -191,7 +191,7 @@ class ReportingObligationsAuditService @Inject()(
     val extendedDataEvent =
       ExtendedDataEvent(
         auditSource = appConfig.appName,
-        auditType = AuditType.ReportingObligationsPage,
+        auditType = enums.AuditType.AuditType.ReportingObligationsPage,
         tags = AuditExtensions.auditHeaderCarrier(headerCarrier).toAuditTags(transactionName, mtdItUser.path),
         detail = createJsonAuditBody(auditEventModel)
       )

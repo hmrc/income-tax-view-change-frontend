@@ -20,6 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.JourneyState.*
 import enums.ReportingMethod.{AnnualReportingMethod, QuarterlyReportingMethod}
@@ -125,7 +126,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
 
   private def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_]): Future[Result] = {
     Logger("application").error(
-      s"${if (isAgent) "[Agent]"}$message")
+      s"${if (isAgent) "[Agent]": Unit}$message")
     Future.successful {
       errorHandler(isAgent).showInternalServerError()
     }

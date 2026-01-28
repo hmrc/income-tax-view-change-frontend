@@ -15,15 +15,16 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import enums.IncomeSourceJourney._
+@import enums.IncomeSourceJourney.*
+@import enums.IncomeSourceJourney.IncomeSourceType.*
+@import models.core.*
 @import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
-@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import play.twirl.api.HtmlFormat
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, *}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import views.html.components._
+@import views.html.components.*
 @import views.html.layouts.unifiedLayout
-@import play.twirl.api.HtmlFormat
-@import models.core._
 
 
 @this(
@@ -49,7 +50,7 @@
         origin: Option[String] = None
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
-@import implicitDateFormatter.longDate
+
 
 @getMessage(key: String, args: String*) = @{
     viewModel.incomeSourceType match {

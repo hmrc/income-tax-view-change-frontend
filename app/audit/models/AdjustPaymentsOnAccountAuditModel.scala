@@ -20,6 +20,8 @@ import audit.Utilities
 import auth.MtdItUser
 import play.api.libs.json.{JsObject, JsValue, Json}
 
+import scala.language.implicitConversions
+
 case class AdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,
                                              previousPaymentOnAccountAmount: BigDecimal,
                                              requestedPaymentOnAccountAmount: BigDecimal,
@@ -30,7 +32,7 @@ case class AdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,
 
   override val transactionName: String = enums.TransactionName.AdjustPaymentsOnAccount
 
-  override val auditType: String = enums.AuditType.AdjustPaymentsOnAccount
+  override val auditType: String = enums.AuditType.AuditType.AdjustPaymentsOnAccount
 
   private val successOutcome: JsObject = Json.obj(
     "outcome" ->

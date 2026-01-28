@@ -20,7 +20,8 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyState.BeforeSubmissionPage
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm._

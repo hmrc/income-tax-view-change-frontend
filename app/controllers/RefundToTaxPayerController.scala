@@ -81,7 +81,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           }
         case error: RepaymentHistoryErrorModel =>
           Logger("application")
-            .error(s"${if (user.isAgent()) "[Agent] "}Could not retrieve repayment history" +
+            .error(s"${if (user.isAgent()) "[Agent] ": Unit}Could not retrieve repayment history" +
               s" for repaymentRequestNumber: $repaymentRequestNumber - ${error.message} - ${error.code}")
           itvcErrorHandler.showInternalServerError()
       }

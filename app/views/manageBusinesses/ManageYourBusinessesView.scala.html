@@ -15,15 +15,13 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import enums.IncomeSourceJourney.*
+@import enums.IncomeSourceJourney.IncomeSourceType.{ForeignProperty, SelfEmployment, UkProperty}
+@import models.core.*
 @import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
-@import enums.IncomeSourceJourney.IncomeSourceType
-@import enums.IncomeSourceJourney.UkProperty
-@import enums.IncomeSourceJourney.ForeignProperty
-@import enums.IncomeSourceJourney.SelfEmployment
-@import models.core._
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
+@import views.html.components.*
+@import views.html.layouts.unifiedLayout
 
 
 @this(
@@ -45,7 +43,7 @@
         backUrl: String
 )( implicit messages: Messages, user: auth.MtdItUser[_])
 
-@import implicitDateFormatter.longDate
+
 
 @getMessage(key: String, args: String*) = @{
     messages(s"manage.your.businesses.$key", args: _*)

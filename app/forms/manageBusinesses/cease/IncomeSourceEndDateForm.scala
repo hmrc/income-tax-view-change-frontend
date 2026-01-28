@@ -19,7 +19,8 @@ package forms.manageBusinesses.cease
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.*
 import forms.models.DateFormElement
 import forms.validation.CustomConstraints
 import play.api.data.Form

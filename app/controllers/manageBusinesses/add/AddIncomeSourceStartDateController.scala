@@ -19,16 +19,17 @@ package controllers.manageBusinesses.add
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney._
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.*
 import enums.JourneyState.{BeforeSubmissionPage, InitialPage}
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
 import implicits.ImplicitDateFormatterImpl
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses

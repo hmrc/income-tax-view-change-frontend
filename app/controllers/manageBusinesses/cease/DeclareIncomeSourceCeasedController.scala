@@ -19,7 +19,8 @@ package controllers.manageBusinesses.cease
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.SelfEmployment
 import enums.JourneyState.InitialPage
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
@@ -28,7 +29,7 @@ import models.core.{Mode, NormalMode}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier

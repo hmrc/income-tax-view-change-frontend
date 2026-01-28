@@ -14,18 +14,19 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import java.time.LocalDate
+@import enums.IncomeSourceJourney.*
+@import enums.IncomeSourceJourney.IncomeSourceType.*
+@import models.core.{AddressModel, *}
+@import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
+@import play.twirl.api.HtmlFormat
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import enums.IncomeSourceJourney._
-@import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
-@import models.core.AddressModel
-@import play.twirl.api.HtmlFormat
-@import models.core._
-@import views.html.components._
+@import views.html.components.*
+@import views.html.layouts.unifiedLayout
+
+@import java.time.LocalDate
 
 @this(
         mainTemplate: unifiedLayout,

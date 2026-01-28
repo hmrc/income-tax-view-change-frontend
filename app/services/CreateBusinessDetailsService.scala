@@ -19,7 +19,7 @@ package services
 
 import auth.MtdItUser
 import connectors.CreateIncomeSourceConnector
-import enums.IncomeSourceJourney.UkProperty
+import enums.IncomeSourceJourney.IncomeSourceType.UkProperty
 import models.createIncomeSource._
 import models.incomeSourceDetails.viewmodels._
 import play.api.Logger

@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.JourneyState.*
 import enums.ReportingMethod

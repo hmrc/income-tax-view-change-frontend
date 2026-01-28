@@ -17,6 +17,7 @@
 package audit.models
 
 import play.api.libs.json.{JsObject, JsValue, Json}
+import scala.language.implicitConversions
 
 case class ConfirmClientDetailsAuditModel(clientName: String,
                                           nino: String,
@@ -28,7 +29,7 @@ case class ConfirmClientDetailsAuditModel(clientName: String,
 
   override val transactionName: String = enums.TransactionName.ClientDetailsConfirmed
 
-  override val auditType: String = enums.AuditType.ClientDetailsConfirmed
+  override val auditType: String = enums.AuditType.AuditType.ClientDetailsConfirmed
 
   private val userDetailsJson: JsObject = Json.obj(
     "nino" -> nino,

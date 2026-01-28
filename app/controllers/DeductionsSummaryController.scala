@@ -65,11 +65,11 @@ class DeductionsSummaryController @Inject()(val authActions: AuthActions,
           liabilityCalc.metadata.isCalculationCrystallised, taxYear, origin)
         Ok(deductionBreakdownView(viewModel, taxYear, backUrl = fallbackBackUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
-        Logger("application").info(s"${if (isAgent) "[Agent]"}[$taxYear] No deductions data found.")
+        Logger("application").info(s"${if (isAgent) "[Agent]": Unit}[$taxYear] No deductions data found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
         Logger("application").error(
-          s"${if (isAgent) "[Agent]"}[$taxYear] No new calc deductions data error found. Downstream error")
+          s"${if (isAgent) "[Agent]": Unit}[$taxYear] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }

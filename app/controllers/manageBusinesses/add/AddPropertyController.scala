@@ -19,8 +19,9 @@ package controllers.manageBusinesses.add
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import forms.manageBusinesses.add.{AddProprertyForm => form}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.{ForeignProperty, UkProperty}
+import forms.manageBusinesses.add.AddProprertyForm as form
 import models.core.NormalMode
 import play.api.Logger
 import play.api.i18n.I18nSupport

@@ -18,7 +18,8 @@ package utils
 
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.{ SelfEmployment, UkProperty}
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger
 

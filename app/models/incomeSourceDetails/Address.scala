@@ -29,8 +29,8 @@ case class Address(
 
   def encrypted: SensitiveAddress =
     SensitiveAddress(
-      lines     .map(SensitiveString),
-      postcode  .map(SensitiveString)
+      lines     .map(SensitiveString.apply),
+      postcode  .map(SensitiveString.apply)
     )
 
 

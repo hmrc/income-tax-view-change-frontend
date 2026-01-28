@@ -16,38 +16,18 @@
 
 package enums.GatewayPage
 
-sealed trait GatewayPage {
-  val name: String
-}
+enum GatewayPage(val name: String):
+  case WhatYouOwePage extends GatewayPage("whatYouOwe")
+  case YourSelfAssessmentChargeSummaryPage extends GatewayPage("yourSelfAssessmentChargeSummary")
+  case PaymentHistoryPage extends GatewayPage("paymentHistory")
+  case TaxYearSummaryPage extends GatewayPage("taxYearSummary")
+  case NoMatch extends GatewayPage("nomatch")
 
-object GatewayPage {
-  def apply(page: String): GatewayPage = {
-    page match {
+object GatewayPage:
+  def apply(page: String): GatewayPage = 
+    page match
       case WhatYouOwePage.name => WhatYouOwePage
       case PaymentHistoryPage.name => PaymentHistoryPage
       case TaxYearSummaryPage.name => TaxYearSummaryPage
       case YourSelfAssessmentChargeSummaryPage.name => YourSelfAssessmentChargeSummaryPage
       case _ => NoMatch
-    }
-  }
-}
-
-case object WhatYouOwePage extends GatewayPage {
-  val name = "whatYouOwe"
-}
-
-case object YourSelfAssessmentChargeSummaryPage extends GatewayPage {
-  val name = "yourSelfAssessmentChargeSummary"
-}
-
-case object PaymentHistoryPage extends GatewayPage {
-  val name = "paymentHistory"
-}
-
-case object TaxYearSummaryPage extends GatewayPage {
-  val name = "taxYearSummary"
-}
-
-case object NoMatch extends GatewayPage {
-  val name = "nomatch"
-}

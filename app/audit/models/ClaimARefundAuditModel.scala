@@ -18,15 +18,16 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import enums.AuditType.ClaimARefundResponse
+import enums.AuditType.AuditType.ClaimARefundResponse
 import enums.TransactionName.ClaimARefund
 import models.creditsandrefunds.{CreditsModel, Transaction}
-import models.financialDetails._
+import models.financialDetails.*
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import scala.language.implicitConversions
 
 case class ClaimARefundAuditModel(creditsModel: CreditsModel)(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 

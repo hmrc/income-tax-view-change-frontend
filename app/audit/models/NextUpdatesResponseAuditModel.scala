@@ -17,9 +17,11 @@
 package audit.models
 
 import auth.MtdItUser
-import enums.AuditType.ViewObligationsResponse
+import enums.AuditType.AuditType.ViewObligationsResponse
 import models.obligations.SingleObligationModel
-import play.api.libs.json._
+import play.api.libs.json.*
+
+import scala.language.implicitConversions
 
 case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
                                          incomeSourceId: String,

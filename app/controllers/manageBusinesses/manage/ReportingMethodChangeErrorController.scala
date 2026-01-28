@@ -19,7 +19,8 @@ package controllers.manageBusinesses.manage
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId

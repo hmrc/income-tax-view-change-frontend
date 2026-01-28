@@ -22,9 +22,10 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.*
+import enums.JourneyState.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{JourneyState, ReportingMethod}
-import enums.JourneyState.*
 import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import models.UIJourneySessionData
 import models.admin.OptInOptOutContentUpdateR17

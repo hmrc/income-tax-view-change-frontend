@@ -20,6 +20,8 @@ import audit.Utilities
 import auth.MtdItUser
 import play.api.libs.json.{JsObject, JsValue, Json}
 
+import scala.language.implicitConversions
+
 case class IncomeSourceReportingMethodAuditModel(isSuccessful: Boolean,
                                                  journeyType: String,
                                                  operationType: String,
@@ -30,7 +32,7 @@ case class IncomeSourceReportingMethodAuditModel(isSuccessful: Boolean,
 
   override val transactionName: String = enums.TransactionName.UpdateIncomeSource
 
-  override val auditType: String = enums.AuditType.UpdateIncomeSource
+  override val auditType: String = enums.AuditType.AuditType.UpdateIncomeSource
 
   private val successOutcome: JsObject = Json.obj(
     "outcome" ->

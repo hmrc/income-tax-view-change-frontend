@@ -16,7 +16,8 @@
 
 package enums.TriggeredMigration
 
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.{ForeignProperty, SelfEmployment, UkProperty}
 import TriggeredMigrationState.*
 
 enum TriggeredMigrationState(val messageKeyValue: String, val anchorLinkId: String):

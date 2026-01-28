@@ -20,8 +20,9 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.routes
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.*
 import enums.JourneyState.CannotGoBackPage
-import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.admin.ReportingFrequencyPage
@@ -31,7 +32,7 @@ import models.incomeSourceDetails.CeaseIncomeSourceData
 import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{NextUpdatesService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -138,16 +139,16 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
             )))
         case (Some(_), None) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"${if (isAgent) "[Agent] - "}cease session data not found for $incomeSourceType")
+          Logger("application").error(s"${if (isAgent) "[Agent] - ": Unit}cease session data not found for $incomeSourceType")
           Future(errorHandler.showInternalServerError())
 
         case (None, Some(_)) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"${if (isAgent) "[Agent] - "}IncomeSourceId not found for $incomeSourceType")
+          Logger("application").error(s"${if (isAgent) "[Agent] - ": Unit}IncomeSourceId not found for $incomeSourceType")
           Future(errorHandler.showInternalServerError())
         case _ =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"${if (isAgent) "[Agent] - "}missing incomeSourceId and endDate for $incomeSourceType")
+          Logger("application").error(s"${if (isAgent) "[Agent] - ": Unit}missing incomeSourceId and endDate for $incomeSourceType")
           Future(errorHandler.showInternalServerError())
       }
     }

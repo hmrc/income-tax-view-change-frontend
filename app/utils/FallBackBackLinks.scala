@@ -16,8 +16,9 @@
 
 package utils
 
-import controllers.routes._
-import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
+import controllers.routes.*
+import enums.GatewayPage.*
+import enums.GatewayPage.GatewayPage.{PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 
 trait FallBackBackLinks {
 

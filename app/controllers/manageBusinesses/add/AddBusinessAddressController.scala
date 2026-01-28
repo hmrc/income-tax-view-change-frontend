@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.SelfEmployment
+import enums.IncomeSourceJourney.IncomeSourceType.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.core.Mode

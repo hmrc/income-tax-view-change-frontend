@@ -21,14 +21,16 @@ import auth.MtdItUser
 import implicits.ImplicitDateParser
 import models.liabilitycalculation.EndOfYearEstimate
 import play.api.libs.json.{JsValue, Json}
-import utils.Utilities._
+import utils.Utilities.*
+
+import scala.language.implicitConversions
 
 
 case class ForecastTaxCalculationAuditModel(user: MtdItUser[_], endOfYearEstimate: EndOfYearEstimate)
   extends ExtendedAuditModel with ImplicitDateParser {
 
   override val transactionName: String = enums.TransactionName.ForecastTaxCalculation
-  override val auditType: String = enums.AuditType.ForecastTaxCalculation
+  override val auditType: String = enums.AuditType.AuditType.ForecastTaxCalculation
 
   private val totalEstimatedIncome: Option[Int] = endOfYearEstimate.totalEstimatedIncome
   private val totalTaxableIncome: Option[Int] = endOfYearEstimate.totalTaxableIncome

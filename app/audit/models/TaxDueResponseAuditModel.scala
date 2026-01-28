@@ -19,20 +19,22 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import models.liabilitycalculation.ReliefsClaimed
-import models.liabilitycalculation.taxcalculation._
-import models.liabilitycalculation.viewmodels._
-import play.api.libs.json._
-import utils.Utilities._
+import models.liabilitycalculation.taxcalculation.*
+import models.liabilitycalculation.viewmodels.*
+import play.api.libs.json.*
+import utils.Utilities.*
+
+import scala.language.implicitConversions
 
 
 case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
                                     viewModel: TaxDueSummaryViewModel,
                                     taxYear: Int) extends ExtendedAuditModel {
 
-  import implicits.ImplicitCurrencyFormatter._
+  import implicits.ImplicitCurrencyFormatter.*
 
   override val transactionName: String = enums.TransactionName.TaxCalculationDetailsResponse
-  override val auditType: String = enums.AuditType.TaxCalculationDetailsResponse
+  override val auditType: String = enums.AuditType.AuditType.TaxCalculationDetailsResponse
 
 
   private def calcMessageCodeToString(id: String): Option[String] =

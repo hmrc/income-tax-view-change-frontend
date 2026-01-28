@@ -287,8 +287,8 @@ class OptOutService @Inject()(
       })
 
     annualQuarterlyUpdateCounts.
-      map(cumulativeQuarterlyUpdateCounts).
-      map(QuarterlyUpdatesCountForTaxYearModel)
+      map(cumulativeQuarterlyUpdateCounts.apply).
+      map(QuarterlyUpdatesCountForTaxYearModel.apply)
   }
 
 

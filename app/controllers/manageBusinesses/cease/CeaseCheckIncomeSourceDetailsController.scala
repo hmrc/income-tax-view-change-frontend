@@ -23,7 +23,8 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyState.BeforeSubmissionPage
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.SelfEmployment
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationCeased
 import models.core.IncomeSourceId
@@ -89,7 +90,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
       }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent] "}" +
+        Logger("application").error(s"${if (isAgent) "[Agent] ": Unit}" +
           s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage} - ${ex.getCause}")
         //TODO: will need to replace the hard coded false when we have backend data for triggered migration
         Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))

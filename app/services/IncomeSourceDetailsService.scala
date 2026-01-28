@@ -20,7 +20,8 @@ import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.BusinessDetailsConnector
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails._

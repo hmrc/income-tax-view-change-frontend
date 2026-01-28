@@ -18,12 +18,15 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.SelfEmployment
 import implicits.ImplicitDateParser
 import models.core.IncomeSourceId
 import models.updateIncomeSource.UpdateIncomeSourceResponseError
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities.JsonUtil
+
+import scala.language.implicitConversions
 
 case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                        cessationDate: String,
@@ -43,7 +46,7 @@ case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
   }
 
   override val transactionName: String = enums.TransactionName.CeaseIncomeSource
-  override val auditType: String = enums.AuditType.CeaseIncomeSource
+  override val auditType: String = enums.AuditType.AuditType.CeaseIncomeSource
   override val detail: JsValue = {
     val details = userAuditDetails(user) ++
       Json.obj("outcome" -> outcome,

@@ -16,16 +16,8 @@
 
 package enums.FailureCategory
 
-import scala.language.implicitConversions
-
-sealed trait FailureCategory {
-  val name: String
-
-  implicit def failureCategoryToString(failureCategory: FailureCategory): String = {
-    failureCategory.name
-  }
-}
-
-case object ApiFailure extends FailureCategory {
-  val name = "API_FAILURE"
-}
+enum FailureCategory(val name: String):
+  case ApiFailure extends FailureCategory("API_FAILURE")
+  
+object FailureCategory:
+  given Conversion[FailureCategory, String] = failureCategory => failureCategory.name

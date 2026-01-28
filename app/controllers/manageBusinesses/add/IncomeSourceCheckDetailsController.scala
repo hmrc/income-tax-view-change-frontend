@@ -21,8 +21,9 @@ import audit.models.CreateIncomeSourceAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.JourneyState.BeforeSubmissionPage
 import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.SelfEmployment
+import enums.JourneyState.BeforeSubmissionPage
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationState.TriggeredMigrationAdded
 import models.UIJourneySessionData
@@ -40,6 +41,7 @@ import views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsView: IncomeSourceCheckDetailsView,
                                                    val authActions: AuthActions,
@@ -208,7 +210,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
               }
             case Left(ex) =>
               auditingService.extendedAudit(
-                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None)
+                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.FailureCategory.ApiFailure), Some(ex.getMessage), None)
               )
               Future.failed(ex)
           }

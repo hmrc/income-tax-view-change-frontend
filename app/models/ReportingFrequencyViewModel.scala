@@ -16,9 +16,10 @@
 
 package models
 
-import enums.ReportingObligations.{MultiYearCard, NoCard, ReportingObligationSummaryCardState, SingleYearCard}
+import enums.ReportingObligations.ReportingObligationSummaryCardState
+import enums.ReportingObligations.ReportingObligationSummaryCardState.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus._
+import models.itsaStatus.ITSAStatus.*
 import services.DateServiceInterface
 import services.optout.OptOutProposition
 

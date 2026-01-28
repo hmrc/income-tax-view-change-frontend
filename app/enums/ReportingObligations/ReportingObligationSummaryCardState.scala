@@ -16,10 +16,5 @@
 
 package enums.ReportingObligations
 
-sealed trait ReportingObligationSummaryCardState
-
-case object SingleYearCard extends ReportingObligationSummaryCardState
-
-case object MultiYearCard extends ReportingObligationSummaryCardState
-
-case object NoCard extends ReportingObligationSummaryCardState
+enum ReportingObligationSummaryCardState:
+  case SingleYearCard, MultiYearCard, NoCard

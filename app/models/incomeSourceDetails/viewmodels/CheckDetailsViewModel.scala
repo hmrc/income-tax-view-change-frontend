@@ -16,7 +16,8 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.SelfEmployment
 
 import java.time.LocalDate
 

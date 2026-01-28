@@ -23,6 +23,8 @@ import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
 import services.optIn.core.OptInProposition
 
+import scala.language.implicitConversions
+
 case class OptInAuditModel(
                             optInProposition: OptInProposition,
                             intentTaxYear: TaxYear,
@@ -31,7 +33,7 @@ case class OptInAuditModel(
 
   override val transactionName: String = enums.TransactionName.OptInQuarterlyReportingRequest
 
-  override val auditType: String = enums.AuditType.OptInQuarterlyReportingRequest
+  override val auditType: String = enums.AuditType.AuditType.OptInQuarterlyReportingRequest
 
   val outcome: JsObject = {
     val outcome = resolvedOutcome match {

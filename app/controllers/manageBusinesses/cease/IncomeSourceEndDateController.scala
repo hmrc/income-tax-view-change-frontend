@@ -20,7 +20,8 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyState.BeforeSubmissionPage
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import enums.IncomeSourceJourney.*
+import enums.IncomeSourceJourney.IncomeSourceType.SelfEmployment
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
 
@@ -124,7 +125,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
       }
     } recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+        Logger("application").error(s"${if (isAgent) "[Agent]": Unit}" +
           s"Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
         errorHandler(isAgent).showInternalServerError()
     }
@@ -206,7 +207,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
     }
   } recover {
     case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+      Logger("application").error(s"${if (isAgent) "[Agent]": Unit}" +
         s"Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }

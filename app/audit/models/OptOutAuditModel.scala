@@ -20,9 +20,11 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import play.api.libs.json._
+import play.api.libs.json.*
 import services.optout.OptOutProposition
 import uk.gov.hmrc.auth.core.AffinityGroup
+
+import scala.language.implicitConversions
 
 case class Outcome(
                     isSuccessful: Boolean,
@@ -56,7 +58,7 @@ case class OptOutAuditModel(
 
   override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
 
-  override val auditType: String = enums.AuditType.OptOutQuarterlyReportingRequest
+  override val auditType: String = enums.AuditType.AuditType.OptOutQuarterlyReportingRequest
 
   override val detail: JsValue = Json.toJson(this)
 }
@@ -82,7 +84,7 @@ case class OptOutCompleteAuditModel(
 
   override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
 
-  override val auditType: String = enums.AuditType.OptOutQuarterlyReportingRequest
+  override val auditType: String = enums.AuditType.AuditType.OptOutQuarterlyReportingRequest
 
   override val detail: JsValue = Json.toJson(this)
 }

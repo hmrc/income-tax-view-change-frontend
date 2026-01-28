@@ -27,6 +27,8 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
+import scala.language.implicitConversions
+
 case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             messagesApi: MessagesApi,
                                             taxYearSummaryViewModel: TaxYearSummaryViewModel,
@@ -35,7 +37,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
 
 
   override val transactionName: String = enums.TransactionName.TaxYearOverviewResponse
-  override val auditType: String = enums.AuditType.TaxYearOverviewResponse
+  override val auditType: String = enums.AuditType.AuditType.TaxYearOverviewResponse
 
 
   private val taxYearSummaryJson = {

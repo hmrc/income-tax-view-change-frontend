@@ -46,22 +46,22 @@ case class AddIncomeSourceData(
 
   def encrypted: SensitiveAddIncomeSourceData =
     SensitiveAddIncomeSourceData(
-      businessName                        .map(SensitiveString),
-      businessTrade                       .map(SensitiveString),
-      dateStarted                         .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
-      accountingPeriodStartDate           .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
-      accountingPeriodEndDate             .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
-      incomeSourceId                      .map(SensitiveString),
-      address                             .map { case Address(lines, postcode) => SensitiveAddress(lines.map(SensitiveString), postcode.map(SensitiveString)) },
-      countryCode                         .map(SensitiveString),
-      addressId                           .map(SensitiveString),
-      addressLookupId                     .map(SensitiveString),
-      changeReportingFrequency            .map(SensitiveBoolean),
-      reportingMethodTaxYear1             .map(SensitiveString),
-      reportingMethodTaxYear2             .map(SensitiveString),
-      incomeSourceAdded                   .map(SensitiveBoolean),
-      incomeSourceCreatedJourneyComplete  .map(SensitiveBoolean),
-      incomeSourceRFJourneyComplete       .map(SensitiveBoolean)
+      businessName                        .map(SensitiveString.apply),
+      businessTrade                       .map(SensitiveString.apply),
+      dateStarted                         .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant.apply),
+      accountingPeriodStartDate           .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant.apply),
+      accountingPeriodEndDate             .map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant.apply),
+      incomeSourceId                      .map(SensitiveString.apply),
+      address                             .map { case Address(lines, postcode) => SensitiveAddress(lines.map(SensitiveString.apply), postcode.map(SensitiveString.apply)) },
+      countryCode                         .map(SensitiveString.apply),
+      addressId                           .map(SensitiveString.apply),
+      addressLookupId                     .map(SensitiveString.apply),
+      changeReportingFrequency            .map(SensitiveBoolean.apply),
+      reportingMethodTaxYear1             .map(SensitiveString.apply),
+      reportingMethodTaxYear2             .map(SensitiveString.apply),
+      incomeSourceAdded                   .map(SensitiveBoolean.apply),
+      incomeSourceCreatedJourneyComplete  .map(SensitiveBoolean.apply),
+      incomeSourceRFJourneyComplete       .map(SensitiveBoolean.apply)
     )
 }
 

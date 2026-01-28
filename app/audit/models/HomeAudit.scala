@@ -16,12 +16,13 @@
 
 package audit.models
 
-import audit.Utilities._
+import audit.Utilities.*
 import auth.MtdItUser
 import models.obligations.NextUpdatesTileViewModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate
+import scala.language.implicitConversions
 
 case class HomeAudit(mtdItUser: MtdItUser[_],
                      nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
@@ -48,7 +49,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     Json.obj("credId"-> mtdItUser.credId) ++
     Json.obj("agentReferenceNumber"-> mtdItUser.arn)
 
-  override val auditType: String = enums.AuditType.ItsaHomePage
+  override val auditType: String = enums.AuditType.AuditType.ItsaHomePage
 
 }
 

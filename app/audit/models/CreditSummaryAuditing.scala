@@ -59,7 +59,7 @@ object CreditSummaryAuditing {
                                  creditDetails: Seq[CreditSummaryDetails]) extends ExtendedAuditModel {
 
     override val transactionName: String = enums.TransactionName.CreditsSummary
-    override val auditType: String = enums.AuditType.CreditsSummaryResponse
+    override val auditType: String = enums.AuditType.AuditType.CreditsSummaryResponse
 
     private def creditDetailToJson(credit: CreditSummaryDetails): JsObject = {
       Json.obj(

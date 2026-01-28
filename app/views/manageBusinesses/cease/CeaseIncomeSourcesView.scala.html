@@ -15,12 +15,13 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+@import enums.IncomeSourceJourney.*
+@import enums.IncomeSourceJourney.IncomeSourceType.{ForeignProperty, SelfEmployment, UkProperty}
+@import models.core.*
 @import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.*
+@import views.html.components.*
 @import views.html.layouts.unifiedLayout
-@import models.core._
 
 @this(
         mainTemplate: unifiedLayout,

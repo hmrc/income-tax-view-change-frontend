@@ -18,14 +18,16 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import enums.AuditType.ChargeSummary
+import enums.AuditType.AuditType.ChargeSummary
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.PaymentHistoryAllocations
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
 import services.DateServiceInterface
 import utils.JsonUtils
+
+import scala.language.implicitConversions
 
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
                               chargeItem: ChargeItem,

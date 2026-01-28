@@ -15,7 +15,8 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import enums.IncomeSourceJourney.*
+@import enums.IncomeSourceJourney.IncomeSourceType.{ForeignProperty, SelfEmployment, UkProperty}
 @import models.incomeSourceDetails.{ ChosenReportingMethod, SignedUpForMTD, SignUpNextYearOnly, NotSigningUp, SignUpCurrentYearOnly, SignUpBothYears, OnlyOneYearAvailableToSignUp, OptedOut}
 @import models.incomeSourceDetails.viewmodels._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}

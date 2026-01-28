@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import enums.JourneyState.AfterSubmissionPage
-import enums.IncomeSourceJourney.IncomeSourceType
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import models.UIJourneySessionData
@@ -84,7 +84,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                   )
                                                   (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     updateIncomeSourceAsAdded(sessionData).flatMap {
-      case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+      case false => Logger("application").error(s"${if (isAgent) "[Agent]": Unit}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {
           incomeSourceReportingFrequencyService.errorHandler(isAgent).showInternalServerError()

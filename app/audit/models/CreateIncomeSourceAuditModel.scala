@@ -22,7 +22,9 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.Utilities._
+import utils.Utilities.*
+
+import scala.language.implicitConversions
 
 case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                         viewModel: CheckDetailsViewModel,
@@ -34,7 +36,7 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
 
   private val isSuccessful = failureCategory.isEmpty
   override val transactionName: String = enums.TransactionName.CreateIncomeSource
-  override val auditType: String = enums.AuditType.CreateIncomeSource
+  override val auditType: String = enums.AuditType.AuditType.CreateIncomeSource
 
   private val outcome: JsObject = {
     val outcome: JsObject = Json.obj("isSuccessful" -> isSuccessful)

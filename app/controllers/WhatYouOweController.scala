@@ -18,10 +18,10 @@ package controllers
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config._
-import config.featureswitch._
+import config.*
+import config.featureswitch.*
 import controllers.routes.{ChargeSummaryController, CreditAndRefundController, NotMigratedUserController, PaymentController, TaxYearSummaryController}
-import enums.GatewayPage.WhatYouOwePage
+import enums.GatewayPage.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -56,12 +56,12 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         Ok(whatYouOwe(viewModel, origin))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
       case None =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" + "Failed to create WhatYouOweViewModel")
+        Logger("application").error(s"${if (isAgent) "[Agent]": Unit}" + "Failed to create WhatYouOweViewModel")
         itvcErrorHandler.showInternalServerError()
     }
   } recover {
     case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+      Logger("application").error(s"${if (isAgent) "[Agent]": Unit}" +
         s"Error received while getting WhatYouOwe page details: ${ex.getMessage} - ${ex.getCause}")
       itvcErrorHandler.showInternalServerError()
   }
