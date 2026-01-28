@@ -48,7 +48,7 @@ class AddPropertyController @Inject()(authActions: AuthActions,
     controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   }
 
-  def show(isAgent: Boolean, isTrigMig: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+  def show(isAgent: Boolean, isTrigMig: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTrigMig).async {
     implicit user => handleRequest(isAgent, isTrigMig)
   }
 
@@ -57,7 +57,7 @@ class AddPropertyController @Inject()(authActions: AuthActions,
     Future.successful(Ok(addProperty(form.apply, isAgent, Some(getBackUrl(isAgent)), postAction)))
   }
 
-  def submit(isAgent: Boolean, isTrigMig: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def submit(isAgent: Boolean, isTrigMig: Boolean = false): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTrigMig).async { implicit user =>
     handleSubmitRequest(isAgent = isAgent, isTrigMig)
   }
 

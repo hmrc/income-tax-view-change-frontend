@@ -45,9 +45,9 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     s"$baseUrl/api/v2/confirmed?id=$id"
   }
 
-  def continueUrl(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): String = {
-    if(isAgent) controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode).url
-    else controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = mode).url
+  def continueUrl(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): String = {
+    if(isAgent) controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode, isTriggeredMigration).url
+    else controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = mode, isTriggeredMigration).url
   }
 
   lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url
@@ -160,12 +160,12 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
 
-  def initialiseAddressLookup(isAgent: Boolean, mode: Mode)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
+  def initialiseAddressLookup(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
     val payload = if (isAgent) {
-      addressJson(continueUrl(isAgent, mode), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
+      addressJson(continueUrl(isAgent, mode, isTriggeredMigration), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
     } else {
-      addressJson(continueUrl(isAgent, mode), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
+      addressJson(continueUrl(isAgent, mode, isTriggeredMigration), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
     }
     http.post(url"$addressLookupInitializeUrl")
       .withBody(payload)

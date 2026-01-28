@@ -58,7 +58,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
     }
   }
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandler, isAgent = false,
         backUrl = controllers.routes.HomeController.show().url)
@@ -72,7 +72,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
     Redirect("https://www.gov.uk/government/collections/hmrc-online-services-for-agents#hmrc-online-services-for-agents-account")
   }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandlerAgent,
         isAgent = true,

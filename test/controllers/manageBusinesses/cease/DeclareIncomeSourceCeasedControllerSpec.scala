@@ -128,7 +128,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
       }
 
       s"submit${if (isAgent) "Agent"}($incomeSourceType)" when {
-        val action = if (mtdRole == MTDIndividual) testController.submit(optId, incomeSourceType) else testController.submitAgent(optId, incomeSourceType)
+        val action = if (mtdRole == MTDIndividual) testController.submit(optId, incomeSourceType, false) else testController.submitAgent(optId, incomeSourceType, false)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         val validFormData = Map(
           DeclareIncomeSourceCeasedForm.declaration -> "true",

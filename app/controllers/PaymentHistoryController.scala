@@ -102,7 +102,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
         logAndHandleError(s"Downstream error, ${ex.getMessage} - ${ex.getCause}")
     }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -111,7 +111,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
       )
   }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
@@ -120,7 +120,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
   }
 
   def refundStatus: Action[AnyContent] =
-    authActions.asMTDIndividual.async { implicit user =>
+    authActions.asMTDIndividual().async { implicit user =>
       if (isEnabled(PaymentHistoryRefunds)) {
         repaymentService.view(user.nino).map {
           case Right(nextUrl) => Redirect(nextUrl)

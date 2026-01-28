@@ -91,7 +91,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
   }
 
   def show(repaymentRequestNumber: String,
-           origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+           origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.PaymentHistoryController.show(origin).url,
@@ -101,7 +101,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
       )
   }
 
-  def showAgent(repaymentRequestNumber: String): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showAgent(repaymentRequestNumber: String): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.PaymentHistoryController.showAgent().url,

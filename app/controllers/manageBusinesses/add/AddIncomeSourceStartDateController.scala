@@ -56,8 +56,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
   //TODO: Redirect the user back to the triggered migration page if they access the page with triggered migration as false and they are unconfirmed
   def show(isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-
+    authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
       handleShowRequest(
         incomeSourceType = incomeSourceType,
         isAgent = isAgent,
@@ -68,13 +67,15 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
   def submit(isAgent: Boolean,
              mode: Mode,
-             incomeSourceType: IncomeSourceType
-            ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+             incomeSourceType: IncomeSourceType,
+             isTriggeredMigration: Boolean
+            ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
 
     handleSubmitRequest(
       incomeSourceType = incomeSourceType,
       isAgent = isAgent,
-      mode = mode
+      mode = mode,
+      isTriggeredMigration = isTriggeredMigration
     )
   }
 
@@ -94,7 +95,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
     }, isTriggeredMigration) { sessionData =>
       if (mode == NormalMode && incomeSourceType.equals(UkProperty) || mode == NormalMode && incomeSourceType.equals(ForeignProperty)) {
         lazy val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
-        sessionService.createSession(journeyType, isTriggeredMigration)
+        sessionService.createSession(journeyType)
       }
 
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
@@ -111,7 +112,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
             isAgent = isAgent,
             messagesPrefix = messagesPrefix,
             backUrl = getBackUrl(incomeSourceType, isAgent, mode),
-            postAction = getPostAction(incomeSourceType, isAgent, mode),
+            postAction = getPostAction(incomeSourceType, isAgent, mode, isTriggeredMigration),
             incomeSourceType = incomeSourceType
           )
         )
@@ -127,7 +128,8 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
 
   private def handleSubmitRequest(incomeSourceType: IncomeSourceType,
                                   isAgent: Boolean,
-                                  mode: Mode)
+                                  mode: Mode,
+                                  isTriggeredMigration: Boolean)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
 
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
@@ -139,12 +141,12 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
             isAgent = isAgent,
             form = formWithErrors,
             backUrl = getBackUrl(incomeSourceType, isAgent, mode),
-            postAction = getPostAction(incomeSourceType, isAgent, mode),
+            postAction = getPostAction(incomeSourceType, isAgent, mode, isTriggeredMigration),
             messagesPrefix = messagesPrefix,
             incomeSourceType = incomeSourceType
           )
         )),
-      formData => handleValidFormData(formData, incomeSourceType, isAgent, mode)
+      formData => handleValidFormData(formData, incomeSourceType, isAgent, mode, isTriggeredMigration)
     )
   }.recover {
     case ex =>
@@ -154,7 +156,7 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  private def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode)
+  private def handleValidFormData(formData: LocalDate, incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)
                                  (implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
       incomeSourceType match {
@@ -184,18 +186,18 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
             )
         }
       ) flatMap {
-        case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, mode)))
+        case true => Future.successful(Redirect(getSuccessUrl(incomeSourceType, isAgent, mode, isTriggeredMigration)))
         case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
       }
     }
   }
 
-  private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode): Call = {
-    routes.AddIncomeSourceStartDateController.submit(isAgent, mode, incomeSourceType)
+  private def getPostAction(incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = {
+    routes.AddIncomeSourceStartDateController.submit(isAgent, mode, incomeSourceType, isTriggeredMigration)
   }
 
-  private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode): Call = {
-    routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode, incomeSourceType)
+  private def getSuccessUrl(incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = {
+    routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode, incomeSourceType, isTriggeredMigration)
   }
 
   private def getBackUrl(incomeSourceType: IncomeSourceType,

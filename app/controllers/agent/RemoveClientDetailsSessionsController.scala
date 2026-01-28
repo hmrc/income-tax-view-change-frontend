@@ -36,7 +36,7 @@ class RemoveClientDetailsSessionsController @Inject()(val authActions: AuthActio
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
 
-  def show: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient { implicit user =>
+  def show: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient() { implicit user =>
     Redirect(controllers.agent.routes.EnterClientsUTRController.show().url)
       .removingFromSession(
         SessionKeys.clientFirstName,

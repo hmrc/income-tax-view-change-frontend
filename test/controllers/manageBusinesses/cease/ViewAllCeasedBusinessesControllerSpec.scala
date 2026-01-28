@@ -54,7 +54,7 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions with Implici
     val isAgent = mtdRole != MTDIndividual
     s"show($isAgent)" when {
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-      val action = testController.show(isAgent)
+      val action = testController.show(isAgent, false)
       s"the user is authenticated as a $mtdRole" should {
         "render the view all ceased businesses page" in {
           setupMockSuccess(mtdRole)

@@ -96,7 +96,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
     mtdAllRoles.foreach { mtdRole =>
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"show${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
-        val action = if (mtdRole == MTDIndividual) testCeaseCheckIncomeSourceDetailsController.show(incomeSourceType) else testCeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
+        val action = if (mtdRole == MTDIndividual) testCeaseCheckIncomeSourceDetailsController.show(incomeSourceType, false) else testCeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType, false)
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" when {
             "using the manage businesses journey" in {
@@ -145,7 +145,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
       }
 
       s"submit${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
-        val action = if (mtdRole == MTDIndividual) testCeaseCheckIncomeSourceDetailsController.submit(incomeSourceType) else testCeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType)
+        def action(isTriggeredMigration: Boolean) = if (mtdRole == MTDIndividual) testCeaseCheckIncomeSourceDetailsController.submit(incomeSourceType, isTriggeredMigration) else testCeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType, isTriggeredMigration)
         val fakePostRequest = fakeRequest.withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           val expectedRedirect = if (mtdRole == MTDIndividual) {
@@ -163,7 +163,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
 
-              val result = action(fakePostRequest)
+              val result = action(false)(fakePostRequest)
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe Some(expectedRedirect)
@@ -180,7 +180,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(Left(UpdateIncomeSourceTestConstants.failureResponse)))
 
-              val result = action(fakePostRequest)
+              val result = action(false)(fakePostRequest)
 
               val expectedRedirect = controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(mtdRole != MTDIndividual, incomeSourceType).url
 
@@ -194,12 +194,12 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               mockBothPropertyBothBusiness()
-              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType), isTriggeredMigration = true))))
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(Right(UpdateIncomeSourceSuccess(testMtditid))))
 
-              val result = action(fakePostRequest)
+              val result = action(true)(fakePostRequest)
 
               val expectedRedirect = controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(mtdRole != MTDIndividual, Some(TriggeredMigrationCeased.toString)).url
 
@@ -215,16 +215,16 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
               mockNoIncomeSources()
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
-              val result = action(fakePostRequest)
+              val result = action(false)(fakePostRequest)
 
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
           }
         }
           if (mtdRole == MTDIndividual) {
-            testMTDIndividualAuthFailures(action)
+            testMTDIndividualAuthFailures(action(false))
           } else {
-            testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
+            testMTDAgentAuthFailures(action(false), mtdRole == MTDSupportingAgent)
           }
         }
     }

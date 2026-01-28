@@ -61,35 +61,36 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
     }
   }
 
-  private def getPostAction(isAgent: Boolean, mode: Mode, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType
+  private def getPostAction(isAgent: Boolean, mode: Mode, maybeIncomeSourceId: Option[IncomeSourceId], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean
                            ): Call = {
 
     val hashedId: Option[String] = maybeIncomeSourceId.map(_.toHash.hash)
 
-    routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, mode)
+    routes.IncomeSourceEndDateController.submit(hashedId, incomeSourceType, isAgent, mode, isTriggeredMigration)
 
   }
 
-  private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType): Call = {
-    if (isAgent) routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType)
-    else routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType)
+  private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Call = {
+    if (isAgent) routes.CeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType, isTriggeredMigration)
+    else routes.CeaseCheckIncomeSourceDetailsController.show(incomeSourceType, isTriggeredMigration)
   }
 
   private lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
-  def show(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode):
-  Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def show(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean):
+  Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
     val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
     handleRequest(
       isAgent = isAgent,
       incomeSourceType = incomeSourceType,
       id = incomeSourceIdHashMaybe,
-      mode = mode
+      mode = mode,
+      isTriggeredMigration = isTriggeredMigration
     )
   }
 
-  def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType)
+  def handleRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean)
                    (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] =
     withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
 
@@ -114,7 +115,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
               Future.successful(Ok(
                 incomeSourceEndDate(
                   form = newForm,
-                  postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType),
+                  postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType, isTriggeredMigration),
                   isAgent = isAgent,
                   backUrl = getBackCall(isAgent).url,
                   incomeSourceType = incomeSourceType
@@ -129,15 +130,16 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
         errorHandler(isAgent).showInternalServerError()
     }
 
-  def submit(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode):
-  Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def submit(id: Option[String], incomeSourceType: IncomeSourceType, isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean):
+  Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
     val incomeSourceIdHashMaybe: Option[IncomeSourceIdHash] = id.flatMap(x => mkFromQueryString(x).toOption)
 
     handleSubmitRequest(
       isAgent = isAgent,
       incomeSourceType = incomeSourceType,
       id = incomeSourceIdHashMaybe,
-      mode = mode
+      mode = mode,
+      isTriggeredMigration = isTriggeredMigration
     )
   }
 
@@ -170,7 +172,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, mode: Mode)
+  def handleSubmitRequest(id: Option[IncomeSourceIdHash], isAgent: Boolean, incomeSourceType: IncomeSourceType, mode: Mode, isTriggeredMigration: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
 
     val hashCompareResult: Option[Either[Throwable, IncomeSourceId]] = id.map(x => user.incomeSources.compareHashToQueryString(x))
@@ -188,7 +190,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
               hasErrors => {
                 Future.successful(BadRequest(incomeSourceEndDate(
                   form = hasErrors,
-                  postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType),
+                  postAction = getPostAction(isAgent, mode, incomeSourceIdMaybe, incomeSourceType, isTriggeredMigration),
                   backUrl = getBackCall(isAgent).url,
                   isAgent = isAgent,
                   incomeSourceType = incomeSourceType
@@ -199,7 +201,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
                   validatedInput,
                   incomeSourceType,
                   incomeSourceIdMaybe,
-                  getRedirectCall(isAgent, incomeSourceType)
+                  getRedirectCall(isAgent, incomeSourceType, isTriggeredMigration)
                 )
             )
         }

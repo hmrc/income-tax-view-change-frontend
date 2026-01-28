@@ -49,7 +49,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
   private lazy val homePageCall: Call = controllers.routes.HomeController.show()
   private lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent()
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -59,7 +59,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
       )(implicitly, itvcErrorHandler)
   }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

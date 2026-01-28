@@ -48,47 +48,47 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                                            val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
-  private def getBackURL(isAgent: Boolean, mode: Mode): String = {
+  private def getBackURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): String = {
     ((isAgent, mode) match {
-      case (_, NormalMode) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode = NormalMode, SelfEmployment)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (_, NormalMode) => routes.AddIncomeSourceStartDateCheckController.show(isAgent, mode = NormalMode, SelfEmployment, isTriggeredMigration)
+      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
+      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
     }).url
   }
 
-  private def getSuccessURL(isAgent: Boolean, mode: Mode): String = {
+  private def getSuccessURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): String = {
     ((isAgent, mode) match {
-      case (false, NormalMode) => routes.AddBusinessAddressController.show(mode)
-      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (_, NormalMode) => routes.AddBusinessAddressController.showAgent(mode)
-      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (false, NormalMode) => routes.AddBusinessAddressController.show(mode, isTriggeredMigration)
+      case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
+      case (_, NormalMode) => routes.AddBusinessAddressController.showAgent(mode, isTriggeredMigration)
+      case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
     }).url
   }
 
-  private def getPostAction(isAgent: Boolean, mode: Mode): Call = if(isAgent) {
-    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submitAgent(mode)
+  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if(isAgent) {
+    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submitAgent(mode, isTriggeredMigration)
   } else {
-    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(mode)
+    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(mode, isTriggeredMigration)
   }
 
-  def show(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit user =>
-      handleRequest(isAgent = false, mode)
+      handleRequest(isAgent = false, mode, isTriggeredMigration)
   }
 
-  def showAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
     implicit user =>
-      handleRequest(isAgent = true, mode)
+      handleRequest(isAgent = true, mode, isTriggeredMigration)
   }
 
-  def handleRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
+  def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
 
       val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
       val filledForm = businessTradeOpt.fold(BusinessTradeForm.form)(businessTrade =>
         BusinessTradeForm.form.fill(BusinessTradeForm(businessTrade)))
-      val backURL = getBackURL(isAgent, mode)
-      val postAction = getPostAction(isAgent, mode)
+      val backURL = getBackURL(isAgent, mode, isTriggeredMigration)
+      val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
       Future.successful {
         Ok(addBusinessTradeView(filledForm, postAction, isAgent, backURL))
@@ -101,17 +101,17 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def submit(mode: Mode): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit request =>
-      handleSubmitRequest(isAgent = false, mode)(implicitly, itvcErrorHandler)
+      handleSubmitRequest(isAgent = false, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
   }
 
-  def submitAgent(mode: Mode): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def submitAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
     implicit request =>
-      handleSubmitRequest(isAgent = true, mode)(implicitly, itvcErrorHandlerAgent)
+      handleSubmitRequest(isAgent = true, mode, isTriggeredMigration)(implicitly, itvcErrorHandlerAgent)
   }
 
-  def handleSubmitRequest(isAgent: Boolean, mode: Mode)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+  def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
 
@@ -122,9 +122,9 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
               BadRequest(
                 addBusinessTradeView(
                   businessTradeForm = formWithErrors,
-                  postAction = getPostAction(isAgent, mode),
+                  postAction = getPostAction(isAgent, mode, isTriggeredMigration),
                   isAgent = isAgent,
-                  backURL = getBackURL(isAgent, mode)
+                  backURL = getBackURL(isAgent, mode, isTriggeredMigration)
                 )
               )
             },
@@ -139,7 +139,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                   )
               )
             ) flatMap {
-              case true  => Future.successful(Redirect(getSuccessURL(isAgent, mode)))
+              case true  => Future.successful(Redirect(getSuccessURL(isAgent, mode, isTriggeredMigration)))
               case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
             }
         )

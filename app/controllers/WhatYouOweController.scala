@@ -66,7 +66,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       itvcErrorHandler.showInternalServerError()
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
@@ -76,7 +76,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.HomeController.showAgent().url,

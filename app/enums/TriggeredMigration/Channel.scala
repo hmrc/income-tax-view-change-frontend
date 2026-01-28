@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package models.triggeredMigration
+package enums.TriggeredMigration
 
-import play.api.libs.json.{Json, OFormat}
+sealed trait Channel {
+  val value: String
+}
 
-case class TriggeredMigrationSessionData(isTriggeredMigrationJourney: Boolean)
+case object CustomerLed extends Channel {
+  override val value = "Customer-led"
+}
 
-object TriggeredMigrationSessionData {
-  implicit val format: OFormat[TriggeredMigrationSessionData] = Json.format[TriggeredMigrationSessionData]
+case object HmrcUnconfirmed extends Channel {
+  override val value = "Hmrc-led-unconfirmed"
+}
+
+case object HmrcConfirmed extends Channel {
+  override val value = "Hmrc-led-confirmed"
 }

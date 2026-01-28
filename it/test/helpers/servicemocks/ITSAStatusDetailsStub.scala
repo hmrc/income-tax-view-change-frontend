@@ -28,11 +28,11 @@ import testConstants.BaseIntegrationTestConstants.testNino
 
 object ITSAStatusDetailsStub extends ComponentSpecBase {
 
-  def getUrl(taxYearRange: String = "23-24", futureYears: Boolean = false): String =
-    s"/income-tax-view-change/itsa-status/status/$testNino/$taxYearRange?futureYears=$futureYears&history=false"
+  def getUrl(taxYearRange: String = "23-24", futureYears: Boolean = false, nino: String): String =
+    s"/income-tax-view-change/itsa-status/status/$nino/$taxYearRange?futureYears=$futureYears&history=false"
 
   def stubGetITSAStatusDetails(status: String, taxYearRange: String = "2024-25"): StubMapping = {
-    WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5)), OK,
+    WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5), nino = testNino), OK,
       s"""|[
           |  {
           |    "taxYear": "$taxYearRange",
@@ -50,7 +50,7 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
   }
 
   def stubNotFoundForGetITSAStatusDetails(taxYearRange: String = "2024-25"): StubMapping = {
-    WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5)), NOT_FOUND,
+    WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5), nino = testNino), NOT_FOUND,
       s"""{
          |"code": "NOT_FOUND",
          |"reason":"The remote endpoint has indicated that the requested resource could not be found."
@@ -63,20 +63,21 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
                                            taxYear: TaxYear,
                                            `itsaStatusCY-1`: ITSAStatus = ITSAStatus.Mandated,
                                            itsaStatusCY: ITSAStatus = ITSAStatus.Mandated,
-                                           `itsaStatusCY+1`: ITSAStatus = ITSAStatus.Mandated
+                                           `itsaStatusCY+1`: ITSAStatus = ITSAStatus.Mandated,
+                                           nino: String = testNino
                                          ): StubMapping = {
     val previousYear = taxYear.previousYear
     val futureYear = taxYear.nextYear
 
     val taxYearToStatus: Map[String, String] =
       Map(
-        s"${futureYear.startYear}-${futureYear.shortenTaxYearEnd}" -> `itsaStatusCY+1`.toString,
-        s"${taxYear.startYear}-${taxYear.shortenTaxYearEnd}" -> itsaStatusCY.toString,
-        s"${previousYear.startYear}-${previousYear.shortenTaxYearEnd}" -> `itsaStatusCY-1`.toString
+        s"${futureYear.shortenTaxYearEnd}" -> `itsaStatusCY+1`.toString,
+        s"${taxYear.shortenTaxYearEnd}" -> itsaStatusCY.toString,
+        s"${previousYear.shortenTaxYearEnd}" -> `itsaStatusCY-1`.toString
       )
 
     WiremockHelper.stubGet(
-      url = getUrl(s"${previousYear.`taxYearYY-YY`}", futureYears = true),
+      url = getUrl(s"${previousYear.`taxYearYY-YY`}", futureYears = true, nino),
       status = OK,
       body = taxYearToStatus.foldLeft(JsArray()) {
         case (array, (taxYear, status)) =>
@@ -112,7 +113,7 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
       s"${previousYear - 1}-${shortTaxYear(previousYear)}" -> yearStatus.previousYear.toString
     )
 
-    WiremockHelper.stubGet(getUrl(s"${shortTaxYear(previousYear) - 1}-${shortTaxYear(previousYear)}", futureYears = true), OK,
+    WiremockHelper.stubGet(getUrl(s"${shortTaxYear(previousYear) - 1}-${shortTaxYear(previousYear)}", futureYears = true, testNino), OK,
 
       taxYearToStatus.foldLeft(JsArray()) {
         case (array, (taxYear, status)) =>
@@ -134,7 +135,7 @@ object ITSAStatusDetailsStub extends ComponentSpecBase {
   }
 
   def stubGetITSAStatusDetailsError(taxYear: String = "23-24", futureYears: Boolean = false): StubMapping = {
-    WiremockHelper.stubGet(getUrl(taxYear, futureYears), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
+    WiremockHelper.stubGet(getUrl(taxYear, futureYears, testNino), INTERNAL_SERVER_ERROR, "IF is currently experiencing problems that require live service intervention.")
   }
 
 

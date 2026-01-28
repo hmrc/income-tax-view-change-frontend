@@ -60,9 +60,9 @@ class AddBusinessNameControllerSpec extends MockAuthActions with MockSessionServ
   }
 
   def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false) = mtdRole match {
-    case MTDIndividual if isPost => testAddBusinessNameController.submit(mode)
+    case MTDIndividual if isPost => testAddBusinessNameController.submit(mode, false)
     case MTDIndividual => testAddBusinessNameController.show(mode)
-    case _ if isPost => testAddBusinessNameController.submitAgent(mode)
+    case _ if isPost => testAddBusinessNameController.submitAgent(mode, false)
     case _ => testAddBusinessNameController.showAgent(mode)
   }
 

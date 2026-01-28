@@ -38,7 +38,7 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
 
   def setupMockCreateSession(result: Boolean): Unit =
     when(
-      mockSessionService.createSession(any(), any())(any()))
+      mockSessionService.createSession(any())(any()))
       .thenReturn(Future.successful(result))
 
   def setupMockGetSessionKeyMongo(result: Either[Throwable, Option[String]]): Unit = {
