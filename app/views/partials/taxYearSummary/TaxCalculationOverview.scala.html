@@ -15,14 +15,13 @@
  *@
 
 @import models.liabilitycalculation.viewmodels.CalculationSummary
-@import views.html.components.p
+@import models.taxyearsummary._
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import views.html.partials.taxYearSummaryBreakdownPartial
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 @import views.html.partials.taxYearSummary.ErrorMessage
-@import views.html.components.h3
-@import views.html.components.link
+@import views.html.components._
 @import viewUtils.ExternalUrlHelper
 @import views.html.partials.taxYearSummary.TaxCalculationAmendmentGuidance
 
@@ -32,30 +31,207 @@
         breakdownPartial: taxYearSummaryBreakdownPartial,
         insetText: GovukInsetText,
         errorMessage: ErrorMessage,
+        h2: h2,
         h3: h3,
         link: link,
         taxCalculationAmendmentGuidance: TaxCalculationAmendmentGuidance
 )
 
-@(model: CalculationSummary, isAgent: Boolean, taxYear: Int, isLatest: Boolean, isPrevious: Boolean, pfaEnabled: Boolean, isAmended: Boolean)(implicit messages: Messages)
+@(
+    calculationSummaryModel: Option[CalculationSummary],
+    isAgent: Boolean,
+    taxYear: Int,
+    isLatest: Boolean,
+    isPrevious: Boolean,
+    pfaEnabled: Boolean,
+    isAmended: Boolean,
+    taxYearViewScenarios: TaxYearViewScenarios,
+    showNoTaxCalc: Boolean,
+    viewTaxCalcLink: Option[String],
+    selfAssessmentLink: String,
+    contactHmrcLink: String,
+)(implicit messages: Messages)
 
-@if(model.messages.exists(_.errorMessages.size > 0)) {
-    @{
-        val key = if(isAgent) "tax-year-summary.agent.message" else "tax-year-summary.message"
-        errorMessage(model, key, isAgent)
+@yourTaxCalculationCannotBeDisplayed = {
+
+    @h3(msg = messages("tax.year.summary.calc.cannot.be.displayed.heading"), classes = "govuk-heading-m", optId = Some("your-tax-calculation-cannot-be-displayed-heading"))
+
+    @p(id = Some("not-filed-compatible-software-paragraph"))(content = Html(messages("tax.year.summary.calc.not.filed.compatible.software.p")))
+
+    @viewTaxCalcLink.map { link =>
+        <p>
+            <a id="view-your-tax-calculations-link" class="govuk-link" href="@link" target="_blank">@messages("tax.year.summary.calc.view.your.tax.calc.link") @messages("pagehelp.opensInNewTabText")</a>.
+        <p>
     }
-} else {
-    @breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest)
-    @if(!model.crystallised && !isLatest && !isPrevious) {
-        @govukInsetText(InsetText(content = HtmlContent(
-            p(id = Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
-        )))
+
+    @p(id = Some("not-compatible-software"))(content = Html(messages("tax.year.summary.calc.not.compatible.software.p")))
+
+    @if(messages.lang.code == "cy") {
+        <p id="filed-by-post-contact-hmrc">
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.a")
+            <a id="contact-hmrc-link" class="govuk-link" href="@contactHmrcLink" target="_blank">@messages("tax.year.summary.calc.filed.by.post.contact.hmrc.link") @messages("pagehelp.opensInNewTabText")</a>.
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.b")
+        </p>
+        } else {
+        <p id="filed-by-post-contact-hmrc">
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.a")
+            <a id="contact-hmrc-link" class="govuk-link" href="@contactHmrcLink" target="_blank">@messages("tax.year.summary.calc.filed.by.post.contact.hmrc.link") @messages("pagehelp.opensInNewTabText")</a>.
+        </p>
     }
+}
+
+@irsaEnrollment = {
+
+    @h3(msg = messages("tax.year.summary.calc.cannot.be.displayed.heading"), classes = "govuk-heading-m", optId = Some("your-tax-calculation-cannot-be-displayed-heading"))
+
+    @p(id = Some("not-filed-compatible-software-paragraph"))(content = Html(messages("tax.year.summary.calc.not.filed.compatible.software.p")))
+
+    @viewTaxCalcLink.map { link =>
+        <p>
+            <a id="view-your-tax-calculations-link" class="govuk-link" href="@link" target="_blank">@messages("tax.year.summary.calc.view.your.tax.calc.link") @messages("pagehelp.opensInNewTabText")</a>.
+        <p>
+    }
+
+    @p(id = Some("not-compatible-software"))(content = Html(messages("tax.year.summary.calc.not.compatible.software.p")))
+
+    @if(messages.lang.code == "cy") {
+        <p id="filed-by-post-contact-hmrc">
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.a")
+            <a id="contact-hmrc-link" class="govuk-link" href="@contactHmrcLink" target="_blank">@messages("tax.year.summary.calc.filed.by.post.contact.hmrc.link") @messages("pagehelp.opensInNewTabText")</a>.
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.b")
+        </p>
+    } else {
+        <p id="filed-by-post-contact-hmrc">
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.a")
+            <a id="contact-hmrc-link" class="govuk-link" href="@contactHmrcLink" target="_blank">@messages("tax.year.summary.calc.filed.by.post.contact.hmrc.link") @messages("pagehelp.opensInNewTabText")</a>.
+        </p>
+    }
+}
+
+@withoutIrsaEnrollment = {
+
+    @h3(msg = messages("tax.year.summary.calc.cannot.be.displayed.heading"), classes = "govuk-heading-m", optId = Some("your-tax-calculation-cannot-be-displayed-heading"))
+
+    @p(id = Some("not-filed-compatible-software-paragraph"))(content = Html(messages("tax.year.summary.calc.not.filed.compatible.software.p")))
+
+
+    <p>
+        @messages("tax.year.summary.calc.find.out.more.sa.p")
+        <a id="self-assessment-link" class="govuk-link" href="@selfAssessmentLink" target="_blank">@messages("tax.year.summary.calc.find.out.more.sa.link") @messages("pagehelp.opensInNewTabText")</a>.
+    <p>
+
+    @p(id = Some("not-compatible-software"))(content = Html(messages("tax.year.summary.calc.not.compatible.software.p")))
+
+    @if(messages.lang.code == "cy") {
+        <p id="filed-by-post-contact-hmrc">
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.a")
+            <a id="contact-hmrc-link" class="govuk-link" href="@contactHmrcLink" target="_blank">@messages("tax.year.summary.calc.filed.by.post.contact.hmrc.link") @messages("pagehelp.opensInNewTabText")</a>.
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.b")
+        </p>
+    } else {
+        <p id="filed-by-post-contact-hmrc">
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.p.a")
+            <a id="contact-hmrc-link" class="govuk-link" href="@contactHmrcLink" target="_blank">@messages("tax.year.summary.calc.filed.by.post.contact.hmrc.link") @messages("pagehelp.opensInNewTabText")</a>.
+        </p>
+    }
+}
+
+@cannotBeDeepLinkedAgent = {
+
+    @h3(msg = messages("tax.year.summary.calc.cannot.be.displayed.heading"), classes = "govuk-heading-m", optId = Some("your-tax-calculation-cannot-be-displayed-heading"))
+
+    @p(id = Some("not-filed-compatible-software-paragraph"))(content = Html(messages("tax.year.summary.calc.not.filed.compatible.software.agent.p")))
+
+    @p(id = Some("filed-via-sa")){
+        @messages("tax.year.summary.calc.filed.sa.agent.p.a")
+        <a id="self-assessment-for-agents-account" class="govuk-link" href="@selfAssessmentLink" target="_blank">@messages("tax.year.summary.calc.filed.sa.agent.link") @messages("pagehelp.opensInNewTabText")</a>.
+        @messages("tax.year.summary.calc.filed.sa.agent.p.b")
+    }
+
+    @p(id = Some("not-compatible-software"))(content = Html(messages("tax.year.summary.calc.not.compatible.software.agent.p")))
+
+    @if(messages.lang.code == "cy") {
+        <p id="filed-by-post-contact-hmrc-agent">
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.a")
+            <a id="filed-by-post-contact-hmrc-link" class="govuk-link" href="@contactHmrcLink" target="_blank">@messages("tax.year.summary.calc.filed.by.post.contact.hmrc.agent.link") @messages("pagehelp.opensInNewTabText")</a>
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.b")
+        </p>
+    } else {
+        <p id="filed-by-post-contact-hmrc-agent">
+            @messages("tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.a")
+            <a id="contact-hmrc-agent-link" class="govuk-link" href="@contactHmrcLink" target="_blank">@messages("tax.year.summary.calc.filed.by.post.contact.hmrc.agent.link") @messages("pagehelp.opensInNewTabText")</a>.
+        </p>
+    }
+}
+
+
+@amendGuidance = {
+
     @if(isPrevious) {
         @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
     }
 
-    @if(model.crystallised && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
+    @if(calculationSummaryModel.exists(_.crystallised) && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
         @taxCalculationAmendmentGuidance(taxYear, "calculation")
+    }
+}
+
+@if(calculationSummaryModel.exists(_.messages.exists(_.errorMessages.size > 0))) {
+
+    @{
+        val key = if(isAgent) "tax-year-summary.agent.message" else "tax-year-summary.message"
+        calculationSummaryModel.map(model => errorMessage(model, key, isAgent))
+    }
+
+} else {
+
+    @if(showNoTaxCalc) {
+        @h2(msg = messages("tax-year-summary.tax-calculation.no-calc"), classes = "govuk-heading-l", optId = Some("no-calc-data-header"))
+        @p(id = Some("no-calc-data-note"))(Html(messages("tax-year-summary.tax-calculation.no-calc.note")))
+
+    } else {
+
+        @if(taxYearViewScenarios == LegacyAndCesa) {
+            @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
+            @yourTaxCalculationCannotBeDisplayed
+            @amendGuidance
+        }
+
+        @if(taxYearViewScenarios == IrsaEnrolementHandedOff) {
+            @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
+            @irsaEnrollment
+            @amendGuidance
+        }
+
+        @if(taxYearViewScenarios == NoIrsaAEnrolement) {
+            @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
+            @withoutIrsaEnrollment
+            @amendGuidance
+        }
+
+        @if(taxYearViewScenarios == AgentBefore2023TaxYear) {
+            @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
+            @cannotBeDeepLinkedAgent
+            @amendGuidance
+        }
+
+        @if(taxYearViewScenarios == MtdSoftwareShowCalc) {
+
+            @calculationSummaryModel.map(model => breakdownPartial(model, taxYear, isFinalCalc = false, isAgent, isPrevious = isPrevious, isLatest = isLatest))
+
+            @if(!calculationSummaryModel.exists(_.crystallised) && !isLatest && !isPrevious) {
+                @govukInsetText(InsetText(content = HtmlContent(
+                    p(id = Some("calc-estimate-info"))(content = Html(messages("tax-year-summary.calc-estimate-info")))
+                )))
+            }
+
+            @if(isPrevious) {
+                @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
+            }
+
+            @if(calculationSummaryModel.exists(_.crystallised) && !isPrevious && !isLatest && pfaEnabled && !isAmended) {
+                @taxCalculationAmendmentGuidance(taxYear, "calculation")
+            }
+        }
     }
 }
