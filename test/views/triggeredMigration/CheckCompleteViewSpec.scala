@@ -16,8 +16,10 @@
 
 package views.triggeredMigration
 
+import forms.triggeredMigration.CheckCompleteForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.triggeredMigration.CheckCompleteView
@@ -31,7 +33,9 @@ class CheckCompleteViewSpec extends TestSupport {
   val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   class Setup(isAgent: Boolean) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent))))
+    val homeCall: Call = if(isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
+    val postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent), CheckCompleteForm(), postAction)))
   }
 
   object CheckCompleteMessages {
