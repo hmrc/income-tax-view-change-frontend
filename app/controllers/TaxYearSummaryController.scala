@@ -71,7 +71,9 @@ class TaxYearSummaryController @Inject()(
 
   // Individual back urls
   private def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
+
   private def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
+
   private def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 
   // Agent back urls
@@ -164,7 +166,8 @@ class TaxYearSummaryController @Inject()(
               taxYear = taxYear,
               backUrl = backUrl,
               origin = origin,
-              isAgent = isAgent)
+              isAgent = isAgent
+            )
         }
       case (error: LiabilityCalculationError, previousCalc, Some(lpp2Url)) =>
         Logger("application").error(s"[TaxYearSummaryController][renderView] Unable to show calc view for latest calc, PreviousCalc is defined: ${previousCalc.isDefined}")

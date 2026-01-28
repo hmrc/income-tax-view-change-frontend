@@ -18,20 +18,20 @@ package services
 
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
-import models.liabilitycalculation._
-import models.taxyearsummary._
+import models.liabilitycalculation.*
+import models.taxyearsummary.*
 import play.api.Logger
 
 import javax.inject.Inject
 
-//noinspection ScalaStyle
+// noinspection ScalaStyle
 class TaxYearSummaryService @Inject()() {
 
   def checkSubmissionChannel(liabilityCalculationResponse: Option[LiabilityCalculationResponseModel]): TaxYearViewScenarios = {
     
     liabilityCalculationResponse match {
-      case Some(LiabilityCalculationError(status, message)) =>
-        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationError - LegacyAndCesa, status: $status, error message: $message")
+      case Some(LiabilityCalculationError(404, message)) =>
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationError - LegacyAndCesa, status: 404, error message: $message")
         LegacyAndCesa
       case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsLegacyWithCesa))) =>
         Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsLegacyWithCesa")
