@@ -37,9 +37,9 @@ object SentForRisking extends RepaymentHistoryStatus("I")
 object RepaymentHistoryStatus {
   def apply(indicator: String): RepaymentHistoryStatus = {
     indicator match {
-      case "A" | "M" => Approved(indicator)
-      case "I" => SentForRisking
-      case "C" => Rejected(indicator)
+      case "A" | "M" | "Approved" => Approved(indicator)
+      case "I" | "Sent for Risking" => SentForRisking
+      case "C" | "Rejected" => Rejected(indicator)
       case _ => Rejected(indicator)
     }
   }
