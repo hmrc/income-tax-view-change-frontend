@@ -466,10 +466,18 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     selfAssessmentLink = "some fake url",
     contactHmrcLink = "some fake url")
 
-  def forecastWithNoCalcData(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink, taxYearViewScenarios = MtdSoftwareShowCalc, viewTaxCalcLink = Some("some fake url"),
-    selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+  def forecastWithNoCalcData(isAgent: Boolean = false): Html =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url")
 
   def mfaDebitsView(isAgent: Boolean): Html = taxYearSummaryView(
     taxYear = testYear,

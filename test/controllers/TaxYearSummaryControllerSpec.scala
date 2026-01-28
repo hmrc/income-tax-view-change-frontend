@@ -22,12 +22,12 @@ import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.auth.MockAuthActions
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService, MockNextUpdatesService}
-import models.admin._
-import models.financialDetails._
+import models.admin.*
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{LiabilityCalculationError, Message, Messages}
-import models.obligations._
+import models.obligations.*
 import models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -36,12 +36,12 @@ import play.api
 import play.api.Application
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.http.{HeaderNames, Status}
-import play.api.test.Helpers.{status, _}
-import services._
+import play.api.test.Helpers.{status, *}
+import services.*
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{financialDetails, _}
+import testConstants.FinancialDetailsTestConstants.{financialDetails, *}
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import views.html.TaxYearSummaryView
@@ -254,11 +254,13 @@ class TaxYearSummaryControllerSpec
                 )
                 val expectedContent: String =
                   taxYearSummaryView(
-                    testTaxYear, taxYearSummary,
-                    taxYearsBackLink(isAgent),
-                    ctaLink = ctaLink(isAgent),
+                    taxYear = testTaxYear,
+                    viewModel = taxYearSummary,
+                    backUrl = taxYearsBackLink(isAgent),
                     isAgent = isAgent,
+                    ctaLink = ctaLink(isAgent),
                     taxYearViewScenarios = MtdSoftwareShowCalc,
+                    showNoTaxCalc = false,
                     viewTaxCalcLink = Some("some fake url"),
                     selfAssessmentLink = "some fake url",
                     contactHmrcLink = "some fake url",
@@ -294,7 +296,8 @@ class TaxYearSummaryControllerSpec
                   .thenReturn(MtdSoftwareShowCalc)
 
                 val expectedContent: String = taxYearSummaryView(
-                  testTaxYear, TaxYearSummaryViewModel(
+                  taxYear = testTaxYear,
+                  viewModel = TaxYearSummaryViewModel(
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                     None,
                     testChargesList,
@@ -302,10 +305,11 @@ class TaxYearSummaryControllerSpec
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false
                   ),
-                  taxYearsBackLink(isAgent),
-                  ctaLink = ctaLink(isAgent),
+                  backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
+                  ctaLink = ctaLink(isAgent),
                   taxYearViewScenarios = MtdSoftwareShowCalc,
+                  showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = ""
@@ -340,19 +344,21 @@ class TaxYearSummaryControllerSpec
                   .thenReturn(MtdSoftwareShowCalc)
 
                 val expectedContent: String = taxYearSummaryView(
-                  testTaxYear, TaxYearSummaryViewModel(
-                    None,
-                    None,
-                    testChargesList,
-                    testObligtionsModel,
+                  taxYear = testTaxYear,
+                  viewModel = TaxYearSummaryViewModel(
+                    calculationSummary = None,
+                    previousCalculationSummary = None,
+                    charges = testChargesList,
+                    obligations = testObligtionsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false
                   ),
-                  taxYearsBackLink(isAgent),
-                  ctaLink = ctaLink(isAgent),
+                  backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
+                  ctaLink = ctaLink(isAgent),
                   taxYearViewScenarios = MtdSoftwareShowCalc,
+                  showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
@@ -655,6 +661,7 @@ class TaxYearSummaryControllerSpec
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent,
                   taxYearViewScenarios = MtdSoftwareShowCalc,
+                  showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
@@ -697,17 +704,19 @@ class TaxYearSummaryControllerSpec
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
-                  testTaxYear, TaxYearSummaryViewModel(
-                    Some(calcOverview),
-                    None,
-                    class2NicsChargesList,
-                    testObligtionsModel,
+                  taxYear = testTaxYear,
+                  viewModel = TaxYearSummaryViewModel(
+                    calculationSummary = Some(calcOverview),
+                    previousCalculationSummary = None,
+                    charges = class2NicsChargesList,
+                    obligations = testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false),
-                  taxYearsBackLink(isAgent),
-                  ctaLink = ctaLink(isAgent),
+                  backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
+                  ctaLink = ctaLink(isAgent),
                   taxYearViewScenarios = MtdSoftwareShowCalc,
+                  showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
@@ -750,17 +759,19 @@ class TaxYearSummaryControllerSpec
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val expectedContent: String = taxYearSummaryView(
-                  testTaxYear, TaxYearSummaryViewModel(
-                    Some(calcOverview),
-                    None,
-                    payeChargesList,
-                    testObligtionsModel,
+                  taxYear = testTaxYear,
+                  viewModel = TaxYearSummaryViewModel(
+                    calculationSummary = Some(calcOverview),
+                    previousCalculationSummary = None,
+                    charges = payeChargesList,
+                    obligations = testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false),
-                  taxYearsBackLink(isAgent),
-                  ctaLink = ctaLink(isAgent),
+                  backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
+                  ctaLink = ctaLink(isAgent),
                   taxYearViewScenarios = MtdSoftwareShowCalc,
+                  showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = ""
@@ -802,19 +813,20 @@ class TaxYearSummaryControllerSpec
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
                 val charges = mfaCharges
                 val expectedContent: String = taxYearSummaryView(
-                  testTaxYear,
-                  TaxYearSummaryViewModel(
-                    Some(calcOverview),
-                    None,
-                    charges,
-                    testObligtionsModel,
+                  taxYear = testTaxYear,
+                  viewModel = TaxYearSummaryViewModel(
+                    calculationSummary = Some(calcOverview),
+                    previousCalculationSummary = None,
+                    charges = charges,
+                    obligations = testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false
                   ),
-                  taxYearsBackLink(isAgent),
-                  ctaLink = ctaLink(isAgent),
+                  backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
+                  ctaLink = ctaLink(isAgent),
                   taxYearViewScenarios = MtdSoftwareShowCalc,
+                  showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
@@ -846,24 +858,27 @@ class TaxYearSummaryControllerSpec
                   .thenReturn(MtdSoftwareShowCalc)
 
                 val calcOverview: CalculationSummary = CalculationSummary(liabilityCalculationModelSuccessful)
-                val expectedContent: String = taxYearSummaryView(
-                  testTaxYear, TaxYearSummaryViewModel(
-                    Some(calcOverview),
-                    None,
-                    testEmptyChargesList,
-                    testObligtionsModel,
-                    ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false),
-                  taxYearsBackLink(isAgent),
-                  ctaLink = ctaLink(isAgent),
-                  isAgent = isAgent,
-                  taxYearViewScenarios = MtdSoftwareShowCalc,
-                  viewTaxCalcLink = Some("some fake url"),
-                  selfAssessmentLink = "some fake url",
-                  contactHmrcLink = "some fake url",
+                val expectedContent: String =
+                  taxYearSummaryView(
+                    taxYear = testTaxYear,
+                    viewModel = TaxYearSummaryViewModel(
+                      Some(calcOverview),
+                      None,
+                      testEmptyChargesList,
+                      testObligtionsModel,
+                      ctaViewModel = emptyCTAViewModel, LPP2Url = "",
+                      pfaEnabled = false),
+                    backUrl = taxYearsBackLink(isAgent),
+                    isAgent = isAgent,
+                    ctaLink = ctaLink(isAgent),
+                    taxYearViewScenarios = MtdSoftwareShowCalc,
+                    showNoTaxCalc = false,
+                    viewTaxCalcLink = Some("some fake url"),
+                    selfAssessmentLink = "some fake url",
+                    contactHmrcLink = "some fake url",
 
 
-                ).toString
+                  ).toString
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -893,18 +908,20 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 val expectedContent: String = Jsoup.parse(taxYearSummaryView(
-                  testTaxYear, TaxYearSummaryViewModel(
-                    None,
-                    None,
-                    testChargesList,
-                    testObligtionsModel,
+                  taxYear = testTaxYear,
+                  viewModel = TaxYearSummaryViewModel(
+                    calculationSummary = None,
+                    previousCalculationSummary = None,
+                    charges = testChargesList,
+                    obligations = testObligtionsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false),
-                  taxYearsBackLink(isAgent),
-                  ctaLink = ctaLink(isAgent),
+                  backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
+                  ctaLink = ctaLink(isAgent),
                   taxYearViewScenarios = MtdSoftwareShowCalc,
+                  showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
@@ -944,17 +961,19 @@ class TaxYearSummaryControllerSpec
                 val calcOverview: CalculationSummary = CalculationSummary(errorMessageVariableValues)
 
                 val expectedContent: String = taxYearSummaryView(
-                  testTaxYear, TaxYearSummaryViewModel(
-                    Some(calcOverview),
-                    None,
-                    testChargesList,
-                    testObligtionsModel,
+                  taxYear = testTaxYear,
+                  viewModel = TaxYearSummaryViewModel(
+                    calculationSummary = Some(calcOverview),
+                    previousCalculationSummary = None,
+                    charges = testChargesList,
+                    obligations = testObligtionsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false),
-                  taxYearsBackLink(isAgent),
-                  ctaLink = ctaLink(isAgent),
+                  backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
+                  ctaLink = ctaLink(isAgent),
                   taxYearViewScenarios = MtdSoftwareShowCalc,
+                  showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
