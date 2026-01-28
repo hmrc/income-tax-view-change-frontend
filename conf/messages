@@ -642,7 +642,7 @@ taxCal_breakdown.table.taxDeductedAtSource.voidISAs                          = V
 taxCal_breakdown.table.taxDeductedAtSource.total					         = Total tax deducted
 taxCal_breakdown.table.amount                                                = Amount
 
-taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Student loan repayments (plan {0})
+taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Student loan repayments (Plan {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Postgraduate loan repayments
 taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Tax due on annuity payments
 taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Tax due on royalty payments

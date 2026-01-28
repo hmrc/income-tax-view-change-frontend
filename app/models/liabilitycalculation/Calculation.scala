@@ -155,7 +155,7 @@ case class StudentLoan(planType: Option[String] = None,
                        studentLoanApportionedIncomeThreshold: Option[BigDecimal] = None,
                        studentLoanRate: Option[BigDecimal] = None
                       ) {
-  def planTypeActual: String = planType.getOrElse(throw MissingFieldException("Plan type"))
+  def planTypeActual: String = planType.map(_.substring(1)).getOrElse(throw MissingFieldException("Plan type"))
   def studentLoanRepaymentAmountActual: BigDecimal = studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
 }
 

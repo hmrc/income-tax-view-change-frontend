@@ -23,6 +23,6 @@ object TaxDueSummaryMessages  extends ComponentSpecBase {
   val voluntaryClass2Nics: String = messagesAPI("taxCal_breakdown.table.nic2.true")
   val nonVoluntaryClass2Nics: String = messagesAPI("taxCal_breakdown.table.nic2.false")
   val additionCharges: String = messagesAPI("taxCal_breakdown.additional_charges")
-  val studentPlan: String = messagesAPI("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", "01")
+  val studentPlan: String = messagesAPI("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", "1")
   val postgraduatePlan: String = messagesAPI("taxCal_breakdown.table.studentLoanPostGraduatePlan")
 }
