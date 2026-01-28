@@ -158,13 +158,13 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val multipleErrorMessage: Option[Messages] = Some(Messages(errors = Some(Seq(
     Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
     Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
-    Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+    Message("C15510", "the Rent-a-Room relief claimed for a jointly let property cannot be more than 10% of the Rent-a-Room limit."),
     Message("C159028", "the total tax taken off your employment must be less than the total taxable pay including: tips, other payments, lump sums")
   ))))
   val multipleAgentErrorMessage: Option[Messages] = Some(Messages(errors = Some(Seq(
     Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
     Message("C15507", "your client claimed £2000 in Property Income Allowance but this is more than turnover for their UK property."),
-    Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+    Message("C15510", "the Rent-a-Room relief claimed for a jointly let property cannot be more than 10% of the Rent-a-Room limit."),
     Message("C159028", "the total tax taken off your client’s employment must be less than the total taxable pay including: tips, other payments, lump sums")
   ))))
 
