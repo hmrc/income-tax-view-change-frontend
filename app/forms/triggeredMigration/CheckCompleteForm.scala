@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import play.api.data.Forms._
 
 object CheckCompleteForm {
 
-  val responseContinue: String  = "Continue"
-  val response: String    = "check-complete-confirm"
+  val responseContinue: String = "Continue"
+  val response: String = "check-complete-confirm"
   val errorKey = "triggered-migration.check-active-businesses-confirm.error.required"
 
   def apply(): Form[CheckCompleteForm] = {
@@ -32,7 +32,9 @@ object CheckCompleteForm {
           .verifying(errorKey, value =>
             value.nonEmpty && value.contains(responseContinue)
           )
-      )(CheckCompleteForm.apply)(CheckCompleteForm.unapply)
+      )
+        (response => CheckCompleteForm(response))
+        (form => Some(form.response))
     )
   }
 }
