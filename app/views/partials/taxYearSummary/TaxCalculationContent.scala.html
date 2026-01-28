@@ -37,17 +37,17 @@
 )(implicit request: Request[_], messages: Messages)
 
 @taxCalculationOverview(
-    calcSummary,
-    isAgent,
-    taxYear,
-    isLatest,
-    isPrevious,
-    pfaEnabled,
-    isAmended,
-    taxYearViewScenarios = taxYearViewScenarios,
-    showNoTaxCalc,
-    viewTaxCalcLink,
-    selfAssessmentLink,
-    contactHmrcLink
+    calculationSummaryModel = calcSummary,
+    isAgent = isAgent,
+    taxYear = taxYear,
+    isLatest = isLatest,
+    isPrevious = isPrevious,
+    pfaEnabled = pfaEnabled,
+    isAmended = isAmended,
+    taxYearViewScenarios = taxYearViewScenarios = taxYearViewScenarios,
+    showNoTaxCalc = showNoTaxCalc,
+    viewTaxCalcLink = viewTaxCalcLink,
+    selfAssessmentLink = selfAssessmentLink,
+    contactHmrcLink = contactHmrcLink
 )
 

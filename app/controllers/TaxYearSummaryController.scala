@@ -71,28 +71,29 @@ class TaxYearSummaryController @Inject()(
 
   // Individual back urls
   private def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
-
-  def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
-
-  def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
+  private def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
+  private def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 
   // Agent back urls
   private lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
   private lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
   private lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
 
+  def formatErrorMessages(
+                           liabilityCalc: LiabilityCalculationResponse,
+                           messagesProperty: MessagesApi,
+                           isAgent: Boolean
+                         )(implicit messages: Messages): LiabilityCalculationResponse = {
 
-  def formatErrorMessages(liabilityCalc: LiabilityCalculationResponse, messagesProperty: MessagesApi, isAgent: Boolean)
-                         (implicit messages: Messages): LiabilityCalculationResponse = {
-
-    if (liabilityCalc.messages.isDefined) {
-      val errorMessages = liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty, isAgent)
-      val translatedDateMessages = {
-        models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages, this)
-      }
-      liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedDateMessages))))
-    } else {
-      liabilityCalc
+    liabilityCalc.messages match {
+      case Some(value) =>
+        val errorMessages =
+          liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty, isAgent)
+        val translatedDateMessages =
+          models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages, this)
+        liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedDateMessages))))
+      case None =>
+        liabilityCalc
     }
   }
 
@@ -102,41 +103,88 @@ class TaxYearSummaryController @Inject()(
     calculationSummary.isDefined && !isCrystallised && forecastDataPresent
   }
 
-  private def renderView(liabilityCalc: LiabilityCalculationResponseModel,
-                         previousCalc: Option[LiabilityCalculationResponseModel],
-                         chargeItems: List[TaxYearSummaryChargeItem],
-                         taxYear: Int,
-                         obligations: ObligationsModel,
-                         claimToAdjustViewModel: TYSClaimToAdjustViewModel,
-                         backUrl: String,
-                         origin: Option[String],
-                         isAgent: Boolean
+  private def renderView(
+                          liabilityCalc: LiabilityCalculationResponseModel,
+                          previousCalc: Option[LiabilityCalculationResponseModel],
+                          chargeItems: List[TaxYearSummaryChargeItem],
+                          taxYear: Int,
+                          obligations: ObligationsModel,
+                          claimToAdjustViewModel: TYSClaimToAdjustViewModel,
+                          backUrl: String,
+                          origin: Option[String],
+                          isAgent: Boolean
                         )(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     (liabilityCalc, previousCalc, getLPP2Link(chargeItems, isAgent)) match {
       case (liabilityCalc: LiabilityCalculationResponse, None, Some(lpp2Url)) =>
-        handleCalcSuccess(mtdItUser.mtditid, mtdItUser.nino, liabilityCalc, None, chargeItems, obligations, lpp2Url, claimToAdjustViewModel, taxYear, backUrl, origin, isAgent)
+        handleCalcSuccess(
+          mtdItId = mtdItUser.mtditid,
+          nino = mtdItUser.nino,
+          latestCalc = liabilityCalc,
+          previousCalc = None,
+          chargeItems = chargeItems,
+          obligations = obligations,
+          lpp2Url = lpp2Url,
+          claimToAdjustViewModel = claimToAdjustViewModel,
+          taxYear = taxYear,
+          backUrl = backUrl,
+          origin = origin,
+          isAgent = isAgent
+        )
 
       case (liabilityCalc: LiabilityCalculationResponse, Some(previousCalc), Some(lpp2Url)) =>
         previousCalc match {
           case previousCalc: LiabilityCalculationResponse =>
-            handleCalcSuccess(mtdItId = mtdItUser.mtditid, nino = mtdItUser.nino, latestCalc = liabilityCalc, previousCalc = Some(previousCalc), chargeItems = chargeItems, obligations = obligations, lpp2Url = lpp2Url, claimToAdjustViewModel = claimToAdjustViewModel, taxYear = taxYear, backUrl = backUrl, origin = origin, isAgent = isAgent)
+            handleCalcSuccess(
+              mtdItId = mtdItUser.mtditid,
+              nino = mtdItUser.nino,
+              latestCalc = liabilityCalc,
+              previousCalc = Some(previousCalc),
+              chargeItems = chargeItems,
+              obligations = obligations,
+              lpp2Url = lpp2Url,
+              claimToAdjustViewModel = claimToAdjustViewModel,
+              taxYear = taxYear,
+              backUrl = backUrl,
+              origin = origin,
+              isAgent = isAgent
+            )
           case error: LiabilityCalculationError =>
-            handleCalcError(mtdItId = mtdItUser.mtditid, nino = mtdItUser.nino, error = error, validLatestCalculation = Some(liabilityCalc), chargeItems = chargeItems, obligations = obligations, lpp2Url = lpp2Url, claimToAdjustViewModel = claimToAdjustViewModel, taxYear = taxYear, backUrl = backUrl, origin = origin, isAgent = isAgent)
+            handleCalcError(
+              mtdItId = mtdItUser.mtditid,
+              nino = mtdItUser.nino,
+              error = error,
+              validLatestCalculation = Some(liabilityCalc),
+              chargeItems = chargeItems,
+              obligations = obligations,
+              lpp2Url = lpp2Url,
+              claimToAdjustViewModel = claimToAdjustViewModel,
+              taxYear = taxYear,
+              backUrl = backUrl,
+              origin = origin,
+              isAgent = isAgent)
         }
       case (error: LiabilityCalculationError, _, Some(lpp2Url)) =>
-        handleCalcError(mtdItId = mtdItUser.mtditid, nino = mtdItUser.nino, error = error, validLatestCalculation = None, chargeItems = chargeItems, obligations = obligations, lpp2Url = lpp2Url, claimToAdjustViewModel = claimToAdjustViewModel, taxYear = taxYear, backUrl = backUrl, origin = origin, isAgent = isAgent)
-
-      case (_, _, None) =>
-        if (isAgent) {
-          Logger("application").error(s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-          Future(agentItvcErrorHandler.showInternalServerError())
-        }
-        else {
-          Logger("application").error(s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-
-          Future(itvcErrorHandler.showInternalServerError())
-        }
+        handleCalcError(
+          mtdItId = mtdItUser.mtditid,
+          nino = mtdItUser.nino,
+          error = error,
+          validLatestCalculation = None,
+          chargeItems = chargeItems,
+          obligations = obligations,
+          lpp2Url = lpp2Url,
+          claimToAdjustViewModel = claimToAdjustViewModel,
+          taxYear = taxYear,
+          backUrl = backUrl,
+          origin = origin,
+          isAgent = isAgent
+        )
+      case (_, _, None) if isAgent =>
+        Logger("application").error(s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+        Future(agentItvcErrorHandler.showInternalServerError())
+      case (_, _, None) if !isAgent =>
+        Logger("application").error(s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+        Future(itvcErrorHandler.showInternalServerError())
     }
   }
 
@@ -259,8 +307,11 @@ class TaxYearSummaryController @Inject()(
 
       Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with No Calc data")
 
-      val selfAssessmentLink: Option[String] = mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
-      val taxYearViewScenarios = taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
+      val selfAssessmentLink: Option[String] =
+        mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
+
+      val taxYearViewScenarios =
+        taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
 
       Future(
         Ok(taxYearSummaryView(
@@ -297,7 +348,8 @@ class TaxYearSummaryController @Inject()(
         case Some(value) => Some(appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(value))
         case None => None
       }
-      case None => Some("")
+      case None =>
+        Some("")
     }
   }
 
@@ -308,7 +360,8 @@ class TaxYearSummaryController @Inject()(
     financialDetailsService.getFinancialDetails(taxYear, user.nino) flatMap {
       case financialDetails@FinancialDetailsModel(_, _, documentDetails, fd) =>
 
-        val getChargeItem: DocumentDetail => Option[ChargeItem] = getChargeItemOpt(financialDetails = financialDetails.financialDetails)
+        val getChargeItem: DocumentDetail => Option[ChargeItem] =
+          getChargeItemOpt(financialDetails = financialDetails.financialDetails)
 
         val chargeItemsNoPayments = documentDetails
           .filter(_.paymentLot.isEmpty)
@@ -325,8 +378,14 @@ class TaxYearSummaryController @Inject()(
               .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, financialDetails.findDueDateByDocumentDetails(dd))))
             .filterNot(_.originalAmount < 0)
             .filter(_.notCodedOutPoa(isEnabled(FilterCodedOutPoas)))
-            .filter(ChargeItem.filterAllowedCharges(isEnabled(PenaltiesAndAppeals),
-              FirstLatePaymentPenalty, SecondLatePaymentPenalty, LateSubmissionPenalty))
+            .filter(
+              ChargeItem.filterAllowedCharges(
+                isEnabled(PenaltiesAndAppeals),
+                FirstLatePaymentPenalty,
+                SecondLatePaymentPenalty,
+                LateSubmissionPenalty
+              )
+            )
         }
 
         val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {
@@ -359,10 +418,10 @@ class TaxYearSummaryController @Inject()(
       case FinancialDetailsErrorModel(NOT_FOUND, _) => f(List.empty)
       case _ if isAgent =>
         Logger("application").error(s"[Agent]Could not retrieve financial details for year: $taxYear")
-        Future.successful(itvcErrorHandler.showInternalServerError())
+        Future(itvcErrorHandler.showInternalServerError())
       case _ =>
         Logger("application").error(s"Could not retrieve financial details for year: $taxYear")
-        Future.successful(agentItvcErrorHandler.showInternalServerError())
+        Future(agentItvcErrorHandler.showInternalServerError())
     }
   }
 
@@ -377,10 +436,10 @@ class TaxYearSummaryController @Inject()(
       case _ =>
         if (isAgent) {
           Logger("application").error(s"Could not retrieve obligations for year: $taxYear")
-          Future.successful(agentItvcErrorHandler.showInternalServerError())
+          Future(agentItvcErrorHandler.showInternalServerError())
         } else {
           Logger("application").error(s"[Agent]Could not retrieve obligations for year: $taxYear")
-          Future.successful(itvcErrorHandler.showInternalServerError())
+          Future(itvcErrorHandler.showInternalServerError())
         }
     }
   }
@@ -441,8 +500,8 @@ class TaxYearSummaryController @Inject()(
   private def claimToAdjustViewModel(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[TYSClaimToAdjustViewModel] = {
     claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
       case Right(value) => value match {
-        case Some(value) if value.endYear == taxYear => Future.successful(TYSClaimToAdjustViewModel(Option(value)))
-        case _ => Future.successful(TYSClaimToAdjustViewModel(None))
+        case Some(value) if value.endYear == taxYear => Future(TYSClaimToAdjustViewModel(Option(value)))
+        case _ => Future(TYSClaimToAdjustViewModel(None))
       }
       case Left(ex: Throwable) =>
         Logger("application").error(s"There was an error when getting the POA Entry point" +
@@ -456,7 +515,7 @@ class TaxYearSummaryController @Inject()(
       if (taxYear.toString.matches("[0-9]{4}")) {
         handleRequest(taxYear, origin, isAgent = false)
       } else {
-        Future.successful(itvcErrorHandler.showInternalServerError())
+        Future(itvcErrorHandler.showInternalServerError())
       }
     }
 
