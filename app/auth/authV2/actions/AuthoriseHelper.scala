@@ -23,13 +23,21 @@ import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name, ~}
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 trait AuthoriseHelper extends FeatureSwitching {
 
   type AuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
+  type NrsIndividualAuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel ~
+  Option[String] ~ Option[String] ~ Option[String] ~ Option[LocalDate] ~ Option[String] ~ Option[String] ~ Option[CredentialRole] ~
+  Option[MdtpInformation] ~ Option[ItmpName] ~ Option[LocalDate] ~ Option[ItmpAddress] ~ Option[String] ~ LoginTimes
+  type NrsAgentAuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel ~
+    Option[String] ~ Option[String] ~ Option[String] ~ Option[String] ~ Option[LocalDate] ~ Option[String]~ AgentInformation ~
+    Option[String] ~ Option[CredentialRole] ~ Option[MdtpInformation] ~ Option[ItmpName] ~ Option[LocalDate] ~
+    Option[ItmpAddress] ~ Option[String] ~ LoginTimes
 
   val logger: Logger
 
