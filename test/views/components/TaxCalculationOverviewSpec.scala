@@ -68,11 +68,11 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
 
       "return the correct content" in {
 
-        val calculationSummary = buildCalculationSummary(crystallised = false)
+        val calculationSummary: CalculationSummary = buildCalculationSummary(crystallised = false)
 
         val partial: HtmlFormat.Appendable =
           taxCalculationOverview(
-            model = calculationSummary,
+            calculationSummaryModel = Some(calculationSummary),
             isAgent = false,
             taxYear = 2025,
             isLatest = true,
@@ -80,6 +80,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             pfaEnabled = true,
             isAmended = true,
             taxYearViewScenarios = LegacyAndCesa,
+            showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
             contactHmrcLink = contactHmrcLink
@@ -106,7 +107,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
 
         val partial: HtmlFormat.Appendable =
           taxCalculationOverview(
-            model = calculationSummary,
+            calculationSummaryModel = Some(calculationSummary),
             isAgent = false,
             taxYear = 2025,
             isLatest = true,
@@ -114,6 +115,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             pfaEnabled = true,
             isAmended = true,
             taxYearViewScenarios = IrsaEnrolementHandedOff,
+            showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
             contactHmrcLink = contactHmrcLink
@@ -140,7 +142,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
 
         val partial: HtmlFormat.Appendable =
           taxCalculationOverview(
-            model = calculationSummary,
+            calculationSummaryModel = Some(calculationSummary),
             isAgent = false,
             taxYear = 2025,
             isLatest = true,
@@ -148,6 +150,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             pfaEnabled = true,
             isAmended = true,
             taxYearViewScenarios = NoIrsaAEnrolement,
+            showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
             contactHmrcLink = contactHmrcLink
@@ -175,7 +178,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
 
         val partial: HtmlFormat.Appendable =
           taxCalculationOverview(
-            model = calculationSummary,
+            calculationSummaryModel = Some(calculationSummary),
             isAgent = true,
             taxYear = 2025,
             isLatest = true,
@@ -183,6 +186,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             pfaEnabled = true,
             isAmended = true,
             taxYearViewScenarios = AgentBefore2023TaxYear,
+            showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
             contactHmrcLink = contactHmrcLink
@@ -209,7 +213,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
 
         val partial: HtmlFormat.Appendable =
           taxCalculationOverview(
-            model = calculationSummary,
+            calculationSummaryModel = Some(calculationSummary),
             isAgent = false,
             taxYear = 2025,
             isLatest = true,
@@ -217,6 +221,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             pfaEnabled = true,
             isAmended = true,
             taxYearViewScenarios = MtdSoftwareShowCalc,
+            showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
             contactHmrcLink = contactHmrcLink
