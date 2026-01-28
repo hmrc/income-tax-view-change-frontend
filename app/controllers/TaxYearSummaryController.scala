@@ -117,6 +117,7 @@ class TaxYearSummaryController @Inject()(
 
     (liabilityCalc, previousCalc, getLPP2Link(chargeItems, isAgent)) match {
       case (liabilityCalc: LiabilityCalculationResponse, None, Some(lpp2Url)) =>
+        Logger("application").info(s"[TaxYearSummaryController][renderView] Attempting to show successful latest calc view with no previous calc")
         handleCalcSuccess(
           mtdItId = mtdItUser.mtditid,
           nino = mtdItUser.nino,
@@ -131,10 +132,10 @@ class TaxYearSummaryController @Inject()(
           origin = origin,
           isAgent = isAgent
         )
-
       case (liabilityCalc: LiabilityCalculationResponse, Some(previousCalc), Some(lpp2Url)) =>
         previousCalc match {
           case previousCalc: LiabilityCalculationResponse =>
+            Logger("application").info(s"[TaxYearSummaryController][renderView] Attempting to show successful calc view for previous calc")
             handleCalcSuccess(
               mtdItId = mtdItUser.mtditid,
               nino = mtdItUser.nino,
@@ -150,6 +151,7 @@ class TaxYearSummaryController @Inject()(
               isAgent = isAgent
             )
           case error: LiabilityCalculationError =>
+            Logger("application").error(s"[TaxYearSummaryController][renderView] Unable to show calc view for previous calc")
             handleCalcError(
               mtdItId = mtdItUser.mtditid,
               nino = mtdItUser.nino,
@@ -164,7 +166,8 @@ class TaxYearSummaryController @Inject()(
               origin = origin,
               isAgent = isAgent)
         }
-      case (error: LiabilityCalculationError, _, Some(lpp2Url)) =>
+      case (error: LiabilityCalculationError, previousCalc, Some(lpp2Url)) =>
+        Logger("application").error(s"[TaxYearSummaryController][renderView] Unable to show calc view for latest calc, PreviousCalc is defined: ${previousCalc.isDefined}")
         handleCalcError(
           mtdItId = mtdItUser.mtditid,
           nino = mtdItUser.nino,

@@ -284,18 +284,19 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       contactHmrcLink = "some fake url"
     )
 
-  def estimateViewWithNoCalcData(isAgent: Boolean = false): Html = taxYearSummaryView(
-    taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
-    backUrl = "testBackURL",
-    isAgent = isAgent,
-    ctaLink = ctaLink,
-    taxYearViewScenarios = MtdSoftwareShowCalc,
-    showNoTaxCalc = false,
-    viewTaxCalcLink = Some("some fake url"),
-    selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url"
-  )
+  def estimateViewWithNoCalcData(isAgent: Boolean = false): Html =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = true,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url"
+    )
 
   def unattendedCalcView(isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearSummaryView(
     taxYear = testYear,

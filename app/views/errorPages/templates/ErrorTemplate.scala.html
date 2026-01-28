@@ -27,7 +27,7 @@
 
 @mainTemplate(pageTitle = messages(pageTitle), isAgent = isAgent, isErrorPage = true) {
 
-     @h1(msg = messages(heading))
+     @h1(msg = messages(heading), id = Some("error-summary-heading"))
      @p(messages(message))
 
 }

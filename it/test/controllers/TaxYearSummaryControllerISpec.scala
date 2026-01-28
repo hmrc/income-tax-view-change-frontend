@@ -18,23 +18,23 @@ package controllers
 
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import helpers.servicemocks.*
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
-import helpers.servicemocks._
-import models.admin._
-import models.financialDetails._
+import models.admin.*
+import models.financialDetails.*
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.Jsoup
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.CalculationListIntegrationTestConstants.successResponseNonCrystallised
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants._
-import testConstants.messages.TaxYearSummaryMessages._
+import testConstants.IncomeSourceIntegrationTestConstants.*
+import testConstants.NewCalcBreakdownItTestConstants.*
+import testConstants.messages.TaxYearSummaryMessages.*
 
 import java.time.LocalDate
 
@@ -504,15 +504,17 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                       allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false
                     )))
                 }
-                "retrieving a calculation failed" in {
+
+                "retrieving a calculation summary which is empty" in {
+
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationErrorResponseWithFlag(testNino,
-                    "2018", "LATEST")(NO_CONTENT, LiabilityCalculationError(NO_CONTENT, "error"))
-                  IncomeTaxViewChangeStub.stubGetAllObligations(testNino,
-                    LocalDate.of(2017, 4, 6),
-                    LocalDate.of(2018, 4, 5),
-                    ObligationsModel(Seq(
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, "2018", "LATEST")(OK, liabilityCalculationModelSuccessful.copy(calculation = None))
+                  IncomeTaxViewChangeStub.stubGetAllObligations(
+                    nino = testNino,
+                    fromDate = LocalDate.of(2017, 4, 6),
+                    toDate = LocalDate.of(2018, 4, 5),
+                    deadlines = ObligationsModel(Seq(
                       GroupedObligationsModel(
                         "ABC123456789",
                         List(SingleObligationModel(
@@ -525,8 +527,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                           StatusFulfilled
                         ))
                       )
-                    ))
-                  )
+                    )))
 
                   val res = buildGETMTDClient(getPath(mtdUserRole, "2018"), additionalCookies).futureValue
 
@@ -535,9 +536,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                   res should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                    elementTextByID("no-calc-data-header")(noCalcHeading),
-                    elementTextByID("no-calc-data-note")(noCalcNote)
+                    pageTitle(mtdUserRole = mtdUserRole, messageKey = "tax-year-summary.heading"),
+                    elementTextByID("calculation-panel-heading")("Calculation"),
                   )
                 }
 
@@ -782,7 +782,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, "2018", "LATEST")
 
                 res should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
+                  httpStatus(INTERNAL_SERVER_ERROR),
+                  pageTitle(mtdUserRole, "Sorry, there is a problem with the service", isErrorPage = true),
+                  elementTextByID("error-summary-heading")("Sorry, there is a problem with the service")
                 )
               }
 
@@ -813,7 +815,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "retrieving a calculation failed" in {
+
                 stubAuthorised(mtdUserRole)
+
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
@@ -839,7 +843,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
 
                 res should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
+                  httpStatus(INTERNAL_SERVER_ERROR),
+                  pageTitle(mtdUserRole = mtdUserRole, messageKey = "Sorry, there is a problem with the service", isErrorPage = true),
+                  elementTextByID("error-summary-heading")("Sorry, there is a problem with the service")
                 )
               }
 
