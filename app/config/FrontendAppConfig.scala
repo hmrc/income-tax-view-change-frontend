@@ -100,6 +100,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val repaymentsUrl: String = servicesConfig.baseUrl("repayment-api")
 
+  lazy val hipRepaymentsUrl: String = servicesConfig.baseUrl("hip-repayment-api")
+
   //Payment Redirect route
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/what-you-owe"
   //Payment Redirect route
@@ -176,6 +178,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val timeMachineAddDays: Int = servicesConfig.getInt("time-machine.add-days")
 
   lazy val isSessionDataStorageEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
+
+  lazy val isHipRepaymentApiEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-hip-repayment-api")
 
   //External-Urls
   def selfAssessmentTaxReturnLink(implicit messages: Messages): String =
