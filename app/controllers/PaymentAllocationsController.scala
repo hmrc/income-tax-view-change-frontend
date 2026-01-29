@@ -56,7 +56,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   private lazy val redirectUrlIndividual: String = controllers.errors.routes.NotFoundDocumentIDLookupController.show().url
   private lazy val redirectUrlAgent: String = controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url
 
-  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def viewPaymentAllocation(documentNumber: String, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         itvcErrorHandler = itvcErrorHandler,
@@ -93,7 +93,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
   }
 
   def viewPaymentAllocationAgent(documentNumber: String): Action[AnyContent] = {
-    authActions.asMTDPrimaryAgent.async {
+    authActions.asMTDPrimaryAgent().async {
       implicit mtdItUser =>
         handleRequest(
           itvcErrorHandler = itvcErrorHandlerAgent,

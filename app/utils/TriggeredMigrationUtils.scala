@@ -23,14 +23,14 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait TriggeredMigrationUtils extends FeatureSwitching {
-  def withTriggeredMigrationFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+  def withTriggeredMigrationFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (!isEnabled(TriggeredMigration)) {
       user.userType match {
-        case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
-        case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
+        case Some(Agent) => Future(Redirect(controllers.routes.HomeController.showAgent()))
+        case _ => Future(Redirect(controllers.routes.HomeController.show()))
       }
     } else {
       comeBlock

@@ -17,8 +17,8 @@
 package services.optIn
 
 import audit.AuditingService
+import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
-import connectors.itsastatus.{ITSAStatusUpdateConnector, ITSAStatusUpdateConnectorModel}
 import enums.JourneyType.{Opt, OptInJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear

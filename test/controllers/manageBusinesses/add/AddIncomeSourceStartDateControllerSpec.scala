@@ -214,7 +214,7 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
         }
 
         s"submit($isAgent, $mode, $incomeSourceType)" when {
-          val action = testController.submit(isAgent, mode, incomeSourceType)
+          val action = testController.submit(isAgent, mode, incomeSourceType, false)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
           s"the user is authenticated as a $mtdRole" should {
             s"redirect to the Add Business Start Date Check page" when {

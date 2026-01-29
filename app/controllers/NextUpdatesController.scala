@@ -116,7 +116,7 @@ class NextUpdatesController @Inject()(
   }
 
 
-  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     getNextUpdates(
       backUrl = controllers.routes.HomeController.show(origin),
       isAgent = false,
@@ -125,7 +125,7 @@ class NextUpdatesController @Inject()(
     )
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       getNextUpdates(
         backUrl = controllers.routes.HomeController.showAgent(),

@@ -152,7 +152,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with I
         s".show() - ${if (isAgent) "Agent"}, $mode, $incomeSourceType" when {
 
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-          val action = testAddIncomeSourceStartDateCheckController.show(isAgent, mode, incomeSourceType)
+          val action = testAddIncomeSourceStartDateCheckController.show(isAgent, mode, incomeSourceType, false)
 
           s"the user is authenticated as a $mtdRole" should {
             s"render the start date check page" when {
@@ -225,7 +225,7 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with I
 
         s".submit - ${if (isAgent) "Agent"}, $mode, $incomeSourceType" when {
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
-          val action = testAddIncomeSourceStartDateCheckController.submit(isAgent, mode, incomeSourceType)
+          val action = testAddIncomeSourceStartDateCheckController.submit(isAgent, mode, incomeSourceType, false)
           s"the user is authenticated as a $mtdRole" should {
 
             s"return ${Status.SEE_OTHER}: redirect back to add $incomeSourceType start date page with ${AddIncomeSourceData.accountingPeriodStartDateField} removed from session, isAgent = $isAgent" when {

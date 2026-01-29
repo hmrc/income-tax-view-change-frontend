@@ -41,17 +41,19 @@ class AuthActions @Inject()(
                              val retrieveClientData: RetrieveClientData,
                              val retrieveFeatureSwitches: FeatureSwitchRetrievalAction,
                              val authoriseAndRetrieveIndividualForNrs: AuthoriseAndRetrieveIndividualForNrs,
-                             val authoriseAndRetrieveAgentForNrs: AuthoriseAndRetrieveAgentForNrs
+                             val authoriseAndRetrieveAgentForNrs: AuthoriseAndRetrieveAgentForNrs,
+                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction
                            ) extends FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
 
-  def asMTDIndividual: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDIndividual(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
       retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
       itsaStatusRetrievalAction andThen
+      triggeredMigrationRetrievalAction(isTriggeredMigrationPage) andThen
       retrieveNavBar
   }
 
@@ -67,7 +69,7 @@ class AuthActions @Inject()(
   def asAgent(arnRequired: Boolean = true): ActionBuilder[AuthorisedUserRequest, AnyContent] =
     checkSessionTimeout andThen authoriseAndRetrieveAgent.authorise(arnRequired)
 
-  def asMTDAgentWithConfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDAgentWithConfirmedClient(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
@@ -75,7 +77,8 @@ class AuthActions @Inject()(
       agentHasConfirmedClientAction andThen
       incomeSourceRetrievalAction andThen
       retrieveFeatureSwitches andThen
-      itsaStatusRetrievalAction
+      itsaStatusRetrievalAction andThen
+      triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
   def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
@@ -87,7 +90,7 @@ class AuthActions @Inject()(
       retrieveFeatureSwitches
   }
 
-  def asMTDPrimaryAgent: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDPrimaryAgent(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
@@ -95,9 +98,10 @@ class AuthActions @Inject()(
       agentIsPrimaryAction andThen
       incomeSourceRetrievalAction andThen
       retrieveFeatureSwitches andThen
-      itsaStatusRetrievalAction
+      itsaStatusRetrievalAction andThen
+      triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
-
+  
   def asMTDPrimaryAgentForNrs: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveAgentForNrs.authorise() andThen
@@ -109,19 +113,19 @@ class AuthActions @Inject()(
       itsaStatusRetrievalAction
   }
 
-  def asMTDIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDIndividualOrAgentWithClient(isAgent: Boolean, triggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
     if (isAgent) {
-      asMTDAgentWithConfirmedClient
+      asMTDAgentWithConfirmedClient(triggeredMigrationPage)
     } else {
-      asMTDIndividual
+      asMTDIndividual(triggeredMigrationPage)
     }
   }
 
   def asMTDIndividualOrPrimaryAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
     if (isAgent) {
-      asMTDPrimaryAgent
+      asMTDPrimaryAgent()
     } else {
-      asMTDIndividual
+      asMTDIndividual()
     }
   }
 

@@ -61,12 +61,12 @@ class PaymentController @Inject()(val authActions: AuthActions,
     }
   }
 
-  def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def paymentHandoff(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleHandoff(amountInPence, origin = origin)
   }
 
-  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => authActions.asMTDPrimaryAgent.async {
+  val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => authActions.asMTDPrimaryAgent().async {
     implicit user =>
       handleHandoff(paymentAmountInPence)
   }

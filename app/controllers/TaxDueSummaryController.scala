@@ -101,7 +101,7 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
   }
 
 
-  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         origin = origin,
@@ -112,7 +112,7 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
       )
   }
 
-  def showTaxDueSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showTaxDueSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,

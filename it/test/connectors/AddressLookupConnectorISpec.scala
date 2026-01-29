@@ -106,7 +106,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
 
           WiremockHelper.stubPostWithRequest(s"/api/v2/init", requestBody, ACCEPTED, "{}")
 
-          val result = connector.initialiseAddressLookup(isAgent = false, mode = NormalMode).futureValue
+          val result = connector.initialiseAddressLookup(isAgent = false, mode = NormalMode, false).futureValue
 
           result shouldBe Right(PostAddressLookupSuccessResponse(None))
           WiremockHelper.verifyPost("/api/v2/init")
@@ -116,7 +116,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
 
           WiremockHelper.stubPostWithRequest(s"/api/v2/init", requestBody, INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.initialiseAddressLookup(isAgent = false, mode = NormalMode).futureValue
+          val result = connector.initialiseAddressLookup(isAgent = false, mode = NormalMode, false).futureValue
 
           result shouldBe Left(UnexpectedPostStatusFailure(INTERNAL_SERVER_ERROR))
           WiremockHelper.verifyPost("/api/v2/init")
@@ -192,7 +192,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
         "return a successful response" in {
           WiremockHelper.stubPostWithRequest(s"/api/v2/init", requestBody, ACCEPTED, "{}")
 
-          val result = connector.initialiseAddressLookup(isAgent = true, mode = NormalMode).futureValue
+          val result = connector.initialiseAddressLookup(isAgent = true, mode = NormalMode, false).futureValue
 
           result shouldBe Right(PostAddressLookupSuccessResponse(None))
           WiremockHelper.verifyPost("/api/v2/init")
@@ -201,7 +201,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
         "return an error when the request fails" in {
           WiremockHelper.stubPostWithRequest("/api/v2/init", requestBody, INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.initialiseAddressLookup(isAgent = true, mode = NormalMode).futureValue
+          val result = connector.initialiseAddressLookup(isAgent = true, mode = NormalMode, false).futureValue
 
           result shouldBe Left(UnexpectedPostStatusFailure(INTERNAL_SERVER_ERROR))
           WiremockHelper.verifyPost("/api/v2/init")

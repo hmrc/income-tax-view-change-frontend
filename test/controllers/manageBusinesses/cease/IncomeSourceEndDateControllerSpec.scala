@@ -107,7 +107,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
         s"show($incomeSourceType, $isAgent, $mode)" when {
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-          val action = testController.show(optIncomeSourceIdHash, incomeSourceType, isAgent, mode)
+          val action = testController.show(optIncomeSourceIdHash, incomeSourceType, isAgent, mode, false)
           s"the user is authenticated as a $mtdRole" should {
             "render the end date page" when {
               "using the manage businesses journey" in {
@@ -173,7 +173,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                   setupMockCreateSession(true)
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
-                  val actionNoId = testController.show(None, incomeSourceType, isAgent, mode)
+                  val actionNoId = testController.show(None, incomeSourceType, isAgent, mode, false)
                   val result: Future[Result] = actionNoId(fakeRequest)
                   status(result) shouldBe INTERNAL_SERVER_ERROR
                 }
@@ -185,7 +185,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                   setupMockCreateSession(true)
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
-                  val actionIdNotRec = testController.show(Some("12345"), incomeSourceType, isAgent, mode)
+                  val actionIdNotRec = testController.show(Some("12345"), incomeSourceType, isAgent, mode, false)
                   val result: Future[Result] = actionIdNotRec(fakeRequest)
                   status(result) shouldBe INTERNAL_SERVER_ERROR
                 }
@@ -197,7 +197,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
         s"submit($incomeSourceType, $isAgent, $mode)" when {
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
-          val action = testController.submit(optIncomeSourceIdHash, incomeSourceType, isAgent, mode)
+          val action = testController.submit(optIncomeSourceIdHash, incomeSourceType, isAgent, mode, false)
           s"the user is authenticated as a $mtdRole" should {
             "redirect to CheckIncomeSourceDetails" when {
               "form is completed successfully" in {
@@ -355,7 +355,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                     when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                       .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
-                    val actionMissingId = testController.submit(None, incomeSourceType, isAgent, mode)
+                    val actionMissingId = testController.submit(None, incomeSourceType, isAgent, mode, false)
                     val result: Future[Result] = actionMissingId(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
                       "value.year" -> "2022"))
 
@@ -367,7 +367,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                     when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                       .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
-                    val actionInvalidId = testController.submit(Some("12345"), incomeSourceType, isAgent, mode)
+                    val actionInvalidId = testController.submit(Some("12345"), incomeSourceType, isAgent, mode, false)
 
                     val result: Future[Result] = actionInvalidId(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
                       "value.year" -> "2022"))
