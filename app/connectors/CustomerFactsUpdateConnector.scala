@@ -44,17 +44,13 @@ class CustomerFactsUpdateConnector @Inject()(val http: HttpClientV2,
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"Customer facts update returned OK for mtdId=$mtdId")
+            Logger("application").info(s"Customer facts update returned OK for mtdId=$mtdId")
           case status if status >= INTERNAL_SERVER_ERROR =>
             Logger("application").error(s"Customer facts update failed. status=$status body=${response.body}")
           case status =>
             Logger("application").warn(s"Customer facts update returned status=$status body=${response.body}")
         }
         response
-      }
-      .recoverWith { case e: Exception =>
-        Logger("application").error(s"Customer facts update failed due to exception for mtdId=$mtdId", e)
-        Future.failed(e)
       }
   }
 }
