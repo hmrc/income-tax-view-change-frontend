@@ -18,12 +18,15 @@ package controllers.triggeredMigration
 
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.admin.TriggeredMigration
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed}
 
 class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {
 
@@ -61,7 +64,12 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
         "render the page when TriggeredMigration FS is enabled" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+            status = OK,
+            body = liabilityCalculationModelSuccessful
+          )
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
           checkPageContent(result, mtdRole)
@@ -88,7 +96,12 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
         "redirect back to the same page when 'Yes' is selected" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+            status = OK,
+            body = liabilityCalculationModelSuccessful
+          )
 
           val result = buildPOSTMTDPostClient(
             path,
@@ -104,7 +117,12 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
         "redirect back to the same page when 'No' is selected" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+            status = OK,
+            body = liabilityCalculationModelSuccessful
+          )
 
           val result = buildPOSTMTDPostClient(
             path,
@@ -120,8 +138,12 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
         "return BAD_REQUEST when no option is selected" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
-
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+            status = OK,
+            body = liabilityCalculationModelSuccessful
+          )
           val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
 
           result should have(

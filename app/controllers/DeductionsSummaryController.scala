@@ -75,7 +75,7 @@ class DeductionsSummaryController @Inject()(val authActions: AuthActions,
   }
 
   def showDeductionsSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
           origin = origin,
@@ -87,7 +87,7 @@ class DeductionsSummaryController @Inject()(val authActions: AuthActions,
     }
 
   def showDeductionsSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = {
-    authActions.asMTDPrimaryAgent.async { implicit response =>
+    authActions.asMTDPrimaryAgent().async { implicit response =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,
         taxYear = taxYear,

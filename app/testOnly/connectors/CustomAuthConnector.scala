@@ -158,6 +158,22 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
               "agentCode" -> Some("agentCode"),
               "agentFriendlyName" -> Some("agentFriendlyName"),
               "email" -> Some("email")
+            ) ++ Json.obj(
+              "itmpData" -> Json.obj(
+                "givenName" -> "givenName",
+                "middleName" -> "middleName",
+                "familyName" -> "familyName",
+                "birthdate" -> "1984-08-12",
+                "address" -> Json.obj(
+                  "line1" -> "line1",
+                  "line2" -> "line2",
+                  "line3" -> "line3",
+                  "line4" -> "line4",
+                  "postCode" -> "TF34ER",
+                  "countryCode" -> "UK",
+                  "countryName" -> "United Kingdom"
+                )
+              )
             )
           }
         }

@@ -17,15 +17,20 @@
 package controllers.triggeredMigration
 
 import controllers.ControllerISpecHelper
+import enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.admin.TriggeredMigration
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import org.scalatest.Assertion
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.*
 import scala.concurrent.Future
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
@@ -79,8 +84,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             "has an active sole trader business, uk property and foreignProperty" in {
               enable(TriggeredMigration)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
-
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness.copy(channel = HmrcUnconfirmed.getValue))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
@@ -93,7 +102,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             "has an active sole trader business and uk property only" in {
               enable(TriggeredMigration)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { (result:WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
@@ -105,7 +119,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             "has an active sole trader business and foreign property only" in {
               enable(TriggeredMigration)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessWithLatency)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessWithLatency.copy(channel = HmrcUnconfirmed.getValue))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -117,7 +136,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             "has an active uk property and foreign property only" in {
               enable(TriggeredMigration)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyBusiness)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyBusiness.copy(channel = HmrcUnconfirmed.getValue))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -128,7 +152,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             "has an active sole trader business only" in {
               enable(TriggeredMigration)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse.copy(channel = HmrcUnconfirmed.getValue))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -141,7 +170,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             "has an active uk property only" in {
               enable(TriggeredMigration)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(channel = HmrcUnconfirmed.getValue))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -151,7 +185,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             "has an active foreign property only" in {
               enable(TriggeredMigration)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness.copy(channel = HmrcUnconfirmed.getValue))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -161,7 +200,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             "has no active businesses" in {
               enable(TriggeredMigration)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allCeasedBusinesses)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allCeasedBusinesses.copy(channel = HmrcUnconfirmed.getValue))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2019", Some("LATEST"))(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -173,7 +217,12 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             "has active businesses with an unknown income source and business name" in {
               enable(TriggeredMigration)
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName.copy(channel = HmrcUnconfirmed.getValue))
+              ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+              IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
+                status = OK,
+                body = liabilityCalculationModelSuccessful
+              )
 
               whenReady(buildGETMTDClient(path, additionalCookies): Future[WSResponse]) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)

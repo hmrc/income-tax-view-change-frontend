@@ -17,13 +17,31 @@
 package auth.authV2.models
 
 import auth.authV2.Constants
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
-import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name}
+import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole, Enrolment, Enrolments}
+
+import java.time.LocalDate
 
 case class AuthUserDetails(enrolments: Enrolments,
                            affinityGroup: Option[AffinityGroup],
                            credentials: Option[Credentials],
-                           name: Option[Name] = None
+                           name: Option[Name] = None,
+                           internalId: Option[String] = None,
+                           externalId: Option[String] = None,
+                           agentCode: Option[String] = None,
+                           nino: Option[String] = None,
+                           dateOfBirth: Option[LocalDate] = None,
+                           email: Option[String] = None,
+                           agentInformation: Option[AgentInformation] = None,
+                           groupIdentifier: Option[String] = None,
+                           credentialRole: Option[CredentialRole] = None,
+                           mdtpInformation: Option[MdtpInformation] = None,
+                           itmpName: Option[ItmpName] = None,
+                           itmpDateOfBirth: Option[LocalDate] = None,
+                           itmpAddress: Option[ItmpAddress] = None,
+                           credentialStrength: Option[String] = None,
+                           loginTimes: Option[LoginTimes] = None,
+                           confidenceLevel: Option[ConfidenceLevel] = None
                           ){
   lazy val agentReferenceNumber: Option[String] = getEnrolment(Constants.agentServiceEnrolmentName)
 

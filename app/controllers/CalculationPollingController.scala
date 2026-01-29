@@ -73,7 +73,7 @@ class CalculationPollingController @Inject()(val authActions: AuthActions,
   }
 
   def calculationPoller(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit user =>
         lazy val successfulPollRedirect: Call = if (isFinalCalc) {
           controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
@@ -92,7 +92,7 @@ class CalculationPollingController @Inject()(val authActions: AuthActions,
     }
 
   def calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean, origin: Option[String] = None): Action[AnyContent] = {
-    authActions.asMTDPrimaryAgent.async { implicit user =>
+    authActions.asMTDPrimaryAgent().async { implicit user =>
 
       lazy val successfulPollRedirect: Call = if (isFinalCalc) {
         controllers.routes.FinalTaxCalculationController.showAgent(taxYear)

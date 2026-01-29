@@ -27,7 +27,6 @@ import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.NavBarFs
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
-import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -53,26 +52,25 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
     await(sessionService.deleteSession(Add))
   }
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): UIJourneySessionData =
+  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData =
     UIJourneySessionData(
       sessionId = testSessionId,
       journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
-      addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData),
-      triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration))
+      addIncomeSourceData = Some(if (incomeSourceType == SelfEmployment) testAddBusinessData else testAddPropertyData)
     )
 
-  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
+  def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): String = {
     val pathStart = if (mtdRole == MTDIndividual) "/manage-your-businesses" else "/agents/manage-your-businesses"
     incomeSourceType match {
-      case SelfEmployment => s"$pathStart/add-sole-trader/business-check-answers"
-      case UkProperty => s"$pathStart/add-uk-property/check-answers"
-      case ForeignProperty => s"$pathStart/add-foreign-property/check-answers"
+      case SelfEmployment => s"$pathStart/add-sole-trader/business-check-answers?isTriggeredMigration=$isTriggeredMigration"
+      case UkProperty => s"$pathStart/add-uk-property/check-answers?isTriggeredMigration=$isTriggeredMigration"
+      case ForeignProperty => s"$pathStart/add-foreign-property/check-answers?isTriggeredMigration=$isTriggeredMigration"
     }
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
     List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-      val path = getPath(mtdUserRole, incomeSourceType)
+      val path = getPath(mtdUserRole, incomeSourceType, false)
       val additionalCookies = getAdditionalCookies(mtdUserRole)
 
       s"GET $path" when {
@@ -170,12 +168,14 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
             "redirect to check hmrc records page" when {
               "user selects 'confirm and continue' and they are in triggered migration" in {
+                val path = getPath(mtdUserRole, incomeSourceType, isTriggeredMigration = true)
+
                 disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
                 IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
-                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType, isTriggeredMigration = true)))
+                await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
                 incomeSourceType match {

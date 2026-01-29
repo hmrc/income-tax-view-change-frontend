@@ -46,7 +46,8 @@
         postAction: Call,
         isAgent: Boolean,
         backUrl: String,
-        origin: Option[String] = None
+        origin: Option[String] = None,
+        isTriggeredMigration: Boolean
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
@@ -61,25 +62,25 @@
 
 @changeBusinessNameURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = CheckMode).url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = CheckMode, isTriggeredMigration).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = CheckMode).url
+        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = CheckMode, isTriggeredMigration).url
     }
 }
 
 @changeBusinessTradeURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(mode = CheckMode).url
+        controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(mode = CheckMode, isTriggeredMigration).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(mode = CheckMode).url
+        controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(mode = CheckMode, isTriggeredMigration).url
     }
 }
 
 @changeBusinessAddressURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = CheckMode).url
+        controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = CheckMode, isTriggeredMigration).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = CheckMode).url
+        controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = CheckMode, isTriggeredMigration).url
     }
 }
 
@@ -107,7 +108,7 @@
 
 
 @changeStartDateURL = @{
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = CheckMode, viewModel.incomeSourceType).url
+    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = CheckMode, viewModel.incomeSourceType, isTriggeredMigration).url
 }
 
 @extractName = @{
