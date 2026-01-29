@@ -19,7 +19,7 @@ package audit.models
 import scala.language.implicitConversions
 
 case class IvOutcomeSuccessAuditModel(nino: String) extends AuditModel {
-  override val transactionName: String = enums.TransactionName.LowConfidenceLevelIvOutcomeSuccess
+  override val transactionName: String = enums.TransactionName.TransactionName.LowConfidenceLevelIvOutcomeSuccess
   override val detail: Seq[(String, String)] = Seq(
     "userType" -> "Individual",
     "nino" -> nino

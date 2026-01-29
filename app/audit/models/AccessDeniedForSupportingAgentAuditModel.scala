@@ -22,7 +22,7 @@ import play.api.libs.json.{JsValue, Json}
 import scala.language.implicitConversions
 
 case class AccessDeniedForSupportingAgentAuditModel(mtdItUser: AuthorisedAndEnrolledRequest[_]) extends ExtendedAuditModel {
-  override val transactionName: String = enums.TransactionName.AccessDeniedForSupportingAgent
+  override val transactionName: String = enums.TransactionName.TransactionName.AccessDeniedForSupportingAgent
   override val detail: JsValue = {
     Json.obj("mtditid" -> mtdItUser.mtditId,
       "agentReferenceNumber" -> mtdItUser.authUserDetails.agentReferenceNumber,

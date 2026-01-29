@@ -33,7 +33,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
                                                 )
   extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.PaymentAllocations
+  override val transactionName: String = enums.TransactionName.TransactionName.PaymentAllocations
   override val auditType: String = enums.AuditType.AuditType.PaymentAllocations
 
   private def getTaxYearString(periodTo: LocalDate): String = {

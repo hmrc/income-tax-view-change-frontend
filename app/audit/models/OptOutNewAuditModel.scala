@@ -23,7 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 import scala.language.implicitConversions
 
 case class OptOutNewAuditModel(optOutTaxYear: Seq[String])(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
-  override val transactionName: String = enums.TransactionName.OptOutTaxYearsPage
+  override val transactionName: String = enums.TransactionName.TransactionName.OptOutTaxYearsPage
   override val auditType: String = enums.AuditType.AuditType.OptOutTaxYearsPage
 
   override val detail: JsValue =

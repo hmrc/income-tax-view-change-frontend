@@ -25,7 +25,7 @@ case class InitiatePayNowAuditModel(mtditid: String, nino: String,
                                     saUtr: Option[String], credId: Option[String],
                                     userType: Option[AffinityGroup]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.InitiatePayNow
+  override val transactionName: String = enums.TransactionName.TransactionName.InitiatePayNow
   override val auditType: String = enums.AuditType.AuditType.InitiatePayNow
 
   private case class AuditDetail(mtditid: String, nino: String,

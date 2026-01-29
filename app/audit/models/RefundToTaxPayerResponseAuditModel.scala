@@ -28,7 +28,7 @@ import scala.language.implicitConversions
 case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistoryModel)
                                              (implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.RefundToTaxPayer
+  override val transactionName: String = enums.TransactionName.TransactionName.RefundToTaxPayer
   override val auditType: String = enums.AuditType.AuditType.RefundToTaxPayerResponse
 
   val repaymentHistoryItem: Option[RepaymentHistory] = repaymentHistory.repaymentsViewerDetails.headOption

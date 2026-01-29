@@ -25,7 +25,7 @@ import scala.language.implicitConversions
 
 object NextUpdatesAuditing {
 
-  private val nextUpdateTransactionName = enums.TransactionName.ObligationsPageView
+  private val nextUpdateTransactionName = enums.TransactionName.TransactionName.ObligationsPageView
   private val nextUpdateAuditType: String = enums.AuditType.AuditType.ObligationsPageView
 
   case class NextUpdatesAuditModel[A](user: MtdItUser[A]) extends ExtendedAuditModel {

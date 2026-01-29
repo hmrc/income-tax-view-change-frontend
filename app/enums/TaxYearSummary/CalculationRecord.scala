@@ -16,14 +16,5 @@
 
 package enums.TaxYearSummary
 
-sealed trait CalculationRecord
-
-object CalculationRecord {
-  case object PREVIOUS extends CalculationRecord {
-    override def toString: String = "PREVIOUS"
-  }
-
-  case object LATEST extends CalculationRecord {
-    override def toString: String = "LATEST"
-  }
-}
+enum CalculationRecord:
+  case PREVIOUS, LATEST

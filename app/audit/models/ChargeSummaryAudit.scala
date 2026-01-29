@@ -159,7 +159,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
       Json.obj("paymentAllocationsChargeHistory" -> paymentAllocationsChargeHistory)
   }
 
-  override val transactionName: String = enums.TransactionName.ChargeSummary
+  override val transactionName: String = enums.TransactionName.TransactionName.ChargeSummary
   override val detail: JsValue = {
     userAuditDetails(mtdItUser) ++
       Json.obj("charge" -> chargeDetails) ++

@@ -29,7 +29,7 @@ import scala.language.implicitConversions
 case class ForecastIncomeAuditModel(user: MtdItUser[_], endOfYearEstimate: EndOfYearEstimate)
   extends ExtendedAuditModel with ImplicitDateParser {
 
-  override val transactionName: String = enums.TransactionName.ForecastIncome
+  override val transactionName: String = enums.TransactionName.TransactionName.ForecastIncome
   override val auditType: String = enums.AuditType.AuditType.ForecastIncome
 
   private val totalEstimatedIncome: Option[Int] = endOfYearEstimate.totalEstimatedIncome

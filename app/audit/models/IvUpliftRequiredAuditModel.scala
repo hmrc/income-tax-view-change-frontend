@@ -21,7 +21,7 @@ import scala.language.implicitConversions
 case class IvUpliftRequiredAuditModel(reasonForHandoff: String,
                                       currentConfidenceLevel: Int,
                                       minimumConfidenceLevelToProceed: Int) extends AuditModel {
-  override val transactionName: String = enums.TransactionName.LowConfidenceLevelIvHandoff
+  override val transactionName: String = enums.TransactionName.TransactionName.LowConfidenceLevelIvHandoff
   override val detail: Seq[(String, String)] = Seq(
     "userType" -> "Individual",
     "reasonForHandoff" -> reasonForHandoff,

@@ -26,7 +26,7 @@ import scala.language.implicitConversions
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: Seq[Payment]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.PaymentHistoryResponse
+  override val transactionName: String = enums.TransactionName.TransactionName.PaymentHistoryResponse
   override val auditType: String = enums.AuditType.AuditType.PaymentHistoryResponse
 
   private def getPayment(payment: Payment, desc: String): JsObject = {

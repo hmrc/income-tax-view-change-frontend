@@ -56,7 +56,7 @@ case class OptOutAuditModel(
                              `currentYear-1Crystallised`: Boolean
                            ) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
+  override val transactionName: String = enums.TransactionName.TransactionName.OptOutQuarterlyReportingRequest
 
   override val auditType: String = enums.AuditType.AuditType.OptOutQuarterlyReportingRequest
 
@@ -82,7 +82,7 @@ case class OptOutCompleteAuditModel(
                                      `currentYear-1Crystallised`: Boolean
                                    ) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
+  override val transactionName: String = enums.TransactionName.TransactionName.OptOutQuarterlyReportingRequest
 
   override val auditType: String = enums.AuditType.AuditType.OptOutQuarterlyReportingRequest
 

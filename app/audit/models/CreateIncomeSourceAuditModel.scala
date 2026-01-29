@@ -35,7 +35,7 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
 
 
   private val isSuccessful = failureCategory.isEmpty
-  override val transactionName: String = enums.TransactionName.CreateIncomeSource
+  override val transactionName: String = enums.TransactionName.TransactionName.CreateIncomeSource
   override val auditType: String = enums.AuditType.AuditType.CreateIncomeSource
 
   private val outcome: JsObject = {

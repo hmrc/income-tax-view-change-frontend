@@ -19,7 +19,7 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.AuditType.ClaimARefundResponse
-import enums.TransactionName.ClaimARefund
+import enums.TransactionName.TransactionName.ClaimARefund
 import models.creditsandrefunds.{CreditsModel, Transaction}
 import models.financialDetails.*
 import play.api.Logger

@@ -29,7 +29,7 @@ case class ViewInYearTaxEstimateAuditModel(
                                             body: ViewInYearTaxEstimateAuditBody
                                           ) extends AuditModel {
 
-  override val transactionName: String = enums.TransactionName.ViewInYearTaxEstimate
+  override val transactionName: String = enums.TransactionName.TransactionName.ViewInYearTaxEstimate
   override val auditType: String = enums.AuditType.AuditType.ViewInYearTaxEstimate
 
   override val detail: Seq[(String, String)] = Seq(

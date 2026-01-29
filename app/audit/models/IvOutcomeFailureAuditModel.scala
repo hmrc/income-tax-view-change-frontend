@@ -19,7 +19,7 @@ package audit.models
 import scala.language.implicitConversions
 
 case class IvOutcomeFailureAuditModel(journeyId: String) extends AuditModel() {
-  override val transactionName: String = enums.TransactionName.LowConfidenceLevelIvOutcomeFail
+  override val transactionName: String = enums.TransactionName.TransactionName.LowConfidenceLevelIvOutcomeFail
   override val detail: Seq[(String, String)] = Seq(
     "userType" -> "Individual",
     "ivJourneyId" -> journeyId

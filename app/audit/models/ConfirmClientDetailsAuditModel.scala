@@ -27,7 +27,7 @@ case class ConfirmClientDetailsAuditModel(clientName: String,
                                           isSupportingAgent: Boolean,
                                           credId: Option[String]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.ClientDetailsConfirmed
+  override val transactionName: String = enums.TransactionName.TransactionName.ClientDetailsConfirmed
 
   override val auditType: String = enums.AuditType.AuditType.ClientDetailsConfirmed
 

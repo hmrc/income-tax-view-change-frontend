@@ -16,31 +16,14 @@
 
 package enums.TaxYearSummary
 
-sealed trait CalcType {
-  val value: String
-}
-
-object CalcType {
-  private case object DECLARE_CRYSTALLISATION extends CalcType {
-    override val value: String = "CR"
-  }
-
-  private case object AMENDMENT extends CalcType {
-    override val value: String = "AM"
-  }
-
-  private case object DECLARE_FINALISATION extends CalcType {
-    override val value: String = "DF"
-  }
-
-  private case object CONFIRM_AMENDMENT extends CalcType {
-    override val value: String = "CA"
-  }
-
-  private case object CRYSTALLISATION extends CalcType {
-    override val value: String = "crystallisation"
-  }
-
+enum CalcType(val value: String):
+  case DECLARE_CRYSTALLISATION extends CalcType("CR")
+  case AMENDMENT extends CalcType("AM")
+  case DECLARE_FINALISATION extends CalcType("DF")
+  case CONFIRM_AMENDMENT extends CalcType("CA")
+  case CRYSTALLISATION extends CalcType("crystallisation")
+  
+object CalcType:
   val crystallisedTypes: Set[String] = Set(
     DECLARE_CRYSTALLISATION,
     CRYSTALLISATION,
@@ -51,4 +34,3 @@ object CalcType {
     AMENDMENT,
     CONFIRM_AMENDMENT
   ).map(_.value)
-}

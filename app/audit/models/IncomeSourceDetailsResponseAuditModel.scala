@@ -31,7 +31,7 @@ case class IncomeSourceDetailsResponseAuditModel(
                                                   yearOfMigration: Option[String]
                                                 ) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.IncomeSourceDetailsResponse
+  override val transactionName: String = enums.TransactionName.TransactionName.IncomeSourceDetailsResponse
   override val auditType: String = enums.AuditType.AuditType.IncomeSourceDetailsResponse
 
   override val detail: JsValue = {

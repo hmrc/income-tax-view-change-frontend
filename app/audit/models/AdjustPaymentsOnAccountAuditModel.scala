@@ -30,7 +30,7 @@ case class AdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,
                                              isDecreased: Boolean
                                             )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.AdjustPaymentsOnAccount
+  override val transactionName: String = enums.TransactionName.TransactionName.AdjustPaymentsOnAccount
 
   override val auditType: String = enums.AuditType.AuditType.AdjustPaymentsOnAccount
 

@@ -39,7 +39,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     case Left((date, _)) => Json.obj("nextUpdateDeadline" -> date.toString)
   }
 
-  override val transactionName: String = enums.TransactionName.ItsaHomePage
+  override val transactionName: String = enums.TransactionName.TransactionName.ItsaHomePage
 
   override val detail: JsValue = Json.obj(
     "mtditid" -> mtdItUser.mtditid,

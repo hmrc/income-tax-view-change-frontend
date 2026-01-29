@@ -31,7 +31,7 @@ case class OptInAuditModel(
                             resolvedOutcome: ITSAStatusUpdateResponse
                           )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.OptInQuarterlyReportingRequest
+  override val transactionName: String = enums.TransactionName.TransactionName.OptInQuarterlyReportingRequest
 
   override val auditType: String = enums.AuditType.AuditType.OptInQuarterlyReportingRequest
 

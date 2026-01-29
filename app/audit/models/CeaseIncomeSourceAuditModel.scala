@@ -45,7 +45,7 @@ case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
       "failureReason" -> updateIncomeSourceErrorResponse.get.reason)
   }
 
-  override val transactionName: String = enums.TransactionName.CeaseIncomeSource
+  override val transactionName: String = enums.TransactionName.TransactionName.CeaseIncomeSource
   override val auditType: String = enums.AuditType.AuditType.CeaseIncomeSource
   override val detail: JsValue = {
     val details = userAuditDetails(user) ++

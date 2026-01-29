@@ -20,8 +20,10 @@ import audit.reporting_obligations.*
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import enums.AuditType
 import enums.AuditType.AuditType.{IncomeSourceDetailsResponse as _, given}
-import enums.{AuditType, TransactionName}
+import enums.TransactionName.*
+import enums.TransactionName.TransactionName.*
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, UnknownStatus, Voluntary}

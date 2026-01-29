@@ -30,7 +30,7 @@ case class ManageIncomeSourceCheckYourAnswersAuditModel(isSuccessful: Boolean,
                                                         businessName: String
                                                        )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.UpdateIncomeSource
+  override val transactionName: String = enums.TransactionName.TransactionName.UpdateIncomeSource
 
   override val auditType: String = enums.AuditType.AuditType.UpdateIncomeSource
 

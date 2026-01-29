@@ -27,7 +27,7 @@ case class EnterClientUTRAuditModel(isSuccessful: Boolean,
                                     credId: Option[String],
                                     isSupportingAgent: Option[Boolean]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.EnterClientUTR
+  override val transactionName: String = enums.TransactionName.TransactionName.EnterClientUTR
 
   override val auditType: String = enums.AuditType.AuditType.EnterClientUTR
 

@@ -31,7 +31,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
 
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
 
-  override val transactionName: String = enums.TransactionName.WhatYouOweResponse
+  override val transactionName: String = enums.TransactionName.TransactionName.WhatYouOweResponse
   override val auditType: String = enums.AuditType.AuditType.WhatYouOweResponse
 
   private val docDetailsListJson: List[JsObject] =
