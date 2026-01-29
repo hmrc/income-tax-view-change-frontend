@@ -44,6 +44,7 @@ import views.html.{ChargeSummaryView, YourSelfAssessmentChargeSummaryView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.json.Json
 
 object ChargeSummaryController {
   case class ErrorCode(message: String)
@@ -189,6 +190,11 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetailWithDueDate.documentDetail,
           financialDetailsForCharge)
+        
+        println("XXXXXX")
+        println(Json.prettyPrint(Json.toJson(documentDetailWithDueDate.documentDetail)))
+        println("XXXXXX")
+        
 
         if (chargeItem.isPenalty && !isEnabled(PenaltiesAndAppeals)){
           Future.successful(onError("Charge type prohibited by feature switches", isAgent, showInternalServerError = true))

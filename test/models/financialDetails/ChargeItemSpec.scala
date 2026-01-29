@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import enums.CodingOutType.CODING_OUT_CLASS2_NICS
 import exceptions.MissingFieldException
 import models.financialDetails.ChargeItem.filterAllowedCharges
+import play.api.libs.json.Json
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
@@ -275,6 +276,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = None)
+        
+        println(Json.prettyPrint(Json.toJson(chargeItem)))
 
         val exception = intercept[MissingFieldException] {
           chargeItem.getInterestOutstandingAmount
