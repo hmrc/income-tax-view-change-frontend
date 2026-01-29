@@ -1449,7 +1449,7 @@ credit-and-refund.subHeading.has-no-credits-2                     = has been req
 ## Money In Your Account
 
 money-in-your-account.heading                                           = Money in your account
-money-in-your-account.credit                                            = Credit: {0} NEEDS WELSH
+money-in-your-account.credit                                            = Credit: {0}
 
 money-in-your-account.no-money                                          = You do not have any money in your account at the moment.
 money-in-your-account.no-money-one-refund                               = You do not have any money in your account at the moment, but you have a
