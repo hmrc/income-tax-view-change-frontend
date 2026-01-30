@@ -142,8 +142,6 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
       val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
       val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
 
-      println(Console.CYAN + s"Triggered Migration Opt: $triggeredMigrationOpt" + Console.RESET)
-
       incomeSourceType match {
         case SelfEmployment => ceaseSelfEmployment(incomeSourceIdOpt, endDateOpt, isAgent, isTriggeredMigration)(implicitly, errorHandler)
         case _ => ceaseProperty(endDateOpt, incomeSourceType, isAgent, isTriggeredMigration)(implicitly, errorHandler)
@@ -193,9 +191,6 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
                          (implicit user: MtdItUser[_]): Future[Result] = {
     val redirectCall = getRedirectCall(isAgent, incomeSourceType, isTriggeredMigration)
 
-    println(Console.MAGENTA + redirectCall + Console.RESET)
-    println(Console.YELLOW + isTriggeredMigration + Console.RESET)
-
     updateIncomeSourceService.updateCessationDate(user.nino, incomeSourceId.value, cessationDate).flatMap {
       case Right(_) =>
         auditingService.extendedAudit(CeaseIncomeSourceAuditModel(
@@ -225,7 +220,6 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
 
   def submit(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit request =>
-      println(Console.CYAN + s"Submit called with isTriggeredMigration: $isTriggeredMigration" + Console.RESET)
       handleSubmitRequest(
         isAgent = false,
         incomeSourceType = incomeSourceType,
