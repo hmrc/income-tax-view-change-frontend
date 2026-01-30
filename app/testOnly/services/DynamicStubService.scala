@@ -75,7 +75,7 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     }
   }
 
-  def overwriteCustomUserData(nino: Nino, mtdid: String, customUserRecord: CustomUserRecord)(implicit headerCarrier: HeaderCarrier) = {
+  def overwriteCustomUserData(nino: Nino, mtdid: String, customUserRecord: CustomUserRecord)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     dynamicStubConnector.overwriteCustomUser(nino, mtdid, customUserRecord)
   }
 }

@@ -110,6 +110,8 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                     ukPropertyCheckbox = postedUser.ukPropertyCheckbox.getOrElse(false),
                     foreignPropertyCheckbox = postedUser.foreignPropertyCheckbox.getOrElse(false),
                     numberOfCeasedBusinesses = postedUser.numberOfCeasedBusinesses.getOrElse(0),
+                    numberOfCeasedUkProperties = postedUser.NumberOfCeasedUkProperties.getOrElse(0),
+                    numberOfCeasedForeignProperties = postedUser.NumberOfCeasedForeignProperties.getOrElse(0),
                     latencyCheckbox = postedUser.latencyCheckbox.getOrElse(false)
                   )
 

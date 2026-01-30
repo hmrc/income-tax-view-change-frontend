@@ -205,7 +205,6 @@
         @LatencyCheckbox
         @channelDropdown
         @ActivePropertiesInput
-        @CeasedPropertiesInput
         <h2 class="govuk-heading-m display-none CustomUserDataDropdowns" id="calculations-data-heading">Calculations Data</h2>
         @calcTypeDropdown
 
@@ -305,6 +304,20 @@
         )
     )
 
+    @govukInput(
+        Input(
+            id = "NumberOfCeasedBusinesses",
+            name = "NumberOfCeasedBusinesses",
+            classes = "govuk-input--width-2 display-none CustomUserDataDropdowns",
+            label = Label(
+                isPageHeading = false,
+                classes = "display-none CustomUserDataDropdowns",
+                content = Text("Number of Ceased Sole Trader Businesses")
+            ),
+            value = Some("0")
+        )
+    )
+
     @govukCheckboxes(
         Checkboxes(
             fieldset = Some(Fieldset(
@@ -318,6 +331,20 @@
                     value = "true"
                 )
             ),
+        )
+    )
+
+    @govukInput(
+        Input(
+            id = "NumberOfCeasedUkProperties",
+            name = "NumberOfCeasedUkProperties",
+            classes = "govuk-input--width-2 display-none CustomUserDataDropdowns",
+            label = Label(
+                isPageHeading = false,
+                classes = "display-none CustomUserDataDropdowns",
+                content = Text("Number of Ceased UK Properties")
+            ),
+            value = Some("0")
         )
     )
 
@@ -336,18 +363,16 @@
             ),
         )
     )
-}
 
-@CeasedPropertiesInput = {
     @govukInput(
         Input(
-            id = "NumberOfCeasedBusinesses",
-            name = "NumberOfCeasedBusinesses",
+            id = "NumberOfCeasedForeignProperties",
+            name = "NumberOfCeasedForeignProperties",
             classes = "govuk-input--width-2 display-none CustomUserDataDropdowns",
             label = Label(
                 isPageHeading = false,
                 classes = "display-none CustomUserDataDropdowns",
-                content = Text("Number of Ceased Businesses")
+                content = Text("Number of Ceased Foreign Properties")
             ),
             value = Some("0")
         )

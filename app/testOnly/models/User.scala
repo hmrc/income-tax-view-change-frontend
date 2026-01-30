@@ -61,6 +61,8 @@ case class PostedUser(nino: String,
                       ukPropertyCheckbox: Option[Boolean],
                       foreignPropertyCheckbox: Option[Boolean],
                       numberOfCeasedBusinesses: Option[Int],
+                      NumberOfCeasedUkProperties: Option[Int],
+                      NumberOfCeasedForeignProperties: Option[Int],
                       latencyCheckbox: Option[Boolean]
                      ) {
 
@@ -97,6 +99,8 @@ object PostedUser {
       "UkPropertyCheckbox" -> optional(boolean),
       "ForeignPropertyCheckbox" -> optional(boolean),
       "NumberOfCeasedBusinesses" -> optional(number),
+      "NumberOfCeasedUkProperties" -> optional(number),
+      "NumberOfCeasedForeignProperties" -> optional(number),
       "latencyCheckbox" -> optional(boolean)
     )(
       (nino,
@@ -113,6 +117,8 @@ object PostedUser {
       ukPropertyCheckbox,
       foreignPropertyCheckbox,
       numberOfCeasedBusinesses,
+      NumberOfCeasedUkProperties,
+      NumberOfCeasedForeignProperties,
       latencyCheckbox) => PostedUser(
         nino,
         agentType,
@@ -128,6 +134,8 @@ object PostedUser {
         ukPropertyCheckbox,
         foreignPropertyCheckbox,
         numberOfCeasedBusinesses,
+        NumberOfCeasedUkProperties,
+        NumberOfCeasedForeignProperties,
         latencyCheckbox
     ))(form => Some(
     form.nino,
@@ -144,6 +152,8 @@ object PostedUser {
     form.ukPropertyCheckbox,
     form.foreignPropertyCheckbox,
     form.numberOfCeasedBusinesses,
+    form.NumberOfCeasedUkProperties,
+    form.NumberOfCeasedForeignProperties,
     form.latencyCheckbox
     ))
   )
@@ -161,6 +171,8 @@ case class CustomUserRecord(cyMinusOneCrystallisationStatus: String,
                             ukPropertyCheckbox: Boolean,
                             foreignPropertyCheckbox: Boolean,
                             numberOfCeasedBusinesses: Int,
+                            numberOfCeasedUkProperties: Int,
+                            numberOfCeasedForeignProperties: Int,
                             latencyCheckbox: Boolean)
 
 object CustomUserRecord {
