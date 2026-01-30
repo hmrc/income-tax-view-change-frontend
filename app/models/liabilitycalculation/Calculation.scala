@@ -54,7 +54,7 @@ object ChargeableEventGainsIncome {
   implicit val format: OFormat[ChargeableEventGainsIncome] = Json.format[ChargeableEventGainsIncome]
 }
 
-case class DividendsIncome(chargeableForeignDividends: Option[Int] = None)
+case class DividendsIncome(totalUkDividends: Option[Int] = None, chargeableForeignDividends: Option[Int] = None)
 
 object DividendsIncome {
   implicit val format: OFormat[DividendsIncome] = Json.format[DividendsIncome]
