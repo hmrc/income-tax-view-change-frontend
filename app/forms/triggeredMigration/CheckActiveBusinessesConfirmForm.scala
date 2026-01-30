@@ -23,7 +23,7 @@ object CheckActiveBusinessesConfirmForm {
 
   val responseYes: String = "Yes"
   val responseNo: String  = "No"
-  val response: String    = "check-active-businesses-confirm"
+  val response: String    = "check-active-businesses-confirm-form"
   val errorKey = "triggered-migration.check-active-businesses-confirm.error.required"
 
   def apply(): Form[CheckActiveBusinessesConfirmForm] = {
