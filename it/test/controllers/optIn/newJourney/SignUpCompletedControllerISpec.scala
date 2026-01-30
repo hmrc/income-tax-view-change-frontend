@@ -92,7 +92,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
 
     val nextYearSubmitUpdatesHeading = "Submit updates in software"
     val nextYearSubmitUpdatesDesc = "For any tax year you are using Making Tax Digital for Income Tax, you need compatible software (opens in new tab)."
-    val nextYearSubmitUpdatesDescAnnual = "When you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
+    val nextYearSubmitUpdatesDescAnnual = "When you are not using Making Tax Digital for Income Tax, you can find out here how to file your Self Assessment tax return (opens in new tab)."
 
     val nextYearReportingObligationsHeading = "Your reporting obligations in the future"
     val nextYearReportingObligationsDesc = "You have just chosen to sign up from the next tax year onwards, but in future you could have to use Making Tax Digital for Income Tax if:"

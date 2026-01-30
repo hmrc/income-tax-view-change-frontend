@@ -2993,7 +2993,7 @@ signUp.completedSignUp.ny.submitUpdates.desc1.text1 = For any tax year you are u
 signUp.completedSignUp.ny.submitUpdates.desc1.link  = compatible software
 signUp.completedSignUp.ny.submitUpdates.desc1.text2 =
 signUp.completedSignUp.ny.submitUpdates.desc1.text3 = .
-signUp.completedSignUp.ny.submitUpdates.desc2.text1 = When you are opted out, you can find out here how to
+signUp.completedSignUp.ny.submitUpdates.desc2.text1 = When you are not using Making Tax Digital for Income Tax, you can find out here how to
 signUp.completedSignUp.ny.submitUpdates.desc2.link  = file your Self Assessment tax return
 
 signUp.completedSignUp.ny.yourReportingObligations             = Your reporting obligations in the future

@@ -2980,7 +2980,7 @@ signUp.completedSignUp.ny.submitUpdates.desc1.text1 = Ar gyfer unrhyw flwyddyn d
 signUp.completedSignUp.ny.submitUpdates.desc1.link  = meddalwedd sy’n cydweddu
 signUp.completedSignUp.ny.submitUpdates.desc1.text2 = arnoch.
 signUp.completedSignUp.ny.submitUpdates.desc1.text3 =
-signUp.completedSignUp.ny.submitUpdates.desc2.text1 = Ar ôl i chi optio allan, gallwch ddysgu yma sut i
+signUp.completedSignUp.ny.submitUpdates.desc2.text1 = Pan nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddysgu yma sut i
 signUp.completedSignUp.ny.submitUpdates.desc2.link  = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 
 signUp.completedSignUp.ny.yourReportingObligations             = Eich ymrwymiadau o ran adrodd yn y dyfodol
