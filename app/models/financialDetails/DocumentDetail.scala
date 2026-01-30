@@ -58,7 +58,7 @@ case class DocumentDetail(taxYear: Int,
     outstandingAmount == 0
 
   def hasAccruingInterest: Boolean =
-    accruingInterestAmount.getOrElse[BigDecimal](0) > 0
+    accruingInterestAmount.getOrElse[BigDecimal](0) > 0 && !isPaid
 
   def isAccruingInterest: Boolean = accruingInterestAmount match {
     case Some(amount) if amount <= 0 => false

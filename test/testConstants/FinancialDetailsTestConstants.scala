@@ -1178,7 +1178,7 @@ object FinancialDetailsTestConstants {
       balanceDetails = balanceDetails,
       documentDetails = List(
         DocumentDetail(taxYear.toInt, id1040000124, documentDescription.head, Some("documentText"), outstandingAmount.head, 43.21, LocalDate.of(2018, 3, 29), None, None, None,
-          None, None, None, Some(0), None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
+          Some(0), None, None, Some(0), None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate.head, documentDueDate = dueDate.head),
         DocumentDetail(taxYear.toInt, id1040000125, documentDescription(1), Some("documentText"), outstandingAmount(1), 12.34, LocalDate.of(2018, 3, 29), None, None, None,
           None, None, None, None, None, Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = dueDate(1), documentDueDate = dueDate(1))
       ),
@@ -1462,6 +1462,7 @@ object FinancialDetailsTestConstants {
                                                      taxYear: String,
                                                      interestOutstandingAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                                      accruingInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
+                                                     latePaymentInterestAmount: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                                      interestEndDate: List[Option[LocalDate]] = List(Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29))),
                                                      lpiWithDunningLock: List[Option[BigDecimal]] = List(Some(100), Some(100)),
                                                      amountCodedOut: List[Option[BigDecimal]] = List(None, None),
@@ -1482,6 +1483,7 @@ object FinancialDetailsTestConstants {
           latePaymentInterestId = Some("latePaymentInterestId"),
           interestFromDate = Some(LocalDate.of(2018, 3, 29)),
           interestEndDate = interestEndDate(0),
+          latePaymentInterestAmount = latePaymentInterestAmount(0),
           accruingInterestAmount = accruingInterestAmount(0),
           lpiWithDunningLock = lpiWithDunningLock(0),
           paymentLotItem = Some("paymentLotItem"),
@@ -1501,6 +1503,7 @@ object FinancialDetailsTestConstants {
           latePaymentInterestId = Some("latePaymentInterestId"),
           interestFromDate = Some(LocalDate.of(2018, 3, 29)),
           interestEndDate = interestEndDate(1),
+          latePaymentInterestAmount = latePaymentInterestAmount(1),
           accruingInterestAmount = accruingInterestAmount(1),
           lpiWithDunningLock = lpiWithDunningLock(0),
           paymentLotItem = Some("paymentLotItem"),
@@ -1640,7 +1643,8 @@ object FinancialDetailsTestConstants {
     outstandingAmount = List(100, 50),
     taxYear = fixedDate.getYear.toString,
     interestOutstandingAmount = List(None, None),
-    accruingInterestAmount = List(None, None)
+    accruingInterestAmount = List(None, None),
+    latePaymentInterestAmount = List(None, None)
   )
 //
 
@@ -1720,11 +1724,13 @@ object FinancialDetailsTestConstants {
     dueDate = List(Some(fixedDate.plusDays(30)), Some(fixedDate.minusDays(1))),
     outstandingAmount = List(50, 75),
     taxYear = fixedDate.getYear.toString,
-    accruingInterestAmount = List(None, None)
+    accruingInterestAmount = List(None, None),
+    latePaymentInterestAmount = List(None, None)
   )
 
   def financialDetailsWithOutstandingChargesAndLpi(outstandingAmount: List[BigDecimal] = List(0, 0),
                                                    accruingInterestAmount: List[Option[BigDecimal]] = List(None, None),
+                                                   latePaymentInterestAmount: List[Option[BigDecimal]] = List(None, None),
                                                    interestOutstandingAmount: List[Option[BigDecimal]] = List(None, None),
                                                    amountCodedOut: List[Option[BigDecimal]] = List(None, None)
                                                   ): FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
@@ -1735,6 +1741,7 @@ object FinancialDetailsTestConstants {
     outstandingAmount = outstandingAmount,
     taxYear = fixedDate.getYear.toString,
     accruingInterestAmount = accruingInterestAmount,
+    latePaymentInterestAmount = latePaymentInterestAmount,
     interestOutstandingAmount = interestOutstandingAmount,
     amountCodedOut = amountCodedOut
   )
