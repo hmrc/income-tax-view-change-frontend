@@ -68,7 +68,9 @@ object NewCalcBreakdownUnitTestConstants {
       chargeableEventGainsIncome = Some(ChargeableEventGainsIncome(
         totalOfAllGains = 12500
       )),
-      dividendsIncome = Some(DividendsIncome(chargeableForeignDividends = Some(12500))),
+      dividendsIncome = Some(DividendsIncome(
+        totalUkDividends = Some(12500),
+        chargeableForeignDividends = Some(12500))),
       employmentAndPensionsIncome = Some(EmploymentAndPensionsIncome(
         totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
         totalBenefitsInKind = Some(5000.99),
@@ -358,7 +360,9 @@ object NewCalcBreakdownUnitTestConstants {
       chargeableEventGainsIncome = Some(ChargeableEventGainsIncome(
         totalOfAllGains = 12500
       )),
-      dividendsIncome = Some(DividendsIncome(chargeableForeignDividends = Some(12500))),
+      dividendsIncome = Some(DividendsIncome(
+        totalUkDividends = Some(12500),
+        chargeableForeignDividends = Some(12500))),
       employmentAndPensionsIncome = Some(EmploymentAndPensionsIncome(
         totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
         totalBenefitsInKind = Some(5000.99),
