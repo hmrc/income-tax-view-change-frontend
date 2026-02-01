@@ -246,4 +246,12 @@ object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   def stubPostStartSelfServeTimeToPayJourney()(status: Int, response: JsValue): StubMapping = {
     WiremockHelper.stubPost(selfServeTimeToPayJourneyStartUrl, status, response.toString())
   }
+
+  // Triggered Migration - Update Customer Facts
+  def stubUpdateCustomerFacts(mtdId: String)(status: Int): StubMapping =
+    WiremockHelper.stubPut(
+      s"/income-tax-view-change/customer-facts/$mtdId",
+      status,
+      ""
+    )
 }
