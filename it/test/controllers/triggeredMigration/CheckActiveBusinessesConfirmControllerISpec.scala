@@ -106,7 +106,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           val result = buildPOSTMTDPostClient(
             path,
             additionalCookies,
-            body = Map("check-active-businesses-confirm" -> Seq("Yes"))
+            body = Map("check-active-businesses-confirm-form" -> Seq("Yes"))
           ).futureValue
 
           val expectedURI =
@@ -131,7 +131,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           val result = buildPOSTMTDPostClient(
             path,
             additionalCookies,
-            body = Map("check-active-businesses-confirm" -> Seq("No"))
+            body = Map("check-active-businesses-confirm-form" -> Seq("No"))
           ).futureValue
 
           val expectedURI =
@@ -170,7 +170,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           val result = buildPOSTMTDPostClient(
             path,
             additionalCookies,
-            body = Map("check-active-businesses-confirm" -> Seq("Yes"))
+            body = Map("check-active-businesses-confirm-form" -> Seq("Yes"))
           ).futureValue
 
           result should have(
@@ -179,7 +179,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           )
         }
 
-        testAuthFailures(path, mtdRole, optBody = Some(Map("check-active-businesses-confirm" -> Seq("Yes"))))
+        testAuthFailures(path, mtdRole, optBody = Some(Map("check-active-businesses-confirm-form" -> Seq("Yes"))))
       }
     }
   }

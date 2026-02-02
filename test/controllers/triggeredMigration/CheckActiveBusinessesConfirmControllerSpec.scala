@@ -107,7 +107,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "Yes")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "Yes")
           )
 
           status(result) shouldBe 303
@@ -126,7 +126,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "No")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "No")
           )
 
           status(result) shouldBe 303
@@ -161,7 +161,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "Yes")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "Yes")
           )
 
           status(result) shouldBe 303
