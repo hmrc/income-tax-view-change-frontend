@@ -26,7 +26,7 @@ import models.admin.TriggeredMigration
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService}
+import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -38,7 +38,8 @@ class TriggeredMigrationRetrievalAction @Inject()(
                                                    frontendAppConfig: FrontendAppConfig,
                                                    ITSAStatusService: ITSAStatusService,
                                                    incomeTaxConnector: IncomeTaxCalculationConnector,
-                                                   dateService: DateServiceInterface
+                                                   dateService: DateServiceInterface,
+                                                   customerFactsUpdateService: CustomerFactsUpdateService
                                                  )
                                                  (implicit val executionContext: ExecutionContext,
                                                   individualErrorHandler: ItvcErrorHandler,
@@ -55,7 +56,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
       override protected def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
         implicit val req: MtdItUser[A] = request
 
-        lazy val authAction = {
+        lazy val authAction: Future[Either[Result, MtdItUser[A]]] = {
           (request.incomeSources.isConfirmedUser, isTriggeredMigrationPage) match {
             case (true, false) => Future(Right(req))
             case (true, true) => if (req.isAgent()) {
@@ -65,17 +66,21 @@ class TriggeredMigrationRetrievalAction @Inject()(
             }
             case (false, _) =>
               isItsaStatusVoluntaryOrMandated().flatMap {
-                case Right(false) => Future(Right(req))
+                case Right(false) =>
+                  confirmCustomerFactsForNonEligibleUsers(req).map(_ => Right(req))
                 case Left(errorResult) => Future(Left(errorResult))
-                case Right(true) => isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).map {
-                    case Right(true) => Right(req)
-                    case Right(false) => if(isTriggeredMigrationPage) {
-                      Right(req)
-                    } else {
+                case Right(true) => isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).flatMap {
+                  case Right(true) =>
+                    confirmCustomerFactsForNonEligibleUsers(req).map(_ => Right(req))
+                  case Right(false) => if (isTriggeredMigrationPage) {
+                    Future.successful(Right(req))
+                  } else {
+                    Future.successful(
                       Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
-                    }
-                    case Left(errorResult) => Left(errorResult)
+                    )
                   }
+                  case Left(errorResult) => Future.successful(Left(errorResult))
+                }
               }
           }
         }
@@ -128,4 +133,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
       case _ => individualErrorHandler.showInternalServerError()(request)
     }
   }
+
+  private def confirmCustomerFactsForNonEligibleUsers[A](req: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Unit] =
+    customerFactsUpdateService.updateCustomerFacts(req.mtditid, isAlreadyConfirmed = false)
 }
