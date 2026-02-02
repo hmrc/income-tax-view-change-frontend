@@ -101,6 +101,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
         checkAgentTitle(pageDocument)
         checkUkPropertyComponents(pageDocument)
+        checkPropertyBusinessesText(pageDocument)
       }
       "return the correct content when the user has a foreign property business" in {
 
@@ -126,7 +127,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
         checkAgentTitle(pageDocument)
         checkForeignPropertyComponents(pageDocument)
-
+        checkPropertyBusinessesText(pageDocument)
       }
 
       "return the correct content when the user has 1 ceased business" in {
@@ -153,6 +154,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
         checkAgentTitle(pageDocument)
         checkCeasedBusinessComponents(pageDocument, isMultiple = false)
+        checkPropertyBusinessesText(pageDocument)
       }
 
       "return the correct content when the user has multiple ceased businesses" in {
@@ -179,8 +181,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
         checkAgentTitle(pageDocument)
         checkCeasedBusinessComponents(pageDocument, isMultiple = true)
-
-
+        checkPropertyBusinessesText(pageDocument)
       }
 
       "return the correct content when the user has all business types" in {
@@ -210,6 +211,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
         checkUkPropertyComponents(pageDocument)
         checkForeignPropertyComponents(pageDocument)
         checkCeasedBusinessComponents(pageDocument, isMultiple = false)
+        checkPropertyBusinessesText(pageDocument)
       }
 
 
@@ -237,6 +239,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
         pageDocument.select("#business-date-0").isEmpty shouldBe true
         pageDocument.select("#foreign-date").isEmpty shouldBe true
         pageDocument.select("#uk-date").isEmpty shouldBe true
+        checkPropertyBusinessesText(pageDocument)
       }
     }
 
@@ -264,6 +267,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
         checkTitle(pageDocument)
         checkSoleTraderComponents(pageDocument)
+        checkPropertyBusinessesText(pageDocument)
       }
       "return the correct content when the user has a uk property business" in {
         val viewIncomeSourcesViewModel: ViewIncomeSourcesViewModel =
@@ -288,6 +292,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
         checkTitle(pageDocument)
         checkUkPropertyComponents(pageDocument)
+        checkPropertyBusinessesText(pageDocument)
       }
       "return the correct content when the user has a foreign property business" in {
         val viewIncomeSourcesViewModel: ViewIncomeSourcesViewModel =
@@ -312,6 +317,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
         checkTitle(pageDocument)
         checkForeignPropertyComponents(pageDocument)
+        checkPropertyBusinessesText(pageDocument)
       }
 
       "return the correct content when the user has 1 ceased business" in {
@@ -338,6 +344,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
         checkTitle(pageDocument)
         checkCeasedBusinessComponents(pageDocument, isMultiple = false)
+        checkPropertyBusinessesText(pageDocument)
       }
 
       "return the correct content when the user has multiple ceased businesses" in {
@@ -364,6 +371,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
 
         checkTitle(pageDocument)
         checkCeasedBusinessComponents(pageDocument, isMultiple = true)
+        checkPropertyBusinessesText(pageDocument)
       }
 
       "return the correct content when the user has all business types" in {
@@ -393,6 +401,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
         checkUkPropertyComponents(pageDocument)
         checkForeignPropertyComponents(pageDocument)
         checkCeasedBusinessComponents(pageDocument, isMultiple = false)
+        checkPropertyBusinessesText(pageDocument)
       }
 
       "return no business start dates when the displayStartDate flag is false" in {
@@ -419,6 +428,7 @@ class ManageYourBusinessesViewSpec extends TestSupport {
         pageDocument.select("#business-date-0").isEmpty shouldBe true
         pageDocument.select("#foreign-date").isEmpty shouldBe true
         pageDocument.select("#uk-date").isEmpty shouldBe true
+        checkPropertyBusinessesText(pageDocument)
       }
     }
   }
@@ -473,6 +483,11 @@ class ManageYourBusinessesViewSpec extends TestSupport {
     }
 
     pageDocument.getElementById("ceasedBusinesses-viewall").text() shouldBe "View all ceased businesses"
+  }
+
+  def checkPropertyBusinessesText(pageDocument: Document): Unit = {
+    pageDocument.getElementById("property-h2").text() shouldBe "Property businesses"
+    pageDocument.getElementById("manage-your-business-property-desc").text() shouldBe "If you get income from one or more properties in the UK, you have a UK property business. If the property is outside the UK, you have a foreign property business. For example: letting houses, flats or holiday homes either on a long or short term basis."
   }
 
 }
