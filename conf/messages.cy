@@ -643,7 +643,7 @@ taxCal_breakdown.table.taxDeductedAtSource.voidISAs                          = I
 taxCal_breakdown.table.taxDeductedAtSource.total					         = Cyfanswm y dreth a ddidynnwyd
 taxCal_breakdown.table.amount                                                = Swm
 
-taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau Benthyciad Myfyriwr (cynllun {0})
+taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau benthyciad myfyriwr (Cynllun {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
 taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Treth sy’n ddyledus ar daliadau blwydd-daliadau
 taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy’n ddyledus ar freindaliadau
