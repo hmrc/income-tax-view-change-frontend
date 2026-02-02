@@ -250,7 +250,7 @@ object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   // Triggered Migration - Update Customer Facts
   def stubUpdateCustomerFacts(mtdId: String)(status: Int): StubMapping =
     WiremockHelper.stubPut(
-      s"/income-tax-view-change/customer-facts/$mtdId",
+      s"/income-tax-view-change/customer-facts/update/$mtdId",
       status,
       ""
     )
