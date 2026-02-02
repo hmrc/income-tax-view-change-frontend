@@ -161,7 +161,8 @@ trait MockAuthActions
         metadata = Metadata(None, "IY"),
         inputs = Inputs(PersonalInformation("")),
         calculation = None,
-        messages = None
+        messages = None,
+        submissionChannel = None
       )))
   }
 
