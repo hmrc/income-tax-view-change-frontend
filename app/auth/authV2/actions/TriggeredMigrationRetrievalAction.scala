@@ -29,7 +29,6 @@ import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,7 +53,6 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
       override protected def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
         implicit val req: MtdItUser[A] = request
-
         lazy val authAction = {
           (request.incomeSources.isConfirmedUser, isTriggeredMigrationPage) match {
             case (true, false) => Future(Right(req))

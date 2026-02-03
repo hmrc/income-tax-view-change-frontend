@@ -24,19 +24,22 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed}
 
-class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {
+class CheckCompleteControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val prefix = if (mtdRole == MTDIndividual) "" else "/agents"
-    s"$prefix/check-your-active-businesses/confirm"
+    val prefix =
+      if(mtdRole == MTDIndividual) ""
+      else "/agents"
+
+    s"$prefix/check-your-active-businesses/complete"
   }
 
-  object CheckActiveBusinessesConfirmMessages {
-    val title = "Have you checked that HMRC records only list your active businesses?"
+  object CheckCompleteMessages {
+    val title = "Check complete"
     val continueText = "Continue"
     val errorSummaryHeading = "There is a problem"
     val errorMessage = "Select yes if you’ve checked that HMRC records only list your active businesses"
@@ -45,19 +48,17 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
   private def checkPageContent(result: WSResponse, mtdRole: MTDUserRole): Unit = {
     result should have(
       httpStatus(OK),
-      pageTitle(mtdRole, CheckActiveBusinessesConfirmMessages.title),
-      elementTextByID("continue-button")(CheckActiveBusinessesConfirmMessages.continueText)
+      pageTitle(mtdRole, CheckCompleteMessages.title),
+      elementTextByID("continue-button")(CheckCompleteMessages.continueText)
     )
   }
 
   mtdAllRoles.foreach { mtdRole =>
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
-    val expectedRedirect: String = if (mtdRole == MTDIndividual) {
-      controllers.routes.HomeController.show().url
-    } else {
-      controllers.routes.HomeController.showAgent().url
-    }
+    val homePageUrl: String =
+      if(mtdRole == MTDIndividual) controllers.routes.HomeController.show().url
+      else controllers.routes.HomeController.showAgent().url
 
     s"GET $path" when {
       s"user is $mtdRole" should {
@@ -83,7 +84,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(expectedRedirect)
+            redirectURI(homePageUrl)
           )
         }
 
@@ -93,7 +94,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
     s"POST $path" when {
       s"user is $mtdRole" should {
-        "redirect to the complete page when 'Yes' is selected" in {
+        "redirect to home page when form is valid and 'Continue' is selected" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
@@ -103,22 +104,17 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             body = liabilityCalculationModelSuccessful
           )
 
-          val result = buildPOSTMTDPostClient(
-            path,
-            additionalCookies,
-            body = Map("check-active-businesses-confirm-form" -> Seq("Yes"))
-          ).futureValue
+          val formData = Map(
+            "check-complete-confirm" -> Seq("Continue")
+          )
 
-          val expectedURI =
-            if(mtdRole == MTDIndividual) "/report-quarterly/income-and-expenses/view/check-your-active-businesses/complete"
-            else "/report-quarterly/income-and-expenses/view/agents/check-your-active-businesses/complete"
-
+          val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(expectedURI)          )
+            redirectURI(homePageUrl)
+          )
         }
-
-        "redirect back to the check records page when 'No' is selected" in {
+        "return a 400 bad request when form is invalid" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
@@ -128,58 +124,17 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             body = liabilityCalculationModelSuccessful
           )
 
-          val result = buildPOSTMTDPostClient(
-            path,
-            additionalCookies,
-            body = Map("check-active-businesses-confirm-form" -> Seq("No"))
-          ).futureValue
-
-          val expectedURI =
-            if(mtdRole == MTDIndividual) "/report-quarterly/income-and-expenses/view/check-your-active-businesses/hmrc-record"
-            else "/report-quarterly/income-and-expenses/view/agents/check-your-active-businesses/hmrc-record"
-
-
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(expectedURI)          )
-        }
-
-        "return BAD_REQUEST when no option is selected" in {
-          enable(TriggeredMigration)
-          stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
-          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
-            status = OK,
-            body = liabilityCalculationModelSuccessful
+          val formData = Map(
+            "check-complete-confirm" -> Seq("this shouldn't be possible through normal use")
           )
-          val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
 
+          val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
           result should have(
-            httpStatus(BAD_REQUEST),
-            elementTextByClass("govuk-error-summary__title")(CheckActiveBusinessesConfirmMessages.errorSummaryHeading),
-            elementTextByClass("govuk-error-summary__list")(CheckActiveBusinessesConfirmMessages.errorMessage)
+            httpStatus(BAD_REQUEST)
           )
         }
 
-        "redirect to home page when TriggeredMigration FS is disabled" in {
-          disable(TriggeredMigration)
-          stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
-
-          val result = buildPOSTMTDPostClient(
-            path,
-            additionalCookies,
-            body = Map("check-active-businesses-confirm-form" -> Seq("Yes"))
-          ).futureValue
-
-          result should have(
-            httpStatus(SEE_OTHER),
-            redirectURI(expectedRedirect)
-          )
-        }
-
-        testAuthFailures(path, mtdRole, optBody = Some(Map("check-active-businesses-confirm-form" -> Seq("Yes"))))
+        testAuthFailures(path, mtdRole)
       }
     }
   }

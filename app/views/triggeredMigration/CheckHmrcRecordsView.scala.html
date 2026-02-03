@@ -270,5 +270,5 @@
 
     @h2(messages("triggered-migration.check-hmrc-records.confirmRecords.heading"), classes = "govuk-heading-l", optId = Some("confirm-records-heading"))
     @p(id = Some("confirm-records-desc")){@messages("triggered-migration.check-hmrc-records.confirmRecords.text")}
-    @continueButton(alternativeText = Some(messages("triggered-migration.check-hmrc-records.confirmRecords.button")))
+    @continueButton(alternativeText = Some(messages("triggered-migration.check-hmrc-records.confirmRecords.button")), href = Some(viewModel.checkActiveBusinessesLink(isAgent)))
 }
