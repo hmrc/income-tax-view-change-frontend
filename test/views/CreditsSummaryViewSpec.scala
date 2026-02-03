@@ -73,8 +73,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
   val moneyInYourAccountMoneyClaimARefundLinkText: String = messages("credits.money-in-your-account-section.claim-a-refund-link")
   val moneyInYourAccountContent: String = s"""${messages("credits.money-in-your-account-section.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} $moneyInYourAccountMoneyClaimARefundLinkText."""
   val moneyInYourAccountAgentContent: String = s"""${messages("credits.money-in-your-account-section.agent.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} $moneyInYourAccountMoneyClaimARefundLinkText."""
-  val moneyInYourAccountMoneyClaimARefundLink: String = "/report-quarterly/income-and-expenses/view/claim-refund"
-  val moneyInYourAccountMoneyClaimARefundAgentLink: String = "/report-quarterly/income-and-expenses/view/agents/claim-refund"
+  val moneyInYourAccountMoneyClaimARefundLink: String = "/report-quarterly/income-and-expenses/view/money-in-your-account"
+  val moneyInYourAccountMoneyClaimARefundAgentLink: String = "/report-quarterly/income-and-expenses/view/agents/money-in-your-account"
 
   class TestSetup(creditCharges: List[CreditDetailModel] = List.empty,
               maybeAvailableCredit: Option[BigDecimal] = None,

@@ -163,6 +163,8 @@ GET         /check-your-active-businesses/hmrc-record                     contro
 GET         /agents/check-your-active-businesses/hmrc-record              controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = true, state: Option[String] ?= None)
 GET         /check-your-active-businesses/complete                        controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = false)
 GET         /agents/check-your-active-businesses/complete                 controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = true)
+POST        /check-your-active-businesses/complete                        controllers.triggeredMigration.CheckCompleteController.submit(isAgent: Boolean = false)
+POST        /agents/check-your-active-businesses/complete                 controllers.triggeredMigration.CheckCompleteController.submit(isAgent: Boolean = true)
 
 # Triggered migration – confirm active businesses
 GET   /check-your-active-businesses/confirm          controllers.triggeredMigration.CheckActiveBusinessesConfirmController.show(isAgent: Boolean = false)
@@ -246,9 +248,9 @@ GET         /:taxYear/forecast-tax-calculation                            contro
 GET         /agents/:taxYear/forecast-tax-calculation                     controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
 
 #Credits and Refunds
-GET          /claim-refund                                                controllers.CreditAndRefundController.show(origin: Option[String] ?= None)
-GET          /agents/claim-refund                                         controllers.CreditAndRefundController.showAgent()
-GET          /start-refund                                                controllers.CreditAndRefundController.startRefund()
+GET          /money-in-your-account                                       controllers.MoneyInYourAccountController.show(origin: Option[String] ?= None)
+GET          /agents/money-in-your-account                                controllers.MoneyInYourAccountController.showAgent()
+GET          /start-refund                                                controllers.MoneyInYourAccountController.startRefund()
 
 
 #Credits

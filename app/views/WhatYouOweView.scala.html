@@ -202,7 +202,7 @@
 
     @if(viewModel.creditAndRefundEnabled) {
         @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
-            @availableCreditInAccount(ac.toCurrencyString, viewModel.creditAndRefundUrl)
+            @availableCreditInAccount(ac.toCurrencyString, viewModel.moneyInYourAccountUrl)
         }
     }
 }

@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import auth.MtdItUser
 @import models.creditsandrefunds.MoneyInYourAccountViewModel
@@ -44,31 +45,32 @@
         messages: Messages)
 
 @mainTemplate(
-    pageTitle = messages("credit-and-refund.heading"),
+    pageTitle = messages("money-in-your-account.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent
+    isAgent = isAgent,
+    useFallbackBackLink = true
 ) {
 
-    @h1(msg = messages("credit-and-refund.heading"))
+    @h1(msg = messages("money-in-your-account.heading"))
 
-    @if(viewModel.hasCreditOrRefunds) {
-        @availableCreditContent(viewModel)
-        @creditAndRefundList(viewModel)
-
-        @if(viewModel.hasAvailableCredit) {
-            @if(viewModel.hasAllocatedCredit) {
-                @reservedContent(viewModel, isAgent)
-            }
-            @howMuchCanIClaim(viewModel)
-        }
-    } else {
-        @p() {
-            @messages("credit-and-refund.no-credit")
-        }
+    @p(classes = "govuk-body govuk-!-font-size-27 govuk-body govuk-!-font-weight-bold", id = Some("credit-amount")) {
+        @messages("money-in-your-account.credit", viewModel.totalCredit.toCurrencyString)
     }
-
-    @if(!isAgent) {
-        @continueButton(Some(messages("credit-and-refund.claim-refund-btn")), Some(s"${controllers.routes.MoneyInYourAccountController.startRefund().url}"))
-
+    @p(classes = "govuk-body", id = Some("credit-explanation")) {
+        @if(viewModel.firstPendingAmountRequested.getOrElse(BigDecimal(0)) == 0) {
+            @messages("money-in-your-account.no-money")
+        }else {
+            @if(viewModel.secondPendingAmountRequested.getOrElse(BigDecimal(0)) > 0) {
+                @messages("money-in-your-account.no-money-two-refunds")
+                @link(controllers.routes.PaymentHistoryController.refundStatus().url,
+                    messageKey = "money-in-your-account.no-money-two-refunds-link-text", outerMessage = ".", id = Some("refunds-link"))
+            } else {
+                @if(viewModel.firstPendingAmountRequested.getOrElse(BigDecimal(0)) > 0) {
+                    @messages("money-in-your-account.no-money-one-refund")
+                    @link(controllers.routes.PaymentHistoryController.refundStatus().url,
+                        messageKey = "money-in-your-account.no-money-one-refund-link-text", outerMessage = ".", id = Some("refunds-link"))
+                }
+            }
+        }
     }
 }

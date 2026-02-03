@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.creditsandrefunds.{CreditAndRefundViewModel, CreditRow, CreditViewRow, PaymentCreditRow, RefundRow}
+@import models.creditsandrefunds.{MoneyInYourAccountViewModel, CreditRow, CreditViewRow, PaymentCreditRow, RefundRow}
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import views.html.components.{h2, p}
 @import views.html.components.creditandrefund.{paymentViewRow, creditViewRow, refundViewRow}
@@ -32,7 +32,7 @@
         refundViewRow: refundViewRow,
         govukDetails: GovukDetails
 )
-@(viewModel: CreditAndRefundViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], messages: Messages)
 
 @renderCreditRow(creditRow: CreditRow) = {
 @creditRow match {

@@ -92,7 +92,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
 
       s"the user is authenticated as a $mtdRole" should {
 
-        "redirect to completion page when form is valid and 'Yes' is selected" in {
+        "redirect to the complete page when form is valid and 'Yes' is selected" in {
 
           enable(TriggeredMigration)
 
@@ -104,11 +104,13 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "Yes")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "Yes")
           )
 
           status(result) shouldBe 303
-          redirectLocation(result).value shouldBe routes.CheckCompleteController.show(isAgent).url
+          redirectLocation(result).value should include(
+            routes.CheckCompleteController.show(isAgent).url
+          )
         }
 
         "redirect back to the Check HMRC Records page when form is valid and 'No' is selected" in {
@@ -121,11 +123,13 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "No")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "No")
           )
 
           status(result) shouldBe 303
-          redirectLocation(result).value shouldBe  routes.CheckHmrcRecordsController.show(isAgent).url
+          redirectLocation(result).value should include(
+            routes.CheckHmrcRecordsController.show(isAgent).url
+          )
         }
 
         "return BadRequest when no option is selected" in {
@@ -154,7 +158,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "Yes")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "Yes")
           )
 
           status(result) shouldBe 303

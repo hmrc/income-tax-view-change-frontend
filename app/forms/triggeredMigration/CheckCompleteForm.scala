@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,29 +19,28 @@ package forms.triggeredMigration
 import play.api.data.Form
 import play.api.data.Forms._
 
-object CheckActiveBusinessesConfirmForm {
+object CheckCompleteForm {
 
-  val responseYes: String = "Yes"
-  val responseNo: String  = "No"
-  val response: String    = "check-active-businesses-confirm-form"
+  val responseContinue: String = "Continue"
+  val response: String = "check-complete-confirm"
   val errorKey = "triggered-migration.check-active-businesses-confirm.error.required"
 
-  def apply(): Form[CheckActiveBusinessesConfirmForm] = {
-    Form[CheckActiveBusinessesConfirmForm](
+  def apply(): Form[CheckCompleteForm] = {
+    Form[CheckCompleteForm](
       mapping(
         response -> optional(text)
           .verifying(errorKey, value =>
-            value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo))
+            value.nonEmpty && value.contains(responseContinue)
           )
       )
-      (response => CheckActiveBusinessesConfirmForm(response))
-      (form => Some(form.response))
+        (response => CheckCompleteForm(response))
+        (form => Some(form.response))
     )
   }
 }
 
-case class CheckActiveBusinessesConfirmForm(response: Option[String]) {
+case class CheckCompleteForm(response: Option[String]) {
   def toFormMap: Map[String, Seq[String]] = Map(
-    CheckActiveBusinessesConfirmForm.response -> Seq(response.getOrElse("N/A"))
+    CheckCompleteForm.response -> Seq(response.getOrElse("N/A"))
   )
 }
