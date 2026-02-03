@@ -1224,33 +1224,6 @@ class TaxYearSummaryControllerSpec
 
         actual shouldBe false
       }
-
-      "submissionChannel == IsLegacy && is not crystallised with forecastIncome == None - return false" in {
-
-        val fakeCalculationSummary =
-          CalculationSummary(
-            timestamp = None,
-            crystallised = false,
-            unattendedCalc = false,
-            taxDue = 0,
-            income = 0,
-            deductions = 0,
-            totalTaxableIncome = 0,
-            forecastIncome = None,
-            forecastIncomeTaxAndNics = None,
-            forecastAllowancesAndDeductions = None,
-            forecastTotalTaxableIncome = None,
-            periodFrom = None,
-            periodTo = None,
-            messages = None,
-            isAmended = false
-          )
-
-        val actual =
-          testController.showForecast(Some(IsLegacy), Some(fakeCalculationSummary))
-
-        actual shouldBe false
-      }
     }
 
     "show the forecast" when {
@@ -1278,33 +1251,6 @@ class TaxYearSummaryControllerSpec
 
         val actual =
           testController.showForecast(Some(IsMTD), Some(fakeCalculationSummary))
-
-        actual shouldBe true
-      }
-
-      "submissionChannel == IsLegacy && is not crystallised with forecastIncome defined - return true" in {
-
-        val fakeCalculationSummary =
-          CalculationSummary(
-            timestamp = None,
-            crystallised = false,
-            unattendedCalc = false,
-            taxDue = 0,
-            income = 0,
-            deductions = 0,
-            totalTaxableIncome = 0,
-            forecastIncome = Some(100),
-            forecastIncomeTaxAndNics = None,
-            forecastAllowancesAndDeductions = None,
-            forecastTotalTaxableIncome = None,
-            periodFrom = None,
-            periodTo = None,
-            messages = None,
-            isAmended = false
-          )
-
-        val actual =
-          testController.showForecast(Some(IsLegacy), Some(fakeCalculationSummary))
 
         actual shouldBe true
       }
