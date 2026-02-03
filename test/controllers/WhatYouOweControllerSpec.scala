@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import controllers.routes.{ChargeSummaryController, CreditAndRefundController, PaymentController}
+import controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
@@ -139,7 +139,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
     backUrl = "testBackURL",
     utr = Some("1234567890"),
     dunningLock = dunningLock,
-    creditAndRefundUrl = if (isAgent) CreditAndRefundController.showAgent().url else CreditAndRefundController.show().url,
+    moneyInYourAccountUrl = if (isAgent) MoneyInYourAccountController.showAgent().url else MoneyInYourAccountController.show().url,
     creditAndRefundEnabled = true,
     taxYearSummaryUrl = _ => if (isAgent)
       controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url

@@ -154,7 +154,7 @@ home.paymentCreditRefundHistory.view                            = Hanes taliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
-home.credAndRefund.view                                         = Hawlio ad-daliad
+home.money-in-your-account                                      = Arian yn eich cyfrif
 home.credAndRefund_howToClaim.view                              = Sut i hawlio ad-daliad
 home.incomeSources.heading                                      = Ffynonellau incwm
 home.incomeSources.newJourneyHeading                            = Eich busnesau
@@ -1445,6 +1445,18 @@ credit-and-refund.row.repaymentInterest-2                         = o log ar ad-
 credit-and-refund.subHeading.has-no-credits-1                     = Cafwyd cais am ad-daliad o
 credit-and-refund.subHeading.has-no-credits-2                     = ac mae ar y gweill.
 
+
+
+## Money In Your Account
+
+money-in-your-account.heading                                           = Arian yn eich cyfrif
+money-in-your-account.credit                                            = Credyd: {0}
+
+money-in-your-account.no-money                                          = Nid oes unrhyw arian yn eich cyfrif ar hyn o bryd.
+money-in-your-account.no-money-one-refund                               = Nid oes gennych unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae gennych
+money-in-your-account.no-money-one-refund-link-text                     = ad-daliad ar y gweill
+money-in-your-account.no-money-two-refunds                              = Nid oes gennych unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae gennych
+money-in-your-account.no-money-two-refunds-link-text                    = ad-daliadau ar y gweill
 
 #######################################################################################################################
 ## Income Sources - Add ##
