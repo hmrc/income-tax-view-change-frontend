@@ -88,6 +88,7 @@
       "chargeableForeignSavingsAndGains": 12500
     },
     "dividendsIncome": {
+      "totalUkDividends": 12500,
       "chargeableForeignDividends": 12500
     },
     "incomeSummaryTotals": {
