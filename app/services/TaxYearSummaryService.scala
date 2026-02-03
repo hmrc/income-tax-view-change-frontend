@@ -31,19 +31,16 @@ class TaxYearSummaryService @Inject()() {
 
     liabilityCalculationResponse match {
       case Some(LiabilityCalculationError(404, message)) =>
-        Logger("application").debug(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationError - LegacyAndCesa, status: 404, error message: $message")
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationError - LegacyAndCesa, status: 404, error message: $message")
         LegacyAndCesa
       case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsLegacyWithCesa))) =>
-        Logger("application").debug(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsLegacyWithCesa")
-        LegacyAndCesa
-      case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsLegacy))) =>
-        Logger("application").debug(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsLegacy")
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsLegacyWithCesa")
         LegacyAndCesa
       case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsMTD))) =>
-        Logger("application").debug(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsMTD - show MtdSoftwareShowCalc calc panel")
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsMTD - show MtdSoftwareShowCalc calc panel")
         MtdSoftwareShowCalc
       case response =>
-        Logger("application").debug(s"[TaxYearSummaryService][checkSubmissionChannel] Catch all - show MtdSoftwareShowCalc calc panel - $response")
+        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] Catch all - show MtdSoftwareShowCalc calc panel - $response")
         MtdSoftwareShowCalc
     }
   }
@@ -59,16 +56,16 @@ class TaxYearSummaryService @Inject()() {
 
     (liabilityCalculationResponse, irsaEnrolement) match {
       case (Some(LiabilityCalculationError(status, _)), _) if mtdItUser.isAgent() && taxYear.isBefore(taxYear2023)=>
-        Logger("application").debug(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] AgentBefore2023TaxYear")
+        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] AgentBefore2023TaxYear")
         AgentBefore2023TaxYear
       case (Some(LiabilityCalculationError(status, _)), Some(_)) if taxYear.isBefore(taxYear2023) && status != 404 =>
-        Logger("application").debug(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] IrsaEnrolementHandedOff")
+        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] IrsaEnrolementHandedOff")
         IrsaEnrolementHandedOff
       case (Some(LiabilityCalculationError(status, _)), None) if taxYear.isBefore(taxYear2023) && status != 404 =>
-        Logger("application").debug(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] NoIrsaAEnrolement")
+        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] NoIrsaAEnrolement")
         NoIrsaAEnrolement
       case _ =>
-        Logger("application").debug(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] checkSubmissionChannel")
+        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] checkSubmissionChannel")
         checkSubmissionChannel(liabilityCalculationResponse)
     }
   }

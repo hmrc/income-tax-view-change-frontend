@@ -104,10 +104,10 @@ class TaxYearSummaryController @Inject()(
                                          calculationSummary: Option[CalculationSummary]
                                        ): Boolean = {
 
-    val isMtdOrLegacy: Boolean =
-      submissionChannel.exists(ch => ch == IsMTD || ch == IsLegacy)
+    val isMtd: Boolean =
+      submissionChannel.contains(IsMTD)
 
-    isMtdOrLegacy &&
+    isMtd &&
       calculationSummary.exists { s =>
         !s.crystallised && s.forecastIncome.isDefined
       }
