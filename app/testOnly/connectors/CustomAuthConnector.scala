@@ -64,7 +64,6 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
     createdPayload
       .flatMap {
         payload =>
-          println(payload)
           loginRequest(payload)
       }
   }
