@@ -180,7 +180,7 @@
 @ceasedBusinessSection = {
     @h2(messages("triggered-migration.check-hmrc-records.cessation-section.heading"), classes = "govuk-heading-l", optId = Some("ceased-section-heading"))
     <p id="ceased-section-text" class="govuk-body">@messages("triggered-migration.check-hmrc-records.cessation-section.text")</p>
-    <a class="govuk-link govuk-body" id="ceased-section-link" href=@controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
+    <a class="govuk-link govuk-body" id="ceased-section-link" href=@controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent, isTriggeredMigration = true)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
 }
 
 @ceasedBannerContent(state: TriggeredMigrationState) = {
@@ -270,5 +270,5 @@
 
     @h2(messages("triggered-migration.check-hmrc-records.confirmRecords.heading"), classes = "govuk-heading-l", optId = Some("confirm-records-heading"))
     @p(id = Some("confirm-records-desc")){@messages("triggered-migration.check-hmrc-records.confirmRecords.text")}
-    @continueButton(alternativeText = Some(messages("triggered-migration.check-hmrc-records.confirmRecords.button")))
+    @continueButton(alternativeText = Some(messages("triggered-migration.check-hmrc-records.confirmRecords.button")), href = Some(viewModel.checkActiveBusinessesLink(isAgent)))
 }

@@ -30,7 +30,7 @@ object OptInCompletedViewMessages {
 
   val yourRevisedDeadlineInset = "Your revised deadlines will be available in the next few minutes."
 
-  val yourRevisedDeadlineContentP1 = "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+  val yourRevisedDeadlineContentP1 = "Even if they are not displayed right away on the submission deadlines page, your account has been updated."
 
   val yourRevisedDeadlineContentP2 = "You can decide at any time to opt out of reporting quarterly for all your businesses on your reporting frequency page."
 

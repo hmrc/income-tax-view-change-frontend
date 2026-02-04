@@ -221,12 +221,12 @@ class IncomeSourceAddedController @Inject()(
   }
 
   def show(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDIndividual.async { implicit mtdItUser =>
+    authActions.asMTDIndividual().async { implicit mtdItUser =>
       handleRequest(isAgent = false, incomeSourceType)(mtdItUser, itvcErrorHandler)
     }
 
   def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient.async { implicit mtdItUser =>
+    authActions.asMTDAgentWithConfirmedClient().async  { implicit mtdItUser =>
       handleRequest(isAgent = true, incomeSourceType)(mtdItUser, itvcErrorHandlerAgent)
     }
 

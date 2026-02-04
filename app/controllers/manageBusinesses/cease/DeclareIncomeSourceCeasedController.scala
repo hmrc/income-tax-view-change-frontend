@@ -56,29 +56,28 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
     controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   }
 
-  //TODO: Redirect the user back to the triggered migration page if they access the page with triggered migration as false and they are unconfirmed
   def show(id: Option[String], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual(isTriggeredMigration).async {
       implicit user =>
         handleRequest(id, isAgent = false, incomeSourceType, isTriggeredMigration)
   }
 
   def showAgent(id: Option[String], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient.async {
+    authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
       implicit mtdItUser =>
         handleRequest(id, isAgent = true, incomeSourceType, isTriggeredMigration)
   }
 
-  def submit(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+  def submit(id: Option[String], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividual(isTriggeredMigration).async {
       implicit request =>
-        handleSubmitRequest(id, isAgent = false, mode = NormalMode, incomeSourceType)
+        handleSubmitRequest(id, isAgent = false, mode = NormalMode, incomeSourceType, isTriggeredMigration)
   }
 
-  def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient.async {
+  def submitAgent(id: Option[String], incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
       implicit mtdItUser =>
-        handleSubmitRequest(id, isAgent = true, mode = NormalMode, incomeSourceType)
+        handleSubmitRequest(id, isAgent = true, mode = NormalMode, incomeSourceType, isTriggeredMigration)
   }
 
   def handleRequest(id: Option[String], isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean)
@@ -98,7 +97,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
                 soleTraderBusinessName = maybeBusinessName,
                 isAgent = isAgent,
                 backUrl = getBackUrl(isAgent),
-                postAction = postAction(id, isAgent, incomeSourceType)
+                postAction = postAction(id, isAgent, incomeSourceType, isTriggeredMigration)
               )
             )
           )
@@ -110,7 +109,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
         showInternalServerError()
     }
 
-  def handleSubmitRequest(id: Option[String], isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType)
+  def handleSubmitRequest(id: Option[String], isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean)
                          (implicit user: MtdItUser[_]): Future[Result] = {
     sessionService.setMongoKey(
         key = CeaseIncomeSourceData.ceaseIncomeSourceDeclare,
@@ -118,7 +117,7 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
         incomeSources = IncomeSourceJourneyType(Cease, incomeSourceType)
       )
       .flatMap {
-        case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, mode, incomeSourceType)))
+        case Right(_) => Future.successful(Redirect(redirectAction(id, isAgent, mode, incomeSourceType, isTriggeredMigration)))
         case Left(exception) => Future.failed(exception)
       }
   } recover {
@@ -127,12 +126,12 @@ class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions
       showInternalServerError()
   }
 
-  private val postAction: (Option[String], Boolean, IncomeSourceType) => Call = (id, isAgent, incomeSourceType) =>
-    if (isAgent) routes.DeclareIncomeSourceCeasedController.submitAgent(id, incomeSourceType)
-    else         routes.DeclareIncomeSourceCeasedController.submit(id, incomeSourceType)
+  private val postAction: (Option[String], Boolean, IncomeSourceType, Boolean) => Call = (id, isAgent, incomeSourceType, isTriggeredMigration) =>
+    if (isAgent) routes.DeclareIncomeSourceCeasedController.submitAgent(id, incomeSourceType, isTriggeredMigration)
+    else         routes.DeclareIncomeSourceCeasedController.submit(id, incomeSourceType, isTriggeredMigration)
 
-  private val redirectAction: (Option[String], Boolean, Mode, IncomeSourceType) => Call = (id, isAgent, mode, incomeSourceType) =>
-    routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, mode)
+  private val redirectAction: (Option[String], Boolean, Mode, IncomeSourceType, Boolean) => Call = (id, isAgent, mode, incomeSourceType, isTriggeredMigration) =>
+    routes.IncomeSourceEndDateController.show(id, incomeSourceType, isAgent, mode, isTriggeredMigration)
 
   private def showInternalServerError()(implicit mtdItUser: MtdItUser[_]): Result = {
     if (mtdItUser.userType.contains(Agent)) itvcErrorHandlerAgent

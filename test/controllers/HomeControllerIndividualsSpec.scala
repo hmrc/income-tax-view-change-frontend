@@ -40,7 +40,7 @@ import services.NextUpdatesService
 import services.optIn.OptInService
 import services.optout.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.HomeView
+import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.helpers.injected.home.YourReportingObligationsTile
 import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
@@ -58,6 +58,10 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
   val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
   val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
+  val yourTasksView: NewHomeYourTasksView = application.injector.instanceOf(classOf[NewHomeYourTasksView])
+  val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
+  val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
+  val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
   val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
   val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
@@ -73,6 +77,10 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   trait Setup {
     val controller: HomeController = HomeController(
       homeView,
+      yourTasksView,
+      recentActivityView,
+      overviewView,
+      helpView,
       primaryAgentHomeView,
       supportingAgentHomeView,
       authActions,
@@ -110,6 +118,21 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   }
 
   "show()" when {
+    "NewHomePage feature switch is enabled" should {
+      "display new home page" in new Setup {
+        enable(NewHomePage)
+        setupMockUserAuth
+        mockItsaStatusRetrievalAction()
+        mockSingleBusinessIncomeSource()
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.title shouldBe homePageTitle
+        document.getElementsByClass("govuk-service-navigation__container").isEmpty shouldBe false
+      }
+    }
     "an authenticated user" should {
       "render the home page with a Next Payments due tile" that {
         "has payments due" when {
@@ -497,7 +520,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe "Next updates due View update deadlines"
+          document.select("#updates-tile").text() shouldBe "Your submission deadlines View update deadlines"
         }
       }
 
@@ -528,13 +551,13 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         document.title shouldBe homePageTitle
 
         val tile: Elements = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.select("p").get(0).text shouldBe "Next update due: 5 February 2024"
         tile.select("p").get(1).text shouldBe "Next tax return due: 31 January 2025"
 
         val link = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
       }
 
       "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
@@ -564,14 +587,14 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         val document: Document = Jsoup.parse(contentAsString(result))
         val tile: Elements = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.select("span.govuk-tag.govuk-tag--red").text should include("2 Overdue updates")
         tile.select("p").get(1).text shouldBe "Next update due: 5 February 2024"
         tile.select("p").get(2).text shouldBe "Next tax return due: 31 January 2025"
 
         val link: Elements = tile.select("a.govuk-link")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
       }
 
       "render the home page controller with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
@@ -599,13 +622,13 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         val document: Document = Jsoup.parse(contentAsString(result))
         val tile: Elements = document.select("#updates-tile")
 
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.text should not include "Next update due:"
         tile.select("p").get(0).text shouldBe "Next tax return due: 31 January 2025"
 
         val link: Elements = tile.select("a.govuk-link")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
       }
 
       "render the home without the Next Updates tile" when {
@@ -628,7 +651,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe "Next updates due View update deadlines"
+          document.select("#updates-tile").text shouldBe "Your submission deadlines View update deadlines"
         }
       }
 

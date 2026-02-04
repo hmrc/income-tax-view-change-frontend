@@ -24,8 +24,8 @@ import java.time.LocalDate
 
 object NextUpdatesTestConstants {
 
-  val heading: String = "Your updates and deadlines"
-  val title: String = "Your updates and deadlines - Manage your Self Assessment - GOV.UK"
+  val heading: String = "Your submission deadlines"
+  val title: String = "Your submission deadlines - Manage your Self Assessment - GOV.UK"
   val summary: String = "What are the update types?"
   val summaryQuarterly: String = "Quarterly updates"
   val quarterlyLine1: String = "A quarterly update is a record of all your business income in a 3 month period."

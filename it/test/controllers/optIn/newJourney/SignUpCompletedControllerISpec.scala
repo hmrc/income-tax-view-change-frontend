@@ -59,7 +59,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
 
     val currentYearYourRevisedDeadlinesHeading = "Your revised deadlines"
     val currentYearYourRevisedDeadlinesDesc = "Your revised deadlines will be available in the next few minutes."
-    val currentYearYourRevisedDeadlinesDesc2 = "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+    val currentYearYourRevisedDeadlinesDesc2 = "Even if they are not displayed right away on the submission deadlines page, your account has been updated."
     val currentYearYourRevisedDeadlinesDesc3 = "You can decide at any time to opt out of Making Tax Digital for Income Tax for all your businesses on your reporting obligations page."
 
     val currentYearSubmitUpdatesHeading = "Submit updates in software"
@@ -87,12 +87,12 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
 
     val nextYearYourRevisedDeadlinesHeading = "Your revised deadlines"
     val nextYearYourRevisedDeadlinesDesc = "Your deadlines for this business will be available in the next few minutes."
-    val nextYearYourRevisedDeadlinesDesc2 = "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
+    val nextYearYourRevisedDeadlinesDesc2 = "Even if they are not displayed right away on the submission deadlines page, your account has been updated."
     val nextYearYourRevisedDeadlinesDesc3 = "You can decide at any time to opt out of Making Tax Digital for Income Tax for all your businesses on your reporting obligations page."
 
     val nextYearSubmitUpdatesHeading = "Submit updates in software"
     val nextYearSubmitUpdatesDesc = "For any tax year you are using Making Tax Digital for Income Tax, you need compatible software (opens in new tab)."
-    val nextYearSubmitUpdatesDescAnnual = "When you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
+    val nextYearSubmitUpdatesDescAnnual = "When you are not using Making Tax Digital for Income Tax, you can find out here how to file your Self Assessment tax return (opens in new tab)."
 
     val nextYearReportingObligationsHeading = "Your reporting obligations in the future"
     val nextYearReportingObligationsDesc = "You have just chosen to sign up from the next tax year onwards, but in future you could have to use Making Tax Digital for Income Tax if:"

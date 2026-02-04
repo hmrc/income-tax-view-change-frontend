@@ -41,7 +41,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
     optOutSessionDataRepository.repository.collection.deleteMany(BsonDocument()).toFuture().futureValue
   }
 
-  val path = "/next-updates"
+  val path = "/submission-deadlines"
 
   s"GET $path" when {
 

@@ -54,7 +54,7 @@ object ChargeableEventGainsIncome {
   implicit val format: OFormat[ChargeableEventGainsIncome] = Json.format[ChargeableEventGainsIncome]
 }
 
-case class DividendsIncome(chargeableForeignDividends: Option[Int] = None)
+case class DividendsIncome(totalUkDividends: Option[Int] = None, chargeableForeignDividends: Option[Int] = None)
 
 object DividendsIncome {
   implicit val format: OFormat[DividendsIncome] = Json.format[DividendsIncome]
@@ -155,7 +155,7 @@ case class StudentLoan(planType: Option[String] = None,
                        studentLoanApportionedIncomeThreshold: Option[BigDecimal] = None,
                        studentLoanRate: Option[BigDecimal] = None
                       ) {
-  def planTypeActual: String = planType.getOrElse(throw MissingFieldException("Plan type"))
+  def planTypeActual: String = planType.map(_.substring(1)).getOrElse(throw MissingFieldException("Plan type"))
   def studentLoanRepaymentAmountActual: BigDecimal = studentLoanRepaymentAmount.getOrElse(throw MissingFieldException("Student Loan Repayment Amount"))
 }
 

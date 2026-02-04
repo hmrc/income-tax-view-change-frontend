@@ -153,7 +153,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def createWhatYouOweViewModel(backUrl: String,
-                                creditAndRefundUrl: String,
+                                moneyInYourAccountUrl: String,
                                 taxYearSummaryUrl: Int => String,
                                 adjustPoaUrl: String,
                                 chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
@@ -186,7 +186,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           backUrl = backUrl,
           utr = user.saUtr,
           dunningLock = whatYouOweChargesList.hasDunningLock,
-          creditAndRefundUrl = creditAndRefundUrl,
+          moneyInYourAccountUrl = moneyInYourAccountUrl,
           creditAndRefundEnabled = isEnabled(CreditsRefundsRepay)(user),
           taxYearSummaryUrl = taxYearSummaryUrl,
           claimToAdjustViewModel = ctaViewModel,

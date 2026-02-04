@@ -88,7 +88,7 @@ class InYearTaxCalculationController @Inject()(authActions: AuthActions,
     }
   }
 
-  def show(origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(origin: Option[String]): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       val currentDate = dateService.getCurrentDate
       handleRequest(
@@ -99,7 +99,7 @@ class InYearTaxCalculationController @Inject()(authActions: AuthActions,
       )(implicitly, implicitly, itvcErrorHandler)
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       val currentDate = dateService.getCurrentDate
       handleRequest(

@@ -83,14 +83,14 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
 
   def paymentAllocationsAuditFull(userType: Option[AffinityGroup] = Some(Agent)): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
-      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
+      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty, "1")),
       paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel, originalPaymentAllocationWithClearingDate)
     )
   }
 
   def paymentAllocationsAuditFullCredit(userType: Option[AffinityGroup] = Some(Agent)): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
-      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
+      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty, "1")),
       paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModelCredit, originalPaymentAllocationWithClearingDateCredit)
     )
   }

@@ -128,7 +128,7 @@ testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
         if (mtdRole == MTDSupportingAgent) {
-          testSupportingAgentDeniedAccess(action)(fakeRequest)
+          testSupportingAgentDeniedAccess(action, withNrsRetrievals = true)(fakeRequest)
         } else {
           "redirect to PoaAdjustedController page" when {
             "data to API 1773 successfully sent" in {
@@ -138,7 +138,7 @@ testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false
               setupMockRecalculateSuccess()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
 
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, withNrs = true)
               val result = action(fakeRequest)
               redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.PoaAdjustedController.show(isAgent = isAgent).url)
             }
@@ -152,7 +152,7 @@ testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false
               setupMockRecalculateFailure()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(validSession))))
 
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, withNrs = true)
               val result = action(fakeRequest)
               redirectLocation(result) shouldBe Some(controllers.claimToAdjustPoa.routes.ApiFailureSubmittingPoaController.show(isAgent).url)
             }
@@ -162,7 +162,7 @@ testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccount(None)
 
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, withNrs = true)
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR
             }
@@ -170,14 +170,14 @@ testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockGetPaymentsOnAccountBuildFailure()
 
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, withNrs = true)
               val result = action(fakeRequest)
               result.futureValue.header.status shouldBe INTERNAL_SERVER_ERROR
             }
           }
         }
       }
-testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false, withNrsRetrievals = true)(fakeRequest)
     }
   }
 }

@@ -176,7 +176,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
 
 
   val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
-    getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, List.empty, List.empty)),
+    getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, List.empty, List.empty, "1")),
     chargeItem = chargeItemWithNoInterest,
     paymentBreakdown = List.empty,
     chargeHistories = List.empty,
@@ -201,7 +201,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
                              chargeItem: ChargeItem, paymentBreakdown: List[FinancialDetail],
                              chargeHistories: List[ChargeHistoryModel], paymentAllocations: List[PaymentHistoryAllocations],
                              agentReferenceNumber: Option[String] = Some("agentReferenceNumber"), isLateInterestCharge: Boolean = true): ChargeSummaryAudit = ChargeSummaryAudit(
-    mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
+    mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil, "1")),
     chargeItem = chargeItem,
     paymentBreakdown = if (!isLateInterestCharge) paymentBreakdowns else List.empty,
     chargeHistories = if (!isLateInterestCharge) chargeHistory else List.empty,

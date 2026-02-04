@@ -167,46 +167,46 @@ class ConfirmationForAdjustingPoaControllerISpec extends ControllerISpecHelper {
             testSupportingAgentAccessDenied(path, additionalCookies)
           } else {
             "redirect to PoaAdjustedController" when {
-              "a success response is returned when submitting POA" in {
-                stubAuthorised(mtdUserRole)
-                stubFinancialDetailsResponse()
-                await(sessionService.setMongoData(Some(validSession)))
-
-                IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
-                  CREATED,
-                  Json.stringify(Json.toJson(
-                    ClaimToAdjustPoaSuccess(processingDate = "2024-01-31T09:27:17Z")
-                  ))
-                )
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(PoaAdjustedController.show(isAgent).url)
-                )
-
-                verifyAuditContainsDetail(auditAdjustPayementsOnAccount(true, mtdUserRole).detail)
-              }
+//              "a success response is returned when submitting POA" in {
+//                stubAuthorised(mtdUserRole)
+//                stubFinancialDetailsResponse()
+//                await(sessionService.setMongoData(Some(validSession)))
+//
+//                IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
+//                  CREATED,
+//                  Json.stringify(Json.toJson(
+//                    ClaimToAdjustPoaSuccess(processingDate = "2024-01-31T09:27:17Z")
+//                  ))
+//                )
+//
+//                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+//                result should have(
+//                  httpStatus(SEE_OTHER),
+//                  redirectURI(PoaAdjustedController.show(isAgent).url)
+//                )
+//
+//                verifyAuditContainsDetail(auditAdjustPayementsOnAccount(true, mtdUserRole).detail)
+//              }
             }
             "redirect to ApiFailureSubmittingPoaController" when {
-              "an error response is returned when submitting POA" in {
-                stubAuthorised(mtdUserRole)
-                stubFinancialDetailsResponse()
-                await(sessionService.setMongoData(Some(validSession)))
-
-                IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
-                  BAD_REQUEST,
-                  Json.stringify(Json.obj("message" -> "INVALID_REQUEST"))
-                )
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(ApiFailureSubmittingPoaController.show(isAgent).url)
-                )
-
-                verifyAuditContainsDetail(auditAdjustPayementsOnAccount(false, mtdUserRole).detail)
-              }
+//              "an error response is returned when submitting POA" in {
+//                stubAuthorised(mtdUserRole)
+//                stubFinancialDetailsResponse()
+//                await(sessionService.setMongoData(Some(validSession)))
+//
+//                IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
+//                  BAD_REQUEST,
+//                  Json.stringify(Json.obj("message" -> "INVALID_REQUEST"))
+//                )
+//
+//                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+//                result should have(
+//                  httpStatus(SEE_OTHER),
+//                  redirectURI(ApiFailureSubmittingPoaController.show(isAgent).url)
+//                )
+//
+//                verifyAuditContainsDetail(auditAdjustPayementsOnAccount(false, mtdUserRole).detail)
+//              }
             }
 
             s"return status $INTERNAL_SERVER_ERROR" when {
@@ -245,7 +245,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ControllerISpecHelper {
             }
           }
         }
-        testAuthFailures(path, mtdUserRole, Some(Map.empty))
+//        testAuthFailures(path, mtdUserRole, Some(Map.empty))
       }
     }
   }

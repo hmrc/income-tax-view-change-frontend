@@ -30,7 +30,7 @@ import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
@@ -65,7 +65,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
     }
   }
 
-  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean)
                    (implicit user: MtdItUser[_]): Future[Result] =
     withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val messagesPrefix = incomeSourceType.ceaseCheckAnswersPrefix
@@ -79,20 +79,19 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
               viewModel = viewModel,
               isAgent = isAgent,
               backUrl = backUrl(isAgent),
-              messagesPrefix = messagesPrefix))
+              messagesPrefix = messagesPrefix,
+              isTriggeredMigration = isTriggeredMigration))
           }
         case None =>
           Future.successful {
-            //TODO: will need to replace the hard coded false when we have backend data for triggered migration
-            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
+            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType, isTriggeredMigration))
           }
       }
     }.recover {
       case ex: Exception =>
         Logger("application").error(s"${if (isAgent) "[Agent] "}" +
           s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage} - ${ex.getCause}")
-        //TODO: will need to replace the hard coded false when we have backend data for triggered migration
-        Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType))
+        Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType, isTriggeredMigration))
     }
 
   def getViewModel(incomeSourceType: IncomeSourceType, endDateOpt: Option[LocalDate], incomeSourceIdOpt: Option[String])
@@ -119,32 +118,33 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
   }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit user =>
       handleRequest(
         isAgent = false,
-        incomeSourceType = incomeSourceType
+        incomeSourceType = incomeSourceType,
+        isTriggeredMigration = isTriggeredMigration
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
-        incomeSourceType = incomeSourceType
+        incomeSourceType = incomeSourceType,
+        isTriggeredMigration = isTriggeredMigration
       )
   }
 
-  def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
+  def handleSubmitRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean)
                          (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val incomeSourceIdOpt = sessionData.ceaseIncomeSourceData.flatMap(_.incomeSourceId)
       val endDateOpt = sessionData.ceaseIncomeSourceData.flatMap(_.endDate)
-      val triggeredMigrationOpt = sessionData.triggeredMigrationSessionData.map(_.isTriggeredMigrationJourney)
 
       incomeSourceType match {
-        case SelfEmployment => ceaseSelfEmployment(incomeSourceIdOpt, endDateOpt, isAgent, triggeredMigrationOpt)(implicitly, errorHandler)
-        case _ => ceaseProperty(endDateOpt, incomeSourceType, isAgent, triggeredMigrationOpt)(implicitly, errorHandler)
+        case SelfEmployment => ceaseSelfEmployment(incomeSourceIdOpt, endDateOpt, isAgent, isTriggeredMigration)(implicitly, errorHandler)
+        case _ => ceaseProperty(endDateOpt, incomeSourceType, isAgent, isTriggeredMigration)(implicitly, errorHandler)
       }
     }.recover {
       case ex: Exception =>
@@ -153,21 +153,21 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
     }
   }
 
-  private def ceaseSelfEmployment(incomeSourceIdOpt: Option[String], endDateOpt: Option[LocalDate], isAgent: Boolean, triggeredMigrationOpt: Option[Boolean])
+  private def ceaseSelfEmployment(incomeSourceIdOpt: Option[String], endDateOpt: Option[LocalDate], isAgent: Boolean, isTriggeredMigration: Boolean)
                                  (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
-    (incomeSourceIdOpt, endDateOpt, triggeredMigrationOpt) match {
-      case (Some(incomeSourceId), Some(endDate), Some(isTriggeredMigration)) => updateCessationDate(endDate, SelfEmployment, IncomeSourceId(incomeSourceId), isAgent, isTriggeredMigration)
+    (incomeSourceIdOpt, endDateOpt) match {
+      case (Some(incomeSourceId), Some(endDate)) => updateCessationDate(endDate, SelfEmployment, IncomeSourceId(incomeSourceId), isAgent, isTriggeredMigration)
       case _ => Future.successful {
-        Logger("application").error(s"Missing income source id, end date or triggered migration data")
+        Logger("application").error(s"Missing income source id or end date.")
         errorHandler.showInternalServerError()
       }
     }
   }
 
-  private def ceaseProperty(endDateOpt: Option[LocalDate], incomeSourceType: IncomeSourceType, isAgent: Boolean, triggeredMigrationOpt: Option[Boolean])
+  private def ceaseProperty(endDateOpt: Option[LocalDate], incomeSourceType: IncomeSourceType, isAgent: Boolean, isTriggeredMigration: Boolean)
                            (implicit user: MtdItUser[_],  errorHandler: ShowInternalServerError): Future[Result] = {
-    (endDateOpt, triggeredMigrationOpt) match {
-      case (Some(endDate), Some(isTriggeredMigration)) =>
+    (endDateOpt) match {
+      case (Some(endDate)) =>
         getActiveProperty(incomeSourceType) match {
           case Some(property) =>
             val incomeSourceId = IncomeSourceId(property.incomeSourceId)
@@ -179,7 +179,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
             }
         }
       case _ =>
-        Logger("application").error(s"Missing end date or triggered migration flag.")
+        Logger("application").error(s"Missing end date.")
         Future.successful {
           errorHandler.showInternalServerError()
         }
@@ -218,17 +218,19 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
   }
 
 
-  def submit(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def submit(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit request =>
       handleSubmitRequest(
         isAgent = false,
-        incomeSourceType = incomeSourceType)(implicitly, itvcErrorHandler)
+        incomeSourceType = incomeSourceType,
+        isTriggeredMigration = isTriggeredMigration)(implicitly, itvcErrorHandler)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def submitAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
     implicit mtdItUser =>
       handleSubmitRequest(
         isAgent = true,
-        incomeSourceType = incomeSourceType)(implicitly, itvcErrorHandlerAgent)
+        incomeSourceType = incomeSourceType,
+        isTriggeredMigration = isTriggeredMigration)(implicitly, itvcErrorHandlerAgent)
   }
 }

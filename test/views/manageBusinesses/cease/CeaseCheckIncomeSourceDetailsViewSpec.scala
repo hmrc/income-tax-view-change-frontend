@@ -64,7 +64,7 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
       case _ => routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType)
     }
 
-    lazy val view: HtmlFormat.Appendable = ceaseCheckIncomeSourceDetailsView(isAgent, testBackUrl, viewModel, messagesPrefix)
+    lazy val view: HtmlFormat.Appendable = ceaseCheckIncomeSourceDetailsView(isAgent, testBackUrl, viewModel, messagesPrefix, false)
     lazy val document: Document = Jsoup.parse(contentAsString(view)
     )
   }

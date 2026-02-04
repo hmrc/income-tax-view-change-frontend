@@ -45,7 +45,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
                                             val appConfig: FrontendAppConfig)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
 
-  def show(): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         sources = user.incomeSources,
@@ -54,7 +54,7 @@ class CeaseIncomeSourceController @Inject()(val ceaseIncomeSources: CeaseIncomeS
       )
   }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleRequest(
         sources = mtdItUser.incomeSources,

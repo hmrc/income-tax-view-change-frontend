@@ -16,7 +16,7 @@
 
 package controllers.triggeredMigration
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
@@ -37,7 +37,8 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+        api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
       )
       .build()
 
@@ -49,7 +50,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       mockIncomeSourceDetailsService.getIncomeSourceDetails()(
         ArgumentMatchers.any(), ArgumentMatchers.any()
       )
-    ).thenReturn(Future(singleBusinessIncome))
+    ).thenReturn(Future(singleBusinessIncome.copy(channel = "2")))
 
 
   mtdAllRoles.foreach { mtdRole =>
@@ -66,6 +67,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(fakeRequest)
@@ -94,40 +96,42 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
       s"the user is authenticated as a $mtdRole" should {
 
-        "redirect back to the page when form is valid and 'Yes' is selected" in {
+        "redirect to the complete page when form is valid and 'Yes' is selected" in {
 
           enable(TriggeredMigration)
 
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "Yes")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "Yes")
           )
 
           status(result) shouldBe 303
           redirectLocation(result).value should include(
-            routes.CheckActiveBusinessesConfirmController.show(isAgent).url
+            routes.CheckCompleteController.show(isAgent).url
           )
         }
 
-        "redirect back to the page when form is valid and 'No' is selected" in {
+        "redirect back to the check records page when form is valid and 'No' is selected" in {
 
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "No")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "No")
           )
 
           status(result) shouldBe 303
           redirectLocation(result).value should include(
-            routes.CheckActiveBusinessesConfirmController.show(isAgent).url
+            routes.CheckHmrcRecordsController.show(isAgent).url
           )
         }
 
@@ -136,6 +140,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
@@ -156,7 +161,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "Yes")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "Yes")
           )
 
           status(result) shouldBe 303

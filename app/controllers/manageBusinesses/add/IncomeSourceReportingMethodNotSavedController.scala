@@ -52,7 +52,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authActions: A
   }
 
 
-  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -60,7 +60,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authActions: A
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

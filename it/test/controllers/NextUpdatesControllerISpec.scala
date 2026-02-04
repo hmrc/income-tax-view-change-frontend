@@ -33,7 +33,7 @@ import testConstants.NextUpdatesIntegrationTestConstants._
 
 class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
-  val path = "/next-updates"
+  val path = "/submission-deadlines"
 
   s"GET $path" when {
     val mtdUserRole = MTDIndividual

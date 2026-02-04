@@ -19,22 +19,22 @@ package views
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
-import controllers.routes.{ChargeSummaryController, CreditAndRefundController, PaymentController}
-import enums.CodingOutType._
+import controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
+import enums.CodingOutType.*
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatter
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
-import models.outstandingCharges._
+import models.outstandingCharges.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import views.html.WhatYouOweView
 
@@ -153,7 +153,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      creditAndRefundUrl = CreditAndRefundController.show().url,
+      moneyInYourAccountUrl = MoneyInYourAccountController.show().url,
       creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
@@ -211,7 +211,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      creditAndRefundUrl = CreditAndRefundController.showAgent().url,
+      moneyInYourAccountUrl = MoneyInYourAccountController.showAgent().url,
       creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),

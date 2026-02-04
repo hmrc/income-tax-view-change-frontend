@@ -25,8 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.TriggeredMigrationUtils
 import views.html.triggeredMigration.CheckActiveBusinessesConfirmView
-
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckActiveBusinessesConfirmController @Inject()(
@@ -34,12 +33,13 @@ class CheckActiveBusinessesConfirmController @Inject()(
                                                         val auth: AuthActions
                                                       )(
                                                         mcc: MessagesControllerComponents,
-                                                        implicit val appConfig: FrontendAppConfig
+                                                        implicit val appConfig: FrontendAppConfig,
+                                                        implicit val ec: ExecutionContext
                                                       ) extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+    auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
       withTriggeredMigrationFS {
         val form = CheckActiveBusinessesConfirmForm()
         Future.successful(
@@ -56,7 +56,7 @@ class CheckActiveBusinessesConfirmController @Inject()(
     }
 
   def submit(isAgent: Boolean): Action[AnyContent] =
-    auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+    auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
       withTriggeredMigrationFS {
         CheckActiveBusinessesConfirmForm().bindFromRequest().fold(
           formWithErrors =>
@@ -70,8 +70,13 @@ class CheckActiveBusinessesConfirmController @Inject()(
                 )
               )
             ),
-          _ =>
-            Future.successful(Redirect(routes.CheckActiveBusinessesConfirmController.show(isAgent)))
+
+          value =>
+            if(value.response.contains(CheckActiveBusinessesConfirmForm.responseYes)) {
+              Future.successful(Redirect(routes.CheckCompleteController.show(isAgent)))
+            } else {
+              Future.successful(Redirect(routes.CheckHmrcRecordsController.show(isAgent)))
+            }
         )
       }
     }

@@ -44,7 +44,7 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
                                              val mcc: MessagesControllerComponents,
                                              val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def show(isAgent: Boolean, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
     val backUrl = if(isAgent) {
       controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
     } else {

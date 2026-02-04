@@ -20,6 +20,8 @@ import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.delegatedEnrolmentPredicate
 import forms.IncomeSourcesFormsSpec.AuthRetrievals
 import org.mockito.Mockito.*
+import forms.IncomeSourcesFormsSpec.{AuthRetrievals, NrsAgentAuthRetrievals}
+import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
@@ -80,6 +82,12 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
                                                       retrievalValue: AuthRetrievals,
                                                       mtdItId: String
                                                     ): Unit = {
+    setupMockAgentAuthSuccess(mockFAF)(retrievalValue)
+    setupMockNoPrimaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)
+    setupMockNoSecondaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)
+  }
+  
+  def setupMockAgentWithMissingDelegatedMTDEnrolmentWithNrs(mockFAF: FrontendAuthorisedFunctions)(retrievalValue: NrsAgentAuthRetrievals, mtdItId: String): Unit = {
     setupMockAgentAuthSuccess(mockFAF)(retrievalValue)
     setupMockNoPrimaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)
     setupMockNoSecondaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)

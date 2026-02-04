@@ -163,13 +163,13 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
   }
 
   def show(taxYear: Int, id: String, isInterestCharge: Boolean = false, origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(taxYear, id, isInterestCharge, isAgent = false, origin)
     }
 
   def showAgent(taxYear: Int, id: String, isInterestCharge: Boolean = false): Action[AnyContent] =
-    authActions.asMTDPrimaryAgent.async {
+    authActions.asMTDPrimaryAgent().async {
       implicit mtdItUser =>
         handleRequest(taxYear, id, isInterestCharge, isAgent = true)
     }

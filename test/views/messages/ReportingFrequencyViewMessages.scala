@@ -45,11 +45,11 @@ object ReportingFrequencyViewMessages {
   val differentObligationsLiTwo = "a tax return"
   val differentObligationsTextTwo = "For tax years you are opted out of, you only need to file a tax return."
   val differentObligationsTextTwoExempt = "For tax years you are opted out of or exempt, you only need to file a tax return."
-  val differentObligationsTextThree = "You can see what is due on the updates and deadlines page."
+  val differentObligationsTextThree = "You can see what is due on the submission deadlines page."
 
   val yourObligationsHeading = "What your reporting obligations are"
   val yourObligationsText = "For tax years you are exempt, you only need to file a tax return."
-  val yourObligationsTextTwo = "Find out what is due and when on the updates and deadlines page."
+  val yourObligationsTextTwo = "Find out what is due and when on the submission deadlines page."
 
   val mandatoryReportingHeadingR17 = "When Making Tax Digital for Income Tax is required"
   val mandatoryReportingHeading = "When reporting quarterly is mandatory"

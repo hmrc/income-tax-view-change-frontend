@@ -137,9 +137,9 @@ home.payments.view                                              = Gwirio’r hyn
 home.overdue.date.update.count                                  = {0} Ddiweddariadau yn hwyr
 home.overdue.date.payment.count                                 = {0} Daliadau am fod yn hwyr
 home.overdue.date                                               = Yn hwyr
-home.updates.heading                                            = Diweddariad nesaf i’w gyflwyno erbyn
+home.updates.heading                                            = Eich dyddiadau cau ar gyfer cyflwyno
 home.updates.view                                               = Bwrw golwg dros ddyddiadau cau diweddariadau
-home.updates.view.reportingFrequency                            = Bwrw golwg dros ddyddiadau cau a rheoli sut rydych yn adrodd
+home.updates.view.reportingFrequency                            = Bwrw golwg dros eich dyddiadau cau
 home.tax-years.heading                                          = Ffurflenni Treth
 home.your-returns.agent.description                             = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.your-returns.description                                   = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
@@ -154,7 +154,7 @@ home.paymentCreditRefundHistory.view                            = Hanes taliadau
 home.your-returns.updatesLink                                   = Diweddaru a chyflwyno’ch Ffurflen Dreth ar gyfer {0} i {1}
 home.returns.viewLink                                           = Bwrw golwg dros eich Ffurflen Dreth gyfredol ar gyfer {0} i {1}
 home.self-assessment.description                                = Defnyddiwch y gwasanaeth hwn i fwrw golwg dros eich gwybodaeth am flynyddoedd treth cynharach cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm.
-home.credAndRefund.view                                         = Hawlio ad-daliad
+home.money-in-your-account                                      = Arian yn eich cyfrif
 home.credAndRefund_howToClaim.view                              = Sut i hawlio ad-daliad
 home.incomeSources.heading                                      = Ffynonellau incwm
 home.incomeSources.newJourneyHeading                            = Eich busnesau
@@ -179,7 +179,7 @@ home.interest-accruing                                          = Mae gennych da
 home.updates.overdue.charges                                    = {0} Daliadau am fod yn hwyr
 home.updates.overdue.updates                                    = {0} Ddiweddariadau yn hwyr
 
-home.updates.R17.heading                                        = Eich diweddariadau a’ch dyddiadau cau
+home.updates.R17.heading                                        = Eich dyddiadau cau ar gyfer cyflwyno
 home.updates.R17.nextUpdateDue                                  = Diweddariad nesaf i’w gyflwyno erbyn: {0}
 home.updates.R17.nextTaxReturnDue                               = Ffurflen Dreth nesaf i’w chyflwyno erbyn: {0}
 home.updates.R17.linkText                                       = Bwrw golwg dros eich dyddiadau cau
@@ -304,7 +304,7 @@ tax-year-summary.message.C15524                                = rydych wedi haw
 tax-year-summary.message.C15506                                = mae swm y Lwfans Incwm o Eiddo yr ydych wedi’i hawlio’n uwch na’r terfyn.
 tax-year-summary.message.C15507                                = rydych wedi hawlio {0}  Lwfans Incwm  Eiddo ond mae hyn yn fwy na’ch trosiant ar gyfer eich eiddo yn y DU
 tax-year-summary.message.C15510                                = ni all y rhyddhad Rhentu Ystafell a hawliwyd ar gyfer eiddo sydd wedi’i osod ar y cyd fod yn fwy na {0}% o’r terfyn ar gyfer y cynllun Rhentu Ystafell.
-tax-year-summary.message.C15518                                = mae swm y rhyddhad Rhentu Ystafell a hawliwyd gennych yn uwch na’r terfyn.
+tax-year-summary.message.C15518                                = mae swm y rhyddhad Rhentu Ystafell a hawliwyd gennych yn fwy na’r terfyn.
 tax-year-summary.message.C15530                                = rydych yn defnyddio system cyfrifyddu ar sail arian parod. Mae hyn yn golygu na allwch hawlio i osod colledion yn erbyn incwm cyffredinol.
 tax-year-summary.message.C15319                                = mae’n rhaid i’ch costau na ellir eu caniatáu mewn perthynas â gwesteia busnes fod yr un faint â’r costau caniataol mewn perthynas â gwesteia busnes.
 tax-year-summary.message.C15320                                = rydych wedi hawlio Lwfans Incwm Masnachu. Mae hyn yn golygu na allwch hawlio ar gyfer unrhyw dreuliau pellach.
@@ -325,8 +325,8 @@ tax-year-summary.message.C55010                                = uni all y diwed
 tax-year-summary.message.C55012                                = mae’n rhaid i’r diweddariad alinio â dyddiad dechrau’r cyfnod cyfrifyddu sef, {0}.
 tax-year-summary.message.C55013                                = mae’n rhaid i’r diweddariad alinio â dyddiad dechrau’r cyfnod cyfrifyddu sef, {0}.
 tax-year-summary.message.C55509                                = rydych wedi hawlio Lwfans Incwm o Eiddo ar gyfer eich llety gwyliau wedi’i ddodrefnu yn y DU Mae hyn yn golygu na allwch hawlio ar gyfer unrhyw dreuliau pellach.
-tax-year-summary.message.C55511                                = mae trothwy’r lwfans Rhentu Ystafell wedi cael ei gyfyngu i swm y rhenti sy’n dod i law.
-tax-year-summary.message.C55519                                = mae trothwy’r lwfans Rhentu Ystafell wedi cael ei gyfyngu i swm y rhenti sy’n dod i law.
+tax-year-summary.message.C55511                                = mae trothwy’r cynllun Rhentu Ystafell wedi cael ei gyfyngu i swm y rhenti a dderbyniwyd.
+tax-year-summary.message.C55519                                = mae trothwy’r cynllun Rhentu Ystafell wedi cael ei gyfyngu i swm y rhenti a dderbyniwyd.
 tax-year-summary.message.C55515                                = ni ellir defnyddio treth a ddidynnwyd yn erbyn incwm eiddo yn y DU oni bai eich bod yn landlord di-breswyl.
 tax-year-summary.message.C55516                                = ni ellir defnyddio treth a ddidynnwyd yn erbyn incwm eiddo yn y DU oni bai eich bod yn landlord di-breswyl.
 tax-year-summary.message.C55517                                = mae swm y dreth a ddidynnwyd yn fwy na chyfanswm y rhent rydych wedi’i gael.
@@ -381,8 +381,8 @@ tax-year-summary.agent.message.C15523                          = mae’ch cleien
 tax-year-summary.agent.message.C15524                          = mae’ch cleient wedi hawlio treuliau cyfunol. Mae hyn yn golygu na all hawlio ar gyfer unrhyw dreuliau pellach.
 tax-year-summary.agent.message.C15506                          = mae swm y Lwfans Incwm o Eiddo sydd wedi’i hawlio gan eich cleient yn uwch na’r terfyn.
 tax-year-summary.agent.message.C15507                          = mae’ch cleient wedi hawlio {0} o Lwfans Incwm o Eiddo ond mae hyn yn fwy na’ch trosiant ar gyfer ei eiddo yn y DU.
-tax-year-summary.agent.message.C15510                          = mi all y rhyddhad Rhentu Ystafell a hawliwyd ar gyfer eiddo sydd wedi’i osod ar y cyd fod yn fwy na {0}% o’r terfyn ar gyfer y cynllun Rhentu Ystafell.
-tax-year-summary.agent.message.C15518                          = mae swm y rhyddhad Rhentu Ystafell a hawliwyd gan eich cleient yn uwch na’r terfyn.
+tax-year-summary.agent.message.C15510                          = ni all y rhyddhad Rhentu Ystafell a hawliwyd ar gyfer eiddo sydd wedi’i osod ar y cyd fod yn fwy na {0}% o’r terfyn ar gyfer y cynllun Rhentu Ystafell.
+tax-year-summary.agent.message.C15518                          = mae swm y rhyddhad Rhentu Ystafell a hawliwyd gan eich cleient yn fwy na’r terfyn.
 tax-year-summary.agent.message.C15530                          = mae’ch cleient yn defnyddio system cyfrifyddu ar sail arian parod. Mae hyn yn golygu na all hawlio i osod colledion yn erbyn incwm cyffredinol.
 tax-year-summary.agent.message.C15319                          = mae’n rhaid i gostau’ch cleient na ellir eu caniatáu mewn perthynas â gwesteia busnes fod yr un faint â’r costau caniataol mewn perthynas â gwesteia busnes.
 tax-year-summary.agent.message.C15320                          = mae’ch cleient wedi hawlio Lwfans Incwm Masnachu. Mae hyn yn golygu na all hawlio ar gyfer unrhyw dreuliau pellach.
@@ -643,7 +643,7 @@ taxCal_breakdown.table.taxDeductedAtSource.voidISAs                          = I
 taxCal_breakdown.table.taxDeductedAtSource.total					         = Cyfanswm y dreth a ddidynnwyd
 taxCal_breakdown.table.amount                                                = Swm
 
-taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau Benthyciad Myfyriwr (cynllun {0})
+taxCal_breakdown.table.studentLoanRepaymentsPlanType0X              = Ad-daliadau benthyciad myfyriwr (Cynllun {0})
 taxCal_breakdown.table.studentLoanPostGraduatePlan                  = Ad-daliadau Benthyciad Ôl-raddedig
 taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged               = Treth sy’n ddyledus ar daliadau blwydd-daliadau
 taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged               = Treth sy’n ddyledus ar freindaliadau
@@ -813,7 +813,7 @@ obligations.quarterlyUpdates                                    = Diweddariadau 
 obligations.finalDeclarationUpdate                              = Datganiad terfynol
 
 ## Next updates Page ##
-nextUpdates.heading                                             = Eich diweddariadau a’ch dyddiadau cau
+nextUpdates.heading                                             = Eich dyddiadau cau ar gyfer cyflwyno
 nextUpdates.sub-heading                                         = Diweddariadau’n ddyledus erbyn
 nextUpdates.dropdown.info                                       = Beth yw’r mathau o ddiweddariadau?
 nextUpdates.info                                       			= Mae’n rhaid i bob diweddariad gael ei anfon gan ddefnyddio ein meddalwedd cadw cofnodion erbyn pob dyddiad a ddangosir.
@@ -1446,6 +1446,18 @@ credit-and-refund.subHeading.has-no-credits-1                     = Cafwyd cais 
 credit-and-refund.subHeading.has-no-credits-2                     = ac mae ar y gweill.
 
 
+
+## Money In Your Account
+
+money-in-your-account.heading                                           = Arian yn eich cyfrif
+money-in-your-account.credit                                            = Credyd: {0}
+
+money-in-your-account.no-money                                          = Nid oes unrhyw arian yn eich cyfrif ar hyn o bryd.
+money-in-your-account.no-money-one-refund                               = Nid oes gennych unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae gennych
+money-in-your-account.no-money-one-refund-link-text                     = ad-daliad ar y gweill
+money-in-your-account.no-money-two-refunds                              = Nid oes gennych unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae gennych
+money-in-your-account.no-money-two-refunds-link-text                    = ad-daliadau ar y gweill
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
@@ -1856,7 +1868,7 @@ income.source.added.obligation.list.text                                        
 ###### Income Source Added Scenario 1 - SignUpNextYearOnly  #######
 
 income.source.added.scenario.one.account.updated.p.a                                        = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
-income.source.added.scenario.one.account.updated.p.link                                     = diweddariadau a dyddiadau cau,
+income.source.added.scenario.one.account.updated.p.link                                     = dyddiadau cau ar gyfer cyflwyno,
 income.source.added.scenario.one.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.one.view.reporting.obligations.p.a                             = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
@@ -1869,7 +1881,7 @@ income.source.added.scenario.one.view.businesses.p                              
 ###### Income Source Added Scenario 2 - NotSigningUp  #######
 
 income.source.added.scenario.two.account.updated.p.a                                        = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
-income.source.added.scenario.two.account.updated.p.link                                     = diweddariadau a dyddiadau cau,
+income.source.added.scenario.two.account.updated.p.link                                     = dyddiadau cau ar gyfer cyflwyno,
 income.source.added.scenario.two.account.updated.p.b                                        = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.two.view.reporting.obligations.p.a                             = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Dysgwch ragor am
@@ -1883,7 +1895,7 @@ income.source.added.scenario.two.view.businesses.p                              
 income.source.added.few.minutes.overdue.updates                                             = Ar gyfer y busnes newydd hwn, mae’n bosibl bod gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
 
 income.source.added.scenario.three.account.updated.p.a                                      = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
-income.source.added.scenario.three.account.updated.p.link                                   = diweddariadau a dyddiadau cau,
+income.source.added.scenario.three.account.updated.p.link                                   = dyddiadau cau ar gyfer cyflwyno,
 income.source.added.scenario.three.account.updated.p.b                                      = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.three.view.reporting.obligations.p.a                           = Yn dibynnu ar eich amgylchiadau, mae’n bosibl y byddwch yn gallu
@@ -1898,7 +1910,7 @@ income.source.added.scenario.three.view.businesses.p                            
 income.source.added.few.minutes.overdue.updates                                             = Ar gyfer y busnes newydd hwn, mae’n bosibl bod gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth {0} i {1}. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
 
 income.source.added.scenario.four.account.updated.p.a                                       = Hyd yn oed os nad ydynt yn ymddangos ar unwaith ar y dudalen
-income.source.added.scenario.four.account.updated.p.link                                    = diweddariadau a dyddiadau cau,
+income.source.added.scenario.four.account.updated.p.link                                    = dyddiadau cau ar gyfer cyflwyno,
 income.source.added.scenario.four.account.updated.p.b                                       = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.four.view.reporting.obligations.p                              = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Dysgwch ragor am
@@ -2080,7 +2092,7 @@ business-ceased.obligation.heading2.text                            = Eich dyddi
 business-ceased.obligation.inset.text                               = Bydd eich dyddiadau cau ar gyfer y busnes hwn ar gael yn y munudau nesaf.
 business-ceased.obligation.p1.text.1                                = Mae’ch cyfrif wedi’i ddiweddaru, hyd yn oed os nad yw’r diweddariadau hyn yn ymddangos ar unwaith ar y
 business-ceased.obligation.p1.text.2                                =
-business-ceased.obligation.p1.link                                  = dudalen diweddariadau a dyddiadau cau.
+business-ceased.obligation.p1.link                                  = dyddiadau cau ar gyfer cyflwyno.
 business-ceased.obligation.p2.text                                  = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
 business-ceased.obligation.p2.link                                  = Bwrw golwg dros eich busnesau
 business-ceased.obligation.remaining-business.text.1                = Gan fod eich busnes sy’n weddill yn newydd, mae wedi’i osod i optio allan o Droi Treth yn Ddigidol ar gyfer Treth Incwm am hyd at 2 o flynyddoedd treth.
@@ -2165,7 +2177,7 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.optedOut =
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.heading = Eich dyddiadau cau sydd wedi’u haddasu
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.inset = Bydd eich dyddiadau cau ar gyfer cyflwyno ar gyfer y busnes hwn ar gael yn y munudau nesaf
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.beforeLink = Hyd yn oed os nad ydynt yn cael eu harddangos ar y dudalen
-incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link = diweddariadau a dyddiadau cau
+incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link = dyddiadau cau ar gyfer cyflwyno
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink = ar unwaith, mae’ch cyfrif wedi’i ddiweddaru.
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para2 = Ar gyfer y busnes newydd hwn mae’n bosibl bod gennych ddiweddariadau hwyr ar gyfer blwyddyn dreth 2024 i 2025. Mae’n rhaid i chi gyflwyno’r diweddariadau hyn, ynghyd â’r holl incwm a threuliau sydd eu hangen, drwy ddefnyddio’ch meddalwedd sy’n cydweddu.
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link = Bwrw golwg dros eich busnes
@@ -2570,7 +2582,7 @@ optout.confirmedOptOut.submitTax.confirmed.bullet2               = defnyddio gwa
 
 optout.confirmedOptOut.updatesDue                                = Eich diweddariadau nesaf sy’n ddyledus
 optout.confirmedOptOut.updatesDue.desc                           = Gwiriwch y dudalen {0} ar gyfer dyddiadau cau y flwyddyn dreth bresennol. Ni fydd dyddiadau cau ar gyfer blynyddoedd yn y dyfodol i’w gweld hyd nes eu bod yn newid i’r flwyddyn dreth bresennol.
-optout.confirmedOptOut.next-updates                              = diweddariadau nesaf
+optout.confirmedOptOut.next-updates                              = dyddiadau cau ar gyfer cyflwyno
 
 optout.confirmedOptOut.reportQuarterly                           = Cyflwyno adroddiadau’n chwarterol eto yn y dyfodol
 optout.confirmedOptOut.reportQuarterly.desc1                     = Mae’n bosibl y bydd gofyn i chi gyflwyno adroddiadau’n chwarterol eto yn y dyfodol os yw’r canlynol yn digwydd:
@@ -2654,7 +2666,7 @@ optout.chooseOptOutTaxYear.deleteUpdates             = Bydd hyn yn dileu {0} diw
 optout.optOutError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
 optout.optOutError.options                           = Gallwch wneud y canlynol:
 optout.optOutError.nextUpdates-bullet-1              = mynd yn ôl i’ch tudalen
-optout.optOutError.nextUpdates-link                  = diweddariadau nesaf
+optout.optOutError.nextUpdates-link                  = dyddiadau cau ar gyfer cyflwyno
 optout.optOutError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optout.optOutError.home-bullet-1                     = mynd yn ôl i’r
 optout.optOutError.home-bullet-2                     = hafan
@@ -2867,7 +2879,7 @@ optin.checkAnswers.submissionsMade = Os ydych wedi cyflwyno unrhyw incwm a threu
 optin.optInError.heading                           = Mae’n ddrwg gennym, ond mae problem gyda’r gwasanaeth
 optin.optInError.options                           = Gallwch wneud y canlynol:
 optin.optInError.nextUpdates-bullet-1              = mynd yn ôl i’ch tudalen
-optin.optInError.nextUpdates-link                  = diweddariadau nesaf
+optin.optInError.nextUpdates-link                  = dyddiadau cau ar gyfer cyflwyno
 optin.optInError.nextUpdates-bullet-2              = a rhoi cynnig arall arni
 optin.optInError.home-bullet-1                     = mynd yn ôl i’r
 optin.optInError.home-bullet-2                     = hafan
@@ -2892,7 +2904,7 @@ optin.completedOptIn.yourRevisedDeadline.inset              = Bydd eich dyddiada
 optin.completedOptIn.yourRevisedDeadline.h2                 = Eich dyddiadau cau sydd wedi’u haddasu
 optin.completedOptIn.yourRevisedDeadline.p1.a               = Hyd yn oed os nad ydynt yn cael eu harddangos ar unwaith ar y dudalen
 optin.completedOptIn.yourRevisedDeadline.p1.b               = mae’ch cyfrif wedi’i ddiweddaru.
-optin.completedOptIn.yourRevisedDeadline.p1.link            = diweddariadau a dyddiadau cau,
+optin.completedOptIn.yourRevisedDeadline.p1.link            = dyddiadau cau ar gyfer cyflwyno,
 
 optin.completedOptIn.yourRevisedDeadline.p2.a               = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
 optin.completedOptIn.yourRevisedDeadline.p2.b               =  .
@@ -2930,7 +2942,7 @@ signUp.completedSignUp.cy.inset                               = Mae’n bosibl b
 signUp.completedSignUp.cy.yourRevisedDeadlines                = Eich dyddiadau cau sydd wedi’u haddasu
 signUp.completedSignUp.cy.yourRevisedDeadlines.text           = Bydd eich dyddiadau cau diwygiedig ar gael yn y munudau nesaf.
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text1    = Hyd yn oed os nad ydynt yn cael eu dangos ar unwaith ar y dudalen
-signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.link     = diweddariadau a dyddiadau cau
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.link     = dyddiadau cau ar gyfer cyflwyno
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.comma    = ,
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text2    = mae’ch cyfrif wedi’i ddiweddaru.
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text1    = Gallwch, ar unrhyw adeg, optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
@@ -2968,7 +2980,7 @@ signUp.completedSignUp.ny.heading.desc                     = Mae’n rhaid i chi
 signUp.completedSignUp.ny.yourRevisedDeadlines             = Eich dyddiadau cau sydd wedi’u haddasu
 signUp.completedSignUp.ny.yourRevisedDeadlines.inset       = Bydd eich dyddiadau cau ar gyfer y busnes hwn ar gael yn y munudau nesaf.
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text1 = Hyd yn oed os nad ydynt yn cael eu dangos ar unwaith ar y dudalen
-signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.link  = diweddariadau a dyddiadau cau
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.link  = dyddiadau cau ar gyfer cyflwyno
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.comma = ,
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text2 = mae’ch cyfrif wedi’i ddiweddaru.
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text1 = Gallwch, ar unrhyw adeg, optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
@@ -2980,7 +2992,7 @@ signUp.completedSignUp.ny.submitUpdates.desc1.text1 = Ar gyfer unrhyw flwyddyn d
 signUp.completedSignUp.ny.submitUpdates.desc1.link  = meddalwedd sy’n cydweddu
 signUp.completedSignUp.ny.submitUpdates.desc1.text2 = arnoch.
 signUp.completedSignUp.ny.submitUpdates.desc1.text3 =
-signUp.completedSignUp.ny.submitUpdates.desc2.text1 = Ar ôl i chi optio allan, gallwch ddysgu yma sut i
+signUp.completedSignUp.ny.submitUpdates.desc2.text1 = Pan nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddysgu yma sut i
 signUp.completedSignUp.ny.submitUpdates.desc2.link  = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 
 signUp.completedSignUp.ny.yourReportingObligations             = Eich ymrwymiadau o ran adrodd yn y dyfodol
@@ -3026,14 +3038,14 @@ reporting.frequency.different.obligations.li2                               = Ff
 reporting.frequency.different.obligations.p2                                = Ar gyfer blynyddoedd treth yr ydych wedi optio allan ohonynt, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
 reporting.frequency.different.obligations.p2hasExempt                       = Ar gyfer blynyddoedd treth yr ydych wedi optio allan neu wedi’i esemptio, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
 reporting.frequency.different.obligations.p3                                = Gallwch fwrw golwg dros yr hyn sy’n ddyledus ar y dudalen
-reporting.frequency.different.obligations.link.text                         = diweddariadau a dyddiadau cau.
+reporting.frequency.different.obligations.link.text                         = dyddiadau cau ar gyfer cyflwyno.
 reporting.frequency.different.obligations.link.text.additional.english      =
 
 #your obligations (exempt)
 reporting.frequency.your.obligations.heading                           = Beth yw eich ymrwymiadau o ran adrodd
 reporting.frequency.your.obligations.p1                                = Ar gyfer blynyddoedd treth pan ydych yn esempt, dim ond cyflwyno Ffurflen Dreth y mae angen i chi ei wneud.
 reporting.frequency.your.obligations.p2                                = Dysgwch faint sy’n ddyledus ac erbyn pryd ar y dudalen
-reporting.frequency.your.obligations.link.text                         = diweddariadau a dyddiadau
+reporting.frequency.your.obligations.link.text                         = dyddiadau cau ar gyfer cyflwyno
 reporting.frequency.your.obligations.link.text.additional.english      = cau.
 
 reporting.frequency.mandatoryReporting.heading    = Pan fydd adrodd yn chwarterol yn ofynnol
@@ -3423,7 +3435,7 @@ triggered-migration.checkComplete.submitUpdates.heading                         
 triggered-migration.checkComplete.submitUpdates.p1                                      = Mae’r diweddariadau chwarterol sy’n ddyledus, a’r wybodaeth y mae angen i chi ei darparu, i’w gweld yn eich cyfrif. Wedyn, bydd yn rhaid i chi ddefnyddio’ch meddalwedd sy’n cydweddu i wneud y canlynol:
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = creu cofnod digidol o’ch incwm o eiddo a’ch incwm o fod yn unig fasnachwr, a’r treuliau cysylltiedig
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = anfon eich diweddariad(au) chwarterol at CThEF
-triggered-migration.checkComplete.submitUpdates.linkText                                = Gwiriwch eich diweddariadau diweddaraf a’r dyddiadau cau
+triggered-migration.checkComplete.submitUpdates.linkText                                = Gwiriwch eich dyddiadau cau diweddaraf ar gyfer cyflwyno
 
 #sign-up/opt-out you can not go back page
 signUpOptOut.cannotGoBack.heading       = Ni allwch fynd yn ôl
