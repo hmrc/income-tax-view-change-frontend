@@ -180,6 +180,7 @@ class TaxYearSummaryController @Inject()(
         }
       case (error: LiabilityCalculationError, previousCalc, Some(lpp2Url)) =>
         Logger("application").error(s"[TaxYearSummaryController][renderView][$taxYear] Unable to show calc view for latest calc, PreviousCalc is defined: ${previousCalc.isDefined}")
+
         handleCalcError(
           mtdItId = mtdItUser.mtditid,
           nino = mtdItUser.nino,
@@ -336,21 +337,61 @@ class TaxYearSummaryController @Inject()(
           isAgent = isAgent,
           ctaLink = ctaLink,
           taxYearViewScenarios = taxYearViewScenarios,
-          showNoTaxCalc = false,
+          showNoTaxCalc = true,
           viewTaxCalcLink = selfAssessmentLink,
           selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
           contactHmrcLink = appConfig.findHmrcContactsSALink()
         ))
       )
     } else {
-      if (isAgent) {
-        Logger("application").error(s"[Agent][$taxYear]] No new calc deductions data error found. Downstream error")
-        Future(agentItvcErrorHandler.showInternalServerError())
-      }
-      else {
-        Logger("application").error(s"[$taxYear]] No new calc deductions data error found. Downstream error")
-        Future(itvcErrorHandler.showInternalServerError())
-      }
+      lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+      val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
+
+      val calculationSummary: Option[CalculationSummary] =
+        validLatestCalculation match {
+          case Some(calc) =>
+            Some(CalculationSummary(calc = formatErrorMessages(calc, messagesApi, isAgent)(messagesApi.preferred(lang))))
+          case _ =>
+            None
+        }
+
+      val viewModel =
+        TaxYearSummaryViewModel(
+          calculationSummary = calculationSummary,
+          previousCalculationSummary = None,
+          charges = chargeItems,
+          obligations = obligations,
+          showForecastData = true,
+          ctaViewModel = claimToAdjustViewModel,
+          LPP2Url = lpp2Url,
+          pfaEnabled = isEnabled(PostFinalisationAmendmentsR18)
+        )
+
+      auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))
+
+      Logger("application").debug(s"[handleCalcError][$taxYear] Rendered Tax year summary page with No Calc data")
+
+      val selfAssessmentLink: Option[String] =
+        mtdItUser.saUtr.map(sautr => s"https://www.tax.service.gov.uk/self-assessment/ind/$sautr/account/taxyear/$taxYear")
+
+      val taxYearViewScenarios =
+        taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
+
+      Future(
+        Ok(taxYearSummaryView(
+          taxYear = taxYear,
+          viewModel = viewModel,
+          backUrl = backUrl,
+          origin = origin,
+          isAgent = isAgent,
+          ctaLink = ctaLink,
+          taxYearViewScenarios = taxYearViewScenarios,
+          showNoTaxCalc = false,
+          viewTaxCalcLink = selfAssessmentLink,
+          selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
+          contactHmrcLink = appConfig.findHmrcContactsSALink()
+        ))
+      )
     }
   }
 

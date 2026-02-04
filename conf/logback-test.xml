@@ -29,7 +29,7 @@
 
     <logger name="uk.gov" level="OFF"/>
 
-    <logger name="application" level="INFO"/>          // change to DEBUG or INFO for more logs
+    <logger name="application" level="ERROR"/>          // change to DEBUG or INFO for more logs
 
     <logger name="auth" level="ERROR"/>                 // change to DEBUG or INFO for more logs
 

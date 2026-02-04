@@ -783,8 +783,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, "2018", "LATEST")
 
                 res should have(
-                  httpStatus(500),
-                  pageTitle(mtdUserRole, "Sorry, there is a problem with the service", isErrorPage = true),
+                  httpStatus(200),
+                  pageTitle(mtdUserRole, "Tax year summary", isErrorPage = false),
+                  elementTextByID("calculation-panel-heading")("Calculation"),
                 )
               }
 
@@ -843,8 +844,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
 
                 res should have(
-                  httpStatus(500),
-                  pageTitle(mtdUserRole, "Sorry, there is a problem with the service", isErrorPage = true),
+                  httpStatus(200),
+                  pageTitle(mtdUserRole, "Tax year summary", isErrorPage = false),
+                  elementTextByID("calculation-panel-heading")("Calculation"),
                 )
               }
 
