@@ -48,10 +48,8 @@ class CustomerFactsUpdateService @Inject()(
             Logger("application").warn(s"Customer facts update returned  status=$status for mtdId=$mtdId body=${response.body}")
 
         }
-        ()
       }.recover { case e: Exception =>
         Logger("application").error(s"Customer facts update failed due to exception for mtdId=$mtdId", e)
-        ()
       }
     }
   }
