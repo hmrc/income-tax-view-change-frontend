@@ -62,7 +62,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     TriggeredMigration,
     PostFinalisationAmendmentsR18,
     `CY+1YouMustWaitToSignUpPageEnabled`,
-    NewHomePage
+    NewHomePage,
+    OverseasBusinessAddress
   )
 
   "FeatureSwitchName" when {
