@@ -291,7 +291,9 @@ class TaxYearSummaryController @Inject()(
                                origin: Option[String],
                                isAgent: Boolean
                              )(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Result] = {
-    
+
+    if (error.status == NO_CONTENT) {
+
       lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
       val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
@@ -340,6 +342,16 @@ class TaxYearSummaryController @Inject()(
           contactHmrcLink = appConfig.findHmrcContactsSALink()
         ))
       )
+    } else {
+      if (isAgent) {
+        Logger("application").error(s"[Agent][$taxYear]] No new calc deductions data error found. Downstream error")
+        Future(agentItvcErrorHandler.showInternalServerError())
+      }
+      else {
+        Logger("application").error(s"[$taxYear]] No new calc deductions data error found. Downstream error")
+        Future(itvcErrorHandler.showInternalServerError())
+      }
+    }
   }
 
   private def getLPP2Link(chargeItems: List[TaxYearSummaryChargeItem], isAgent: Boolean): Option[String] = {
