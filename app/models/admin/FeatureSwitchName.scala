@@ -75,6 +75,8 @@ object FeatureSwitchName {
       JsSuccess(`CY+1YouMustWaitToSignUpPageEnabled`)
     case JsString(NewHomePage.name) =>
       JsSuccess(NewHomePage)
+    case JsString(OverseasBusinessAddress.name) =>
+      JsSuccess(OverseasBusinessAddress)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -117,7 +119,8 @@ object FeatureSwitchName {
       TriggeredMigration,
       PostFinalisationAmendmentsR18,
       `CY+1YouMustWaitToSignUpPageEnabled`,
-      NewHomePage
+      NewHomePage,
+      OverseasBusinessAddress
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -226,6 +229,11 @@ case object `CY+1YouMustWaitToSignUpPageEnabled` extends FeatureSwitchName {
 case object NewHomePage extends FeatureSwitchName {
   override val name: String = "new-home-page"
   override val toString: String = "New Home Page"
+}
+
+case object OverseasBusinessAddress extends FeatureSwitchName {
+  override val name: String = "overseas-business-address"
+  override val toString: String = "Overseas Business Address"
 }
 
 
