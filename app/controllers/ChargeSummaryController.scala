@@ -190,11 +190,6 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetailWithDueDate.documentDetail,
           financialDetailsForCharge)
-        
-        println("XXXXXX")
-        println(Json.prettyPrint(Json.toJson(documentDetailWithDueDate.documentDetail)))
-        println("XXXXXX")
-        
 
         if (chargeItem.isPenalty && !isEnabled(PenaltiesAndAppeals)){
           Future.successful(onError("Charge type prohibited by feature switches", isAgent, showInternalServerError = true))
