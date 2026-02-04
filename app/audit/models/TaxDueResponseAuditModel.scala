@@ -42,8 +42,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
     val giftAidTax: Option[String] = viewModel.giftAidTax.map(_.toCurrencyString)
 
     id match {
-      case "C22201" =>
-        for {
+      case "C22201" => for {
           gross <- grossGiftAid
           band <- modifiedBaseBandLimit
         } yield s"Your Basic Rate limit has been increased by $gross to $band for Gift Aid payments"
@@ -54,14 +53,12 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
       case "C22206" => Some("One or more of your annual adjustments have not been applied because you have submitted additional income or expenses")
       case "C22207" => Some("Your payroll giving amount has been included in your adjusted taxable income")
 
-      case "C22208" =>
-        for {
+      case "C22208" => for {
           tax <- giftAidTax
           band <- modifiedBaseBandLimit
         } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution"
 
-      case "C22209" =>
-        for {
+      case "C22209" => for {
           tax <- giftAidTax
           band <- modifiedBaseBandLimit
         } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution and Gift Aid payments"
