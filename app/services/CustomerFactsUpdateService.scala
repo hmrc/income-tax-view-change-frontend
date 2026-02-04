@@ -29,28 +29,23 @@ class CustomerFactsUpdateService @Inject()(
                                             customerFactsUpdateConnector: CustomerFactsUpdateConnector
                                           ) {
 
-  def updateCustomerFacts(mtdId: String, isAlreadyConfirmed: Boolean)
+  def updateCustomerFacts(mtdId: String)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
-    if (isAlreadyConfirmed) {
-      Logger("application").info(s"Customer facts already confirmed - skipping update for mtdId=$mtdId")
-      Future.successful(())
-    } else {
-      customerFactsUpdateConnector.updateCustomerFacts(mtdId).map { response =>
-        response.status match {
-          case OK =>
-            Logger("application").info(s"Customer facts update returned OK for mtdId=$mtdId")
+    customerFactsUpdateConnector.updateCustomerFacts(mtdId).map { response =>
+      response.status match {
+        case OK =>
+          Logger("application").info(s"Customer facts update returned OK for mtdId=$mtdId")
 
-          case status if status >= INTERNAL_SERVER_ERROR =>
-            Logger("application").error(s"Customer facts update failed. status=$status for mtdId=$mtdId body=${response.body}")
+        case status if status >= INTERNAL_SERVER_ERROR =>
+          Logger("application").error(s"Customer facts update failed. status=$status for mtdId=$mtdId body=${response.body}")
 
-          case status =>
-            Logger("application").warn(s"Customer facts update returned  status=$status for mtdId=$mtdId body=${response.body}")
+        case status =>
+          Logger("application").warn(s"Customer facts update returned  status=$status for mtdId=$mtdId body=${response.body}")
 
-        }
-      }.recover { case e: Exception =>
-        Logger("application").error(s"Customer facts update failed due to exception for mtdId=$mtdId", e)
       }
+    }.recover { case e: Exception =>
+      Logger("application").error(s"Customer facts update failed due to exception for mtdId=$mtdId", e)
     }
   }
 }

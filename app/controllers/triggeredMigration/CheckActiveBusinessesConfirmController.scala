@@ -26,6 +26,7 @@ import services.CustomerFactsUpdateService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.TriggeredMigrationUtils
 import views.html.triggeredMigration.CheckActiveBusinessesConfirmView
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -75,10 +76,9 @@ class CheckActiveBusinessesConfirmController @Inject()(
           form => form.response match {
             case Some(CheckActiveBusinessesConfirmForm.responseYes) =>
               val mtdId = user.mtditid
-              val isAlreadyConfirmed = user.incomeSources.isConfirmedUser
 
               customerFactsUpdateService
-                .updateCustomerFacts(mtdId, isAlreadyConfirmed)
+                .updateCustomerFacts(mtdId)
                 .map(_ => Redirect(routes.CheckCompleteController.show(isAgent)))
 
             case _ =>

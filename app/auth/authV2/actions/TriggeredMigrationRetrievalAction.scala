@@ -67,11 +67,15 @@ class TriggeredMigrationRetrievalAction @Inject()(
             case (false, _) =>
               isItsaStatusVoluntaryOrMandated().flatMap {
                 case Right(false) =>
-                  confirmCustomerFactsForNonEligibleUsers(req).map(_ => Right(req))
+                  customerFactsUpdateService
+                    .updateCustomerFacts(req.mtditid)
+                    .map(_ => Right(req))
                 case Left(errorResult) => Future(Left(errorResult))
                 case Right(true) => isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).flatMap {
                   case Right(true) =>
-                    confirmCustomerFactsForNonEligibleUsers(req).map(_ => Right(req))
+                    customerFactsUpdateService
+                      .updateCustomerFacts(req.mtditid)
+                      .map(_ => Right(req))
                   case Right(false) => if (isTriggeredMigrationPage) {
                     Future.successful(Right(req))
                   } else {
@@ -133,7 +137,4 @@ class TriggeredMigrationRetrievalAction @Inject()(
       case _ => individualErrorHandler.showInternalServerError()(request)
     }
   }
-
-  private def confirmCustomerFactsForNonEligibleUsers[A](req: MtdItUser[A])(implicit hc: HeaderCarrier): Future[Unit] =
-    customerFactsUpdateService.updateCustomerFacts(req.mtditid, isAlreadyConfirmed = false)
 }

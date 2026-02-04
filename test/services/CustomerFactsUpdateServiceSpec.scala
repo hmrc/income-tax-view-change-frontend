@@ -18,10 +18,9 @@ package services
 
 import connectors.CustomerFactsUpdateConnector
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
-import org.mockito.Mockito.{mock, times, verify, when}
-import play.api.http.Status
+import org.mockito.Mockito.{mock, verify, when}
 import testUtils.TestSupport
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -30,48 +29,46 @@ class CustomerFactsUpdateServiceSpec extends TestSupport {
   implicit val hc: HeaderCarrier = HeaderCarrier()
 
   trait Setup {
-    val mockConnector: CustomerFactsUpdateConnector = mock(classOf[CustomerFactsUpdateConnector])
-    val service = new CustomerFactsUpdateService(mockConnector)
+    val mockCustomerFactsUpdateConnector: CustomerFactsUpdateConnector =
+      mock(classOf[CustomerFactsUpdateConnector])
+
+    val service = new CustomerFactsUpdateService(
+      customerFactsUpdateConnector = mockCustomerFactsUpdateConnector
+    )
+
     val mtdId = "XAIT0000123456"
+
+    when(
+      mockCustomerFactsUpdateConnector.updateCustomerFacts(any[String])(any[HeaderCarrier])
+    ).thenReturn(Future.successful(()))
   }
 
   "updateCustomerFacts" should {
 
-    "return Unit and NOT call the connector when already confirmed" in new Setup {
-      val result: Future[Unit] = service.updateCustomerFacts(mtdId, isAlreadyConfirmed = true)
+    "call the connector and return Unit on success" in new Setup {
+      val result: Future[Unit] = service.updateCustomerFacts(mtdId)
 
       result.futureValue shouldBe ()
-      verify(mockConnector, times(0)).updateCustomerFacts(any())(any())
+      verify(mockCustomerFactsUpdateConnector).updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier])
     }
 
-    "call the connector when not confirmed and return Unit on 200" in new Setup {
-      when(mockConnector.updateCustomerFacts(eqTo(mtdId))(any()))
-        .thenReturn(Future.successful(HttpResponse(Status.OK, "")))
-
-      val result: Future[Unit] = service.updateCustomerFacts(mtdId, isAlreadyConfirmed = false)
-
-      result.futureValue shouldBe ()
-      verify(mockConnector, times(1)).updateCustomerFacts(eqTo(mtdId))(any())
-    }
-
-    "call the connector when not confirmed and return Unit on 422" in new Setup {
-      when(mockConnector.updateCustomerFacts(eqTo(mtdId))(any()))
-        .thenReturn(Future.successful(HttpResponse(Status.UNPROCESSABLE_ENTITY, "")))
-
-      val result: Future[Unit] = service.updateCustomerFacts(mtdId, isAlreadyConfirmed = false)
-
-      result.futureValue shouldBe ()
-      verify(mockConnector, times(1)).updateCustomerFacts(eqTo(mtdId))(any())
-    }
-
-    "swallow exceptions (recover) and still return Unit" in new Setup {
-      when(mockConnector.updateCustomerFacts(eqTo(mtdId))(any()))
+    "still return Unit when the connector fails with an exception" in new Setup {
+      when(mockCustomerFactsUpdateConnector.updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier]))
         .thenReturn(Future.failed(new RuntimeException("boom")))
 
-      val result: Future[Unit] = service.updateCustomerFacts(mtdId, isAlreadyConfirmed = false)
+      val result: Future[Unit] = service.updateCustomerFacts(mtdId)
 
       result.futureValue shouldBe ()
-      verify(mockConnector, times(1)).updateCustomerFacts(eqTo(mtdId))(any())
+      verify(mockCustomerFactsUpdateConnector).updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier])
+    }
+
+    "not throw even if connector returns a failed future" in new Setup {
+      when(mockCustomerFactsUpdateConnector.updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new Exception("unexpected")))
+
+      noException should be thrownBy {
+        service.updateCustomerFacts(mtdId).futureValue
+      }
     }
   }
 }

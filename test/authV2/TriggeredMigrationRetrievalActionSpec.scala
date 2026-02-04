@@ -84,7 +84,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
     reset(mockItsaStatusService)
     reset(mockCustomerFactsUpdateService)
 
-    when(mockCustomerFactsUpdateService.updateCustomerFacts(any(), any())(any(), any()))
+    when(mockCustomerFactsUpdateService.updateCustomerFacts(any())(any(), any()))
       .thenReturn(Future.successful(()))
   }
 
@@ -164,7 +164,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view")
-        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any(), any())(any(), any())
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
     }
 
@@ -184,7 +184,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
-        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any(), any())(any(), any())
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "the user has a channel of confirmed and is not on the triggered migration page" in {
         enable(TriggeredMigration)
@@ -195,7 +195,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
-        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any(), any())(any(), any())
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "the user has a channel of customer led and is not on the triggered migration page" in {
         enable(TriggeredMigration)
@@ -206,7 +206,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
-        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any(), any())(any(), any())
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
 
       "the user is unconfirmed and their ITSA status is not voluntary or mandated and they arent on a triggered migration page" in {
@@ -221,7 +221,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
-        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid), eqTo(false))(any(), any())
+        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
       }
 
       "the user is unconfirmed, their ITSA status is voluntary, and their calculation is crystallised and not on a triggered migration page" in {
@@ -238,7 +238,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
-        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid), eqTo(false))(any(), any())
+        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
       }
       "the user is unconfirmed, their ITSA status is mandatory, and their calculation is crystallised and not on a triggered migration page" in {
         enable(TriggeredMigration)
@@ -254,7 +254,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
-        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid), eqTo(false))(any(), any())
+        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
       }
 
       "the triggered migration feature switch is disabled" in {
@@ -266,7 +266,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
-        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any(), any())(any(), any())
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
     }
 
@@ -286,7 +286,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/check-your-active-businesses/hmrc-record")
-        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any(), any())(any(), any())
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "the user is unconfirmed, their ITSA status is mandatory, and their calculation is not crystallised and they arent on a triggered migration page" in {
         enable(TriggeredMigration)
@@ -303,7 +303,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/check-your-active-businesses/hmrc-record")
-        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any(), any())(any(), any())
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
     }
 

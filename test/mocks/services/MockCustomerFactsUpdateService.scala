@@ -30,6 +30,6 @@ trait MockCustomerFactsUpdateService {
 
   def mockUpdateCustomerFacts(): Unit =
     when(
-      mockCustomerFactsUpdateService.updateCustomerFacts(any(), any())(any(), any())
+      mockCustomerFactsUpdateService.updateCustomerFacts(any())(any(), any())
     ).thenReturn(Future.successful(()))
 }
