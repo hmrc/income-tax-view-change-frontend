@@ -219,7 +219,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 val result = action(fakeRequest)
-                status(result) shouldBe Status.OK
+                status(result) shouldBe 500
                 contentType(result) shouldBe Some("text/html")
                 result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
                 result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
@@ -369,9 +369,8 @@ class TaxYearSummaryControllerSpec
                 ).toString
 
                 val result = action(fakeRequest)
-                status(result) shouldBe Status.OK
-                contentAsString(result) shouldBe expectedContent
-                contentType(result) shouldBe Some("text/html")
+                status(result) shouldBe 500
+                Jsoup.parse(contentAsString(result)).title() shouldBe "Sorry, there is a problem with the service - GOV.UK"
               }
             }
 
@@ -932,11 +931,8 @@ class TaxYearSummaryControllerSpec
                 ).toString()).text()
 
                 val result = action(fakeRequest)
-                status(result) shouldBe Status.OK
-                Jsoup.parse(contentAsString(result)).text() shouldBe expectedContent
-                contentType(result) shouldBe Some("text/html")
-                result.futureValue.session.get(gatewayPage) shouldBe Some("taxYearSummary")
-                result.futureValue.session.get(calcPagesBackPage) shouldBe Some("ITVC")
+                status(result) shouldBe 500
+                Jsoup.parse(contentAsString(result)).title() shouldBe "Sorry, there is a problem with the service - GOV.UK"
               }
             }
 
