@@ -187,6 +187,14 @@ trait ViewSpec extends TestSupport {
       element.table(table).select("tr").size() shouldBe size
     }
 
+    def hasTableWithCorrectHeadings(headings: List[String], table: Int = 1): List[Assertion] = {
+      headings.zipWithIndex.map { (heading, index) => element.table(table).selectNth("th", index + 1).text() shouldBe heading }
+    }
+
+    def hasTableWithCaption(caption: String, table: Int = 1): Assertion = {
+      element.table(table).selectHead("caption").text() shouldBe caption
+    }
+
     def hasErrorSummary(fieldErrors: (String, String)*): Assertion = {
       val errorSummary: Element = element.selectHead("#error-summary-display")
       errorSummary.attr("role") shouldBe "alert"
