@@ -1,0 +1,102 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import forms.manageBusinesses.add.BusinessNameForm
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.helpers.injected.{ErrorSummary, InputHelper}
+@import views.html.layouts.unifiedLayout
+
+@this(
+        mainTemplate: unifiedLayout,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        formWithCSRF: FormWithCSRF,
+        govukInsetText: GovukInsetText,
+        inputHelper: InputHelper,
+        errorSummary: ErrorSummary,
+        govukInput: GovukInput,
+        govukRadios: GovukRadios,
+        continueButton: ContinueButton
+)
+
+@(form: Form[_],
+        isAgent: Boolean,
+        postAction: Call,
+        backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+ @* @(businessNameForm: Form[BusinessNameForm],
+        isAgent: Boolean,
+        postAction: Call,
+        backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_]) *@
+
+@businessName = @{
+    "business-name"
+}
+
+@field = @{
+    form("business-name")
+}
+
+@mainTemplate(
+    pageTitle = messages("add-business-is.the.new.address.in.the.uk.heading"),
+    form = Some(form),
+    isAgent = isAgent,
+    backUrl = Some(backUrl),
+    btaNavPartial = user.btaNavPartial) {
+
+    @errorSummary(
+        form = form
+    )
+
+    @formWithCSRF(action = postAction, Symbol("id") -> "business-name-form") {
+
+        <span class="govuk-caption-xl">@messages("incomeSources.add.sole-trader")</span>
+
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(messages("add-business-is.the.new.address.in.the.uk.heading", "TODO needs to be a parameter passed from a controller")),
+                    classes = "govuk-fieldset__legend--xl start-date-heading",
+                    isPageHeading = true
+                ))
+            )),
+            items = Seq(
+                RadioItem(
+                    id = Some("yes-response"),
+                    value = Some("Yes"),
+                    content = Text(messages("radioForm.yes"))
+                ),
+                RadioItem(
+                    id = Some("no-response"),
+                    value = Some("No"),
+                    content = Text(messages("radioForm.no"))
+                )
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
+            classes = "govuk-radios--inline"
+        ).withFormField(field))
+
+        @continueButton()
+    }
+}
+
+
+
+

@@ -1570,6 +1570,11 @@ add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes f
 add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
 add-business-trade.form.error.same-name     = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
+## Is the new address in the UK page
+add-business-is.the.new.address.in.the.uk.heading   = A yw’r cyfeiriad newydd yn y DU
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading   = A yw cyfeiriad eich busnes unig fasnachwr yn y DU?
+
+
 ## Add business address page
 add-business-address.select.heading         = Dewiswch gyfeiriad y busnes
 add-business-address.lookup.heading         = Beth yw cyfeiriad eich busnes?
