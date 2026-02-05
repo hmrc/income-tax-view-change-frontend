@@ -22,14 +22,17 @@ import config.FrontendAppConfig
 import forms.triggeredMigration.CheckActiveBusinessesConfirmForm
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.CustomerFactsUpdateService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.TriggeredMigrationUtils
 import views.html.triggeredMigration.CheckActiveBusinessesConfirmView
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckActiveBusinessesConfirmController @Inject()(
                                                         view: CheckActiveBusinessesConfirmView,
+                                                        customerFactsUpdateService: CustomerFactsUpdateService,
                                                         val auth: AuthActions
                                                       )(
                                                         mcc: MessagesControllerComponents,
@@ -70,13 +73,17 @@ class CheckActiveBusinessesConfirmController @Inject()(
                 )
               )
             ),
+          form => form.response match {
+            case Some(CheckActiveBusinessesConfirmForm.responseYes) =>
+              val mtdId = user.mtditid
 
-          value =>
-            if(value.response.contains(CheckActiveBusinessesConfirmForm.responseYes)) {
-              Future.successful(Redirect(routes.CheckCompleteController.show(isAgent)))
-            } else {
+              customerFactsUpdateService
+                .updateCustomerFacts(mtdId)
+                .map(_ => Redirect(routes.CheckCompleteController.show(isAgent)))
+
+            case _ =>
               Future.successful(Redirect(routes.CheckHmrcRecordsController.show(isAgent)))
-            }
+          }
         )
       }
     }

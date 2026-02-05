@@ -25,9 +25,9 @@ import models.admin.TriggeredMigration
 import models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail, StatusReason}
-import models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel, Metadata, PersonalInformation}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito.{reset, when}
+import models.liabilitycalculation.*
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.Application
@@ -35,7 +35,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{MessagesControllerComponents, Request, Result, Results}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, ITSAStatusService}
+import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
@@ -47,6 +47,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
   lazy val mockItsaStatusService = mock[ITSAStatusService]
   lazy val mockIncomeTaxCalculationConnector = mock[IncomeTaxCalculationConnector]
   lazy val mockDateServiceInterface = mock[DateServiceInterface]
+  lazy val mockCustomerFactsUpdateService = mock[CustomerFactsUpdateService]
 
   override lazy val app: Application =
     new GuiceApplicationBuilder()
@@ -61,7 +62,8 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
     appConfig,
     mockItsaStatusService,
     mockIncomeTaxCalculationConnector,
-    mockDateServiceInterface
+    mockDateServiceInterface,
+    mockCustomerFactsUpdateService
   )(
     ec,
     itvcErrorHandler,
@@ -80,6 +82,10 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
     super.beforeEach()
     reset(mockIncomeTaxCalculationConnector)
     reset(mockItsaStatusService)
+    reset(mockCustomerFactsUpdateService)
+
+    when(mockCustomerFactsUpdateService.updateCustomerFacts(any())(any(), any()))
+      .thenReturn(Future.successful(()))
   }
 
   val validITSAStatuses = Seq(Voluntary, Mandated)
@@ -158,6 +164,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view")
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
     }
 
@@ -177,6 +184,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "the user has a channel of confirmed and is not on the triggered migration page" in {
         enable(TriggeredMigration)
@@ -187,6 +195,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "the user has a channel of customer led and is not on the triggered migration page" in {
         enable(TriggeredMigration)
@@ -197,6 +206,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
 
       "the user is unconfirmed and their ITSA status is not voluntary or mandated and they arent on a triggered migration page" in {
@@ -211,6 +221,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
       }
 
       "the user is unconfirmed, their ITSA status is voluntary, and their calculation is crystallised and not on a triggered migration page" in {
@@ -227,6 +238,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
       }
       "the user is unconfirmed, their ITSA status is mandatory, and their calculation is crystallised and not on a triggered migration page" in {
         enable(TriggeredMigration)
@@ -242,6 +254,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
       }
 
       "the triggered migration feature switch is disabled" in {
@@ -253,6 +266,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
     }
 
@@ -272,6 +286,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/check-your-active-businesses/hmrc-record")
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "the user is unconfirmed, their ITSA status is mandatory, and their calculation is not crystallised and they arent on a triggered migration page" in {
         enable(TriggeredMigration)
@@ -288,6 +303,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/check-your-active-businesses/hmrc-record")
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
     }
 
