@@ -1569,6 +1569,10 @@ add-business-trade.form.error.long          = Business trade must be 35 characte
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
 add-business-trade.form.error.same-name     = Trade and business name cannot be the same
 
+## Is the new address in the UK page
+add-business-is.the.new.address.in.the.uk.heading   = Is the new address in the UK
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading   = Is the address of your sole trader business in the UK?
+
 ## Add business address page
 add-business-address.select.heading         = Select business address
 add-business-address.lookup.heading         = What is your business address?
