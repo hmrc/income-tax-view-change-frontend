@@ -28,4 +28,4 @@ case object IrsaEnrolementHandedOff extends TaxYearViewScenarios
 
 case object NoIrsaAEnrolement extends TaxYearViewScenarios
 
-case object AgentBefore2023TaxYear extends TaxYearViewScenarios
+case object AgentCannotViewTaxCalc extends TaxYearViewScenarios

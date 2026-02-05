@@ -209,7 +209,7 @@
             @amendGuidance
         }
 
-        @if(taxYearViewScenarios == AgentBefore2023TaxYear) {
+        @if(taxYearViewScenarios == AgentCannotViewTaxCalc) {
             @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
             @cannotBeDeepLinkedAgent
             @amendGuidance

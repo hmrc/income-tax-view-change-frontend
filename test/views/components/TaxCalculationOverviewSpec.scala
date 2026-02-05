@@ -170,7 +170,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
       }
     }
 
-    "scenario is AgentBefore2023TaxYear" should {
+    "scenario is AgentCannotViewTaxCalc" should {
 
       "return the correct content" in {
 
@@ -185,7 +185,7 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
             isPrevious = true,
             pfaEnabled = true,
             isAmended = true,
-            taxYearViewScenarios = AgentBefore2023TaxYear,
+            taxYearViewScenarios = AgentCannotViewTaxCalc,
             showNoTaxCalc = false,
             viewTaxCalcLink = Some(viewTaxCalcLink),
             selfAssessmentLink = saTaxReturnsLink,
