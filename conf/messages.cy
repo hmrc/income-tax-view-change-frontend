@@ -1458,6 +1458,25 @@ money-in-your-account.no-money-one-refund-link-text                     = ad-dal
 money-in-your-account.no-money-two-refunds                              = Nid oes gennych unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae gennych
 money-in-your-account.no-money-two-refunds-link-text                    = ad-daliadau ar y gweill
 
+
+money-in-your-account.credit-not-allocated                              = Nid yw’r swm hwn wedi’i neilltuo ar gyfer unrhyw daliadau ar hyn o bryd.
+money-in-your-account.all-credit-allocated                              = Mae’r swm hwn wedi’i neilltuo ar gyfer talu unrhyw daliadau sydd ar y gweill. Gallwch hawlio’r arian hwn yn ôl o hyd, ond efallai y bydd yn haws i’w adael yn eich cyfrif i osgoi methu unrhyw ddyddiadau cau ar gyfer talu.
+money-in-your-account.some-credit-allocated.p1                          = Mae {0} wedi’i neilltuo ar gyfer talu’r taliadau sydd ar y gweill. Gallwch hawlio’r arian hwn yn ôl, ond efallai y bydd yn haws i’w adael yn eich cyfrif i osgoi methu unrhyw ddyddiadau cau ar gyfer talu.
+money-in-your-account.some-credit-allocated.p2.1                        = Os ydych yn hawlio mwy na
+money-in-your-account.some-credit-allocated.p2.2                        = bydd angen i chi wneud taliad arall i dalu’r taliadau sydd ar y gweill cyn y dyddiad cau.
+money-in-your-account.where-from.table-caption                          = O ble y daeth yr arian
+money-in-your-account.where-from.table-header.amount                    = Swm
+money-in-your-account.where-from.table-header.tax-year                  = Blwyddyn dreth
+money-in-your-account.where-from.table-header.description               = Disgrifiad
+money-in-your-account.where-from.table-header.date                      = Dyddiad
+money-in-your-account.where-from.total-row                              = Cyfanswm y credyd
+money-in-your-account.where-from.table-row.tax-year                     = {0} i {1}
+money-in-your-account.where-from.table-row.tax-year.hidden              = Blwyddyn dreth {0} i {1}
+money-in-your-account.where-from.payment-row.description                = Taliad a wnaethoch i CThEF ar {0}
+money-in-your-account.where-from.credit-row.description                 = Credyd o flwyddyn dreth gynharach
+money-in-your-account.where-from.refund-row.description                 = Ad-daliad ar y gweill
+money-in-your-account.claim-refund.button-text                          = Hawlio ad-daliad
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
