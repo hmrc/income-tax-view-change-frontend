@@ -2291,7 +2291,8 @@ incomeSources.ceased-income-sources.unknown-sole-trader         =   Sole trader 
 # manage your businesses
 manage.your.businesses.heading                                           = Your businesses
 manage.your.businesses.self-employed-h2                                  = Sole trader businesses
-manage.your.businesses.self-employed-desc                                = You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader.
+manage.your.businesses.sole-trader-inset                                 = Do not add limited companies or business partnerships here.
+manage.your.businesses.self-employed-desc                                = You’re a sole trader if you run your own business as an individual and work for yourself. This is also known as being self‑employed.
 manage.your.businesses.addIncomeSources.selfEmployment.link              = Add a sole trader business
 manage.your.businesses.addIncomeSources.ukProperty.link                  = Add UK property business
 manage.your.businesses.addIncomeSources.foreignProperty.link             = Add foreign property business
@@ -3406,7 +3407,7 @@ triggered-migration.check-hmrc-records.soleTrader.businessName       = Business 
 triggered-migration.check-hmrc-records.soleTrader.businessState      = Business state
 triggered-migration.check-hmrc-records.soleTrader.active             = Active
 triggered-migration.check-hmrc-records.soleTrader.add.link           = Add a sole trader business
-triggered-migration.check-hmrc-records.soleTrader.guidance           = You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader.
+triggered-migration.check-hmrc-records.soleTrader.guidance           = You’re a sole trader if you run your own business as an individual and work for yourself. This is also known as being self‑employed.
 triggered-migration.check-hmrc-records.soleTrader.unknown            = Unknown
 
 triggered-migration.check-hmrc-records.property.heading              = Property businesses

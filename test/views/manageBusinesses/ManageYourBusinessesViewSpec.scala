@@ -432,6 +432,9 @@ class ManageYourBusinessesViewSpec extends TestSupport {
   }
 
   def checkSoleTraderComponents(pageDocument: Document): Unit = {
+    pageDocument.getElementById("self-employed-h1").text() shouldBe "Sole trader businesses"
+    pageDocument.getElementById("self-employed-desc").text() shouldBe "You’re a sole trader if you run your own business as an individual and work for yourself. This is also known as being self‑employed."
+    pageDocument.getElementById("self-employed-inset").text() shouldBe "Do not add limited companies or business partnerships here."
     pageDocument.getElementById("business-type-0").text() shouldBe "Income-Source"
     pageDocument.getElementById("view-manage-link-0").text() shouldBe "View and manage Income-Source"
     pageDocument.getElementById("cease-link-0").text() shouldBe "Cease Income-Source"
