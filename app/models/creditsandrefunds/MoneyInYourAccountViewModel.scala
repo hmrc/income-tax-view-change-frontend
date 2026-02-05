@@ -16,6 +16,7 @@
 
 package models.creditsandrefunds
 
+import controllers.routes
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 
@@ -25,6 +26,7 @@ import java.time.LocalDate
 sealed trait CreditRow {
   val amount: BigDecimal
   val creditType: CreditType
+  val date: LocalDate
 }
 
 object CreditRow {
@@ -33,31 +35,54 @@ object CreditRow {
 
     transaction.transactionType match {
       case PaymentType =>
-        transaction.dueDate.map(date =>
-          PaymentCreditRow(
-            amount = transaction.amount,
-            date = date))
+        transaction.dueDate.flatMap(dueDate =>
+          transaction.effectiveDateOfPayment.map(effectiveDate =>
+            PaymentCreditRow(
+              transactionId = transaction.transactionId,
+              amount = transaction.amount,
+              date = dueDate,
+              effectiveDate = effectiveDate
+            )))
       case Repayment =>
-        Some(RefundRow(amount = transaction.amount))
+        Some(RefundRow(amount = transaction.amount, date = LocalDate.now())) // Set date to current date to enable correct ordering of rows in WhereMoneyCameFromTable.scala.html
       case creditType =>
-        transaction.taxYear.map(year =>
-          CreditViewRow(
-            amount = transaction.amount,
-            creditType = creditType,
-            taxYear = year))
+        transaction.taxYear.flatMap(year =>
+          transaction.dueDate.map(date =>
+            CreditViewRow(
+              transactionId = transaction.transactionId,
+              amount = transaction.amount,
+              creditType = creditType,
+              taxYear = year,
+              date = date)))
     }
   }
 }
 
-case class CreditViewRow(amount: BigDecimal, creditType: CreditType, taxYear: TaxYear) extends CreditRow
+case class CreditViewRow(transactionId: String, amount: BigDecimal, creditType: CreditType, taxYear: TaxYear, date: LocalDate) extends CreditRow {
+  def descriptionLink(isAgent: Boolean): String = creditType match {
+    case PoaOneReconciliationCredit | PoaTwoReconciliationCredit | ITSAReturnAmendmentCredit =>
+      if (isAgent) routes.ChargeSummaryController.showAgent(taxYear = taxYear.endYear, id = transactionId).url else routes.ChargeSummaryController.show(taxYear = taxYear.endYear, id = transactionId).url
+    case _ =>
+      if (isAgent) routes.CreditsSummaryController.showAgentCreditsSummary(calendarYear = date.getYear).url else routes.CreditsSummaryController.showCreditsSummary(calendarYear = date.getYear).url
+  }
+}
 
-case class PaymentCreditRow(amount: BigDecimal,  date: LocalDate) extends CreditRow {
+case class PaymentCreditRow(transactionId: String, amount: BigDecimal, date: LocalDate, effectiveDate: LocalDate) extends CreditRow {
 
   override val creditType: CreditType = PaymentType
-}
-case class RefundRow(amount: BigDecimal) extends CreditRow {
 
+  val taxYear: TaxYear = TaxYear.getTaxYear(date)
+
+  def descriptionLink(isAgent: Boolean): String =
+    if (isAgent) routes.PaymentAllocationsController.viewPaymentAllocationAgent(transactionId).url else routes.PaymentAllocationsController.viewPaymentAllocation(transactionId).url
+}
+
+case class RefundRow(amount: BigDecimal, date: LocalDate) extends CreditRow {
+
+  val taxYear: TaxYear = TaxYear.getTaxYear(date)
   override val creditType: CreditType = Repayment
+
+  def descriptionLink: String = routes.PaymentHistoryController.refundStatus().url
 }
 
 case class MoneyInYourAccountViewModel(availableCredit: BigDecimal,
@@ -81,7 +106,7 @@ object MoneyInYourAccountViewModel {
     MoneyInYourAccountViewModel(
       availableCredit = model.availableCreditForRepayment,
       allocatedCredit = model.allocatedCreditForFutureCharges,
-      unallocatedCredit =  model.unallocatedCredit,
+      unallocatedCredit = model.unallocatedCredit,
       totalCredit = model.totalCredit,
       firstPendingAmountRequested = model.firstPendingAmountRequested,
       secondPendingAmountRequested = model.secondPendingAmountRequested,

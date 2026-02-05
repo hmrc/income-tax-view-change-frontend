@@ -1457,6 +1457,24 @@ money-in-your-account.no-money-one-refund-link-text                     = refund
 money-in-your-account.no-money-two-refunds                              = You do not have any money in your account at the moment, but you have
 money-in-your-account.no-money-two-refunds-link-text                    = refunds in progress
 
+money-in-your-account.credit-not-allocated                              = This amount has not been set aside for any charges yet.
+money-in-your-account.all-credit-allocated                              = This amount has been set aside to pay for upcoming charges. You can still claim it back, but it may be easier to leave it in your account to avoid missing any payment deadlines.
+money-in-your-account.some-credit-allocated.p1                          = {0} has been set aside to pay for upcoming charges.You can claim this money back, but it may be easier to leave it in your account to avoid missing any payment deadlines.
+money-in-your-account.some-credit-allocated.p2.1                        = If you claim more than
+money-in-your-account.some-credit-allocated.p2.2                        = you’ll need to make another payment to cover your upcoming charges before the deadline.
+money-in-your-account.where-from.table-caption                          = Where the money came from
+money-in-your-account.where-from.table-header.amount                    = Amount
+money-in-your-account.where-from.table-header.tax-year                  = Tax year
+money-in-your-account.where-from.table-header.description               = Description
+money-in-your-account.where-from.table-header.date                      = Date
+money-in-your-account.where-from.total-row                              = Total credit
+money-in-your-account.where-from.table-row.tax-year                     = {0} to {1}
+money-in-your-account.where-from.table-row.tax-year.hidden              = Tax year {0} to {1}
+money-in-your-account.where-from.payment-row.description                = Payment you made to HMRC on {0}
+money-in-your-account.where-from.credit-row.description                 = Credit from an earlier tax year
+money-in-your-account.where-from.refund-row.description                 = Refund in progress
+money-in-your-account.claim-refund.button-text                          = Claim a refund
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
