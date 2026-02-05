@@ -2289,7 +2289,8 @@ incomeSources.ceased-income-sources.unknown-sole-trader         =   Busnesau uni
 # manage your businesses
 manage.your.businesses.heading                                           = Eich busnesau
 manage.your.businesses.self-employed-h2                                  = Busnesau unig fasnachwr
-manage.your.businesses.self-employed-desc                                = Rydych yn hunangyflogedig os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn ‘unig fasnachwr’. Os ydych yn gweithio drwy gwmni cyfyngedig, nid unig fasnachwr ydych chi.
+manage.your.businesses.sole-trader-inset                                 = Peidiwch ag ychwanegu cwmnïau cyfyngedig na phartneriaethau busnes yma.
+manage.your.businesses.self-employed-desc                                = Rydych yn unig fasnachwr os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn hunangyflogedig.
 manage.your.businesses.addIncomeSources.selfEmployment.link              = Ychwanegu busnes unig fasnachwr
 manage.your.businesses.addIncomeSources.ukProperty.link                  = Ychwanegu busnes eiddo yn y DU
 manage.your.businesses.addIncomeSources.foreignProperty.link             = Ychwanegu busnes eiddo tramor
@@ -3392,7 +3393,7 @@ triggered-migration.check-hmrc-records.soleTrader.businessName       = Enw’r b
 triggered-migration.check-hmrc-records.soleTrader.businessState      = Statws y busnes
 triggered-migration.check-hmrc-records.soleTrader.active             = Cyfredol
 triggered-migration.check-hmrc-records.soleTrader.add.link           = Ychwanegu busnes unig fasnachwr
-triggered-migration.check-hmrc-records.soleTrader.guidance           = Rydych yn hunangyflogedig os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn ‘unig fasnachwr’. Os ydych yn gweithio drwy gwmni cyfyngedig, nid unig fasnachwr ydych chi.
+triggered-migration.check-hmrc-records.soleTrader.guidance           = Rydych yn unig fasnachwr os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn hunangyflogedig.
 triggered-migration.check-hmrc-records.soleTrader.unknown            = Anhysbys
 
 triggered-migration.check-hmrc-records.property.heading              = Busnesau eiddo

@@ -65,7 +65,11 @@
 
 @soleTraderSection = {
     @h3(messages("triggered-migration.check-hmrc-records.soleTrader.heading"), classes = "govuk-heading-m", optId = Some("sole-trader-heading"))
+
     @p(id = Some("sole-trader-guidance")){@messages("triggered-migration.check-hmrc-records.soleTrader.guidance")}
+    @govukInsetText(InsetText(
+        content = Text(messages("manage.your.businesses.sole-trader-inset"))
+    ))
 
     @for((business, index) <- viewModel.soleTraderBusinesses.zipWithIndex) {
         <div class="govuk-summary-card">
