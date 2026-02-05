@@ -241,69 +241,48 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
           }
         }
 
-        "return the AgentCannotViewTaxCalc view scenario" in {
+        "user is an agent" should {
 
-          val taxYear = TaxYear(2024, 2025)
+          "return the AgentCannotViewTaxCalc view scenario" in {
 
-          val agentUser =
-            MtdItUser(
-              mtditid = testMtditid,
-              nino = testNino,
-              usersRole = MTDPrimaryAgent,
-              authUserDetails = getAuthUserDetails(Some(Agent), getAllEnrolmentsAgent(hasNino = true, hasSA = true), hasUserName = true),
-              clientDetails = None,
-              incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-              btaNavPartial = None,
-              featureSwitches = List()
-            )(FakeRequest())
+            val taxYear = TaxYear(2024, 2025)
 
-          val liabilityCalculationResponse =
-            LiabilityCalculationResponse(
-              inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
-              metadata = Metadata(
-                calculationTimestamp = Some(""),
-                calculationType = ""
-              ),
-              submissionChannel = Some(IsLegacyWithCesa),
-              messages = None,
-              calculation = None,
-            )
+            val agentUser =
+              MtdItUser(
+                mtditid = testMtditid,
+                nino = testNino,
+                usersRole = MTDPrimaryAgent,
+                authUserDetails = getAuthUserDetails(Some(Agent), getAllEnrolmentsAgent(hasNino = true, hasSA = true), hasUserName = true),
+                clientDetails = None,
+                incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
+                btaNavPartial = None,
+                featureSwitches = List()
+              )(FakeRequest())
+
+            val liabilityCalculationResponse =
+              LiabilityCalculationResponse(
+                inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+                metadata = Metadata(
+                  calculationTimestamp = Some(""),
+                  calculationType = ""
+                ),
+                submissionChannel = Some(IsLegacyWithCesa),
+                messages = None,
+                calculation = None,
+              )
 
 
-          val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(agentUser) // Agent user
-          val expected = AgentCannotViewTaxCalc
+            val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(agentUser) // Agent user
+            val expected = AgentCannotViewTaxCalc
 
-          actual shouldBe expected
-        }
-
-        "return the AgentCannotViewTaxCalc view scenario" in {
-
-          val taxYear = TaxYear(2024, 2025)
-
-          val agentUser =
-            MtdItUser(
-              mtditid = testMtditid,
-              nino = testNino,
-              usersRole = MTDPrimaryAgent,
-              authUserDetails = getAuthUserDetails(Some(Agent), getAllEnrolmentsAgent(hasNino = true, hasSA = true), hasUserName = true),
-              clientDetails = None,
-              incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-              btaNavPartial = None,
-              featureSwitches = List()
-            )(FakeRequest())
-
-          val liabilityCalculationErrorResponse = LiabilityCalculationError(status = 404, message = "some error message")
-
-          val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationErrorResponse), taxYear)(agentUser) // Agent user
-          val expected = AgentCannotViewTaxCalc
-
-          actual shouldBe expected
+            actual shouldBe expected
+          }
         }
       }
 
       "the tax year is before 2023" when {
 
-        "the user is and Agent user" should {
+        "the user is an Agent user" should {
 
           "return the AgentCannotViewTaxCalc view scenario" in {
 
