@@ -22,18 +22,14 @@ import config.featureswitch.FeatureSwitching
 import connectors.{CalculationListConnector, IncomeTaxCalculationConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.liabilitycalculation._
-import models.taxyearsummary._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import models.liabilitycalculation.*
+import models.taxyearsummary.*
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{saEnrolment, testMtditid, testNino}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.Enrolments
-
-import scala.concurrent.Future
 
 class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
 
@@ -244,13 +240,72 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
             actual shouldBe expected
           }
         }
+
+        "return the AgentCannotViewTaxCalc view scenario" in {
+
+          val taxYear = TaxYear(2024, 2025)
+
+          val agentUser =
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              usersRole = MTDPrimaryAgent,
+              authUserDetails = getAuthUserDetails(Some(Agent), getAllEnrolmentsAgent(hasNino = true, hasSA = true), hasUserName = true),
+              clientDetails = None,
+              incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
+              btaNavPartial = None,
+              featureSwitches = List()
+            )(FakeRequest())
+
+          val liabilityCalculationResponse =
+            LiabilityCalculationResponse(
+              inputs = Inputs(PersonalInformation(taxRegime = "", class2VoluntaryContributions = Some(true))),
+              metadata = Metadata(
+                calculationTimestamp = Some(""),
+                calculationType = ""
+              ),
+              submissionChannel = Some(IsLegacyWithCesa),
+              messages = None,
+              calculation = None,
+            )
+
+
+          val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationResponse), taxYear)(agentUser) // Agent user
+          val expected = AgentCannotViewTaxCalc
+
+          actual shouldBe expected
+        }
+
+        "return the AgentCannotViewTaxCalc view scenario" in {
+
+          val taxYear = TaxYear(2024, 2025)
+
+          val agentUser =
+            MtdItUser(
+              mtditid = testMtditid,
+              nino = testNino,
+              usersRole = MTDPrimaryAgent,
+              authUserDetails = getAuthUserDetails(Some(Agent), getAllEnrolmentsAgent(hasNino = true, hasSA = true), hasUserName = true),
+              clientDetails = None,
+              incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
+              btaNavPartial = None,
+              featureSwitches = List()
+            )(FakeRequest())
+
+          val liabilityCalculationErrorResponse = LiabilityCalculationError(status = 404, message = "some error message")
+
+          val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationErrorResponse), taxYear)(agentUser) // Agent user
+          val expected = AgentCannotViewTaxCalc
+
+          actual shouldBe expected
+        }
       }
 
       "the tax year is before 2023" when {
 
         "the user is and Agent user" should {
 
-          "return the AgentBefore2023TaxYear view scenario" in {
+          "return the AgentCannotViewTaxCalc view scenario" in {
 
             val taxYear = TaxYear(2022, 2023)
 
@@ -269,7 +324,7 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
             val liabilityCalculationErrorResponse = LiabilityCalculationError(status = 404, message = "some error message")
 
             val actual = service.determineCannotDisplayCalculationContentScenario(Some(liabilityCalculationErrorResponse), taxYear)(agentUser) // Agent user
-            val expected = AgentBefore2023TaxYear
+            val expected = AgentCannotViewTaxCalc
 
             actual shouldBe expected
           }

@@ -55,9 +55,9 @@ class TaxYearSummaryService @Inject()() {
     val irsaEnrolement: Option[String] = mtdItUser.authUserDetails.saUtr
 
     (liabilityCalculationResponse, irsaEnrolement) match {
-      case (Some(LiabilityCalculationError(status, _)), _) if mtdItUser.isAgent() =>
-        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] AgentBefore2023TaxYear")
-        AgentBefore2023TaxYear
+      case (Some(LiabilityCalculationError(_, _)) | Some(LiabilityCalculationResponse(_, _, _, _, _)), _) if mtdItUser.isAgent() =>
+        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] AgentCannotViewTaxCalc")
+        AgentCannotViewTaxCalc
       case (Some(LiabilityCalculationError(status, _)), Some(_)) if taxYear.isBefore(taxYear2023) && status != 404 =>
         Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] IrsaEnrolementHandedOff")
         IrsaEnrolementHandedOff
