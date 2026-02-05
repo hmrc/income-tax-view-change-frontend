@@ -35,6 +35,7 @@ case class ChargeItem(
                        outstandingAmount: BigDecimal,
                        interestOutstandingAmount: Option[BigDecimal],
                        accruingInterestAmount: Option[BigDecimal],
+                       latePaymentInterestAmount: Option[BigDecimal],
                        interestFromDate: Option[LocalDate],
                        interestEndDate: Option[LocalDate],
                        interestRate: Option[BigDecimal],
@@ -64,10 +65,9 @@ case class ChargeItem(
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
-  def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.getOrElse[BigDecimal](0) != 0 && accruingInterestAmount.getOrElse[BigDecimal](0) <= 0
+  def hasAccruingInterest: Boolean = accruingInterestAmount.getOrElse[BigDecimal](0) > 0
 
-  def hasInterest: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != 0
+  def hasInterest: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) > 0
 
   def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
@@ -278,6 +278,7 @@ object ChargeItem {
       outstandingAmount = documentDetail.outstandingAmount,
       interestOutstandingAmount = documentDetail.interestOutstandingAmount,
       accruingInterestAmount = documentDetail.accruingInterestAmount,
+      latePaymentInterestAmount = documentDetail.latePaymentInterestAmount,
       interestFromDate = documentDetail.interestFromDate,
       interestEndDate = documentDetail.interestEndDate,
       interestRate = documentDetail.interestRate,

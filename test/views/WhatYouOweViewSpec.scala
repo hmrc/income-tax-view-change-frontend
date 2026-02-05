@@ -502,7 +502,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           poaExtra1Table.select("td").last().text() shouldBe "£100.00"
 
-          val poa2ExtraTable: Element = pageDocument.getElementsByClass("govuk-table__row").get(2)
+          val poa2ExtraTable: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
           poa2ExtraTable.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
           poa2ExtraTable.select("td").get(1).text() shouldBe poa2ReconcileInterest + " 2"
           poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
@@ -538,13 +538,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           lspRow.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lspRow.select("td").last().text() shouldBe "£100.00"
 
-          val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
+          val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
           lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp1Row.select("td").get(1).text() shouldBe lpp1Interest + " 3"
           lpp1Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp1Row.select("td").last().text() shouldBe "£99.00"
 
-          val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
+          val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(6)
           lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp2Row.select("td").get(1).text() shouldBe lpp2Interest + " 4"
           lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
