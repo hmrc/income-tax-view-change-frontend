@@ -864,6 +864,7 @@ trait ChargeConstants {
     outstandingAmount = List(0, 0),
     taxYear = fixedDate.getYear.toString,
     accruingInterestAmount = List(Some(99.0), Some(98.0)),
+    outstandingInterest = List(Some(99.0), Some(98.0)),
     interestEndDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
     dunningLock = noDunningLocks,
     interestRate = List(Some(100), Some(100)),
@@ -875,7 +876,10 @@ trait ChargeConstants {
     dueDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
     outstandingAmount = List(0, 0),
     taxYear = fixedDate.getYear.toString,
+    interestRate = List(Some(2.6), Some(2.6)),
     accruingInterestAmount = List(Some(100.0), None),
+    latePaymentInterestAmount = List(Some(100.0), None),
+    outstandingInterest = List(Some(100.0), None),
     interestEndDate = List(Some(fixedDate.plusDays(1)), Some(fixedDate.plusDays(1))),
     dunningLock = noDunningLocks
   )
