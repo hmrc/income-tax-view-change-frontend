@@ -18,18 +18,20 @@ package services.triggeredMigration
 
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
+import mocks.services.MockSessionService
 import models.core.{CessationModel, IncomeSourceId}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
 import testUtils.TestSupport
 
 import java.time.LocalDate
 
-class TriggeredMigrationServiceSpec extends TestSupport {
+class TriggeredMigrationServiceSpec extends TestSupport with MockSessionService {
 
-  val service: TriggeredMigrationService = new TriggeredMigrationService()
+  val service: TriggeredMigrationService = new TriggeredMigrationService(mockSessionService)
 
   val baseIncomeSources: IncomeSourceDetailsModel = IncomeSourceDetailsModel(
     nino = "AA123456A",
@@ -165,6 +167,26 @@ class TriggeredMigrationServiceSpec extends TestSupport {
       )
 
       result shouldBe expectedResult
+    }
+  }
+
+  "saveConfirmedData" should {
+    "return true when the session service call is successful" in {
+      setupMockSetMongoData(true)
+
+      val result = await(service.saveConfirmedData())
+
+      result shouldBe true
+    }
+
+    "return an exception when the session service call is unsuccessful" in {
+      setupMockSetMongoData(false)
+
+      val ex = intercept[Exception] {
+        await(service.saveConfirmedData())
+      }
+
+      ex.getMessage should include ("Mongo update call was not acknowledged")
     }
   }
 }

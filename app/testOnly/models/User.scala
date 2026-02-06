@@ -53,7 +53,11 @@ case class PostedUser(nino: String,
                       cyMinusOneCrystallisationStatus: Option[String],
                       cyMinusOneItsaStatus: Option[String],
                       cyItsaStatus: Option[String],
-                      cyPlusOneItsaStatus: Option[String]
+                      cyPlusOneItsaStatus: Option[String],
+                      activeSoleTrader: Boolean = false,
+                      activeUkProperty: Boolean = false,
+                      activeForeignProperty: Boolean = false,
+                      ceasedBusiness: Boolean = false
                      ) {
 
   def isAgent: Boolean = AgentTypeEnums.apply(this.agentType).isDefined
@@ -77,7 +81,11 @@ object PostedUser {
       "cyMinusOneCrystallisationStatus" -> optional(text),
       "cyMinusOneItsaStatus" -> optional(text),
       "cyItsaStatus" -> optional(text),
-      "cyPlusOneItsaStatus" -> optional(text)
+      "cyPlusOneItsaStatus" -> optional(text),
+      "SoleTraderCheckbox" -> boolean,
+      "UkPropertyCheckbox" -> boolean,
+      "ForeignPropertyCheckbox" -> boolean,
+      "CeasedBusinessCheckbox" -> boolean
     )(
       (nino,
       agentType,
@@ -85,22 +93,34 @@ object PostedUser {
       cyMinusOneCrystallisationStatus,
       cyMinusOneItsaStatus,
       cyItsaStatus,
-      cyPlusOneItsaStatus) => PostedUser(
+      cyPlusOneItsaStatus,
+      activeSoleTrader,
+      activeUkProperty,
+      activeForeignProperty,
+      ceasedBusinesses) => PostedUser(
         nino,
         agentType,
         usePTANavBar,
         cyMinusOneCrystallisationStatus,
         cyMinusOneItsaStatus,
         cyItsaStatus,
-        cyPlusOneItsaStatus)
+        cyPlusOneItsaStatus,
+        activeSoleTrader,
+        activeUkProperty,
+        activeForeignProperty,
+        ceasedBusinesses)
     )(form => Some(
-    form.nino,
-    form.agentType,
-    form.usePTANavBar,
-    form.cyMinusOneCrystallisationStatus,
-    form.cyMinusOneItsaStatus,
-    form.cyItsaStatus,
-    form.cyPlusOneItsaStatus
+      form.nino,
+      form.agentType,
+      form.usePTANavBar,
+      form.cyMinusOneCrystallisationStatus,
+      form.cyMinusOneItsaStatus,
+      form.cyItsaStatus,
+      form.cyPlusOneItsaStatus,
+      form.activeSoleTrader,
+      form.activeUkProperty,
+      form.activeForeignProperty,
+      form.ceasedBusiness
     ))
   )
 

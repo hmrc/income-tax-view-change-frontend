@@ -19,9 +19,9 @@ package controllers.triggeredMigration
 import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import forms.triggeredMigration.CheckCompleteForm
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.triggeredMigration.CheckCompleteView
 import utils.TriggeredMigrationUtils
@@ -30,7 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckCompleteController @Inject()(view: CheckCompleteView,
-                                        val auth: AuthActions)
+                                        val auth: AuthActions,
+                                        sessionService: SessionService)
                                        (mcc: MessagesControllerComponents,
                                         implicit val appConfig: FrontendAppConfig,
                                         implicit val ec: ExecutionContext)
@@ -43,14 +44,18 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
   def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
     withTriggeredMigrationFS {
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
-      val form = CheckCompleteForm()
+
+      val sessionId = hc.sessionId.map(_.value) getOrElse {
+        throw new Exception("Missing sessionId in HeaderCarrier")
+      }
+
+      sessionService.clearSession(sessionId)
 
       Future.successful(Ok(
         view(
           isAgent,
           compatibleSoftwareLink,
           nextUpdatesLink(isAgent),
-          form,
           postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
         ))
       )
@@ -61,27 +66,12 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
       withTriggeredMigrationFS {
-        CheckCompleteForm().bindFromRequest().fold(
-          formWithErrors =>
-            Future.successful(
-              BadRequest(
-                view(
-                  isAgent,
-                  compatibleSoftwareLink,
-                  nextUpdatesLink(isAgent),
-                  form = formWithErrors,
-                  postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
-                )
-              )
-            ),
 
-          value =>
-            (isAgent, value.response) match {
-              case (false, Some(CheckCompleteForm.responseContinue)) => Future.successful(Redirect(controllers.routes.HomeController.show()))
-              case (true, Some(CheckCompleteForm.responseContinue)) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
-              case (_, _) => Future.successful(Redirect(routes.CheckHmrcRecordsController.show(isAgent)))
-            }
-        )
+        if (isAgent) {
+          Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
+        } else {
+          Future.successful(Redirect(controllers.routes.HomeController.show()))
+        }
       }
     }
 }
