@@ -23,6 +23,7 @@ import forms.triggeredMigration.CheckActiveBusinessesConfirmForm
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.CustomerFactsUpdateService
+import services.triggeredMigration.TriggeredMigrationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.TriggeredMigrationUtils
 import views.html.triggeredMigration.CheckActiveBusinessesConfirmView
@@ -32,6 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CheckActiveBusinessesConfirmController @Inject()(
                                                         view: CheckActiveBusinessesConfirmView,
+                                                        triggeredMigrationService: TriggeredMigrationService,
                                                         customerFactsUpdateService: CustomerFactsUpdateService,
                                                         val auth: AuthActions
                                                       )(
@@ -79,8 +81,11 @@ class CheckActiveBusinessesConfirmController @Inject()(
 
               customerFactsUpdateService
                 .updateCustomerFacts(mtdId)
-                .map(_ => Redirect(routes.CheckCompleteController.show(isAgent)))
-
+                .map { _ => {
+                    triggeredMigrationService.saveConfirmedData()
+                    Redirect(routes.CheckCompleteController.show(isAgent))
+                  }
+                }
             case _ =>
               Future.successful(Redirect(routes.CheckHmrcRecordsController.show(isAgent)))
           }

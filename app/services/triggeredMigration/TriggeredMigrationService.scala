@@ -16,15 +16,22 @@
 
 package services.triggeredMigration
 
+import com.google.inject.Inject
+import enums.JourneyType.TriggeredMigrationJourney
 import enums.TriggeredMigration.TriggeredMigrationState
+import models.UIJourneySessionData
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import models.triggeredMigration.TriggeredMigrationSessionData
 import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
+import services.SessionService
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Singleton
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TriggeredMigrationService {
+class TriggeredMigrationService @Inject()(sessionService: SessionService) {
 
   def getCheckHmrcRecordsViewModel(incomeSources: IncomeSourceDetailsModel, state: Option[TriggeredMigrationState]): CheckHmrcRecordsViewModel = {
     val activeSoleTraderBusinesses = incomeSources.businesses.filterNot(_.isCeased)
@@ -47,5 +54,19 @@ class TriggeredMigrationService {
       triggeredMigrationState = state,
       numberOfCeasedBusinesses = numberOfCeasedBusinesses
     )
+  }
+
+  def saveConfirmedData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    val sessionId = hc.sessionId.map(_.value) getOrElse {
+      throw new Exception("Missing sessionId in HeaderCarrier")
+    }
+
+    sessionService.setMongoData(UIJourneySessionData(sessionId, TriggeredMigrationJourney.toString,
+      triggeredMigrationData = Some(TriggeredMigrationSessionData(
+        recentlyConfirmed = true
+      )))) flatMap {
+      case true => Future.successful(true)
+      case false => Future.failed(new Exception("[TriggeredMigrationService][saveConfirmedData] Mongo update call was not acknowledged"))
+    }
   }
 }

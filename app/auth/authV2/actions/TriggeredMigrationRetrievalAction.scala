@@ -21,12 +21,13 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxCalculationConnector
 import controllers.BaseController
+import enums.JourneyType.TriggeredMigrationJourney
 import enums.TaxYearSummary.CalculationRecord.LATEST
 import models.admin.TriggeredMigration
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
-import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
+import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, SessionService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -39,7 +40,8 @@ class TriggeredMigrationRetrievalAction @Inject()(
                                                    ITSAStatusService: ITSAStatusService,
                                                    incomeTaxConnector: IncomeTaxCalculationConnector,
                                                    dateService: DateServiceInterface,
-                                                   customerFactsUpdateService: CustomerFactsUpdateService
+                                                   customerFactsUpdateService: CustomerFactsUpdateService,
+                                                   sessionService: SessionService
                                                  )
                                                  (implicit val executionContext: ExecutionContext,
                                                   individualErrorHandler: ItvcErrorHandler,
@@ -59,23 +61,17 @@ class TriggeredMigrationRetrievalAction @Inject()(
         lazy val authAction: Future[Either[Result, MtdItUser[A]]] = {
           (request.incomeSources.isConfirmedUser, isTriggeredMigrationPage) match {
             case (true, false) => Future(Right(req))
-            case (true, true) => if (req.isAgent()) {
-              Future(Left(Redirect(controllers.routes.HomeController.showAgent())))
-            } else {
-              Future(Left(Redirect(controllers.routes.HomeController.show())))
-            }
+            case (true, true) =>
+              checkIfRecentlyConfirmed().map {
+                case true => Right(req)
+                case false => Left(redirectToHome(req.isAgent()))
+              }
             case (false, _) =>
               isItsaStatusVoluntaryOrMandated().flatMap {
-                case Right(false) =>
-                  customerFactsUpdateService
-                    .updateCustomerFacts(req.mtditid)
-                    .map(_ => Right(req))
+                case Right(false) => confirmIneligibleUser(req, isTriggeredMigrationPage)
                 case Left(errorResult) => Future(Left(errorResult))
                 case Right(true) => isCalculationCrystallised(req, req.incomeSources.startingTaxYear.toString).flatMap {
-                  case Right(true) =>
-                    customerFactsUpdateService
-                      .updateCustomerFacts(req.mtditid)
-                      .map(_ => Right(req))
+                  case Right(true) => confirmIneligibleUser(req, isTriggeredMigrationPage)
                   case Right(false) => if (isTriggeredMigrationPage) {
                     Future.successful(Right(req))
                   } else {
@@ -135,6 +131,32 @@ class TriggeredMigrationRetrievalAction @Inject()(
     request.authUserDetails.affinityGroup match {
       case Some(Agent) => agentErrorHandler.showInternalServerError()(request)
       case _ => individualErrorHandler.showInternalServerError()(request)
+    }
+  }
+
+  private def checkIfRecentlyConfirmed()(implicit hc: HeaderCarrier): Future[Boolean] = {
+    sessionService.getMongo(TriggeredMigrationJourney).map {
+      case Right(Some(data)) => data.triggeredMigrationData.exists(_.recentlyConfirmed)
+      case _ => false
+    }
+  }
+
+  private def redirectToHome(isAgent: Boolean): Result = {
+    if (isAgent) {
+      Redirect(controllers.routes.HomeController.showAgent())
+    } else {
+      Redirect(controllers.routes.HomeController.show())
+    }
+  }
+
+  private def confirmIneligibleUser[A](req: MtdItUser[A], isTriggeredMigrationPage: Boolean)(implicit hc: HeaderCarrier) = {
+    customerFactsUpdateService.updateCustomerFacts(req.mtditid).map {
+      _ =>
+        if (isTriggeredMigrationPage) {
+          Left(redirectToHome(req.isAgent()))
+        } else {
+          Right(req)
+        }
     }
   }
 }
