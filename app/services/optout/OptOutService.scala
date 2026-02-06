@@ -174,7 +174,12 @@ class OptOutService @Inject()(
                                      ec: ExecutionContext): Future[(OptOutProposition, Option[OptOutViewModel])] = {
     for {
       proposition <- fetchOptOutProposition()
-      _ <- optOutRepository.initialiseOptOutJourney(proposition, shouldResetIntent = false)
+      journeyComplete <- optOutRepository.fetchJourneyCompleteStatus()
+      _ <- if (!journeyComplete) {
+        optOutRepository.initialiseOptOutJourney(proposition, shouldResetIntent = false)
+      } else {
+        Future.successful(true)
+      }
     } yield (proposition, nextUpdatesOptOutViewModel(proposition))
   }
 
