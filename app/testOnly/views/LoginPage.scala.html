@@ -186,6 +186,13 @@
 
         <div class="display-none" id="trigMigCheckboxes">
             <h2 class="govuk-heading-m" id="business-data-heading">Business/Property Data</h2>
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-visually-hidden">Warning</span>
+                    At least one checkbox must be selected to become valid business data
+                </strong>
+            </div>
 
             @govukCheckboxes(
                 Checkboxes(
