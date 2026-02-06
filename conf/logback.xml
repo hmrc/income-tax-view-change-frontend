@@ -22,9 +22,9 @@
     </appender>
 
 
-    <logger name="application" level="INFO"/>
-    <logger name="com.google.inject" level="INFO"/>
-    <logger name="org.asynchttpclient.netty" level="INFO"/>
+    <logger name="application" level="ERROR"/>
+    <logger name="com.google.inject" level="ERROR"/>
+    <logger name="org.asynchttpclient.netty" level="ERROR"/>
     <logger name="uk.gov.hmrc.play.bootstrap.audit" level="WARN"/>
     <logger name="uk.gov.hmrc.audit" level="WARN"/>
     <logger name="io.netty" level="WARN"/>
@@ -34,7 +34,7 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="INFO">
+    <root level="ERROR">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>

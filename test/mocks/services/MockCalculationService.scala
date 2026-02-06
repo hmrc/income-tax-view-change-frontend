@@ -103,7 +103,7 @@ trait MockCalculationService extends UnitSpec with BeforeAndAfterEach {
     setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((liabilityCalculationModelSuccessfulNotCrystallised, previousCalc))
 
   def mockLatestAndPreviousNotFound(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
-    setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((LiabilityCalculationError(204, "not found"), None))
+    setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((LiabilityCalculationError(404, "not found"), None))
 
   def mockLatestAndPreviousError(mtditid: String = "XAIT00000000015", nino: String = testNino, taxYear: Int = testTaxYear): Unit =
     setupMockGetLatestAndPreviousCalculationDetails(mtditid, nino, taxYear)((LiabilityCalculationError(500, "Internal server error"), None))

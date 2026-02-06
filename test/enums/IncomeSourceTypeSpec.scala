@@ -17,11 +17,11 @@
 package enums
 
 import enums.IncomeSourceJourney.ForeignProperty
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsString, Json}
-import org.scalatest.matchers.should.Matchers
 
-class IncomeSourceTypeSpec extends AnyWordSpec with Matchers{
+class IncomeSourceTypeSpec extends AnyWordSpec with Matchers {
 
 
   "writes" should {
