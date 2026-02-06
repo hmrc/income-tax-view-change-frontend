@@ -54,10 +54,12 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       dateService: DateServiceInterface
                                      ) extends BaseController with I18nSupport with FeatureSwitching {
 
+  final val trigMigUser = "TR000001A"
+
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, testOnlyAppConfig.optOutUserPrefixes))
+      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, testOnlyAppConfig.optOutUserPrefixes, trigMigUser))
     )
   }
 
@@ -96,6 +98,24 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                         .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
                       errorHandler.showInternalServerError()
                   }
+                } else if (user.nino == trigMigUser) {
+                  val trigMigUser = TrigMigUser(
+                    postedUser.isAgent || postedUser.isSupporting,
+                    activeSoleTrader = postedUser.activeSoleTrader,
+                    activeUkProperty = postedUser.activeUkProperty,
+                    activeForeignProperty = postedUser.activeForeignProperty,
+                    ceasedBusiness = postedUser.ceasedBusiness
+                  )
+                  
+                  updateTestDataForTrigMigUser(user.nino, user.mtditid, trigMigUser).map {
+                    _ => successRedirect(bearer, auth, homePage)
+                  }.recover {
+                    case ex =>
+                      val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                      Logger("application")
+                        .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+                      errorHandler.showInternalServerError()
+                  }
                 } else {
                   Future.successful(successRedirect(bearer, auth, homePage))
                 }
@@ -113,6 +133,12 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       .withSession(
         SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
           sessionAuthorityUri = auth)))
+  }
+
+  private def updateTestDataForTrigMigUser(nino: String, mtdid: String, trigMigUser: TrigMigUser)(implicit headerCarrier: HeaderCarrier) = {
+    val ninoObj = Nino(nino)
+
+    dynamicStubService.overwriteBusinessData(ninoObj, mtdid, trigMigUser)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,

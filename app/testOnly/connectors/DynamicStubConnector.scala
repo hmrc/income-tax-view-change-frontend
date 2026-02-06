@@ -21,11 +21,12 @@ import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, Nino, SchemaModel}
+import testOnly.models.{DataModel, Nino, SchemaModel, TrigMigUser}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import play.api.libs.ws.writeableOf_JsValue
 import play.api.libs.ws.writeableOf_urlEncodedForm
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -87,6 +88,33 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     val url = getOverwriteItsaStatusUrl(nino.value, taxYearRange, itsaStatus)
     http.get(url"$url")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
+      response.status match {
+        case OK =>
+          (): Unit
+        case _ =>
+          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+      }
+    }
+    Future(())
+  }
+
+  def getOverwriteBusinessDataUrl(nino: String, mtdid: String): String = {
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/business-data/$nino/$mtdid"
+  }
+
+  def overwriteBusinessData(nino: Nino, mtdid: String, trigMigUser: TrigMigUser)
+                         (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+
+
+    val url = getOverwriteBusinessDataUrl(nino.value, mtdid)
+
+    val requestJson = Json.toJson(trigMigUser)
+
+    http.post(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .withBody(requestJson)
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
