@@ -100,14 +100,13 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   }
                 } else if (user.nino == trigMigUser) {
                   val trigMigUser = TrigMigUser(
-                    postedUser.isAgent || postedUser.isSupporting,
                     activeSoleTrader = postedUser.activeSoleTrader,
                     activeUkProperty = postedUser.activeUkProperty,
                     activeForeignProperty = postedUser.activeForeignProperty,
                     ceasedBusiness = postedUser.ceasedBusiness
                   )
                   
-                  updateTestDataForTrigMigUser(user.nino, user.mtditid, trigMigUser).map {
+                  updateTestDataForTrigMigUser(user.mtditid, trigMigUser).map {
                     _ => successRedirect(bearer, auth, homePage)
                   }.recover {
                     case ex =>
@@ -135,10 +134,8 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
           sessionAuthorityUri = auth)))
   }
 
-  private def updateTestDataForTrigMigUser(nino: String, mtdid: String, trigMigUser: TrigMigUser)(implicit headerCarrier: HeaderCarrier) = {
-    val ninoObj = Nino(nino)
-
-    dynamicStubService.overwriteBusinessData(ninoObj, mtdid, trigMigUser)
+  private def updateTestDataForTrigMigUser(mtdid: String, trigMigUser: TrigMigUser)(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteBusinessData(mtdid, trigMigUser)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,

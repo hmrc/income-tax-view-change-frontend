@@ -100,15 +100,15 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     Future(())
   }
 
-  def getOverwriteBusinessDataUrl(nino: String, mtdid: String): String = {
-    s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/business-data/$nino/$mtdid"
+  def getOverwriteBusinessDataUrl(mtdid: String): String = {
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/business-data/$mtdid"
   }
 
-  def overwriteBusinessData(nino: Nino, mtdid: String, trigMigUser: TrigMigUser)
+  def overwriteBusinessData(mtdid: String, trigMigUser: TrigMigUser)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
 
-    val url = getOverwriteBusinessDataUrl(nino.value, mtdid)
+    val url = getOverwriteBusinessDataUrl(mtdid)
 
     val requestJson = Json.toJson(trigMigUser)
 

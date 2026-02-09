@@ -18,8 +18,7 @@ package testOnly.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class TrigMigUser(isAgent: Boolean,
-                       activeSoleTrader: Boolean,
+case class TrigMigUser(activeSoleTrader: Boolean,
                        activeUkProperty: Boolean,
                        activeForeignProperty: Boolean,
                        ceasedBusiness: Boolean)
