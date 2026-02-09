@@ -21,6 +21,7 @@ import models.liabilitycalculation.taxcalculation.TaxCalculation
 import play.api.libs.json.{Json, OFormat}
 
 case class Calculation(
+                        partnerIncome: Option[PartnerIncome] = None,
                         allowancesAndDeductions: Option[AllowancesAndDeductions] = None,
                         reliefs: Option[Reliefs] = None,
                         taxDeductedAtSource: Option[TaxDeductedAtSource] = None,
@@ -46,6 +47,12 @@ case class Calculation(
 
 object Calculation {
   implicit val format: OFormat[Calculation] = Json.format[Calculation]
+}
+
+case class PartnerIncome(totalPartnerIncome: BigDecimal)
+
+object PartnerIncome {
+  implicit val format: OFormat[PartnerIncome] = Json.format[PartnerIncome]
 }
 
 case class ChargeableEventGainsIncome(totalOfAllGains: Int)

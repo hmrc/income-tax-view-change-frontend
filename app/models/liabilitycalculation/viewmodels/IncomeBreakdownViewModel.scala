@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ case class IncomeBreakdownViewModel(
                                      totalOccupationalPensionIncome: Option[BigDecimal] = None,
                                      totalStateBenefitsIncome: Option[BigDecimal] = None,
                                      totalShareSchemesIncome: Option[BigDecimal] = None,
+                                     incomeFromPartnerships: Option[BigDecimal] = None,
                                      totalIncomeReceived: Option[BigDecimal] = None
                                    )
 
@@ -70,6 +71,7 @@ object IncomeBreakdownViewModel {
           totalOccupationalPensionIncome = c.employmentAndPensionsIncome.flatMap(eapi => eapi.totalOccupationalPensionIncome),
           totalStateBenefitsIncome = c.stateBenefitsIncome.flatMap(sbi => sbi.totalStateBenefitsIncomeExcStatePensionLumpSum),
           totalShareSchemesIncome = c.shareSchemesIncome.flatMap(ssi => Some(ssi.totalIncome)),
+          incomeFromPartnerships = c.partnerIncome.flatMap(pi => Some(pi.totalPartnerIncome)),
           totalIncomeReceived = c.taxCalculation.flatMap(tc => Some(tc.incomeTax).flatMap(it => Some(it.totalIncomeReceivedFromAllSources)))
         ))
       case _ => None

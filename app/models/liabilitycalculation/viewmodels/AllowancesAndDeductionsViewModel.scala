@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ case class AllowancesAndDeductionsViewModel(
                                              qualifyingLoanInterestFromInvestments: Option[BigDecimal] = None,
                                              postCessationTradeReceipts: Option[BigDecimal] = None,
                                              paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
+                                             partnershipLosses: Option[BigDecimal] = None,
                                              totalAllowancesAndDeductions: Option[BigDecimal] = None,
                                              totalReliefs: Option[BigDecimal] = None
                                            ) {
@@ -57,6 +58,7 @@ object AllowancesAndDeductionsViewModel {
           qualifyingLoanInterestFromInvestments = calc.allowancesAndDeductions.flatMap(ad => ad.qualifyingLoanInterestFromInvestments),
           postCessationTradeReceipts = calc.allowancesAndDeductions.flatMap(ad => ad.postCessationTradeReceipts),
           paymentsToTradeUnionsForDeathBenefits = calc.allowancesAndDeductions.flatMap(ad => ad.paymentsToTradeUnionsForDeathBenefits),
+          partnershipLosses = calc.allowancesAndDeductions.flatMap(ad => ad.totalPartnershipLossesBroughtForward),
           totalAllowancesAndDeductions = calc.taxCalculation.map(tc => tc.incomeTax.totalAllowancesAndDeductions),
           totalReliefs = calc.taxCalculation.flatMap(tc => tc.incomeTax.totalReliefs)
         )
