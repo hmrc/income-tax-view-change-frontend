@@ -308,7 +308,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
   def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      Future.successful(Ok(newHomeOverviewView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+      Future.successful(Ok(newHomeOverviewView(origin, isAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
   }
 
   def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {

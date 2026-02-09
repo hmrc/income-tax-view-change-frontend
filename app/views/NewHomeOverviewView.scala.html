@@ -19,22 +19,30 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
-
+@import views.html.partials.newHome.overview._
+@import config.FrontendAppConfig
+@import models.incomeSourceDetails.TaxYear
 
 @this(
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
-        govukServiceNavigation : GovukServiceNavigation
+        govukServiceNavigation : GovukServiceNavigation,
+        chargesSection: ChargesSection,
+        deadlinesSection: DeadlinesSection,
+        incomeSection: IncomeSection,
+        taxYearSection: TaxYearSection,
+        penaltiesSection: PenaltiesSection
 )
 
 @(origin: Option[String] = None,
         isAgent: Boolean,
+        currentTaxYear: TaxYear,
         yourTasksUrl: String,
         recentActivityUrl: String,
         overViewUrl: String,
         helpUrl: String)(
-        implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
+        implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
 @pageHeading = @{
@@ -53,6 +61,11 @@
     } else {
         user.userName.fold("")(_.name.getOrElse(""))
     }
+}
+
+
+@SectionBreak = {
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 }
 
 @mainTemplate(
@@ -98,4 +111,24 @@
         ),
         attributes = Map("style" -> "background-color: white;")
     ))
+
+
+    <div class="govuk-!-padding-bottom-6"></div>
+
+    @chargesSection(isAgent)
+    @SectionBreak
+
+    @deadlinesSection(isAgent)
+    @SectionBreak
+
+    @incomeSection(isAgent)
+    @SectionBreak
+
+    @taxYearSection(isAgent, currentTaxYear)
+    @SectionBreak
+
+    @penaltiesSection(isAgent)
 }
+
+
+
