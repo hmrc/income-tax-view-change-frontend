@@ -78,14 +78,11 @@ class CheckActiveBusinessesConfirmController @Inject()(
           form => form.response match {
             case Some(CheckActiveBusinessesConfirmForm.responseYes) =>
               val mtdId = user.mtditid
-
-              customerFactsUpdateService
-                .updateCustomerFacts(mtdId)
-                .map { _ => {
-                    triggeredMigrationService.saveConfirmedData()
-                    Redirect(routes.CheckCompleteController.show(isAgent))
-                  }
+              customerFactsUpdateService.updateCustomerFacts(mtdId).flatMap { _ =>
+                triggeredMigrationService.saveConfirmedData().flatMap {
+                  _ => Future.successful(Redirect(routes.CheckCompleteController.show(isAgent)))
                 }
+              }
             case _ =>
               Future.successful(Redirect(routes.CheckHmrcRecordsController.show(isAgent)))
           }

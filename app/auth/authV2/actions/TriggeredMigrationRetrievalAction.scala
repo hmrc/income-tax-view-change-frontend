@@ -136,8 +136,18 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
   private def checkIfRecentlyConfirmed()(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(TriggeredMigrationJourney).map {
-      case Right(Some(data)) => data.triggeredMigrationData.exists(_.recentlyConfirmed)
-      case _ => false
+      case Right(Some(data)) =>
+        data.triggeredMigrationData match {
+          case Some(trigMigData) =>
+            Logger(getClass).info(s"[TriggeredMigrationRetrievalAction][checkIfRecentlyConfirmed] triggeredMigrationData found in session data")
+            trigMigData.recentlyConfirmed
+          case None =>
+            Logger(getClass).info(s"[TriggeredMigrationRetrievalAction][checkIfRecentlyConfirmed] triggeredMigrationData missing from session data")
+            false
+        }
+      case _ =>
+        Logger(getClass).info(s"[TriggeredMigrationRetrievalAction][checkIfRecentlyConfirmed] No session data found for TriggeredMigrationJourney")
+        false
     }
   }
 

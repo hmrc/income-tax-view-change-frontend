@@ -45,12 +45,6 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
     withTriggeredMigrationFS {
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
 
-      val sessionId = hc.sessionId.map(_.value) getOrElse {
-        throw new Exception("Missing sessionId in HeaderCarrier")
-      }
-
-      sessionService.clearSession(sessionId)
-
       Future.successful(Ok(
         view(
           isAgent,
@@ -66,6 +60,12 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
       withTriggeredMigrationFS {
+
+        val sessionId = hc.sessionId.map(_.value) getOrElse {
+          throw new Exception("Missing sessionId in HeaderCarrier")
+        }
+
+        sessionService.clearSession(sessionId)
 
         if (isAgent) {
           Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
