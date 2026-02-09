@@ -159,6 +159,88 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
+  def internationalAddressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
+    JsObject(
+      Seq(
+        "version" -> JsNumber(2),
+        "options" -> JsObject(
+          Seq(
+            "continueUrl" -> JsString(appConfig.itvcFrontendEnvironment + continueUrl),
+            "timeoutConfig" -> JsObject(
+              Seq(
+                "timeoutAmount" -> JsNumber(3600),
+                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout().url),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive().url)
+              )
+            ),
+            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut().url),
+            "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
+            "selectPageConfig" -> JsObject(
+              Seq(
+                "proposalListLimit" -> JsNumber(15)
+              )
+            ),
+            "confirmPageConfig" -> JsObject(
+              Seq(
+                "showChangeLink" -> JsBoolean(true),
+                "showSearchAgainLink" -> JsBoolean(true),
+                "showConfirmChangeText" -> JsBoolean(true)
+              )
+            ),
+            "manualAddressEntryConfig" -> JsObject(
+              Seq(
+                "mandatoryFields" -> JsObject(
+                  Seq(
+                    "addressLine1" -> JsBoolean(true),
+                    "addressLine2" -> JsBoolean(true)
+                  )
+                )
+              )
+            ),
+            "phaseFeedbackLink" -> JsString(appConfig.itvcFrontendEnvironment + feedbackUrl),
+            "deskProServiceName" -> JsString("cds-reimbursement-claim"),
+            "showPhaseBanner" -> JsBoolean(true),
+            "ukMode" -> JsBoolean(false)
+          )
+        ),
+        "labels" -> JsObject(
+          Seq(
+            "en" -> JsObject(
+              Seq(
+                "international" -> JsObject(
+                  Seq(
+                    "editPageLabels" -> JsObject(
+                      Seq(
+                        "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.heading")),
+                        "title" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.heading")),
+                        "postcodeLabel" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.postcode"))
+                      )
+                    )
+                  )
+                )
+              )
+            ),
+            "cy" -> JsObject(
+              Seq(
+                "international" -> JsObject(
+                  Seq(
+                    "editPageLabels" -> JsObject(
+                      Seq(
+                        "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-international-business-address.heading")),
+                        "title" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-international-business-address.heading")),
+                        "postcodeLabel" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-international-business-address.postcode"))
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  }
+
 
   def initialiseAddressLookup(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
@@ -166,6 +248,18 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
       addressJson(continueUrl(isAgent, mode, isTriggeredMigration), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
     } else {
       addressJson(continueUrl(isAgent, mode, isTriggeredMigration), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
+    }
+    http.post(url"$addressLookupInitializeUrl")
+      .withBody(payload)
+      .execute[PostAddressLookupResponse]
+  }
+
+  def initialiseManualInternationalAddressPage(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
+    Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
+    val payload = if (isAgent) {
+      internationalAddressJson(continueUrl(isAgent, mode, isTriggeredMigration), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
+    } else {
+      internationalAddressJson(continueUrl(isAgent, mode, isTriggeredMigration), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
     }
     http.post(url"$addressLookupInitializeUrl")
       .withBody(payload)

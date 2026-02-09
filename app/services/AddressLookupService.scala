@@ -49,6 +49,22 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
         Right(location)
     }
   }
+  
+  def initialiseInternationalAddressPage(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)
+                                        (implicit hc: HeaderCarrier, user: MtdItUser[_])= {
+    addressLookupConnector.initialiseManualInternationalAddressPage(
+      isAgent = isAgent,
+      mode = mode,
+      isTriggeredMigration
+    ) map {
+      case Left(UnexpectedPostStatusFailure(status)) =>
+        Logger("application").info(s"error during initialise $status")
+        Left(AddressError("status: " + status))
+      case Right(PostAddressLookupSuccessResponse(location: Option[String])) =>
+        Logger("application").info(message = s"success response: $location")
+        Right(location)
+    }
+  }
 
   def fetchAddress(id: Option[String])(implicit hc: HeaderCarrier): Future[Either[Throwable, BusinessAddressModel]] = {
     id match {

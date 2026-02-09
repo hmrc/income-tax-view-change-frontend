@@ -1576,7 +1576,9 @@ add-business-address.lookup.heading         = Beth yw cyfeiriad eich busnes?
 add-business-address.confirm.heading        = Cadarnhewch gyfeiriad y busnes
 add-business-address.edit.heading           = Nodwch gyfeiriad eich busnes
 
-
+## Add international business address page
+add-international-business-address.heading = Nodwch gyfeiriad rhyngwladol eich busnes
+add-international-business-address.postcode =  Cod post neu god ‘zip’
 
 
 shortMonth.1     = Ion
