@@ -64,7 +64,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
     nextUpdatesService, mockDateService, repository, auditingService)
 
   def buildUrl(fromDate: LocalDate, toDate: LocalDate): String = {
-    s"http://localhost:9999/income-tax-view-change/$testNino/obligations/from/$fromDate/to/$toDate"
+    s"http://localhost:9999/income-tax-obligations/$testNino/obligations/from/$fromDate/to/$toDate"
   }
 
   def buildSuccessResponse(): HttpResponse = {
