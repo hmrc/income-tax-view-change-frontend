@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import forms.manageBusinesses.add.BusinessNameForm
+@import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.helpers.injected.{ErrorSummary, InputHelper}
@@ -36,7 +36,7 @@
         continueButton: ContinueButton
 )
 
-@(form: Form[_],
+@(form: Form[IsTheNewAddressInTheUKForm],
         isAgent: Boolean,
         postAction: Call,
         backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])

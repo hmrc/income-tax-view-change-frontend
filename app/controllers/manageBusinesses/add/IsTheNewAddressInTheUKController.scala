@@ -1,0 +1,168 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.manageBusinesses.add
+
+import auth.MtdItUser
+import auth.authV2.AuthActions
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import enums.BeforeSubmissionPage
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import forms.manageBusinesses.add.{IsTheNewAddressInTheUKForm => form}
+import models.admin.OverseasBusinessAddress
+import models.core.{Mode, NormalMode}
+import play.api.Logger
+import play.api.i18n.I18nSupport
+import play.api.mvc.*
+import services.SessionService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import views.html.manageBusinesses.add.IsTheNewAddressInTheUK
+import views.html.errorPages.CustomNotFoundErrorView
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
+                                                 val istheNewAddressInTheUKView: IsTheNewAddressInTheUK,
+                                                 val sessionService: SessionService,
+                                                 val customNotFoundErrorView: CustomNotFoundErrorView)
+                                                (implicit val appConfig: FrontendAppConfig,
+                                                 val itvcErrorHandler: ItvcErrorHandler,
+                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                 val mcc: MessagesControllerComponents,
+                                                 val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+
+  //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
+  private def getBackURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): String = {
+    ((isAgent, mode) match {
+      case (_, NormalMode) => routes.AddBusinessTradeController.showAgent(mode, isTriggeredMigration)
+      case (false, _) => routes.AddBusinessTradeController.show(mode, isTriggeredMigration)
+      case (_, _) => routes.AddBusinessTradeController.showAgent(mode, isTriggeredMigration)
+    }).url
+  }
+
+//  TODO check why generated ReverseRoutes.scala does not match the param
+  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
+    routes.AddBusinessTradeController.submitAgent(mode, isTriggeredMigration)
+//    routes.IsTheNewAddressInTheUKController.submitAgent(mode, isTriggeredMigration)
+  } else {
+    routes.AddBusinessTradeController.submit(mode, isTriggeredMigration)
+//    routes.IsTheNewAddressInTheUKController.submit(mode, isTriggeredMigration)
+  }
+
+  def show(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
+    implicit user =>
+      if (isEnabled(OverseasBusinessAddress))
+        handleRequest(isAgent = false, mode, isTriggeredMigration)
+      else {
+//        TODO finish it. Where it should go if FS is OFF
+        Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+      }
+  }
+
+  def showAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
+    implicit user =>
+      handleRequest(isAgent = true, mode, isTriggeredMigration)
+  }
+
+  def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+
+      val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
+
+      /*val filledForm = businessTradeOpt.fold(IsTheNewAddressInTheUKForm.)(businessTrade =>
+        BusinessTradeForm.form.fill(IsTheNewAddressInTheUKForm(businessTrade)))*/
+      val backURL = getBackURL(isAgent, mode, isTriggeredMigration)
+      val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
+
+      Future.successful {
+        Ok(istheNewAddressInTheUKView(form.apply, isAgent, postAction, backURL))
+      }
+    }
+  }.recover {
+    case ex =>
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      errorHandler.showInternalServerError()
+  }
+
+  def submit(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
+    implicit request =>
+      handleSubmitRequest(isAgent = false, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
+  }
+
+  def submitAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
+    implicit request =>
+      handleSubmitRequest(isAgent = true, mode, isTriggeredMigration)(implicitly, itvcErrorHandlerAgent)
+  }
+
+  def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+//      val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
+
+        form.apply.bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful {
+              BadRequest(
+                istheNewAddressInTheUKView(
+                  form = formWithErrors,
+                  postAction = getPostAction(isAgent, mode, isTriggeredMigration),
+                  isAgent = isAgent,
+                  backUrl = getBackURL(isAgent, mode, isTriggeredMigration)
+                )
+              )
+            },
+          validForm =>
+            handleValidForm(validForm, isAgent, isTriggeredMigration)
+        )
+    }
+  }.recover {
+    case ex =>
+//      TODO we might refactor it
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      errorHandler.showInternalServerError()
+  }
+
+
+  private def handleValidForm(validForm: form,
+                              isAgent: Boolean,
+                              isTrigMig: Boolean = false)
+                             (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+
+    val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
+    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isTrigMig).url
+    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isTrigMig).url
+
+    //TODO check this
+    //    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = isTrigMig).url
+    //    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = isTrigMig).url
+
+    formResponse match {
+      case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
+      case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
+      case _ =>
+        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Future.successful(errorHandler.showInternalServerError())
+    }
+  }
+
+}
