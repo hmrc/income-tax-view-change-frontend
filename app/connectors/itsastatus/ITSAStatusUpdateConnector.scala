@@ -45,7 +45,7 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
   }
 
   private def buildRequestUrlWith(userNino: String): String =
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$userNino"
+    s"${appConfig.itvcProtectedService}/income-tax-obligations/itsa-status/update/$userNino"
 
   private[connectors] def updateITSAStatus(userNino: String, requestBody: ITSAStatusUpdateRequest)
                                           (implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
