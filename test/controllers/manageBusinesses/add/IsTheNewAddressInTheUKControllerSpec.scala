@@ -20,8 +20,9 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.manageBusinesses.add.AddProprertyForm
-import forms.manageBusinesses.add.AddProprertyForm.*
+import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm
+import forms.manageBusinesses.add.*
+import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm.{responseForeign, responseUK}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.OverseasBusinessAddress
@@ -76,7 +77,6 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
 
   Seq(CheckMode, NormalMode).foreach { mode =>
     mtdAllRoles.foreach { mtdRole =>
-      val isAgent = mtdRole != MTDIndividual
       s"show${if (mtdRole != MTDIndividual) "Agent": Unit} (mode = $mode)" when {
         val action = getAction(mtdRole, mode)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
@@ -117,14 +117,14 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
 
 
               val result = action(fakeRequest.withFormUrlEncodedBody(
-                AddProprertyForm.response -> responseUK
+                IsTheNewAddressInTheUKForm.response -> responseForeign
               ))
 
               status(result) shouldBe SEE_OTHER
               val redirectUrl = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show().url
               redirectLocation(result) shouldBe Some(redirectUrl)
             }
-            "uk property selected" in {
+            "uk business property selected" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -133,7 +133,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
 
               val result = action(fakeRequest.withFormUrlEncodedBody(
-                AddProprertyForm.response -> responseForeign
+                IsTheNewAddressInTheUKForm.response -> responseUK
               ))
 
               status(result) shouldBe SEE_OTHER

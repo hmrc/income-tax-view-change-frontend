@@ -23,7 +23,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.BeforeSubmissionPage
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.manageBusinesses.add.{IsTheNewAddressInTheUKForm => form}
+import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
 import models.admin.OverseasBusinessAddress
 import models.core.{Mode, NormalMode}
 import play.api.Logger
@@ -51,11 +51,13 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
   //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
-  private def getBackURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): String = {
+  private def getBackURL(isAgent: Boolean, mode: Mode): String = {
+    val notImplementedCall: Call = Call(method = "", url = "#NotImplemented")
+
     ((isAgent, mode) match {
-      case (_, NormalMode) => routes.AddBusinessTradeController.showAgent(mode, isTriggeredMigration)
-      case (false, _) => routes.AddBusinessTradeController.show(mode, isTriggeredMigration)
-      case (_, _) => routes.AddBusinessTradeController.showAgent(mode, isTriggeredMigration)
+      case (_, NormalMode) => notImplementedCall
+      case (false, _) => notImplementedCall
+      case (_, _) => notImplementedCall
     }).url
   }
 
@@ -73,7 +75,6 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       if (isEnabled(OverseasBusinessAddress))
         handleRequest(isAgent = false, mode, isTriggeredMigration)
       else {
-//        TODO finish it. Where it should go if FS is OFF
         Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
       }
   }
@@ -85,12 +86,8 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
-
-      val businessTradeOpt = sessionData.addIncomeSourceData.flatMap(_.businessTrade)
-
-      /*val filledForm = businessTradeOpt.fold(IsTheNewAddressInTheUKForm.)(businessTrade =>
-        BusinessTradeForm.form.fill(IsTheNewAddressInTheUKForm(businessTrade)))*/
-      val backURL = getBackURL(isAgent, mode, isTriggeredMigration)
+      
+      val backURL = getBackURL(isAgent, mode)
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
       Future.successful {
@@ -116,8 +113,6 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
 
   def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
-//      val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
-
         form.apply.bindFromRequest().fold(
           formWithErrors =>
             Future.successful {
@@ -126,7 +121,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                   form = formWithErrors,
                   postAction = getPostAction(isAgent, mode, isTriggeredMigration),
                   isAgent = isAgent,
-                  backUrl = getBackURL(isAgent, mode, isTriggeredMigration)
+                  backUrl = getBackURL(isAgent, mode)
                 )
               )
             },
