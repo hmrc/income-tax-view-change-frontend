@@ -207,6 +207,12 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
           Seq(
             "en" -> JsObject(
               Seq(
+                "countryPickerLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.countryPicker.heading")),
+                    "title" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.countryPicker.heading"))
+                  )
+                ),
                 "international" -> JsObject(
                   Seq(
                     "editPageLabels" -> JsObject(

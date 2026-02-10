@@ -1578,6 +1578,7 @@ add-business-address.edit.heading           = Enter your business address
 ## Add international business address page
 add-international-business-address.heading = Enter your international business address
 add-international-business-address.postcode = Postcode or zipcode
+add-international-business-address.countryPicker.heading = Select the country or territory for your business address
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
