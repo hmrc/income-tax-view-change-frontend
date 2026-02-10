@@ -73,7 +73,7 @@ object ReportingFrequencyViewMessages {
 
   val compatibleSoftwareTextTwo = "For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return."
 
-  val compatibleSoftwareTextThreeR17 = "If you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
+  val compatibleSoftwareTextThreeR17 = "If you are not using Making Tax Digital for Income Tax, you can find out here how to file your Self Assessment tax return (opens in new tab)."
   val compatibleSoftwareTextThreeR17Exempt = "If you are opted out or exempt, you can find out here how to file your Self Assessment tax return (opens in new tab)."
 
 }

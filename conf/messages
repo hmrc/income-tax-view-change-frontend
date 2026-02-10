@@ -888,7 +888,7 @@ nextUpdates.r17.tab.annual.label                                   = Up to {0} t
 nextUpdates.r17.tab.annual.heading                                 = Up to {0} to {1} tax year
 nextUpdates.r17.tab.annual.text1                                   = This page shows your upcoming due dates and any missed deadlines.
 nextUpdates.r17.tab.annual.subHeading                              = Tax return due
-nextUpdates.r17.tab.annual.text2                                   = As you are opted out of Making Tax Digital for Income Tax, you can find out here how you
+nextUpdates.r17.tab.annual.text2                                   = As you are not using Making Tax Digital for Income Tax, you can find out here how you
 nextUpdates.r17.tab.annual.text2.exempt                            = As you are exempt from Making Tax Digital for Income Tax, you can find out here how you
 nextUpdates.r17.tab.annual.link                                    = file your Self Assessment tax return
 nextUpdates.r17.tab.annual.text3                                   = Your return for the {0} to {1} tax year is due by
@@ -3093,7 +3093,7 @@ reporting.frequency.compatibleSoftware.heading.R17                      = When y
 reporting.frequency.compatibleSoftware.p1.R17                           = Whether you are required or voluntarily signed up, you need
 reporting.frequency.compatibleSoftware.link.text.R17                    = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2.R17                           = There are both paid and free options for you or your agent to choose from.
-reporting.frequency.compatibleSoftware.p3.R17                           = If you are opted out, you can find out here how to
+reporting.frequency.compatibleSoftware.p3.R17                           = If you are not using Making Tax Digital for Income Tax, you can find out here how to
 reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = If you are opted out or exempt, you can find out here how to
 reporting.frequency.compatibleSoftware.link2.text                       = file your Self Assessment tax return
 

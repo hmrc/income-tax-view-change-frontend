@@ -81,7 +81,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       }
 
       "display the description containing the compatible software link in the current year tab" in new Setup(isAgent = false, obligationsModel, Annual, Annual) {
-        pageDocument.getElementById("current-year-compatible-software-desc").text() shouldBe "As you are opted out of Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById("current-year-compatible-software-desc").text() shouldBe "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
         pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
       }
 
@@ -94,7 +94,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       }
 
       "display the description containing the compatible software link in the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Annual) {
-        pageDocument.getElementById("next-year-desc").text() shouldBe "As you are opted out of Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById("next-year-desc").text() shouldBe "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
         pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
       }
 
@@ -204,7 +204,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       }
 
       "display the description containing the compatible software link in the next year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
-        pageDocument.getElementById("next-year-desc").text() shouldBe "As you are opted out of Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById("next-year-desc").text() shouldBe "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
         pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
       }
 
@@ -227,7 +227,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       }
 
       "display the description containing the compatible software link in the current year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
-        pageDocument.getElementById("current-year-compatible-software-desc").text() shouldBe "As you are opted out of Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
+        pageDocument.getElementById("current-year-compatible-software-desc").text() shouldBe "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
         pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
       }
 
