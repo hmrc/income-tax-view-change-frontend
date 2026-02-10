@@ -18,9 +18,8 @@ package controllers.manageBusinesses.add
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm
 import forms.manageBusinesses.add.*
 import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm.{responseForeign, responseUK}
 import mocks.auth.MockAuthActions
@@ -82,19 +81,35 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
           "display the is the new address in the uk page" when {
-            "using the manage businesses journey" in {
+            "fs is enabled using the manage businesses journey" in {
               enable(OverseasBusinessAddress)
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
               val result = action(fakeRequest)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
 
               val document: Document = Jsoup.parse(contentAsString(result))
               document.title should include(messages("add-business-is.the.new.address.in.the.uk.heading"))
               status(result) shouldBe OK
+            }
+          }
+          "display the error custom page page" when {
+            "fs is disables using the manage businesses journey" in {
+                disable(OverseasBusinessAddress)
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                val result = action(fakeRequest)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
+
+                val document: Document = Jsoup.parse(contentAsString(result))
+                document.title should include(messages("error.custom.heading"))
+                status(result) shouldBe OK
             }
           }
         }
@@ -112,7 +127,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
 
 
@@ -129,7 +144,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
               setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
 
               val result = action(fakeRequest.withFormUrlEncodedBody(

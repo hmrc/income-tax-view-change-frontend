@@ -32,8 +32,8 @@ import play.api.mvc.*
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.add.IsTheNewAddressInTheUK
 import views.html.errorPages.CustomNotFoundErrorView
+import views.html.manageBusinesses.add.IsTheNewAddressInTheUK
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -72,21 +72,23 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
 
   def show(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit user =>
-      if (isEnabled(OverseasBusinessAddress))
+      if isEnabled(OverseasBusinessAddress) then
         handleRequest(isAgent = false, mode, isTriggeredMigration)
-      else {
+      else
         Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
-      }
   }
 
   def showAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
     implicit user =>
-      handleRequest(isAgent = true, mode, isTriggeredMigration)
+      if isEnabled(OverseasBusinessAddress) then
+        handleRequest(isAgent = true, mode, isTriggeredMigration)
+      else
+        Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
   }
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
-      
+
       val backURL = getBackURL(isAgent, mode)
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
@@ -150,6 +152,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     //    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = isTrigMig).url
     //    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = isTrigMig).url
 
+    //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
     formResponse match {
       case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
       case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
