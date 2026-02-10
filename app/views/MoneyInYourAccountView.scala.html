@@ -62,9 +62,9 @@
         @if(viewModel.creditRows.length > 0){
             @whereMoneyCameFromTable(viewModel, isAgent)
         } else {}
-        @if(!isAgent){
-            @ClaimRefundButton()
-        } else {}
+
+        @ClaimRefundButton()
+
     } else {
         @NoMoneyInAccountCreditExplanation(viewModel)
     }

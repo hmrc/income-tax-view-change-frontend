@@ -138,7 +138,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
       ) {
         document.title() shouldBe individualTitle
         layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
-        document.selectById("credit-explanation-1").text() shouldBe "£100.00 has been set aside to pay for upcoming charges.You can claim this money back, but it may be easier to leave it in your account to avoid missing any payment deadlines."
+        document.selectById("credit-explanation-1").text() shouldBe "£100.00 has been set aside to pay for upcoming charges. You can claim this money back, but it may be easier to leave it in your account to avoid missing any payment deadlines."
         document.selectById("credit-explanation-2").text() shouldBe "If you claim more than £100.00, you’ll need to make another payment to cover your upcoming charges before the deadline."
         document.hasTableWithCaption("Where the money came from")
         document.hasTableWithCorrectSize(1, 3)
