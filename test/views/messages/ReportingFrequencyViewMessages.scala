@@ -40,12 +40,13 @@ object ReportingFrequencyViewMessages {
   val manageReportingObligationsCardText = "Stop from 6 April 2023"
 
   val differentObligationsHeading = "What the different reporting obligations are"
-  val differentObligationsText = "When you are using Making Tax Digital for Income Tax you need to submit:"
-  val differentObligationsLiOne = "4 updates a year for each source of self employment and property income"
-  val differentObligationsLiTwo = "a tax return"
-  val differentObligationsTextTwo = "For tax years you are opted out of, you only need to file a tax return."
+  val differentObligationsText = "When you are using Making Tax Digital for Income Tax you need to:"
+  val differentObligationsLiOne = "create, store and correct digital records of your self-employment and property income and expenses"
+  val differentObligationsLiTwo = "submit your quarterly updates"
+  val differentObligationsLiThree = "file your tax return"
+  val differentObligationsTextTwo = "Even if you are not using Making Tax Digital for Income Tax, you still need to file a tax return."
   val differentObligationsTextTwoExempt = "For tax years you are opted out of or exempt, you only need to file a tax return."
-  val differentObligationsTextThree = "You can see what is due on the submission deadlines page."
+  val differentObligationsTextThree = "Found out what is due when on the your submissions deadlines page."
 
   val yourObligationsHeading = "What your reporting obligations are"
   val yourObligationsText = "For tax years you are exempt, you only need to file a tax return."

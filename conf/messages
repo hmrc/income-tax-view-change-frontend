@@ -3045,13 +3045,14 @@ reporting.frequency.manageReportingFrequency.b2.link                = Opt out of
 
 #different obligations
 reporting.frequency.different.obligations.heading                           = What the different reporting obligations are
-reporting.frequency.different.obligations.p1                                = When you are using Making Tax Digital for Income Tax you need to submit:
-reporting.frequency.different.obligations.li1                               = 4 updates a year for each source of self employment and property income
-reporting.frequency.different.obligations.li2                               = a tax return
-reporting.frequency.different.obligations.p2                                = For tax years you are opted out of, you only need to file a tax return.
+reporting.frequency.different.obligations.p1                                = When you are using Making Tax Digital for Income Tax you need to:
+reporting.frequency.different.obligations.li1                               = create, store and correct digital records of your self-employment and property income and expenses
+reporting.frequency.different.obligations.li2                               = submit your quarterly updates
+reporting.frequency.different.obligations.li3                               = file your tax return
+reporting.frequency.different.obligations.p2                                = Even if you are not using Making Tax Digital for Income Tax, you still need to file a tax return.
 reporting.frequency.different.obligations.p2hasExempt                       = For tax years you are opted out of or exempt, you only need to file a tax return.
-reporting.frequency.different.obligations.p3                                = You can see what is due on the
-reporting.frequency.different.obligations.link.text                         = submission deadlines
+reporting.frequency.different.obligations.p3                                = Found out what is due when on the
+reporting.frequency.different.obligations.link.text                         = your submissions deadlines
 reporting.frequency.different.obligations.link.text.additional.english      = page.
 
 #your obligations (exempt)

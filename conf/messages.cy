@@ -3033,13 +3033,14 @@ reporting.frequency.manageReportingFrequency.b2.link = Optio allan o adrodd yn c
 
 #different obligations
 reporting.frequency.different.obligations.heading                           = Yr ymrwymiadau o ran rhoi gwybod i ni
-reporting.frequency.different.obligations.p1                                = Pan fyddwch yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi gyflwyno’r canlynol:
-reporting.frequency.different.obligations.li1                               = 4 diweddariad y flwyddyn ar gyfer pob ffynhonnell o incwm o hunangyflogaeth ac eiddo
-reporting.frequency.different.obligations.li2                               = Ffurflen Dreth
-reporting.frequency.different.obligations.p2                                = Ar gyfer blynyddoedd treth yr ydych wedi optio allan ohonynt, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
+reporting.frequency.different.obligations.p1                                = Pan fyddwch yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi wneud y canlynol:
+reporting.frequency.different.obligations.li1                               = creu, cadw, a chywiro cofnodion digidol o’ch incwm o hunangyflogaeth ac eiddo a’ch treuliau
+reporting.frequency.different.obligations.li2                               = cyflwyno’ch diweddariadau chwarterol
+reporting.frequency.different.obligations.li3                               = cyflwyno’ch Ffurflen Dreth
+reporting.frequency.different.obligations.p2                                = Hyd yn oed os nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi gyflwyno Ffurflen Dreth o hyd.
 reporting.frequency.different.obligations.p2hasExempt                       = Ar gyfer blynyddoedd treth yr ydych wedi optio allan neu wedi’i esemptio, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
-reporting.frequency.different.obligations.p3                                = Gallwch fwrw golwg dros yr hyn sy’n ddyledus ar y dudalen
-reporting.frequency.different.obligations.link.text                         = dyddiadau cau ar gyfer cyflwyno.
+reporting.frequency.different.obligations.p3                                = Dysgwch faint sy’n ddyledus ac erbyn pryd ar y dudalen
+reporting.frequency.different.obligations.link.text                         = eich dyddiadau cau ar gyfer cyflwyno.
 reporting.frequency.different.obligations.link.text.additional.english      =
 
 #your obligations (exempt)
