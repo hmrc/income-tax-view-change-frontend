@@ -75,9 +75,9 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       handleShowRequest(origin)
   }
 
-  def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
+  def showAgent(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
-      handleShowRequest()
+      handleShowRequest(origin)
   }
 
   def handleShowRequest(origin: Option[String] = None)

@@ -25,7 +25,7 @@ import models.itsaStatus.ITSAStatus
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed}
 
 class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {
@@ -78,7 +78,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -110,7 +110,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
           IncomeTaxViewChangeStub.stubUpdateCustomerFacts(testMtditid)(OK)
@@ -136,7 +136,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
           val result = buildPOSTMTDPostClient(
@@ -160,7 +160,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
           val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
 

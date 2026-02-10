@@ -39,8 +39,7 @@ class SessionService @Inject()(
         sensitiveUIJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
       case Some(sessionId) =>
         uiJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
-      case _ =>
-        Future.successful(Left(new Exception("Missing sessionId in HeaderCarrier")))
+      case _ => Future.successful(Left(new Exception("Missing sessionId in HeaderCarrier")))
     }
   }
 

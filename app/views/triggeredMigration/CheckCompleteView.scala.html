@@ -19,7 +19,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
-@import forms.triggeredMigration.CheckCompleteForm
 
 
 @this(
@@ -38,7 +37,7 @@
         bulletList: bulletPointList,
 )
 
-@(isAgent: Boolean, compatSoftwareLink: String, nextUpdatesLink: String, form: Form[forms.triggeredMigration.CheckCompleteForm], postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean, compatSoftwareLink: String, nextUpdatesLink: String, postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
 
 
 @getMessage(key: String) = @{
