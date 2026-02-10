@@ -3051,8 +3051,8 @@ reporting.frequency.different.obligations.li2                               = su
 reporting.frequency.different.obligations.li3                               = file your tax return
 reporting.frequency.different.obligations.p2                                = Even if you are not using Making Tax Digital for Income Tax, you still need to file a tax return.
 reporting.frequency.different.obligations.p2hasExempt                       = For tax years you are opted out of or exempt, you only need to file a tax return.
-reporting.frequency.different.obligations.p3                                = Found out what is due when on the
-reporting.frequency.different.obligations.link.text                         = your submissions deadlines
+reporting.frequency.different.obligations.p3                                = Find out what is due and when on the
+reporting.frequency.different.obligations.link.text                         = your submission deadlines
 reporting.frequency.different.obligations.link.text.additional.english      = page.
 
 #your obligations (exempt)
