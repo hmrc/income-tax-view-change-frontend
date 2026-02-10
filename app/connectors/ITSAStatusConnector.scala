@@ -32,7 +32,7 @@ class ITSAStatusConnector @Inject()(val http: HttpClientV2,
                                    )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getITSAStatusDetailUrl(taxableEntityId: String, taxYear: String, futureYears: Boolean, history: Boolean): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-obligations/itsa-status/status/$taxableEntityId/$taxYear?futureYears=${futureYears.toString}&history=${history.toString}"
+    s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/itsa-status/status/$taxableEntityId/$taxYear?futureYears=${futureYears.toString}&history=${history.toString}"
   }
 
   def getITSAStatusDetail(nino: String, taxYear: String, futureYears: Boolean, history: Boolean)
