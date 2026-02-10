@@ -108,7 +108,7 @@
 @TotalTableRow(availableCredit: BigDecimal) = @{
     Seq(
         TableRow(
-            content = HtmlContent(messages("money-in-your-account.where-from.total-row")),
+            content = HtmlContent(messages("money-in-your-account.where-from.total-row").toNonBreaking),
             classes = "govuk-table__header"
         ),
         TableRow(),
