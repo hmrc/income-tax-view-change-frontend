@@ -1459,7 +1459,7 @@ money-in-your-account.no-money-two-refunds-link-text                    = refund
 
 money-in-your-account.credit-not-allocated                              = This amount has not been set aside for any charges yet.
 money-in-your-account.all-credit-allocated                              = This amount has been set aside to pay for upcoming charges. You can still claim it back, but it may be easier to leave it in your account to avoid missing any payment deadlines.
-money-in-your-account.some-credit-allocated.p1                          = {0} has been set aside to pay for upcoming charges.You can claim this money back, but it may be easier to leave it in your account to avoid missing any payment deadlines.
+money-in-your-account.some-credit-allocated.p1                          = {0} has been set aside to pay for upcoming charges. You can claim this money back, but it may be easier to leave it in your account to avoid missing any payment deadlines.
 money-in-your-account.some-credit-allocated.p2.1                        = If you claim more than
 money-in-your-account.some-credit-allocated.p2.2                        = you’ll need to make another payment to cover your upcoming charges before the deadline.
 money-in-your-account.where-from.table-caption                          = Where the money came from
