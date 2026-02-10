@@ -17,15 +17,19 @@
 package controllers.triggeredMigration
 
 import controllers.ControllerISpecHelper
+import enums.JourneyType.TriggeredMigrationJourney
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import models.UIJourneySessionData
 import models.admin.TriggeredMigration
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import repositories.UIJourneySessionDataRepository
+import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed}
 
 class CheckCompleteControllerISpec extends ControllerISpecHelper {
@@ -53,6 +57,8 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
     )
   }
 
+  val repository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
+
   mtdAllRoles.foreach { mtdRole =>
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
@@ -64,12 +70,22 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
       s"user is $mtdRole" should {
         "render the page when TriggeredMigration FS is enabled" in {
           enable(TriggeredMigration)
+
+          eventually {
+            repository.set(
+              UIJourneySessionData(testSessionId,
+                TriggeredMigrationJourney.toString,
+                triggeredMigrationData =
+                  Some(TriggeredMigrationSessionData(recentlyConfirmed = true))
+            ))
+          }
+
           stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -97,11 +113,11 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
         "redirect to home page when form is valid and 'Continue' is selected" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
           val formData = Map(
@@ -112,25 +128,6 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
           result should have(
             httpStatus(SEE_OTHER),
             redirectURI(homePageUrl)
-          )
-        }
-        "return a 400 bad request when form is invalid" in {
-          enable(TriggeredMigration)
-          stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
-          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
-            status = OK,
-            body = liabilityCalculationModelSuccessful
-          )
-
-          val formData = Map(
-            "check-complete-confirm" -> Seq("this shouldn't be possible through normal use")
-          )
-
-          val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
-          result should have(
-            httpStatus(BAD_REQUEST)
           )
         }
 

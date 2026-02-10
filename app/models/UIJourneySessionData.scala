@@ -16,11 +16,12 @@
 
 package models
 
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.*
 import models.optin.OptInSessionData
 import models.optout.OptOutSessionData
+import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -35,6 +36,7 @@ case class UIJourneySessionData(
                                  optOutSessionData: Option[OptOutSessionData] = None,
                                  optInSessionData: Option[OptInSessionData] = None,
                                  incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
+                                 triggeredMigrationData: Option[TriggeredMigrationSessionData] = None,
                                  lastUpdated: Instant = Instant.now,
                                  journeyIsComplete: Option[Boolean] = None
                                ) {
@@ -49,8 +51,9 @@ case class UIJourneySessionData(
       optOutSessionData,
       optInSessionData,
       incomeSourceReportingFrequencyData,
+      triggeredMigrationData,
       lastUpdated,
-      journeyIsComplete
+      journeyIsComplete,
     )
 }
 
@@ -67,6 +70,7 @@ object UIJourneySessionData {
         (__ \ "optOutSessionData").formatNullable[OptOutSessionData] ~
         (__ \ "optInSessionData").formatNullable[OptInSessionData] ~
         (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData] ~
+        (__ \ "triggeredMigrationData").formatNullable[TriggeredMigrationSessionData] ~
         (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat) ~
         (__ \ "journeyIsComplete").formatNullable[Boolean]
       ).apply(
@@ -79,6 +83,7 @@ object UIJourneySessionData {
         optOutSessionData,
         optInSessionData,
         incomeSourceReportingFrequencyData,
+        triggeredMigrationData,
         lastUpdated,
         journeyIsComplete
       ) =>
@@ -91,6 +96,7 @@ object UIJourneySessionData {
           optOutSessionData,
           optInSessionData,
           incomeSourceReportingFrequencyData,
+          triggeredMigrationData,
           lastUpdated,
           journeyIsComplete
         ),
@@ -104,6 +110,7 @@ object UIJourneySessionData {
           u.optOutSessionData,
           u.optInSessionData,
           u.incomeSourceReportingFrequencyData,
+          u.triggeredMigrationData,
           u.lastUpdated,
           u.journeyIsComplete
         )
@@ -121,6 +128,7 @@ case class SensitiveUIJourneySessionData(
                                           optOutSessionData: Option[OptOutSessionData] = None,
                                           optInSessionData: Option[OptInSessionData] = None,
                                           incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
+                                          triggeredMigrationData: Option[TriggeredMigrationSessionData] = None,
                                           lastUpdated: Instant = Instant.now,
                                           journeyIsComplete: Option[Boolean] = None
                                         ) {
@@ -135,6 +143,7 @@ case class SensitiveUIJourneySessionData(
       optOutSessionData,
       optInSessionData,
       incomeSourceReportingFrequencyData,
+      triggeredMigrationData,
       lastUpdated,
       journeyIsComplete
     )
@@ -152,6 +161,7 @@ object SensitiveUIJourneySessionData {
         ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
         ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
         ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
+        ~ (__ \ "triggeredMigrationData").formatNullable[TriggeredMigrationSessionData]
         ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
         ~ (__ \ "journeyIsComplete").formatNullable[Boolean]
       ).apply(
@@ -164,6 +174,7 @@ object SensitiveUIJourneySessionData {
         optOutSessionData,
         optInSessionData,
         incomeSourceReportingFrequencyData,
+        triggeredMigrationData,
         lastUpdated,
         journeyIsComplete
       ) =>
@@ -176,6 +187,7 @@ object SensitiveUIJourneySessionData {
           optOutSessionData,
           optInSessionData,
           incomeSourceReportingFrequencyData,
+          triggeredMigrationData,
           lastUpdated,
           journeyIsComplete
         ),
@@ -189,6 +201,7 @@ object SensitiveUIJourneySessionData {
           s.optOutSessionData,
           s.optInSessionData,
           s.incomeSourceReportingFrequencyData,
+          s.triggeredMigrationData,
           s.lastUpdated,
           s.journeyIsComplete
         )

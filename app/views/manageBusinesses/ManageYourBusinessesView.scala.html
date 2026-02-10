@@ -35,7 +35,8 @@
         link: link,
         hr: hr,
         govukTable: GovukTable,
-        ceasedBusinesses: CeasedBusinesses
+        ceasedBusinesses: CeasedBusinesses,
+        govukInsetText: GovukInsetText
 )
 
 
@@ -128,9 +129,14 @@
 
         @h2(msg = getMessage("self-employed-h2"), optId = Some("self-employed-h1"))
 
-        @p(){
+        @p(id=Some("self-employed-desc")){
             @getMessage("self-employed-desc")
         }
+
+        @govukInsetText(InsetText(
+            id = Some("self-employed-inset"),
+            content = Text(messages("manage.your.businesses.sole-trader-inset"))
+        ))
 
         @if(soleTraderBusinesses.nonEmpty) {
 
@@ -181,7 +187,7 @@
 
         @h2(msg = getMessage("property-h2"), optId = Some("property-h2"))
 
-        @p(){
+        @p(id=Some("manage-your-business-property-desc")){
             @getMessage("property-desc")
         }
 

@@ -26,11 +26,11 @@ import models.itsaStatus.ITSAStatus
 import org.scalatest.Assertion
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.*
-import scala.concurrent.Future
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import testConstants.IncomeSourceIntegrationTestConstants.*
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
+
+import scala.concurrent.Future
 
 class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
@@ -51,7 +51,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
     val yourActiveBusinessesHeading = "Your active businesses"
     val soleTraderHeading = "Sole trader businesses"
     val addASoleTraderBusinessText = "Add a sole trader business"
-    val soleTraderGuidance = "You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader."
+    val soleTraderGuidance = "You’re a sole trader if you run your own business as an individual and work for yourself. This is also known as being self‑employed."
 
     val propertyHeading = "Property businesses"
     val ukPropertyHeading = "UK property"
@@ -88,7 +88,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
-                body = liabilityCalculationModelSuccessful
+                body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { (result: WSResponse) =>
@@ -106,7 +106,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
-                body = liabilityCalculationModelSuccessful
+                body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { (result:WSResponse) =>
@@ -123,7 +123,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
-                body = liabilityCalculationModelSuccessful
+                body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
@@ -140,7 +140,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
-                body = liabilityCalculationModelSuccessful
+                body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
@@ -156,7 +156,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
-                body = liabilityCalculationModelSuccessful
+                body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
@@ -174,7 +174,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
-                body = liabilityCalculationModelSuccessful
+                body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
@@ -189,7 +189,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
-                body = liabilityCalculationModelSuccessful
+                body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
@@ -204,7 +204,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2019", Some("LATEST"))(
                 status = OK,
-                body = liabilityCalculationModelSuccessful
+                body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
@@ -221,7 +221,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
-                body = liabilityCalculationModelSuccessful
+                body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies): Future[WSResponse]) { (result: WSResponse) =>

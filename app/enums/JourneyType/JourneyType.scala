@@ -53,3 +53,7 @@ case object OptInJourney extends OptJourney {
 case object OptOutJourney extends OptJourney {
   override val toString = "OPTOUT"
 }
+
+case object TriggeredMigrationJourney extends JourneyType {
+  override def toString: String = "TRIGGERED-MIGRATION"
+}

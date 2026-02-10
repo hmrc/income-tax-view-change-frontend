@@ -24,7 +24,7 @@ import config.featureswitch.FeatureSwitching
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.MockIncomeTaxCalculationConnector
-import mocks.services.{MockClientDetailsService, MockITSAStatusService, MockIncomeSourceDetailsService, MockSessionDataService}
+import mocks.services.{MockClientDetailsService, MockCustomerFactsUpdateService, MockITSAStatusService, MockIncomeSourceDetailsService, MockSessionDataService}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary
@@ -46,15 +46,13 @@ import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
 import scala.concurrent.Future
 import services.agent.ClientDetailsService
-import services.{DateServiceInterface, ITSAStatusService, IncomeSourceDetailsService, SessionDataService}
+import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, IncomeSourceDetailsService, SessionDataService}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.*
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
 import java.time.Instant
-import scala.concurrent.Future
 
 trait MockAuthActions
   extends TestSupport
@@ -65,6 +63,7 @@ trait MockAuthActions
     with MockAuditingService
     with MockSessionDataService
     with MockClientDetailsService
+    with MockCustomerFactsUpdateService
     with FeatureSwitching
     with MockITSAStatusService
     with MockIncomeTaxCalculationConnector {
@@ -74,6 +73,7 @@ trait MockAuthActions
     disableAllSwitches()
     reset(mockAuthService)
     reset(mockFAF)
+    reset(mockCustomerFactsUpdateService)
   }
 
   override def afterEach() = {
@@ -94,7 +94,8 @@ trait MockAuthActions
         api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService),
         api.inject.bind[AuditingService].toInstance(mockAuditingService),
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
-        api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService)
+        api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService),
+        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService)
       )
   }
 

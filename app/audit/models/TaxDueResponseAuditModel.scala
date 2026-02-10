@@ -35,29 +35,49 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
   override val auditType: String = enums.AuditType.TaxCalculationDetailsResponse
 
 
-  private def calcMessageCodeToString(id: String): Option[String] =
-    Some(id) collect {
-      case "C22201" => s"Your Basic Rate limit has been increased by ${viewModel.grossGiftAidPayments.get.toCurrencyString} to ${BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString} for Gift Aid payments"
-      case "C22202" => "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
-      case "C22203" => "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
-      case "C22205" => s"Total loss from all income sources was capped at ${BigDecimal(viewModel.lossesAppliedToGeneralIncome.get).toCurrencyString}"
-      case "C22206" => "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
-      case "C22207" => "Your payroll giving amount has been included in your adjusted taxable income"
-      case "C22208" => s"Your Basic Rate limit has been increased by ${viewModel.giftAidTax.get.toCurrencyString} to ${BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString} for Pension Contribution"
-      case "C22209" => s"Your Basic Rate limit has been increased by ${viewModel.giftAidTax.get.toCurrencyString} to ${BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString} for Pension Contribution and Gift Aid payments"
-      case "C22210" => "Employment related expenses are capped at the total amount of employment income"
-      case "C22211" => "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
-      case "C22212" => "Employment and Deduction related expenses have been limited to employment income."
-      case "C22213" => "Due to your employed earnings, paying Class 2 Voluntary may not be beneficial."
-      case "C22214" => "Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions."
-      case "C22215" => "Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this viewModel."
-      case "C22216" => "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
-      case "C22217" => "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
-      case "C22218" => "The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration viewModel."
-      case "C22220" => "If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid."
-      case "C22223" => "Class 2 National Insurance does not apply because your client is under 16."
-      case "C22224" => "Class 2 National Insurance does not apply because your client is over State Pension age."
+  private def calcMessageCodeToString(id: String): Option[String] = {
+    val grossGiftAid: Option[String] = viewModel.grossGiftAidPayments.map(_.toCurrencyString)
+    val modifiedBaseBandLimit: Option[String] = viewModel.getModifiedBaseTaxBand.map(value => BigDecimal(value.apportionedBandLimit).toCurrencyString)
+    val lossesApplied: Option[String] = viewModel.lossesAppliedToGeneralIncome.map(value => BigDecimal(value).toCurrencyString)
+    val giftAidTax: Option[String] = viewModel.giftAidTax.map(_.toCurrencyString)
+
+    id match {
+      case "C22201" => for {
+          gross <- grossGiftAid
+          band <- modifiedBaseBandLimit
+        } yield s"Your Basic Rate limit has been increased by $gross to $band for Gift Aid payments"
+
+      case "C22202" => Some("Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax")
+      case "C22203" => Some("Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold")
+      case "C22205" => lossesApplied.map(lossApplied => s"Total loss from all income sources was capped at $lossApplied")
+      case "C22206" => Some("One or more of your annual adjustments have not been applied because you have submitted additional income or expenses")
+      case "C22207" => Some("Your payroll giving amount has been included in your adjusted taxable income")
+
+      case "C22208" => for {
+          tax <- giftAidTax
+          band <- modifiedBaseBandLimit
+        } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution"
+
+      case "C22209" => for {
+          tax <- giftAidTax
+          band <- modifiedBaseBandLimit
+        } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution and Gift Aid payments"
+
+      case "C22210" => Some("Employment related expenses are capped at the total amount of employment income")
+      case "C22211" => Some("This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration")
+      case "C22212" => Some("Employment and Deduction related expenses have been limited to employment income.")
+      case "C22213" => Some("Due to your employed earnings, paying Class 2 Voluntary may not be beneficial.")
+      case "C22214" => Some("Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions.")
+      case "C22215" => Some("Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this viewModel.")
+      case "C22216" => Some("Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")
+      case "C22217" => Some("There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.")
+      case "C22218" => Some("The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration viewModel.")
+      case "C22220" => Some("If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid.")
+      case "C22223" => Some("Class 2 National Insurance does not apply because your client is under 16.")
+      case "C22224" => Some("Class 2 National Insurance does not apply because your client is over State Pension age.")
+      case _ => None
     }
+  }
 
   private val allowedCalcMessages: Seq[String] = {
     viewModel.messages.map(_.allMessages).getOrElse(Seq.empty).map(_.id).flatMap(calcMessageCodeToString)

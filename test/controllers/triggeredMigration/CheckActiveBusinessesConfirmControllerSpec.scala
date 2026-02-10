@@ -20,7 +20,7 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalcu
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application
@@ -46,12 +46,8 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
     app.injector.instanceOf[CheckActiveBusinessesConfirmController]
 
   private def stubIncomeSourceDetails(): Unit =
-    when(
-      mockIncomeSourceDetailsService.getIncomeSourceDetails()(
-        ArgumentMatchers.any(), ArgumentMatchers.any()
-      )
-    ).thenReturn(Future(singleBusinessIncome.copy(channel = "2")))
-
+    when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+      .thenReturn(Future.successful(singleBusinessIncome.copy(channel = "Hmrc-led-unconfirmed")))
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
@@ -88,7 +84,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
       }
 
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
     s"submit(isAgent = $isAgent)" when {
@@ -104,6 +100,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
           mockItsaStatusRetrievalAction()
           mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
+          mockUpdateCustomerFacts()
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
@@ -116,7 +113,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
           )
         }
 
-        "redirect back to the check records page when form is valid and 'No' is selected" in {
+        "redirect back to the Check HMRC Records page when form is valid and 'No' is selected" in {
 
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
@@ -169,7 +166,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
         }
       }
 
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

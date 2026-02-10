@@ -24,8 +24,8 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed}
 
 class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {
@@ -33,6 +33,16 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
   def getPath(mtdRole: MTDUserRole): String = {
     val prefix = if (mtdRole == MTDIndividual) "" else "/agents"
     s"$prefix/check-your-active-businesses/confirm"
+  }
+
+  def getCompletePath(mtdRole: MTDUserRole): String = {
+    val prefix = if (mtdRole == MTDIndividual) "" else "/agents"
+    s"$prefix/check-your-active-businesses/complete"
+  }
+
+  def getCheckHmrcRecordsPath(mtdRole: MTDUserRole): String = {
+    val prefix = if (mtdRole == MTDIndividual) "" else "/agents"
+    s"$prefix/check-your-active-businesses/hmrc-record"
   }
 
   object CheckActiveBusinessesConfirmMessages {
@@ -68,7 +78,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -100,8 +110,10 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
+
+          IncomeTaxViewChangeStub.stubUpdateCustomerFacts(testMtditid)(OK)
 
           val result = buildPOSTMTDPostClient(
             path,
@@ -109,23 +121,22 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             body = Map("check-active-businesses-confirm-form" -> Seq("Yes"))
           ).futureValue
 
-          val expectedURI =
-            if(mtdRole == MTDIndividual) "/report-quarterly/income-and-expenses/view/check-your-active-businesses/complete"
-            else "/report-quarterly/income-and-expenses/view/agents/check-your-active-businesses/complete"
+          val completePath = getCompletePath(mtdRole)
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(expectedURI)          )
+            redirectURI(s"/report-quarterly/income-and-expenses/view$completePath")
+          )
         }
 
-        "redirect back to the check records page when 'No' is selected" in {
+        "redirect to Check HMRC Records when 'No' is selected" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
           val result = buildPOSTMTDPostClient(
@@ -134,14 +145,12 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             body = Map("check-active-businesses-confirm-form" -> Seq("No"))
           ).futureValue
 
-          val expectedURI =
-            if(mtdRole == MTDIndividual) "/report-quarterly/income-and-expenses/view/check-your-active-businesses/hmrc-record"
-            else "/report-quarterly/income-and-expenses/view/agents/check-your-active-businesses/hmrc-record"
-
+          val checkHmrcRecordsPath = getCheckHmrcRecordsPath(mtdRole)
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(expectedURI)          )
+            redirectURI(s"/report-quarterly/income-and-expenses/view$checkHmrcRecordsPath")
+          )
         }
 
         "return BAD_REQUEST when no option is selected" in {
@@ -151,7 +160,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
-            body = liabilityCalculationModelSuccessful
+            body = liabilityCalculationModelSuccessfulNotCrystallised
           )
           val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
 

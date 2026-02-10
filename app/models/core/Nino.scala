@@ -27,6 +27,6 @@ object Nino {
   implicit val format: Format[Nino] = Format(reads, writes)}
 
 object ViewHistory {
-  implicit val writes: Writes[ViewHistory] = Writes(vh => JsString(vh.nino))
+  implicit val writes: Writes[ViewHistory] = Writes(vh => Json.obj("nino" -> vh.nino))
   implicit val reads: Reads[ViewHistory]   = Reads(js => js.validate[String].map(ViewHistory(_)))
   implicit val format: Format[ViewHistory] = Format(reads, writes)}
