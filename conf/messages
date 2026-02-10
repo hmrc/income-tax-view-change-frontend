@@ -197,6 +197,8 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty poin
 
 ## New Home Page ##
 
+new.home.navigation.tabs.overview                               = Overview
+
 new.home.overview.charges.sub-heading                           = Charges, payments, credits and refunds
 new.home.overview.charges.make-payment                          = Check what you owe and make a payment
 new.home.overview.charges.payment-history                       = View payment, credit and refund history

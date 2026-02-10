@@ -198,6 +198,8 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
 ## New Home Page ##
 
+new.home.navigation.tabs.overview                               = Trosolwg
+
 new.home.overview.charges.sub-heading                           = Ffioedd, taliadau, credydau ac ad-daliadau
 new.home.overview.charges.make-payment                          = Gwirio’r hyn sydd arnoch a gwneud taliad
 new.home.overview.charges.payment-history                       = Gweld hanes taliadau, credydau ac ad-daliadau
