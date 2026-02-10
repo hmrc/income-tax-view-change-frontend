@@ -3102,7 +3102,7 @@ reporting.frequency.table.MTD.isUsingMTD                            = Iawn
 reporting.frequency.table.MTD.isNotUsingMTD                         = Na
 reporting.frequency.table.mandated.r17                              = Yn ofynnol
 reporting.frequency.table.voluntary.r17                             = Wedi cofrestru’n wirfoddol
-reporting.frequency.table.annual.r17                                = Wedi optio allan
+reporting.frequency.table.annual.r17                                = Nid yw’n ofynnol
 reporting.frequency.table.exempt.r17                                = Esempt
 
 #changing reporting obligations section - R17

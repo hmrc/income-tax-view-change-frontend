@@ -3115,7 +3115,7 @@ reporting.frequency.table.MTD.isUsingMTD                            = Yes
 reporting.frequency.table.MTD.isNotUsingMTD                         = No
 reporting.frequency.table.mandated.r17                              = Required
 reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
-reporting.frequency.table.annual.r17                                = Opted out
+reporting.frequency.table.annual.r17                                = Not required
 reporting.frequency.table.exempt.r17                                = Exempt
 
 
