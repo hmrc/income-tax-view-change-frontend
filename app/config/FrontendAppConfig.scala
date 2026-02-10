@@ -45,6 +45,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //ITVC Protected Service
   lazy val itvcProtectedService: String = servicesConfig.baseUrl("income-tax-view-change")
+  
+  //Income tax obligations service
+  lazy val incomeTaxObligationsService: String = servicesConfig.baseUrl("income-tax-obligations")
 
   //Income tax calculation service
   lazy val incomeTaxCalculationService: String = servicesConfig.baseUrl("income-tax-calculation")
