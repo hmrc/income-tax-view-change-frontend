@@ -49,7 +49,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                                                  val mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
-
+  
   //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
   private def getBackURL(isAgent: Boolean, mode: Mode): String = {
     val notImplementedCall: Call = Call(method = "", url = "#NotImplemented")
@@ -75,7 +75,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       if isEnabled(OverseasBusinessAddress) then
         handleRequest(isAgent = false, mode, isTriggeredMigration)
       else
-        Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+        Future.successful(Redirect(controllers.routes.HomeController.show().url))
   }
 
   def showAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
@@ -83,7 +83,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       if isEnabled(OverseasBusinessAddress) then
         handleRequest(isAgent = true, mode, isTriggeredMigration)
       else
-        Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+        Future.successful(Redirect(controllers.routes.HomeController.showAgent().url))
   }
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
@@ -93,7 +93,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
       Future.successful {
-        Ok(istheNewAddressInTheUKView(form.apply, isAgent, postAction, backURL))
+        Ok(istheNewAddressInTheUKView(form.apply, isAgent, hasUKAddress(user), postAction, backURL))
       }
     }
   }.recover {
@@ -101,6 +101,15 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
+  }
+
+  private def hasUKAddress(user: MtdItUser[?]): Boolean = {
+    val hasUKAddress = for {
+      b <- user.incomeSources.businesses
+      a <- b.address
+      if a.addressLine1.isDefined && a.postCode.isDefined
+    } yield a
+    hasUKAddress.nonEmpty
   }
 
   def submit(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
@@ -123,6 +132,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                   form = formWithErrors,
                   postAction = getPostAction(isAgent, mode, isTriggeredMigration),
                   isAgent = isAgent,
+                  hasUKAddress = hasUKAddress(user),
                   backUrl = getBackURL(isAgent, mode)
                 )
               )

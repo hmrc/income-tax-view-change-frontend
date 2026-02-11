@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{DateServiceInterface, SessionService}
+import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
@@ -96,7 +97,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
               status(result) shouldBe OK
             }
           }
-          "display the error custom page page" when {
+          "redirect to the home page page" when {
             "fs is disables using the manage businesses journey" in {
                 disable(OverseasBusinessAddress)
                 setupMockSuccess(mtdRole)
@@ -106,10 +107,25 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 val result = action(fakeRequest)
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
+                
+                status(result) shouldBe SEE_OTHER
+                redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+            }
+          }
+          "display the is the address of your sole trader business in the UK page" when {
+            "fs is enabled using the manage businesses journey" in {
+              enable(OverseasBusinessAddress)
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
+              setupMockCreateSession(true)
+              val result = action(fakeRequest)
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
 
-                val document: Document = Jsoup.parse(contentAsString(result))
-                document.title should include(messages("error.custom.heading"))
-                status(result) shouldBe OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.title should include(messages("add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading"))
+              status(result) shouldBe OK
             }
           }
         }

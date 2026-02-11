@@ -38,6 +38,7 @@
 
 @(form: Form[IsTheNewAddressInTheUKForm],
         isAgent: Boolean,
+        hasUKAddress: Boolean,
         postAction: Call,
         backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -49,8 +50,16 @@
     form("business-name")
 }
 
+@hasUKAddressMessage = @{
+    if(hasUKAddress){
+        "add-business-is.the.new.address.in.the.uk.heading"
+    } else {
+        "add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading"
+    }
+}
+    
 @mainTemplate(
-    pageTitle = messages("add-business-is.the.new.address.in.the.uk.heading"),
+    pageTitle = messages(hasUKAddressMessage),
     form = Some(form),
     isAgent = isAgent,
     backUrl = Some(backUrl),
@@ -67,7 +76,7 @@
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
-                    content = Text(messages("add-business-is.the.new.address.in.the.uk.heading", "TODO needs to be a parameter passed from a controller")),
+                    content = Text(messages(hasUKAddressMessage)),
                     classes = "govuk-fieldset__legend--xl start-date-heading",
                     isPageHeading = true
                 ))
