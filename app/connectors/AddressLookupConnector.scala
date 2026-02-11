@@ -59,7 +59,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   lazy val individualWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("header.serviceName")
   lazy val agentWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("agent.header.serviceName")
 
-  def addressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
+  private def addressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
     JsObject(
       Seq(
         "version" -> JsNumber(2),
@@ -159,7 +159,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-  def internationalAddressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
+  private def internationalAddressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
     JsObject(
       Seq(
         "version" -> JsNumber(2),
@@ -207,10 +207,25 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
           Seq(
             "en" -> JsObject(
               Seq(
+                "confirmPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.confirm.heading"))
+                  )
+                ),
+                "lookupPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.lookup.heading"))
+                  )
+                ),
                 "countryPickerLabels" -> JsObject(
                   Seq(
                     "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.countryPicker.heading")),
                     "title" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.countryPicker.heading"))
+                  )
+                ),
+                "editPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-business-address.edit.heading"))
                   )
                 ),
                 "international" -> JsObject(
@@ -228,6 +243,27 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             ),
             "cy" -> JsObject(
               Seq(
+                "confirmPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.confirm.heading"))
+                  )
+                ),
+                "lookupPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.lookup.heading"))
+                  )
+                ),
+                "editPageLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-business-address.edit.heading"))
+                  )
+                ),
+                "countryPickerLabels" -> JsObject(
+                  Seq(
+                    "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-international-business-address.countryPicker.heading")),
+                    "title" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-international-business-address.countryPicker.heading"))
+                  )
+                ),
                 "international" -> JsObject(
                   Seq(
                     "editPageLabels" -> JsObject(
@@ -247,26 +283,15 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-
-  def initialiseAddressLookup(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
+  def initialiseAddressLookup(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean, ukOnly: Boolean)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
     Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
-    val payload = if (isAgent) {
-      addressJson(continueUrl(isAgent, mode, isTriggeredMigration), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
-    } else {
-      addressJson(continueUrl(isAgent, mode, isTriggeredMigration), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
+    val payload = (isAgent, ukOnly) match {
+      case (true, true)   => addressJson(continueUrl(isAgent, mode, isTriggeredMigration), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
+      case (false, true)  => addressJson(continueUrl(isAgent, mode, isTriggeredMigration), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
+      case (true, false)  => internationalAddressJson(continueUrl(isAgent, mode, isTriggeredMigration), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
+      case (false, false) => internationalAddressJson(continueUrl(isAgent, mode, isTriggeredMigration), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
     }
-    http.post(url"$addressLookupInitializeUrl")
-      .withBody(payload)
-      .execute[PostAddressLookupResponse]
-  }
 
-  def initialiseManualInternationalAddressPage(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
-    Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
-    val payload = if (isAgent) {
-      internationalAddressJson(continueUrl(isAgent, mode, isTriggeredMigration), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
-    } else {
-      internationalAddressJson(continueUrl(isAgent, mode, isTriggeredMigration), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)
-    }
     http.post(url"$addressLookupInitializeUrl")
       .withBody(payload)
       .execute[PostAddressLookupResponse]

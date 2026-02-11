@@ -56,10 +56,11 @@ class AddInternationalBusinessAddressController @Inject()(val authActions: AuthA
   private def initialiseJourney(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)
                                (implicit user: MtdItUser[_],
                                 errorHandler: ShowInternalServerError): Future[Result] = {
-    addressLookupService.initialiseInternationalAddressPage(
+    addressLookupService.initialiseAddressJourney(
       isAgent = isAgent,
       mode = mode,
-      isTriggeredMigration
+      isTriggeredMigration,
+      ukOnly = false
     ) map {
       case Right(Some(location)) =>
         Redirect(location)
@@ -74,24 +75,26 @@ class AddInternationalBusinessAddressController @Inject()(val authActions: AuthA
   
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_],
                                                                                  errorHandler: ShowInternalServerError): Future[Result] = {
-    val journeyType = IncomeSourceJourneyType(Add, SelfEmployment)
+    withOverseasBusinessFS {
+      val journeyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
-    sessionService.getMongo(journeyType).flatMap {
-      case Right(Some(sessionData)) =>
-        sessionData.addIncomeSourceData.flatMap(_.addressLookupId) match {
-          case Some(addressLookupId) =>
-            addressLookupService.fetchAddress(Some(addressLookupId)).flatMap {
-              case Right(_) =>
-                Future.successful(Redirect(addressLookupConfirmUrl(addressLookupId)))
-              case Left(_) =>
-                Logger("application").info(s"[AddInternationalBusinessAddressController][handleRequest] - addressLookupId expired/invalid, starting new ALF journey")
-                initialiseJourney(isAgent = isAgent, mode = mode, isTriggeredMigration)(user, errorHandler)
-            }
+      sessionService.getMongo(journeyType).flatMap {
+        case Right(Some(sessionData)) =>
+          sessionData.addIncomeSourceData.flatMap(_.addressLookupId) match {
+            case Some(addressLookupId) =>
+              addressLookupService.fetchAddress(Some(addressLookupId)).flatMap {
+                case Right(_) =>
+                  Future.successful(Redirect(addressLookupConfirmUrl(addressLookupId)))
+                case Left(_) =>
+                  Logger("application").info(s"[AddInternationalBusinessAddressController][handleRequest] - addressLookupId expired/invalid, starting new ALF journey")
+                  initialiseJourney(isAgent = isAgent, mode = mode, isTriggeredMigration)(user, errorHandler)
+              }
 
-          case None => initialiseJourney(isAgent = isAgent, mode = mode, isTriggeredMigration)(user, errorHandler)
-        }
+            case None => initialiseJourney(isAgent = isAgent, mode = mode, isTriggeredMigration)(user, errorHandler)
+          }
 
-      case _ => initialiseJourney(isAgent = isAgent, mode = mode, isTriggeredMigration)(user, errorHandler)
+        case _ => initialiseJourney(isAgent = isAgent, mode = mode, isTriggeredMigration)(user, errorHandler)
+      }
     }
   }
 }

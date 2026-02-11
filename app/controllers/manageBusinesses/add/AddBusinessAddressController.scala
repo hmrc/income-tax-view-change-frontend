@@ -68,7 +68,8 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     addressLookupService.initialiseAddressJourney(
       isAgent = isAgent,
       mode = mode,
-      isTriggeredMigration
+      isTriggeredMigration,
+      ukOnly = true
     ) map {
       case Right(Some(location)) =>
         Redirect(location)
