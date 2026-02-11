@@ -183,6 +183,7 @@ trait ChargeConstants {
 
   def financialDetailsOverdueWithLpi(
                                       accruingInterestAmount: List[Option[BigDecimal]],
+                                      outstandingInterest: List[Option[BigDecimal]],
                                       dunningLock: List[Option[String]],
                                       lpiWithDunningLock: List[Option[BigDecimal]] = List(None, None),
                                       outstandingAmount: List[BigDecimal] = List(50.0, 75.0)): List[ChargeItem] =
@@ -194,6 +195,7 @@ trait ChargeConstants {
       taxYear = fixedDate.getYear.toString,
       interestRate = List(Some(2.6), Some(6.2)),
       accruingInterestAmount = accruingInterestAmount,
+      outstandingInterest = outstandingInterest,
       poaRelevantAmount = None
     )
 
@@ -636,6 +638,7 @@ trait ChargeConstants {
 
   def financialDetailsOverdueWithLpiDunningLockZeroCi(taxYear: TaxYear,
                                                       accruingInterestAmount: Option[BigDecimal],
+                                                      interestOutstandingAmount: Option[BigDecimal],
                                                       dunningLock: Boolean,
                                                       lpiWithDunningLock: Option[BigDecimal]): List[ChargeItem] =
 
@@ -649,7 +652,7 @@ trait ChargeConstants {
         dueDate = Some(fixedDate.minusDays(10)),
         originalAmount = 43.21,
         outstandingAmount = 0.0,
-        interestOutstandingAmount = None,
+        interestOutstandingAmount = interestOutstandingAmount,
         accruingInterestAmount = accruingInterestAmount,
         latePaymentInterestAmount = accruingInterestAmount,
         interestFromDate = Some(LocalDate.parse("2019-05-25")),
@@ -670,7 +673,7 @@ trait ChargeConstants {
         dueDate = Some(fixedDate.minusDays(1)),
         originalAmount = 12.34,
         outstandingAmount = 75.0,
-        interestOutstandingAmount = None,
+        interestOutstandingAmount = interestOutstandingAmount,
         accruingInterestAmount = accruingInterestAmount,
         latePaymentInterestAmount = accruingInterestAmount,
         interestFromDate = Some(LocalDate.parse("2019-05-25")),
