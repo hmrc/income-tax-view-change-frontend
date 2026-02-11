@@ -337,7 +337,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         res should have(
           elementTextByID("current-year-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
           elementTextByID("current-year-subheading")(expectedValue = "Tax return due"),
-          elementTextByID("current-year-compatible-software-desc")(expectedValue = "As you are opted out of Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."),
+          elementTextByID("current-year-compatible-software-desc")(expectedValue = "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."),
           elementTextByID("current-year-return-due-date")(expectedValue = "Your return for the 2022 to 2023 tax year is due by 31 January 2024.")
         )
       }
