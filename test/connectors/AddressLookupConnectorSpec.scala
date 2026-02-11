@@ -102,7 +102,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
             json = JsString(""), headers = Map("Location" -> Seq("Sample location"))))
 
-          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = false, mode = NormalMode, isTriggeredMigration = false, ukOnly = false)
+          val result = TestAddressLookupConnector.initialiseAddressLookup(isAgent = true, mode = NormalMode, isTriggeredMigration = false, ukOnly = false)
           result map {
             case Left(_) => Fail("Error returned from lookup service")
             case Right(PostAddressLookupSuccessResponse(location)) => location shouldBe Some("Sample location")
