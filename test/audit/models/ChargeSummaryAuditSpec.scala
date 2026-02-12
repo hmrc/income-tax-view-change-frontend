@@ -148,6 +148,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     outstandingAmount = 0.0,
     interestOutstandingAmount = None,
     accruingInterestAmount = None,
+    latePaymentInterestAmount = None,
     interestFromDate = None,
     interestEndDate = None,
     interestRate = None,

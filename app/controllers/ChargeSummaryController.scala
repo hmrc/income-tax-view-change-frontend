@@ -44,6 +44,7 @@ import views.html.{ChargeSummaryView, YourSelfAssessmentChargeSummaryView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.json.Json
 
 object ChargeSummaryController {
   case class ErrorCode(message: String)

@@ -226,7 +226,8 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(0, 0),
-              accruingInterestAmount = List(Some(0), Some(10)), interestOutstandingAmount = List(Some(0), Some(10))))))
+              accruingInterestAmount = List(Some(0), Some(10)), latePaymentInterestAmount = List(Some(0), Some(10)),
+              interestOutstandingAmount = List(Some(0), Some(10))))))
 
           TestWhatYouOweService.getWhatYouOweChargesList(
             isEnabled(FilterCodedOutPoas),
