@@ -35,6 +35,11 @@ object AddressLookupTestConstants {
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
       |    },
+      |    "manualAddressEntryConfig": {
+      |      "mandatoryFields": {
+      |        "postcode": true
+      |      }
+      |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
       |      "showSearchAgainLink": true,
@@ -98,6 +103,11 @@ object AddressLookupTestConstants {
       |    "accessibilityFooterUrl": "http://localhost:9081/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
+      |    },
+      |    "manualAddressEntryConfig": {
+      |      "mandatoryFields": {
+      |        "postcode": true
+      |      }
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
