@@ -1,0 +1,46 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.partials.newHome.overview.OverviewCard
+@import controllers.routes.{TaxYearsController, TaxYearSummaryController}
+@import models.incomeSourceDetails.TaxYear
+
+@this(
+    overviewCard: OverviewCard
+)
+
+@(isAgent: Boolean, taxYear: TaxYear)(implicit messages: Messages)
+
+
+@allTaxYearsUrl = @{
+    if(isAgent){
+        TaxYearsController.showAgentTaxYears().url
+    } else {
+        TaxYearsController.showTaxYears().url
+    }
+}
+
+@yearToYearTaxYearsUrl = @{
+    if(isAgent){
+        TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear.endYear).url
+    } else {
+        TaxYearSummaryController.renderTaxYearSummaryPage(taxYear.endYear).url
+    }
+}
+
+<h2 class="govuk-heading-m">@messages("new.home.overview.tax-year.sub-heading")</h2>
+@overviewCard(messages("new.home.overview.tax-year.view-all-tax-years"), allTaxYearsUrl)
+@overviewCard(messages("new.home.overview.tax-year.view-tax-years", taxYear.startYear.toString, taxYear.endYear.toString), yearToYearTaxYearsUrl)

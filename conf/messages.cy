@@ -196,6 +196,29 @@ home.penaltiesAndAppeals.view                                   = Gwirio cosbau 
 home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
+## New Home Page ##
+
+new.home.navigation.tabs.overview                               = Trosolwg
+
+new.home.overview.charges.sub-heading                           = Ffioedd, taliadau, credydau ac ad-daliadau
+new.home.overview.charges.make-payment                          = Gwirio’r hyn sydd arnoch a gwneud taliad
+new.home.overview.charges.payment-history                       = Gweld hanes taliadau, credydau ac ad-daliadau
+new.home.overview.charges.money-in-account                      = Gwirio faint o arian sydd yn eich cyfrif
+new.home.overview.charges.adjust-payments                       = Addasu taliadau ar gyfrif
+new.home.overview.deadlines.sub-heading                         = Dyddiadau cau ac ymrwymiadau o ran adrodd
+new.home.overview.deadlines.view-updates                        = Gweld diweddariadau a dyddiadau cau
+new.home.overview.deadlines.check-obligations                   = Gwirio eich ymrwymiadau o ran adrodd
+new.home.overview.income.sub-heading                            = Ffynonellau incwm
+new.home.overview.income.manage-income                          = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
+new.home.overview.tax-year.sub-heading                          = Crynodebau o flynyddoedd treth
+new.home.overview.tax-year.view-all-tax-years                   = Bwrw golwg dros bob blwyddyn dreth
+new.home.overview.tax-year.view-tax-years                       = Gweld eich cyfrifiad treth a’ch rhagolwg ar gyfer {0} i {1}
+new.home.overview.penalties.sub-heading                         = Cosbau ac apeliadau
+new.home.overview.penalties.check-penalties                     = Gwirio cosbau ac apeliadau Hunanasesiad
+new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
+new.home.overview.penalties.check-lpp                           = Gweld eich cosbau am dalu’n hwyr
+
+
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
 error.custom.message                                           = Mae’r dudalen rydych yn ceisio’i gweld wedi newid

@@ -195,6 +195,29 @@ home.penaltiesAndAppeals.view                                   = Check Self Ass
 home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty points
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
+## New Home Page ##
+
+new.home.navigation.tabs.overview                               = Overview
+
+new.home.overview.charges.sub-heading                           = Charges, payments, credits and refunds
+new.home.overview.charges.make-payment                          = Check what you owe and make a payment
+new.home.overview.charges.payment-history                       = View payment, credit and refund history
+new.home.overview.charges.money-in-account                      = Check for money in your account
+new.home.overview.charges.adjust-payments                       = Adjust payments on account
+new.home.overview.deadlines.sub-heading                         = Deadlines and reporting obligations
+new.home.overview.deadlines.view-updates                        = View updates and deadlines
+new.home.overview.deadlines.check-obligations                   = Check your reporting obligations
+new.home.overview.income.sub-heading                            = Income sources
+new.home.overview.income.manage-income                          = Add, manage or cease a business or income source
+new.home.overview.tax-year.sub-heading                          = Tax year summaries
+new.home.overview.tax-year.view-all-tax-years                   = View all tax years
+new.home.overview.tax-year.view-tax-years                       = View your {0}-{1} tax calculation and forecast
+new.home.overview.penalties.sub-heading                         = Penalties and appeals
+new.home.overview.penalties.check-penalties                     = Check Self Assessment penalties and appeals
+new.home.overview.penalties.check-lsp                           = View your late submission penalties
+new.home.overview.penalties.check-lpp                           = View your late payment penalties
+
+
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
 error.custom.message                                            = The page you’re trying to view has changed
