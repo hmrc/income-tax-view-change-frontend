@@ -19,8 +19,14 @@ package utils
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger
+import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+
+import scala.concurrent.{ExecutionContext, Future}
 
 trait IncomeSourcesUtils extends FeatureSwitching {
 
@@ -42,6 +48,17 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       case SelfEmployment => None
       case UkProperty => selectActiveProperty(UkProperty, _.isUkProperty)
       case foreignProperty => selectActiveProperty(foreignProperty, _.isForeignProperty)
+    }
+  }
+
+  def withOverseasBusinessFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
+    if (!isEnabled(OverseasBusinessAddress)) {
+      user.userType match {
+        case Some(Agent) => Future(Redirect(controllers.routes.HomeController.showAgent()))
+        case _ => Future(Redirect(controllers.routes.HomeController.show()))
+      }
+    } else {
+      comeBlock
     }
   }
 

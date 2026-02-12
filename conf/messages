@@ -479,7 +479,7 @@ income_breakdown.guidance_software                              = Check your rec
 income_breakdown.table.employment	                            = Pay from all employments
 income_breakdown.table.benefits_received                        = Benefits & expenses received
 income_breakdown.table.allowable_expenses                       = Allowable expenses
-income_breakdown.table.self_employment                          = Profit from all self employments
+income_breakdown.table.self_employment                          = Profit from all self-employments
 income_breakdown.table.property                                 = Profit from UK land and property
 income_breakdown.table.bbsi                                     = Interest from UK banks, building societies and securities
 income_breakdown.table.dividends                                = Dividends from UK companies
@@ -888,7 +888,7 @@ nextUpdates.r17.tab.annual.label                                   = Up to {0} t
 nextUpdates.r17.tab.annual.heading                                 = Up to {0} to {1} tax year
 nextUpdates.r17.tab.annual.text1                                   = This page shows your upcoming due dates and any missed deadlines.
 nextUpdates.r17.tab.annual.subHeading                              = Tax return due
-nextUpdates.r17.tab.annual.text2                                   = As you are opted out of Making Tax Digital for Income Tax, you can find out here how you
+nextUpdates.r17.tab.annual.text2                                   = As you are not using Making Tax Digital for Income Tax, you can find out here how you
 nextUpdates.r17.tab.annual.text2.exempt                            = As you are exempt from Making Tax Digital for Income Tax, you can find out here how you
 nextUpdates.r17.tab.annual.link                                    = file your Self Assessment tax return
 nextUpdates.r17.tab.annual.text3                                   = Your return for the {0} to {1} tax year is due by
@@ -1457,6 +1457,24 @@ money-in-your-account.no-money-one-refund-link-text                     = refund
 money-in-your-account.no-money-two-refunds                              = You do not have any money in your account at the moment, but you have
 money-in-your-account.no-money-two-refunds-link-text                    = refunds in progress
 
+money-in-your-account.credit-not-allocated                              = This amount has not been set aside for any charges yet.
+money-in-your-account.all-credit-allocated                              = This amount has been set aside to pay for upcoming charges. You can still claim it back, but it may be easier to leave it in your account to avoid missing any payment deadlines.
+money-in-your-account.some-credit-allocated.p1                          = {0} has been set aside to pay for upcoming charges. You can claim this money back, but it may be easier to leave it in your account to avoid missing any payment deadlines.
+money-in-your-account.some-credit-allocated.p2.1                        = If you claim more than
+money-in-your-account.some-credit-allocated.p2.2                        = you’ll need to make another payment to cover your upcoming charges before the deadline.
+money-in-your-account.where-from.table-caption                          = Where the money came from
+money-in-your-account.where-from.table-header.amount                    = Amount
+money-in-your-account.where-from.table-header.tax-year                  = Tax year
+money-in-your-account.where-from.table-header.description               = Description
+money-in-your-account.where-from.table-header.date                      = Date
+money-in-your-account.where-from.total-row                              = Total credit:
+money-in-your-account.where-from.table-row.tax-year                     = {0} to {1}
+money-in-your-account.where-from.table-row.tax-year.hidden              = Tax year {0} to {1}
+money-in-your-account.where-from.payment-row.description                = Payment you made to HMRC on {0}
+money-in-your-account.where-from.credit-row.description                 = Credit from an earlier tax year
+money-in-your-account.where-from.refund-row.description                 = Refund in progress
+money-in-your-account.claim-refund.button-text                          = Claim a refund
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
@@ -1575,6 +1593,10 @@ add-business-address.lookup.heading         = What is your business address?
 add-business-address.confirm.heading        = Confirm business address
 add-business-address.edit.heading           = Enter your business address
 
+## Add international business address page
+add-international-business-address.heading = Enter your international business address
+add-international-business-address.postcode = Postcode or zipcode
+add-international-business-address.countryPicker.heading = Select the country or territory for your business address
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
@@ -3045,13 +3067,14 @@ reporting.frequency.manageReportingFrequency.b2.link                = Opt out of
 
 #different obligations
 reporting.frequency.different.obligations.heading                           = What the different reporting obligations are
-reporting.frequency.different.obligations.p1                                = When you are using Making Tax Digital for Income Tax you need to submit:
-reporting.frequency.different.obligations.li1                               = 4 updates a year for each source of self employment and property income
-reporting.frequency.different.obligations.li2                               = a tax return
-reporting.frequency.different.obligations.p2                                = For tax years you are opted out of, you only need to file a tax return.
+reporting.frequency.different.obligations.p1                                = When you are using Making Tax Digital for Income Tax you need to:
+reporting.frequency.different.obligations.li1                               = create, store and correct digital records of your self-employment and property income and expenses
+reporting.frequency.different.obligations.li2                               = submit your quarterly updates
+reporting.frequency.different.obligations.li3                               = file your tax return
+reporting.frequency.different.obligations.p2                                = Even if you are not using Making Tax Digital for Income Tax, you still need to file a tax return.
 reporting.frequency.different.obligations.p2hasExempt                       = For tax years you are opted out of or exempt, you only need to file a tax return.
-reporting.frequency.different.obligations.p3                                = You can see what is due on the
-reporting.frequency.different.obligations.link.text                         = submission deadlines
+reporting.frequency.different.obligations.p3                                = Find out what is due and when on the
+reporting.frequency.different.obligations.link.text                         = your submission deadlines
 reporting.frequency.different.obligations.link.text.additional.english      = page.
 
 #your obligations (exempt)
@@ -3092,7 +3115,7 @@ reporting.frequency.compatibleSoftware.heading.R17                      = When y
 reporting.frequency.compatibleSoftware.p1.R17                           = Whether you are required or voluntarily signed up, you need
 reporting.frequency.compatibleSoftware.link.text.R17                    = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2.R17                           = There are both paid and free options for you or your agent to choose from.
-reporting.frequency.compatibleSoftware.p3.R17                           = If you are opted out, you can find out here how to
+reporting.frequency.compatibleSoftware.p3.R17                           = If you are not using Making Tax Digital for Income Tax, you can find out here how to
 reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = If you are opted out or exempt, you can find out here how to
 reporting.frequency.compatibleSoftware.link2.text                       = file your Self Assessment tax return
 
@@ -3115,7 +3138,7 @@ reporting.frequency.table.MTD.isUsingMTD                            = Yes
 reporting.frequency.table.MTD.isNotUsingMTD                         = No
 reporting.frequency.table.mandated.r17                              = Required
 reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
-reporting.frequency.table.annual.r17                                = Opted out
+reporting.frequency.table.annual.r17                                = Not required
 reporting.frequency.table.exempt.r17                                = Exempt
 
 

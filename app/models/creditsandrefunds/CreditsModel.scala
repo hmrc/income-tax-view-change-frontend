@@ -46,6 +46,7 @@ case class Transaction(transactionType: CreditType,
                        amount: BigDecimal,
                        taxYear: Option[TaxYear],
                        dueDate: Option[LocalDate],
+                       effectiveDateOfPayment: Option[LocalDate],
                        transactionId: String)
 
 object Transaction {

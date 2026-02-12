@@ -22,31 +22,28 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
+import models.admin.OverseasBusinessAddress
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{clearInvocations, never, verify, when, mock}
-import org.scalatest.matchers.must.Matchers
-import services.{DateService, DateServiceInterface}
+import org.mockito.Mockito.*
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
-import play.api.mvc.{Call, Result}
-import play.api.test.Helpers.*
-import services.{AddressLookupService, DateService, IncomeSourceDetailsService, SessionService}
+import play.api.mvc.Result
+import play.api.test.Helpers.{redirectLocation, *}
+import services.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 
 
-class AddBusinessAddressControllerSpec extends MockAuthActions
+class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
   with MockSessionService with MockDateService {
 
   val incomeSourceDetailsService: IncomeSourceDetailsService = mock(classOf[IncomeSourceDetailsService])
 
-  val postAction: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = NormalMode)
-  val postActionCheck: Call = controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = CheckMode)
   lazy val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
@@ -59,7 +56,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
-  lazy val testAddBusinessAddressController = app.injector.instanceOf[AddBusinessAddressController]
+  lazy val testAddInternationalBusinessAddressController = app.injector.instanceOf[AddInternationalBusinessAddressController]
   lazy val frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
@@ -83,10 +80,11 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
     mtdAllRoles.foreach { mtdRole =>
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
-        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(mode, false) else testAddBusinessAddressController.showAgent(mode, false)
+        val action = if (mtdRole == MTDIndividual) testAddInternationalBusinessAddressController.show(isAgent = false, mode, false) else testAddInternationalBusinessAddressController.show(isAgent = true, mode, false)
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the address lookup service" when {
             "location redirect is returned by the lookup service" in {
+              enable(OverseasBusinessAddress)
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -102,6 +100,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             }
 
             "session data exists but addressLookupId is missing" in {
+              enable(OverseasBusinessAddress)
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -117,6 +116,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             }
 
             "mongo call fails" in {
+              enable(OverseasBusinessAddress)
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -134,6 +134,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
           "redirect to the address lookup confirmation page" when {
             "addressLookupId exists in session data and is still valid" in {
+              enable(OverseasBusinessAddress)
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -157,6 +158,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
           "redirect to the address lookup service" when {
             "addressLookupId exists in session data but journey is expired/invalid" in {
+              enable(OverseasBusinessAddress)
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -175,8 +177,31 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             }
           }
 
+          "redirect to home page" when {
+            "overseas business address FS is disabled" in {
+              disable(OverseasBusinessAddress)
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              setupMockGetMongo(Right(None))
+
+              val result: Future[Result] = action(fakeRequest)
+
+              val homePageUrl = if (mtdRole == MTDIndividual) {
+                controllers.routes.HomeController.show().url
+              } else {
+                controllers.routes.HomeController.showAgent().url
+              }
+
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(homePageUrl)
+            }
+          }
+
           "return the correct error" when {
             "no location returned" in {
+              enable(OverseasBusinessAddress)
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -191,6 +216,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
             }
 
             "failure returned" in {
+              enable(OverseasBusinessAddress)
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -199,71 +225,6 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               when(mockAddressLookupService.initialiseAddressJourney(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(Left(AddressError("Test status"))))
-
-              val result: Future[Result] = action(fakeRequest)
-              status(result) shouldBe INTERNAL_SERVER_ERROR
-            }
-          }
-        }
-
-        if (mtdRole == MTDIndividual) {
-          testMTDIndividualAuthFailures(action)
-        } else {
-          testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
-        }
-      }
-
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
-        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.submit(Some("123"), mode, false) else testAddBusinessAddressController.agentSubmit(Some("123"), mode, false)
-        s"the user is authenticated as a $mtdRole" should {
-          "redirect to the business check answers page" when {
-            "valid data received" in {
-              val checkAnswersUrl = if(mtdRole == MTDIndividual) {
-                "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-check-answers"
-              } else {
-                "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add-sole-trader/business-check-answers"
-              }
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-              setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
-              setupMockSetMongoData(result = true)
-              when(mockAddressLookupService.fetchAddress(any())(any()))
-                .thenReturn(Future(Right(testBusinessAddressModel)))
-
-              val result: Future[Result] = action(fakeRequest)
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result) shouldBe Some(checkAnswersUrl)
-              verifySetMongoData()
-            }
-          }
-
-          "return the correct error" when {
-            "no address returned" in {
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-              setupMockGetMongo(Right(Some(UIJourneySessionData("", ""))))
-              setupMockSetMongoData(result = true)
-
-              when(mockAddressLookupService.fetchAddress(any())(any()))
-                .thenReturn(Future(Left(AddressError("Test status"))))
-
-              val result: Future[Result] = action(fakeRequest)
-              status(result) shouldBe INTERNAL_SERVER_ERROR
-            }
-
-            "session data not found" in {
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-              setupMockGetMongo(Right(None))
-
-              when(mockAddressLookupService.fetchAddress(any())(any()))
-                .thenReturn(Future(Right(testBusinessAddressModel)))
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR

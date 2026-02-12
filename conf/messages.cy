@@ -480,7 +480,7 @@ income_breakdown.guidance_software                              = Gwiriwch eich 
 income_breakdown.table.employment	                            = Cyflog o bob cyflogaeth
 income_breakdown.table.benefits_received                        = Buddiannau a threuliau a gafwyd
 income_breakdown.table.allowable_expenses                       = Treuliau caniataol
-income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
+income_breakdown.table.self_employment                          = Elw o bob un hunangyflogaeth
 income_breakdown.table.property                                 = Elw o dir ac eiddo yn y DU
 income_breakdown.table.bbsi                                     = Llog o fanciau, cymdeithasau adeiladu a gwarantau yn y DU
 income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
@@ -888,9 +888,9 @@ nextUpdates.r17.tab.annual.label                                   = Hyd at flwy
 nextUpdates.r17.tab.annual.heading                                 = Hyd at flwyddyn dreth {0} i {1}
 nextUpdates.r17.tab.annual.text1                                   = Mae’r dudalen hon yn dangos y dyddiadau cau sydd ar y gweill ar eich cyfer ac unrhyw ddyddiadau cau a fethwyd.
 nextUpdates.r17.tab.annual.subHeading                              = Ffurflen Dreth i’w chyflwyno
-nextUpdates.r17.tab.annual.text2                                   = Gan eich bod yn optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch gael rhagor o wybodaeth yn y fan hon am sut rydych chi’n
+nextUpdates.r17.tab.annual.text2                                   = Gan nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddysgu yma sut i
 nextUpdates.r17.tab.annual.text2.exempt                            = Gan eich bod wedi’ch esemptio rhag y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddysgu yma sut i
-nextUpdates.r17.tab.annual.link                                    = cyflwyno’ch Ffurflen Dreth Hunanasesiad
+nextUpdates.r17.tab.annual.link                                    = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 nextUpdates.r17.tab.annual.text3                                   = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn
 nextUpdates.r17.tab.annual.text4                                   = 31 Ionawr {0}.
 nextUpdates.r17.tab.annual.ny.label                                = Blwyddyn dreth {0} i {1}
@@ -1458,6 +1458,25 @@ money-in-your-account.no-money-one-refund-link-text                     = ad-dal
 money-in-your-account.no-money-two-refunds                              = Nid oes gennych unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae gennych
 money-in-your-account.no-money-two-refunds-link-text                    = ad-daliadau ar y gweill
 
+
+money-in-your-account.credit-not-allocated                              = Nid yw’r swm hwn wedi’i neilltuo ar gyfer unrhyw daliadau ar hyn o bryd.
+money-in-your-account.all-credit-allocated                              = Mae’r swm hwn wedi’i neilltuo ar gyfer talu unrhyw daliadau sydd ar y gweill. Gallwch hawlio’r arian hwn yn ôl o hyd, ond efallai y bydd yn haws i’w adael yn eich cyfrif i osgoi methu unrhyw ddyddiadau cau ar gyfer talu.
+money-in-your-account.some-credit-allocated.p1                          = Mae {0} wedi’i neilltuo ar gyfer talu’r taliadau sydd ar y gweill. Gallwch hawlio’r arian hwn yn ôl, ond efallai y bydd yn haws i’w adael yn eich cyfrif i osgoi methu unrhyw ddyddiadau cau ar gyfer talu.
+money-in-your-account.some-credit-allocated.p2.1                        = Os ydych yn hawlio mwy na
+money-in-your-account.some-credit-allocated.p2.2                        = bydd angen i chi wneud taliad arall i dalu’r taliadau sydd ar y gweill cyn y dyddiad cau.
+money-in-your-account.where-from.table-caption                          = O ble y daeth yr arian
+money-in-your-account.where-from.table-header.amount                    = Swm
+money-in-your-account.where-from.table-header.tax-year                  = Blwyddyn dreth
+money-in-your-account.where-from.table-header.description               = Disgrifiad
+money-in-your-account.where-from.table-header.date                      = Dyddiad
+money-in-your-account.where-from.total-row                              = Cyfanswm y credyd:
+money-in-your-account.where-from.table-row.tax-year                     = {0} i {1}
+money-in-your-account.where-from.table-row.tax-year.hidden              = Blwyddyn dreth {0} i {1}
+money-in-your-account.where-from.payment-row.description                = Taliad a wnaethoch i CThEF ar {0}
+money-in-your-account.where-from.credit-row.description                 = Credyd o flwyddyn dreth gynharach
+money-in-your-account.where-from.refund-row.description                 = Ad-daliad ar y gweill
+money-in-your-account.claim-refund.button-text                          = Hawlio ad-daliad
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
@@ -1576,8 +1595,10 @@ add-business-address.lookup.heading         = Beth yw cyfeiriad eich busnes?
 add-business-address.confirm.heading        = Cadarnhewch gyfeiriad y busnes
 add-business-address.edit.heading           = Nodwch gyfeiriad eich busnes
 
-
-
+## Add international business address page
+add-international-business-address.heading = Nodwch gyfeiriad rhyngwladol eich busnes
+add-international-business-address.postcode =  Cod post neu god ‘zip’
+add-international-business-address.countryPicker.heading = Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes
 
 shortMonth.1     = Ion
 shortMonth.2     = Chwe
@@ -3033,13 +3054,14 @@ reporting.frequency.manageReportingFrequency.b2.link = Optio allan o adrodd yn c
 
 #different obligations
 reporting.frequency.different.obligations.heading                           = Yr ymrwymiadau o ran rhoi gwybod i ni
-reporting.frequency.different.obligations.p1                                = Pan fyddwch yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi gyflwyno’r canlynol:
-reporting.frequency.different.obligations.li1                               = 4 diweddariad y flwyddyn ar gyfer pob ffynhonnell o incwm o hunangyflogaeth ac eiddo
-reporting.frequency.different.obligations.li2                               = Ffurflen Dreth
-reporting.frequency.different.obligations.p2                                = Ar gyfer blynyddoedd treth yr ydych wedi optio allan ohonynt, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
+reporting.frequency.different.obligations.p1                                = Pan fyddwch yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi wneud y canlynol:
+reporting.frequency.different.obligations.li1                               = creu, cadw, a chywiro cofnodion digidol o’ch incwm o hunangyflogaeth ac eiddo a’ch treuliau
+reporting.frequency.different.obligations.li2                               = cyflwyno’ch diweddariadau chwarterol
+reporting.frequency.different.obligations.li3                               = cyflwyno’ch Ffurflen Dreth
+reporting.frequency.different.obligations.p2                                = Hyd yn oed os nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi gyflwyno Ffurflen Dreth o hyd.
 reporting.frequency.different.obligations.p2hasExempt                       = Ar gyfer blynyddoedd treth yr ydych wedi optio allan neu wedi’i esemptio, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
-reporting.frequency.different.obligations.p3                                = Gallwch fwrw golwg dros yr hyn sy’n ddyledus ar y dudalen
-reporting.frequency.different.obligations.link.text                         = dyddiadau cau ar gyfer cyflwyno.
+reporting.frequency.different.obligations.p3                                = Dysgwch faint sy’n ddyledus ac erbyn pryd ar y dudalen
+reporting.frequency.different.obligations.link.text                         = eich dyddiadau cau ar gyfer cyflwyno.
 reporting.frequency.different.obligations.link.text.additional.english      =
 
 #your obligations (exempt)
@@ -3080,7 +3102,7 @@ reporting.frequency.compatibleSoftware.heading.R17                      = Pan fy
 reporting.frequency.compatibleSoftware.p1.R17                           = P’un a oes angen i chi gofrestru neu wedi cofrestru’n wirfoddol, mae angen
 reporting.frequency.compatibleSoftware.link.text.R17                    = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm arnoch
 reporting.frequency.compatibleSoftware.p2.R17                           = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
-reporting.frequency.compatibleSoftware.p3.R17                           = Os ydych chi wedi optio allan, gallwch ddarganfod yma sut i
+reporting.frequency.compatibleSoftware.p3.R17                           = Os nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddysgu yma sut i
 reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = Os ydych chi wedi optio allan neu wedi’i esemptio, gallwch ddarganfod yma sut i
 reporting.frequency.compatibleSoftware.link2.text                       = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 
@@ -3102,7 +3124,7 @@ reporting.frequency.table.MTD.isUsingMTD                            = Iawn
 reporting.frequency.table.MTD.isNotUsingMTD                         = Na
 reporting.frequency.table.mandated.r17                              = Yn ofynnol
 reporting.frequency.table.voluntary.r17                             = Wedi cofrestru’n wirfoddol
-reporting.frequency.table.annual.r17                                = Wedi optio allan
+reporting.frequency.table.annual.r17                                = Nid yw’n ofynnol
 reporting.frequency.table.exempt.r17                                = Esempt
 
 #changing reporting obligations section - R17
