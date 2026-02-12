@@ -38,13 +38,24 @@
         <tr>
             <td class="govuk-table__cell">@paymentAllocation.clearingDateActual.toLongDateShort.toNonBreaking</td>
             <td class="govuk-table__cell" id="payment-allocation-@index">
+                @if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined) {
                 <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
                     @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
                 </a>
+                } else {
+                <a class="govuk-body no-wrap">
+                    @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
+                </a>
+                }
             </td>
             <td class="govuk-table__cell">
+                @if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined) {
                 <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYearHidden", (paymentAllocation.allocationDetailActual.getTaxYear - 1).toString, paymentAllocation.allocationDetailActual.getTaxYear.toString)</span>
                 <span class="govuk-body no-wrap" aria-hidden="true">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetailActual.getTaxYear - 1).toString, paymentAllocation.allocationDetailActual.getTaxYear.toString)</span>
+                } else {
+                <span class="govuk-visually-hidden">@messages("paymentAllocation.noData")</span>
+                <span class="govuk-body no-wrap" aria-hidden="true">@messages("paymentAllocation.noData")</span>
+                }
             </td>
             <td class="govuk-table__cell govuk-table__cell--numeric">@paymentAllocation.allocationDetailActual.amountActual.toCurrencyString</td>
         </tr>
