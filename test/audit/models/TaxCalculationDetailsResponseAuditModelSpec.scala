@@ -231,7 +231,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
     ),
     "taxCalculationMessage" -> Json.arr(
       Json.obj(
-        "calculationMessage" -> "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
+        "calculationMessage" -> "This is a forecast of your annual Income Tax liability based on the information you have provided to date. Any overpayments of Income Tax will not be refundable until after you have submitted your final declaration"
       ),
       Json.obj(
         "calculationMessage" -> "Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions."
