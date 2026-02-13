@@ -75,7 +75,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
         if (incomeSourceType == SelfEmployment) businessViewModelMax else propertyViewModelMax(incomeSourceType),
         isAgent = isAgent,
         postAction = postAction,
-        backUrl = backUrl
+        backUrl = backUrl,
+        isTriggeredMigration = false
       )(messages, implicitly)
     }
 

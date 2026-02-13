@@ -59,7 +59,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val finalDeclarationDates2: DatesModel = DatesModel(day.plusYears(1), day.plusDays(1).plusYears(1), day.plusDays(2).plusYears(1), "C", isFinalDec = true, obligationType = "Crystallisation")
 
   val viewAllBusinessLink = "/report-quarterly/income-and-expenses/view/manage-your-businesses"
-  val viewUpcomingUpdatesLink = "/report-quarterly/income-and-expenses/view/next-updates"
+  val viewUpcomingUpdatesLink = "/report-quarterly/income-and-expenses/view/submission-deadlines"
   val viewReportingObligationsLink = "/report-quarterly/income-and-expenses/view/reporting-frequency"
 
   val incomeSourceCeasedObligationsViewModel: IncomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(
@@ -186,11 +186,11 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     }
 
 
-    "show first paragraph with 'updates and deadlines' link" in new Setup(validCallWithData) {
+    "show first paragraph with 'submission deadlines' link" in new Setup(validCallWithData) {
       val p: Element = document.getElementById("even-if-paragraph")
       val link: Element = document.getElementById("p1-link")
-      p.text shouldBe "Even if they are not displayed right away on the updates and deadlines page, your account has been updated."
-      link.hasCorrectLink("updates and deadlines", viewUpcomingUpdatesURL)
+      p.text shouldBe "Even if they are not displayed right away on the submission deadlines page, your account has been updated."
+      link.hasCorrectLink("submission deadlines", viewUpcomingUpdatesURL)
     }
 
     "show conditional paragraph with obligations link if remaining latent business and Reporting frequency FS is ON" in new Setup(

@@ -58,7 +58,8 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
         isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
         earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
         btaNavPartial = user.btaNavPartial,
-        origin = origin)
+        origin = origin
+      )
     } match {
       case Success(taxView) => Future.successful(Ok(taxView))
       case Failure(ex) =>
@@ -69,7 +70,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
   }
 
   def showTaxYears(origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async { implicit user =>
+    authActions.asMTDIndividual().async { implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
         isAgent = false,
@@ -78,7 +79,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
     }
 
   def showAgentTaxYears: Action[AnyContent] =
-    authActions.asMTDPrimaryAgent.async {
+    authActions.asMTDPrimaryAgent().async {
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent().url,

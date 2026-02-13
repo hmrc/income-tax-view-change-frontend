@@ -18,6 +18,7 @@ package models.incomeSourceDetails
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import play.api.libs.json.{Format, JsValue, Json}
@@ -33,7 +34,8 @@ case class IncomeSourceDetailsModel(
                                      mtdbsa: String,
                                      yearOfMigration: Option[String],
                                      businesses: List[BusinessDetailsModel],
-                                     properties: List[PropertyDetailsModel]
+                                     properties: List[PropertyDetailsModel],
+                                     channel: String = "Customer-led"
                                    ) extends IncomeSourceDetailsResponse with Logging {
 
   val hasPropertyIncome: Boolean = properties.nonEmpty
@@ -64,7 +66,7 @@ case class IncomeSourceDetailsModel(
       .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
-    val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int])
+    val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(orderedTaxYearsByAccountingPeriods())
     Logger("application").debug(s"Tax years list = $taxYears")
     taxYears
   }
@@ -121,6 +123,9 @@ case class IncomeSourceDetailsModel(
   def isAnyOfActiveBusinessesLatent: Boolean = businesses.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty) ||
     properties.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
 
+  def isConfirmedUser: Boolean = {
+    Set(CustomerLed.getValue, HmrcConfirmed.getValue).contains(channel)
+  }
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {

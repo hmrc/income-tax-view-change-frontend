@@ -25,15 +25,16 @@
         appConfig: config.FrontendAppConfig
 )
 
-@(taxYears: List[Int],
-        backUrl: String,
-        utr: Option[String] = None,
-        itsaSubmissionIntegrationEnabled: Boolean,
-        isPostFinalisationAmendmentR18Enabled: Boolean,
-        earliestSubmissionTaxYear: Int,
-        isAgent: Boolean = false,
-        btaNavPartial: Option[Html] = None,
-        origin: Option[String] = None
+@(
+    taxYears: List[Int],
+    backUrl: String,
+    utr: Option[String] = None,
+    itsaSubmissionIntegrationEnabled: Boolean,
+    isPostFinalisationAmendmentR18Enabled: Boolean,
+    earliestSubmissionTaxYear: Int,
+    isAgent: Boolean = false,
+    btaNavPartial: Option[Html] = None,
+    origin: Option[String] = None
 )(implicit request: Request[_], messages: Messages)
 
 @getReturnHref(year: Int) = @{

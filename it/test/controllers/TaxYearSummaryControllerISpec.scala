@@ -18,29 +18,30 @@ package controllers
 
 import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import helpers.servicemocks.*
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
-import helpers.servicemocks._
-import models.admin._
-import models.financialDetails._
-import models.liabilitycalculation.LiabilityCalculationError
+import models.admin.*
+import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
+import models.liabilitycalculation.{IsMTD, LiabilityCalculationError}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.Jsoup
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.CalculationListIntegrationTestConstants
 import testConstants.CalculationListIntegrationTestConstants.successResponseNonCrystallised
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NewCalcBreakdownItTestConstants._
-import testConstants.messages.TaxYearSummaryMessages._
+import testConstants.IncomeSourceIntegrationTestConstants.*
+import testConstants.NewCalcBreakdownItTestConstants.*
+import testConstants.messages.TaxYearSummaryMessages.*
 
 import java.time.LocalDate
 
 class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
   def getPath(mtdRole: MTDUserRole, year: String = getCurrentTaxYearEnd.getYear.toString): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/tax-year-summary/$year"
   }
 
@@ -87,22 +88,18 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 res should have(
                   httpStatus(OK),
-                  elementTextByID("latest-calculation-overview-description")("Your tax return was amended on 15 February 2019 and as a result this is your most up-to-date calculation."),
-                  elementTextByID("previous-calculation-overview-description")("When your tax return is amended it changes your tax calculation. If this happens, this page shows any previous tax calculations you may have."),
-                  elementTextByID("previous-calculation-note")("The tax return was amended then."),
-                  elementTextByID("previous-calculation-bullet-start")("You can change your tax return after you have filed it. To do this online you must:"),
-                  elementTextByID("previous-calculation-bullet-1")("use the software or HMRC online service used to submit the return"),
-                  elementTextByID("previous-calculation-bullet-2")("do it within 12 months of the Self Assessment deadline (opens in new tab)"),
-                  elementTextByID("previous-calculation-contact-hmrc")("If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC (opens in new tab)."),
-                  elementTextByID("previous-calculation-example")("For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."),
-                  elementTextByID("previous-calculation-bill")("Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.")
+                  pageTitle(mtdUserRole, "tax-year-summary.heading")
                 )
               }
 
               "includes the latest and previous calculations tab - previous calc finalised" in {
+
                 enable(PostFinalisationAmendmentsR18)
+
                 stubAuthorised(mtdUserRole)
+
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessfulWithAmendment
@@ -126,21 +123,17 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   deadlines = allObligations
                 )
 
+                CalculationListStub.stubGetLegacyCalculationList(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                  jsonResponse = CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
+                )
+
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 res should have(
                   httpStatus(OK),
-                  elementTextByID("latest-calculation-overview-description")("Your tax return was amended on 15 February 2019 and as a result this is your most up-to-date calculation."),
-                  elementTextByID("previous-calculation-overview-description")("When your tax return is amended it changes your tax calculation. If this happens, this page shows any previous tax calculations you may have."),
-                  elementTextByID("previous-calculation-note")("The tax return was filed then."),
-                  elementTextByID("previous-calculation-bullet-start")("You can change your tax return after you have filed it. To do this online you must:"),
-                  elementTextByID("previous-calculation-bullet-1")("use the software or HMRC online service used to submit the return"),
-                  elementTextByID("previous-calculation-bullet-2")("do it within 12 months of the Self Assessment deadline (opens in new tab)"),
-                  elementTextByID("previous-calculation-contact-hmrc")("If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC (opens in new tab)."),
-                  elementTextByID("previous-calculation-example")("For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."),
-                  elementTextByID("previous-calculation-bill")("Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.")
+                  pageTitle(mtdUserRole, "tax-year-summary.heading"),
                 )
               }
 
@@ -149,7 +142,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
-                  body = liabilityCalculationModelSuccessfulNotCrystallised
+                  body = liabilityCalculationModelSuccessfulNotCrystallised.copy(submissionChannel = Some(IsMTD))
                 )
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
@@ -196,6 +189,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "that includes submissions" in {
+
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
@@ -242,21 +236,6 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelector("#calculation-income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
-                  elementTextBySelector("#calculation-income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
-                  elementTextBySelectorList("#calculation-income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $poa1"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "a")(poa1Lpi),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("24 Jun 2021"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£100.00"),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString)
                 )
               }
 
@@ -308,27 +287,6 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelector("#calculation-income-deductions-contributions-table tr:nth-child(1) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
-                  elementTextBySelector("#calculation-income-deductions-contributions-table tr:nth-child(2) td[class=govuk-table__cell govuk-table__cell--numeric]")("£12,500.00"),
-                  elementTextBySelectorList("#calculation-income-deductions-contributions-table", "tbody", "tr:nth-child(4)", "td:nth-of-type(1)")("£90,500.99"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $poa1 $underReview"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("23 Apr 2021"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£1,000.00"),
-
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")(s"$overdue $poa2"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£2,000.00"),
-
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "th")(s"$poa1Lpi $underReview"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(1)")("24 Jun 2021"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(3)", "td:nth-of-type(2)")("£100.00"),
-
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(quarterlyUpdate),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("business"),
-                  elementTextBySelectorList("#submissions", "div:nth-of-type(1)", "table:eq(1) tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("5 Apr " + getCurrentTaxYearEnd.getYear.toString),
                 )
 
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
@@ -546,15 +504,17 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                       allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false
                     )))
                 }
-                "retrieving a calculation failed" in {
+
+                "retrieving a calculation summary which is empty" in {
+
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                  IncomeTaxCalculationStub.stubGetCalculationErrorResponseWithFlag(testNino,
-                    "2018", "LATEST")(NO_CONTENT, LiabilityCalculationError(NO_CONTENT, "error"))
-                  IncomeTaxViewChangeStub.stubGetAllObligations(testNino,
-                    LocalDate.of(2017, 4, 6),
-                    LocalDate.of(2018, 4, 5),
-                    ObligationsModel(Seq(
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, "2018", "LATEST")(OK, liabilityCalculationModelSuccessful)
+                  IncomeTaxViewChangeStub.stubGetAllObligations(
+                    nino = testNino,
+                    fromDate = LocalDate.of(2017, 4, 6),
+                    toDate = LocalDate.of(2018, 4, 5),
+                    deadlines = ObligationsModel(Seq(
                       GroupedObligationsModel(
                         "ABC123456789",
                         List(SingleObligationModel(
@@ -567,8 +527,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                           StatusFulfilled
                         ))
                       )
-                    ))
-                  )
+                    )))
 
                   val res = buildGETMTDClient(getPath(mtdUserRole, "2018"), additionalCookies).futureValue
 
@@ -577,9 +536,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                   res should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                    elementTextByID("no-calc-data-header")(noCalcHeading),
-                    elementTextByID("no-calc-data-note")(noCalcNote)
+                    pageTitle(mtdUserRole = mtdUserRole, messageKey = "tax-year-summary.heading"),
+                    elementTextByID("calculation-panel-heading")("Calculation"),
                   )
                 }
 
@@ -637,7 +595,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     elementTextBySelector("""a[href$="#forecast"]""")(""),
                     elementTextBySelector(".forecast_table")(""),
                     elementTextBySelectorList("#taxCalculation", "div h2")(messagesAPI("tax-year-summary.message.header")),
-                    elementTextBySelectorList("#taxCalculation", "div strong")("Warning " + messagesAPI(s"tax-year-summary${if(mtdUserRole == MTDIndividual) "" else ".agent"}.message.action")),
+                    elementTextBySelectorList("#taxCalculation", "div strong")("Warning " + messagesAPI(s"tax-year-summary${if (mtdUserRole == MTDIndividual) "" else ".agent"}.message.action")),
                     elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(1)")(errMessages.head.text),
                     elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(2)")(errMessages(1).text),
                     elementTextBySelectorList("#taxCalculation", "ul > li:nth-child(3)")(errMessages(2).text),
@@ -720,11 +678,13 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                   val document = Jsoup.parse(res.body)
-                  def getChargeSummaryUrl(id: String) = if(mtdUserRole == MTDIndividual) {
+
+                  def getChargeSummaryUrl(id: String) = if (mtdUserRole == MTDIndividual) {
                     controllers.routes.ChargeSummaryController.show(testYear2023, id).url
                   } else {
                     controllers.routes.ChargeSummaryController.showAgent(testYear2023, id).url
                   }
+
                   document.getElementById("paymentTypeLink-0").attr("href") shouldBe getChargeSummaryUrl("1040000123")
                   document.getElementById("paymentTypeLink-1").attr("href") shouldBe getChargeSummaryUrl("1040000124")
 
@@ -793,14 +753,15 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "retrieving a calculation failed with INTERNAL_SERVER_ERROR" in {
+
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
-                IncomeTaxCalculationStub.stubGetCalculationErrorResponseWithFlag(testNino,
-                  "2018", "LATEST")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
-                IncomeTaxViewChangeStub.stubGetAllObligations(testNino,
-                  LocalDate.of(2017, 4, 6),
-                  LocalDate.of(2018, 4, 5),
-                  ObligationsModel(Seq(
+                IncomeTaxCalculationStub.stubGetCalculationErrorResponseWithFlag(testNino, "2018", "LATEST")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
+                IncomeTaxViewChangeStub.stubGetAllObligations(
+                  nino = testNino,
+                  fromDate = LocalDate.of(2017, 4, 6),
+                  toDate = LocalDate.of(2018, 4, 5),
+                  deadlines = ObligationsModel(Seq(
                     GroupedObligationsModel(
                       "ABC123456789",
                       List(SingleObligationModel(
@@ -822,7 +783,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, "2018", "LATEST")
 
                 res should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
+                  httpStatus(200),
+                  pageTitle(mtdUserRole, "Tax year summary", isErrorPage = false),
+                  elementTextByID("calculation-panel-heading")("Calculation"),
                 )
               }
 
@@ -853,7 +816,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "retrieving a calculation failed" in {
+
                 stubAuthorised(mtdUserRole)
+
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
@@ -879,7 +844,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino)
 
                 res should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
+                  httpStatus(200),
+                  pageTitle(mtdUserRole, "Tax year summary", isErrorPage = false),
+                  elementTextByID("calculation-panel-heading")("Calculation"),
                 )
               }
 

@@ -638,7 +638,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessfulConversionSB = LiabilityCalculationResponse(
@@ -654,7 +656,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
   val liabilityCalculationModelSuccessfulConversionDB = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -669,7 +673,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
   val liabilityCalculationModelSuccessfulConversionLS = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -684,7 +690,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
   val liabilityCalculationModelSuccessfulConversionGLP = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -699,7 +707,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessfulWithNoCalc = liabilityCalculationModelSuccessfulConversionPB.copy(
@@ -709,14 +719,14 @@ trait LiabilityCalculationDataHelper {
   val errorMessagesIndividual = Some(List(
     Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
     Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
-    Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+    Message("C15510", "the Rent-a-Room relief claimed for a jointly let property cannot be more than 10% of the Rent-a-Room limit."),
     Message("C55009", "updates cannot include gaps.")
   ))
 
   val errorMessagesAgent = Some(List(
     Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
     Message("C15507", "your client claimed £2000 in Property Income Allowance but this is more than turnover for their UK property."),
-    Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+    Message("C15510", "the Rent-a-Room relief claimed for a jointly let property cannot be more than 10% of the Rent-a-Room limit."),
     Message("C55009", "updates cannot include gaps.")
   ))
 

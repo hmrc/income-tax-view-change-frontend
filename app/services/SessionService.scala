@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import enums.JourneyType._
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}
-import models.triggeredMigration.TriggeredMigrationSessionData
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -40,18 +39,16 @@ class SessionService @Inject()(
         sensitiveUIJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
       case Some(sessionId) =>
         uiJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
-      case _ =>
-        Future.successful(Left(new Exception("Missing sessionId in HeaderCarrier")))
+      case _ => Future.successful(Left(new Exception("Missing sessionId in HeaderCarrier")))
     }
   }
 
-  def createSession(journeyType: JourneyType, isTriggeredMigration: Boolean = false)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def createSession(journeyType: JourneyType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     setMongoData(
       UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
         journeyType = journeyType.toString,
-        addIncomeSourceData = None,
-        triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration))
+        addIncomeSourceData = None
       )
     )
   }

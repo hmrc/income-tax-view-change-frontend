@@ -19,8 +19,9 @@ package models.nrs
 import play.api.http.MimeTypes
 import play.api.libs.json._
 import play.api.mvc.{Request, RequestHeader}
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments}
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments, MissingBearerToken}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
+import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import java.time.Instant
@@ -62,7 +63,7 @@ object NrsMetadata extends InstantFormatter {
       payloadContentType      = MimeTypes.XML,
       payloadSha256Checksum   = checkSum,
       userSubmissionTimestamp = userSubmissionTimestamp,
-      userAuthToken           = hc.authorization.map(_.value).getOrElse(""),
+      userAuthToken           = request.session.get(SessionKeys.authToken).orElse(request.headers.get("Authorization")).getOrElse(throw MissingBearerToken("missing authorisation token")),
       headerData              = request.headers.toMap.map(x => x._1 -> (x._2 mkString ",")),
       searchKeys              = searchKeys,
       identityData            = identityData

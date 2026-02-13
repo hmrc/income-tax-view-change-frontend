@@ -28,6 +28,8 @@ case class CreditsModel(availableCreditForRepayment: BigDecimal,
                         allocatedCreditForFutureCharges: BigDecimal,
                         unallocatedCredit: BigDecimal,
                         totalCredit: BigDecimal,
+                        firstPendingAmountRequested: Option[BigDecimal],
+                        secondPendingAmountRequested: Option[BigDecimal],
                         transactions: List[Transaction] ) extends SuccessModel
 
 object CreditsModel {
@@ -44,6 +46,7 @@ case class Transaction(transactionType: CreditType,
                        amount: BigDecimal,
                        taxYear: Option[TaxYear],
                        dueDate: Option[LocalDate],
+                       effectiveDateOfPayment: Option[LocalDate],
                        transactionId: String)
 
 object Transaction {

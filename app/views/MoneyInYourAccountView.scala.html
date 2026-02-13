@@ -1,0 +1,122 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import implicits.ImplicitCurrencyFormatter._
+@import implicits.ImplicitDateFormatter
+@import auth.MtdItUser
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import views.html.partials.creditAndRefunds._
+@import models.creditsandrefunds._
+
+@this(
+        mainTemplate: unifiedLayout,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        appConfig: config.FrontendAppConfig,
+        h1: h1,
+        h2: h2,
+        p: p,
+        continueButton: ContinueButton,
+        link: link,
+        whereMoneyCameFromTable: WhereMoneyCameFromTable
+)
+
+@(viewModel: MoneyInYourAccountViewModel,
+        isAgent: Boolean = false,
+        backUrl: String)(implicit request: Request[_],
+        user: MtdItUser[_],
+        messages: Messages)
+
+@mainTemplate(
+    pageTitle = messages("money-in-your-account.heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    useFallbackBackLink = true
+) {
+
+    @h1(msg = messages("money-in-your-account.heading"))
+
+    @p(classes = "govuk-body govuk-!-font-size-27 govuk-body govuk-!-font-weight-bold", id = Some("credit-amount")) {
+        @messages("money-in-your-account.credit", viewModel.totalCredit.toCurrencyString)
+    }
+
+    @if(viewModel.availableCredit > 0) {
+        @MoneyInAccountCreditExplanation(viewModel)
+
+        @if(viewModel.creditRows.length > 0){
+            @whereMoneyCameFromTable(viewModel, isAgent)
+        } else {}
+
+        @ClaimRefundButton()
+
+    } else {
+        @NoMoneyInAccountCreditExplanation(viewModel)
+    }
+}
+
+
+@NoMoneyInAccountCreditExplanation(viewModel: MoneyInYourAccountViewModel) = {
+    @p(classes = "govuk-body", id = Some("credit-explanation")) {
+        @if(viewModel.firstPendingAmountRequested.getOrElse(BigDecimal(0)) == 0) {
+            @messages("money-in-your-account.no-money")
+        }else {
+            @if(viewModel.secondPendingAmountRequested.getOrElse(BigDecimal(0)) > 0) {
+                @messages("money-in-your-account.no-money-two-refunds")
+                @link(controllers.routes.PaymentHistoryController.refundStatus().url,
+                    messageKey = "money-in-your-account.no-money-two-refunds-link-text", outerMessage = ".", id = Some("refunds-link"))
+            } else {
+                @if(viewModel.firstPendingAmountRequested.getOrElse(BigDecimal(0)) > 0) {
+                    @messages("money-in-your-account.no-money-one-refund")
+                    @link(controllers.routes.PaymentHistoryController.refundStatus().url,
+                        messageKey = "money-in-your-account.no-money-one-refund-link-text", outerMessage = ".", id = Some("refunds-link"))
+                }
+            }
+        }
+    }
+}
+
+
+@MoneyInAccountCreditExplanation(viewModel: MoneyInYourAccountViewModel) = {
+    @if(viewModel.allocatedCredit > 0 && viewModel.unallocatedCredit > 0){
+        @p(id = Some("credit-explanation-1")){
+            @messages("money-in-your-account.some-credit-allocated.p1", viewModel.allocatedCredit.abs.toCurrencyString)
+        }
+        @p(id = Some("credit-explanation-2")){
+            @messages("money-in-your-account.some-credit-allocated.p2.1")
+            <span class="govuk-body govuk-!-font-weight-bold">@viewModel.unallocatedCredit.abs.toCurrencyString</span>,
+            @messages("money-in-your-account.some-credit-allocated.p2.2")
+        }
+    } else if(viewModel.allocatedCredit > 0){
+        @p(id = Some("credit-explanation")){
+            @messages("money-in-your-account.all-credit-allocated")
+        }
+    } else {
+        @p(id = Some("credit-explanation")){
+        @messages("money-in-your-account.credit-not-allocated")
+        }
+    }
+}
+
+@ClaimRefundButton() = @{
+    continueButton(
+        Some(messages("money-in-your-account.claim-refund.button-text")),
+        Some(s"${controllers.routes.MoneyInYourAccountController.startRefund().url}"),
+        id = Some("claim-a-refund-button")
+    )
+}

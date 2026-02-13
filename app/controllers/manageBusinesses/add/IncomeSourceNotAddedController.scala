@@ -58,7 +58,7 @@ class IncomeSourceNotAddedController @Inject()(val authActions: AuthActions,
     )))
   }
 
-  def show(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         isAgent = false,
@@ -67,7 +67,7 @@ class IncomeSourceNotAddedController @Inject()(val authActions: AuthActions,
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

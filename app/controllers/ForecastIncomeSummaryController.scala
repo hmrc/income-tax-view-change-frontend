@@ -74,12 +74,12 @@ class ForecastIncomeSummaryController @Inject()(val authActions: AuthActions,
   }
 
   def show(taxYear: Int, origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(taxYear, isAgent = false, origin)
     }
 
-  def showAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showAgent(taxYear: Int): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit response =>
       handleRequest(taxYear, isAgent = true)
   }

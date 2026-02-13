@@ -149,9 +149,9 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 mockSingleBusinessIncomeSource()
                 mockCreditHistoryService(chargesList)
                 val backUrl = if (isAgent) {
-                  routes.CreditAndRefundController.showAgent().url
+                  routes.MoneyInYourAccountController.showAgent().url
                 } else {
-                  routes.CreditAndRefundController.show().url
+                  routes.MoneyInYourAccountController.show().url
                 }
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,

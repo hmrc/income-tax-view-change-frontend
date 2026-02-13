@@ -34,11 +34,13 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
                                     (implicit ec: ExecutionContext) {
   case class AddressError(status: String) extends RuntimeException
 
-  def initialiseAddressJourney(isAgent: Boolean, mode: Mode)
+  def initialiseAddressJourney(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean, ukOnly: Boolean)
                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[String]]] = {
     addressLookupConnector.initialiseAddressLookup(
       isAgent = isAgent,
-      mode = mode
+      mode = mode,
+      isTriggeredMigration = isTriggeredMigration,
+      ukOnly = ukOnly
     ) map {
       case Left(UnexpectedPostStatusFailure(status)) =>
         Logger("application").info(s"error during initialise $status")

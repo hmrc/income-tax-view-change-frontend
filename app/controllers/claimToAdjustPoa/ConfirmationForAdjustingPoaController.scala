@@ -64,7 +64,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
+    authActions.asMTDIndividualOrPrimaryAgentWithClientForNrs(isAgent) async {
       implicit user =>
         handleSubmitPoaData(
           claimToAdjustService = claimToAdjustService,

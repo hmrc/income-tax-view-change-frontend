@@ -44,7 +44,6 @@ import scala.concurrent.Future
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 
-  lazy val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   lazy val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
   lazy val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
   lazy val mockDateService: DateService = mock(classOf[DateService])

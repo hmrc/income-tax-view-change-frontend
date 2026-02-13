@@ -83,7 +83,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
     mtdAllRoles.foreach { mtdRole =>
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
-        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(mode) else testAddBusinessAddressController.showAgent(mode)
+        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(mode, false) else testAddBusinessAddressController.showAgent(mode, false)
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the address lookup service" when {
             "location redirect is returned by the lookup service" in {
@@ -93,7 +93,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               setupMockGetMongo(Right(None))
 
-              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
 
               val result: Future[Result] = action(fakeRequest)
@@ -108,7 +108,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               setupMockGetMongo(Right(Some(testUIJourneySessionDataNoLookupId)))
 
-              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
 
               val result: Future[Result] = action(fakeRequest)
@@ -123,7 +123,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               setupMockGetMongo(Left(AddressError("mongo failure")))
 
-              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
 
               val result: Future[Result] = action(fakeRequest)
@@ -151,7 +151,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(expectedUrl)
 
-              verify(mockAddressLookupService, never).initialiseAddressJourney(any(), any())(any(), any())
+              verify(mockAddressLookupService, never).initialiseAddressJourney(any(), any(), any(), any())(any(), any())
             }
           }
 
@@ -166,7 +166,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
               when(mockAddressLookupService.fetchAddress(any())(any()))
                 .thenReturn(Future(Left(AddressError("Not found"))))
 
-              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(Right(Some("Sample location"))))
 
               val result: Future[Result] = action(fakeRequest)
@@ -183,7 +183,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               setupMockGetMongo(Right(None))
 
-              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(Right(None)))
 
               val result: Future[Result] = action(fakeRequest)
@@ -197,7 +197,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
 
               setupMockGetMongo(Right(None))
 
-              when(mockAddressLookupService.initialiseAddressJourney(any(), any())(any(), any()))
+              when(mockAddressLookupService.initialiseAddressJourney(any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(Left(AddressError("Test status"))))
 
               val result: Future[Result] = action(fakeRequest)
@@ -214,7 +214,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
       }
 
       s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
-        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.submit(Some("123"), mode) else testAddBusinessAddressController.agentSubmit(Some("123"), mode)
+        val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.submit(Some("123"), mode, false) else testAddBusinessAddressController.agentSubmit(Some("123"), mode, false)
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the business check answers page" when {
             "valid data received" in {

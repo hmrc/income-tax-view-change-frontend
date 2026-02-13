@@ -21,13 +21,16 @@ import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
 import config.featureswitch.FeatureSwitching
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import mocks.services.{MockClientDetailsService, MockIncomeSourceDetailsService, MockSessionDataService}
+import mocks.connectors.MockIncomeTaxCalculationConnector
+import mocks.services.{MockClientDetailsService, MockCustomerFactsUpdateService, MockITSAStatusService, MockIncomeSourceDetailsService, MockSessionDataService}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.*
+import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
+import models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -43,12 +46,13 @@ import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
 import scala.concurrent.Future
 import services.agent.ClientDetailsService
-import services.{DateServiceInterface, IncomeSourceDetailsService, SessionDataService}
+import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, IncomeSourceDetailsService, SessionDataService}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
-
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
+import java.time.Instant
 
 trait MockAuthActions
   extends TestSupport
@@ -59,14 +63,17 @@ trait MockAuthActions
     with MockAuditingService
     with MockSessionDataService
     with MockClientDetailsService
-    with FeatureSwitching {
-
+    with MockCustomerFactsUpdateService
+    with FeatureSwitching
+    with MockITSAStatusService
+    with MockIncomeTaxCalculationConnector {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
     reset(mockAuthService)
     reset(mockFAF)
+    reset(mockCustomerFactsUpdateService)
   }
 
   override def afterEach() = {
@@ -75,7 +82,7 @@ trait MockAuthActions
 
   lazy val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
   lazy val mockFAF: FrontendAuthorisedFunctions = mock(classFAF)
-
+  
   lazy val mockItsaStatusConnector = sMock[ITSAStatusConnector]
   lazy val mockBusinessDetailsConnector = sMock[BusinessDetailsConnector]
   lazy val mockDateServiceInterface = sMock[DateServiceInterface]
@@ -87,15 +94,25 @@ trait MockAuthActions
         api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService),
         api.inject.bind[AuditingService].toInstance(mockAuditingService),
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
-        api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService)
+        api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService),
+        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService)
       )
   }
 
-
-  def setupMockSuccess(mtdUserRole: MTDUserRole): Unit = mtdUserRole match {
-    case MTDIndividual => setupMockUserAuth
-    case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
-    case _ => setupMockAgentWithClientAuth(true)
+  def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false): Unit = {
+    if (withNrs) {
+      mtdUserRole match {
+        case MTDIndividual => setupMockUserAuthWithNrs
+        case MTDPrimaryAgent => setupMockAgentWithClientAuthWithNrs(false)
+        case _ => setupMockAgentWithClientAuthWithNrs(true)
+      }
+    } else {
+      mtdUserRole match {
+        case MTDIndividual => setupMockUserAuth
+        case MTDPrimaryAgent => setupMockAgentWithClientAuth(false)
+        case _ => setupMockAgentWithClientAuth(true)
+      }
+    }
   }
 
   def mockItsaStatusRetrievalAction(
@@ -128,10 +145,39 @@ trait MockAuthActions
       .thenReturn(taxYear)
   }
 
+  def mockTriggeredMigrationRetrievalAction() = {
+    when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+      .thenReturn(Future.successful(List(
+        ITSAStatusResponseModel(
+          taxYear = "2023-24",
+          itsaStatusDetails = Some(List(
+            StatusDetail("", Voluntary, MtdItsaOptOut, None)
+          ))
+        )
+      )))
+
+    when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+      .thenReturn(Future(LiabilityCalculationResponse(
+        metadata = Metadata(None, "IY"),
+        inputs = Inputs(PersonalInformation("")),
+        calculation = None,
+        messages = None,
+        submissionChannel = None
+      )))
+  }
+
 
   def setupMockUserAuth: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(hasNino = true, hasSA = true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel
+    setupMockUserAuthSuccess(mockFAF)(retrievalValue)
+  }
+
+  def setupMockUserAuthWithNrs: Unit = {
+    val allEnrolments = getAllEnrolmentsIndividual(true, true)
+    val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Individual) ~ acceptedConfidenceLevel ~
+      None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~ None ~
+      LoginTimes(Instant.ofEpochSecond(1000), Some(Instant.ofEpochSecond(500)))
     setupMockUserAuthSuccess(mockFAF)(retrievalValue)
   }
 
@@ -146,6 +192,16 @@ trait MockAuthActions
     setupMockGetClientDetailsSuccess()
     val allEnrolments = getAllEnrolmentsAgent(true, true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
+    setupMockAgentWithClientAuthSuccess(mockFAF)(retrievalValue, testMtditid, isSupportingAgent)
+  }
+
+  def setupMockAgentWithClientAuthWithNrs(isSupportingAgent: Boolean): Unit = {
+    setupMockGetSessionDataSuccess()
+    setupMockGetClientDetailsSuccess()
+    val allEnrolments = getAllEnrolmentsAgent(true, true)
+    val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel ~
+      None ~ None ~ None ~ None ~ None ~ None ~ AgentInformation(Some("agentId"), Some("agentCode"), Some("agentName")) ~
+      None ~ None ~ None ~ None ~ None ~ None ~ None ~ LoginTimes(Instant.ofEpochSecond(1000), Some(Instant.ofEpochSecond(500)))
     setupMockAgentWithClientAuthSuccess(mockFAF)(retrievalValue, testMtditid, isSupportingAgent)
   }
 
@@ -170,6 +226,16 @@ trait MockAuthActions
     setupMockAgentWithMissingDelegatedMTDEnrolment(mockFAF)(retrievalValue, testMtditid)
   }
 
+  def setupMockAgentWithoutMTDEnrolmentForClientWithNrs(): Unit = {
+    setupMockGetSessionDataSuccess()
+    setupMockGetClientDetailsSuccess()
+    val allEnrolments = getAllEnrolmentsAgent(true, true)
+    val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel ~
+      None ~ None ~ None ~ None ~ None ~ None ~ AgentInformation(Some("agentId"), Some("agentCode"), Some("agentName")) ~
+      None ~ None ~ None ~ None ~ None ~ None ~ None ~ LoginTimes(Instant.ofEpochSecond(1000), Some(Instant.ofEpochSecond(500)))
+    setupMockAgentWithMissingDelegatedMTDEnrolmentWithNrs(mockFAF)(retrievalValue, testMtditid)
+  }
+
   def setupMockAgentSuccess(): Unit = {
     val allEnrolments = getAllEnrolmentsAgent(true, true)
     val retrievalValue = allEnrolments ~ Some(testRetrievedUserName) ~ Some(testCredentials) ~ Some(AffinityGroup.Agent) ~ acceptedConfidenceLevel
@@ -185,13 +251,14 @@ trait MockAuthActions
   def testMTDAuthFailuresForRole(
                                   action: Action[AnyContent],
                                   userRole: MTDUserRole,
-                                  supportingAgentAccessAllowed: Boolean = true
+                                  supportingAgentAccessAllowed: Boolean = true,
+                                  withNrsRetrievals: Boolean = false
                                 )(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
     userRole match {
       case MTDIndividual =>
-        testMTDAuthFailuresForIndividual(action, userRole)(fakeRequest)
+        testMTDAuthFailuresForIndividual(action, userRole, withNrsRetrievals)(fakeRequest)
       case _ =>
-        testMTDAuthFailuresForAgent(action, userRole, supportingAgentAccessAllowed)(fakeRequest)
+        testMTDAuthFailuresForAgent(action, userRole, supportingAgentAccessAllowed, withNrsRetrievals)(fakeRequest)
     }
   }
 
@@ -199,7 +266,7 @@ trait MockAuthActions
     testMTDAuthFailuresForIndividual(action, MTDIndividual)(fakeRequestWithActiveSession)
   }
 
-  def testMTDAuthFailuresForIndividual(action: Action[AnyContent], userRole: MTDUserRole)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+  def testMTDAuthFailuresForIndividual(action: Action[AnyContent], userRole: MTDUserRole, useNrsRetrievals: Boolean = false)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
 
     s"the $userRole is not authenticated" should {
 
@@ -247,7 +314,11 @@ trait MockAuthActions
 
       "render the internal error page" in {
 
-        setupMockUserAuth
+        if(useNrsRetrievals) {
+          setupMockUserAuthWithNrs
+        } else {
+          setupMockUserAuth
+        }
         mockItsaStatusRetrievalAction(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
         mockErrorIncomeSource()
 
@@ -269,7 +340,8 @@ trait MockAuthActions
   def testMTDAuthFailuresForAgent(
                                    action: Action[AnyContent],
                                    mtdUserRole: MTDUserRole,
-                                   supportingAgentAccessAllowed: Boolean)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]
+                                   supportingAgentAccessAllowed: Boolean,
+                                   useNrsRetrievals: Boolean = false)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]
                                  ): Unit = {
 
     val isSupportingAgent = mtdUserRole == MTDSupportingAgent
@@ -323,7 +395,11 @@ trait MockAuthActions
           setupMockGetSessionDataSuccess()
           mockItsaStatusRetrievalAction()
           setupMockGetClientDetailsSuccess()
-          setupMockAgentWithoutMTDEnrolmentForClient()
+          if (useNrsRetrievals) {
+            setupMockAgentWithoutMTDEnrolmentForClientWithNrs()
+          } else {
+            setupMockAgentWithoutMTDEnrolmentForClient()
+          }
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
@@ -341,7 +417,11 @@ trait MockAuthActions
       s"the $userType is not authenticated and has delegated enrolment but doesn't have income source" should {
         "render the internal error page" in {
 
-          setupMockAgentWithClientAuth(isSupportingAgent)
+          if (useNrsRetrievals) {
+            setupMockAgentWithClientAuthWithNrs(isSupportingAgent)
+          } else {
+            setupMockAgentWithClientAuth(isSupportingAgent)
+          }
           mockItsaStatusRetrievalAction(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
           mockErrorIncomeSource()
 
@@ -355,11 +435,11 @@ trait MockAuthActions
     }
   }
 
-  def testSupportingAgentDeniedAccess(action: Action[AnyContent])(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
+  def testSupportingAgentDeniedAccess(action: Action[AnyContent], withNrsRetrievals: Boolean = false)(fakeRequest: FakeRequest[AnyContentAsEmpty.type]): Unit = {
 
     "render the supporting agent unauthorised page" in {
 
-      setupMockSuccess(MTDSupportingAgent)
+      setupMockSuccess(MTDSupportingAgent, withNrsRetrievals)
       mockItsaStatusRetrievalAction()
       val result = action(fakeRequest)
       status(result) shouldBe Status.UNAUTHORIZED

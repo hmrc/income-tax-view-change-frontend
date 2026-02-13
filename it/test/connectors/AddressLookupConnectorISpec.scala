@@ -27,6 +27,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
 import play.api.test.Injecting
+import testConstants.AddressLookupTestConstants
 
 class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
 
@@ -40,73 +41,21 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
   "AddressLookupConnector" when {
     ".initialiseAddressLookup()" when {
       "sending a request (Individual)" should {
-        val requestBody = Json.parse("""{
-                                       |  "version": 2,
-                                       |  "options": {
-                                       |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/manage-your-businesses/add/business-address/id/",
-                                       |    "timeoutConfig": {
-                                       |      "timeoutAmount": 3600,
-                                       |      "timeoutUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/session-timeout",
-                                       |      "timeoutKeepAliveUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/keep-alive"
-                                       |    },
-                                       |    "signOutHref": "http://localhost:9081/report-quarterly/income-and-expenses/view/sign-out",
-                                       |    "accessibilityFooterUrl": "http://localhost:9081/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview",
-                                       |    "selectPageConfig": {
-                                       |      "proposalListLimit": 15
-                                       |    },
-                                       |    "confirmPageConfig": {
-                                       |      "showChangeLink": true,
-                                       |      "showSearchAgainLink": true,
-                                       |      "showConfirmChangeText": true
-                                       |    },
-                                       |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/feedback",
-                                       |    "deskProServiceName": "cds-reimbursement-claim",
-                                       |    "showPhaseBanner": true,
-                                       |    "ukMode": true
-                                       |  },
-                                       |  "labels": {
-                                       |    "en": {
-                                       |      "selectPageLabels": {
-                                       |        "heading": "Select business address"
-                                       |      },
-                                       |      "lookupPageLabels": {
-                                       |        "heading": "What is your business address?"
-                                       |      },
-                                       |      "confirmPageLabels": {
-                                       |        "heading": "Confirm business address"
-                                       |      },
-                                       |      "editPageLabels": {
-                                       |        "heading": "Enter your business address"
-                                       |      },
-                                       |      "appLevelLabels": {
-                                       |        "navTitle": "Manage your Self Assessment"
-                                       |      }
-                                       |    },
-                                       |    "cy": {
-                                       |      "selectPageLabels": {
-                                       |        "heading": "Dewiswch gyfeiriad y busnes"
-                                       |      },
-                                       |      "lookupPageLabels": {
-                                       |        "heading": "Beth yw cyfeiriad eich busnes?"
-                                       |      },
-                                       |      "confirmPageLabels": {
-                                       |        "heading": "Cadarnhewch gyfeiriad y busnes"
-                                       |      },
-                                       |      "editPageLabels": {
-                                       |        "heading": "Nodwch gyfeiriad eich busnes"
-                                       |      },
-                                       |      "appLevelLabels": {
-                                       |        "navTitle": "Rheoli’ch Hunanasesiad"
-                                       |      }
-                                       |    }
-                                       |  }
-                                       |}""".stripMargin)
-
+        
         "return a successful response" in {
 
-          WiremockHelper.stubPostWithRequest(s"/api/v2/init", requestBody, ACCEPTED, "{}")
+          WiremockHelper.stubPostWithRequest(s"/api/v2/init", AddressLookupTestConstants.ukRequestBodyIndividual, ACCEPTED, "{}")
 
-          val result = connector.initialiseAddressLookup(isAgent = false, mode = NormalMode).futureValue
+          val result = connector.initialiseAddressLookup(isAgent = false, mode = NormalMode, false, ukOnly = true).futureValue
+
+          result shouldBe Right(PostAddressLookupSuccessResponse(None))
+          WiremockHelper.verifyPost("/api/v2/init")
+        }
+
+        "return a successful response - ukOnly = false" in {
+          WiremockHelper.stubPostWithRequest(s"/api/v2/init", AddressLookupTestConstants.internationalRequestBodyInvididual, ACCEPTED, "{}")
+
+          val result = connector.initialiseAddressLookup(isAgent = false, mode = NormalMode, false, ukOnly = false).futureValue
 
           result shouldBe Right(PostAddressLookupSuccessResponse(None))
           WiremockHelper.verifyPost("/api/v2/init")
@@ -114,9 +63,9 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
 
         "return an error when the request fails" in {
 
-          WiremockHelper.stubPostWithRequest(s"/api/v2/init", requestBody, INTERNAL_SERVER_ERROR, "{}")
+          WiremockHelper.stubPostWithRequest(s"/api/v2/init", AddressLookupTestConstants.ukRequestBodyIndividual, INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.initialiseAddressLookup(isAgent = false, mode = NormalMode).futureValue
+          val result = connector.initialiseAddressLookup(isAgent = false, mode = NormalMode, false, ukOnly = true).futureValue
 
           result shouldBe Left(UnexpectedPostStatusFailure(INTERNAL_SERVER_ERROR))
           WiremockHelper.verifyPost("/api/v2/init")
@@ -124,84 +73,29 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
       }
 
       "sending a request (Agent)" should {
-        val requestBody = Json.parse(
-          """
-            |{
-            |  "version": 2,
-            |  "options": {
-            |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add/business-address/id/",
-            |    "timeoutConfig": {
-            |      "timeoutAmount": 3600,
-            |      "timeoutUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/session-timeout",
-            |      "timeoutKeepAliveUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/keep-alive"
-            |    },
-            |    "signOutHref": "http://localhost:9081/report-quarterly/income-and-expenses/view/sign-out",
-            |    "accessibilityFooterUrl": "http://localhost:9081/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview",
-            |    "selectPageConfig": {
-            |      "proposalListLimit": 15
-            |    },
-            |    "confirmPageConfig": {
-            |      "showChangeLink": true,
-            |      "showSearchAgainLink": true,
-            |      "showConfirmChangeText": true
-            |    },
-            |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/feedback",
-            |    "deskProServiceName": "cds-reimbursement-claim",
-            |    "showPhaseBanner": true,
-            |    "ukMode": true
-            |  },
-            |  "labels": {
-            |    "en": {
-            |      "selectPageLabels": {
-            |        "heading": "Select business address"
-            |      },
-            |      "lookupPageLabels": {
-            |        "heading": "What is your business address?"
-            |      },
-            |      "confirmPageLabels": {
-            |        "heading": "Confirm business address"
-            |      },
-            |      "editPageLabels": {
-            |        "heading": "Enter your business address"
-            |      },
-            |      "appLevelLabels": {
-            |        "navTitle": "Manage your Self Assessment"
-            |      }
-            |    },
-            |    "cy": {
-            |      "selectPageLabels": {
-            |        "heading": "Dewiswch gyfeiriad y busnes"
-            |      },
-            |      "lookupPageLabels": {
-            |        "heading": "Beth yw cyfeiriad eich busnes?"
-            |      },
-            |      "confirmPageLabels": {
-            |        "heading": "Cadarnhewch gyfeiriad y busnes"
-            |      },
-            |      "editPageLabels": {
-            |        "heading": "Nodwch gyfeiriad eich busnes"
-            |      },
-            |      "appLevelLabels": {
-            |        "navTitle": "Rheoli’ch Hunanasesiad"
-            |      }
-            |    }
-            |  }
-            |}
-            |""".stripMargin)
 
-        "return a successful response" in {
-          WiremockHelper.stubPostWithRequest(s"/api/v2/init", requestBody, ACCEPTED, "{}")
+        "return a successful response - ukOnly = true" in {
+          WiremockHelper.stubPostWithRequest(s"/api/v2/init", AddressLookupTestConstants.ukRequestBodyAgent, ACCEPTED, "{}")
 
-          val result = connector.initialiseAddressLookup(isAgent = true, mode = NormalMode).futureValue
+          val result = connector.initialiseAddressLookup(isAgent = true, mode = NormalMode, false, ukOnly = true).futureValue
+
+          result shouldBe Right(PostAddressLookupSuccessResponse(None))
+          WiremockHelper.verifyPost("/api/v2/init")
+        }
+
+        "return a successful response - ukOnly = false" in {
+          WiremockHelper.stubPostWithRequest(s"/api/v2/init", AddressLookupTestConstants.internationalRequestBodyAgent, ACCEPTED, "{}")
+
+          val result = connector.initialiseAddressLookup(isAgent = true, mode = NormalMode, false, ukOnly = false).futureValue
 
           result shouldBe Right(PostAddressLookupSuccessResponse(None))
           WiremockHelper.verifyPost("/api/v2/init")
         }
 
         "return an error when the request fails" in {
-          WiremockHelper.stubPostWithRequest("/api/v2/init", requestBody, INTERNAL_SERVER_ERROR, "{}")
+          WiremockHelper.stubPostWithRequest("/api/v2/init", AddressLookupTestConstants.ukRequestBodyAgent, INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.initialiseAddressLookup(isAgent = true, mode = NormalMode).futureValue
+          val result = connector.initialiseAddressLookup(isAgent = true, mode = NormalMode, false, ukOnly = true).futureValue
 
           result shouldBe Left(UnexpectedPostStatusFailure(INTERNAL_SERVER_ERROR))
           WiremockHelper.verifyPost("/api/v2/init")

@@ -22,7 +22,7 @@ import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PaymentOnAccountViewModel, PoaAmendmentData, SelectYourReason}
 import models.core.Nino
-import models.nrs.{NrsMetadata, NrsSubmission, RawPayload, SearchKeys}
+import models.nrs.{IdentityData, NrsMetadata, NrsSubmission, RawPayload, SearchKeys}
 import play.api.Logger
 import play.api.i18n.{Lang, LangImplicits, Messages}
 import play.api.libs.Files.logger
@@ -35,6 +35,8 @@ import uk.gov.hmrc.play.audit.AuditExtensions
 import utils.ErrorRecovery
 import controllers.claimToAdjustPoa.routes._
 import models.admin.SubmitClaimToAdjustToNrs
+import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
+import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
 
 import java.security.MessageDigest
 import java.time.Instant
@@ -140,7 +142,30 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
       request = user,
       userSubmissionTimestamp = now,
       searchKeys = SearchKeys(user.credId, user.saUtr, user.nino),
-      checkSum = checksum
+      checkSum = checksum,
+      identityData = IdentityData(
+        user.authUserDetails.internalId,
+        user.authUserDetails.externalId,
+        user.authUserDetails.agentCode,
+        user.authUserDetails.credentials,
+        user.authUserDetails.confidenceLevel.getOrElse(L50),
+        user.authUserDetails.nino,
+        user.authUserDetails.saUtr,
+        user.authUserDetails.name,
+        user.authUserDetails.dateOfBirth,
+        user.authUserDetails.email,
+        user.authUserDetails.agentInformation.getOrElse(AgentInformation(None, None, None)),
+        user.authUserDetails.groupIdentifier,
+        user.authUserDetails.credentialRole,
+        user.authUserDetails.mdtpInformation,
+        user.authUserDetails.itmpName,
+        user.authUserDetails.itmpDateOfBirth,
+        user.authUserDetails.itmpAddress,
+        user.authUserDetails.affinityGroup,
+        user.authUserDetails.credentialStrength,
+        user.authUserDetails.enrolments,
+        user.authUserDetails.loginTimes.getOrElse(LoginTimes(Instant.now(), None))
+      )
     )
 
     val metadata: NrsMetadata = {

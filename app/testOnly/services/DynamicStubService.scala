@@ -23,7 +23,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import testOnly.connectors.DynamicStubConnector
-import testOnly.models.{DataModel, Nino}
+import testOnly.models.{DataModel, Nino, TrigMigUser}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
@@ -66,6 +66,12 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     Logger("application").debug("" +
       s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
     dynamicStubConnector.overwriteItsaStatus(nino, taxYearRange, ITSAStatus)
+  }
+
+  def overwriteBusinessData(mtdid: String, trigMigUser: TrigMigUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+    Logger("application").debug("Overwriting business data (5266) via the dynamic stub")
+    
+    dynamicStubConnector.overwriteBusinessData(mtdid, trigMigUser)
   }
 
   def addData(dataModel: DataModel)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {

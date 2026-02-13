@@ -35,6 +35,9 @@ class CreditsModelSpec extends UnitSpec {
 
   val totalCredit: BigDecimal = 35
 
+  val firstPendingAmountRequested: BigDecimal = 100
+  val secondPendingAmountRequested: BigDecimal = 200
+
   val allCreditsJson: String =
     s"""
       |{
@@ -42,6 +45,8 @@ class CreditsModelSpec extends UnitSpec {
       |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
       |  "unallocatedCredit" : ${unallocatedCredit},
       |  "totalCredit" : ${totalCredit},
+      |  "firstPendingAmountRequested": ${firstPendingAmountRequested},
+      |  "secondPendingAmountRequested": ${secondPendingAmountRequested},
       |  "transactions" : [ {
       |    "transactionType" : "refund",
       |    "amount" : 5,
@@ -55,60 +60,70 @@ class CreditsModelSpec extends UnitSpec {
       |    "amount" : 1,
       |    "taxYear" : 2023,
       |    "dueDate" : "2023-01-01",
+      |    "effectiveDateOfPayment" : "2023-01-01",
       |    "transactionId" : "CUTOVER01"
       |  }, {
       |    "transactionType" : "balancingCharge",
       |    "amount" : 2,
       |    "taxYear" : 2024,
       |    "dueDate" : "2024-01-01",
+      |    "effectiveDateOfPayment" : "2024-01-01",
       |    "transactionId" : "BALANCING01"
       |  }, {
       |    "transactionType" : "mfa",
       |    "amount" : 3,
       |    "taxYear" : 2021,
       |    "dueDate" : "2021-01-01",
+      |    "effectiveDateOfPayment" : "2021-01-01",
       |    "transactionId" : "MFA01"
       |  }, {
       |    "transactionType" : "repaymentInterest",
       |    "amount" : 4,
       |    "taxYear" : 2022,
       |    "dueDate" : "2022-01-01",
+      |    "effectiveDateOfPayment" : "2022-01-01",
       |    "transactionId" : "REPAYMENTINT01"
       |  } ]
       |}
       |""".stripMargin
 
   val allCreditsObj = CreditsModel(availableCreditForRepayment, allocatedCreditForFutureCharges,
-    unallocatedCredit, totalCredit, List(
+    unallocatedCredit, totalCredit, Some(firstPendingAmountRequested), Some(secondPendingAmountRequested), List(
     Transaction(transactionType = Repayment,
       amount = 5,
       taxYear = None,
       dueDate = None,
+      effectiveDateOfPayment = None,
       transactionId = "REFUND01"),
     Transaction(transactionType = Repayment,
       amount = 5,
       taxYear = None,
       dueDate = None,
+      effectiveDateOfPayment = None,
       transactionId = "REFUND02"),
     Transaction(transactionType = CutOverCreditType,
       amount = 1,
       taxYear = Some(TaxYear.forYearEnd(2023)),
       dueDate = Some(dateInYear(2023)),
+      effectiveDateOfPayment = Some(dateInYear(2023)),
       transactionId = "CUTOVER01"),
     Transaction(transactionType = BalancingChargeCreditType,
       amount = 2,
       taxYear = Some(TaxYear.forYearEnd(2024)),
       dueDate = Some(dateInYear(2024)),
+      effectiveDateOfPayment = Some(dateInYear(2024)),
       transactionId = "BALANCING01"),
     Transaction(transactionType = MfaCreditType,
       amount = 3,
       taxYear = Some(TaxYear.forYearEnd(2021)),
       dueDate = Some(dateInYear(2021)),
+      effectiveDateOfPayment = Some(dateInYear(2021)),
       transactionId = "MFA01"),
     Transaction(transactionType = RepaymentInterest,
       amount = 4,
       taxYear = Some(TaxYear.forYearEnd(2022)),
       dueDate = Some(dateInYear(2022)),
+      effectiveDateOfPayment = Some(dateInYear(2022)),
       transactionId = "REPAYMENTINT01")
   ))
 
@@ -169,6 +184,8 @@ class CreditsModelSpec extends UnitSpec {
       (result \ "availableCreditForRepayment").get shouldBe JsNumber(availableCreditForRepayment)
       (result \ "totalCredit").get shouldBe JsNumber(totalCredit)
       (result \ "unallocatedCredit").get shouldBe JsNumber(unallocatedCredit)
+      (result \ "firstPendingAmountRequested").get shouldBe JsNumber(firstPendingAmountRequested)
+      (result \ "secondPendingAmountRequested").get shouldBe JsNumber(secondPendingAmountRequested)
       (result \ "transactions").get match {
         case r: JsArray =>
           r.value.size shouldBe 6
@@ -188,6 +205,8 @@ class CreditsModelSpec extends UnitSpec {
           |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
           |  "unallocatedCredit" : ${unallocatedCredit},
           |  "totalCredit" : ${totalCredit},
+          |  "firstPendingAmountRequested": ${firstPendingAmountRequested},
+          |  "secondPendingAmountRequested": ${secondPendingAmountRequested},
           |  "transactions" : [ {
           |    "transactionType" : "invalid credit type",
           |    "amount" : 5,

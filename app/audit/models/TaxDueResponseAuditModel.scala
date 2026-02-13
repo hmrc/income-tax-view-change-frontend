@@ -19,45 +19,65 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import models.liabilitycalculation.ReliefsClaimed
-import models.liabilitycalculation.taxcalculation._
-import models.liabilitycalculation.viewmodels._
-import play.api.libs.json._
-import utils.Utilities._
+import models.liabilitycalculation.taxcalculation.*
+import models.liabilitycalculation.viewmodels.*
+import play.api.libs.json.*
+import utils.Utilities.*
 
 
 case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
                                     viewModel: TaxDueSummaryViewModel,
                                     taxYear: Int) extends ExtendedAuditModel {
 
-  import implicits.ImplicitCurrencyFormatter._
+  import implicits.ImplicitCurrencyFormatter.*
 
   override val transactionName: String = enums.TransactionName.TaxCalculationDetailsResponse
   override val auditType: String = enums.AuditType.TaxCalculationDetailsResponse
 
 
-  private def calcMessageCodeToString(id: String): Option[String] =
-    Some(id) collect {
-      case "C22201" => s"Your Basic Rate limit has been increased by ${viewModel.grossGiftAidPayments.get.toCurrencyString} to ${BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString} for Gift Aid payments"
-      case "C22202" => "Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax"
-      case "C22203" => "Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold"
-      case "C22205" => s"Total loss from all income sources was capped at ${BigDecimal(viewModel.lossesAppliedToGeneralIncome.get).toCurrencyString}"
-      case "C22206" => "One or more of your annual adjustments have not been applied because you have submitted additional income or expenses"
-      case "C22207" => "Your payroll giving amount has been included in your adjusted taxable income"
-      case "C22208" => s"Your Basic Rate limit has been increased by ${viewModel.giftAidTax.get.toCurrencyString} to ${BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString} for Pension Contribution"
-      case "C22209" => s"Your Basic Rate limit has been increased by ${viewModel.giftAidTax.get.toCurrencyString} to ${BigDecimal(viewModel.getModifiedBaseTaxBand.get.apportionedBandLimit).toCurrencyString} for Pension Contribution and Gift Aid payments"
-      case "C22210" => "Employment related expenses are capped at the total amount of employment income"
-      case "C22211" => "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
-      case "C22212" => "Employment and Deduction related expenses have been limited to employment income."
-      case "C22213" => "Due to your employed earnings, paying Class 2 Voluntary may not be beneficial."
-      case "C22214" => "Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions."
-      case "C22215" => "Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this viewModel."
-      case "C22216" => "Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled."
-      case "C22217" => "There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds."
-      case "C22218" => "The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration viewModel."
-      case "C22220" => "If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid."
-      case "C22223" => "Class 2 National Insurance does not apply because your client is under 16."
-      case "C22224" => "Class 2 National Insurance does not apply because your client is over State Pension age."
+  private def calcMessageCodeToString(id: String): Option[String] = {
+    val grossGiftAid: Option[String] = viewModel.grossGiftAidPayments.map(_.toCurrencyString)
+    val modifiedBaseBandLimit: Option[String] = viewModel.getModifiedBaseTaxBand.map(value => BigDecimal(value.apportionedBandLimit).toCurrencyString)
+    val lossesApplied: Option[String] = viewModel.lossesAppliedToGeneralIncome.map(value => BigDecimal(value).toCurrencyString)
+    val giftAidTax: Option[String] = viewModel.giftAidTax.map(_.toCurrencyString)
+
+    id match {
+      case "C22201" => for {
+          gross <- grossGiftAid
+          band <- modifiedBaseBandLimit
+        } yield s"Your Basic Rate limit has been increased by $gross to $band for Gift Aid payments"
+
+      case "C22202" => Some("Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax")
+      case "C22203" => Some("Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold")
+      case "C22205" => lossesApplied.map(lossApplied => s"Total loss from all income sources was capped at $lossApplied")
+      case "C22206" => Some("One or more of your annual adjustments have not been applied because you have submitted additional income or expenses")
+      case "C22207" => Some("Your payroll giving amount has been included in your adjusted taxable income")
+
+      case "C22208" => for {
+          tax <- giftAidTax
+          band <- modifiedBaseBandLimit
+        } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution"
+
+      case "C22209" => for {
+          tax <- giftAidTax
+          band <- modifiedBaseBandLimit
+        } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution and Gift Aid payments"
+
+      case "C22210" => Some("Employment related expenses are capped at the total amount of employment income")
+      case "C22211" => Some("This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration")
+      case "C22212" => Some("Employment and Deduction related expenses have been limited to employment income.")
+      case "C22213" => Some("Due to your employed earnings, paying Class 2 Voluntary may not be beneficial.")
+      case "C22214" => Some("Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions.")
+      case "C22215" => Some("Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this viewModel.")
+      case "C22216" => Some("Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.")
+      case "C22217" => Some("There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.")
+      case "C22218" => Some("The Capital gains tax has been included in the estimated annual liability calculation only, the actual amount of capital gains tax will be in the final declaration viewModel.")
+      case "C22220" => Some("If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid.")
+      case "C22223" => Some("Class 2 National Insurance does not apply because your client is under 16.")
+      case "C22224" => Some("Class 2 National Insurance does not apply because your client is over State Pension age.")
+      case _ => None
     }
+  }
 
   private val allowedCalcMessages: Seq[String] = {
     viewModel.messages.map(_.allMessages).getOrElse(Seq.empty).map(_.id).flatMap(calcMessageCodeToString)
@@ -126,8 +146,8 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
 
   private def taxReductionsJson(taxReductions: ReliefsClaimed): JsObject = Json.obj() ++
-    Json.obj("reductionDescription"-> reductionTypeToString(taxReductions.`type`)) ++
-    Json.obj("amount"-> taxReductions.amountUsed)
+    Json.obj("reductionDescription" -> reductionTypeToString(taxReductions.`type`)) ++
+    Json.obj("amount" -> taxReductions.amountUsed)
 
   private def optReliefClaim(description: String, amount: Option[BigDecimal]): Option[ReliefsClaimed] =
     if (amount.isDefined) {
@@ -206,12 +226,12 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
   )
 
   private def capitalGainsTaxExtrasJson(cgt: CapitalGainsTaxViewModel): JsObject = Json.obj() ++
-    Json.obj("taxableCapitalGains"-> cgt.totalTaxableGains) ++
-    Json.obj("capitalGainsTaxAdjustment"-> cgt.adjustments) ++
-    Json.obj("foreignTaxCreditReliefOnCapitalGains"-> cgt.foreignTaxCreditRelief) ++
-    Json.obj("taxOnGainsAlreadyPaid"-> cgt.taxOnGainsAlreadyPaid) ++
-    Json.obj("capitalGainsTaxDue"-> cgt.capitalGainsTaxDue) ++
-    Json.obj("capitalGainsTaxCalculatedAsOverpaid"-> cgt.capitalGainsOverpaid)
+    Json.obj("taxableCapitalGains" -> cgt.totalTaxableGains) ++
+    Json.obj("capitalGainsTaxAdjustment" -> cgt.adjustments) ++
+    Json.obj("foreignTaxCreditReliefOnCapitalGains" -> cgt.foreignTaxCreditRelief) ++
+    Json.obj("taxOnGainsAlreadyPaid" -> cgt.taxOnGainsAlreadyPaid) ++
+    Json.obj("capitalGainsTaxDue" -> cgt.capitalGainsTaxDue) ++
+    Json.obj("capitalGainsTaxCalculatedAsOverpaid" -> cgt.capitalGainsOverpaid)
 
   private def capitalGainsTaxRatesJson(cgt: CapitalGainsTaxViewModel): Option[Seq[JsObject]] = {
     val businessAssets: Option[Seq[JsObject]] = businessAssetsTaxBandJson(cgt.businessAssetsDisposalsAndInvestorsRel)
@@ -224,7 +244,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
   private def capitalGainsTaxJson(cgt: CapitalGainsTaxViewModel): JsObject =
     capitalGainsTaxExtrasJson(cgt) ++
-      Json.obj("rates"-> capitalGainsTaxRatesJson(cgt))
+      Json.obj("rates" -> capitalGainsTaxRatesJson(cgt))
 
 
   private def deductionsString(deduction: String): String =
@@ -298,19 +318,19 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
   override val detail: JsValue =
     userAuditDetails(mtdItUser) ++
-      Json.obj("calculationOnTaxableIncome"-> viewModel.totalTaxableIncome) ++
-      Json.obj("selfAssessmentTaxAmount"-> viewModel.totalIncomeTaxAndNicsDue) ++
-      Json.obj("taxCalculationMessage"-> calculationMessagesDetail) ++
-      Json.obj("payPensionsProfit"-> payPensionsProfitDetail) ++
-      Json.obj("savings"->savingsDetail) ++
-      Json.obj("dividends"->dividendsDetail) ++
-      Json.obj("employmentLumpSums"-> employmentLumpSumsDetail) ++
-      Json.obj("gainsOnLifePolicies"-> gainsOnLifePoliciesDetail) ++
-      Json.obj("class4NationalInsurance"-> class4NationInsuranceDetail) ++
-      Json.obj("capitalGainsTax"-> capitalGainsTaxDetail) ++
-      Json.obj("taxReductions"->taxReductionsDetails) ++
-      Json.obj("additionalCharges"-> additionChargesDetail) ++
-      Json.obj("otherCharges"-> otherChargesDetail) ++
-      Json.obj("taxDeductions"-> taxDeductionsDetail)
+      Json.obj("calculationOnTaxableIncome" -> viewModel.totalTaxableIncome) ++
+      Json.obj("selfAssessmentTaxAmount" -> viewModel.totalIncomeTaxAndNicsDue) ++
+      Json.obj("taxCalculationMessage" -> calculationMessagesDetail) ++
+      Json.obj("payPensionsProfit" -> payPensionsProfitDetail) ++
+      Json.obj("savings" -> savingsDetail) ++
+      Json.obj("dividends" -> dividendsDetail) ++
+      Json.obj("employmentLumpSums" -> employmentLumpSumsDetail) ++
+      Json.obj("gainsOnLifePolicies" -> gainsOnLifePoliciesDetail) ++
+      Json.obj("class4NationalInsurance" -> class4NationInsuranceDetail) ++
+      Json.obj("capitalGainsTax" -> capitalGainsTaxDetail) ++
+      Json.obj("taxReductions" -> taxReductionsDetails) ++
+      Json.obj("additionalCharges" -> additionChargesDetail) ++
+      Json.obj("otherCharges" -> otherChargesDetail) ++
+      Json.obj("taxDeductions" -> taxDeductionsDetail)
 
 }

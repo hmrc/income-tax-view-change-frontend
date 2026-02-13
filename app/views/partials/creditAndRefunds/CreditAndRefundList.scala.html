@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.creditsandrefunds.{CreditAndRefundViewModel, CreditRow, CreditViewRow, PaymentCreditRow, RefundRow}
+@import models.creditsandrefunds.{MoneyInYourAccountViewModel, CreditRow, CreditViewRow, PaymentCreditRow, RefundRow}
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import views.html.components.{h2, p}
 @import views.html.components.creditandrefund.{paymentViewRow, creditViewRow, refundViewRow}
@@ -32,20 +32,20 @@
         refundViewRow: refundViewRow,
         govukDetails: GovukDetails
 )
-@(viewModel: CreditAndRefundViewModel)(implicit request: Request[_], messages: Messages)
+@(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], messages: Messages)
 
 @renderCreditRow(creditRow: CreditRow) = {
-@creditRow match {
-    case PaymentCreditRow(amount, date) => {
-        @paymentViewRow(amount, date)
+    @creditRow match {
+        case PaymentCreditRow(_, amount, date, _) => {
+            @paymentViewRow(amount, date)
+        }
+        case CreditViewRow(_, amount, creditType, taxYear, _) => {
+            @creditViewRow(amount, creditType, taxYear)
+        }
+        case RefundRow(amount, _) => {
+            @refundViewRow(amount)
+        }
     }
-    case CreditViewRow(amount, creditType, taxYear) => {
-        @creditViewRow(amount, creditType, taxYear)
-    }
-    case RefundRow(amount) => {
-        @refundViewRow(amount)
-    }
-}
 }
 
 @detailsContent = {
