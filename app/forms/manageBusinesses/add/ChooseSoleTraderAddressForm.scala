@@ -20,7 +20,6 @@ import play.api.data.Form
 import play.api.data.Forms.*
 import play.api.i18n.Messages
 
-
 object ChooseSoleTraderAddressForm {
 
   val newAddress: String = "new-address"

@@ -40,7 +40,7 @@
         postAction: Call,
         isAgent: Boolean,
         form: Form[ChooseSoleTraderAddressForm],
-        businessAddresses: Seq[String],
+        businessAddresses: Seq[(String, Int)],
         backUrl: String,
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -73,8 +73,6 @@
             @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("address" -> "chosen-address")))
         }
 
-
-
         @govukRadios(Radios(
             fieldset = Some(Fieldset(
                 legend = Some(Legend(
@@ -85,8 +83,9 @@
             items =
                 businessAddresses.map(address =>
                     RadioItem(
-                        content = Text(address),
-                        value = Some("existing-address")
+                        content = Text(address._1),
+                        value = Some("existing-address"),
+                        id = Some(s"choose-sole-trader-address-radios-existing-address-${address._2.toString}")
                     )
                 )++ Seq(
                     RadioItem(
@@ -102,7 +101,7 @@
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
         ).withFormField(form("chosen-address")))
 
-        @continueButton()
+        @continueButton(id = Some("choose-sole-trader-address-continue-button"))
     }
 
 }

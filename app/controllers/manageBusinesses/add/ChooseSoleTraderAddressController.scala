@@ -22,15 +22,12 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler, ShowInternalServerError}
 import config.featureswitch.FeatureSwitching
 import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import jakarta.inject.Singleton
-import models.core.AddressModel
 import play.api.Logger
-import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
 import views.html.manageBusinesses.add.ChooseSoleTraderAddressView
-import play.api.i18n.Messages
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,12 +51,15 @@ class ChooseSoleTraderAddressController @Inject()(
   private def backUrl(isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url //change in nav ticket
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent = isAgent).async { implicit user =>
+    /*TODO currently if there are no business addresses then this will redirect the user to the home page.
+    * in the nav ticket we will want to likely redirect to the enter business address page instead
+    */
     if(isEnabled(OverseasBusinessAddress)){
-      val businessAddresses = user.incomeSources.getAllUniqueBusinessAddresses
+      val businessAddresses = user.incomeSources.getAllUniqueBusinessAddressesWithIndex
       Future(Ok(view(
         postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
         isAgent = isAgent,
-        form = ChooseSoleTraderAddressForm.apply(),
+        form = ChooseSoleTraderAddressForm(),
         businessAddresses = businessAddresses,
         backUrl = backUrl(isAgent)
       ))
@@ -72,8 +72,8 @@ class ChooseSoleTraderAddressController @Inject()(
   }
 
   def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    val businessAddresses = user.incomeSources.getAllUniqueBusinessAddresses
-    ChooseSoleTraderAddressForm.apply().bindFromRequest().fold(
+    val businessAddresses = user.incomeSources.getAllUniqueBusinessAddressesWithIndex
+    ChooseSoleTraderAddressForm().bindFromRequest().fold(
       formWithErrors => {
         Future {
           BadRequest(
@@ -97,7 +97,7 @@ class ChooseSoleTraderAddressController @Inject()(
                                 validForm: ChooseSoleTraderAddressForm
                              )(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     val formResponse = validForm.response
-    //TODO implement proper routes here
+    //TODO implement proper routes here in nav ticket
     formResponse match {
       case Some(ChooseSoleTraderAddressForm.existingAddress) =>
         //take the user to 'is this information correct' page

@@ -138,9 +138,11 @@ case class IncomeSourceDetailsModel(
         }
         case None => None
     })
-    val a = allAddresses.flatten.distinct
-    a.foreach(x => println(x))
-    a
+    allAddresses.flatten.distinct
+  }
+  
+  def getAllUniqueBusinessAddressesWithIndex: Seq[(String, Int)] = {
+    getAllUniqueBusinessAddresses.zipWithIndex
   }
 }
 
