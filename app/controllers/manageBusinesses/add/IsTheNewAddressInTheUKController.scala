@@ -49,26 +49,6 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                                                  val mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
-  
-  //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
-  private def getBackURL(isAgent: Boolean, mode: Mode): String = {
-    val notImplementedCall: Call = Call(method = "", url = "#NotImplemented")
-
-    ((isAgent, mode) match {
-      case (_, NormalMode) => notImplementedCall
-      case (false, _) => notImplementedCall
-      case (_, _) => notImplementedCall
-    }).url
-  }
-
-//  TODO check why generated ReverseRoutes.scala does not match the param
-  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
-    routes.AddBusinessTradeController.submitAgent(mode, isTriggeredMigration)
-//    routes.IsTheNewAddressInTheUKController.submitAgent(mode, isTriggeredMigration)
-  } else {
-    routes.AddBusinessTradeController.submit(mode, isTriggeredMigration)
-//    routes.IsTheNewAddressInTheUKController.submit(mode, isTriggeredMigration)
-  }
 
   def show(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit user =>
@@ -103,15 +83,6 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  private def hasUKAddress(user: MtdItUser[?]): Boolean = {
-    val hasUKAddress = for {
-      b <- user.incomeSources.businesses
-      a <- b.address
-      if a.addressLine1.isDefined && a.postCode.isDefined
-    } yield a
-    hasUKAddress.nonEmpty
-  }
-
   def submit(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit request =>
       handleSubmitRequest(isAgent = false, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
@@ -143,26 +114,19 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     }
   }.recover {
     case ex =>
-//      TODO we might refactor it
       Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
-
 
   private def handleValidForm(validForm: form,
                               isAgent: Boolean,
                               isTrigMig: Boolean = false)
                              (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-
+    //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
     val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
     val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isTrigMig).url
     val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isTrigMig).url
-
-    //TODO check this
-    //    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = isTrigMig).url
-    //    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = isTrigMig).url
-
-    //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
+    
     formResponse match {
       case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
       case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
@@ -173,4 +137,34 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     }
   }
 
+  private def hasUKAddress(user: MtdItUser[?]): Boolean = {
+    val ukCountryCodes = Seq("UK", "United Kingdom", "GB", "Great Britain")
+    val validUKAddress = for {
+      b <- user.incomeSources.businesses
+      a <- b.address
+      countryCode <- a.countryCode
+      if ukCountryCodes.contains(countryCode) && a.addressLine1.isDefined && a.postCode.isDefined
+    } yield a
+    validUKAddress.nonEmpty
+  }
+
+  //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
+  private def getBackURL(isAgent: Boolean, mode: Mode): String = {
+    val notImplementedCall: Call = Call(method = "", url = "#NotImplemented")
+
+    ((isAgent, mode) match {
+      case (_, NormalMode) => notImplementedCall
+      case (false, _) => notImplementedCall
+      case (_, _) => notImplementedCall
+    }).url
+  }
+
+  //  TODO check why generated ReverseRoutes.scala does not match the param
+  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
+    routes.AddBusinessTradeController.submitAgent(mode, isTriggeredMigration)
+    //    routes.IsTheNewAddressInTheUKController.submitAgent(mode, isTriggeredMigration)
+  } else {
+    routes.AddBusinessTradeController.submit(mode, isTriggeredMigration)
+    //    routes.IsTheNewAddressInTheUKController.submit(mode, isTriggeredMigration)
+  }
 }
