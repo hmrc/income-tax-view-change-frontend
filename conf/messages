@@ -546,6 +546,7 @@ income_breakdown.table.foreign_benefits_gifts                   = Foreign benefi
 income_breakdown.table.gains_insurance                          = Gains on life insurance polices
 income_breakdown.table.share_schemes                            = Share schemes
 income_breakdown.table.other_income                             = Other Income
+income_breakdown.table.income_from_partnerships                 = Income from partnerships
 income_breakdown.total                                          = Total income received
 
 ## Forecast Income Summary Page ##
@@ -596,6 +597,7 @@ deduction_breakdown.table.annual_payments                              = Annual 
 deduction_breakdown.table.qualifying_loan_interest                     = Qualifying loan interest
 deduction_breakdown.table.post_cessation_trade_receipts                = Post-cessation trade receipts
 deduction_breakdown.table.trade_union_payments                         = Trade union payments
+deduction_breakdown.table.partnership_losses                           = Partnership losses
 deduction_breakdown.total                                              = Total allowances and deductions
 
 ## Tax Calculation Breakdown Page ##

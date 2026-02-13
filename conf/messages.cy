@@ -548,6 +548,7 @@ income_breakdown.table.foreign_benefits_gifts                   = Buddiannau a r
 income_breakdown.table.gains_insurance                          = Enillion ar bolisïau yswiriant bywyd
 income_breakdown.table.share_schemes                            = Cynlluniau cyfranddaliadau
 income_breakdown.table.other_income                             = Incwm arall
+income_breakdown.table.income_from_partnerships                 = Incwm o bartneriaethau
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Forecast Income Summary Page ##
@@ -598,6 +599,7 @@ deduction_breakdown.table.annual_payments                              = Taliada
 deduction_breakdown.table.qualifying_loan_interest                     = Llog ar fenthyciad cymwys
 deduction_breakdown.table.post_cessation_trade_receipts                = Derbynebau ar ôl i fasnachu ddod i ben
 deduction_breakdown.table.trade_union_payments                         = Taliadau undeb llafur
+deduction_breakdown.table.partnership_losses                           = Colledion y bartneriaeth
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
 
 ## Tax Calculation Breakdown Page ##
