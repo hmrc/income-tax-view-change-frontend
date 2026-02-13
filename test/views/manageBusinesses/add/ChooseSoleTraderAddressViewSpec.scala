@@ -51,11 +51,6 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
 
   val users: Seq[MTDUserRole] = Seq(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 
-  def pageContent() = {
-    val radioNewAddress = "None of these, I want to add a new address"
-    val formError = "Select an option to continue"
-  }
-
   users.foreach { user => {
     val isAgent: Boolean = if(user != MTDIndividual) true else false
     s"for $user OverseasBusinessAddress FS is enabled" should {
@@ -71,8 +66,8 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
       s"for $user have the existing business addresses in the radio buttons" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(0).text() shouldBe "some address line 1, TTT6AB"
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(1).text() shouldBe "some other address line 1, RRR6AB"
-        pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(2).text() shouldBe "or"
-        pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(3).text() shouldBe "None of these, I want to add a new address"
+        pageDocument.getElementsByClass("govuk-radios__divider").text() shouldBe "or"
+        pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(2).text() shouldBe "None of these, I want to add a new address"
       }
       s"for $user have the correct radio buttons when there are no results from getAllUniqueBusinessAddresses" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(0).text()
