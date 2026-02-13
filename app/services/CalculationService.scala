@@ -30,42 +30,52 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class CalculationService @Inject()(incomeTaxCalculationConnector: IncomeTaxCalculationConnector)(implicit ec: ExecutionContext, val appConfig: FrontendAppConfig) extends FeatureSwitching {
+class CalculationService @Inject()(
+                                    incomeTaxCalculationConnector: IncomeTaxCalculationConnector
+                                  )(implicit ec: ExecutionContext, val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   def getLatestCalculation(mtditid: String, nino: String, calcId: String, taxYear: Int)
                           (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    Logger("application").debug("" +
-      s"Requesting calc data from the backend by calc id and taxYear: $calcId - $taxYear")
+    Logger("application").debug("" + s"Requesting calc data from the backend by calc id and taxYear: $calcId - $taxYear")
     incomeTaxCalculationConnector.getCalculationResponseByCalcId(mtditid, nino, calcId, taxYear)
   }
 
   def getLiabilityCalculationDetail(mtditid: String, nino: String, taxYear: Int)
                                    (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString, None).map(value =>{
-      value
-    })
+    incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString, None)
   }
 
-  def getLatestAndPreviousCalculationDetails(mtditid: String, nino: String, taxYear: Int)
-                                            (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[(LiabilityCalculationResponseModel, Option[LiabilityCalculationResponseModel])] = {
-    val latestResponse = getCalculationDetailsWithFlag(mtditid, nino, taxYear, isPrevious = false)
+  def getLatestAndPreviousCalculationDetails(
+                                              mtditid: String,
+                                              nino: String,
+                                              taxYear: Int
+                                            )(
+                                              implicit headerCarrier: HeaderCarrier,
+                                              mtdItUser: MtdItUser[_]
+                                            ): Future[(LiabilityCalculationResponseModel, Option[LiabilityCalculationResponseModel])] = {
+
+    val latestResponse: Future[LiabilityCalculationResponseModel] =
+      getCalculationDetailsWithFlag(mtditid, nino, taxYear, isPrevious = false)
 
     latestResponse.flatMap {
-      case liabilityCalc: LiabilityCalculationResponse if isEnabled(PostFinalisationAmendmentsR18) =>
-        if (liabilityCalc.metadata.hasAnAmendment) {
-          getCalculationDetailsWithFlag(mtditid, nino, taxYear, isPrevious = true).map { previous =>
-            (liabilityCalc, Some(previous))
-          }
-        } else {
-          Future.successful((liabilityCalc, None))
+      case liabilityCalc: LiabilityCalculationResponse if isEnabled(PostFinalisationAmendmentsR18) && liabilityCalc.metadata.hasAnAmendment =>
+        getCalculationDetailsWithFlag(mtditid, nino, taxYear, isPrevious = true).map { previous =>
+          (liabilityCalc, Some(previous))
         }
-      case other => Future.successful((other, None))
+      case liabilityCalc: LiabilityCalculationResponse if isEnabled(PostFinalisationAmendmentsR18) && !liabilityCalc.metadata.hasAnAmendment =>
+        Future((liabilityCalc, None))
+      case other =>
+        Future((other, None))
     }
   }
 
-  def getCalculationDetailsWithFlag(mtditid: String, nino: String, taxYear: Int, isPrevious: Boolean)
-                                   (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    val calculationRecord = if(isPrevious) Some(PREVIOUS) else Some(LATEST)
+  def getCalculationDetailsWithFlag(
+                                     mtditid: String,
+                                     nino: String,
+                                     taxYear: Int,
+                                     isPrevious: Boolean
+                                   )(implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
+    val calculationRecord = if (isPrevious) Some(PREVIOUS) else Some(LATEST)
     incomeTaxCalculationConnector.getCalculationResponse(mtditid, nino, taxYear.toString, calculationRecord)
   }
 }

@@ -252,6 +252,33 @@ tax-year-summary.explanatory-text                              = Mae’r cyfrifi
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
+
+tax.year.summary.calc.cannot.be.displayed.heading                  = Ni ellir arddangos eich cyfrifiad treth
+
+tax.year.summary.calc.not.filed.compatible.software.p              = Mae hyn oherwydd na chafodd eich Ffurflen Dreth ei chyflwyno gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+tax.year.summary.calc.view.your.tax.calc.link                      = Bwrw golwg dros eich cyfrifiad treth os gwnaethoch gyflwyno’ch Ffurflen Dreth gan ddefnyddio gwasanaeth ar-lein CThEF
+tax.year.summary.calc.not.compatible.software.p                    = Os cyflwynwyd eich Ffurflen Dreth gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm, bydd eich cyfrifiad treth ar gael yn y feddalwedd hon.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.a               = Os gwnaethoch gyflwyno’ch Ffurflen Dreth drwy’r post, bydd rhaid i chi gysylltu â CThEF
+tax.year.summary.calc.filed.by.post.contact.hmrc.link              = cysylltwch â CThEF
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.b               = er mwyn bwrw golwg dros eich cyfrifiad treth.
+
+tax.year.summary.calc.find.out.more.sa.p                           = Os ydych wedi cyflwyno’ch Ffurflen Dreth gan ddefnyddio’ch cyfrif Hunanasesiad ar-lein blaenorol, gallwch ddod o hyd i’ch cyfrifiad treth yn y fan honno. Dysgwch ragor am
+tax.year.summary.calc.find.out.more.sa.link                        = Ffurflenni Treth Hunanasesiad
+
+tax.year.summary.calc.not.compatible.software.agent.p              = Os cyflwynwyd y Ffurflen Dreth gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm, bydd eich cyfrifiad treth ar gael yn y feddalwedd hon.
+
+tax.year.summary.calc.filed.sa.agent.p.a                           = Mae’n bosibl eich bod wedi cyflwyno’r Ffurflen Dreth gan ddefnyddio’ch cyfrif
+tax.year.summary.calc.filed.sa.agent.link                          = Hunanasesiad ar gyfer Asiantau blaenorol
+tax.year.summary.calc.filed.sa.agent.p.b                           = Os felly, bydd eich cyfrifiad ar gael yn y fan honno. Bydd y cyfrif hefyd yn defnyddio Dynodydd Defnyddiwr (ID) a chyfrinair Porth y Llywodraeth sy’n wahanol i’ch cyfrif gwasanaethau asiant.
+
+tax.year.summary.calc.not.filed.compatible.software.agent.p        = Mae hyn oherwydd na chafodd y Ffurflen Dreth ei chyflwyno gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.a         = Os gwnaethoch gyflwyno’ch Ffurflen Dreth drwy’r post, bydd rhaid i chi
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.link        = gysylltu â CThEF
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.b         = er mwyn bwrw golwg dros eich cyfrifiad treth.
+
+
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.total-due                                     = Cyfanswm y bil treth
 tax-year-summary.tax-calculation.date                          = {0} i {1}

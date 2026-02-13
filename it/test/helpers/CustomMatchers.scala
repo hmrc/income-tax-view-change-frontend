@@ -92,10 +92,10 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
 
         Then(s"the page title should be '$expectedTitle'")
         HavePropertyMatchResult(
-          body.title == expectedTitle,
-          "pageTitle",
-          expectedTitle,
-          body.title
+          matches = body.title == expectedTitle,
+          propertyName = "pageTitle",
+          expectedValue = expectedTitle,
+          actualValue = body.title
         )
       }
     }
@@ -213,10 +213,10 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
         Then(s"the text of elementId '$id' should be '$expectedValue'")
 
         HavePropertyMatchResult(
-          body.select(s"#$id").text == expectedValue,
-          s"elementByID($id)",
-          expectedValue,
-          body.select(s"#$id").text
+          matches = body.select(s"#$id").text == expectedValue,
+          propertyName = s"elementByID($id)",
+          expectedValue = expectedValue,
+          actualValue = body.select(s"#$id").text
         )
       }
     }

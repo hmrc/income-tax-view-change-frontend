@@ -51,16 +51,20 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions with MockCalcula
   val testCalcError: LiabilityCalculationError = LiabilityCalculationError(Status.OK, "Test message")
   val testCalcNOCONTENT: LiabilityCalculationError = LiabilityCalculationError(Status.NO_CONTENT, "Test message")
 
-  val testCalcResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
-    inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
-    messages = None,
-    calculation = None,
-    metadata = Metadata(
-      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = "inYear",
-      calculationReason = Some("customerRequest"),
-      periodFrom = Some(LocalDate.of(2022, 1, 1)),
-      periodTo = Some(LocalDate.of(2023, 1, 1))))
+  val testCalcResponse: LiabilityCalculationResponse =
+    LiabilityCalculationResponse(
+      inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+      messages = None,
+      calculation = None,
+      metadata = Metadata(
+        calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+        calculationType = "inYear",
+        calculationReason = Some("customerRequest"),
+        periodFrom = Some(LocalDate.of(2022, 1, 1)),
+        periodTo = Some(LocalDate.of(2023, 1, 1))
+      ),
+      submissionChannel = None
+    )
   val taxYear = 2018
 
   mtdAllRoles.foreach { mtdUserRole =>

@@ -30,6 +30,7 @@ import scala.concurrent.Future
 class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
 
   class GetCalculationResponseTest(nino: String, taxYear: String, response: HttpResponse, calculationRecord: Option[CalculationRecord]) {
+
     val connector = new IncomeTaxCalculationConnector(mockHttpClientV2, appConfig)
 
     if (calculationRecord.isDefined)
@@ -39,6 +40,7 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
   }
 
   class GetCalculationResponseByCalcIdTest(nino: String, calcId: String, response: HttpResponse, taxYear: Int) {
+
     val connector = new IncomeTaxCalculationConnector(mockHttpClientV2, appConfig)
 
     setupMockHttpV2Get(s"${connector.getCalculationResponseByCalcIdUrl(nino, calcId)}?taxYear=${taxYear.toString}")(response)
@@ -50,18 +52,29 @@ class IncomeTaxCalculationConnectorSpec extends TestSupport with MockHttpV2 {
   val taxYearAsInt: Int = taxYear.toInt
   val calculationId = "041f7e4d-87b9-4d4a-a296-3cfbdf92f7e2"
 
-  val calculation: LiabilityCalculationResponse = LiabilityCalculationResponse(
-    inputs = Inputs(PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
-    messages = None,
-    metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest")),
-    calculation = None)
-  val calculationJson: JsObject = Json.obj("inputs" -> Json.obj("personalInformation" ->
-    Json.obj("taxRegime" -> "UK")),
-    "metadata" -> Json.obj("calculationTimestamp" -> "2019-02-15T09:35:15.094Z", "calculationType" -> "inYear",
-    "calculationReason" -> "customerRequest"))
+  val calculation: LiabilityCalculationResponse =
+    LiabilityCalculationResponse(
+      inputs = Inputs(PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+      messages = None,
+      metadata = Metadata(Some("2019-02-15T09:35:15.094Z"), "inYear", Some("customerRequest")),
+      calculation = None,
+      submissionChannel = None
+    )
+  val calculationJson: JsObject =
+    Json.obj(
+      "inputs" -> Json.obj("personalInformation" -> Json.obj("taxRegime" -> "UK")),
+      "metadata" -> Json.obj(
+        "calculationTimestamp" -> "2019-02-15T09:35:15.094Z",
+        "calculationType" -> "inYear",
+        "calculationReason" -> "customerRequest",
+        "calculationTrigger" -> "CesaSAReturn"
+      )
+    )
 
   "IncomeTaxCalculationConnector.getCalculationResponse" should {
+
     "return a calculation" when {
+
       "receiving an OK with valid Calculation json" in new GetCalculationResponseTest(nino, taxYear, HttpResponse(status = OK,
         json = calculationJson, headers = Map.empty), None) {
         val result: Future[LiabilityCalculationResponseModel] = connector.getCalculationResponse(mtditid, nino, taxYear, None)
