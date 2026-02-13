@@ -20,20 +20,21 @@ import auth.MtdItUser
 import enums.IncomeSourceJourney.SelfEmployment
 import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import forms.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
+import mocks.services.MockDateService
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.scalatest.matchers.should.Matchers
-import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants.{testLatencyDetails, _}
-import testConstants.PropertyDetailsTestConstants._
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import testConstants.BaseTestConstants.*
+import testConstants.BusinessDetailsTestConstants.{testLatencyDetails, *}
+import testConstants.PropertyDetailsTestConstants.*
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 import testUtils.UnitSpec
 
 import java.time.LocalDate
 
-class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
+class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateService {
 
   val testQueryString: String = mkIncomeSourceId("XA00001234").toHash.hash
   val testSelfEmploymentIdHash: Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(testQueryString)
@@ -260,6 +261,63 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers {
       )
 
       model.earliestSubmissionTaxYear shouldBe None
+    }
+  }
+
+  "orderedTaxYearsByAccountingPeriods" should {
+
+    "return all tax years from 2018" when {
+
+      "the date service returns a tax year of 2025-26 and the earliest first accounting period end date is in 2017-18" in {
+        val model = IncomeSourceDetailsModel(
+          nino = testNino,
+          mtdbsa = testMtditid,
+          yearOfMigration = Some("2020"),
+          businesses = List(business1, business2),
+          properties = Nil
+        )
+
+        setupMockGetCurrentTaxYearEnd(mockDateService)(2026)
+
+        model.orderedTaxYearsByAccountingPeriods(mockDateService) shouldBe List(2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026)
+      }
+    }
+  }
+
+  "orderedTaxYearsByYearOfMigration" should {
+
+    "return all tax years from 2020" when {
+
+      "a year of migration is defined as 2020" in {
+        val model = IncomeSourceDetailsModel(
+          nino = testNino,
+          mtdbsa = testMtditid,
+          yearOfMigration = Some("2020"),
+          businesses = List(business1, business2),
+          properties = Nil
+        )
+
+        setupMockGetCurrentTaxYearEnd(mockDateService)(2026)
+
+        model.orderedTaxYearsByYearOfMigration(mockDateService) shouldBe List(2020, 2021, 2022, 2023, 2024, 2025, 2026)
+      }
+    }
+
+    "return all tax years from 2018" when {
+
+      "a year of migration is not defined and it falls back to the accounting period method" in {
+        val model = IncomeSourceDetailsModel(
+          nino = testNino,
+          mtdbsa = testMtditid,
+          yearOfMigration = None,
+          businesses = List(business1, business2),
+          properties = Nil
+        )
+
+        setupMockGetCurrentTaxYearEnd(mockDateService)(2026)
+
+        model.orderedTaxYearsByAccountingPeriods(mockDateService) shouldBe List(2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026)
+      }
     }
   }
 
