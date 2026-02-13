@@ -30,7 +30,6 @@ import views.html.manageBusinesses.add.ChooseSoleTraderAddressView
 class ChooseSoleTraderAddressViewSpec extends TestSupport {
 
   val view: ChooseSoleTraderAddressView = app.injector.instanceOf[ChooseSoleTraderAddressView]
-//  val chooseSoleTraderAddressForm: ChooseSoleTraderAddressForm = app.injector.instanceOf[ChooseSoleTraderAddressForm]
 
   class Setup(isAgent: Boolean, form: Form[ChooseSoleTraderAddressForm], hasBusinesses: Boolean = true) {
 
