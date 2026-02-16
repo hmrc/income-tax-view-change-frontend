@@ -31,15 +31,14 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
-import play.api.test.FakeRequest
+import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{DateServiceInterface, SessionService}
 import testConstants.BusinessDetailsTestConstants.{business1, foreignAddress, invalidUKAddressNoPostCode}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
-  
+
   private val addBusinessIsTheNewAddressInTheUKHeading = "add-business-is.the.new.address.in.the.uk.heading"
   private val addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading = "add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading"
 
@@ -54,24 +53,10 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
   lazy val testController: IsTheNewAddressInTheUKController = app.injector.instanceOf[IsTheNewAddressInTheUKController]
 
   def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false): Action[AnyContent] = mtdRole match {
-    case MTDIndividual if isPost => testController.submit(mode, false)
-    case MTDIndividual => testController.show(mode, false)
-    case _ if isPost => testController.submitAgent(mode, false)
-    case _ => testController.showAgent(mode, false)
-  }
-
-  def getRequest(isAgent: Boolean): FakeRequest[AnyContentAsEmpty.type] = {
-    if (isAgent) fakeRequestConfirmedClient()
-    else fakeRequestWithActiveSession
-  }
-
-  def postRequest(isAgent: Boolean): FakeRequest[AnyContentAsEmpty.type] = {
-    if (isAgent) fakePostRequestConfirmedClient()
-    else fakePostRequestWithActiveSession
-  }
-
-  def getValidationErrorTabTitle: String = {
-    s"${messages("htmlTitle.invalidInput", messages(addBusinessIsTheNewAddressInTheUKHeading))}"
+    case MTDIndividual if isPost => testController.submit(false, mode, false)
+    case MTDIndividual => testController.show(false, mode, false)
+    case _ if isPost => testController.submit(true, mode, false)
+    case _ => testController.show(true, mode, false)
   }
 
   Seq(CheckMode, NormalMode).foreach { mode =>

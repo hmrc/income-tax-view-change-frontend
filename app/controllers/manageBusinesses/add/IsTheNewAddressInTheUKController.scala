@@ -50,20 +50,12 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                                                  val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
-  def show(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
+  def show(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async {
     implicit user =>
       if isEnabled(OverseasBusinessAddress) then
-        handleRequest(isAgent = false, mode, isTriggeredMigration)
+        handleRequest(isAgent, mode, isTriggeredMigration)
       else
         Future.successful(Redirect(controllers.routes.HomeController.show().url))
-  }
-
-  def showAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
-    implicit user =>
-      if isEnabled(OverseasBusinessAddress) then
-        handleRequest(isAgent = true, mode, isTriggeredMigration)
-      else
-        Future.successful(Redirect(controllers.routes.HomeController.showAgent().url))
   }
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
@@ -83,14 +75,9 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       errorHandler.showInternalServerError()
   }
 
-  def submit(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
+  def submit(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async {
     implicit request =>
-      handleSubmitRequest(isAgent = false, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
-  }
-
-  def submitAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
-    implicit request =>
-      handleSubmitRequest(isAgent = true, mode, isTriggeredMigration)(implicitly, itvcErrorHandlerAgent)
+      handleSubmitRequest(isAgent, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
   }
   
   def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
