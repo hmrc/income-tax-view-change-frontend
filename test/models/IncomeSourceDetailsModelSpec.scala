@@ -321,5 +321,50 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
     }
   }
 
+  "return all active business addresses" when {
+
+    "getAllUniqueBusinessAddresses finds an international address" in {
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = None,
+        businesses = List(business1International),
+        properties = Nil
+      )
+      model.getAllUniqueBusinessAddresses shouldBe List("1 international road")
+    }
+    "getAllUniqueBusinessAddresses finds a UK address" in {
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = None,
+        businesses = List(business1),
+        properties = Nil
+      )
+      model.getAllUniqueBusinessAddresses shouldBe List("8 Test, NE12 6CI")
+    }
+
+    "getAllUniqueBusinessAddressesWithIndex finds two international address that are not distinct" in {
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = None,
+        businesses = List(business1International, business1International),
+        properties = Nil
+      )
+      model.getAllUniqueBusinessAddressesWithIndex shouldBe List(("1 international road", 0))
+    }
+    "getAllUniqueBusinessAddressesWithIndex finds a UK address" in {
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = None,
+        businesses = List(business1),
+        properties = Nil
+      )
+      model.getAllUniqueBusinessAddressesWithIndex shouldBe List(("8 Test, NE12 6CI", 0))
+    }
+  }
+
 
 }
