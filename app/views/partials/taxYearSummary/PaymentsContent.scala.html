@@ -74,6 +74,11 @@
                         <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.noData"))</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">@accruingInterestAmount.toCurrencyString</td>
                     }
+                } else if(chargeItem.isOnlyInterest) {
+                    @chargeItem.latePaymentInterestAmount.map { latePaymentInterestAmount =>
+                        <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.noData"))</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@latePaymentInterestAmount.toCurrencyString</td>
+                    }
                 } else if(chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
                 <td class="govuk-table__cell">@messages("tax-year-summary.noData")</td>
                 <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>

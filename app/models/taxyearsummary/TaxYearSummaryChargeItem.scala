@@ -36,6 +36,7 @@ object TaxYearSummaryChargeItem {
       outstandingAmount = chargeItem.outstandingAmount,
       interestOutstandingAmount = chargeItem.interestOutstandingAmount,
       accruingInterestAmount = chargeItem.accruingInterestAmount,
+      latePaymentInterestAmount = chargeItem.latePaymentInterestAmount,
       interestFromDate = chargeItem.interestFromDate,
       interestEndDate = chargeItem.interestEndDate,
       interestRate = chargeItem.interestRate,
@@ -59,6 +60,7 @@ object TaxYearSummaryChargeItem {
       outstandingAmount = chargeItem.outstandingAmount,
       interestOutstandingAmount = chargeItem.interestOutstandingAmount,
       accruingInterestAmount = chargeItem.accruingInterestAmount,
+      latePaymentInterestAmount = chargeItem.latePaymentInterestAmount,
       interestFromDate = chargeItem.interestFromDate,
       interestEndDate = chargeItem.interestEndDate,
       interestRate = chargeItem.interestRate,
@@ -83,6 +85,7 @@ case class TaxYearSummaryChargeItem(
                                      outstandingAmount: BigDecimal,
                                      interestOutstandingAmount: Option[BigDecimal],
                                      accruingInterestAmount: Option[BigDecimal],
+                                     latePaymentInterestAmount: Option[BigDecimal],
                                      interestFromDate: Option[LocalDate],
                                      interestEndDate: Option[LocalDate],
                                      interestRate: Option[BigDecimal],
@@ -136,6 +139,8 @@ case class TaxYearSummaryChargeItem(
     else outstandingAmount
   }
 
+  def isOnlyInterest: Boolean = interestRemainingToPay > 0 && isPaid
+
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
   val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != accruingInterestAmount.getOrElse[BigDecimal](0)
@@ -170,6 +175,8 @@ case class TaxYearSummaryChargeItem(
       case Some(Nics2) | None => "Not coded out"
     }
   }
+
+  val interestChargeTypes: Seq[TransactionType] = Seq(FirstLatePaymentPenalty, SecondLatePaymentPenalty, LateSubmissionPenalty)
 
 
 }
