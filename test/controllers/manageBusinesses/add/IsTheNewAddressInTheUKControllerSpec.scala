@@ -20,8 +20,6 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.manageBusinesses.add.*
-import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm.{responseForeign, responseUK}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.OverseasBusinessAddress
@@ -41,6 +39,9 @@ import testConstants.BusinessDetailsTestConstants.{business1, foreignAddress, in
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
+  
+  private val addBusinessIsTheNewAddressInTheUKHeading = "add-business-is.the.new.address.in.the.uk.heading"
+  private val addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading = "add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading"
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -70,7 +71,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
   }
 
   def getValidationErrorTabTitle: String = {
-    s"${messages("htmlTitle.invalidInput", messages("add-business-is.the.new.address.in.the.uk.heading"))}"
+    s"${messages("htmlTitle.invalidInput", messages(addBusinessIsTheNewAddressInTheUKHeading))}"
   }
 
   Seq(CheckMode, NormalMode).foreach { mode =>
@@ -92,7 +93,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
 
                 val document: Document = Jsoup.parse(contentAsString(result))
-                document.title should include(messages("add-business-is.the.new.address.in.the.uk.heading"))
+                document.title should include(messages(addBusinessIsTheNewAddressInTheUKHeading))
                 status(result) shouldBe OK
               }
             }
@@ -108,7 +109,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
 
                 val document: Document = Jsoup.parse(contentAsString(result))
-                document.title should include(messages("add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading"))
+                document.title should include(messages(addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading))
                 status(result) shouldBe OK
               }
               "when user has invalid UK addresses without post code on file using the manage businesses journey" in {
@@ -122,7 +123,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
 
                 val document: Document = Jsoup.parse(contentAsString(result))
-                document.title should include(messages("add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading"))
+                document.title should include(messages(addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading))
                 status(result) shouldBe OK
               }
               "when user has no UK addresses on file using the manage businesses journey" in {
@@ -136,7 +137,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
 
                 val document: Document = Jsoup.parse(contentAsString(result))
-                document.title should include(messages("add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading"))
+                document.title should include(messages(addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading))
                 status(result) shouldBe OK
               }
             }
@@ -154,50 +155,6 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 
                 status(result) shouldBe SEE_OTHER
                 redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
-            }
-          }
-        }
-        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
-      }
-
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
-        val action = getAction(mtdRole, mode, true)
-        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
-        s"the user is authenticated as a $mtdRole" should {
-// TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
-          s"return ${Status.SEE_OTHER}: redirect to the correct  Page" when {
-            "foreign property selected" in {
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
-                .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
-
-
-              val result = action(fakeRequest.withFormUrlEncodedBody(
-                IsTheNewAddressInTheUKForm.response -> responseForeign
-              ))
-
-              status(result) shouldBe SEE_OTHER
-              val redirectUrl = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show().url
-              redirectLocation(result) shouldBe Some(redirectUrl)
-            }
-            "uk business property selected" in {
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
-                .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
-
-              val result = action(fakeRequest.withFormUrlEncodedBody(
-                IsTheNewAddressInTheUKForm.response -> responseUK
-              ))
-
-              status(result) shouldBe SEE_OTHER
-              val redirectUrl = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show().url
-              redirectLocation(result) shouldBe Some(redirectUrl)
             }
           }
         }

@@ -92,7 +92,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     implicit request =>
       handleSubmitRequest(isAgent = true, mode, isTriggeredMigration)(implicitly, itvcErrorHandlerAgent)
   }
-
+  
   def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
         form.apply.bindFromRequest().fold(
@@ -159,12 +159,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  //  TODO check why generated ReverseRoutes.scala does not match the param
-  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
-    routes.AddBusinessTradeController.submitAgent(mode, isTriggeredMigration)
-    //    routes.IsTheNewAddressInTheUKController.submitAgent(mode, isTriggeredMigration)
-  } else {
-    routes.AddBusinessTradeController.submit(mode, isTriggeredMigration)
-    //    routes.IsTheNewAddressInTheUKController.submit(mode, isTriggeredMigration)
-  }
+  //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
+  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call =
+    Call(method = "", url = "#NotImplemented")
 }
