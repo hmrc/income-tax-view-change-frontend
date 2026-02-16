@@ -33,14 +33,14 @@ import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.errorPages.CustomNotFoundErrorView
-import views.html.manageBusinesses.add.IsTheNewAddressInTheUK
+import views.html.manageBusinesses.add.IsTheNewAddressInTheUKView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
-                                                 val istheNewAddressInTheUKView: IsTheNewAddressInTheUK,
+                                                 val isTheNewAddressInTheUKView: IsTheNewAddressInTheUKView,
                                                  val sessionService: SessionService,
                                                  val customNotFoundErrorView: CustomNotFoundErrorView)
                                                 (implicit val appConfig: FrontendAppConfig,
@@ -73,7 +73,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
       Future.successful {
-        Ok(istheNewAddressInTheUKView(form.apply, isAgent, hasUKAddress(user), postAction, backURL))
+        Ok(isTheNewAddressInTheUKView(form.apply, isAgent, hasUKAddress(user), postAction, backURL))
       }
     }
   }.recover {
@@ -99,7 +99,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
           formWithErrors =>
             Future.successful {
               BadRequest(
-                istheNewAddressInTheUKView(
+                isTheNewAddressInTheUKView(
                   form = formWithErrors,
                   postAction = getPostAction(isAgent, mode, isTriggeredMigration),
                   isAgent = isAgent,
