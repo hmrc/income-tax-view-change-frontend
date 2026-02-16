@@ -31,9 +31,12 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
 
   val view: ChooseSoleTraderAddressView = app.injector.instanceOf[ChooseSoleTraderAddressView]
 
-  class Setup(isAgent: Boolean, form: Form[ChooseSoleTraderAddressForm], hasBusinesses: Boolean = true) {
+  class Setup(isAgent: Boolean, form: Form[ChooseSoleTraderAddressForm], isInternational: Boolean = false) {
 
     val postAction: Call = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent)
+
+    val businessAddress: Seq[(String, Int)] = Seq(("some address line 1, TTT6AB", 0), ("some other address line 1, RRR6AB", 1))
+    val businessAddressInternational: Seq[(String, Int)] = Seq(("some international address", 0), ("no postcode address", 1))
 
     val pageDocument: Document = Jsoup.parse(
       contentAsString(
@@ -41,7 +44,7 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
           postAction = postAction,
           isAgent = isAgent,
           form = form,
-          businessAddresses = if(hasBusinesses) Seq(("some address line 1, TTT6AB", 0), ("some other address line 1, RRR6AB", 0)) else Nil,
+          businessAddresses = if(isInternational) businessAddressInternational else businessAddress,
           backUrl = controllers.routes.HomeController.show().url
         )
       )
@@ -53,29 +56,35 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
 
   users.foreach { user => {
     val isAgent: Boolean = if(user != MTDIndividual) true else false
-    s"for $user OverseasBusinessAddress FS is enabled" should {
-      s"for $user have the correct title" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+    s"for $user | OverseasBusinessAddress FS is enabled" should {
+      s"$user | render the correct title" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
         pageDocument.title() shouldBe "What is the address of your sole trader business? - Manage your Self Assessment - GOV.UK"
       }
-      s"for $user have heading" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct heading" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
         pageDocument.getElementById("choose-sole-trader-address-heading").text() shouldBe "What is the address of your sole trader business?"
       }
-      s"for $user have sub-heading" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct sub-heading" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
         pageDocument.getElementById("choose-sole-trader-address-subheading").text() shouldBe "Sole trader"
       }
-      s"for $user have the existing business addresses in the radio buttons" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct existing UK business addresses in the radio buttons" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(0).text() shouldBe "some address line 1, TTT6AB"
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(1).text() shouldBe "some other address line 1, RRR6AB"
         pageDocument.getElementsByClass("govuk-radios__divider").text() shouldBe "or"
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(2).text() shouldBe "None of these, I want to add a new address"
       }
-      s"for $user have the correct radio buttons when there are no results from getAllUniqueBusinessAddresses" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct existing international business addresses in the radio buttons" in new Setup(isAgent, ChooseSoleTraderAddressForm(), isInternational = true) {
+        pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(0).text() shouldBe "some international address"
+        pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(1).text() shouldBe "no postcode address"
+        pageDocument.getElementsByClass("govuk-radios__divider").text() shouldBe "or"
+        pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(2).text() shouldBe "None of these, I want to add a new address"
+      }
+      s"$user | render the correct correct radio buttons when there are no results from getAllUniqueBusinessAddresses" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(0).text()
       }
-      s"for $user have a continue button" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the continue button" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
         pageDocument.getElementById("choose-sole-trader-address-continue-button").text() shouldBe "Continue"
       }
-      s"for $user have a back link with the correct URL" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct back link with the correct URL" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
         //TODO this will need to be changed with the nav ticket
         pageDocument.getElementById("back-fallback").text() shouldBe "Back"
         pageDocument.getElementById("back-fallback").attr("href") shouldBe controllers.routes.HomeController.show().url

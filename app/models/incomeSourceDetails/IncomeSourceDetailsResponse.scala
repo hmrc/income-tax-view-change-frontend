@@ -131,9 +131,10 @@ case class IncomeSourceDetailsModel(
     val allAddresses = businesses.map(thisBusiness => {
       thisBusiness.address match
         case Some(address: AddressModel) => {
-          (address.addressLine1, address.postCode) match {
-            case (Some(al1), Some(pc)) => Some(s"$al1, $pc")
-            case _=> None
+          (address.addressLine1, address.postCode, address.countryCode) match {
+            case (Some(al1), Some(pc), Some("GB")) => Some(s"$al1, $pc")
+            case (Some(al1), _, _) => Some(s"$al1")
+            case _ => None
           }
         }
         case None => None

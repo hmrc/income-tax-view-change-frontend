@@ -32,7 +32,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{DateServiceInterface, SessionService}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019AndProp
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2018and2019AndProp, businessInternational}
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -63,8 +63,8 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
       val action = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
-        "display the ChooseSoleTraderAddress page" when {
-          "user has active business addresses and OverseasBusinessAddress FS is enabled" in {
+        "display the ChooseSoleTraderAddress page when OverseasBusinessAddress FS is enabled" when {
+          "user has active UK business addresses" in {
             enable(OverseasBusinessAddress)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
@@ -74,6 +74,19 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
             val backUrl = if(isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+            document.getElementById("back-fallback").attr("href") shouldBe backUrl
+            status(result) shouldBe OK
+          }
+          "user has an active international business address" in {
+            enable(OverseasBusinessAddress)
+            setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessInternational)
+            mockNoIncomeSources()
+            val result = action(fakeRequest)
+
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
+            val backUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
             document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
           }
