@@ -157,15 +157,20 @@ trait ClaimToAdjustHelper {
 
   def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
                                poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = {
-    val res  = for {
-      poaOneDocDetail <- documentDetails.find(isPoaOne)
-      poaTwoDocDetail <- documentDetails.find(isPoaTwo)
+
+    val maybePoaOneDoc = documentDetails.find(isPoaOne)
+    val maybePoaTwoDoc = documentDetails.find(isPoaTwo)
+    val maybePoaTwoDueDate = maybePoaTwoDoc.flatMap(_.documentDueDate)
+    val maybeTaxReturnDeadline = maybePoaTwoDueDate.map(getTaxReturnDeadline)
+    val poasAreBeforeDeadline = maybePoaTwoDueDate.zip(maybeTaxReturnDeadline).exists { case (due, deadline) => due isBefore deadline }
+
+    val res = for {
+      poaOneDocDetail <- maybePoaOneDoc
+      poaTwoDocDetail <- maybePoaTwoDoc
       latestDocumentDetail = poaTwoDocDetail
-      poaTwoDueDate <- poaTwoDocDetail.documentDueDate
-      taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
-      poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
+      dueDate <- maybePoaTwoDueDate
       if poasAreBeforeDeadline
-  } yield {
+    } yield {
       if (poaOneDocDetail.poaRelevantAmount.isDefined && poaTwoDocDetail.poaRelevantAmount.isDefined) {
         Right(
           PaymentOnAccountViewModel(
@@ -191,7 +196,16 @@ trait ClaimToAdjustHelper {
     }
     res match {
       case Some(e) => e
-      case _ => Left(new Exception("Unable to construct PaymentOnAccountViewModel"))
+      case _ =>
+        Logger("application").warn(
+          s"Failed to construct POA ViewModel. " +
+            s"POA1 exists: ${maybePoaOneDoc.isDefined}, " +
+            s"POA2 exists: ${maybePoaTwoDoc.isDefined}, " +
+            s"POA2 DueDate: $maybePoaTwoDueDate, " +
+            s"Deadline: $maybeTaxReturnDeadline, " +
+            s"Is before deadline: $poasAreBeforeDeadline"
+        )
+        Left(new Exception("Unable to construct PaymentOnAccountViewModel"))
     }
   }
 
