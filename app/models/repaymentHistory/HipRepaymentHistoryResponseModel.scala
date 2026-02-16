@@ -18,10 +18,10 @@ package models.repaymentHistory
 
 import play.api.libs.json.{Format, Json}
 
-import java.time.OffsetDateTime
+import java.time.LocalDateTime
 
 case class EtmpTransactionHeader(status: String,
-                                 processingDate: OffsetDateTime)
+                                 processingDate: LocalDateTime)
 
 object EtmpTransactionHeader {
   implicit val format: Format[EtmpTransactionHeader] = Json.format[EtmpTransactionHeader]
