@@ -24,11 +24,12 @@ object IsTheNewAddressInTheUKForm {
   val responseUK: String = "uk-property"
   val responseForeign: String = "foreign-property"
   val response: String = "type-of-business"
+  
+  def apply(hasUKAddress: Boolean): Form[IsTheNewAddressInTheUKForm] = {
 
-
-  def apply: Form[IsTheNewAddressInTheUKForm] = {
-
-    val radiosEmptyError: String = "manageBusinesses.type-of-property.error"
+    val radiosEmptyError: String =
+      if hasUKAddress then "add-business-is.the.new.address.in.the.uk.error"
+      else "add-business-is.the.address.of.your.sole.trader.business.in.the.uk.error"
 
     Form[IsTheNewAddressInTheUKForm](
       mapping(

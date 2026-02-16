@@ -21,7 +21,7 @@ import testUtils.TestSupport
 
 class IsTheNewAddressInTheUKFormSpec extends TestSupport {
 
-  lazy val form: Form[IsTheNewAddressInTheUKForm] = IsTheNewAddressInTheUKForm.apply
+  lazy val form: Form[IsTheNewAddressInTheUKForm] = IsTheNewAddressInTheUKForm.apply(true)
   "IsTheNewAddressInTheUKCheck form" should {
     "bind with a valid response - yes" in {
       val formData = IsTheNewAddressInTheUKForm(Some("uk-property"))

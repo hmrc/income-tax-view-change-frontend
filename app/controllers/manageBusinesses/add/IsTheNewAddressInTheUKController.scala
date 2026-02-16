@@ -65,7 +65,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
       Future.successful {
-        Ok(isTheNewAddressInTheUKView(form.apply, isAgent, hasUKAddress(user), postAction, backURL))
+        Ok(isTheNewAddressInTheUKView(form.apply(hasUKAddress(user)), isAgent, hasUKAddress(user), postAction, backURL))
       }
     }
   }.recover {
@@ -82,7 +82,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
   
   def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
-        form.apply.bindFromRequest().fold(
+        form.apply(hasUKAddress(user)).bindFromRequest().fold(
           formWithErrors =>
             Future.successful {
               BadRequest(
@@ -147,6 +147,9 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
   }
 
   //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
-  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call =
-    Call(method = "", url = "#NotImplemented")
+  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
+    controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.submit(true, isTriggeredMigration)
+  } else {
+    routes.IsTheNewAddressInTheUKController.submit(false, isTriggeredMigration)
+  }
 }

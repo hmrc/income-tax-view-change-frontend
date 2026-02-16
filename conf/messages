@@ -1571,7 +1571,9 @@ add-business-trade.form.error.same-name     = Trade and business name cannot be 
 
 ## Is the new address in the UK page
 add-business-is.the.new.address.in.the.uk.heading   = Is the new address in the UK
-add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading   = Is the address of your sole trader business in the UK?
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading  = Is the address of your sole trader business in the UK?
+add-business-is.the.new.address.in.the.uk.error    = Select yes if the new address is in the UK
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.error    = Select yes if your sole trader business is in the UK
 
 ## Add business address page
 add-business-address.select.heading         = Select business address
