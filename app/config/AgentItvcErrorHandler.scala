@@ -37,9 +37,9 @@ class AgentItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
 
   def showInternalServerError()(implicit request: RequestHeader): Result =
     InternalServerError(errorTemplate(
-      messagesApi.preferred(request)("standardError.heading"),
-      messagesApi.preferred(request)("standardError.heading"),
-      messagesApi.preferred(request)("standardError.message"),
+      pageTitle = messagesApi.preferred(request)("standardError.heading"),
+      heading = messagesApi.preferred(request)("standardError.heading"),
+      message = messagesApi.preferred(request)("standardError.message"),
       isAgent = true
     ))
 

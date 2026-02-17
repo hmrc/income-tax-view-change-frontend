@@ -80,6 +80,15 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 "proposalListLimit" -> JsNumber(15)
               )
             ),
+            "manualAddressEntryConfig" -> JsObject(
+              Seq(
+                "mandatoryFields" -> JsObject(
+                  Seq(
+                    "postcode" -> JsBoolean(true)
+                  )
+                )
+              )
+            ),
             "confirmPageConfig" -> JsObject(
               Seq(
                 "showChangeLink" -> JsBoolean(true),

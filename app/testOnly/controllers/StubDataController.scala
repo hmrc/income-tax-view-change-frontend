@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
+import play.api.mvc.*
 import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.StubDataForm
 import testOnly.models.DataModel
@@ -48,12 +48,13 @@ class StubDataController @Inject()(stubDataView: StubDataView)
       StubDataForm.stubDataForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         schema => {
-          dynamicStubConnector.addData(schema).map(
-            response => response.status match {
-              case OK => Ok(view(StubDataForm.stubDataForm, showSuccess = true))
-              case _ => InternalServerError(view(StubDataForm.stubDataForm.fill(schema), errorResponse = Some(response.body)))
-            }
-          )
+          dynamicStubConnector.addData(schema)
+            .map(
+              response => response.status match {
+                case OK => Ok(view(StubDataForm.stubDataForm, showSuccess = true))
+                case _ => InternalServerError(view(StubDataForm.stubDataForm.fill(schema), errorResponse = Some(response.body)))
+              }
+            )
         }
       )
   }

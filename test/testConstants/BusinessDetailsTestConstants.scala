@@ -17,12 +17,12 @@
 package testConstants
 
 import enums.IncomeSourceJourney.SelfEmployment
+import models.core.*
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core._
-import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.viewmodels.*
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 
 import java.time.{LocalDate, Month}
@@ -38,7 +38,30 @@ object BusinessDetailsTestConstants {
   val year2025: Int = 2025
 
   val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
-  val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
+  val address = AddressModel(
+    Some("8 Test"),
+    Some("New Court"),
+    Some("New Town"),
+    Some("New City"),
+    Some("NE12 6CI"),
+    Some("United Kingdom")
+  )
+  val invalidUKAddressNoPostCode = AddressModel(
+    Some("8 Test"), 
+    Some("New Court"), 
+    Some("New Town"),
+    Some("New City"),
+    None, Some("United Kingdom")
+  )
+  val foreignAddress = AddressModel(
+    Some("31 Some street"),
+    None,
+    None,
+    None,
+    None,
+    Some("US")
+  )
+  
   val businessIncomeSourceId = "1234"
 
   val getCurrentTaxYearEnd: LocalDate = {

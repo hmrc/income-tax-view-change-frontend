@@ -195,6 +195,29 @@ home.penaltiesAndAppeals.view                                   = Check Self Ass
 home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty points
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
+## New Home Page ##
+
+new.home.navigation.tabs.overview                               = Overview
+
+new.home.overview.charges.sub-heading                           = Charges, payments, credits and refunds
+new.home.overview.charges.make-payment                          = Check what you owe and make a payment
+new.home.overview.charges.payment-history                       = View payment, credit and refund history
+new.home.overview.charges.money-in-account                      = Check for money in your account
+new.home.overview.charges.adjust-payments                       = Adjust payments on account
+new.home.overview.deadlines.sub-heading                         = Deadlines and reporting obligations
+new.home.overview.deadlines.view-updates                        = View updates and deadlines
+new.home.overview.deadlines.check-obligations                   = Check your reporting obligations
+new.home.overview.income.sub-heading                            = Income sources
+new.home.overview.income.manage-income                          = Add, manage or cease a business or income source
+new.home.overview.tax-year.sub-heading                          = Tax year summaries
+new.home.overview.tax-year.view-all-tax-years                   = View all tax years
+new.home.overview.tax-year.view-tax-years                       = View your {0}-{1} tax calculation and forecast
+new.home.overview.penalties.sub-heading                         = Penalties and appeals
+new.home.overview.penalties.check-penalties                     = Check Self Assessment penalties and appeals
+new.home.overview.penalties.check-lsp                           = View your late submission penalties
+new.home.overview.penalties.check-lpp                           = View your late payment penalties
+
+
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
 error.custom.message                                            = The page you’re trying to view has changed
@@ -229,6 +252,32 @@ tax-year-summary.calculation-date                                  = Calculation
 tax-year-summary.calc-from-last-time                               = This is not your final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.agent.calc-from-last-time                         = This is not your client’s final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
+
+tax.year.summary.calc.cannot.be.displayed.heading                  = Your tax calculation cannot be displayed
+
+tax.year.summary.calc.not.filed.compatible.software.p              = This is because your tax return was not filed using software compatible with Making Tax Digital for Income Tax.
+tax.year.summary.calc.view.your.tax.calc.link                      = View your tax calculation if you filed your tax return using the HMRC online service
+tax.year.summary.calc.not.compatible.software.p                    = If your return was submitted using software not compatible with Making Tax Digital for Income Tax, your tax calculation will be available in this software.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.a               = To view your tax calculation if you filed your return by post,
+tax.year.summary.calc.filed.by.post.contact.hmrc.link              = contact HMRC
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.b               =
+
+tax.year.summary.calc.find.out.more.sa.p                           = If you filed your return using your previous Self Assessment online account, you can find your tax calculation there. Find out more about
+tax.year.summary.calc.find.out.more.sa.link                        = Self Assessment tax returns
+
+tax.year.summary.calc.not.filed.compatible.software.agent.p        = This is because the tax return was not filed using software compatible with Making Tax Digital for Income Tax.
+
+tax.year.summary.calc.filed.sa.agent.p.a                           = You may have filed the tax return using your previous
+tax.year.summary.calc.filed.sa.agent.link                          = Self Assessment for Agents account
+tax.year.summary.calc.filed.sa.agent.p.b                           = If so, the calculation will be available there. The account will also use a different Government Gateway ID and password to your agent services account.
+
+tax.year.summary.calc.not.compatible.software.agent.p              = If the return was submitted using software not compatible with Making Tax Digital for Income Tax, your tax calculation will be available in this software.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.a         = To view your tax calculation if you filed the return by post,
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.link        = contact HMRC
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.b         =
+
 tax-year-summary.total-due                                         = Total tax bill
 tax-year-summary.tax-calculation.date                              = {0} to {1}
 tax-year-summary.tax-calculation                                   = Calculation
@@ -497,6 +546,7 @@ income_breakdown.table.foreign_benefits_gifts                   = Foreign benefi
 income_breakdown.table.gains_insurance                          = Gains on life insurance polices
 income_breakdown.table.share_schemes                            = Share schemes
 income_breakdown.table.other_income                             = Other Income
+income_breakdown.table.income_from_partnerships                 = Income from partnerships
 income_breakdown.total                                          = Total income received
 
 ## Forecast Income Summary Page ##
@@ -547,6 +597,7 @@ deduction_breakdown.table.annual_payments                              = Annual 
 deduction_breakdown.table.qualifying_loan_interest                     = Qualifying loan interest
 deduction_breakdown.table.post_cessation_trade_receipts                = Post-cessation trade receipts
 deduction_breakdown.table.trade_union_payments                         = Trade union payments
+deduction_breakdown.table.partnership_losses                           = Partnership losses
 deduction_breakdown.total                                              = Total allowances and deductions
 
 ## Tax Calculation Breakdown Page ##
@@ -1586,6 +1637,12 @@ add-business-trade.form.error.short         = Business trade must have at least 
 add-business-trade.form.error.long          = Business trade must be 35 characters or fewer
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
 add-business-trade.form.error.same-name     = Trade and business name cannot be the same
+
+## Is the new address in the UK page
+add-business-is.the.new.address.in.the.uk.heading   = Is the new address in the UK
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading  = Is the address of your sole trader business in the UK?
+add-business-is.the.new.address.in.the.uk.error    = Select yes if the new address is in the UK
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.error    = Select yes if your sole trader business is in the UK
 
 ## Add business address page
 add-business-address.select.heading         = Select business address

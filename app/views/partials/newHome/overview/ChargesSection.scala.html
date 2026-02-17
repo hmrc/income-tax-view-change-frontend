@@ -1,0 +1,59 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.partials.newHome.overview.OverviewCard
+@import controllers.routes.{WhatYouOweController, PaymentHistoryController, MoneyInYourAccountController}
+@import controllers.claimToAdjustPoa.routes.AmendablePoaController
+@this(overviewCard: OverviewCard)
+
+@(isAgent: Boolean)(implicit messages: Messages)
+
+
+@whatYouOweUrl: String = @{
+    if(isAgent){
+        WhatYouOweController.showAgent().url
+    } else {
+        WhatYouOweController.show().url
+    }
+}
+
+@paymentHistoryUrl: String = @{
+    if(isAgent){
+        PaymentHistoryController.showAgent().url
+    } else {
+        PaymentHistoryController.show().url
+    }
+}
+
+@moneyInAccountUrl: String = @{
+    if(isAgent){
+        MoneyInYourAccountController.showAgent().url
+    } else {
+        MoneyInYourAccountController.show().url
+    }
+}
+
+@amendablePoaUrl: String = @{
+    AmendablePoaController.show(isAgent).url
+}
+
+<h2 class="govuk-heading-m">@messages("new.home.overview.charges.sub-heading")</h2>
+@overviewCard(messages("new.home.overview.charges.make-payment"), whatYouOweUrl)
+@overviewCard(messages("new.home.overview.charges.payment-history"), paymentHistoryUrl)
+@overviewCard(messages("new.home.overview.charges.money-in-account"), moneyInAccountUrl)
+@overviewCard(messages("new.home.overview.charges.adjust-payments"), amendablePoaUrl)
+
+

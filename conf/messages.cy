@@ -196,6 +196,29 @@ home.penaltiesAndAppeals.view                                   = Gwirio cosbau 
 home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
+## New Home Page ##
+
+new.home.navigation.tabs.overview                               = Trosolwg
+
+new.home.overview.charges.sub-heading                           = Ffioedd, taliadau, credydau ac ad-daliadau
+new.home.overview.charges.make-payment                          = Gwirio’r hyn sydd arnoch a gwneud taliad
+new.home.overview.charges.payment-history                       = Gweld hanes taliadau, credydau ac ad-daliadau
+new.home.overview.charges.money-in-account                      = Gwirio faint o arian sydd yn eich cyfrif
+new.home.overview.charges.adjust-payments                       = Addasu taliadau ar gyfrif
+new.home.overview.deadlines.sub-heading                         = Dyddiadau cau ac ymrwymiadau o ran adrodd
+new.home.overview.deadlines.view-updates                        = Gweld diweddariadau a dyddiadau cau
+new.home.overview.deadlines.check-obligations                   = Gwirio eich ymrwymiadau o ran adrodd
+new.home.overview.income.sub-heading                            = Ffynonellau incwm
+new.home.overview.income.manage-income                          = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
+new.home.overview.tax-year.sub-heading                          = Crynodebau o flynyddoedd treth
+new.home.overview.tax-year.view-all-tax-years                   = Bwrw golwg dros bob blwyddyn dreth
+new.home.overview.tax-year.view-tax-years                       = Gweld eich cyfrifiad treth a’ch rhagolwg ar gyfer {0} i {1}
+new.home.overview.penalties.sub-heading                         = Cosbau ac apeliadau
+new.home.overview.penalties.check-penalties                     = Gwirio cosbau ac apeliadau Hunanasesiad
+new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
+new.home.overview.penalties.check-lpp                           = Gweld eich cosbau am dalu’n hwyr
+
+
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
 error.custom.message                                           = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
@@ -229,6 +252,33 @@ tax-year-summary.explanatory-text                              = Mae’r cyfrifi
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
+
+tax.year.summary.calc.cannot.be.displayed.heading                  = Ni ellir arddangos eich cyfrifiad treth
+
+tax.year.summary.calc.not.filed.compatible.software.p              = Mae hyn oherwydd na chafodd eich Ffurflen Dreth ei chyflwyno gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+tax.year.summary.calc.view.your.tax.calc.link                      = Bwrw golwg dros eich cyfrifiad treth os gwnaethoch gyflwyno’ch Ffurflen Dreth gan ddefnyddio gwasanaeth ar-lein CThEF
+tax.year.summary.calc.not.compatible.software.p                    = Os cyflwynwyd eich Ffurflen Dreth gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm, bydd eich cyfrifiad treth ar gael yn y feddalwedd hon.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.a               = Os gwnaethoch gyflwyno’ch Ffurflen Dreth drwy’r post, bydd rhaid i chi gysylltu â CThEF
+tax.year.summary.calc.filed.by.post.contact.hmrc.link              = cysylltwch â CThEF
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.b               = er mwyn bwrw golwg dros eich cyfrifiad treth.
+
+tax.year.summary.calc.find.out.more.sa.p                           = Os ydych wedi cyflwyno’ch Ffurflen Dreth gan ddefnyddio’ch cyfrif Hunanasesiad ar-lein blaenorol, gallwch ddod o hyd i’ch cyfrifiad treth yn y fan honno. Dysgwch ragor am
+tax.year.summary.calc.find.out.more.sa.link                        = Ffurflenni Treth Hunanasesiad
+
+tax.year.summary.calc.not.compatible.software.agent.p              = Os cyflwynwyd y Ffurflen Dreth gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm, bydd eich cyfrifiad treth ar gael yn y feddalwedd hon.
+
+tax.year.summary.calc.filed.sa.agent.p.a                           = Mae’n bosibl eich bod wedi cyflwyno’r Ffurflen Dreth gan ddefnyddio’ch cyfrif
+tax.year.summary.calc.filed.sa.agent.link                          = Hunanasesiad ar gyfer Asiantau blaenorol
+tax.year.summary.calc.filed.sa.agent.p.b                           = Os felly, bydd eich cyfrifiad ar gael yn y fan honno. Bydd y cyfrif hefyd yn defnyddio Dynodydd Defnyddiwr (ID) a chyfrinair Porth y Llywodraeth sy’n wahanol i’ch cyfrif gwasanaethau asiant.
+
+tax.year.summary.calc.not.filed.compatible.software.agent.p        = Mae hyn oherwydd na chafodd y Ffurflen Dreth ei chyflwyno gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.a         = Os gwnaethoch gyflwyno’ch Ffurflen Dreth drwy’r post, bydd rhaid i chi
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.link        = gysylltu â CThEF
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.b         = er mwyn bwrw golwg dros eich cyfrifiad treth.
+
+
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.total-due                                     = Cyfanswm y bil treth
 tax-year-summary.tax-calculation.date                          = {0} i {1}
@@ -498,6 +548,7 @@ income_breakdown.table.foreign_benefits_gifts                   = Buddiannau a r
 income_breakdown.table.gains_insurance                          = Enillion ar bolisïau yswiriant bywyd
 income_breakdown.table.share_schemes                            = Cynlluniau cyfranddaliadau
 income_breakdown.table.other_income                             = Incwm arall
+income_breakdown.table.income_from_partnerships                 = Incwm o bartneriaethau
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Forecast Income Summary Page ##
@@ -548,6 +599,7 @@ deduction_breakdown.table.annual_payments                              = Taliada
 deduction_breakdown.table.qualifying_loan_interest                     = Llog ar fenthyciad cymwys
 deduction_breakdown.table.post_cessation_trade_receipts                = Derbynebau ar ôl i fasnachu ddod i ben
 deduction_breakdown.table.trade_union_payments                         = Taliadau undeb llafur
+deduction_breakdown.table.partnership_losses                           = Colledion y bartneriaeth
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
 
 ## Tax Calculation Breakdown Page ##
@@ -1588,6 +1640,12 @@ add-business-trade.form.error.short         = Mae’n rhaid i fasnach y busnes g
 add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes fod yn 35 o gymeriadau neu lai
 add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
 add-business-trade.form.error.same-name     = Ni all enw’r busnes a’r enw masnachu fod yr un peth
+
+## Is the new address in the UK page
+add-business-is.the.new.address.in.the.uk.heading   = A yw’r cyfeiriad newydd yn y DU
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading   = A yw cyfeiriad eich busnes unig fasnachwr yn y DU?
+add-business-is.the.new.address.in.the.uk.error    = Dewiswch ‘Iawn’ os yw’r cyfeiriad newydd yn y DU
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.error    = Dewiswch ‘Iawn’ os yw’ch busnes unig fasnachwr yn y DU
 
 ## Add business address page
 add-business-address.select.heading         = Dewiswch gyfeiriad y busnes
