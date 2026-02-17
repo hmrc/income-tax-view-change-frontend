@@ -331,7 +331,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1International),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddresses shouldBe List("1 international road")
+      model.getAllUniqueBusinessAddresses shouldBe List("31 Some street")
     }
     "getAllUniqueBusinessAddresses finds a UK address" in {
       val model = IncomeSourceDetailsModel(
@@ -352,7 +352,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1International, business1International),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddressesWithIndex shouldBe List(("1 international road", 0))
+      model.getAllUniqueBusinessAddressesWithIndex shouldBe List(("31 Some street", 0))
     }
     "getAllUniqueBusinessAddressesWithIndex finds a UK address" in {
       val model = IncomeSourceDetailsModel(

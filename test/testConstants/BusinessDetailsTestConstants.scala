@@ -44,14 +44,14 @@ object BusinessDetailsTestConstants {
     Some("New Town"),
     Some("New City"),
     Some("NE12 6CI"),
-    Some("United Kingdom")
+    Some("GB")
   )
   val invalidUKAddressNoPostCode = AddressModel(
     Some("8 Test"), 
     Some("New Court"), 
     Some("New Town"),
     Some("New City"),
-    None, Some("United Kingdom")
+    None, Some("GB")
   )
   val foreignAddress = AddressModel(
     Some("31 Some street"),
@@ -61,7 +61,7 @@ object BusinessDetailsTestConstants {
     None,
     Some("US")
   )
-  
+
   val businessIncomeSourceId = "1234"
 
   val getCurrentTaxYearEnd: LocalDate = {
