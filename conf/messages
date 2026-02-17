@@ -719,7 +719,7 @@ taxCal_breakdown.message.C22214                                 = Your Class 4 h
 taxCal_breakdown.message.C22215                                 = Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation.
 taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
-taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the Final declaration calculation.
+taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
 taxCal_breakdown.message.C22220                                 = If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid.
 taxCal_breakdown.message.C22223                                 = Class 2 National Insurance does not apply because you are under 16.
 taxCal_breakdown.message.C22224                                 = Class 2 National Insurance does not apply because you are over State Pension age.
@@ -730,7 +730,7 @@ taxCal_breakdown.message.C22226_Scottish                        = Your tax has i
 taxCal_breakdown.message.agent.static1                          = This calculation is only based on information HMRC have received about your client’s income and expenses to date. This may change as we receive further information about your client during the tax year.
 taxCal_breakdown.message.agent.C22220                           = If your client’s taxable profits are between £6,725 and £11,908 your client will not need to pay Class 2 National Insurance. Your client’s entitlements to the State Pension, and certain benefits, will still apply. Your client’s contributions are treated as having been paid.
 taxCal_breakdown.message.agent.C22201                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Gift Aid payments.
-taxCal_breakdown.message.agent.C22202                           = Tax due on gift aid payments exceeds your client’s income tax charged so your client is liable for gift aid tax
+taxCal_breakdown.message.agent.C22202                           = Tax due on Gift aid payments exceeds your client’s Income Tax charged so your client is liable for Gift aid tax
 taxCal_breakdown.message.agent.C22203                           = Class 2 National Insurance has not been charged because your client’s self-employed profits are under the small profit threshold.
 taxCal_breakdown.message.agent.C22205                           = Total loss from all income sources was capped at {0}.
 taxCal_breakdown.message.agent.C22206                           = One or more of your client’s annual adjustments have not been applied because your client has submitted additional income or expenses.
@@ -738,14 +738,14 @@ taxCal_breakdown.message.agent.C22207                           = Your client’
 taxCal_breakdown.message.agent.C22208                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Pension Contribution.
 taxCal_breakdown.message.agent.C22209                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Pension Contribution and Gift Aid payments.
 taxCal_breakdown.message.agent.C22210                           = Employment related expenses are capped at the total amount of employment income.
-taxCal_breakdown.message.agent.C22211                           = This is a forecast of your client’s annual income tax liability based on the information your client has provided to date. Any overpayments of income tax will not be refundable until after your client has submitted their final declaration.
+taxCal_breakdown.message.agent.C22211                           = This is a forecast of your client’s annual Income Tax liability based on the information your client has provided to date. Any overpayments of Income Tax will not be refundable until after your client has submitted their final declaration.
 taxCal_breakdown.message.agent.C22212                           = Employment and deduction related expenses have been limited to employment income.
 taxCal_breakdown.message.agent.C22213                           = Due to your client’s employed earnings, paying Class 2 Voluntary may not be beneficial.
 taxCal_breakdown.message.agent.C22214                           = Your client’s Class 4 has been adjusted for Class 2 due and primary Class 1 contributions.
 taxCal_breakdown.message.agent.C22215                           = Due to the level of your client’s current income, your client may not be eligible for Marriage Allowance and therefore it has not been included in this calculation.
 taxCal_breakdown.message.agent.C22216                           = Due to the level of your client’s income, your client is no longer eligible for Marriage Allowance and your client’s claim will be cancelled.
 taxCal_breakdown.message.agent.C22217                           = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
-taxCal_breakdown.message.agent.C22218                           = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the Final declaration calculation.
+taxCal_breakdown.message.agent.C22218                           = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
 taxCal_breakdown.message.agent.C22223                           = Class 2 National Insurance does not apply because your client is under 16.
 taxCal_breakdown.message.agent.C22224                           = Class 2 National Insurance does not apply because your client is over State Pension age.
 taxCal_breakdown.message.agent.C22225                           = Your tax has been reduced because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is higher than the rate at which charities have obtained relief.
@@ -2469,7 +2469,6 @@ manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button      
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header                             = There is a problem
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                        = Select the tax years you want to report quarterly
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched       = Select the tax years you want to sign up for
-
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##
