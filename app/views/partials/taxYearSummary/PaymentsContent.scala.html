@@ -69,15 +69,10 @@
                         <div class="form-hint govuk-body-s"> @messages("tax-year-summary.payments.paymentUnderReview") </div>
                     }
                 </th>
-                @if(chargeItem.isAccruingInterest) {
-                    @chargeItem.accruingInterestAmount.map { accruingInterestAmount =>
-                        <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.noData"))</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@accruingInterestAmount.toCurrencyString</td>
-                    }
-                } else if(chargeItem.isOnlyInterest) {
+                @if(chargeItem.latePaymentInterestAmount.exists(_ > 0)) {
                     @chargeItem.latePaymentInterestAmount.map { latePaymentInterestAmount =>
                         <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.noData"))</td>
-                        <td class="govuk-table__cell govuk-table__cell--numeric">@latePaymentInterestAmount.toCurrencyString</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{latePaymentInterestAmount.toCurrencyString + "L"}</td>
                     }
                 } else if(chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)) {
                 <td class="govuk-table__cell">@messages("tax-year-summary.noData")</td>
@@ -89,7 +84,7 @@
                 <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
                 } else {
                 <td class="govuk-table__cell">@chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("tax-year-summary.noData"))</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric">@chargeItem.originalAmount.toCurrencyString</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric">@{chargeItem.originalAmount.toCurrencyString + "HERE"}</td>
                 }
             </tr>
         }
