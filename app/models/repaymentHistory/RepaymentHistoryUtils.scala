@@ -155,20 +155,26 @@ object RepaymentHistoryUtils {
                          (implicit dateServiceInterface: DateServiceInterface): Either[Throwable, PaymentHistoryEntry] = {
     for {
       creditType <- payment.creditType.toRight(MissingFieldException("Credit type"))
-      dueDate <- payment.dueDate.toRight(MissingFieldException(s"Payment Due Date - ${creditType.getClass.getSimpleName}"))
       amount = payment.amount
       transactionId <- payment.transactionId.toRight(MissingFieldException(
         if (hasCreditDrilldown) "Transaction ID" else "Document ID"))
-    } yield PaymentHistoryEntry(
-      date = dueDate,
-      creditType = creditType,
-      amount = amount,
-      linkUrl = if (hasCreditDrilldown)
-        getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
-      else
-        getCreditsLinkUrl(dueDate, isAgent),
-      visuallyHiddenText = transactionId
-    )
+    } yield {
+      val dueDate = payment.dueDate match {
+        case Some(date) => date
+        case None => payment.documentDate
+      }
+      
+      PaymentHistoryEntry(
+        date = dueDate,
+        creditType = creditType,
+        amount = amount,
+        linkUrl = if (hasCreditDrilldown)
+          getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
+        else
+          getCreditsLinkUrl(dueDate, isAgent),
+        visuallyHiddenText = transactionId
+      )
+    }
   }
 
   private def codedOutChargeEntry(chargeItem: ChargeItem, isAgent: Boolean)(implicit dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
