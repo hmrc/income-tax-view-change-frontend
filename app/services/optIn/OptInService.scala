@@ -30,7 +30,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
-import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInSessionData}
+import models.optin.{ConfirmTaxYearViewModel, MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
 import play.api.Logger
 import repositories.UIJourneySessionDataRepository
 import services.optIn.core.OptInProposition._
@@ -237,4 +237,51 @@ class OptInService @Inject()(
     }
   }
 
+  def initialiseOptInContextData()(implicit user: MtdItUser[_],
+                                   hc: HeaderCarrier,
+                                   ec: ExecutionContext): Future[Boolean] = {
+
+    fetchExistingUIJourneySessionDataOrInit().flatMap {
+
+      case Some(journeySessionData) =>
+        journeySessionData.optInSessionData match {
+
+          case Some(optInSd) if optInSd.optInContextData.isDefined =>
+            Future.successful(true)
+
+          case Some(optInSd) =>
+            val currentYear = dateService.getCurrentTaxYear
+            val nextYear = currentYear.nextYear
+
+            fetchOptInInitialState(currentYear, nextYear).flatMap { initialState =>
+
+              val contextData = OptInContextData(
+                currentTaxYear = currentYear.toString,
+                currentYearITSAStatus = initialState.currentYearItsaStatus.toString,
+                nextYearITSAStatus = initialState.nextYearItsaStatus.toString
+              )
+
+              val updatedJourneySessionData = journeySessionData.copy(
+                optInSessionData = Some(
+                  optInSd.copy(optInContextData = Some(contextData))
+                )
+              )
+
+              repository.set(updatedJourneySessionData)
+            }
+          case None =>
+            setupSessionData().flatMap {
+              case true  => initialiseOptInContextData()
+              case false => Future.successful(false)
+            }
+
+        }
+
+      case None =>
+        Logger("application").error(
+          "[OptInService][initialiseOptInContextData] Could not initialise session"
+        )
+        Future.successful(false)
+    }
+  }
 }

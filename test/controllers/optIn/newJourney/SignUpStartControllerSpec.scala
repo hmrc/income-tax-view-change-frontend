@@ -69,6 +69,8 @@ class SignUpStartControllerSpec extends MockAuthActions with MockOptInService {
           mockSaveIntent(TaxYear(2025, 2026))
           mockFetchSavedChosenTaxYear(Some(TaxYear(2025, 2026)))
 
+          when(mockOptInService.initialiseOptInContextData()(any(), any(), any())).thenReturn(Future.successful(true))
+
           val result = action(fakeRequest)
           status(result) shouldBe OK
         }
@@ -85,6 +87,8 @@ class SignUpStartControllerSpec extends MockAuthActions with MockOptInService {
 
           mockSaveIntent(TaxYear(2025, 2026))
           mockFetchSavedChosenTaxYear(None)
+
+          when(mockOptInService.initialiseOptInContextData()(any(), any(), any())).thenReturn(Future.successful(true))
 
           val result = action(fakeRequest)
           status(result) shouldBe SEE_OTHER
