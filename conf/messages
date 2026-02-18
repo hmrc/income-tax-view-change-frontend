@@ -196,6 +196,10 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty poin
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
 ## New Home Page ##
+new.home.navigation.tabs.yourTasks                              = Your tasks
+
+new.home.yourTasks.sub-heading                                  = Your tasks
+new.home.yourTasks.updates-and-deadlines                        = View updates and deadlines
 
 new.home.navigation.tabs.overview                               = Overview
 

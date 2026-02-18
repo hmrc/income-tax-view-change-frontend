@@ -19,13 +19,15 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
+@import views.html.partials.newHome.yourTasks._
 
 
 @this(
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
-        govukServiceNavigation : GovukServiceNavigation
+        govukServiceNavigation : GovukServiceNavigation,
+        updatesAndDeadlinesSection: UpdatesAndDeadlinesSection
 )
 
 @(origin: Option[String] = None,
@@ -53,6 +55,10 @@
     } else {
         user.userName.fold("")(_.name.getOrElse(""))
     }
+}
+
+@SectionBreak = {
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 }
 
 @mainTemplate(
@@ -98,4 +104,9 @@
         ),
         attributes = Map("style" -> "background-color: white;")
     ))
+
+    <div class="govuk-!-padding-bottom-6"></div>
+
+    @updatesAndDeadlinesSection(isAgent)
+    @SectionBreak
 }

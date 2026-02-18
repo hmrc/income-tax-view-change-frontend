@@ -198,6 +198,11 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
 ## New Home Page ##
 
+new.home.navigation.tabs.yourTasks                              = Eich tasgau
+
+new.home.yourTasks.sub-heading                                  = Eich tasgau
+new.home.yourTasks.updates-and-deadlines                        = Gweld diweddariadau a dyddiadau cau
+
 new.home.navigation.tabs.overview                               = Trosolwg
 
 new.home.overview.charges.sub-heading                           = Ffioedd, taliadau, credydau ac ad-daliadau
