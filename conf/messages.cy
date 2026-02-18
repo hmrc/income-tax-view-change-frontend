@@ -204,7 +204,6 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 ### Your New Tasks Tab
 
 new.home.navigation.tabs.yourTasks                              = Eich tasgau
-
 new.home.yourTasks.updates-and-deadlines                        = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
 new.home.yourTasks.upcoming-annual-updates-body            = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad blynyddol.
 new.home.yourTasks.upcoming-annual-updates-label           = Dyledus erbyn {0}

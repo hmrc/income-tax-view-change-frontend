@@ -62,7 +62,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(120), quarterlyObligationType) ++
     getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(20), quarterlyObligationType) ++
     getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(100), annualObligationType)
-
+  
   class TestSetup(
                    origin: Option[String] = None,
                    isAgent: Boolean = false,
@@ -74,7 +74,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
                    obligations: Seq[SingleObligationModel] = getSingleObligationModels(),
                    nextTaxReturnDueDate: Option[LocalDate] = None,
                    nextQuarterlyUpdatesDueDate: Option[LocalDate] = None) {
-
+    
+  }
     val testMessages: Messages = if (welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
     } else {
@@ -102,7 +103,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
-
+    
   "New Home Your Tasks page for individuals" when {
     "upcoming annual submission due more than 30 days" should {
       "display the correct content" in new TestSetup(nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(31))) {

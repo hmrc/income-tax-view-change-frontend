@@ -64,6 +64,10 @@
     }
 }
 
+@SectionBreak = {
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+}
+
 @mainTemplate(
     pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
