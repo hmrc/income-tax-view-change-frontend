@@ -47,7 +47,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
           band <- modifiedBaseBandLimit
         } yield s"Your Basic Rate limit has been increased by $gross to $band for Gift Aid payments"
 
-      case "C22202" => Some("Tax due on gift aid payments exceeds your income tax charged so you are liable for gift aid tax")
+      case "C22202" => Some("Tax due on Gift Aid payments exceeds your Income Tax charged so you are liable for Gift Aid tax")
       case "C22203" => Some("Class 2 National Insurance has not been charged because your self-employed profits are under the small profit threshold")
       case "C22205" => lossesApplied.map(lossApplied => s"Total loss from all income sources was capped at $lossApplied")
       case "C22206" => Some("One or more of your annual adjustments have not been applied because you have submitted additional income or expenses")
@@ -64,7 +64,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
         } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution and Gift Aid payments"
 
       case "C22210" => Some("Employment related expenses are capped at the total amount of employment income")
-      case "C22211" => Some("This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration")
+      case "C22211" => Some("This is a forecast of your annual Income Tax liability based on the information you have provided to date. Any overpayments of Income Tax will not be refundable until after you have submitted your final declaration")
       case "C22212" => Some("Employment and Deduction related expenses have been limited to employment income.")
       case "C22213" => Some("Due to your employed earnings, paying Class 2 Voluntary may not be beneficial.")
       case "C22214" => Some("Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions.")
