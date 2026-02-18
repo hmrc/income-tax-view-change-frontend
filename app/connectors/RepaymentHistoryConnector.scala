@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.core.Nino
-import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
+import models.repaymentHistory._
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -47,13 +47,20 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
-          response.json.validate[RepaymentHistoryModel].fold(
-            invalid => {
-              Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
-              RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
-            },
-            valid => valid
-          )
+          response.json.validate[HipRepaymentHistoryResponse]
+            .map(hip =>
+              RepaymentHistoryModel(hip.etmp_Response_Details.repaymentsViewerDetails)
+            )
+            .orElse(
+              response.json.validate[RepaymentHistoryModel]
+            )
+            .fold(
+              invalid => {
+                Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
+                RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
+              },
+              valid => valid
+            )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
@@ -74,13 +81,20 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
-          response.json.validate[RepaymentHistoryModel].fold(
-            invalid => {
-              Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
-              RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
-            },
-            valid => valid
-          )
+          response.json.validate[HipRepaymentHistoryResponse]
+            .map(hip =>
+              RepaymentHistoryModel(hip.etmp_Response_Details.repaymentsViewerDetails)
+            )
+            .orElse(
+              response.json.validate[RepaymentHistoryModel]
+            )
+            .fold(
+              invalid => {
+                Logger("application").error(s"Json validation error parsing repayment response, error $invalid")
+                RepaymentHistoryErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing repayment response")
+              },
+              valid => valid
+            )
         case status =>
           if (status >= INTERNAL_SERVER_ERROR) {
             Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
