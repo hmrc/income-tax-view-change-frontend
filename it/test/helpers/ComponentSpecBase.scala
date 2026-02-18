@@ -158,6 +158,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.identity-verification-frontend.host" -> "http://stubIV.com",
     "microservice.services.income-tax-view-change.host" -> mockHost,
     "microservice.services.income-tax-view-change.port" -> mockPort,
+    "microservice.services.income-tax-obligations.host" -> mockHost,
+    "microservice.services.income-tax-obligations.port" -> mockPort,
     "microservice.services.self-assessment-api.host" -> mockHost,
     "microservice.services.self-assessment-api.port" -> mockPort,
     "microservice.services.business-account.host" -> mockHost,

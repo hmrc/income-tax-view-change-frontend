@@ -59,7 +59,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAudi
 
     def getAppConfig(): FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-        override lazy val itvcProtectedService: String = "http://localhost:9999"
+        override lazy val incomeTaxObligationsService: String = "http://localhost:9999"
       }
 
     val connector = new ObligationsConnector(mockHttpClientV2, mockAuditingService, getAppConfig())
@@ -67,13 +67,13 @@ class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAudi
 
   "getOpenObligationsUrl" should {
     "return the correct url" in new Setup {
-      connector.getOpenObligationsUrl(testNino) shouldBe s"$baseUrl/income-tax-view-change/$testNino/open-obligations"
+      connector.getOpenObligationsUrl(testNino) shouldBe s"$baseUrl/income-tax-obligations/$testNino/open-obligations"
     }
   }
 
   "getAllObligationsUrl" should {
     "return the correct url" in new Setup {
-      connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino) shouldBe s"$baseUrl/income-tax-view-change/$testNino/obligations/from/$fromDate/to/$toDate"
+      connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino) shouldBe s"$baseUrl/income-tax-obligations/$testNino/obligations/from/$fromDate/to/$toDate"
     }
   }
 
@@ -84,7 +84,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAudi
     val emptyResponse = HttpResponse(status = Status.NOT_FOUND, json = Json.parse("{}"), headers = Map.empty)
     val badResponse = HttpResponse(status = Status.BAD_REQUEST, body = "Error Message")
 
-    val getNextUpdatesTestUrl = s"http://localhost:9999/income-tax-view-change/$testNino/open-obligations"
+    val getNextUpdatesTestUrl = s"http://localhost:9999/income-tax-obligations/$testNino/open-obligations"
 
     "return a SuccessResponse with JSON in case of success" in new Setup {
       setupMockHttpV2Get(s"$getNextUpdatesTestUrl")(successResponse)
