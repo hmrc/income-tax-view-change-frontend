@@ -92,7 +92,8 @@
 }
 
 @getLongAddressFromBusinessAddressDetails(address1: String, address2: Option[String], address3: Option[String], address4: Option[String], postCode: Option[String], countryCode: Option[String]) = @{
-    List(Some(address1),
+    List(
+        Some(address1),
         address2,
         address3,
         address4,
@@ -168,7 +169,7 @@
                         )
                     )
                 ))
-            )
+            ),
         )
     } else Seq.empty
 }
@@ -203,9 +204,7 @@
                 key = Key(
                     content = Text(getMessage("trade"))
                 ),
-                value = Value(
-                    content = Text(extractTrade)
-                ),
+                value = Value(content = Text(extractTrade)),
                 actions = Some(Actions(
                     items = Seq(
                         ActionItem(
@@ -246,6 +245,50 @@
     } else Seq.empty
 }
 
+@addedInternationalAddress = @{
+    if(true) {
+        Seq(
+            SummaryListRow(
+                key = Key(content = Text(messages("check-details-fp.international.address"))),
+                value = Value(content = extractAddress),
+                actions = Some(Actions(
+                    items =
+                        Seq(
+                            ActionItem(
+                                href = "",
+                                content = Text(getMessage("change")),
+                                attributes = Map("id" -> "added-international-address-link"),
+                                visuallyHiddenText = Some(getMessage("address"))
+                            )
+                        )
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
+@NewAddressInUk = @{
+    if(true) {
+        Seq(
+            SummaryListRow(
+                key = Key(content = Text(messages("check-details-fp.new.address.in.uk"))),
+                value = Value(content = extractAddress),
+                actions = Some(Actions(
+                    items =
+                        Seq(
+                            ActionItem(
+                                href = "",
+                                content = Text(getMessage("change")),
+                                attributes = Map("id" -> "is-the-new-address-in-the-uk"),
+                                visuallyHiddenText = Some(getMessage("address"))
+                            )
+                        )
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
 @mainTemplate(
     pageTitle = getMessage("title"),
     backUrl = Some(backUrl),
@@ -264,7 +307,7 @@
 
         @govukSummaryList(SummaryList(
             rows = {
-                businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow
+                businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow ++ addedInternationalAddress
             },
             attributes = Map("id" -> "check-details-table")
         ))
