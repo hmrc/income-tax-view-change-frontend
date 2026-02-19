@@ -16,15 +16,23 @@
 
 @this()
 
-@(title: String, link: String)
+@(title: String, link: String)(implicit messages: Messages)
 
 <div class="govuk-summary-card-no-border govuk-!-padding-top-1">
-    <div class="govuk-summary-card__title-wrapper govuk-!-padding-bottom-2 govuk-!-padding-top-2">
+    <div class="govuk-summary-card__title-wrapper--l govuk-!-padding-bottom-2 govuk-!-padding-top-2 govuk-!-padding-left-1" style="background-color: #f3f2f1">
         <h3 class="govuk-summary-card__title">
             <a class="govuk-link--no-visited-state govuk-link--no-underline" href="@link">
                 @title
                 <span class="hmrc-card__chevron" aria-hidden="true"></span>
             </a>
         </h3>
+        @* TODO this should be dynamic. And fix Styling https://design-system.service.gov.uk/styles/layout/#setting-up-page-wrappers *@
+      @*  <p class="govuk-summary-card__content">@messages("new.home.yourTasks.updates-and-deadlines-body")</p> *@
+        <p class="govuk-summary-card__content govuk-!-padding-0">@messages("new.home.yourTasks.updates-and-deadlines-body")</p>
+        <p class="govuk-summary-card__content govuk-!-padding-0">
+            @* TODO this should be dynamic *@
+            <span class="govuk-tag govuk-tag--red">Due 31 Jan 2026</span>
+        </p>
     </div>
+
 </div>
