@@ -36,7 +36,6 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndP
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.HandleYourTasksView
-
 import java.time.LocalDate
 
 class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
@@ -115,7 +114,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(31).toLongDateShort}"
       }
     }
-
+    
     "upcoming annual submission due exactly in 30 days" should {
       "display the correct content" in new TestSetup(nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30))) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
