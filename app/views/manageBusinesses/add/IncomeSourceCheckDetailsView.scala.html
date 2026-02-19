@@ -224,8 +224,50 @@
     if(viewModel.incomeSourceType == SelfEmployment) {
         Seq(
             SummaryListRow(
+                key = Key(content = Text(getMessage("address"))),
+                value = Value(content = extractAddress),
+                actions = Some(Actions(
+                    items =
+                        Seq(
+                            ActionItem(
+                                href = changeBusinessAddressURL,
+                                content = Text(getMessage("change")),
+                                attributes = Map("id" -> "change-business-address-link"),
+                                visuallyHiddenText = Some(getMessage("address"))
+                            )
+                        )
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
+@soleTraderInUkAddress = @{
+    if(viewModel.incomeSourceType == SelfEmployment) {
+        Seq(
+            SummaryListRow(
+                key = Key(content = Text(messages("check-details.sole.trader.in.uk.address"))),
+                value = Value(content = Text("Yes/No")),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                        href = changeBusinessAddressURL,
+                        content = Text(getMessage("change")),
+                        attributes = Map("id" -> "change-business-address-link"),
+                        visuallyHiddenText = Some(getMessage("address"))
+                    ))
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
+@soleTraderBusinessAddressRow = @{
+    if(viewModel.incomeSourceType == SelfEmployment) {
+        Seq(
+            SummaryListRow(
                 key = Key(
-                    content = Text(getMessage("address"))
+                    content = Text(messages("check-details.sole.trader.address"))
                 ),
                 value = Value(
                     content = extractAddress
@@ -267,12 +309,12 @@
     } else Seq.empty
 }
 
-@NewAddressInUk = @{
+@newAddressInUk = @{
     if(true) {
         Seq(
             SummaryListRow(
                 key = Key(content = Text(messages("check-details-fp.new.address.in.uk"))),
-                value = Value(content = extractAddress),
+                value = Value(content = Text("Yes/No")),
                 actions = Some(Actions(
                     items =
                         Seq(
@@ -307,7 +349,7 @@
 
         @govukSummaryList(SummaryList(
             rows = {
-                businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow ++ addedInternationalAddress
+                businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow ++ soleTraderBusinessAddressRow ++ addedInternationalAddress ++ newAddressInUk ++ soleTraderInUkAddress
             },
             attributes = Map("id" -> "check-details-table")
         ))

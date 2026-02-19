@@ -1878,10 +1878,11 @@ check-details.heading                                         = Sole trader
 check-details.business-name                                   = Business name
 check-details.start-date                                      = Trading start date
 check-details.trade                                           = Type of trade
+
 check-details.address                                         = Address
 check-details.sole.trader.address                             = Sole trader business address
 
-check-details.in.uk.address                                   = Is the address of your sole trader business in the UK
+check-details.sole.trader.in.uk.address                                   = Is the address of your sole trader business in the UK
 
 check-details.change                                          = Change
 check-details.description                                     = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
