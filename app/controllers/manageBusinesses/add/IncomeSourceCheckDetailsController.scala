@@ -22,7 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationAdded
 import models.UIJourneySessionData
@@ -32,7 +32,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{CreateBusinessDetailsService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
@@ -41,42 +41,51 @@ import views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsView: IncomeSourceCheckDetailsView,
-                                                   val authActions: AuthActions,
-                                                   val businessDetailsService: CreateBusinessDetailsService,
-                                                   val auditingService: AuditingService,
-                                                   val sessionService: SessionService,
-                                                   val itvcErrorHandler: ItvcErrorHandler,
-                                                   val itvcErrorHandlerAgent: AgentItvcErrorHandler)
-                                                  (implicit val ec: ExecutionContext,
-                                                   val mcc: MessagesControllerComponents,
-                                                   val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with JourneyCheckerManageBusinesses with I18nSupport {
+class IncomeSourceCheckDetailsController @Inject()(
+                                                    val authActions: AuthActions,
+                                                    val auditingService: AuditingService,
+                                                    val businessDetailsService: CreateBusinessDetailsService,
+                                                    val sessionService: SessionService,
+                                                    val incomeSourceCheckDetailsView: IncomeSourceCheckDetailsView,
+                                                    val itvcErrorHandler: ItvcErrorHandler,
+                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                                  (
+                                                    implicit val ec: ExecutionContext,
+                                                    val mcc: MessagesControllerComponents,
+                                                    val appConfig: FrontendAppConfig
+                                                  ) extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport {
 
 
-  private lazy val errorRedirectUrl: (Boolean, IncomeSourceType, Boolean) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean) =>
+  private def errorRedirectUrl(
+                                isAgent: Boolean,
+                                incomeSourceType: IncomeSourceType,
+                                isTriggeredMigration: Boolean
+                              ): String = {
     if (isAgent) routes.IncomeSourceNotAddedController.showAgent(incomeSourceType, isTriggeredMigration).url
     else routes.IncomeSourceNotAddedController.show(incomeSourceType, isTriggeredMigration).url
-
-  def show(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = false,
-        incomeSourceType,
-        isTriggeredMigration
-      )(implicitly, itvcErrorHandler)
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
-    implicit mtdItUser =>
-      handleRequest(
-        sources = mtdItUser.incomeSources,
-        isAgent = true,
-        incomeSourceType,
-        isTriggeredMigration
-      )(implicitly, itvcErrorHandlerAgent)
-  }
+  def show(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividual(isTriggeredMigration).async {
+      implicit user =>
+        handleRequest(
+          sources = user.incomeSources,
+          isAgent = false,
+          incomeSourceType,
+          isTriggeredMigration
+        )(implicitly, itvcErrorHandler)
+    }
+
+  def showAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
+      implicit mtdItUser =>
+        handleRequest(
+          sources = mtdItUser.incomeSources,
+          isAgent = true,
+          incomeSourceType,
+          isTriggeredMigration
+        )(implicitly, itvcErrorHandlerAgent)
+    }
 
   private def handleRequest(sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
@@ -166,7 +175,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
       handleSubmit(isAgent = false, incomeSourceType, isTriggeredMigration)
   }
 
-  def submitAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
+  def submitAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
     implicit mtdItUser =>
       handleSubmit(isAgent = true, incomeSourceType, isTriggeredMigration)
   }
