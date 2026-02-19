@@ -2200,7 +2200,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  // TODO - set the interest values to None, as it's not a late payment charge
+
   val financialDetailsWithReviewAndReconcileDebits: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(3.00), Some(7.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = ReviewAndReconcileDocumentDetailsNotDue,
