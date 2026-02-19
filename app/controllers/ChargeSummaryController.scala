@@ -20,21 +20,21 @@ import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.featureswitch._
+import config.featureswitch.*
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.ChargeSummaryController.ErrorCode
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
-import models.admin._
-import models.chargeHistory._
+import models.admin.*
+import models.chargeHistory.*
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.core.Nino
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.paymentAllocationCharges.PaymentAllocationViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, PaymentAllocationsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -44,7 +44,6 @@ import views.html.{ChargeSummaryView, YourSelfAssessmentChargeSummaryView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.libs.json.Json
 
 object ChargeSummaryController {
   case class ErrorCode(message: String)

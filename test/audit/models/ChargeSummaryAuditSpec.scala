@@ -111,6 +111,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
     outstandingAmount = 0,
     documentDate = LocalDate.of(2018, 3, 29),
     accruingInterestAmount = Some(54.32),
+    latePaymentInterestAmount = Some(54.32),
     interestOutstandingAmount = Some(2),
     interestFromDate = Some(LocalDate.of(2021, 10, 6)),
     interestEndDate = Some(LocalDate.of(2022, 1, 6))
@@ -168,6 +169,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
   )
   val chargeItemWithInterest: ChargeItem = chargeItemWithNoInterest.copy(
     accruingInterestAmount = Some(54.32),
+    latePaymentInterestAmount = Some(54.32),
     interestOutstandingAmount = Some(2),
     interestFromDate = Some(LocalDate.of(2021, 10, 6)),
     interestEndDate = Some(LocalDate.of(2022, 1, 6))
@@ -456,7 +458,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
           ).detail mustBe commonAuditDetails(Agent) ++ Json.obj(
             "charge" -> Json.obj(
               "remainingToPay" -> docDetailWithInterest.interestRemainingToPay,
-              "fullPaymentAmount" -> docDetailWithInterest.accruingInterestAmount,
+              "fullPaymentAmount" -> docDetailWithInterest.latePaymentInterestAmount,
               "dueDate" -> docDetailWithInterest.interestEndDate,
               "chargeType" -> getChargeType(chargeItemWithInterest, latePaymentCharge = true),
               "interestPeriod" -> "2021-10-06 to 2022-01-06",

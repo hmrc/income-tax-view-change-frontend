@@ -135,7 +135,7 @@ case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
     "interestLock" -> paymentBreakdown.interestLockExists)
 
   private val fullPaymentAmount = if (isLatePaymentCharge)
-    chargeItem.accruingInterestAmount else Option(chargeItem.originalAmount)
+    chargeItem.latePaymentInterestAmount else Option(chargeItem.originalAmount)
 
   private val remainingToPay = if (isLatePaymentCharge)
     chargeItem.interestRemainingToPay else chargeItem.remainingToPay

@@ -155,7 +155,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 stubAuthorised(mtdUserRole)
                                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
-                                  123.45, 0.0, accruingInterestAmount = Some(54.32)))
+                                  123.45, 1.2, latePaymentInterestAmount = Some(54.32)))
 
                                 val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
