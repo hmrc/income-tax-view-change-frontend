@@ -1873,26 +1873,33 @@ cease-check-answers-fp.caption                                = Foreign property
 
 # check business details
 
-check-details.title                                     = Confirm this information is correct
-check-details.heading                                   = Sole trader
-check-details.business-name                             = Business name
-check-details.start-date                                = Trading start date
-check-details.trade                                     = Type of trade
-check-details.address                                   = Address
-check-details.change                                    = Change
-check-details.description                               = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
+check-details.title                                           = Confirm this information is correct
+check-details.heading                                         = Sole trader
+check-details.business-name                                   = Business name
+check-details.start-date                                      = Trading start date
+check-details.trade                                           = Type of trade
+check-details.address                                         = Address
+check-details.sole.trader.address                             = Sole trader business address
 
-check-details-uk.title                                  = Confirm this information is correct
-check-details-uk.heading                                = UK property
-check-details-uk.start-date                             = Start date
-check-details-uk.change                                 = Change
-check-details-uk.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
+check-details.in.uk.address                                   = Is the address of your sole trader business in the UK
 
-check-details-fp.title                                  = Confirm this information is correct
-check-details-fp.heading                                = Foreign property
-check-details-fp.start-date                             = Start date
-check-details-fp.change                                 = Change
-check-details-fp.description                            = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
+check-details.change                                          = Change
+check-details.description                                     = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
+
+check-details-uk.title                                        = Confirm this information is correct
+check-details-uk.heading                                      = UK property
+check-details-uk.start-date                                   = Start date
+check-details-uk.change                                       = Change
+check-details-uk.description                                  = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
+
+check-details-fp.title                                        = Confirm this information is correct
+check-details-fp.heading                                      = Foreign property
+check-details-fp.start-date                                   = Start date
+check-details-fp.change                                       = Change
+check-details-fp.description                                  = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
+check-details-fp.new.address.in.uk                            = Is the new address in the UK
+check-details-fp.international.address                        = Added international address for this business
+
 
 business.added.text                                           = What you must do
 business.added.deadlines                                      = Your revised deadlines
@@ -1907,7 +1914,6 @@ business.added.table.heading.2                                = Deadline
 business.added.income.sources.button                          = Your income sources
 business.added.previous.tax.years.heading                     = Previous tax years
 business.added.previous.tax.years.t1                          = You must make sure that you have sent all the required income and expenses, and final declarations for tax years earlier than
-
 
 business.added.view.all.businesses                                                          = View all your businesses
 
