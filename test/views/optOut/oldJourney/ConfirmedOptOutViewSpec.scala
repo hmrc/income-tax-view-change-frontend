@@ -157,7 +157,7 @@ class ConfirmedOptOutViewSpec extends TestSupport {
       "show the 'Your reporting obligations' section" in {
 
         pageDocument.getElementById(Selectors.yourReportingObligationsHeading).text() shouldBe "Your reporting obligations from the next tax year onwards"
-        pageDocument.getElementById(Selectors.requiredToUseMtdInset).text() shouldBe "From 6 April 2024, you will be required to use Making Tax Digital for Income tax."
+        pageDocument.getElementById(Selectors.requiredToUseMtdInset).text() shouldBe "From 6 April 2024, you will be required to use Making Tax Digital for Income Tax."
         pageDocument.getElementById(Selectors.thisIsBecause).text() shouldBe "This could be because:"
         pageDocument.getElementById(Selectors.yourObligationsBullet(1)).text() shouldBe "HMRC lowered the income threshold for it"
         pageDocument.getElementById(Selectors.yourObligationsBullet(2)).text() shouldBe "you reported an increase in your qualifying income in a tax return"
