@@ -33,7 +33,6 @@ import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.NewHomeYourTasksView
 
-
 class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val newHomeYourTasksView: NewHomeYourTasksView = app.injector.instanceOf[NewHomeYourTasksView]
@@ -72,8 +71,10 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
   "New Home Your Tasks page for individuals" should {
     "display the the correct content" in new TestSetup() {
       document.select("h2.govuk-heading-m").get(0).text() shouldBe "Your tasks"
-      document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "View updates and deadlines"
-      document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/dummyIndividualURL")
+      document.select(".govuk-summary-card__title").get(0).text() shouldBe "View updates and deadlines >"
+      document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/submission-deadlines")
+      document.select(".govuk-summary-card__content").get(0).text() shouldBe "You have an upcoming annual submission deadline."
+      document.select(".govuk-summary-card__content").get(1).text() shouldBe "Due 31 Jan 2026"
     }
   }
 
@@ -81,8 +82,11 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
   "New Home Overview page for agents" should {
     "display the the correct content" in new TestSetup(isAgent = true) {
       document.select("h2.govuk-heading-m").get(0).text() shouldBe "Your tasks"
-      document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "View updates and deadlines"
-      document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/dummyAgentURL")
+      document.select(".govuk-summary-card__title").get(0).text() shouldBe "View updates and deadlines >"
+      document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
+      //TODO check if wording for Agents is matching
+      document.select(".govuk-summary-card__content").get(0).text() shouldBe "You have an upcoming annual submission deadline."
+      document.select(".govuk-summary-card__content").get(1).text() shouldBe "Due 31 Jan 2026"
     }
   }
 

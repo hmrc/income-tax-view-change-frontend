@@ -201,7 +201,8 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 new.home.navigation.tabs.yourTasks                              = Eich tasgau
 
 new.home.yourTasks.sub-heading                                  = Eich tasgau
-new.home.yourTasks.updates-and-deadlines                        = Gweld diweddariadau a dyddiadau cau
+new.home.yourTasks.updates-and-deadlines                        = Gweld diweddariadau a dyddiadau cau >
+new.home.yourTasks.updates-and-deadlines-body                   = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad blynyddol.
 
 new.home.navigation.tabs.overview                               = Trosolwg
 

@@ -22,11 +22,9 @@
 
 @updatesAndDeadlinesUrl: String = @{
     if(isAgent){
-        "/report-quarterly/income-and-expenses/view/dummyAgentURL"
-//        SomeController.showAgent().url
+        routes.NextUpdatesController.showAgent().url
     } else {
-        "/report-quarterly/income-and-expenses/view/dummyIndividualURL"
-//        SomeController.show().url
+        routes.NextUpdatesController.show().url
     }
 }
 
