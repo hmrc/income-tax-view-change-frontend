@@ -168,20 +168,32 @@ case class ChargeSummaryViewModel(
     val matchingPayment = payment.clearingId
     matchingPayment match {
       case Some(paymentId) => {
-        val link: String = if (isAgent) {
-          PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
-        } else {
-          PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
+        val link: String = (isAgent, payment.isCutoverCredit) match {
+          case (true, false) => PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
+          case (false, false) => PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
+          case _ => ""
         }
-        val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
-          messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
-        Html(
-          s"""
-             |<a class="govuk-link" href="$link">
-             |    $linkText
-             |    <span class="govuk-visually-hidden">${chargeItem.taxYear.endYear}</span>
-             |</a>
+
+        val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
+        else if (payment.isCutoverCredit) messages("paymentHistory.cutOver")
+        else messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
+        if (payment.isCutoverCredit) {
+          Html(
+            s"""
+               |<p class="govuk-body">
+               |    $linkText
+               |    <span class="govuk-visually-hidden">${chargeItem.taxYear.endYear}</span>
+               |</p>
+            """.stripMargin)
+        } else {
+          Html(
+            s"""
+               |<a class="govuk-link" href="$link">
+               |    $linkText
+               |    <span class="govuk-visually-hidden">${chargeItem.taxYear.endYear}</span>
+               |</a>
              """.stripMargin)
+        }
       }
       case None => {
         Html(messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut))
