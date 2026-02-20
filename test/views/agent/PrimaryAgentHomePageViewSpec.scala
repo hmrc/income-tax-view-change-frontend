@@ -19,8 +19,8 @@ package views.agent
 import auth.MtdItUser
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
-import config.featureswitch._
-import models.homePage._
+import config.featureswitch.*
+import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -29,9 +29,10 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants._
+import testConstants.ANewCreditAndRefundModel
+import testConstants.BaseTestConstants.*
 import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -98,7 +99,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val agentHome: PrimaryAgentHomeView = app.injector.instanceOf[PrimaryAgentHomeView]
 
-    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()),
+    val paymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(ANewCreditAndRefundModel().withTotalCredit(200).model,
       creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
 
     val returnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
