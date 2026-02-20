@@ -164,7 +164,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedEOPSModel)))
+        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedModel)))
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = buildGETMTDClient(path).futureValue
