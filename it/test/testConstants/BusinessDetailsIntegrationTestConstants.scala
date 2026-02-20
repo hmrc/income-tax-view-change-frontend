@@ -58,7 +58,7 @@ object BusinessDetailsIntegrationTestConstants {
     addressLine3 = Some("Magical Land"),
     addressLine4 = Some("England"),
     postCode = Some("ZL1 064"),
-    countryCode = Some("UK")
+    countryCode = Some("GB")
   )
 
   val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))

@@ -20,7 +20,7 @@ import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import models.core.{AddressModel, IncomeSourceId, IncomeSourceIdHash}
 import play.api.libs.json.{Format, JsValue, Json}
 import play.api.{Logger, Logging}
 import services.DateServiceInterface
@@ -125,6 +125,23 @@ case class IncomeSourceDetailsModel(
 
   def isConfirmedUser: Boolean = {
     Set(CustomerLed.getValue, HmrcConfirmed.getValue).contains(channel)
+  }
+
+  def getAllUniqueBusinessAddresses: List[String] = {
+    val allAddresses = businesses.flatMap { thisBusiness =>
+      thisBusiness.address.map { address =>
+        (address.addressLine1, address.postCode, address.countryCode) match {
+          case (Some(al1), Some(pc), Some("GB")) => Some(s"$al1, $pc")
+          case (Some(al1), _, _) => Some(s"$al1")
+          case _ => None
+        }
+      }
+    }
+    allAddresses.flatten.distinct
+  }
+  
+  def getAllUniqueBusinessAddressesWithIndex: Seq[(String, Int)] = {
+    getAllUniqueBusinessAddresses.zipWithIndex
   }
 }
 

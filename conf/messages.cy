@@ -19,6 +19,7 @@ base.confirm-and-save                                           = Cadarnhau a ch
 base.confirm-this-change                                        = Cadarnhau’r newid hwn
 base.software.compatible.with.mtd.income.tax.link               = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol
 base.fullstop                                                   = .
+base.or                                                         = neu
 
 
 ## Accessibility ##
@@ -2465,6 +2466,11 @@ manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button      
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header                                = Mae problem
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                           = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched          = Dewiswch y blynyddoedd treth yr ydych am gofrestru ar eu cyfer
+
+# choose international sole trader address
+manageBusinesses.add.chooseSoleTraderAddress.heading                                                         = Beth yw cyfeiriad eich busnes unig fasnachwr?
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.newAddress                                         = Dim un o’r rhain, rwyf am ychwanegu cyfeiriad newydd
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.error                                              = Dewiswch opsiwn er mwyn parhau
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##
