@@ -36,9 +36,10 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.NextUpdatesService
+import services.{CreditService, NextUpdatesService}
 import services.optIn.OptInService
 import services.optout.OptOutService
+import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
@@ -66,12 +67,18 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
   val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
 
+  given mockedCreditService: CreditService = mock(classOf[CreditService])
+
   given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
+
   given mockedOptInService: OptInService = mock(classOf[OptInService])
+
   given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
 
   given ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
+
   given AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
+
   given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
 
   trait Setup {
@@ -91,6 +98,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       mockWhatYouOweService,
       mockITSAStatusService,
       mockPenaltyDetailsService,
+      mockedCreditService,
       mockedOptInService,
       mockedOptOutService,
       auditingService
@@ -148,6 +156,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
                 mainTransaction = Some("4920"), transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))))
+            when(mockedCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(ANewCreditAndRefundModel().withTotalCredit(796).model))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(financialDetails))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
@@ -156,7 +165,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
-
             when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
               .thenReturn(Future.successful(true))
             when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
@@ -724,6 +732,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             enable(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
+            when(mockedCreditService.getAllCredits(any(), any()))
+              .thenReturn(Future.successful(
+                ANewCreditAndRefundModel()
+                  .model
+              ))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),

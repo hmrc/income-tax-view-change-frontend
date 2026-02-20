@@ -60,6 +60,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
                                val whatYouOweService: WhatYouOweService,
                                val ITSAStatusService: ITSAStatusService,
                                val penaltyDetailsService: PenaltyDetailsService,
+                               val creditService: CreditService,
                                val optInService: OptInService,
                                val optOutService: OptOutService,
                                auditingService: AuditingService)
@@ -143,6 +144,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     val currentTaxYear = TaxYear(getCurrentTaxYearEnd - 1, getCurrentTaxYearEnd)
 
     for {
+      credits <- creditService.getAllCredits()
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       paymentsDue = getDueDates(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       dunningLockExists = hasDunningLock(unpaidCharges)
@@ -174,7 +176,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
 
       val paymentCreditAndRefundHistoryTileViewModel =
-        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
+        PaymentCreditAndRefundHistoryTileViewModel(credits, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
 
       val yourBusinessesTileViewModel =
         YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
