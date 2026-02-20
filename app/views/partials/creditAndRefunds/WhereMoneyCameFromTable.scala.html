@@ -135,7 +135,7 @@
         ),
         HeadCell(
             content = Text(messages("money-in-your-account.where-from.table-header.amount")),
-            classes = "govuk-!-text-align-right"
+            classes = "govuk-!-text-align-right govuk-!-width-one-quarter"
         )
     )),
     rows = viewModel.creditRows.sortBy(_.date).zipWithIndex.map{ case (creditRow, index) =>
