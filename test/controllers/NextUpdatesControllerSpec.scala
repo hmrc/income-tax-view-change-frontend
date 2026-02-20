@@ -60,14 +60,14 @@ class NextUpdatesControllerSpec extends MockAuthActions
 
   val obligationsModel: ObligationsModel = ObligationsModel(Seq(
     GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
-    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
+    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#002", StatusFulfilled)))
   ))
 
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
     GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
-    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "EOPS", Some(fixedDate), "EOPS", StatusFulfilled)))
+    GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#002", StatusFulfilled)))
   )).obligationsByDate(isR17ContentEnabled = true).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-    DeadlineViewModel(getQuarterType(obligations.head.incomeType), standardAndCalendar = false, date, obligations, Seq.empty)
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
   })
 
   val contentChecks = NextUpdatesQuarterlyReportingContentChecks(
@@ -86,10 +86,6 @@ class NextUpdatesControllerSpec extends MockAuthActions
       currentYearItsaStatus = Voluntary,
       nextYearItsaStatus = Mandated
     )
-
-  private def getQuarterType(string: String) = {
-    if (string == "Quarterly") QuarterlyObligation else EopsObligation
-  }
 
   def mockObligations: OngoingStubbing[Future[ObligationsResponseModel]] = {
     when(mockNextUpdatesService.getOpenObligations()(any(), any()))

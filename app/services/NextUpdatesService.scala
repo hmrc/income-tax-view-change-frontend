@@ -76,13 +76,19 @@ class NextUpdatesService @Inject()(
 
 
   def getNextUpdatesViewModel(obligationsModel: ObligationsModel, isR17ContentEnabled: Boolean)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
-    val allDeadlines = obligationsModel.obligationsByDate(isR17ContentEnabled).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-      if (obligations.headOption.map(_.obligation.obligationType).contains("Quarterly")) {
-        val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
-        DeadlineViewModel(QuarterlyObligation, standardAndCalendar = true, date, obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty), obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
-      }
-      else DeadlineViewModel(EopsObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-    }.filter(deadline => (deadline.obligationType != EopsObligation) && !(deadline.standardQuarters.isEmpty && deadline.calendarQuarters.isEmpty))
+    val allDeadlines =
+      obligationsModel.obligationsByDate(isR17ContentEnabled).flatMap { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+        if (obligations.headOption.exists(_.obligation.obligationType == "Quarterly")) {
+          val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
+          Some(
+            DeadlineViewModel(QuarterlyObligation,
+              standardAndCalendar = true,
+              date,
+              obligationsByType.getOrElse(Some(QuarterTypeStandard), Seq.empty),
+              obligationsByType.getOrElse(Some(QuarterTypeCalendar), Seq.empty))
+          )
+        } else None
+      }.filterNot(deadline => deadline.standardQuarters.isEmpty && deadline.calendarQuarters.isEmpty)
 
     val (missedDeadlines, remainingDeadlines) = if (isR17ContentEnabled) allDeadlines.partition(_.deadline.isBefore(dateService.getCurrentDate)) else (Seq.empty, allDeadlines)
 
