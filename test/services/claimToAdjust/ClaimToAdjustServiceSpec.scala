@@ -141,6 +141,18 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
         result.futureValue shouldBe Right(Some(TaxYear(startYear = 2023, endYear = 2024)))
       }
+      "a user has four sets of document details relating to PoA data. Two of them marked as credits." in {
+        setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
+        setupGetCalculationList(testNino, "23-24")(calculationListSuccessResponseModelNonCrystallised)
+        setupMockGetFinancialDetails(2024, testNino)(userPOADetails2024)
+        setupMockGetFinancialDetails(2023, testNino)(genericUserPoaDetailsWithPoaCredits(2023, outstandingAmount = 250.00))
+
+        val (service, _) = newFixture(LocalDate.of(2023, 8, 27))
+        val result = service.getPoaTaxYearForEntryPoint(testUserNino)
+
+        result.futureValue shouldBe Right(Some(TaxYear(startYear = 2022, endYear = 2023)))
+
+      }
     }
     "return a future right which is empty" when {
       "for amendable Poa years a user has non-crystallised tax years but no poa data" in {
