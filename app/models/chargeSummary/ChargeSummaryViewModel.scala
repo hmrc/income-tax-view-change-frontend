@@ -168,10 +168,10 @@ case class ChargeSummaryViewModel(
     val matchingPayment = payment.clearingId
     matchingPayment match {
       case Some(paymentId) => {
-        val link: String = (isAgent, payment.isCutoverCredit) match {
-          case (true, false) => PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
-          case (false, false) => PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
-          case _ => ""
+        val link: String = if (isAgent) {
+          PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
+        } else {
+          PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
         }
 
         val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
