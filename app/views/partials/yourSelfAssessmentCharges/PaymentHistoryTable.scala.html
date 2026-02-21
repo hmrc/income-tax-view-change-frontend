@@ -109,7 +109,7 @@
                     content = Text(messages(s"chargeSummary.lpi.chargeHistory.created.${viewModel.chargeItem.getChargeTypeKey}"))
                 ),
                 TableRow(
-                    content = HtmlContent(viewModel.chargeItem.accruingInterestAmount.get.toCurrency),
+                    content = HtmlContent(viewModel.chargeItem.latePaymentInterestAmount.get.toCurrency),
                     format = Some("numeric")
                 )
             ) else Nil

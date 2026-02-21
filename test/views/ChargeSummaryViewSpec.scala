@@ -117,6 +117,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       outstandingAmount = 0,
       interestOutstandingAmount = None,
       accruingInterestAmount = None,
+      latePaymentInterestAmount = None,
       interestFromDate = None,
       interestEndDate = None,
       interestRate = None,

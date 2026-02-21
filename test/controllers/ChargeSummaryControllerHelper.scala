@@ -60,6 +60,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
           outstandingAmount = 0,
           interestOutstandingAmount = None,
           accruingInterestAmount = None,
+          latePaymentInterestAmount = None,
           interestFromDate = None,
           interestEndDate = None,
           interestRate = None,

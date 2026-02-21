@@ -687,7 +687,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(
                   financialDetailsModelResponse = financialDetails(
-                    documentDetails = documentDetailClass2Nic.documentDetail,
+                    documentDetails = documentDetailClass2Nic.documentDetail.copy(latePaymentInterestAmount = None),
                     financialDetails = financialDetail(mainTransaction = "4910")
                   )
                 )
@@ -742,7 +742,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(
                   financialDetailsModelResponse = financialDetails(
-                    documentDetails = documentDetailPaye.documentDetail,
+                    documentDetails = documentDetailPaye.documentDetail.copy(latePaymentInterestAmount = None),
                     financialDetails = financialDetail(mainTransaction = "4910", codedOutStatus = Some("I"))
                   )
                 )
