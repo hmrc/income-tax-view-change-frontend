@@ -129,7 +129,7 @@ case class ChargeItem(
   }
 
   def remainingToPayByChargeOrInterest: BigDecimal = {
-    if (isAccruingInterest) interestRemainingToPay
+    if (isAccruingInterest || hasInterest) interestRemainingToPay
     else remainingToPay
   }
 
