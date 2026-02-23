@@ -103,6 +103,11 @@ GET          /agents/manage-your-businesses/add-foreign-property/foreign-propert
 GET          /manage-your-businesses/add-uk-property/uk-property-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = UkProperty)
 GET          /agents/manage-your-businesses/add-uk-property/uk-property-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
 
+GET          /manage-your-businesses/add-sole-trader/choose-address                                     controllers.manageBusinesses.add.ChooseSoleTraderAddressController.show(isAgent: Boolean = false)
+GET          /agents/manage-your-businesses/add-sole-trader/choose-address                              controllers.manageBusinesses.add.ChooseSoleTraderAddressController.show(isAgent: Boolean = true)
+POST         /manage-your-businesses/add-sole-trader/choose-address                                     controllers.manageBusinesses.add.ChooseSoleTraderAddressController.submit(isAgent: Boolean = false)
+POST         /agents/manage-your-businesses/add-sole-trader/choose-address                              controllers.manageBusinesses.add.ChooseSoleTraderAddressController.submit(isAgent: Boolean = true)
+
 ###### Check details / Change ######
 
 GET          /manage-your-businesses/add-sole-trader/business-check-answers                controllers.manageBusinesses.add.IncomeSourceCheckDetailsController.show(incomeSourceType: IncomeSourceType = SelfEmployment, isTriggeredMigration: Boolean ?= false)

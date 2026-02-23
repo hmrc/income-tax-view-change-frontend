@@ -19,6 +19,7 @@ base.confirm-and-save                                           = Confirm and sa
 base.confirm-this-change                                        = Confirm this change
 base.software.compatible.with.mtd.income.tax.link               = software compatible with Making Tax Digital for Income Tax
 base.fullstop                                                   = .
+base.or                                                         = or
 
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
@@ -2469,6 +2470,11 @@ manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button      
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header                             = There is a problem
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                        = Select the tax years you want to report quarterly
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched       = Select the tax years you want to sign up for
+
+# choose international sole trader address
+manageBusinesses.add.chooseSoleTraderAddress.heading                                                         = What is the address of your sole trader business?
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.newAddress                                         = None of these, I want to add a new address
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.error                                              = Select an option to continue
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##

@@ -44,14 +44,14 @@ object BusinessDetailsTestConstants {
     Some("New Town"),
     Some("New City"),
     Some("NE12 6CI"),
-    Some("United Kingdom")
+    Some("GB")
   )
   val invalidUKAddressNoPostCode = AddressModel(
     Some("8 Test"), 
     Some("New Court"), 
     Some("New Town"),
     Some("New City"),
-    None, Some("United Kingdom")
+    None, Some("GB")
   )
   val foreignAddress = AddressModel(
     Some("31 Some street"),
@@ -61,7 +61,7 @@ object BusinessDetailsTestConstants {
     None,
     Some("US")
   )
-  
+
   val businessIncomeSourceId = "1234"
 
   val getCurrentTaxYearEnd: LocalDate = {
@@ -85,7 +85,7 @@ object BusinessDetailsTestConstants {
     addressLine3 = Some("Magical Land"),
     addressLine4 = Some("England"),
     postCode = Some("ZL1 064"),
-    countryCode = Some("UK")
+    countryCode = Some("GB")
   )
   val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)))
@@ -222,6 +222,19 @@ object BusinessDetailsTestConstants {
     cessation = None,
     latencyDetails = None,
     address = Some(testBizAddress),
+  )
+
+  val business1International = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails),
+    address = Some(foreignAddress),
   )
 
   val businessWithLatency1 = BusinessDetailsModel(
