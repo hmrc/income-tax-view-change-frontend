@@ -16,6 +16,7 @@
 
 package controllers.agent.sessionUtils
 
+@deprecated("To be decommission after switch to income-tax-session-data")
 object SessionKeys {
 
   val clientNino: String = "ClientNino"
