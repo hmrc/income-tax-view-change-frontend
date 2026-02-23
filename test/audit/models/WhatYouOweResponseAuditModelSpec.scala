@@ -112,7 +112,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
           Json.obj(
             "chargeType" -> paymentOnAccount1,
             "dueDate" -> dueDateInFuture,
-            "outstandingAmount" -> 125,
+            "outstandingAmount" -> 100,
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
             "overDue" -> false
