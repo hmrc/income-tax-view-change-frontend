@@ -41,10 +41,16 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
 
     (isStart, journeyState) match {
       case (true, None) =>
-        optInService.saveIntent(taxYear).flatMap {
-          case true => codeBlock
+        optInService.initialiseOptInContextData().flatMap {
+          case true =>
+            optInService.saveIntent(taxYear).flatMap {
+              case true => codeBlock
+              case false =>
+                Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session")
+                showInternalServerError(user.isAgent())
+            }
           case false =>
-            Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session")
+            Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not initialise opt-in context data in session")
             showInternalServerError(user.isAgent())
         }
       case (false, None) =>
@@ -54,6 +60,9 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
         }
 
       case (false, Some(JourneyCompleted)) => codeBlock
+
+      case _ =>
+        redirectReportingFrequency(user.userType)
     }
   }
 
