@@ -99,6 +99,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
 
       "the user has credit which has not been allocated" in new TestSetup(
         creditAndRefundModel = ANewCreditAndRefundModel()
+          .withTotalCredit(200)
           .withAvailableCredit(100)
           .withUnallocatedCredit(100)
           .withPayment(dateInYear(2024), 50)
@@ -115,6 +116,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
       }
       "the user has credit which has all been allocated" in new TestSetup(
         creditAndRefundModel = ANewCreditAndRefundModel()
+          .withTotalCredit(200)
           .withAvailableCredit(100)
           .withAllocatedFutureCredit(100)
           .withBalancingChargeCredit(dateInYear(2024), 50)
@@ -131,6 +133,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
       }
       "the user has credit which has been partially allocated" in new TestSetup(
         creditAndRefundModel = ANewCreditAndRefundModel()
+          .withTotalCredit(200)
           .withAvailableCredit(100)
           .withPayment(dateInYear(2024), 100)
           .withUnallocatedCredit(100)
