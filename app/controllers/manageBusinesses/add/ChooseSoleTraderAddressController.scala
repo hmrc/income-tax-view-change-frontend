@@ -18,96 +18,177 @@ package controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, ItvcErrorHandler, ShowInternalServerError}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import jakarta.inject.Singleton
+import models.UIJourneySessionData
+import models.admin.OverseasBusinessAddress
+import models.incomeSourceDetails.{AddIncomeSourceData, ChooseSoleTraderAddressRadioAnswer}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.IncomeSourcesUtils
+import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.add.ChooseSoleTraderAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import config.FrontendAppConfig
-import models.admin.OverseasBusinessAddress
 
 @Singleton
 class ChooseSoleTraderAddressController @Inject()(
-                                                    val itvcErrorHandler: ItvcErrorHandler,
-                                                    val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                                    view: ChooseSoleTraderAddressView,
-                                                    authActions: AuthActions
+                                                   authActions: AuthActions,
+                                                   itvcErrorHandler: ItvcErrorHandler,
+                                                   itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                   val sessionService: SessionService,
+                                                   view: ChooseSoleTraderAddressView,
                                                  )(implicit val appConfig: FrontendAppConfig,
                                                    val mcc: MessagesControllerComponents,
-                                                   val ec: ExecutionContext) extends FrontendController(mcc) with FeatureSwitching with IncomeSourcesUtils with I18nSupport {
+                                                   val ec: ExecutionContext
+                                                 ) extends FrontendController(mcc) with FeatureSwitching with IncomeSourcesUtils with I18nSupport with JourneyCheckerManageBusinesses {
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
     else itvcErrorHandler
 
-  private def backUrl(isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url //change in nav ticket
+  private def backUrl(isAgent: Boolean): String =
+    if (isAgent) controllers.routes.HomeController.showAgent().url
+    else controllers.routes.HomeController.show().url //TODO: Change in nav ticket
+
+  private def buildAddressOptions(user: MtdItUser[_]): Seq[(String, Int)] = {
+    user.incomeSources.getAllUniqueBusinessAddressesWithIndex.map {
+      case (answer, index) =>
+        val id = index
+        val display =
+          s"${answer.addressLine1.getOrElse("")}, ${answer.postcode.getOrElse("")}"
+        (display, id)
+    }
+  }
+
+
+  private def handleValidForm(
+                               isAgent: Boolean,
+                               validForm: ChooseSoleTraderAddressForm,
+                             )(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+
+    val formResponse = validForm.response
+    lazy val isNewAddress = ChooseSoleTraderAddressRadioAnswer(None, None, None, true)
+    lazy val IsAddressInTheUk = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
+    lazy val showGenericErrorPage = errorHandler(isAgent).showInternalServerError()
+
+    sessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment)).flatMap {
+      case Left(error) =>
+        Future(errorHandler(isAgent).showInternalServerError())
+      case Right(uiSessionDataOpt) =>
+        uiSessionDataOpt match {
+          case Some(uiSessionData) =>
+            formResponse match {
+              case "new-address" =>
+                val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = Some(isNewAddress))))
+                sessionService.setMongoData(updatedData).map { data => IsAddressInTheUk }
+              case previousBusinessAddressIndex =>
+                val previousBusinessAddressDetails: ChooseSoleTraderAddressRadioAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
+                val redirect: Result = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Update with route
+                val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = Some(previousBusinessAddressDetails))))
+                sessionService.setMongoData(updatedData).map { data => redirect }
+              case _ =>
+                uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = None))
+                val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = None)))
+                Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] Pre-existing ui session data but invalid form response")
+                sessionService.setMongoData(updatedData).map { data => showGenericErrorPage }
+            }
+          case None =>
+            formResponse match {
+              case "new-address" =>
+                UIJourneySessionData(
+                  sessionId = hc.sessionId.get.value,
+                  journeyType = "ADD-SE",
+                  addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(isNewAddress)))
+                )
+                val redirect = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
+                Future(redirect)
+              case previousBusinessAddressIndex =>
+                val previousBusinessAddressDetails: ChooseSoleTraderAddressRadioAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
+                val uiSessionData =
+                  UIJourneySessionData(
+                    sessionId = hc.sessionId.get.value,
+                    journeyType = "ADD-SE",
+                    addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(previousBusinessAddressDetails)))
+                  )
+                val redirect = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Update with route
+                sessionService.setMongoData(uiSessionData).map { data => redirect }
+              case _ =>
+                Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] No existing ui session data and invalid form response")
+                Future(showGenericErrorPage)
+            }
+        }
+    }
+  }
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent = isAgent).async { implicit user =>
+
     /*TODO currently if there are no business addresses then this will redirect the user to the home page.
     * in the nav ticket we will want to likely redirect to the enter business address page instead
     */
-    if(isEnabled(OverseasBusinessAddress)){
-      val businessAddresses = user.incomeSources.getAllUniqueBusinessAddressesWithIndex
-      Future(Ok(view(
-        postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
-        isAgent = isAgent,
-        form = ChooseSoleTraderAddressForm(),
-        businessAddresses = businessAddresses,
-        backUrl = backUrl(isAgent)
-      ))
+
+    if (isEnabled(OverseasBusinessAddress)) {
+      val addressOptions: Seq[(String, Int)] = buildAddressOptions(user)
+
+      val radioButtonValues = {
+        // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
+        // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
+        addressOptions.map { case (_, id) => id.toString } :+ "new-address"
+      }
+
+      val form = ChooseSoleTraderAddressForm.form(radioButtonValues)
+
+      Future(
+        Ok(
+          view(
+            postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
+            isAgent = isAgent,
+            form = form,
+            chooseSoleTraderAddressRadioAnswersWithIndex = addressOptions,
+            backUrl = backUrl(isAgent)
+          )
+        )
       )
-    }else{
-      val homeCall = if(isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
+    } else {
+      val homeCall = if (isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
       Future(Redirect(homeCall))
     }
-
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-    val businessAddresses = user.incomeSources.getAllUniqueBusinessAddressesWithIndex
-    ChooseSoleTraderAddressForm().bindFromRequest().fold(
-      formWithErrors => {
-        Future {
-          BadRequest(
-            view(
-              postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
-              isAgent = isAgent,
-              form = formWithErrors,
-              businessAddresses = businessAddresses,
-              backUrl = backUrl(isAgent)
-            )
-          )
-        }
-      },
-      validForm =>
-        handleValidForm(isAgent, validForm)
-    )
-  }
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      // TODO: we need to save the user address to the ui session data
+      val addressOptions: Seq[(String, Int)] = buildAddressOptions(user)
+      val radioButtonValues = {
+        // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
+        // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
+        addressOptions.map { case (_, id) => id.toString } :+ "new-address"
+      }
 
-  private def handleValidForm(
-                                isAgent: Boolean,
-                                validForm: ChooseSoleTraderAddressForm
-                             )(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    val formResponse = validForm.response
-    //TODO implement proper routes here in nav ticket
-    formResponse match {
-      case Some(ChooseSoleTraderAddressForm.existingAddress) =>
-        //take the user to 'is this information correct' page
-        Future.successful(Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)))
-      case Some(ChooseSoleTraderAddressForm.newAddress) =>
-        //take the user to 'is this address in the uk' page
-        Future.successful(Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)))
-      case _ =>
-        Logger("application").error("[ChooseSoleTraderAddress] Invalid form response")
-        Future(errorHandler(isAgent).showInternalServerError())
+      ChooseSoleTraderAddressForm.form(radioButtonValues)
+        .bindFromRequest()
+        .fold(
+          formWithErrors => {
+            Future {
+              BadRequest(
+                view(
+                  postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
+                  isAgent = isAgent,
+                  form = formWithErrors,
+                  chooseSoleTraderAddressRadioAnswersWithIndex = addressOptions,
+                  backUrl = backUrl(isAgent)
+                )
+              )
+            }
+          },
+          validForm => handleValidForm(isAgent, validForm)
+        )
     }
-  }
 }

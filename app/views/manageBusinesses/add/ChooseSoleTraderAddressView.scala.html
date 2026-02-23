@@ -25,6 +25,7 @@
 @import models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
 @import services.DateServiceInterface
 @import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
+@import models.incomeSourceDetails.*
 
 @this(
         mainTemplate: unifiedLayout,
@@ -40,7 +41,7 @@
         postAction: Call,
         isAgent: Boolean,
         form: Form[ChooseSoleTraderAddressForm],
-        businessAddresses: Seq[(String, Int)],
+        chooseSoleTraderAddressRadioAnswersWithIndex: Seq[(String, Int)],
         backUrl: String,
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -67,10 +68,10 @@
 
     @pageHeading
 
-    @formWithCSRF(action = postAction, Symbol("id") -> "chosen-address") {
+    @formWithCSRF(action = postAction, Symbol("id") -> "choose-sole-trader-address-form") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("address" -> "chosen-address")))
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
         }
 
         @govukRadios(Radios(
@@ -81,13 +82,14 @@
                 ))
             )),
             items =
-                businessAddresses.map(address =>
+                chooseSoleTraderAddressRadioAnswersWithIndex.map { case (displayText, id) =>
                     RadioItem(
-                        content = Text(address._1),
-                        value = Some("existing-address"),
-                        id = Some(s"choose-sole-trader-address-radios-existing-address-${address._2.toString}")
+                        id = Some(s"choose-sole-trader-address-$id"),
+                        content = Text(displayText),
+                        value = Some(id.toString)
                     )
-                )++ Seq(
+                }
+                ++ Seq(
                     RadioItem(
                         divider = Some(Messages("base.or"))
                     ),
@@ -99,7 +101,7 @@
 
                 ),
             errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)))),
-        ).withFormField(form("chosen-address")))
+        ).withFormField(form("value")))
 
         @continueButton(id = Some("choose-sole-trader-address-continue-button"))
     }

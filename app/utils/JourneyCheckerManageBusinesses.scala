@@ -17,9 +17,8 @@
 package utils
 
 import auth.MtdItUser
-import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState, ReportingFrequencyPages}
+import enums.*
 import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
-import enums._
 import models.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result
@@ -96,9 +95,12 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
     }
   }
 
-  def withSessionData(incomeSources: IncomeSourceJourneyType, journeyState: JourneyState, isTriggeredMigration: Boolean = false)
-                                          (codeBlock: UIJourneySessionData => Future[Result])
-                                          (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+  def withSessionData(
+                       incomeSources: IncomeSourceJourneyType,
+                       journeyState: JourneyState,
+                       isTriggeredMigration: Boolean = false
+                     )(codeBlock: UIJourneySessionData => Future[Result])
+                     (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     sessionService.getMongo(incomeSources).flatMap {
       case Right(Some(data: UIJourneySessionData)) if showCannotGoBackErrorPage(data, incomeSources, journeyState) =>
         redirectUrl(incomeSources, useDefaultRedirect(data, incomeSources, journeyState))(user)
@@ -113,12 +115,12 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
             )
             codeBlock(data)
           }
+        } else {
+          journeyRestartUrl(isTriggeredMigration)(user)
         }
-        else journeyRestartUrl(isTriggeredMigration)(user)
       case Left(ex) =>
         val agentPrefix = if (isAgent(user)) "[Agent]" else ""
-        Logger("application").error(s"$agentPrefix" +
-          s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}", ex)
+        Logger("application").error(s"$agentPrefix" + s"Unable to retrieve Mongo data for journey type ${incomeSources.toString}", ex)
         journeyRestartUrl(isTriggeredMigration)(user)
     }
   }

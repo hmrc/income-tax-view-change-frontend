@@ -22,25 +22,22 @@ import play.api.i18n.Messages
 
 object ChooseSoleTraderAddressForm {
 
-  val newAddress: String = "new-address"
-  val existingAddress: String = "existing-address"
-  val response: String = "chosen-address"
+  val fieldName = "value"
 
+  def form(allowedValues: Seq[String])
+          (implicit messages: Messages): Form[ChooseSoleTraderAddressForm] = {
 
-  def apply()(implicit messages: Messages): Form[ChooseSoleTraderAddressForm] = {
-
-    Form[ChooseSoleTraderAddressForm](
+    Form(
       mapping(
-        response -> optional(text)
-          .verifying(messages("manageBusinesses.add.chooseSoleTraderAddress.radio.option.error"), value => value.nonEmpty && (value.contains(newAddress) || value.contains(existingAddress)))
-      )(response => ChooseSoleTraderAddressForm(response))
-      (form => Some(form.response))
+        fieldName -> optional(text)
+          .verifying(
+            messages("manageBusinesses.add.chooseSoleTraderAddress.radio.option.error"),
+            opt => opt.exists((v: String) => allowedValues.contains(v))
+          )
+      )(opt => ChooseSoleTraderAddressForm(opt.getOrElse("")))
+        (form => Some(Some(form.response)))
     )
   }
 }
 
-case class ChooseSoleTraderAddressForm(response: Option[String]) {
-  def toFormMap: Map[String, Seq[String]] = Map(
-    ChooseSoleTraderAddressForm.response -> Seq(response.getOrElse("N/A"))
-  )
-}
+case class ChooseSoleTraderAddressForm(response: String)

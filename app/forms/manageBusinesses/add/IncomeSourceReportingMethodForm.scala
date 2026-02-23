@@ -18,52 +18,60 @@ package forms.manageBusinesses.add
 
 import forms.validation.CustomConstraints
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.*
 
 object IncomeSourceReportingMethodFormMapping extends CustomConstraints {
+
   val newTaxYear1ReportingMethod = "new_tax_year_1_reporting_method"
   val newTaxYear2ReportingMethod = "new_tax_year_2_reporting_method"
   val taxYear1 = s"${newTaxYear1ReportingMethod}_tax_year"
   val taxYear2 = s"${newTaxYear2ReportingMethod}_tax_year"
   val taxYear1ReportingMethod = "tax_year_1_reporting_method"
   val taxYear2ReportingMethod = "tax_year_2_reporting_method"
+
   private val validRadioOptions = Set("A", "Q")
 
   val form: Form[IncomeSourceReportingMethodForm] = Form[IncomeSourceReportingMethodForm](
     mapping(
       newTaxYear1ReportingMethod -> optional(text)
-        .verifying(newTaxYear1ReportingMethod, taxYearReporting1 => taxYearReporting1.isEmpty || validRadioOptions.contains(taxYearReporting1.get)),
+        .verifying(
+          error = newTaxYear1ReportingMethod,
+          constraint = taxYearReporting1 => taxYearReporting1.isEmpty || validRadioOptions.contains(taxYearReporting1.get)
+        ),
       newTaxYear2ReportingMethod -> optional(text)
-        .verifying(newTaxYear2ReportingMethod, taxYearReporting2 => taxYearReporting2.isDefined && validRadioOptions.contains(taxYearReporting2.get)),
+        .verifying(
+          error = newTaxYear2ReportingMethod,
+          constraint = taxYearReporting2 => taxYearReporting2.isDefined && validRadioOptions.contains(taxYearReporting2.get)
+        ),
       taxYear1 -> optional(text),
       taxYear1ReportingMethod -> optional(text),
       taxYear2 -> optional(text),
       taxYear2ReportingMethod -> optional(text)
     )
-    (
-     ( newTaxYear1ReportingMethod,
-      newTaxYear2ReportingMethod,
-      taxYear1,
-      taxYear1ReportingMethod,
-      taxYear2,
-      taxYear2ReportingMethod) =>
-       IncomeSourceReportingMethodForm(newTaxYear1ReportingMethod,
-       newTaxYear2ReportingMethod,
-       taxYear1,
-       taxYear1ReportingMethod,
-       taxYear2,
-       taxYear2ReportingMethod)
-    )(
-      form =>
-      Some(
-        form.newTaxYear1ReportingMethod,
-        form.newTaxYear2ReportingMethod,
-        form.taxYear1,
-        form.taxYear1ReportingMethod,
-        form.taxYear2,
-        form.taxYear2ReportingMethod
-      )
-  ))
+      (
+        (newTaxYear1ReportingMethod,
+         newTaxYear2ReportingMethod,
+         taxYear1,
+         taxYear1ReportingMethod,
+         taxYear2,
+         taxYear2ReportingMethod) =>
+          IncomeSourceReportingMethodForm(newTaxYear1ReportingMethod,
+            newTaxYear2ReportingMethod,
+            taxYear1,
+            taxYear1ReportingMethod,
+            taxYear2,
+            taxYear2ReportingMethod)
+      )(
+        form =>
+          Some(
+            form.newTaxYear1ReportingMethod,
+            form.newTaxYear2ReportingMethod,
+            form.taxYear1,
+            form.taxYear1ReportingMethod,
+            form.taxYear2,
+            form.taxYear2ReportingMethod
+          )
+      ))
 }
 
 case class IncomeSourceReportingMethodForm(newTaxYear1ReportingMethod: Option[String],
