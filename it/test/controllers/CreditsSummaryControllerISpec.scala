@@ -23,8 +23,9 @@ import helpers.CreditsSummaryDataHelper
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
+import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelCreditAndRefundsJsonV2}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
@@ -135,7 +136,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                       nino = testNino,
                       selfEmploymentIds = List.empty,
                       propertyIncomeIds = Nil,
-                      yearOfMigration = None
+                      yearOfMigration = Some("2018")
                     ).detail
                   )
 

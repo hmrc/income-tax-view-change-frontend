@@ -18,9 +18,9 @@ package controllers
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config._
-import config.featureswitch._
-import controllers.routes.{ChargeSummaryController, CreditAndRefundController, NotMigratedUserController, PaymentController, TaxYearSummaryController}
+import config.*
+import config.featureswitch.*
+import controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, NotMigratedUserController, PaymentController, TaxYearSummaryController}
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
@@ -51,7 +51,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
-    whatYouOweService.createWhatYouOweViewModel(backUrl, getCreditAndRefundUrl, getTaxYearSummaryUrl(origin), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
+    whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, getTaxYearSummaryUrl(origin), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
       case Some(viewModel) =>
         Ok(whatYouOwe(viewModel, origin))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
@@ -66,7 +66,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       itvcErrorHandler.showInternalServerError()
   }
 
-  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
@@ -76,7 +76,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
         backUrl = controllers.routes.HomeController.showAgent().url,
@@ -85,10 +85,10 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
 
-  private def getCreditAndRefundUrl(implicit user: MtdItUser[_]): String = (user.isAgent() match {
-    case true if user.incomeSources.yearOfMigration.isDefined  => CreditAndRefundController.showAgent()
+  private def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (user.isAgent() match {
+    case true if user.incomeSources.yearOfMigration.isDefined  => MoneyInYourAccountController.showAgent()
     case true                                                  => NotMigratedUserController.showAgent()
-    case false if user.incomeSources.yearOfMigration.isDefined => CreditAndRefundController.show()
+    case false if user.incomeSources.yearOfMigration.isDefined => MoneyInYourAccountController.show()
     case false                                                 => NotMigratedUserController.show()
   }).url
 

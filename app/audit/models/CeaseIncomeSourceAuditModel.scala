@@ -55,7 +55,7 @@ case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
       case SelfEmployment =>
         val businessName = user.incomeSources
           .getSoleTraderBusiness(incomeSourceId.value).flatMap(_.tradingName)
-        details ++ ("businessName", businessName)
+        details ++ Json.obj("businessName"-> businessName)
       case _ =>
         details
     }

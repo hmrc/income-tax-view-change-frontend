@@ -39,14 +39,23 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   def getPoaTaxYearForEntryPoint(nino: Nino)
                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[TaxYear]]] = {
-    {
-      for {
-        fdMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
-        maybeTaxYear <- EitherT.right[Throwable](Future.successful {
-          fdMaybe.flatMap(_.arePoaPaymentsPresent())
-        })
-      } yield maybeTaxYear
-    }.value
+    val validTaxYearsWithPoas = getPoaAdjustableTaxYears.foldLeft[Future[Either[Exception, List[TaxYear]]]](Future.successful(Right(List.empty))) { (acc, item) =>
+      financialDetailsConnector.getFinancialDetails(item.endYear, nino.value).flatMap {
+        case financialDetails: FinancialDetailsModel if financialDetails.arePoaPaymentsPresent().isDefined => acc.map {
+          case Left(error) => Left(error)
+          case Right(yearsList) => Right(yearsList :+ item)
+        }
+        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Future.successful(Left(new Exception("There was an error whilst fetching financial details data")))
+        case _ => acc
+      }
+    } //this code produces either a Future[Left[Error]] if there was an error getting the finDetails, or a List (of 0-2) valid tax years with POAs
+    validTaxYearsWithPoas.flatMap {
+      case Left(error) => Future.successful(Left(error))
+      case Right(taxYearsList) => checkCrystallisation(nino, taxYearsList)(hc, dateService, calculationListConnector, ec).map {
+        case None => Right(None)
+        case Some(taxYear: TaxYear) => Right(Some(taxYear))
+      }
+    }
   }
 
   def getPoaForNonCrystallisedTaxYear(nino: Nino)
@@ -92,8 +101,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         financialDetailsMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
         fdAndChargeMaybe <- EitherT(Future.successful(getFinancialDetailAndChargeRefModel(financialDetailsMaybe)))
         haveBeenAdjusted <- EitherT(isSubsequentAdjustment(chargeHistoryConnector, fdAndChargeMaybe.chargeReference))
+        documentDetailsWithNoCredits = fdAndChargeMaybe.documentDetails.filterNot(_.originalAmount < 0)
         paymentOnAccountViewModel <- EitherT(
-          Future.successful(getAmendablePoaViewModel(sortByTaxYear(fdAndChargeMaybe.documentDetails), haveBeenAdjusted)))
+          Future.successful(getAmendablePoaViewModel(sortByTaxYear(documentDetailsWithNoCredits), haveBeenAdjusted)))
       } yield paymentOnAccountViewModel
     }.value
   }

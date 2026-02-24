@@ -22,9 +22,9 @@ import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
-import play.api.http.Status
+import play.api.http.{HeaderNames, Status}
 import play.api.http.Status.OK
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.Headers.checkAndAddTestHeader
@@ -83,20 +83,29 @@ class BusinessDetailsConnector @Inject()(
       }
   }
 
-  def modifyHeaderCarrier(path: String,
-                          headerCarrier: HeaderCarrier
+  def modifyHeaderCarrier(
+                           path: String,
+                           headerCarrier: HeaderCarrier
                          )(implicit appConfig: FrontendAppConfig): HeaderCarrier = {
 
     val manageBusinessesPattern = """.*/manage-your-businesses/.*""".r
-    val incomeSourcesPattern = """.*/income-sources/.*""".r
+    val incomeSourcesPattern    = """.*/income-sources/.*""".r
+    val confirmTriggeredMigrationUrl   = "/check-your-active-businesses/confirm"
+    val completedTriggeredMigrationUrl = "/check-your-active-businesses/complete"
 
-    path match {
-      case manageBusinessesPattern(_*) | incomeSourcesPattern(_*) =>
-        checkAndAddTestHeader(path, headerCarrier, appConfig.incomeSourceOverrides(), "afterIncomeSourceCreated")
-      case _ =>
-        headerCarrier
+    val refererOpt = headerCarrier.extraHeaders.find(_._1.equalsIgnoreCase(HeaderNames.REFERER)).map(_._2)
+
+    if (refererOpt.exists(ref => ref.contains(confirmTriggeredMigrationUrl) || ref.contains(completedTriggeredMigrationUrl))) {
+      return checkAndAddTestHeader(path, headerCarrier, appConfig.triggeredMigrationOverrides(), "afterMigration")
     }
+
+    if (manageBusinessesPattern.matches(path) || incomeSourcesPattern.matches(path)) {
+      return checkAndAddTestHeader(path, headerCarrier, appConfig.incomeSourceOverrides(), "afterIncomeSourceCreated")
+    }
+
+    headerCarrier
   }
+
 
 
   def getIncomeSources()(implicit headerCarrier: HeaderCarrier, mtdItUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {

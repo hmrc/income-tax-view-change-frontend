@@ -85,36 +85,90 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
     //TODO: Remove multi-year call
     financialDetailsService.getAllFinancialDetails.flatMap { financialResponses =>
-      Logger("application").debug(s"- financialResponses = $financialResponses")
+
+      val codedOutParam: Option[Boolean] = user.getQueryString("codedOut").flatMap {
+        case "true" => Some(true)
+        case "false" => Some(false)
+        case _ => None
+      }
 
       val paymentsFromAllYears = financialResponses.collect {
         case (_, model: FinancialDetailsModel) => model.filterPayments()
-      }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None), List(), List(), List()))((merged, next) => merged.mergeLists(next))
+      }.foldLeft(FinancialDetailsModel(BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None), List(), List(), List()))((merged, next) => merged.mergeLists(next))
 
-      val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
-        case (year, response) if year == taxYear => response
+      val matchingModels: List[(Int, FinancialDetailsModel)] = financialResponses.collect {
+        case (year, fdm: FinancialDetailsModel) if fdm.asChargeItems.exists(_.transactionId == id) => (year, fdm)
       }
-      matchingYear.headOption match {
-        case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.asChargeItems.exists(_.transactionId == id) =>
-          doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
-        case Some(_: FinancialDetailsModel) =>
-          Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
-        case Some(error: FinancialDetailsErrorModel) =>
-          Future.successful(onError(s"Financial details error :: $error", isAgent, showInternalServerError = true))
-        case None =>
-          Future.successful(onError("Failed to find related financial detail for tax year and charge ", isAgent, showInternalServerError = true))
+
+      if (matchingModels.nonEmpty) {
+
+        val preferredByRequestedYear: Option[(Int, FinancialDetailsModel)] = matchingModels.find(_._1 == taxYear)
+
+        val preferredModel: Option[(Int, FinancialDetailsModel)] = codedOutParam match {
+          case Some(true) =>
+            matchingModels.find { case (_, fdm) =>
+              fdm.asChargeItems.find(_.transactionId == id).exists(_.isCodingOut)
+            }.orElse(preferredByRequestedYear).orElse(matchingModels.headOption)
+
+          case Some(false) =>
+            matchingModels.find { case (_, fdm) =>
+              fdm.asChargeItems.find(_.transactionId == id).exists(ci => !ci.isCodingOut)
+            }.orElse(preferredByRequestedYear).orElse(matchingModels.headOption)
+
+          case None =>
+            preferredByRequestedYear.orElse(matchingModels.headOption)
+        }
+
+        preferredModel match {
+          case Some((selectedTaxYear, fdmForTaxYear)) =>
+            if (selectedTaxYear != taxYear) {
+
+              val redirectCall =
+                if (isAgent) routes.ChargeSummaryController.showAgent(selectedTaxYear, id, isInterestCharge)
+                else routes.ChargeSummaryController.show(selectedTaxYear, id, isInterestCharge, origin)
+
+              val redirectUrl =
+                codedOutParam match {
+                  case Some(value) => s"${redirectCall.url}?codedOut=${value.toString}"
+                  case None => redirectCall.url
+                }
+
+              Future.successful(Redirect(redirectUrl))
+            } else {
+              doShowChargeSummary(selectedTaxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
+            }
+
+          case None =>
+            Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
+        }
+
+      } else {
+
+        val matchingYear: List[FinancialDetailsResponseModel] = financialResponses.collect {
+          case (year, response) if year == taxYear => response
+        }
+        matchingYear.headOption match {
+          case Some(fdmForTaxYear: FinancialDetailsModel) if fdmForTaxYear.asChargeItems.exists(_.transactionId == id) =>
+            doShowChargeSummary(taxYear, id, isInterestCharge, fdmForTaxYear, paymentsFromAllYears, isAgent, origin, isMFADebit(fdmForTaxYear, id))
+          case Some(_: FinancialDetailsModel) =>
+            Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
+          case Some(error: FinancialDetailsErrorModel) =>
+            Future.successful(onError(s"Financial details error :: $error", isAgent, showInternalServerError = true))
+          case None =>
+            Future.successful(onError("Failed to find related financial detail for tax year and charge ", isAgent, showInternalServerError = true))
+        }
       }
     }
   }
 
   def show(taxYear: Int, id: String, isInterestCharge: Boolean = false, origin: Option[String] = None): Action[AnyContent] =
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(taxYear, id, isInterestCharge, isAgent = false, origin)
     }
 
   def showAgent(taxYear: Int, id: String, isInterestCharge: Boolean = false): Action[AnyContent] =
-    authActions.asMTDPrimaryAgent.async {
+    authActions.asMTDPrimaryAgent().async {
       implicit mtdItUser =>
         handleRequest(taxYear, id, isInterestCharge, isAgent = true)
     }
@@ -127,106 +181,111 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                  (implicit user: MtdItUser[_], dateService: DateServiceInterface): Future[Result] = {
 
     val sessionGatewayPage = user.session.get(gatewayPage).map(GatewayPage(_))
-    val documentDetailWithDueDate: DocumentDetailWithDueDate = chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id).get
-    val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
 
-    val chargeItem = ChargeItem.fromDocumentPair(
-      documentDetailWithDueDate.documentDetail,
-      financialDetailsForCharge)
+    chargeDetailsforTaxYear.findDocumentDetailByIdWithDueDate(id) match {
+      case Some(documentDetailWithDueDate) =>
+        val financialDetailsForCharge = chargeDetailsforTaxYear.financialDetails.filter(_.transactionId.contains(id))
 
-    if (chargeItem.isPenalty && !isEnabled(PenaltiesAndAppeals)){
-      Future.successful(onError("Charge type prohibited by feature switches", isAgent, showInternalServerError = true))
-    } else {
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetailWithDueDate.documentDetail,
+          financialDetailsForCharge)
 
-      val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
-        case Some(value) => value.chargeReference
-        case None => None
-      }
-      val paymentBreakdown: List[FinancialDetail] =
-        if (!isInterestCharge) {
-          financialDetailsForCharge.filter(_.messageKeyByTypes.isDefined)
-        } else Nil
+        if (chargeItem.isPenalty && !isEnabled(PenaltiesAndAppeals)){
+          Future.successful(onError("Charge type prohibited by feature switches", isAgent, showInternalServerError = true))
+        } else {
 
-      val paymentAllocations: List[PaymentHistoryAllocations] =
-        financialDetailsForCharge
-          .filter(_.messageKeyByTypes.isDefined)
-          .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
-
-
-      chargeHistoryService.chargeHistoryResponse(isInterestCharge, chargeReference, isEnabled(ChargeHistory)).flatMap {
-        case Right(chargeHistory) =>
-          auditChargeSummary(chargeItem, paymentBreakdown,
-            chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
-
-          val chargeItems: List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
-          val (poaOneChargeUrl, poaTwoChargeUrl) = {
-            for {
-              poaOneChargeItem <- chargeItems
-                .filter(c => List(PoaOneDebit, PoaOneReconciliationDebit).contains(c.transactionType))
-              poaTwoChargeItem <- chargeItems
-                .filter(c => List(PoaTwoDebit, PoaTwoReconciliationDebit).contains(c.transactionType))
-            } yield {
-              if (isAgent)
-                (
-                  routes.ChargeSummaryController.showAgent(poaOneChargeItem.taxYear.endYear, poaOneChargeItem.transactionId).url,
-                  routes.ChargeSummaryController.showAgent(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
-                )
-              else
-                (routes.ChargeSummaryController.show(poaOneChargeItem.taxYear.endYear, poaOneChargeItem.transactionId).url,
-                  routes.ChargeSummaryController.show(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
-                )
-            }
-          }.headOption.getOrElse(("", ""))
-          val whatYouOweUrl = {
-            if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
-            else controllers.routes.WhatYouOweController.show(origin).url
+          val chargeReference: Option[String] = financialDetailsForCharge.headOption match {
+            case Some(value) => value.chargeReference
+            case None => None
           }
+          val paymentBreakdown: List[FinancialDetail] =
+            if (!isInterestCharge) {
+              financialDetailsForCharge.filter(_.messageKeyByTypes.isDefined)
+            } else Nil
 
-          chargeReference match {
-            case Some(chargeRef) =>
-              val LSPUrl = appConfig.incomeTaxPenaltiesFrontend
-              val LPPUrl = if (isAgent) appConfig.incomeTaxPenaltiesFrontendLPP1CalculationAgent(chargeRef) else appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeRef)
+          val paymentAllocations: List[PaymentHistoryAllocations] =
+            financialDetailsForCharge
+              .filter(_.messageKeyByTypes.isDefined)
+              .flatMap(chargeFinancialDetail => paymentsForAllYears.getAllocationsToCharge(chargeFinancialDetail))
 
-              val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
-                currentDate = dateService.getCurrentDate,
-                chargeItem = chargeItem,
-                backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
-                gatewayPage = sessionGatewayPage,
-                paymentBreakdown = paymentBreakdown,
-                paymentAllocations = paymentAllocations,
-                payments = paymentsForAllYears,
-                chargeHistoryEnabled = isEnabled(ChargeHistory),
-                creditsRefundRepayEnabled = isEnabled(CreditsRefundsRepay),
-                latePaymentInterestCharge = isInterestCharge,
-                penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-                reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsforTaxYear),
-                btaNavPartial = user.btaNavPartial,
-                isAgent = isAgent,
-                adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
-                poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
-                poaOneChargeUrl = poaOneChargeUrl,
-                poaTwoChargeUrl = poaTwoChargeUrl,
-                LSPUrl = LSPUrl,
-                LPPUrl = LPPUrl
-              )
 
-              getPaymentAllocation(chargeItem).map { allocationData =>
+          chargeHistoryService.chargeHistoryResponse(isInterestCharge, chargeReference, isEnabled(ChargeHistory)).flatMap {
+            case Right(chargeHistory) =>
+              auditChargeSummary(chargeItem, paymentBreakdown,
+                chargeHistory, paymentAllocations, isInterestCharge, isMFADebit, taxYear)
 
-                mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
-                  case Right(_) => Ok {
-                    if (chargeItem.isIncludedInSACSummary) {
-                      yourSelfAssessmentChargeSummary(viewModel, allocationData, whatYouOweUrl)
-                    } else
-                      chargeSummaryView(viewModel, whatYouOweUrl)
-                  }
-                  case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
+              val chargeItems: List[ChargeItem] = chargeDetailsforTaxYear.asChargeItems
+              val (poaOneChargeUrl, poaTwoChargeUrl) = {
+                for {
+                  poaOneChargeItem <- chargeItems
+                    .filter(c => List(PoaOneDebit, PoaOneReconciliationDebit).contains(c.transactionType))
+                  poaTwoChargeItem <- chargeItems
+                    .filter(c => List(PoaTwoDebit, PoaTwoReconciliationDebit).contains(c.transactionType))
+                } yield {
+                  if (isAgent)
+                    (
+                      routes.ChargeSummaryController.showAgent(poaOneChargeItem.taxYear.endYear, poaOneChargeItem.transactionId).url,
+                      routes.ChargeSummaryController.showAgent(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
+                    )
+                  else
+                    (routes.ChargeSummaryController.show(poaOneChargeItem.taxYear.endYear, poaOneChargeItem.transactionId).url,
+                      routes.ChargeSummaryController.show(poaTwoChargeItem.taxYear.endYear, poaTwoChargeItem.transactionId).url
+                    )
                 }
+              }.headOption.getOrElse(("", ""))
+              val whatYouOweUrl = {
+                if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
+                else controllers.routes.WhatYouOweController.show(origin).url
               }
-            case None => Future.successful(onError("No chargeReference found", isAgent, showInternalServerError = true))
+
+              chargeReference match {
+                case Some(chargeRef) =>
+                  val LSPUrl = appConfig.incomeTaxPenaltiesFrontend
+                  val LPPUrl = if (isAgent) appConfig.incomeTaxPenaltiesFrontendLPP1CalculationAgent(chargeRef) else appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeRef)
+
+                  val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
+                    currentDate = dateService.getCurrentDate,
+                    chargeItem = chargeItem,
+                    backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
+                    gatewayPage = sessionGatewayPage,
+                    paymentBreakdown = paymentBreakdown,
+                    paymentAllocations = paymentAllocations,
+                    payments = paymentsForAllYears,
+                    chargeHistoryEnabled = isEnabled(ChargeHistory),
+                    creditsRefundRepayEnabled = isEnabled(CreditsRefundsRepay),
+                    latePaymentInterestCharge = isInterestCharge,
+                    penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+                    reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsforTaxYear),
+                    btaNavPartial = user.btaNavPartial,
+                    isAgent = isAgent,
+                    adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
+                    poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
+                    poaOneChargeUrl = poaOneChargeUrl,
+                    poaTwoChargeUrl = poaTwoChargeUrl,
+                    LSPUrl = LSPUrl,
+                    LPPUrl = LPPUrl
+                  )
+
+                  getPaymentAllocation(chargeItem).map { allocationData =>
+
+                    mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {
+                      case Right(_) => Ok {
+                        if (chargeItem.isIncludedInSACSummary) {
+                          yourSelfAssessmentChargeSummary(viewModel, allocationData, whatYouOweUrl)
+                        } else
+                          chargeSummaryView(viewModel, whatYouOweUrl)
+                      }
+                      case Left(ec) => onError(s"Invalid response from charge history: ${ec.message}", isAgent, showInternalServerError = true)
+                    }
+                  }
+                case None => Future.successful(onError("No chargeReference found", isAgent, showInternalServerError = true))
+              }
+            case _ =>
+              Future.successful(onError("Invalid response from charge history", isAgent, showInternalServerError = true))
           }
-        case _ =>
-          Future.successful(onError("Invalid response from charge history", isAgent, showInternalServerError = true))
-      }
+        }
+      case None =>
+        Future.successful(onError(s"Transaction id not found for tax year $taxYear", isAgent, showInternalServerError = false))
     }
   }
 

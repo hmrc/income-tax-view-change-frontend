@@ -33,7 +33,8 @@ import scala.util.Try
 
 class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
                               implicit val dateService: DateServiceInterface)
-                             (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig) {
+                             (implicit ec: ExecutionContext,
+                              val appConfig: FrontendAppConfig) {
   def getAllCredits(implicit user: MtdItUser[_],
                     hc: HeaderCarrier): Future[CreditsModel] = {
 
@@ -57,7 +58,7 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
           }
         })
       .map(_.flatten)
-      .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, 0, 0, Nil)))
+      .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, 0, 0, None, None, Nil)))
   }
 
   def getAllCreditsV2(implicit user: MtdItUser[_],
@@ -77,7 +78,7 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
       case Right(financialDetails: CreditsModel) => financialDetails
       case Left(error: ErrorModel) if error.code != NOT_FOUND =>
         throw new Exception("Error response while getting Unpaid financial details")
-      case _ => CreditsModel(0, 0, 0, 0, Nil)
+      case _ => CreditsModel(0, 0, 0, 0, None, None, Nil)
     }
   }
 }

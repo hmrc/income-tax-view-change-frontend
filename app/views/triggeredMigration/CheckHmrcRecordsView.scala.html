@@ -65,7 +65,11 @@
 
 @soleTraderSection = {
     @h3(messages("triggered-migration.check-hmrc-records.soleTrader.heading"), classes = "govuk-heading-m", optId = Some("sole-trader-heading"))
+
     @p(id = Some("sole-trader-guidance")){@messages("triggered-migration.check-hmrc-records.soleTrader.guidance")}
+    @govukInsetText(InsetText(
+        content = Text(messages("manage.your.businesses.sole-trader-inset"))
+    ))
 
     @for((business, index) <- viewModel.soleTraderBusinesses.zipWithIndex) {
         <div class="govuk-summary-card">
@@ -101,16 +105,16 @@
             </div>
         </div>
     }
-    @link(link = addSoleTraderBusinessURL, messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link", id = Some("sole-trader-add-link"))
+    @link(link = addSoleTraderBusinessURL(), messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link", id = Some("sole-trader-add-link"))
 }
 
-@addPropertyURL() = @{controllers.manageBusinesses.add.routes.AddPropertyController.show(user.isAgent, isTrigMig = true).url}
+@addPropertyURL() = @{controllers.manageBusinesses.add.routes.AddPropertyController.show(user.isAgent(), isTrigMig = true).url}
 @addForeignPropertyURL() = @{controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = true).url}
 @addUKPropertyURL() = @{controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = true).url}
 
-@addUKPropertyLink() = { @p(id = Some("add-uk-property-link")){@link(link = addUKPropertyURL, messageKey = "manage.your.businesses.addIncomeSources.ukProperty.link")}}
-@addForeignPropertyLink() = { @p(id = Some("add-foreign-property-link")){@link(link = addForeignPropertyURL, messageKey = "manage.your.businesses.addIncomeSources.foreignProperty.link")}}
-@addPropertyLink() = { @p(id = Some("add-property-link")){@link(link = addPropertyURL, messageKey = "manage.your.businesses.addIncomeSources.property.link")}}
+@addUKPropertyLink() = { @p(id = Some("add-uk-property-link")){@link(link = addUKPropertyURL(), messageKey = "manage.your.businesses.addIncomeSources.ukProperty.link")}}
+@addForeignPropertyLink() = { @p(id = Some("add-foreign-property-link")){@link(link = addForeignPropertyURL(), messageKey = "manage.your.businesses.addIncomeSources.foreignProperty.link")}}
+@addPropertyLink() = { @p(id = Some("add-property-link")){@link(link = addPropertyURL(), messageKey = "manage.your.businesses.addIncomeSources.property.link")}}
 
 @propertyBusinessSection = @{
     (viewModel.hasActiveUkProperty, viewModel.hasActiveForeignProperty) match {
@@ -180,7 +184,7 @@
 @ceasedBusinessSection = {
     @h2(messages("triggered-migration.check-hmrc-records.cessation-section.heading"), classes = "govuk-heading-l", optId = Some("ceased-section-heading"))
     <p id="ceased-section-text" class="govuk-body">@messages("triggered-migration.check-hmrc-records.cessation-section.text")</p>
-    <a class="govuk-link govuk-body" id="ceased-section-link" href=@controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
+    <a class="govuk-link govuk-body" id="ceased-section-link" href=@controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent, isTriggeredMigration = true)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
 }
 
 @ceasedBannerContent(state: TriggeredMigrationState) = {
@@ -224,7 +228,7 @@
 @mainTemplate(
     pageTitle = messages("triggered-migration.check-hmrc-records.title"),
     backUrl = Some("#"),
-    isAgent = user.isAgent,
+    isAgent = user.isAgent(),
     btaNavPartial = user.btaNavPartial
 ) {
     @{
@@ -270,5 +274,5 @@
 
     @h2(messages("triggered-migration.check-hmrc-records.confirmRecords.heading"), classes = "govuk-heading-l", optId = Some("confirm-records-heading"))
     @p(id = Some("confirm-records-desc")){@messages("triggered-migration.check-hmrc-records.confirmRecords.text")}
-    @continueButton(alternativeText = Some(messages("triggered-migration.check-hmrc-records.confirmRecords.button")))
+    @continueButton(alternativeText = Some(messages("triggered-migration.check-hmrc-records.confirmRecords.button")), href = Some(viewModel.checkActiveBusinessesLink(isAgent)))
 }

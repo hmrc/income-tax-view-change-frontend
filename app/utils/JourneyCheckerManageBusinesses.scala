@@ -17,11 +17,10 @@
 package utils
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney._
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState, ReportingFrequencyPages}
 import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
+import enums._
 import models.UIJourneySessionData
-import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -107,11 +106,10 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
         codeBlock(data)
       case Right(None) =>
         if (journeyState == InitialPage) {
-          sessionService.createSession(incomeSources, isTriggeredMigration).flatMap { _ =>
+          sessionService.createSession(incomeSources).flatMap { _ =>
             val data = UIJourneySessionData(
               hc.sessionId.get.value,
-              incomeSources.toString,
-              triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(isTriggeredMigration))
+              incomeSources.toString
             )
             codeBlock(data)
           }

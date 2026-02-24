@@ -18,11 +18,11 @@ package testConstants.incomeSources
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import models.UIJourneySessionData
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
-import models.triggeredMigration.TriggeredMigrationSessionData
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants._
@@ -34,6 +34,7 @@ object IncomeSourceDetailsTestConstants {
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(business1, business2), List(propertyDetails))
   val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(ceasedBusiness), List(ceasedPropertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+  val singleBusinessIncomeUnconfirmed = singleBusinessIncome.copy(channel = HmrcUnconfirmed.getValue)
   val dualBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1, business1), Nil)
   val singleBusinessIncomeNoLatency = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1NoLatency), Nil)
   val singleBusinessIncomeWithLatency2019 = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(businessWithLatency2019), Nil)
@@ -53,6 +54,7 @@ object IncomeSourceDetailsTestConstants {
   val noIncomeDetails = IncomeSourceDetailsModel(testNino, testMtditid, None, List(), Nil)
   val errorResponse = IncomeSourceDetailsError(testErrorStatus, testErrorMessage)
   val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business2018, business2019), List(propertyDetails))
+  val businessInternational = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business1International), List(propertyDetails))
   val oldUserDetails = IncomeSourceDetailsModel(testNino, testMtditid, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(oldUseralignedBusiness), List(propertyDetails))
   val preSanitised = IncomeSourceDetailsModel(testNino, testMtditid, Some((fixedDate.getYear - 1).toString), List(business2018, alignedBusiness), List(propertyDetails))
@@ -170,7 +172,7 @@ object IncomeSourceDetailsTestConstants {
     }
   }
 
-  def notCompletedUIJourneySessionData(journeyType: IncomeSourceJourneyType, isTriggeredMigration: Boolean = false): UIJourneySessionData = {
+  def notCompletedUIJourneySessionData(journeyType: IncomeSourceJourneyType): UIJourneySessionData = {
     journeyType.operation.operationType match {
       case "ADD" =>
         UIJourneySessionData(
@@ -188,9 +190,6 @@ object IncomeSourceDetailsTestConstants {
             reportingMethodTaxYear1 = None,
             reportingMethodTaxYear2 = None,
             incomeSourceCreatedJourneyComplete = None
-          )),
-          triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(
-            isTriggeredMigrationJourney = isTriggeredMigration
           ))
         )
       case "MANAGE" =>
@@ -211,9 +210,6 @@ object IncomeSourceDetailsTestConstants {
             endDate = Some(LocalDate.of(2022, 10, 10)),
             ceaseIncomeSourceDeclare = Some("true"),
             journeyIsComplete = None
-          )),
-          triggeredMigrationSessionData = Some(TriggeredMigrationSessionData(
-            isTriggeredMigrationJourney = isTriggeredMigration
           )))
     }
   }

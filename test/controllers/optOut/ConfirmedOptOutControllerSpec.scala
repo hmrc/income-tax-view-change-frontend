@@ -104,13 +104,16 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
           status(result) shouldBe Status.OK
         }
 
-        s"return result with $INTERNAL_SERVER_ERROR status" when {
+        s"redirect to cannot-go-back page" when {
           "there is no tax year eligible for opt out" in {
             enable(OptOutFs)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(noEligibleTaxYearResponse)
+
+            when(mockOptOutService.getQuarterlyUpdatesCount(any(), any())(any(), any(), any()))
+              .thenReturn(Future.successful(0))
 
             when(mockOptOutService.fetchOptOutProposition()(any(), any(), any())).thenReturn(
               Future(
@@ -129,9 +132,12 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
                 Future(CurrentTaxYear)
               )
 
-            val result = action(fakeRequest)
+            mockUpdateOptOutJourneyStatusInSessionData()
+            mockFetchOptOutJourneyCompleteStatus()
 
-            status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            val result = action(fakeRequest)
+            status(result) shouldBe Status.SEE_OTHER
+            redirectLocation(result) shouldBe Some(controllers.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)).url)
           }
 
           "opt out service fails" in {

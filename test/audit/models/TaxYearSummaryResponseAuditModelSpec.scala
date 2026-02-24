@@ -16,7 +16,7 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData._
+import authV2.AuthActionsTestData.*
 import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{Accepted, ChargeItem, CodedOutStatusType, DocumentDetail, DocumentDetailWithDueDate}
@@ -25,15 +25,16 @@ import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdj
 import models.liabilitycalculation.{Message, Messages}
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import org.scalatest.Assertion
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.libs.json.{JsObject, Json}
 import testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
 import testConstants.ChargeConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-
+import play.api.libs.json._
+import org.scalatest.matchers.should.Matchers._
 import java.time.LocalDate
 
 class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupport with ImplicitDateParser with ChargeConstants {
@@ -157,13 +158,13 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
   val multipleErrorMessage: Option[Messages] = Some(Messages(errors = Some(Seq(
     Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
     Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
-    Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+    Message("C15510", "the Rent-a-Room relief claimed for a jointly let property cannot be more than 10% of the Rent-a-Room limit."),
     Message("C159028", "the total tax taken off your employment must be less than the total taxable pay including: tips, other payments, lump sums")
   ))))
   val multipleAgentErrorMessage: Option[Messages] = Some(Messages(errors = Some(Seq(
     Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
     Message("C15507", "your client claimed £2000 in Property Income Allowance but this is more than turnover for their UK property."),
-    Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+    Message("C15510", "the Rent-a-Room relief claimed for a jointly let property cannot be more than 10% of the Rent-a-Room limit."),
     Message("C159028", "the total tax taken off your client’s employment must be less than the total taxable pay including: tips, other payments, lump sums")
   ))))
 
@@ -355,10 +356,13 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
     "have the correct details for the audit event" when {
       "the user type is Agent" when {
         "full audit response" in {
-          taxYearOverviewResponseAuditFull(
-            userType = Some(Agent),
-            agentReferenceNumber = Some("agentReferenceNumber"),
-          ).detail shouldBe jsonAuditAgentResponse
+          assertJsonEquals(
+            taxYearOverviewResponseAuditFull(
+              userType = Some(Agent),
+              agentReferenceNumber = Some("agentReferenceNumber")
+            ).detail,
+            jsonAuditAgentResponse
+          )
         }
         "audit response has single error messages" in {
           taxYearOverviewResponseAuditFull(
@@ -385,44 +389,46 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
 
       "the user type is Individual" when {
         "full audit response" in {
-          taxYearOverviewResponseAuditFull(
+          assertJsonEquals(taxYearOverviewResponseAuditFull(
             userType = Some(Individual),
             agentReferenceNumber = None,
             paymentHasADunningLock = true
-          ).detail shouldBe jsonAuditIndividualResponse
+          ).detail, jsonAuditIndividualResponse)
+
         }
         "full audit response with coding out" in {
-          taxYearOverviewResponseAuditFull(
+          assertJsonEquals(taxYearOverviewResponseAuditFull(
             userType = Some(Individual),
             agentReferenceNumber = None,
             paymentHasADunningLock = true,
             codedOutStatusType = Some(Accepted),
             hasInterest = false
-          ).detail shouldBe jsonAuditIndividualResponseWithCodedOut
+          ).detail, jsonAuditIndividualResponseWithCodedOut)
+
         }
         "audit response has single error messages" in {
-          taxYearOverviewResponseAuditFull(
+          assertJsonEquals(taxYearOverviewResponseAuditFull(
             userType = Some(Individual),
             agentReferenceNumber = None,
             paymentHasADunningLock = true,
             messages = singleErrorMessage
-          ).detail shouldBe errorAuditResponseJson(jsonAuditIndividualResponse, singleErrorMessage)
+          ).detail, errorAuditResponseJson(jsonAuditIndividualResponse, singleErrorMessage))
         }
         "audit response has single multi-line error messages" in {
-          taxYearOverviewResponseAuditFull(
+          assertJsonEquals(taxYearOverviewResponseAuditFull(
             userType = Some(Individual),
             agentReferenceNumber = None,
             paymentHasADunningLock = true,
             messages = singleMultiLineErrorMessage
-          ).detail shouldBe errorAuditResponseJson(jsonAuditIndividualResponse, singleMultiLineErrorMessage)
+          ).detail, errorAuditResponseJson(jsonAuditIndividualResponse, singleMultiLineErrorMessage))
         }
         "audit response has multiple error messages" in {
-          taxYearOverviewResponseAuditFull(
+          assertJsonEquals(taxYearOverviewResponseAuditFull(
             userType = Some(Individual),
             agentReferenceNumber = None,
             paymentHasADunningLock = true,
             messages = multipleErrorMessage
-          ).detail shouldBe errorAuditResponseJson(jsonAuditIndividualResponse, multipleErrorMessage)
+          ).detail, errorAuditResponseJson(jsonAuditIndividualResponse, multipleErrorMessage))
         }
       }
 

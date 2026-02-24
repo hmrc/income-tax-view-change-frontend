@@ -66,7 +66,7 @@ class SingleYearOptOutWarningController @Inject()(auth: AuthActions,
   }
 
   private def withAuth(isAgent: Boolean)(code: MtdItUser[_] => Future[Result]): Action[AnyContent] = {
-    val userAuthAction = if (isAgent) auth.asMTDAgentWithConfirmedClient else auth.asMTDIndividual
+    val userAuthAction = if (isAgent) auth.asMTDAgentWithConfirmedClient() else auth.asMTDIndividual()
     userAuthAction.async(user => code(user))
   }
 

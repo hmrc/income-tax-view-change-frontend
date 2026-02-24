@@ -29,7 +29,8 @@ case class AllowancesAndDeductions(
                                     postCessationTradeReceipts: Option[BigDecimal] = None,
                                     paymentsToTradeUnionsForDeathBenefits: Option[BigDecimal] = None,
                                     grossAnnuityPayments: Option[BigDecimal] = None,
-                                    pensionContributions: Option[BigDecimal] = None
+                                    pensionContributions: Option[BigDecimal] = None,
+                                    totalPartnershipLossesBroughtForward: Option[BigDecimal] = None
                                   )
 
 object AllowancesAndDeductions {
@@ -43,8 +44,23 @@ object AllowancesAndDeductions {
       (JsPath \ "post-cessationTradeReceipts").writeNullable[BigDecimal] and
       (JsPath \ "paymentsToTradeUnionsForDeathBenefits").writeNullable[BigDecimal] and
       (JsPath \ "grossAnnuityPayments").writeNullable[BigDecimal] and
-      (JsPath \ "pensionContributions").writeNullable[BigDecimal]
-    ) (unlift(AllowancesAndDeductions.unapply))
+      (JsPath \ "pensionContributions").writeNullable[BigDecimal] and
+      (JsPath \ "totalPartnershipLossesBroughtForward").writeNullable[BigDecimal]
+    ) { a =>
+    (
+      a.personalAllowance,
+      a.marriageAllowanceTransferOut,
+      a.reducedPersonalAllowance,
+      a.giftOfInvestmentsAndPropertyToCharity,
+      a.lossesAppliedToGeneralIncome,
+      a.qualifyingLoanInterestFromInvestments,
+      a.postCessationTradeReceipts,
+      a.paymentsToTradeUnionsForDeathBenefits,
+      a.grossAnnuityPayments,
+      a.pensionContributions,
+      a.totalPartnershipLossesBroughtForward
+    )
+  }
 
   implicit val reads: Reads[AllowancesAndDeductions] = (
     (JsPath \ "personalAllowance").readNullable[Int] and
@@ -56,7 +72,8 @@ object AllowancesAndDeductions {
       (JsPath \ "post-cessationTradeReceipts").readNullable[BigDecimal] and
       (JsPath \ "paymentsToTradeUnionsForDeathBenefits").readNullable[BigDecimal] and
       (JsPath \ "grossAnnuityPayments").readNullable[BigDecimal] and
-      (JsPath \ "pensionContributions").readNullable[BigDecimal]
+      (JsPath \ "pensionContributions").readNullable[BigDecimal] and
+      (JsPath \ "totalPartnershipLossesBroughtForward").readNullable[BigDecimal]
     ) (AllowancesAndDeductions.apply _)
 }
 

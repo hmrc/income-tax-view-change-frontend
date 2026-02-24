@@ -163,13 +163,13 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeCon
   }
 
   private def groupedCodedOutBcdCharges() = List(
-    (2018, List(PaymentHistoryEntry(date = LocalDate.of(2018, 3, 29), creditType = BalancingCharge, amount = codedOutDocumentDetailPayeSACi.originalAmount.some, transactionId = codedOutDocumentDetailPayeSACi.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02", visuallyHiddenText = BalancingCharge.toString))),
-    (2017, List(PaymentHistoryEntry(date = LocalDate.of(2017, 3, 29), creditType = BalancingCharge, amount = balancingChargePaye.originalAmount.some, transactionId = balancingChargePaye.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=1040000126", visuallyHiddenText = BalancingCharge.toString)))
+    (2018, List(PaymentHistoryEntry(date = LocalDate.of(2018, 3, 29), creditType = BalancingCharge, amount = codedOutDocumentDetailPayeSACi.originalAmount.some, transactionId = codedOutDocumentDetailPayeSACi.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02&codedOut=true", visuallyHiddenText = BalancingCharge.toString))),
+    (2017, List(PaymentHistoryEntry(date = LocalDate.of(2017, 3, 29), creditType = BalancingCharge, amount = balancingChargePaye.originalAmount.some, transactionId = balancingChargePaye.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=1040000126&codedOut=true", visuallyHiddenText = BalancingCharge.toString)))
   )
 
   private def groupedCodedOutPoaCharges() = List(
-    (2016, List(PaymentHistoryEntry(date = LocalDate.of(2016, 3, 29), creditType = PoaTwoDebit, amount = poa2WithCodingutAccepted.originalAmount.some, transactionId = poa2WithCodingutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000124", visuallyHiddenText = PoaTwoDebit.toString))),
-    (2015, List(PaymentHistoryEntry(date = LocalDate.of(2015, 3, 29), creditType = PoaOneDebit, amount = poa1WithCodingOutAccepted.originalAmount.some, transactionId = poa1WithCodingOutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000123", visuallyHiddenText = PoaOneDebit.toString)))
+    (2016, List(PaymentHistoryEntry(date = LocalDate.of(2016, 3, 29), creditType = PoaTwoDebit, amount = poa2WithCodingutAccepted.originalAmount.some, transactionId = poa2WithCodingutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000124&codedOut=true", visuallyHiddenText = PoaTwoDebit.toString))),
+    (2015, List(PaymentHistoryEntry(date = LocalDate.of(2015, 3, 29), creditType = PoaOneDebit, amount = poa1WithCodingOutAccepted.originalAmount.some, transactionId = poa1WithCodingOutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000123&codedOut=true", visuallyHiddenText = PoaOneDebit.toString)))
   )
 
   "RepaymentHistoryUtils" should {

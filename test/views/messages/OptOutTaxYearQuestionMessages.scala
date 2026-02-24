@@ -47,14 +47,16 @@ object OptOutTaxYearQuestionMessages {
   // Single Year followed by Mandated
   val previousSingleYearHeading = "Opt out of Making Tax Digital for Income Tax for the 2024 to 2025 tax year"
   val previousSingleYearTitle = "Opt out of Making Tax Digital for Income Tax for the 2024 to 2025 tax year - Manage your Self Assessment - GOV.UK"
-  val previousSingleYearDesc1 = "This would mean you do not need to use software compatible with Making Tax Digital for Income Tax, but you can keep using it if you prefer."
+  val previousSingleYearDesc1 = "You can only opt out for the 2024 to 2025 tax year."
   val previousSingleYearInset = "You have 2 quarterly updates submitted for this tax year. If you continue, these updates will be deleted from our records. You will need to include any income from these updates in your tax return."
   val previousSingleYearDesc2 = "In future, you could be required to go back to using Making Tax Digital for Income Tax. If this happens, we will write to you to let you know."
+  val previousSingleYearFollowedByMandatedInset = "Even if you continue, from 6 April 2025, you will be required to go back to using Making Tax Digital for Income Tax."
+
   val previousSingleYearQuestion = "Do you still want to opt out for the 2024 to 2025 tax year?"
 
   val singleYearFollowedByMandatedHeading = "Opt out of Making Tax Digital for Income Tax for a single tax year"
   val singleYearFollowedByMandatedTitle = "Opt out of Making Tax Digital for Income Tax for a single tax year - Manage your Self Assessment - GOV.UK"
-  val singleYearFollowedByMandatedDesc1 = "You can only opt out for the 2025 to 2026 tax year. This would mean you no longer need software compatible with Making Tax Digital for Income Tax for this tax year."
+  val singleYearFollowedByMandatedDesc1 = "You can only opt out for the 2025 to 2026 tax year."
   val singleYearFollowedByMandatedInset = "Even if you continue, from 6 April 2026, you will be required to go back to using Making Tax Digital for Income Tax."
   val singleYearFollowedByMandatedQuestion = "Do you still want to opt out for the 2025 to 2026 tax year?"
 

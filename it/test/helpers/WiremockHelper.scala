@@ -18,9 +18,9 @@ package helpers
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.common.ConsoleNotifier
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration.*
 import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.servicemocks.MTDAgentAuthStub.bakeSessionCookie
@@ -28,6 +28,7 @@ import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.http.HeaderNames
 import play.api.libs.json.JsValue
+import play.api.libs.ws.DefaultBodyWritables.*
 import play.api.libs.ws.{WSClient, WSResponse}
 import testConstants.BaseIntegrationTestConstants.testSessionId
 
@@ -237,7 +238,7 @@ object WiremockHelper extends Eventually with IntegrationPatience {
 trait WiremockHelper {
   self: GuiceOneServerPerSuite =>
 
-  import WiremockHelper._
+  import WiremockHelper.*
 
   lazy val ws = app.injector.instanceOf[WSClient]
 
@@ -272,8 +273,7 @@ trait WiremockHelper {
                          isCY: Boolean = false,
                          additionalHeaders: Map[String, String] = Map.empty
                        ): Future[WSResponse] = {
-    val defaultHeader = Map(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies),
-      "X-Session-ID" -> testSessionId)
+    val defaultHeader = Map(HeaderNames.COOKIE -> bakeSessionCookie(Map.empty ++ additionalCookies), "X-Session-ID" -> testSessionId)
     val defaultAndAdditionalHeaders = defaultHeader ++ additionalHeaders
     val headers = if (isCY) defaultAndAdditionalHeaders ++ Map(HeaderNames.ACCEPT_LANGUAGE -> "cy") else defaultAndAdditionalHeaders
     buildClient(path)

@@ -34,7 +34,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
   val paymentFromEarlierYear: String = messages("paymentHistory.paymentFromEarlierYear")
 
   private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual)) = PaymentHistoryResponseAuditModel(
-    mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
+    mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty, "1")),
   payments = Seq(
       Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
@@ -56,7 +56,7 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
   )
 
   val paymentHistoryAuditMin: PaymentHistoryResponseAuditModel = PaymentHistoryResponseAuditModel(
-    mtdItUser = getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
+    mtdItUser = getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty, "1")),
     payments = Seq.empty[Payment]
   )
 
@@ -115,15 +115,15 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
     "Have the correct details for the audit event" when {
       "Audit expected behaviour" when {
         "MFACredits is available" in {
-          paymentHistoryAuditFullTxm().detail shouldBe getExpectedJson()
+          assertJsonEquals(paymentHistoryAuditFullTxm().detail, getExpectedJson())
         }
 
         "the audit is empty" in {
-          paymentHistoryAuditMin.detail shouldBe Json.obj(
+          assertJsonEquals(paymentHistoryAuditMin.detail, Json.obj(
             "mtditid" -> testMtditid,
             "nino" -> testNino,
             "paymentHistory" -> Json.arr()
-          )
+          ))
         }
       }
     }

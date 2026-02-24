@@ -71,13 +71,13 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
       obligations   <- obligationsConnector.getAllObligationsDateRange(taxYearModel.toFinancialYearStart, taxYearModel.toFinancialYearEnd)
     } yield (liabilityCalc, obligations) match {
       case (calcErrorResponse: LiabilityCalculationError, _) if calcErrorResponse.status == NO_CONTENT =>
-        Logger("application").info("No calculation data returned from downstream. Not Found.")
+        Logger("application").info("[TaxDueSummaryController][handleRequest] No calculation data returned from downstream. Not Found.")
         itvcErrorHandler.showInternalServerError()
       case (_: LiabilityCalculationError, _) =>
-        Logger("application").error(s"[$taxYear] No new calc deductions data error found. Downstream error")
+        Logger("application").error(s"[TaxDueSummaryController][handleRequest][$taxYear] No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
       case (_, _: ObligationsErrorModel) =>
-        Logger("application").error(s"[$taxYear] Failed to retrieve obligations. Downstream error")
+        Logger("application").error(s"[TaxDueSummaryController][handleRequest][$taxYear] Failed to retrieve obligations. Downstream error")
         itvcErrorHandler.showInternalServerError()
       case (liabilityCalc: LiabilityCalculationResponse, obligations: ObligationsModel) =>
 
@@ -101,7 +101,7 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
   }
 
 
-  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual.async {
+  def showTaxDueSummary(taxYear: Int, origin: Option[String] = None, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         origin = origin,
@@ -112,7 +112,7 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
       )
   }
 
-  def showTaxDueSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
+  def showTaxDueSummaryAgent(taxYear: Int, previousCalculation: Boolean = false): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
         itcvErrorHandler = itvcErrorHandlerAgent,

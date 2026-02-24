@@ -38,8 +38,8 @@
                 </h2>
             </div>
             <div class="govuk-notification-banner__content">
-                <p class="govuk-notification-banner__heading">Do not change the feature switches in Staging during the accessibility testing period, unless supporting said testing</p>
-                <p class="govuk-notification-banner__heading">This period will last from the 10th November at 9am and will run for approximately 12 days</p>
+                <p class="govuk-notification-banner__heading">Do not change the feature switches in Staging during the accessibility re-testing period, unless supporting said testing</p>
+                <p class="govuk-notification-banner__heading">This period will last from the 28th January at 9am and will run for a few days</p>
                 <p class="govuk-notification-banner__heading">Once the testing has been completed, this message will be removed</p>
             </div>
         </div>
@@ -59,12 +59,7 @@
             <div class="govuk-checkboxes" data-module="govuk-checkboxes">
             @for((switch, state) <- switchNames) {
                 <div class="govuk-checkboxes__item">
-                    <input class="govuk-checkboxes__input" type="checkbox" id="feature-switch.enable-@switch.name" name="@switch.name"
-                    value="true" @{
-                        if(state) {
-                            "Checked"
-                        }
-                    }>
+                    <input class="govuk-checkboxes__input" type="checkbox" id="feature-switch.enable-@switch.name" name="@switch.name" value="true" @if(state){checked} >
                     <label class="govuk-label govuk-checkboxes__label" for="@switch.name">@switch.toString</label>
                 </div>
             }

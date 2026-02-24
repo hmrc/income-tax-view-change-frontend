@@ -76,7 +76,7 @@ object ITSAStatus extends Enumeration {
     Set(Mandated, Voluntary, Annual).contains(status)
 
   implicit val itsaStatusReads: Reads[ITSAStatus] = Reads.enumNameReads(ITSAStatus)
-  implicit val itsaStatusWrite: Writes[ITSAStatus] = Writes.enumNameWrites
+  implicit val itsaStatusWrite: Writes[ITSAStatus.Value] = Writes.enumNameWrites[ITSAStatus.type]
 }
 
 object StatusReason extends Enumeration {
@@ -96,5 +96,5 @@ object StatusReason extends Enumeration {
   val DigitallyExempt = Value("Digitally Exempt")
 
   implicit val statusReasonReads: Reads[StatusReason] = Reads.enumNameReads(StatusReason)
-  implicit val statusReasonWrite: Writes[StatusReason] = Writes.enumNameWrites
+  implicit val statusReasonWrite: Writes[StatusReason.Value] = Writes.enumNameWrites[StatusReason.type]
 }

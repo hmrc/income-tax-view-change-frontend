@@ -118,7 +118,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
         "return a successful Right(CreditsModel)" in {
 
           val testUserNino = "AB123456C"
-          val testCreditModel = CreditsModel(0.0, 0.0, 0.0, 0.0, Nil)
+          val testCreditModel = CreditsModel(0.0, 0.0, 0.0, 0.0, None, None, Nil)
           val response: String = Json.toJson(testCreditModel).toString()
 
           val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
@@ -188,7 +188,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
         "return a successful Right(CreditsModel)" in {
 
           val testUserNino = "AB123456C"
-          val testCreditModel = CreditsModel(0.0, 0.0, 0.0, 0.0, Nil)
+          val testCreditModel = CreditsModel(0.0, 0.0, 0.0, 0.0, None, None, Nil)
           val response: String = Json.toJson(testCreditModel).toString()
 
           val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"

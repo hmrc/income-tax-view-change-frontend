@@ -27,14 +27,14 @@ object PaymentAllocationStatusSpec extends Properties("PaymentAllocationStatus_a
     lot = Some("lot2"), lotItem = Some("lotItem2"), documentDescription = None,
     dueDate = Some(LocalDate.parse("2018-12-12")), documentDate = LocalDate.parse("2018-12-12"), outstandingAmount = None, transactionId = Some("DOCID02"))
 
-  property("allocationStatus_FullyAllocatedPaymentStatus") = forAll { outstanding: BigDecimal =>
+  property("allocationStatus_FullyAllocatedPaymentStatus") = forAll { (outstanding: BigDecimal) =>
     (outstanding != 0) ==> {
       val payment = defaultPayment.copy(amount = Some(outstanding), outstandingAmount = Some(BigDecimal(0.0)))
       payment.allocationStatus() == Some(FullyAllocatedPaymentStatus)
     }
   }
 
-  property("allocationStatus_NotYetAllocatedPaymentStatus") = forAll { someAmount: BigDecimal =>
+  property("allocationStatus_NotYetAllocatedPaymentStatus") = forAll { (someAmount: BigDecimal) =>
     (someAmount != 0) ==> {
       val payment = defaultPayment.copy(amount = Some(someAmount), outstandingAmount = Some(someAmount))
       payment.allocationStatus() == Some(NotYetAllocatedPaymentStatus)
@@ -48,7 +48,7 @@ object PaymentAllocationStatusSpec extends Properties("PaymentAllocationStatus_a
     }
   }
 
-  property("allocationStatus_None") = forAll { _: BigDecimal =>
+  property("allocationStatus_None") = forAll {( _: BigDecimal) =>
     val payment = defaultPayment.copy(amount = None, outstandingAmount = None)
     payment.allocationStatus() == None
   }

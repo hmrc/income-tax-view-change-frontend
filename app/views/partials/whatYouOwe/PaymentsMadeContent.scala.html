@@ -44,6 +44,10 @@
     @p(id = Some("overdue-inset-migrated-2"))(content = Html(messages("yourSelfAssessmentChargeSummary.overdue-inset-text-2")))
 }
 
+@getNoPaymentsDueText = {
+    @p(id = Some("no-payments-due"))(Html(getMessage(if(isAgent) "no-payments-due-agent" else "no-payments-due")))
+}
+
 @viewModel.whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
     @h2(getMessage("payments-made-heading"))
     @p(id = Some("payments-made-migrated"))(Html(
@@ -68,9 +72,14 @@
 }
 
 @if(viewModel.utr.isDefined && !user.isAgent()) {
-    @(for {
-        (_, amount) <- viewModel.whatYouOweChargesList.getEarliestTaxYearAndAmountByDueDate
-    } yield {
-        insetTextAndButton(amount)
-    })
+    @{
+        viewModel.whatYouOweChargesList.getDefaultPaymentAmount match {
+            case Some(value) => insetTextAndButton(value)
+            case None =>
+        }
+    }
+}
+
+@if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
+    @getNoPaymentsDueText
 }

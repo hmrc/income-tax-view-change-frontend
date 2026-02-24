@@ -40,10 +40,9 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
     s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange"
   }
 
-  def getLegacyCalculationList(nino: Nino, taxYearEnd: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
+  def getLegacyCalculationList(nino: String, taxYearEnd: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
-    http.get(url"${getLegacyCalculationListUrl(nino.value, taxYearEnd)}")
+    http.get(url"${getLegacyCalculationListUrl(nino, taxYearEnd)}")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
       .execute[HttpResponse] map { response =>
       response.status match {
@@ -54,16 +53,13 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
                 s"Json validation error parsing legacy calculation list response, error $invalid")
               CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing legacy calculation list response")
             },
-            valid => {
-              valid
-            }
+            valid => valid
           )
-        case status =>
-          if (status >= INTERNAL_SERVER_ERROR) {
-            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
-          } else {
-            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
-          }
+        case status if status >= INTERNAL_SERVER_ERROR =>
+          Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+          CalculationListErrorModel(response.status, response.body)
+        case _ =>
+          Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
           CalculationListErrorModel(response.status, response.body)
       }
     }

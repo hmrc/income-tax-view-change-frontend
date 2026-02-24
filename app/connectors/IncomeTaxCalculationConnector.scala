@@ -28,8 +28,8 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2,
-                                              config: FrontendAppConfig) extends RawResponseReads {
+class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2, config: FrontendAppConfig) extends RawResponseReads {
+
   val baseUrl: String = config.incomeTaxCalculationService
 
   def getCalculationResponseUrl(nino: String): String = s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calculation-details"
@@ -37,9 +37,12 @@ class IncomeTaxCalculationConnector @Inject()(http: HttpClientV2,
   def getCalculationResponseByCalcIdUrl(nino: String, calcId: String): String =
     s"$baseUrl/income-tax-calculation/income-tax/nino/$nino/calc-id/$calcId/calculation-details"
 
-  def getCalculationResponse(mtditid: String, nino: String, taxYear: String, calculationRecord: Option[CalculationRecord])
-                            (implicit headerCarrier: HeaderCarrier,
-                             ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
+  def getCalculationResponse(
+                              mtditid: String,
+                              nino: String,
+                              taxYear: String,
+                              calculationRecord: Option[CalculationRecord]
+                            )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[LiabilityCalculationResponseModel] = {
 
     val queryParams = Map("taxYear" -> taxYear) ++ calculationRecord.map("calculationRecord" -> _)
     val url = url"${getCalculationResponseUrl(nino)}?$queryParams"

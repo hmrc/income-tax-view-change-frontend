@@ -1,0 +1,152 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import implicits.ImplicitCurrencyFormatter._
+@import implicits.ImplicitDateFormatter
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.HtmlFormatter.NbspString
+@import models.creditsandrefunds._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import views.html.partials.creditAndRefunds._
+@import auth.MtdItUser
+
+
+@this(
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    link: link,
+    p: p,
+    govukTable : GovukTable,
+)
+
+@(viewModel: MoneyInYourAccountViewModel, isAgent: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+
+@import implicitDateFormatter._
+
+
+@TableRowDescriptionLink(message: String, href: String, index: Int) = @{
+    HtmlContent(link(
+        id = Some(s"where-the-money-came-from-link-$index"),
+        link = href,
+        messageKey = message
+    ))
+}
+
+@PaymentTableRow(payment: PaymentCreditRow, index: Int) = @{
+    Seq(
+        TableRow(
+            content = HtmlContent(payment.date.toLongDateShort.toNonBreaking.toString)
+        ),
+        TableRow(
+            content = TableRowDescriptionLink(messages("money-in-your-account.where-from.payment-row.description", payment.effectiveDate.toLongDateShort), payment.descriptionLink(isAgent), index),
+            attributes = Map("id" -> s"payment-$index")
+        ),
+        TableRow(
+            content = HtmlContent(messages("money-in-your-account.where-from.table-row.tax-year", payment.taxYear.startYear.toString, payment.taxYear.endYear.toString).toNonBreaking),
+            attributes = Map("id" -> s"tax-year-cell-$index")
+        ),
+        TableRow(
+            content = HtmlContent(payment.amount.abs.toCurrency.toString),
+            format = Some("numeric")
+        )
+    )
+}
+@CreditTableRow(credit: CreditViewRow, index: Int) = @{
+    Seq(
+        TableRow(
+            content = HtmlContent(credit.date.toLongDateShort.toNonBreaking.toString)
+        ),
+        TableRow(
+            content = TableRowDescriptionLink("money-in-your-account.where-from.credit-row.description", credit.descriptionLink(isAgent), index),
+            attributes = Map("id" -> s"payment-$index")
+        ),
+        TableRow(
+            content = HtmlContent(messages("money-in-your-account.where-from.table-row.tax-year", credit.taxYear.startYear.toString, credit.taxYear.endYear.toString).toNonBreaking),
+            attributes = Map("id" -> s"tax-year-cell-$index")
+        ),
+        TableRow(
+            content = HtmlContent(credit.amount.abs.toCurrency.toString),
+            format = Some("numeric")
+        )
+    )
+}
+
+@RefundTableRow(refund: RefundRow, index: Int) = @{
+    Seq(
+        TableRow(
+            content = HtmlContent(messages("tax-year-summary.noData"))
+        ),
+        TableRow(
+            content = TableRowDescriptionLink("money-in-your-account.where-from.refund-row.description", refund.descriptionLink, index),
+            attributes = Map("id" -> s"payment-$index")
+        ),
+        TableRow(
+            content = HtmlContent(messages("tax-year-summary.noData")),
+            attributes = Map("id" -> s"tax-year-cell-$index")
+        ),
+        TableRow(
+            content = HtmlContent(refund.amount.abs.unary_-.toCurrency.toString),
+            format = Some("numeric")
+        )
+    )
+}
+
+@TotalTableRow(availableCredit: BigDecimal) = @{
+    Seq(
+        TableRow(
+            content = HtmlContent(messages("money-in-your-account.where-from.total-row").toNonBreaking),
+            classes = "govuk-table__header"
+        ),
+        TableRow(),
+        TableRow(),
+        TableRow(
+            content = HtmlContent(availableCredit.abs.toCurrency.toString),
+            format = Some("numeric"),
+            classes = "govuk-table__header"
+        )
+    )
+}
+
+
+@govukTable(Table(
+    head = Some(Seq(
+        HeadCell(
+            content = Text(messages("money-in-your-account.where-from.table-header.date"))
+        ),
+        HeadCell(
+            content = Text(messages("money-in-your-account.where-from.table-header.description"))
+        ),
+        HeadCell(
+            content = Text(messages("money-in-your-account.where-from.table-header.tax-year"))
+        ),
+        HeadCell(
+            content = Text(messages("money-in-your-account.where-from.table-header.amount")),
+            classes = "govuk-!-text-align-right govuk-!-width-one-quarter"
+        )
+    )),
+    rows = viewModel.creditRows.sortBy(_.date).zipWithIndex.map{ case (creditRow, index) =>
+        creditRow match {
+            case payment: PaymentCreditRow => PaymentTableRow(payment, index)
+            case credit: CreditViewRow => CreditTableRow(credit, index)
+            case refund: RefundRow => RefundTableRow(refund, index)
+        }
+    } ++ Seq(TotalTableRow(viewModel.availableCredit)),
+    classes = "govuk-!-margin-bottom-8",
+    caption = Some(messages("money-in-your-account.where-from.table-caption")),
+    captionClasses = "govuk-table__caption--m",
+    attributes = Map("id" -> "where-the-money-came-from-table"),
+))

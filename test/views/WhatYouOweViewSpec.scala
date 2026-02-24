@@ -19,22 +19,22 @@ package views
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
-import controllers.routes.{ChargeSummaryController, CreditAndRefundController, PaymentController}
-import enums.CodingOutType._
+import controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
+import enums.CodingOutType.*
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatter
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
-import models.outstandingCharges._
+import models.outstandingCharges.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import views.html.WhatYouOweView
 
@@ -55,8 +55,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val saNote1_2: String = s"${messages("whatYouOwe.sa-note-1-body-2")} $saLink1_2 ${messages("whatYouOwe.sa-note-1-body-3")}"
   val saNote1_3: String = s"${messages("whatYouOwe.sa-note-1-body-4")} ${messages("whatYouOwe.sa-link-1-body-3", "2024", "2025")}."
   val saNote2Heading: String = messages("whatYouOwe.sa-note-2-heading")
+  val saNote2HeadingAgent: String = messages("whatYouOwe.sa-note-2-heading-agent")
   val saLink2: String = s"${messages("whatYouOwe.sa-link-2")} ${messages("pagehelp.opensInNewTabText")}"
+  val saLink2Agent: String = s"${messages("whatYouOwe.sa-link-2-agent")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote2: String = s"${messages("whatYouOwe.sa-note-2-body")} $saLink2."
+  val saNote2Agent: String = s"${messages("whatYouOwe.sa-note-2-body-agent-1")} $saLink2Agent. ${messages("whatYouOwe.sa-note-2-body-agent-2")}"
   val osChargesNote: String = messages("whatYouOwe.outstanding-charges-note")
   val paymentUnderReviewPara: String = s"${messages("whatYouOwe.dunningLock.text", s"${messages("whatYouOwe.dunningLock.link")} ${messages("pagehelp.opensInNewTabText")}")}."
   val chargeType: String = messages("tax-year-summary.payments.charge-type")
@@ -150,7 +153,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      creditAndRefundUrl = CreditAndRefundController.show().url,
+      moneyInYourAccountUrl = MoneyInYourAccountController.show().url,
       creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
@@ -208,7 +211,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      creditAndRefundUrl = CreditAndRefundController.showAgent().url,
+      moneyInYourAccountUrl = MoneyInYourAccountController.showAgent().url,
       creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
@@ -249,7 +252,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   )
 
   def whatYouOweDataWithOverdueInterestData(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueInterestDataCi(accruingInterestAmount),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
     codedOutDetails = Some(balancingCodedOut)
@@ -258,7 +261,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def whatYouOweDataWithOverdueAccruedInterest(accruingInterestAmount: List[Option[BigDecimal]],
                                                dunningLock: List[Option[String]] = noDunningLocks,
                                                outstandingAmount: List[BigDecimal] = List(50.0, 75.0)): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpi(accruingInterestAmount, dunningLock, outstandingAmount = outstandingAmount),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
     codedOutDetails = Some(balancingCodedOut)
@@ -267,7 +270,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   def whatYouOweDataWithOverdueLpiDunningLock(accruingInterestAmount: Option[BigDecimal],
                                               lpiWithDunningLock: Option[BigDecimal],
                                               outstandingAmount: List[BigDecimal] = List(50.0, 75.0)): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpi(
       List(accruingInterestAmount, accruingInterestAmount),
       List(None, None),
@@ -279,21 +282,21 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   def whatYouOweDataWithOverdueLpiDunningLockZero(accruingInterestAmount: Option[BigDecimal],
                                                   lpiWithDunningLock: Option[BigDecimal]): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsOverdueWithLpiDunningLockZeroCi(TaxYear.forYearEnd(fixedDate.getYear), accruingInterestAmount, false, lpiWithDunningLock),
     outstandingChargesModel = Some(outstandingChargesOverdueDataIt),
     codedOutDetails = Some(balancingCodedOut)
   )
 
   def whatYouOweDataWithOverdueMixedData2(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsOverdueWithLpi(accruingInterestAmount, noDunningLocks)(1))
       ++ List(financialDetailsWithMixedData3Ci.head),
     codedOutDetails = Some(balancingCodedOut)
   )
 
   def whatYouOweDataTestActiveWithMixedData2(accruingInterestAmount: List[Option[BigDecimal]]): WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsOverdueWithLpi(accruingInterestAmount, noDunningLocks)(1))
       ++ List(financialDetailsWithMixedData3Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue),
@@ -338,49 +341,56 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val outstandingChargesWithAciValueZeroAndOverdue: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusDays(15).toString, 0.00)
 
   val whatYouOweDataWithWithAciValueZeroAndOverdue: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList =
       List(financialDetailsWithMixedData3Ci(1)) ++ List(financialDetailsWithMixedData3Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
-  val whatYouOweDataWithWithAciValueZeroAndFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+  val whatYouOweDataWithWithPaymentsWithin30Days: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(1.00, 0.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    chargesList = List(financialDetailsWithMixedData1Ci(1))
+      ++ List(financialDetailsWithMixedData1Ci.head),
+    outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
+  )
+
+  val whatYouOweDataWithWithFuturePayments: WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(0.00, 0.00, 4.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsWithMixedData1Ci(1))
       ++ List(financialDetailsWithMixedData1Ci.head),
     outstandingChargesModel = Some(outstandingChargesWithAciValueZeroAndOverdue)
   )
 
   val whatYouOweDataWithCodingOutNics2: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
     codedOutDetails = Some(codedOutDetails)
   )
 
   val whatYouOweDataNoCharges: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(),
     outstandingChargesModel = None,
     codedOutDetails = None
   )
 
   val whatYouOweDataWithCodingOutFullyCollected: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
     codedOutDetails = Some(CodingOutDetails(0.00, TaxYear.forYearEnd(2021)))
   )
 
   val whatYouOweDataWithMFADebits: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(financialDetailsMFADebitsCi.head),
     outstandingChargesModel = None,
     codedOutDetails = None
   )
 
   val whatYouOweDataWithCodingOutFuture: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutNics2Ci()),
     outstandingChargesModel = None,
     codedOutDetails = Some(codedOutDetails)
@@ -389,35 +399,36 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val whatYouOweDataCodingOutWithoutAmountCodingOut: WhatYouOweChargesList = whatYouOweDataWithCodingOutNics2.copy(codedOutDetails = None)
 
   val whatYouOweDataWithCancelledPayeSa: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithCodingOutCancelledPayeSaCi()),
     outstandingChargesModel = None,
     codedOutDetails = None
   )
 
   val whatYouOweWithPoaOneCollected: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithPoaCodingOutAccepted()),
     outstandingChargesModel = None,
     codedOutDetails = Some(codedOutDetails)
   )
 
   val whatYouOweWithPoaTwoCollected: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     chargesList = List(chargeItemWithPoaCodingOutAccepted().copy(transactionType = PoaTwoDebit)),
     outstandingChargesModel = None,
     codedOutDetails = Some(codedOutDetails)
   )
 
-  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None), codedOutDetails = Some(balancingCodedOut))
+  val noChargesButCodedOutModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None), codedOutDetails = Some(balancingCodedOut))
+  val noChargesModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None))
 
   val whatYouOweDataWithPayeSA: WhatYouOweChargesList = WhatYouOweChargesList(
-    balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None),
     chargesList =  List(chargeItemWithCodingOutNics2Ci()),
     codedOutDetails = Some(codedOutDetails)
   )
 
-  val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None))
+  val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None))
 
   def claimToAdjustLink(isAgent: Boolean): String = {
     if (isAgent) {
@@ -969,11 +980,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           findElementById(".interest-rate") shouldBe None
         }
 
-        "have payments data with button" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
+        "have payments data with button with overdue charges" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
-
-          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
-
+          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(300).url
+        }
+        "have payments data with button with charges due within 30 days" in new TestSetup(charges = whatYouOweDataWithOverdueData().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00))) {
+          pageDocument.getElementById("payment-button").text shouldBe payNow
+          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(100).url
+        }
+        "have payments data with button with charges due after 30 days" in new TestSetup(charges = whatYouOweDataWithOverdueData().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00, balanceDueWithin30Days = 0.00))) {
+          pageDocument.getElementById("payment-button").text shouldBe payNow
+          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(400).url
         }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
@@ -1069,12 +1086,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
       }
-      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithMixedData1()) {
-
+      s"have payment data with button with overdue charges" in new TestSetup(charges = whatYouOweDataWithMixedData1()) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
-
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(10000).url
-
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(200).url
+        findElementById("pre-mtd-payments-heading") shouldBe None
+      }
+      s"have payment data with button with charges due within 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData1().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00))) {
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(100).url
+        findElementById("pre-mtd-payments-heading") shouldBe None
+      }
+      s"have payment data with button with charges due after 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData1().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(balanceDueWithin30Days = 0.00, overDueAmount = 0.00))) {
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(400).url
         findElementById("pre-mtd-payments-heading") shouldBe None
       }
     }
@@ -1134,21 +1158,59 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
       }
 
-      s"have payment data with button" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
-
+      s"have payment data with button when charges overdue" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(200).url
+      }
+      s"have payment data with button when charges due in next 30 days" in new TestSetup(charges = whatYouOweDataWithWithPaymentsWithin30Days) {
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(100).url
+      }
+      s"have payment data with button when charges due in more than 30 days" in new TestSetup(charges = whatYouOweDataWithWithFuturePayments) {
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(400).url
+      }
+    }
 
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(12345667).url
+    "the user has no charges but is coded out" should {
+
+      s"have the title $whatYouOweTitle and page header and notes" in new TestSetup(charges = noChargesButCodedOutModel) {
+        pageDocument.title() shouldBe whatYouOweTitle
+        pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote2)
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
 
       }
 
+      "have the link to their previous Self Assessment online account in the sa-note" in new TestSetup(charges = noChargesButCodedOutModel) {
+        verifySelfAssessmentLink()
+      }
+
+      "not have button Pay now" in new TestSetup(charges = noChargesButCodedOutModel) {
+        findElementById("payment-button") shouldBe None
+      }
+      "not have payment made paragraph" in new TestSetup(charges = noChargesButCodedOutModel) {
+        findElementById("payments-made") shouldBe None
+        findElementById("payments-made-bullets") shouldBe None
+        findElementById("sa-tax-bill") shouldBe None
+        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
+        pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
+        pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
+        pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
+        pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+        pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
+      }
     }
 
-    "the user has no charges" should {
+    "the user has no charges at all" should {
 
       s"have the title $whatYouOweTitle and page header and notes" in new TestSetup(charges = noChargesModel) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
+        pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
@@ -1168,11 +1230,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findElementById("payments-made") shouldBe None
         findElementById("payments-made-bullets") shouldBe None
         findElementById("sa-tax-bill") shouldBe None
-        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
         pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
         pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
         pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-        pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote2Heading
         pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
       }
     }
@@ -1248,7 +1309,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url
       }
 
-      "not have button Pay now with no chagres" in new AgentTestSetup(charges = noChargesModel) {
+      "not have button Pay now with no charges but coded out" in new AgentTestSetup(charges = noChargesButCodedOutModel) {
         findAgentElementById("payment-button") shouldBe None
       }
       "not have button Pay now with charges" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
@@ -1282,14 +1343,27 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
       pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
       pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-      pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
-      pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
+      pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2HeadingAgent
+      pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2Agent
     }
 
-    "the user has no charges" should {
+    "the user has no charges but is coded out" should {
+      s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading-agent"))} and page header and notes" in new AgentTestSetup(charges = noChargesButCodedOutModel) {
+        pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
+        pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote2)
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
+      }
+    }
+
+    "the user has no charges at all" should {
       s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading-agent"))} and page header and notes" in new AgentTestSetup(charges = noChargesModel) {
         pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
         pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
+        pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)

@@ -19,7 +19,7 @@ package services
 import auth.MtdItUser
 import config.FrontendAppConfig
 import connectors.AddressLookupConnector
-import models.core.{IncomeSourceId, Mode}
+import models.core.Mode
 import models.incomeSourceDetails.BusinessAddressModel
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
@@ -34,11 +34,13 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
                                     (implicit ec: ExecutionContext) {
   case class AddressError(status: String) extends RuntimeException
 
-  def initialiseAddressJourney(isAgent: Boolean, mode: Mode)
+  def initialiseAddressJourney(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean, ukOnly: Boolean)
                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[String]]] = {
     addressLookupConnector.initialiseAddressLookup(
       isAgent = isAgent,
-      mode = mode
+      mode = mode,
+      isTriggeredMigration = isTriggeredMigration,
+      ukOnly = ukOnly
     ) map {
       case Left(UnexpectedPostStatusFailure(status)) =>
         Logger("application").info(s"error during initialise $status")
@@ -49,10 +51,10 @@ class AddressLookupService @Inject()(val frontendAppConfig: FrontendAppConfig,
     }
   }
 
-  def fetchAddress(id: Option[IncomeSourceId])(implicit hc: HeaderCarrier): Future[Either[Throwable, BusinessAddressModel]] = {
+  def fetchAddress(id: Option[String])(implicit hc: HeaderCarrier): Future[Either[Throwable, BusinessAddressModel]] = {
     id match {
-      case Some(incomeSourceId: IncomeSourceId) =>
-        addressLookupConnector.getAddressDetails(incomeSourceId.value) map {
+      case Some(addressLookupId: String) =>
+        addressLookupConnector.getAddressDetails(addressLookupId) map {
           case Left(UnexpectedGetStatusFailure(status)) =>
             Logger("application").error(s"failed to get details for $id with status $status")
             Left(AddressError("status: " + status))

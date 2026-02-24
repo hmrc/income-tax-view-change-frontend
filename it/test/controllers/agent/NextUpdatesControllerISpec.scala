@@ -60,7 +60,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
   val implicitDateFormatter: ImplicitDateFormatter = app.injector.instanceOf[ImplicitDateFormatterImpl]
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  val path = "/agents/next-updates"
+  val path = "/agents/submission-deadlines"
 
   s"GET $path" when {
     List(MTDPrimaryAgent, MTDSupportingAgent).foreach { mtdUserRole =>

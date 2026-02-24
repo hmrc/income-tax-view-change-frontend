@@ -16,6 +16,9 @@
 
 package controllers
 
+import audit.AuditingService
+import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.MTDSupportingAgent
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
@@ -23,24 +26,77 @@ import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
+import play.api
+import play.api.Application
 import play.api.http.Status
-import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.mvc.{MessagesControllerComponents, Result}
+import play.api.test.Helpers.*
 import play.api.test.Injecting
+import play.twirl.api.Html
+import services.{CreditService, NextUpdatesService}
+import services.optIn.OptInService
+import services.optout.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
+import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import views.html.helpers.injected.home.YourReportingObligationsTile
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with Injecting {
 
-  lazy val testHomeController = app.injector.instanceOf[HomeController]
+  given mockedYourReportingObligationsTile: YourReportingObligationsTile = mock(classOf[YourReportingObligationsTile])
+
+  val application: Application = applicationBuilderWithAuthBindings.overrides(
+    api.inject.bind[YourReportingObligationsTile].toInstance(mockedYourReportingObligationsTile),
+  ).build()
+
+  val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
+  val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
+  val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
+  val yourTasksView: NewHomeYourTasksView = application.injector.instanceOf(classOf[NewHomeYourTasksView])
+  val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
+  val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
+  val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
+  val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
+  val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
+
+  given mockedCreditService: CreditService = mock(classOf[CreditService])
+  given mockedOptInService: OptInService = mock(classOf[OptInService])
+  given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
+  given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
+  given ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
+  given AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
+  given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
 
   trait Setup {
-    val controller = testHomeController
-    when(mockDateService.getCurrentDate) thenReturn fixedDate
-    when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
+    val controller: HomeController = HomeController(
+      homeView,
+      yourTasksView,
+      recentActivityView,
+      overviewView,
+      helpView,
+      primaryAgentHomeView,
+      supportingAgentHomeView,
+      authActions,
+      mockedNextUpdatesService,
+      mockIncomeSourceDetailsService,
+      mockFinancialDetailsService,
+      mockDateServiceInjected,
+      mockWhatYouOweService,
+      mockITSAStatusService,
+      mockPenaltyDetailsService,
+      mockedCreditService,
+      mockedOptInService,
+      mockedOptOutService,
+      auditingService
+    )
+
+    when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
+    when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
     lazy val homePageTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
     lazy val homePageCaption = "You are signed in as a supporting agent"
@@ -51,9 +107,6 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
-
-    when(mockDateServiceInterface.getCurrentDate).thenReturn(fixedDate)
-    when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
   }
 
   "show()" when {
@@ -68,7 +121,10 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           mockGetDueDates(Right(futureDueDates))
           mockSingleBusinessIncomeSource()
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+          when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+            .thenReturn(Future.successful(true))
+          when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
+            .thenReturn(Future.successful(true))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -106,7 +162,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe "Next updates due View update deadlines"
+          document.select("#updates-tile").text() shouldBe "Your submission deadlines View update deadlines"
         }
       }
 
@@ -123,14 +179,13 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe "Next updates due View update deadlines"
+          document.select("#updates-tile").text shouldBe "Your submission deadlines View update deadlines"
         }
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
         enable(OptInOptOutContentUpdateR17)
         setupMockAgentWithClientAuth(isSupportingAgent)
-
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
@@ -149,7 +204,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         val document: Document = Jsoup.parse(contentAsString(result))
 
         val tile: Elements = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.select("p").get(0).text shouldBe "Next update due: 5 February 2024"
         tile.select("p").get(1).text shouldBe "Next tax return due: 31 January 2025"
 
@@ -163,8 +218,8 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         setupMockAgentWithClientAuth(isSupportingAgent)
 
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
-        val overdue1 = LocalDate.of(2000, 1, 1)
-        val overdue2 = LocalDate.of(2000, 2, 1)
+        val overdue1: LocalDate = LocalDate.of(2000, 1, 1)
+        val overdue2: LocalDate = LocalDate.of(2000, 2, 1)
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
 
@@ -181,8 +236,8 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         status(result) shouldBe Status.OK
         val document: Document = Jsoup.parse(contentAsString(result))
 
-        val tile = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        val tile: Elements = document.select("#updates-tile")
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.select("p").get(0).select("span.govuk-tag").text should include("2 Overdue updates")
         tile.select("p").get(1).text shouldBe "Next update due: 5 February 2024"
         tile.select("p").get(2).text shouldBe "Next tax return due: 31 January 2025"
@@ -213,11 +268,11 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         val document: Document = Jsoup.parse(contentAsString(result))
 
         val tile: Elements = document.select("#updates-tile")
-        tile.select("h2").text shouldBe "Your updates and deadlines"
+        tile.select("h2").text shouldBe "Your submission deadlines"
         tile.text should not include "Next update due"
         tile.select("p").get(0).text shouldBe "Next tax return due: 31 January 2025"
 
-        val link = tile.select("a")
+        val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
         link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
       }
@@ -245,9 +300,10 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
             enable(ReportingFrequencyPage)
             setupMockAgentWithClientAuth(isSupportingAgent)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
+            when(mockedYourReportingObligationsTile.apply(any(), any())(any()))
+              .thenReturn(Html(""))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -360,7 +416,10 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         document.getElementById("reporting-obligations-tile") shouldBe null
       }
     }
-
-    //    testMTDAgentAuthFailures(testHomeController.showAgent(), true)
+  }
+  new Setup {
+    "test MTD Supporting Agent Auth Failures" should {
+      testMTDAgentAuthFailures(controller.showAgent(), isSupportingAgent = true)
+    }
   }
 }

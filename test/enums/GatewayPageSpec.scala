@@ -16,20 +16,20 @@
 
 package enums
 
-import enums.GatewayPage._
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import enums.GatewayPage.*
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 
-class GatewayPageSpec extends AnyWordSpec{
+class GatewayPageSpec extends AnyWordSpec with Matchers{
 
   "apply" should {
     "return correct page based on the name passed" in {
 
-      GatewayPage("whatYouOwe") mustBe WhatYouOwePage
-      GatewayPage("yourSelfAssessmentChargeSummary") mustBe YourSelfAssessmentChargeSummaryPage
-      GatewayPage("paymentHistory") mustBe PaymentHistoryPage
-      GatewayPage("taxYearSummary") mustBe TaxYearSummaryPage
-      GatewayPage("any_name") mustBe NoMatch
+      GatewayPage("whatYouOwe") shouldBe WhatYouOwePage
+      GatewayPage("yourSelfAssessmentChargeSummary") shouldBe YourSelfAssessmentChargeSummaryPage
+      GatewayPage("paymentHistory") shouldBe PaymentHistoryPage
+      GatewayPage("taxYearSummary") shouldBe TaxYearSummaryPage
+      GatewayPage("any_name") shouldBe NoMatch
     }
   }
 }

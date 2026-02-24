@@ -45,10 +45,10 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with ReportingObligationsUtils {
 
   def show(): Action[AnyContent] =
-    authActions.asMTDIndividual.async { implicit user =>
+    authActions.asMTDIndividual().async { implicit user =>
       withOptOutFS {
         optOutService.getTaxYearForOptOutCancelled()
-          .map { taxYear: Option[TaxYear] =>
+          .map { (taxYear: Option[TaxYear]) =>
             Ok(view(
               isAgent = false,
               taxYear
@@ -68,10 +68,10 @@ class OptOutCancelledController @Inject()(val authActions: AuthActions,
     }
 
   def showAgent(): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient.async { implicit user =>
+    authActions.asMTDAgentWithConfirmedClient().async  { implicit user =>
       withOptOutFS {
         optOutService.getTaxYearForOptOutCancelled()
-          .map { taxYear: Option[TaxYear] =>
+          .map { (taxYear: Option[TaxYear]) =>
             Ok(view(
               isAgent = true,
               taxYear

@@ -19,7 +19,7 @@ package controllers.optIn.oldJourney
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import controllers.ControllerISpecHelper
-import controllers.optIn.oldJourney.ConfirmTaxYearControllerISpec._
+import controllers.optIn.oldJourney.ConfirmTaxYearControllerISpec.*
 import enums.JourneyType.{Opt, OptInJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
@@ -32,6 +32,7 @@ import models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
 import models.optin.{OptInContextData, OptInSessionData}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
 import play.mvc.Http.Status.BAD_REQUEST

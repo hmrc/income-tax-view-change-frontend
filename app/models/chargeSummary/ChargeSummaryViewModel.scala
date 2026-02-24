@@ -173,15 +173,27 @@ case class ChargeSummaryViewModel(
         } else {
           PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
         }
-        val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
-          messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
-        Html(
-          s"""
-             |<a class="govuk-link" href="$link">
-             |    $linkText
-             |    <span class="govuk-visually-hidden">${chargeItem.taxYear.endYear}</span>
-             |</a>
+
+        val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
+        else if (payment.isCutoverCredit) messages("paymentHistory.cutOver")
+        else messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
+        if (payment.isCutoverCredit) {
+          Html(
+            s"""
+               |<p class="govuk-body">
+               |    $linkText
+               |    <span class="govuk-visually-hidden">${chargeItem.taxYear.endYear}</span>
+               |</p>
+            """.stripMargin)
+        } else {
+          Html(
+            s"""
+               |<a class="govuk-link" href="$link">
+               |    $linkText
+               |    <span class="govuk-visually-hidden">${chargeItem.taxYear.endYear}</span>
+               |</a>
              """.stripMargin)
+        }
       }
       case None => {
         Html(messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut))

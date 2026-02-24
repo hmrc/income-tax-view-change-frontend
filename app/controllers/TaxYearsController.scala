@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,31 +58,32 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
         isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
         earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
         btaNavPartial = user.btaNavPartial,
-        origin = origin)
+        origin = origin
+      )
     } match {
       case Success(taxView) => Future.successful(Ok(taxView))
       case Failure(ex) =>
-        Logger("application").error(
-          s"failed to render view file for taxYears due to ${ex.getMessage}")
-        val errorHandler = if(isAgent) agentItvcErrorHandler else itvcErrorHandler
+        Logger("application").error(s"failed to render view file for taxYears due to ${ex.getMessage}")
+        val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
         Future.successful(errorHandler.showInternalServerError())
     }
   }
 
-  def showTaxYears(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async {
-    implicit user =>
+  def showTaxYears(origin: Option[String] = None): Action[AnyContent] =
+    authActions.asMTDIndividual().async { implicit user =>
       handleRequest(
         backUrl = controllers.routes.HomeController.show(origin).url,
         isAgent = false,
         origin = origin
       )
-  }
+    }
 
-  def showAgentTaxYears: Action[AnyContent] = authActions.asMTDPrimaryAgent.async {
-    implicit mtdItUser =>
-      handleRequest(
-        backUrl = controllers.routes.HomeController.showAgent().url,
-        isAgent = true
-      )
-  }
+  def showAgentTaxYears: Action[AnyContent] =
+    authActions.asMTDPrimaryAgent().async {
+      implicit mtdItUser =>
+        handleRequest(
+          backUrl = controllers.routes.HomeController.showAgent().url,
+          isAgent = true
+        )
+    }
 }

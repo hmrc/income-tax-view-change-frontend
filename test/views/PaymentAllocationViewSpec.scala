@@ -94,6 +94,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
+  class PaymentAllocationSetupNoTaxPeriodEndDate(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithNoTaxPeriodEndDate) extends Setup(
+    paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"))) {
+    paymentAllocationViewModelWithNoTaxPeriodEndDate.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+  }
 
   "Payment Allocation Page for non LPI" should {
     "check that the first section information is present" when {
@@ -217,6 +221,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allTableData.selectNth("th", 4).hasClass("govuk-table__header--numeric")
       }
 
+      "Show no data when there is no TaxPeriod End date supplied" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelWithNoTaxPeriodEndDate) {
+        val allTableData: Element = document.selectHead("tbody").selectHead("tr")
+        allTableData.selectNth("td", 1).text() shouldBe "31 Jan 2021"
+        allTableData.selectNth("td", 2).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")}"
+        allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.noData")}"
+        allTableData.selectNth("td", 4).text() shouldBe "£10.10"
+      }
+
     }
   }
   "Payment Allocation Page for LPI" should {
@@ -314,8 +326,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       val POA1 = "SA Payment on Account 1"
       val POA2 = "SA Payment on Account 2"
       val BAL_CHARGE = "SA Balancing Charge"
-
-      "a payment on account 1 of 2" in new PaymentAllocationSetup(viewModel(
+      val poa1Allocations = Seq(
         allocationDetail("poa1_1", "2018-03-15", POA1, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
         allocationDetail("poa1_2", "2018-04-05", POA1, ITSA_NI, 2345.67) -> "2019-06-28",
         allocationDetail("poa1_3", "2018-04-06", POA1, ITSA_SCOTLAND, 3456.78) -> "2019-06-29",
@@ -323,7 +334,27 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         allocationDetail("poa1_5", "2018-12-31", POA1, NIC4_GB, 9876.54) -> "2019-08-27",
         allocationDetail("poa1_6", "2019-01-01", POA1, NIC4_SCOTLAND, 8765.43) -> "2019-08-28",
         allocationDetail("poa1_7", "2019-04-05", POA1, NIC4_WALES, 7654.32) -> "2019-08-29",
-        allocationDetail("poa1_8", "2019-04-06", POA1, NIC4_NI, 6543.21) -> "2019-08-30")) {
+        allocationDetail("poa1_8", "2019-04-06", POA1, NIC4_NI, 6543.21) -> "2019-08-30"
+      )
+
+      val poa2Allocations = Seq(allocationDetail("poa2_1", "2018-03-15", POA2, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
+      allocationDetail("poa2_2", "2018-04-05", POA2, ITSA_NI, 2345.67) -> "2019-06-28",
+      allocationDetail("poa2_3", "2018-04-06", POA2, ITSA_SCOTLAND, 3456.78) -> "2019-06-29",
+      allocationDetail("poa2_4", "2018-06-23", POA2, ITSA_WALES, 4567.89) -> "2019-06-30",
+      allocationDetail("poa2_5", "2018-12-31", POA2, NIC4_GB, 9876.54) -> "2019-08-27",
+      allocationDetail("poa2_6", "2019-01-01", POA2, NIC4_SCOTLAND, 8765.43) -> "2019-08-28",
+      allocationDetail("poa2_7", "2019-04-05", POA2, NIC4_WALES, 7654.32) -> "2019-08-29",
+      allocationDetail("poa2_8", "2019-04-06", POA2, NIC4_NI, 6543.21) -> "2019-08-30")
+
+      val bcdAllocations = Seq(
+        allocationDetail("bcd_1", "2018-03-15", BAL_CHARGE, ITSA_SCOTLAND, 1234.56) -> "2019-06-27",
+        allocationDetail("bcd_2", "2018-04-05", BAL_CHARGE, NIC4_WALES, 2345.67) -> "2019-06-28",
+        allocationDetail("bcd_3", "2018-04-06", BAL_CHARGE, NIC2_GB, 3456.78) -> "2019-06-29",
+        allocationDetail("bcd_4", "2019-01-01", BAL_CHARGE, CGT, 9876.54) -> "2019-08-27",
+        allocationDetail("bcd_5", "2019-04-05", BAL_CHARGE, SL, 8765.43) -> "2019-08-28",
+        allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, VOLUNTARY_NIC2_NI, 7654.32) -> "2019-08-29")
+
+      "a payment on account 1 of 2" in new PaymentAllocationSetup(viewModel(poa1Allocations: _*)) {
 
         val expectedLinkUrls: Seq[String] = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "poa1_1").url,
@@ -334,7 +365,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.ChargeSummaryController.show(2019, "poa1_6").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa1_7").url,
           controllers.routes.ChargeSummaryController.show(2020, "poa1_8").url,
-          controllers.routes.CreditAndRefundController.show().url
+          controllers.routes.MoneyInYourAccountController.show().url
         )
 
         document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
@@ -356,15 +387,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           .eachAttr("href").asScala shouldBe expectedLinkUrls
       }
 
-      "a payment on account 2 of 2" in new PaymentAllocationSetup(viewModel(
-        allocationDetail("poa2_1", "2018-03-15", POA2, ITSA_ENGLAND_AND_NI, 1234.56) -> "2019-06-27",
-        allocationDetail("poa2_2", "2018-04-05", POA2, ITSA_NI, 2345.67) -> "2019-06-28",
-        allocationDetail("poa2_3", "2018-04-06", POA2, ITSA_SCOTLAND, 3456.78) -> "2019-06-29",
-        allocationDetail("poa2_4", "2018-06-23", POA2, ITSA_WALES, 4567.89) -> "2019-06-30",
-        allocationDetail("poa2_5", "2018-12-31", POA2, NIC4_GB, 9876.54) -> "2019-08-27",
-        allocationDetail("poa2_6", "2019-01-01", POA2, NIC4_SCOTLAND, 8765.43) -> "2019-08-28",
-        allocationDetail("poa2_7", "2019-04-05", POA2, NIC4_WALES, 7654.32) -> "2019-08-29",
-        allocationDetail("poa2_8", "2019-04-06", POA2, NIC4_NI, 6543.21) -> "2019-08-30")) {
+      "a payment on account 2 of 2" in new PaymentAllocationSetup(viewModel(poa2Allocations: _*)) {
 
         val expectedLinkUrls: Seq[String] = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "poa2_1").url,
@@ -375,7 +398,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.ChargeSummaryController.show(2019, "poa2_6").url,
           controllers.routes.ChargeSummaryController.show(2019, "poa2_7").url,
           controllers.routes.ChargeSummaryController.show(2020, "poa2_8").url,
-          controllers.routes.CreditAndRefundController.show().url
+          controllers.routes.MoneyInYourAccountController.show().url
         )
 
         document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
@@ -397,13 +420,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           .eachAttr("href").asScala shouldBe expectedLinkUrls
       }
 
-      "a balancing charge" in new PaymentAllocationSetup(viewModel(
-        allocationDetail("bcd_1", "2018-03-15", BAL_CHARGE, ITSA_SCOTLAND, 1234.56) -> "2019-06-27",
-        allocationDetail("bcd_2", "2018-04-05", BAL_CHARGE, NIC4_WALES, 2345.67) -> "2019-06-28",
-        allocationDetail("bcd_3", "2018-04-06", BAL_CHARGE, NIC2_GB, 3456.78) -> "2019-06-29",
-        allocationDetail("bcd_4", "2019-01-01", BAL_CHARGE, CGT, 9876.54) -> "2019-08-27",
-        allocationDetail("bcd_5", "2019-04-05", BAL_CHARGE, SL, 8765.43) -> "2019-08-28",
-        allocationDetail("bcd_6", "2019-04-06", BAL_CHARGE, VOLUNTARY_NIC2_NI, 7654.32) -> "2019-08-29")) {
+      "a balancing charge" in new PaymentAllocationSetup(viewModel(bcdAllocations: _*)) {
 
         val expectedLinkUrls: Seq[String] = Seq(
           controllers.routes.ChargeSummaryController.show(2018, "bcd_1").url,
@@ -412,7 +429,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
           controllers.routes.ChargeSummaryController.show(2019, "bcd_4").url,
           controllers.routes.ChargeSummaryController.show(2019, "bcd_5").url,
           controllers.routes.ChargeSummaryController.show(2020, "bcd_6").url,
-          controllers.routes.CreditAndRefundController.show().url
+          controllers.routes.MoneyInYourAccountController.show().url
         )
 
         document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading

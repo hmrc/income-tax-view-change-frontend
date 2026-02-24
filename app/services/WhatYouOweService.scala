@@ -45,7 +45,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                   val financialDetailsConnector: FinancialDetailsConnector,
                                   val outstandingChargesConnector: OutstandingChargesConnector,
                                   implicit val dateService: DateServiceInterface)
-                                 (implicit ec: ExecutionContext, implicit val appConfig: FrontendAppConfig)
+                                 (implicit ec: ExecutionContext,
+                                  val appConfig: FrontendAppConfig)
   extends TransactionUtils with FeatureSwitching {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -73,7 +74,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       case financialDetails =>
         val financialDetailsModelList = financialDetails.asInstanceOf[List[FinancialDetailsModel]]
         val balanceDetails = financialDetailsModelList.headOption
-          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, None, None, None, None, None, None, None))
+          .map(_.balanceDetails).getOrElse(BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None))
 
         val codingOutDetails: Option[CodingOutDetails] =
           financialDetailsModelList
@@ -152,7 +153,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
   }
 
   def createWhatYouOweViewModel(backUrl: String,
-                                creditAndRefundUrl: String,
+                                moneyInYourAccountUrl: String,
                                 taxYearSummaryUrl: Int => String,
                                 adjustPoaUrl: String,
                                 chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
@@ -174,7 +175,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         None
       case (Right(startUrl), Some(lpp2Url)) =>
 
-        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList, dateService))
+        auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList) (dateService))
 
         Some(WhatYouOweViewModel(
           currentDate = dateService.getCurrentDate,
@@ -185,7 +186,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           backUrl = backUrl,
           utr = user.saUtr,
           dunningLock = whatYouOweChargesList.hasDunningLock,
-          creditAndRefundUrl = creditAndRefundUrl,
+          moneyInYourAccountUrl = moneyInYourAccountUrl,
           creditAndRefundEnabled = isEnabled(CreditsRefundsRepay)(user),
           taxYearSummaryUrl = taxYearSummaryUrl,
           claimToAdjustViewModel = ctaViewModel,

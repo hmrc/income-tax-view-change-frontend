@@ -48,7 +48,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
       }
 
       "Have the correct details for the audit event" in {
-        testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
+        assertJsonEquals(testNextUpdatesResponseAuditModel.detail, Json.obj(
           "mtditid" -> testMtditid,
           "nino" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
@@ -77,7 +77,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
               "dueDate" -> "2017-10-30",
               "obligationType" -> "Quarterly",
               "periodKey" -> "#002"
-            )
+            ))
           )
         )
       }
@@ -100,7 +100,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
       }
 
       "Have the correct details for the audit event" in {
-        testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
+        assertJsonEquals(testNextUpdatesResponseAuditModel.detail, Json.obj(
           "mtditid" -> testMtditid,
           "nino" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
@@ -116,7 +116,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
               "obligationType" -> "Quarterly",
               "periodKey" -> "#003"
             )
-          )
+          ))
         )
       }
     }
@@ -124,7 +124,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
     "Supplied with no Obligations and optional fields" should {
 
       val testNextUpdatesResponseAuditModel = NextUpdatesResponseAuditModel(
-        getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil)),
+        getMinimalMTDITUser(None, IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil, "1")),
         testSelfEmploymentId,
         List()
       )
@@ -138,12 +138,12 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
       }
 
       "Have the correct details for the audit event" in {
-        testNextUpdatesResponseAuditModel.detail shouldBe Json.obj(
+        assertJsonEquals(testNextUpdatesResponseAuditModel.detail, Json.obj(
           "mtditid" -> testMtditid,
           "nino" -> testNino,
           "incomeSourceId" -> testSelfEmploymentId,
           "reportDeadlines" -> Json.arr()
-        )
+        ))
       }
     }
   }

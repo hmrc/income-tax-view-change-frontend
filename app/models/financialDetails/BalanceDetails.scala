@@ -20,6 +20,7 @@ import play.api.libs.json.{Json, Reads, Writes}
 
 case class BalanceDetails(balanceDueWithin30Days: BigDecimal,
                           overDueAmount: BigDecimal,
+                          balanceNotDuein30Days: BigDecimal,
                           totalBalance: BigDecimal,
                           totalCreditAvailableForRepayment: Option[BigDecimal],
                           allocatedCredit: Option[BigDecimal],

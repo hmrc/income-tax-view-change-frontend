@@ -46,11 +46,19 @@ object RepaymentHistoryUtils {
     }
   }
 
-  def getChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String): String = {
-    if (isAgent) {
-      controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeId).url
-    } else {
-      controllers.routes.ChargeSummaryController.show(taxYear, chargeId).url
+  def getChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String, codedOut: Option[Boolean] = None): String = {
+    val baseUrl =
+      if (isAgent) {
+        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeId).url
+      } else {
+        controllers.routes.ChargeSummaryController.show(taxYear, chargeId).url
+      }
+
+    codedOut match {
+      case Some(value) =>
+        val joiner = if (baseUrl.contains("?")) "&" else "?"
+        s"${baseUrl}${joiner}codedOut=${value.toString}"
+      case None => baseUrl
     }
   }
 
@@ -147,20 +155,26 @@ object RepaymentHistoryUtils {
                          (implicit dateServiceInterface: DateServiceInterface): Either[Throwable, PaymentHistoryEntry] = {
     for {
       creditType <- payment.creditType.toRight(MissingFieldException("Credit type"))
-      dueDate <- payment.dueDate.toRight(MissingFieldException(s"Payment Due Date - ${creditType.getClass.getSimpleName}"))
       amount = payment.amount
       transactionId <- payment.transactionId.toRight(MissingFieldException(
         if (hasCreditDrilldown) "Transaction ID" else "Document ID"))
-    } yield PaymentHistoryEntry(
-      date = dueDate,
-      creditType = creditType,
-      amount = amount,
-      linkUrl = if (hasCreditDrilldown)
-        getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
-      else
-        getCreditsLinkUrl(dueDate, isAgent),
-      visuallyHiddenText = transactionId
-    )
+    } yield {
+      val dueDate = payment.dueDate match {
+        case Some(date) => date
+        case None => payment.documentDate
+      }
+      
+      PaymentHistoryEntry(
+        date = dueDate,
+        creditType = creditType,
+        amount = amount,
+        linkUrl = if (hasCreditDrilldown)
+          getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
+        else
+          getCreditsLinkUrl(dueDate, isAgent),
+        visuallyHiddenText = transactionId
+      )
+    }
   }
 
   private def codedOutChargeEntry(chargeItem: ChargeItem, isAgent: Boolean)(implicit dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
@@ -169,7 +183,7 @@ object RepaymentHistoryUtils {
       creditType = chargeItem.transactionType,
       amount = Some(chargeItem.originalAmount),
       transactionId = Some(chargeItem.transactionId),
-      linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId),
+      linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId, codedOut = Some(true)),
       visuallyHiddenText = chargeItem.transactionType.toString
     )
   }

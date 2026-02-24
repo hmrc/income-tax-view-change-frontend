@@ -83,14 +83,14 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
 
   def paymentAllocationsAuditFull(userType: Option[AffinityGroup] = Some(Agent)): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
-      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
+      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty, "1")),
       paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModel, originalPaymentAllocationWithClearingDate)
     )
   }
 
   def paymentAllocationsAuditFullCredit(userType: Option[AffinityGroup] = Some(Agent)): PaymentAllocationsResponseAuditModel = {
     PaymentAllocationsResponseAuditModel(
-      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty)),
+      mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty, "1")),
       paymentAllocations = PaymentAllocationViewModel(paymentAllocationChargeModelCredit, originalPaymentAllocationWithClearingDateCredit)
     )
   }
@@ -122,7 +122,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
-          paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe expectedAudit
+         assertJsonEquals(paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail, expectedAudit)
         }
         "the user is an agent" in {
           val expectedAudit = commonAuditDetails(Agent) ++ Json.obj(
@@ -171,7 +171,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
-          paymentAllocationsAuditFull(userType = Some(Individual)).detail shouldBe expectedAudit
+          assertJsonEquals(paymentAllocationsAuditFull(userType = Some(Individual)).detail, expectedAudit)
         }
         "the user is an agent" in {
           val expectedAudit = commonAuditDetails(Agent) ++ Json.obj(
@@ -221,7 +221,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
-          paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail shouldBe expectedAudit
+          assertJsonEquals(paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail, expectedAudit)
         }
         "the user is an agent" in {
           val expectedAudit = commonAuditDetails(Agent) ++ Json.obj(

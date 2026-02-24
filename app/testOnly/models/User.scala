@@ -16,14 +16,14 @@
 
 package testOnly.models
 
-import play.api.data.Forms.{boolean, mapping, optional, text}
+import play.api.data.Forms.{boolean, mapping, text}
 import play.api.data.{Form, Mapping}
 import play.api.libs.json.{Json, OFormat}
 
 case class User(nino: Nino, isAgent: Boolean)
 
 object User {
-  val ninoNonEmptyMapping: Mapping[Nino] = {
+  private val ninoNonEmptyMapping: Mapping[Nino] = {
 
     // TODO: remove usage of .head
     text.verifying("You must supply a valid Nino", nino => {
@@ -36,7 +36,8 @@ object User {
       mapping(
         "nino" -> ninoNonEmptyMapping,
         "isAgent" -> boolean
-      )(User.apply)(User.unapply)
+      )((nino, isAgent) => User(nino, isAgent))
+      (form => Some((form.nino, form.isAgent)))
     )
 }
 
@@ -52,7 +53,11 @@ case class PostedUser(nino: String,
                       cyMinusOneCrystallisationStatus: Option[String],
                       cyMinusOneItsaStatus: Option[String],
                       cyItsaStatus: Option[String],
-                      cyPlusOneItsaStatus: Option[String]
+                      cyPlusOneItsaStatus: Option[String],
+                      activeSoleTrader: Boolean = false,
+                      activeUkProperty: Boolean = false,
+                      activeForeignProperty: Boolean = false,
+                      ceasedBusiness: Boolean = false
                      ) {
 
   def isAgent: Boolean = AgentTypeEnums.apply(this.agentType).isDefined
@@ -65,16 +70,58 @@ case class PostedUser(nino: String,
 }
 
 object PostedUser {
-  val form: Form[PostedUser] =
-    Form(
-      mapping(
-        "nino" -> text,
-        "AgentType" -> optional(text),
-        "usePTANavBar" -> boolean,
-        "cyMinusOneCrystallisationStatus" -> optional(text),
-        "cyMinusOneItsaStatus" -> optional(text),
-        "cyItsaStatus" -> optional(text),
-        "cyPlusOneItsaStatus" -> optional(text)
-      )(PostedUser.apply)(PostedUser.unapply)
-    )
+  import play.api.data.Form
+  import play.api.data.Forms._
+
+  val form: Form[PostedUser] = Form(
+    mapping(
+      "nino" -> text,
+      "AgentType" -> optional(text),
+      "usePTANavBar" -> boolean,
+      "cyMinusOneCrystallisationStatus" -> optional(text),
+      "cyMinusOneItsaStatus" -> optional(text),
+      "cyItsaStatus" -> optional(text),
+      "cyPlusOneItsaStatus" -> optional(text),
+      "SoleTraderCheckbox" -> boolean,
+      "UkPropertyCheckbox" -> boolean,
+      "ForeignPropertyCheckbox" -> boolean,
+      "CeasedBusinessCheckbox" -> boolean
+    )(
+      (nino,
+      agentType,
+      usePTANavBar,
+      cyMinusOneCrystallisationStatus,
+      cyMinusOneItsaStatus,
+      cyItsaStatus,
+      cyPlusOneItsaStatus,
+      activeSoleTrader,
+      activeUkProperty,
+      activeForeignProperty,
+      ceasedBusinesses) => PostedUser(
+        nino,
+        agentType,
+        usePTANavBar,
+        cyMinusOneCrystallisationStatus,
+        cyMinusOneItsaStatus,
+        cyItsaStatus,
+        cyPlusOneItsaStatus,
+        activeSoleTrader,
+        activeUkProperty,
+        activeForeignProperty,
+        ceasedBusinesses)
+    )(form => Some(
+      form.nino,
+      form.agentType,
+      form.usePTANavBar,
+      form.cyMinusOneCrystallisationStatus,
+      form.cyMinusOneItsaStatus,
+      form.cyItsaStatus,
+      form.cyPlusOneItsaStatus,
+      form.activeSoleTrader,
+      form.activeUkProperty,
+      form.activeForeignProperty,
+      form.ceasedBusiness
+    ))
+  )
+
 }

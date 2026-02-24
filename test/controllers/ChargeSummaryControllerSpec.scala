@@ -16,8 +16,8 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
+import connectors.{ITSAStatusConnector, BusinessDetailsConnector}
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails.PoaTwoReconciliationCredit
@@ -27,10 +27,10 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, PaymentAllocationsService}
 import testConstants.BaseTestConstants.testTaxYear
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import java.time.LocalDate
@@ -148,7 +148,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
-              "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
+              "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -165,7 +165,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2, adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
+              "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -793,8 +793,11 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 val result: Future[Result] = testController.show(2020, "CODINGOUT01")(fakeRequest)
 
-                status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-                JsoupParse(result).toHtmlDocument.select("h1").text() shouldBe errorHeading
+                status(result) shouldBe Status.SEE_OTHER
+
+                redirectLocation(result) shouldBe Some(
+                  routes.ChargeSummaryController.show(2018, "CODINGOUT01", origin = None).url
+                )
               }
             }
           }

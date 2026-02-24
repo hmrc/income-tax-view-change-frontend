@@ -18,19 +18,22 @@ package auth.authV2.actions
 
 import auth.MtdItUser
 import auth.authV2.models.ItsaStatusRetrievalActionError
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import connectors.ITSAStatusConnector
 import controllers.BaseController
+import models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.DateServiceInterface
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class ItsaStatusRetrievalAction @Inject()(
+                                           frontendAppConfig: FrontendAppConfig,
                                            itsaStatusConnector: ITSAStatusConnector,
                                            dateService: DateServiceInterface
                                          )(
@@ -38,8 +41,9 @@ class ItsaStatusRetrievalAction @Inject()(
                                            individualErrorHandler: ItvcErrorHandler,
                                            agentErrorHandler: AgentItvcErrorHandler,
                                            mcc: MessagesControllerComponents
-                                         ) extends BaseController with ActionRefiner[MtdItUser, MtdItUser] {
+                                         ) extends BaseController with ActionRefiner[MtdItUser, MtdItUser] with FeatureSwitching {
 
+  override val appConfig: FrontendAppConfig = frontendAppConfig
 
   private def internalServerErrorFor(
                                       request: MtdItUser[_],
@@ -62,34 +66,46 @@ class ItsaStatusRetrievalAction @Inject()(
     }
   }
 
+  //scalastyle:off
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
 
     implicit val req: MtdItUser[A] = request
 
-    itsaStatusConnector.getITSAStatusDetail(
-      nino = req.nino,
-      taxYear = dateService.getCurrentTaxYear.formatAsShortYearRange,
-      futureYears = true,
-      history = false
-    ).map {
-      case Right(statuses) if statuses.size == 1 && statuses.head.taxYear == dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd =>
-        req.authUserDetails.affinityGroup match {
-          case Some(Individual) =>
-            Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Non-Agent/Individual's YouMustWaitToSignUp page")
-            Left(Redirect(controllers.optIn.routes.YouMustWaitToSignUpController.show(isAgent = false)))
-          case Some(Agent) =>
-            Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Agent YouMustWaitToSignUp page")
-            Left(Redirect(controllers.optIn.routes.YouMustWaitToSignUpController.show(isAgent = true)))
-          case None =>
-            Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
-            Left(internalServerErrorFor(req, "affinity-group", None))
-        }
-      case Right(status) =>
-        Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Successful income source and itsa details retrieved, enriching MtdItUser request")
-        Right(req)
-      case Left(error) =>
-        Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
-        Left(internalServerErrorFor(req, "itsa-status", Some(ItsaStatusRetrievalActionError.ItsaStatus(error))))
+    lazy val authAction: Future[Either[Result, MtdItUser[A]]] =
+      itsaStatusConnector.getITSAStatusDetail(
+        nino = req.nino,
+        taxYear = dateService.getCurrentTaxYear.formatAsShortYearRange,
+        futureYears = true,
+        history = false
+      ).map {
+        case Right(statuses) if statuses.size == 1 && statuses.head.taxYear == dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd =>
+          req.authUserDetails.affinityGroup match {
+            case Some(Individual) =>
+              Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Non-Agent/Individual's YouMustWaitToSignUp page")
+              Left(Redirect(controllers.optIn.routes.YouMustWaitToSignUpController.show(isAgent = false)))
+            case Some(Organisation) =>
+              Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Non-Agent/Organisation's YouMustWaitToSignUp page")
+              Left(Redirect(controllers.optIn.routes.YouMustWaitToSignUpController.show(isAgent = false)))
+            case Some(Agent) =>
+              Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Agent YouMustWaitToSignUp page")
+              Left(Redirect(controllers.optIn.routes.YouMustWaitToSignUpController.show(isAgent = true)))
+            case None =>
+              Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
+              Left(internalServerErrorFor(req, "affinity-group", None))
+          }
+        case Right(_) =>
+          Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Successful income source and itsa details retrieved, enriching MtdItUser request")
+          Right(req)
+        case Left(error) =>
+          Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
+          Left(internalServerErrorFor(req, "itsa-status", Some(ItsaStatusRetrievalActionError.ItsaStatus(error))))
+      }
+
+    if (isEnabled(`CY+1YouMustWaitToSignUpPageEnabled`)) {
+      authAction
+    } else {
+      Future(Right(req))
     }
   }
 }
+//scalastyle:on

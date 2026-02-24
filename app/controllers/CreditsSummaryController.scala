@@ -50,7 +50,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
     controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
 
-  lazy val creditAndRefundUrl: String = controllers.routes.CreditAndRefundController.show().url
+  lazy val moneyInYourAccountUrl: String = controllers.routes.MoneyInYourAccountController.show().url
 
   private def paymentHistoryUrl(origin: Option[String]): String =
     controllers.routes.PaymentHistoryController.show(origin).url
@@ -58,14 +58,14 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
   private def agentCreditsSummaryUrl(calendarYear: Int): String =
     controllers.routes.CreditsSummaryController.showAgentCreditsSummary(calendarYear).url
 
-  private lazy val agentCreditAndRefundUrl: String = controllers.routes.CreditAndRefundController.showAgent().url
+  private lazy val agentMoneyInYourAccountUrl: String = controllers.routes.MoneyInYourAccountController.showAgent().url
 
   private lazy val agentPaymentHistoryHomeUrl: String = controllers.routes.PaymentHistoryController.showAgent().url
 
   private def getBackURL(referer: Option[String], origin: Option[String], calendarYear: Int): String = {
     referer.map(URI.create(_).getPath) match {
       case Some(url) if url.equals(paymentHistoryUrl(origin)) => paymentHistoryUrl(origin)
-      case Some(url) if url.equals(creditAndRefundUrl) => creditAndRefundUrl
+      case Some(url) if url.equals(moneyInYourAccountUrl) => moneyInYourAccountUrl
       case _ => creditsSummaryUrl(calendarYear, origin)
     }
   }
@@ -73,7 +73,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
   private def getAgentBackURL(referer: Option[String], calendarYear: Int): String = {
     referer.map(URI.create(_).getPath) match {
       case Some(`agentPaymentHistoryHomeUrl`) => agentPaymentHistoryHomeUrl
-      case Some(`agentCreditAndRefundUrl`) => agentCreditAndRefundUrl
+      case Some(`agentMoneyInYourAccountUrl`) => agentMoneyInYourAccountUrl
       case _ => agentCreditsSummaryUrl(calendarYear)
     }
   }
@@ -112,7 +112,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
   }
 
   def showCreditsSummary(calendarYear: Int, origin: Option[String] = None): Action[AnyContent] = {
-    authActions.asMTDIndividual.async {
+    authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
           calendarYear = calendarYear,
@@ -123,7 +123,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
   }
 
   def showAgentCreditsSummary(calendarYear: Int): Action[AnyContent] = {
-    authActions.asMTDPrimaryAgent.async { implicit mtdItUser =>
+    authActions.asMTDPrimaryAgent().async { implicit mtdItUser =>
       handleRequest(
         calendarYear = calendarYear,
         isAgent = true

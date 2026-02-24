@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package testOnly.models
+package helpers.servicemocks
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{JsPath, OFormat}
+import helpers.WiremockHelper
+import testConstants.BaseIntegrationTestConstants.testMtditid
 
-case class UserModel(mtdItId: String, nino: String)
+object CustomerFactsStub {
 
-object UserModel {
-  implicit val formats: OFormat[UserModel] = (
-    (JsPath \ "mtdItId" \ "mtdItId").format[String] and
-      (JsPath \ "nino" \ "nino").format[String]
-    ) (UserModel.apply, unlift(UserModel.unapply))
+  def getUrl: String = s"/income-tax-view-change/customer-facts/update/$testMtditid"
+
+  def stubPutCustomerFactsResponse(): Unit = {
+    WiremockHelper.stubPut(getUrl, 200, "")
+  }
 }

@@ -64,7 +64,7 @@ class OptInErrorViewSpec extends TestSupport {
 
     "render the navigation options" in new Setup(false) {
       pageDocument.getElementById("nextUpdatesBullet").text() shouldBe optInErrorPageMessages.optInNextUpdatesTotal
-      pageDocument.getElementById("next-updates-link").attr("href") shouldBe optInErrorPageMessages.nextUpdatesLink
+      pageDocument.getElementById("submission-deadlines-link").attr("href") shouldBe optInErrorPageMessages.nextUpdatesLink
       pageDocument.getElementById("homepageBullet").text() shouldBe optInErrorPageMessages.optInHomeTotal
       pageDocument.getElementById("home-link").attr("href") shouldBe optInErrorPageMessages.homePageLink
     }
@@ -86,7 +86,7 @@ class OptInErrorViewSpec extends TestSupport {
 
     "render the navigation options" in new Setup(true) {
       pageDocument.getElementById("nextUpdatesBullet").text() shouldBe optInErrorPageMessages.optInNextUpdatesTotal
-      pageDocument.getElementById("next-updates-link").attr("href") shouldBe optInErrorPageMessages.nextUpdatesLinkAgent
+      pageDocument.getElementById("submission-deadlines-link").attr("href") shouldBe optInErrorPageMessages.nextUpdatesLinkAgent
       pageDocument.getElementById("homepageBullet").text() shouldBe optInErrorPageMessages.optInHomeTotal
       pageDocument.getElementById("home-link").attr("href") shouldBe optInErrorPageMessages.homePageLinkAgent
     }

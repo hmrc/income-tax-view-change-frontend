@@ -16,11 +16,11 @@
 
 package controllers.triggeredMigration
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application
@@ -37,7 +37,8 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+        api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
       )
       .build()
 
@@ -45,12 +46,8 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
     app.injector.instanceOf[CheckActiveBusinessesConfirmController]
 
   private def stubIncomeSourceDetails(): Unit =
-    when(
-      mockIncomeSourceDetailsService.getIncomeSourceDetails()(
-        ArgumentMatchers.any(), ArgumentMatchers.any()
-      )
-    ).thenReturn(Future(singleBusinessIncome))
-
+    when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+      .thenReturn(Future.successful(singleBusinessIncome.copy(channel = "Hmrc-led-unconfirmed")))
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
@@ -66,6 +63,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(fakeRequest)
@@ -86,7 +84,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
       }
 
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
     s"submit(isAgent = $isAgent)" when {
@@ -94,40 +92,43 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
       s"the user is authenticated as a $mtdRole" should {
 
-        "redirect back to the page when form is valid and 'Yes' is selected" in {
+        "redirect to the complete page when form is valid and 'Yes' is selected" in {
 
           enable(TriggeredMigration)
 
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
+          mockUpdateCustomerFacts()
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "Yes")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "Yes")
           )
 
           status(result) shouldBe 303
           redirectLocation(result).value should include(
-            routes.CheckActiveBusinessesConfirmController.show(isAgent).url
+            routes.CheckCompleteController.show(isAgent).url
           )
         }
 
-        "redirect back to the page when form is valid and 'No' is selected" in {
+        "redirect back to the Check HMRC Records page when form is valid and 'No' is selected" in {
 
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "No")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "No")
           )
 
           status(result) shouldBe 303
           redirectLocation(result).value should include(
-            routes.CheckActiveBusinessesConfirmController.show(isAgent).url
+            routes.CheckHmrcRecordsController.show(isAgent).url
           )
         }
 
@@ -136,6 +137,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
           enable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
+          mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
 
           val result = action(
@@ -156,7 +158,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
 
           val result = action(
             fakePostRequestBasedOnMTDUserType(mtdRole)
-              .withFormUrlEncodedBody("check-active-businesses-confirm" -> "Yes")
+              .withFormUrlEncodedBody("check-active-businesses-confirm-form" -> "Yes")
           )
 
           status(result) shouldBe 303
@@ -164,7 +166,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
         }
       }
 
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }

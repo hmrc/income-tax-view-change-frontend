@@ -40,10 +40,15 @@ object BusinessNameForm extends CustomConstraints {
   private val isNotTooLong: Constraint[String] = maxLength(MAX_LENGTH, businessNameLengthIncorrect)
   private val nonEmptyBusinessName: Constraint[String] = nonEmpty(errorMessage = businessNameEmptyError)
 
-  val form: Form[BusinessNameForm] = Form(mapping(
-    businessName.trim() -> text
-      .verifying(firstError(nonEmptyBusinessName, isValidChars, isNotTooLong))
-  )(BusinessNameForm.apply)(BusinessNameForm.unapply)
+  val form: Form[BusinessNameForm] = Form(
+    mapping(
+      businessName.trim() -> text
+        .verifying(firstError(nonEmptyBusinessName, isValidChars, isNotTooLong))
+    )(
+      name => BusinessNameForm(name)
+    )(
+      form => Some(form.name)
+    )
   )
 
   def checkBusinessNameWithTradeName(form: Form[BusinessNameForm], businessTradeName: Option[String]): Form[BusinessNameForm] = {

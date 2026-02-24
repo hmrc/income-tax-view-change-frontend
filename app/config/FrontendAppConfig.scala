@@ -51,6 +51,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Address lookup service
   lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
+  lazy val addressLookupExternalHost: String = servicesConfig.getString("address-lookup.external-host")
 
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
@@ -98,6 +99,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val paymentHistoryLimit: Int = config.get[Int]("payment-history.number-of-years")
 
   lazy val repaymentsUrl: String = servicesConfig.baseUrl("repayment-api")
+
+  lazy val hipRepaymentsUrl: String = servicesConfig.baseUrl("hip-repayment-api")
 
   //Payment Redirect route
   lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/what-you-owe"
@@ -164,6 +167,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   def poaAdjustmentOverrides(): Option[Seq[String]] = config.getOptional[Seq[String]]("afterPoaAmountAdjusted")
 
+  def triggeredMigrationOverrides(): Option[Seq[String]] = config.getOptional[Seq[String]]("afterMigration")
+
   val cacheTtl: Int = config.get[Int]("mongodb.timeToLiveInSeconds")
 
   val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
@@ -176,20 +181,35 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val isSessionDataStorageEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-session-data-storage")
 
+  lazy val isHipRepaymentApiEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-hip-repayment-api")
+
   //External-Urls
-  def selfAssessmentTaxReturnLink(implicit messages: Messages): String =
+  def logInFileSelfAssessmentTaxReturnLink(implicit messages: Messages): String =
     messages.lang.code match {
       case "en" => "https://www.gov.uk/log-in-file-self-assessment-tax-return"
       case "cy" => "https://www.gov.uk/cyflwyno-ch-ffurflen-dreth-hunanasesiad-ar-lein"
       case _ => "https://www.gov.uk/log-in-file-self-assessment-tax-return"
     }
 
-def compatibleSoftwareLink(implicit messages: Messages): String =
+  def selfAssessmentTaxReturnLink(isAgent: Boolean)(implicit messages: Messages): String =
+    messages.lang.code match {
+      case _ if isAgent => "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+      case "en" => "https://www.gov.uk/self-assessment-tax-returns"
+      case "cy" => "https://www.gov.uk/ffurflenni-treth-hunanasesiad/trosolwg"
+      case _ => "https://www.gov.uk/self-assessment-tax-returns"
+    }
+
+  def findHmrcContactsSALink(): String =
+    "https://www.gov.uk/find-hmrc-contacts/self-assessment-general-enquiries"
+
+
+  def compatibleSoftwareLink(implicit messages: Messages): String =
     messages.lang.code match {
       case "en" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
       case "cy" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy"
       case _ => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
     }
+
   lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")
   lazy val threshold2027 = servicesConfig.getString("thresholds.threshold2027")
   lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")

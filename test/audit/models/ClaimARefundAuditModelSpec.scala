@@ -22,20 +22,21 @@ import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, Finan
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
 import testConstants.ANewCreditAndRefundModel
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testConstants.CreditAndRefundConstants.documentDetailWithDueDateFinancialDetailListModel
+import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 
-class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
+class ClaimARefundAuditModelSpec extends TestSupport {
 
   val transactionName: String = "claim-a-refund"
   val auditType: String = "ClaimARefundResponse"
-  val balanceDetailsFull: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
+  val balanceDetailsFull: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, balanceNotDuein30Days = 0, totalBalance = 0,
     totalCreditAvailableForRepayment = Some(-7600.00), allocatedCredit = Some(0), allocatedCreditForFutureCharges = Some(0), totalCredit = Some(2.00),
     firstPendingAmountRequested = Some(-100.00), secondPendingAmountRequested = Some(-150.00), None)
-  val balanceDetailsMin: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, totalBalance = 0,
+  val balanceDetailsMin: BalanceDetails = BalanceDetails(balanceDueWithin30Days = 0, overDueAmount = 0, balanceNotDuein30Days = 0, totalBalance = 0,
     totalCreditAvailableForRepayment = None, allocatedCredit = None, allocatedCreditForFutureCharges = None, totalCredit = None, firstPendingAmountRequested = None, secondPendingAmountRequested = None, None)
 
   val creditDocuments: List[(DocumentDetailWithDueDate, FinancialDetail)] = List(
@@ -82,7 +83,7 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
       claimARefundAuditFull().auditType shouldBe auditType
     }
     s"return a full audit event correctly with POA 1/2 Reconciliation Credit, ITSA Return Amendment Credit, MFA Credits, Cutover Credits, Payments and Refunds, Balancing Charge Credit & Repayment Supplement Credit" in {
-      claimARefundAuditFull().detail shouldBe commonAuditDetails(Individual) ++ Json.obj(
+     assertJsonEquals(claimARefundAuditFull().detail, commonAuditDetails(Individual) ++ Json.obj(
         "creditOnAccount" -> 7600,
         "creditDocuments" ->
           Json.arr(
@@ -103,15 +104,15 @@ class ClaimARefundAuditModelSpec extends AnyWordSpecLike {
           Json.arr(
             Json.obj("description" -> "Refund in progress", "amount" -> 100),
             Json.obj("description" -> "Refund in progress", "amount" -> 150),
-          ))
+          )))
     }
     "return a minimal audit event correctly" in {
-      claimARefundAuditMin().detail shouldBe commonAuditDetails(Individual) ++ Json.obj(
+     assertJsonEquals(claimARefundAuditMin().detail, commonAuditDetails(Individual) ++ Json.obj(
         "creditOnAccount" -> 0,
         "creditDocuments" ->
           Json.arr(),
         "refundDocuments" ->
-          Json.arr())
+          Json.arr()))
     }
     s"return a full audit event for an agent user correctly with POA 1/2 Reconciliation Credit, ITSA Return Amendment Credit, MFA Credits, Cutover Credits, Payments and Refunds & Repayment Supplement Credit" in {
       claimARefundAuditFull(testMtdItAgentUser).detail shouldBe commonAuditDetails(Agent) ++ Json.obj(

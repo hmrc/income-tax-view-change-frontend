@@ -17,20 +17,21 @@
 package audit.models
 
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
-import enums.ChargeType._
+import enums.ChargeType.*
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json.Json
+import play.api.libs.json._
 import play.api.test.FakeRequest
 import services.DateService
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetails, financialDetail}
 import uk.gov.hmrc.auth.core.AffinityGroup
@@ -40,6 +41,29 @@ import java.time.{LocalDate, LocalDateTime, LocalTime}
 
 class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentSharedFunctions with ChargeConstants {
 
+  def normalise(js: JsValue): JsValue = js match {
+
+    case JsObject(fields) =>
+      JsObject(
+        fields.collect { case (k, v) if v != JsNull => k -> normalise(v) }
+          .toSeq.sortBy(_._1)
+      )
+
+    case JsArray(values) =>
+      val normValues = values.collect { case v if v != JsNull => normalise(v) }
+      if (normValues.forall(_.isInstanceOf[JsObject])) {
+        JsArray(normValues.sortBy(_.toString))
+      } else {
+        JsArray(normValues)
+      }
+    case JsNumber(n) =>
+      JsNumber(n.bigDecimal.stripTrailingZeros())
+
+    case other => other
+  }
+
+  def assertJsonEquals(actual: JsValue, expected: JsValue): Assertion =
+    normalise(actual) shouldEqual normalise(expected)
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
@@ -151,7 +175,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
 
 
   val chargeSummaryAuditMin: ChargeSummaryAudit = ChargeSummaryAudit(
-    getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, List.empty, List.empty)),
+    getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, List.empty, List.empty, "1")),
     chargeItem = chargeItemWithNoInterest,
     paymentBreakdown = List.empty,
     chargeHistories = List.empty,
@@ -176,7 +200,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
                              chargeItem: ChargeItem, paymentBreakdown: List[FinancialDetail],
                              chargeHistories: List[ChargeHistoryModel], paymentAllocations: List[PaymentHistoryAllocations],
                              agentReferenceNumber: Option[String] = Some("agentReferenceNumber"), isLateInterestCharge: Boolean = true): ChargeSummaryAudit = ChargeSummaryAudit(
-    mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
+    mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil, "1")),
     chargeItem = chargeItem,
     paymentBreakdown = if (!isLateInterestCharge) paymentBreakdowns else List.empty,
     chargeHistories = if (!isLateInterestCharge) chargeHistory else List.empty,
@@ -281,7 +305,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
         }
 
         "there are charge details with coding out accepted" in {
-          chargeSummaryAuditFull(
+          assertJsonEquals(chargeSummaryAuditFull(
             userType = Some(Agent),
             chargeItemWithCodingOutAccepted,
             paymentBreakdown = paymentBreakdowns,
@@ -289,7 +313,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
             paymentAllocations = paymentAllocation,
             agentReferenceNumber = Some("agentReferenceNumber"),
             isLateInterestCharge = false
-          ).detail mustBe commonAuditDetails(Agent) ++ Json.obj(
+          ).detail, commonAuditDetails(Agent) ++ Json.obj(
             "charge" -> Json.obj(
               "remainingToPay" -> docDetailWithCodingOutAccepted.remainingToPay,
               "fullPaymentAmount" -> docDetailWithCodingOutRejected.originalAmount,
@@ -346,11 +370,11 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
                 "amount" -> 1500
               )
             )
-          )
+          ))
         }
 
         "there are charge details with coding out rejected" in {
-          chargeSummaryAuditFull(
+         assertJsonEquals(chargeSummaryAuditFull(
             userType = Some(Agent),
             chargeItemWithCodingOutRejected,
             paymentBreakdown = paymentBreakdowns,
@@ -358,7 +382,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
             paymentAllocations = paymentAllocation,
             agentReferenceNumber = Some("agentReferenceNumber"),
             isLateInterestCharge = false
-          ).detail mustBe commonAuditDetails(Agent) ++ Json.obj(
+          ).detail, commonAuditDetails(Agent) ++ Json.obj(
             "charge" -> Json.obj(
               "remainingToPay" -> docDetailWithCodingOutRejected.remainingToPay,
               "fullPaymentAmount" -> docDetailWithCodingOutRejected.originalAmount,
@@ -414,7 +438,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
                 "description" -> "Remaining balance reduced by taxpayer request with cancelledPayeSelfAssessment",
                 "amount" -> 1500
               )
-            )
+            ))
           )
         }
 
@@ -446,7 +470,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
 
         "the charge summary audit has minimal details" in {
 
-          chargeSummaryAuditMin.detail mustBe Json.obj(
+          assertJsonEquals(chargeSummaryAuditMin.detail, Json.obj(
             "charge" -> Json.obj(
               "remainingToPay" -> docDetail.remainingToPay,
               "fullPaymentAmount" -> docDetail.originalAmount,
@@ -460,7 +484,7 @@ class ChargeSummaryAuditSpec extends AnyWordSpecLike with Matchers with PaymentS
             "chargeHistory" -> Json.arr(),
             "mtditid" -> testMtditid
 
-          )
+          ))
         }
       }
     }

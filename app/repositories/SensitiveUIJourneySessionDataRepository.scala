@@ -37,33 +37,23 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SensitiveUIJourneySessionDataRepository @Inject()(
-                                                mongoComponent: MongoComponent,
-                                                appConfig: FrontendAppConfig,
-                                                config: Configuration,
-                                                clock: Clock
-                                              )(implicit ec: ExecutionContext)
+                                                         mongoComponent: MongoComponent,
+                                                         appConfig: FrontendAppConfig,
+                                                         config: Configuration,
+                                                         clock: Clock
+                                                       )(implicit ec: ExecutionContext)
   extends PlayMongoRepository[SensitiveUIJourneySessionData](
     collectionName = "ui-journey-session-data",
     mongoComponent = mongoComponent,
-    domainFormat = SensitiveUIJourneySessionData.format(
+    domainFormat = SensitiveUIJourneySessionData.format(using
       SymmetricCryptoFactory.aesCryptoFromConfig("encryption", config.underlying)
     ),
     indexes = Seq(
-      IndexModel(
-        Indexes.ascending("sessionId"),
-        IndexOptions()
-          .name("sessionIdIdx")
-      ),
-      IndexModel(
-        Indexes.ascending("journeyType"),
-        IndexOptions()
-          .name("journeyTypeIdx")
-      ),
+      IndexModel(Indexes.ascending("sessionId"), IndexOptions().name("sessionIdIdx")),
+      IndexModel(Indexes.ascending("journeyType"), IndexOptions().name("journeyTypeIdx")),
       IndexModel(
         Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl, TimeUnit.SECONDS)
+        IndexOptions().name("lastUpdatedIdx").expireAfter(appConfig.cacheTtl.longValue, TimeUnit.SECONDS)
       )
     ),
     replaceIndexes = true

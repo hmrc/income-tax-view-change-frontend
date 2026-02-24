@@ -1,0 +1,436 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package authV2
+
+import auth.authV2.actions.TriggeredMigrationRetrievalAction
+import authV2.AuthActionsTestData.{defaultIncomeSourcesData, getMtdItUser}
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import connectors.IncomeTaxCalculationConnector
+import enums.JourneyType.TriggeredMigrationJourney
+import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
+import mocks.services.MockSessionService
+import models.UIJourneySessionData
+import models.admin.TriggeredMigration
+import models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
+import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
+import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail, StatusReason}
+import models.liabilitycalculation.*
+import models.triggeredMigration.TriggeredMigrationSessionData
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.{reset, times, verify, when}
+import org.scalatest.Assertion
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.Application
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.{MessagesControllerComponents, Request, Result, Results}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
+import testUtils.TestSupport
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+
+import java.time.LocalDate
+import scala.concurrent.Future
+
+class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSessionService {
+
+  lazy val mockItsaStatusService = mock[ITSAStatusService]
+  lazy val mockIncomeTaxCalculationConnector = mock[IncomeTaxCalculationConnector]
+  lazy val mockDateServiceInterface = mock[DateServiceInterface]
+  lazy val mockCustomerFactsUpdateService = mock[CustomerFactsUpdateService]
+
+  override lazy val app: Application =
+    new GuiceApplicationBuilder()
+      .configure("play.http.router" -> "testOnlyDoNotUseInAppConf.Routes")
+      .build()
+
+  lazy val mcc = app.injector.instanceOf[MessagesControllerComponents]
+  lazy val itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
+  lazy val agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
+
+  val action = new TriggeredMigrationRetrievalAction(
+    appConfig,
+    mockItsaStatusService,
+    mockIncomeTaxCalculationConnector,
+    mockDateServiceInterface,
+    mockCustomerFactsUpdateService,
+    mockSessionService
+  )(
+    ec,
+    itvcErrorHandler,
+    agentErrorHandler,
+    mcc
+  )
+
+  def defaultAsyncBody(
+                        requestTestCase: Request[_] => Assertion
+                      ): Request[_] => Future[Result] = testRequest => {
+    requestTestCase(testRequest)
+    Future.successful(Results.Ok("Successful"))
+  }
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockIncomeTaxCalculationConnector)
+    reset(mockItsaStatusService)
+    reset(mockCustomerFactsUpdateService)
+
+    when(mockCustomerFactsUpdateService.updateCustomerFacts(any())(any(), any()))
+      .thenReturn(Future.successful(()))
+  }
+
+  val validITSAStatuses = Seq(Voluntary, Mandated)
+  val invalidITSAStatuses = Seq(Annual, NoStatus, Exempt, DigitallyExempt, Dormant)
+
+  def incomeSourcesWithChannel(channel: String) = defaultIncomeSourcesData.copy(
+    channel = channel,
+    businesses = List(BusinessDetailsModel("testId", None, None, None, Some(LocalDate.now()), None, None, None)))
+
+  val testCalcResponse: LiabilityCalculationResponse =
+    LiabilityCalculationResponse(
+      inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+      messages = None,
+      calculation = None,
+      metadata = Metadata(
+        calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+        calculationType = "crystallisation",
+        calculationReason = Some("customerRequest"),
+        periodFrom = Some(LocalDate.of(2022, 1, 1)),
+        periodTo = Some(LocalDate.of(2023, 1, 1))),
+      submissionChannel = None
+    )
+
+  def triggeredMigrationSessionData(recentlyConfirmed: Boolean) = UIJourneySessionData(
+    sessionId = "testSessionId",
+    journeyType = TriggeredMigrationJourney.toString,
+    triggeredMigrationData = Some(TriggeredMigrationSessionData(recentlyConfirmed))
+  )
+
+  ".apply()" should {
+    "redirect to the home page" when {
+      "an individual user has a channel of confirmed and is on a triggered migration page and is not recently confirmed" in {
+        enable(TriggeredMigration)
+
+        when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("")))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view")
+      }
+
+      "an individual user has a channel of confirmed and is on a triggered migration page and is not recently confirmed (Set to None)" in {
+        enable(TriggeredMigration)
+
+        when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(None)))
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("")))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view")
+      }
+
+      "an individual user has a channel of customer led and is on a triggered migration page and is not recently confirmed" in {
+        enable(TriggeredMigration)
+
+        when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("")))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view")
+      }
+      "an agent user has a channel of confirmed and is on a triggered migration page and is not recently confirmed" in {
+        enable(TriggeredMigration)
+
+        when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
+
+        val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("")))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
+      }
+      "an agent user has a channel of customer led and is on a triggered migration page and is not recently confirmed" in {
+        enable(TriggeredMigration)
+
+        when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
+
+        val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe Some("")))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
+      }
+      "the user is unconfirmed and their CY ITSA status is missing but their CY+1 ITSA status is available" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        when(mockDateServiceInterface.getCurrentTaxYear).thenReturn(TaxYear(2025, 2026))
+
+        when(mockItsaStatusService.getITSAStatusDetail(eqTo(mockDateServiceInterface.getCurrentTaxYear), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2026-27", None))))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(Future(testCalcResponse))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view")
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+    }
+
+    "allow the request to proceed" when {
+      "the user is unconfirmed, they have an ITSA status of Voluntary or Mandated and their calculation is not crystallised while being on a triggered migration page" in {
+        enable(TriggeredMigration)
+
+        val unconfirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Voluntary, StatusReason.Complex)))))))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+          .thenReturn(Future(testCalcResponse.copy(metadata = testCalcResponse.metadata.copy(calculationType = "inYear"))))
+
+        val result = action(true).invokeBlock(unconfirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+      "the user has a channel of confirmed and is not on the triggered migration page" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
+
+        val result = action(false).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+      "the user has a channel of customer led and is not on the triggered migration page" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
+
+        val result = action(false).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+
+      "the user is unconfirmed and their ITSA status is not voluntary or mandated and they arent on a triggered migration page" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Annual, StatusReason.Complex)))))))
+
+        val result = action(false).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
+      }
+
+      "the user is unconfirmed, their ITSA status is voluntary, and their calculation is crystallised and not on a triggered migration page" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Voluntary, StatusReason.Complex)))))))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(Future(testCalcResponse))
+
+        val result = action(false).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
+      }
+      "the user is unconfirmed, their ITSA status is mandatory, and their calculation is crystallised and not on a triggered migration page" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Mandated, StatusReason.Complex)))))))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(Future(testCalcResponse))
+
+        val result = action(false).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
+      }
+
+      "the triggered migration feature switch is disabled" in {
+        disable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+      "an individual user has a channel of confirmed and is on a triggered migration page and is recently confirmed" in {
+        enable(TriggeredMigration)
+
+        when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(true)))))
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+
+      "an individual user has a channel of customer led and is on a triggered migration page and is recently confirmed" in {
+        enable(TriggeredMigration)
+
+        when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(true)))))
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+      "an agent user has a channel of confirmed and is on a triggered migration page and is recently confirmed" in {
+        enable(TriggeredMigration)
+
+        when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(true)))))
+
+        val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+      "an agent user has a channel of customer led and is on a triggered migration page and is recently confirmed" in {
+        enable(TriggeredMigration)
+
+        when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(true)))))
+
+        val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe OK
+        contentAsString(result) shouldBe "Successful"
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+    }
+
+    "redirect the user to the triggered migration check HMRC records page" when {
+      "the user is unconfirmed, their ITSA status is voluntary, and their calculation is not crystallised and they arent on a triggered migration page" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Voluntary, StatusReason.Complex)))))))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(
+          Future(testCalcResponse.copy(metadata = testCalcResponse.metadata.copy(calculationType = "inYear"))))
+
+        val result = action(false).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/check-your-active-businesses/hmrc-record")
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+      "the user is unconfirmed, their ITSA status is mandatory, and their calculation is not crystallised and they arent on a triggered migration page" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Mandated, StatusReason.Complex)))))))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(
+          Future(testCalcResponse.copy(metadata = testCalcResponse.metadata.copy(calculationType = "inYear"))))
+
+        val result = action(false).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe SEE_OTHER
+        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/check-your-active-businesses/hmrc-record")
+        verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
+      }
+    }
+
+    "return an error result" when {
+      "there is an error retrieving the user's calculation during triggered migration retrieval" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Mandated, StatusReason.Complex)))))))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(
+          Future(LiabilityCalculationError(500, "Internal Server Error")))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+      "The user has no ITSA statuses available" in {
+        enable(TriggeredMigration)
+
+        val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
+
+        when(mockDateServiceInterface.getCurrentTaxYear).thenReturn(TaxYear(2025, 2026))
+
+        when(mockItsaStatusService.getITSAStatusDetail(eqTo(mockDateServiceInterface.getCurrentTaxYear), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List()))
+
+        when(mockItsaStatusService.getITSAStatusDetail(eqTo(mockDateServiceInterface.getCurrentTaxYear.nextYear), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List()))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(Future(testCalcResponse))
+
+        val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+    }
+  }
+}

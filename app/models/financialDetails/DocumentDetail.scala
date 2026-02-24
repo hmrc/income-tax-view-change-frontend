@@ -35,6 +35,7 @@ case class DocumentDetail(taxYear: Int,
                           interestOutstandingAmount: Option[BigDecimal] = None,
                           interestRate: Option[BigDecimal] = None,
                           latePaymentInterestId: Option[String] = None,
+                          latePaymentInterestAmount: Option[BigDecimal] = None,
                           interestFromDate: Option[LocalDate] = None,
                           interestEndDate: Option[LocalDate] = None,
                           accruingInterestAmount: Option[BigDecimal] = None,
@@ -145,8 +146,8 @@ case class DocumentDetail(taxYear: Int,
 
   // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   def getChargeTypeKey: String = documentDescription match {
-    case Some(Poa1Charge.key) => "paymentOnAccount1.text"
-    case Some(Poa2Charge.key) => "paymentOnAccount2.text"
+    case Some(poa1) if poa1.replace(" ", "") == Poa1Charge.key.replace(" ", "") => "paymentOnAccount1.text"
+    case Some(poa2) if poa2.replace(" ", "") == Poa2Charge.key.replace(" ", "") => "paymentOnAccount2.text"
     case Some(Poa1ReconciliationDebit.key) => "poa1ExtraCharge.text"
     case Some(Poa2ReconciliationDebit.key) => "poa2ExtraCharge.text"
     case Some(BalancingCharge.key) => "balancingCharge.text"
@@ -174,8 +175,8 @@ case class DocumentDetail(taxYear: Int,
 
   def getDocType: DocumentType = {
     documentDescription match {
-      case Some(Poa1Charge.key) => Poa1Charge
-      case Some(Poa2Charge.key) => Poa2Charge
+      case Some(poa1) if poa1.replace(" ", "") == Poa1Charge.key.replace(" ", "") => Poa1Charge
+      case Some(poa2) if poa2.replace(" ", "") == Poa2Charge.key.replace(" ", "") => Poa2Charge
       case Some(Poa1ReconciliationDebit.key) => Poa1ReconciliationDebit
       case Some(Poa2ReconciliationDebit.key) => Poa2ReconciliationDebit
       case Some(BalancingCharge.key) => BalancingCharge
@@ -217,6 +218,7 @@ object DocumentDetail {
       (__ \ "interestOutstandingAmount").readNullable[BigDecimal] and
       (__ \ "interestRate").readNullable[BigDecimal] and
       (__ \ "latePaymentInterestId").readNullable[String] and
+      (__ \ "latePaymentInterestAmount").readNullable[BigDecimal] and
       (__ \ "interestFromDate").readNullable[LocalDate] and
       (__ \ "interestEndDate").readNullable[LocalDate] and
       (__ \ "accruingInterestAmount").readNullable[BigDecimal] and

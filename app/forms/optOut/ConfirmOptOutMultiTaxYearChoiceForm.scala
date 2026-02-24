@@ -39,7 +39,9 @@ object ConfirmOptOutMultiTaxYearChoiceForm {
   def form(msg: String, optOutYears: List[String]): Form[ConfirmOptOutMultiTaxYearChoiceForm] = Form[ConfirmOptOutMultiTaxYearChoiceForm](
     mapping(
       choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
-    )(ConfirmOptOutMultiTaxYearChoiceForm.apply)(ConfirmOptOutMultiTaxYearChoiceForm.unapply)
+    )
+    (choice => ConfirmOptOutMultiTaxYearChoiceForm(choice))(
+      form => Some(form.choice))
   )
 
 

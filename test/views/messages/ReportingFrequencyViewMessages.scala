@@ -40,16 +40,17 @@ object ReportingFrequencyViewMessages {
   val manageReportingObligationsCardText = "Stop from 6 April 2023"
 
   val differentObligationsHeading = "What the different reporting obligations are"
-  val differentObligationsText = "When you are using Making Tax Digital for Income Tax you need to submit:"
-  val differentObligationsLiOne = "4 updates a year for each source of self employment and property income"
-  val differentObligationsLiTwo = "a tax return"
-  val differentObligationsTextTwo = "For tax years you are opted out of, you only need to file a tax return."
+  val differentObligationsText = "When you are using Making Tax Digital for Income Tax you need to:"
+  val differentObligationsLiOne = "create, store and correct digital records of your self-employment and property income and expenses"
+  val differentObligationsLiTwo = "submit your quarterly updates"
+  val differentObligationsLiThree = "file your tax return"
+  val differentObligationsTextTwo = "Even if you are not using Making Tax Digital for Income Tax, you still need to file a tax return."
   val differentObligationsTextTwoExempt = "For tax years you are opted out of or exempt, you only need to file a tax return."
-  val differentObligationsTextThree = "You can see what is due on the updates and deadlines page."
+  val differentObligationsTextThree = "Find out what is due and when on the your submission deadlines page."
 
   val yourObligationsHeading = "What your reporting obligations are"
   val yourObligationsText = "For tax years you are exempt, you only need to file a tax return."
-  val yourObligationsTextTwo = "Find out what is due and when on the updates and deadlines page."
+  val yourObligationsTextTwo = "Find out what is due and when on the submission deadlines page."
 
   val mandatoryReportingHeadingR17 = "When Making Tax Digital for Income Tax is required"
   val mandatoryReportingHeading = "When reporting quarterly is mandatory"
@@ -72,7 +73,7 @@ object ReportingFrequencyViewMessages {
 
   val compatibleSoftwareTextTwo = "For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return."
 
-  val compatibleSoftwareTextThreeR17 = "If you are opted out, you can find out here how to file your Self Assessment tax return (opens in new tab)."
+  val compatibleSoftwareTextThreeR17 = "If you are not using Making Tax Digital for Income Tax, you can find out here how to file your Self Assessment tax return (opens in new tab)."
   val compatibleSoftwareTextThreeR17Exempt = "If you are opted out or exempt, you can find out here how to file your Self Assessment tax return (opens in new tab)."
 
 }

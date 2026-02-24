@@ -398,6 +398,14 @@ object PaymentAllocationsTestConstants {
         None)
     ))
 
+  val paymentAllocationViewModelWithNoTaxPeriodEndDate: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
+    Seq(
+      AllocationDetailWithClearingDate(
+        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), None, Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(LocalDate.parse("2021-01-31"))
+      )
+    ))
+
   val paymentAllocationViewModelHmrcAdjustment: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsHmrcAdjustment,
     Seq(
       AllocationDetailWithClearingDate(
@@ -444,7 +452,7 @@ object PaymentAllocationsTestConstants {
   )
 
   val lpiFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
-    balanceDetails = BalanceDetails(1.00, 2.00, 3.00, None, None, None, None, None, None, None),
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(lpiParentChargeDocumentDetail),
     financialDetails = List(financialDetail)
   )

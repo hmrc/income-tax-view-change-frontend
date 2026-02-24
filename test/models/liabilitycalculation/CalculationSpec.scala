@@ -24,9 +24,9 @@ class CalculationSpec extends TestSupport with Matchers{
 
   "planTypeActual" should{
     "return value when value is populated" in {
-      val studentLoan = StudentLoan(planType = Some("planType"))
+      val studentLoan = StudentLoan(planType = Some("03"))
 
-      studentLoan.planTypeActual shouldBe "planType"
+      studentLoan.planTypeActual shouldBe "3"
     }
 
     "throw MissingFieldException when value is missing" in {

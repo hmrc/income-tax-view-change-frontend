@@ -140,7 +140,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         getElementById("payments-tile") shouldBe None
       }
 
-      "have a next updates due tile" which {
+      "have a your submission deadlines tile" which {
         "has a heading" in new TestSetup {
           getElementById("updates-tile").map(_.select("h2").text) shouldBe Some(messages("home.updates.heading"))
         }
@@ -157,17 +157,17 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         }
         "has a link to view updates" in new TestSetup {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
           link.map(_.text) shouldBe Some(messages("home.updates.view"))
         }
         "is empty except for the title" when {
           "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-            getElementById("updates-tile").map(_.text()) shouldBe Some("Next updates due View update deadlines")
+            getElementById("updates-tile").map(_.text()) shouldBe Some("Your submission deadlines View update deadlines")
           }
         }
         "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/next-updates")
+          link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
           link.map(_.text) shouldBe Some(messages("home.updates.view.reportingFrequency"))
         }
 
@@ -186,8 +186,8 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
           paragraphs.get(0).text shouldBe "Next update due: 5 November 2099"
           paragraphs.get(1).text shouldBe "Next tax return due: 31 January 2100"
-          link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/next-updates"
+          link.text shouldBe "View your deadlines"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
         }
 
         "has overdue update and tax return when OptInOptOutContentUpdateR17 is enabled and 1 overdue update exists" in new TestSetup(
@@ -207,7 +207,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
           tag.text() shouldBe "Overdue"
           paragraphs.get(1).text shouldBe "Next update due: 1 October 2024"
           paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2025"
-          link.text shouldBe "View deadlines and manage how you report"
+          link.text shouldBe "View your deadlines"
         }
 
         "has multiple overdue updates and tax return with OptInOptOutContentUpdateR17 enabled" in new TestSetup(
@@ -231,7 +231,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
           tag.text() shouldBe "3 Overdue updates"
           paragraphs.get(1).text shouldBe "Next update due: 5 May 2024"
           paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2025"
-          link.text shouldBe "View deadlines and manage how you report"
+          link.text shouldBe "View your deadlines"
         }
 
         "has only the tax return due when ITSA status is Annual and OptInOptOutContentUpdateR17 is enabled" in new TestSetup(
@@ -258,7 +258,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         "displays the correct content" in new TestSetup {
           val langSwitchScript: Option[Element] = getElementById("language-switch")
           langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
-          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith ir Gymraeg Cymraeg")
+          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith i’r Gymraeg Cymraeg")
         }
       }
 

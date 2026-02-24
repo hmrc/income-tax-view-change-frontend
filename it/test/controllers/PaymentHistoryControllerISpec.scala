@@ -23,9 +23,10 @@ import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.PaymentHistoryRefunds
 import models.financialDetails.Payment
-import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import play.api.http.Status.*
+import play.api.libs.ws.WSResponse
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 
 import java.time.LocalDate
 

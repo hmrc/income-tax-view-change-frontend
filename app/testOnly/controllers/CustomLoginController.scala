@@ -39,8 +39,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val testOnlyAppConfig: TestOnlyAppConfig,
-                                      implicit val mcc: MessagesControllerComponents,
-                                      implicit val executionContext: ExecutionContext,
+                                      val mcc: MessagesControllerComponents,
+                                      val executionContext: ExecutionContext,
                                       userRepository: UserRepository,
                                       loginPage: LoginPage,
                                       val dynamicStubConnector: DynamicStubConnector,
@@ -50,14 +50,16 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val dynamicStubService: DynamicStubService,
                                       val ITSAStatusService: ITSAStatusService,
                                       val itvcErrorHandler: ItvcErrorHandler,
-                                      implicit val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       dateService: DateServiceInterface
                                      ) extends BaseController with I18nSupport with FeatureSwitching {
+
+  final val trigMigUser = "TR000001A"
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, testOnlyAppConfig.optOutUserPrefixes))
+      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, testOnlyAppConfig.optOutUserPrefixes, trigMigUser))
     )
   }
 
@@ -79,7 +81,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   s"report-quarterly/income-and-expenses/view?origin=$origin"
                 }
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
-
+                
                 if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes) && user.nino != "OP000009A") {
                   updateTestDataForOptOut(
                     nino = user.nino,
@@ -88,6 +90,23 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                     cyItsaStatus = postedUser.cyItsaStatus.get,
                     cyPlusOneItsaStatus = postedUser.cyPlusOneItsaStatus.get
                   ).map {
+                    _ => successRedirect(bearer, auth, homePage)
+                  }.recover {
+                    case ex =>
+                      val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+                      Logger("application")
+                        .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+                      errorHandler.showInternalServerError()
+                  }
+                } else if (user.nino == trigMigUser) {
+                  val trigMigUser = TrigMigUser(
+                    activeSoleTrader = postedUser.activeSoleTrader,
+                    activeUkProperty = postedUser.activeUkProperty,
+                    activeForeignProperty = postedUser.activeForeignProperty,
+                    ceasedBusiness = postedUser.ceasedBusiness
+                  )
+                  
+                  updateTestDataForTrigMigUser(user.mtditid, trigMigUser).map {
                     _ => successRedirect(bearer, auth, homePage)
                   }.recover {
                     case ex =>
@@ -113,6 +132,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       .withSession(
         SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
           sessionAuthorityUri = auth)))
+  }
+
+  private def updateTestDataForTrigMigUser(mtdid: String, trigMigUser: TrigMigUser)(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteBusinessData(mtdid, trigMigUser)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,

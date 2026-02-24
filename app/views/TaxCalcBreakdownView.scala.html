@@ -265,7 +265,6 @@
             @taxReductionsTableRow("eisSubscriptions")
             @taxReductionsTableRow("seedEnterpriseInvestment")
             @taxReductionsTableRow("communityInvestment")
-            @taxReductionsTableRow("socialEnterpriseInvestment")
             @taxReductionsTableRow("maintenancePayments")
             @tableRow("property_finance_relief", viewModel.totalResidentialFinanceCostsRelief, isNegative = true)
             @tableRow("total_notional_tax", viewModel.totalNotionalTax, isNegative = true)
@@ -446,9 +445,9 @@
 
                 @viewModel.studentLoans.map { studentLoanList =>
                     @studentLoanList.map { studentLoan =>
-                        @if(studentLoan.planTypeActual == "03") {
+                        @if(studentLoan.planTypeActual == "3") {
                             <tr>
-                                <td class="govuk-table__cell" id="graduate-repayment-plan">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan", studentLoan.planTypeActual)</td>
+                                <td class="govuk-table__cell" id="graduate-repayment-plan">@messages("taxCal_breakdown.table.studentLoanPostGraduatePlan")</td>
                                 <td class="govuk-table__cell govuk-table__cell--numeric">@{
                                     studentLoan.studentLoanRepaymentAmountActual.toCurrency
                                 }

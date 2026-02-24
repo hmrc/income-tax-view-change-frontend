@@ -94,11 +94,11 @@ class OptOutTestDataController @Inject()(val authActions: AuthActions,
     if (taxYear.endYear >= 2024) {
       calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = taxYear.formatAsShortYearRange)
     } else {
-      calculationListService.getLegacyCalculationList(nino = Nino(nino), taxYearEnd = taxYear.endYear.toString)
+      calculationListService.getLegacyCalculationList(nino = nino, taxYearEnd = taxYear.endYear.toString)
     }
   }
 
-  val show: Action[AnyContent] = authActions.asMTDIndividual.async {
+  val show: Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       retrieveData(
         nino = user.nino,
@@ -106,7 +106,7 @@ class OptOutTestDataController @Inject()(val authActions: AuthActions,
       )
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       retrieveData(
         nino = mtdItUser.nino,

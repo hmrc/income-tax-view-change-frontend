@@ -17,7 +17,6 @@
 package audit.models
 
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.Utilities.JsonUtil
 
 case class EnterClientUTRAuditModel(isSuccessful: Boolean,
                                     nino: String,
@@ -55,8 +54,8 @@ case class EnterClientUTRAuditModel(isSuccessful: Boolean,
     "mtditid" -> mtditid,
     "saUtr" -> saUtr) ++
     userType ++
-    ("credId", credId) ++
-    ("agentReferenceNumber", arn)
+    Json.obj("credId"-> credId) ++
+    Json.obj("agentReferenceNumber"-> arn)
 
   override val detail: JsValue = userDetailsJson ++ outcome
 

@@ -20,21 +20,21 @@ import config.FrontendAppConfig
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockOptInService, MockOptOutService}
+import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
 import models.ReportingFrequencyViewModel
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.optout.OptOutMultiYearViewModel
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{when, mock as mMock}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.DateServiceInterface
+import services.{DateService, DateServiceInterface}
 import services.optIn.OptInService
 import services.optIn.core.OptInProposition
 import services.optout.{OptOutProposition, OptOutService}
@@ -46,9 +46,11 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 
-class ReportingFrequencyPageControllerSpec extends MockAuthActions with MockOptOutService with MockOptInService with MockitoSugar {
+class ReportingFrequencyPageControllerSpec extends MockAuthActions
+  with MockOptOutService with MockOptInService with MockDateService with MockitoSugar {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  lazy val mockDateServiceInjected: DateService = mMock(classOfDateService)
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -56,7 +58,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions with MockOptO
       api.inject.bind[OptInService].toInstance(mockOptInService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).configure(Map("feature-switches.read-from-mongo" -> "false"))
     .build()
 
@@ -80,9 +82,9 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions with MockOptO
       s"the user is authenticated as a $mtdRole" should {
         "render the reporting frequency page" when {
           "the reporting frequency feature switch is enabled" in {
-
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-
+            when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(fixedTaxYear)
+            when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
             enable(ReportingFrequencyPage, SignUpFs, OptOutFs)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))

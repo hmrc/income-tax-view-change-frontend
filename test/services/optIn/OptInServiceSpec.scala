@@ -29,9 +29,9 @@ import models.itsaStatus.ITSAStatus._
 import models.itsaStatus.{StatusDetail, StatusReason}
 import models.optin.newJourney.SignUpTaxYearQuestionViewModel
 import models.optin.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData}
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
+import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
 import play.api.http.Status.OK
@@ -401,6 +401,116 @@ class OptInServiceSpec extends UnitSpec
 
         result.futureValue shouldBe None
       }
+    }
+  }
+
+  ".initialiseOptInContextData()" should {
+
+    "return true and not call ITSA when optInContextData is already present" in {
+      val existingContext = OptInContextData(currentTaxYear.toString, Annual.toString, Voluntary.toString)
+
+      val sessionData = UIJourneySessionData(
+        sessionId = hc.sessionId.get.value,
+        journeyType = Opt(OptInJourney).toString,
+        optInSessionData = Some(OptInSessionData(optInContextData = Some(existingContext), selectedOptInYear = None))
+      )
+
+      when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(sessionData)))
+
+      val result = service.initialiseOptInContextData()
+
+      result.futureValue shouldBe true
+      verify(mockITSAStatusService, times(0)).getStatusTillAvailableFutureYears(any())(any(), any(), any())
+      verify(repository, times(0)).set(any())
+    }
+
+    "fetch ITSA statuses and store OptInContextData in session when missing" in {
+      val sessionData = UIJourneySessionData(
+        sessionId = hc.sessionId.get.value,
+        journeyType = Opt(OptInJourney).toString,
+        optInSessionData = Some(OptInSessionData(optInContextData = None, selectedOptInYear = None))
+      )
+
+      when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(sessionData)))
+      when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+      when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
+        .thenReturn(Future.successful(
+          Map(
+            currentTaxYear -> statusDetailWith(Annual),
+            nextTaxYear -> statusDetailWith(Voluntary)
+          )
+        ))
+
+      val expectedContext = OptInContextData(
+        currentTaxYear = currentTaxYear.toString,
+        currentYearITSAStatus = Annual.toString,
+        nextYearITSAStatus = Voluntary.toString
+      )
+
+      val expectedUpdatedSession = sessionData.copy(
+        optInSessionData = Some(sessionData.optInSessionData.get.copy(optInContextData = Some(expectedContext)))
+      )
+
+      when(repository.set(expectedUpdatedSession)).thenReturn(Future.successful(true))
+
+      val result = service.initialiseOptInContextData()
+
+      result.futureValue shouldBe true
+      verify(mockDateService, times(1)).getCurrentTaxYear
+      verify(mockITSAStatusService, times(1)).getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any)
+      verify(repository, times(1)).set(expectedUpdatedSession)
+    }
+
+    "initialise Sign-up session and store context data when optInSessionData is missing" in {
+      val sessionId = hc.sessionId.get.value
+
+      val sessionWithoutOptInData = UIJourneySessionData(
+        sessionId = sessionId,
+        journeyType = Opt(OptInJourney).toString,
+        optInSessionData = None
+      )
+
+      val sessionAfterSetup = UIJourneySessionData(
+        sessionId = sessionId,
+        journeyType = Opt(OptInJourney).toString,
+        optInSessionData = Some(OptInSessionData(None, None, Some(false)))
+      )
+
+      when(repository.get(sessionId, Opt(OptInJourney)))
+        .thenReturn(Future.successful(Some(sessionWithoutOptInData)))
+        .thenReturn(Future.successful(Some(sessionAfterSetup)))
+
+      when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
+
+      when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
+        .thenReturn(Future.successful(
+          Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Voluntary))
+        ))
+
+      val result = service.initialiseOptInContextData()
+      result.futureValue shouldBe true
+
+      verify(repository, times(2)).get(sessionId, Opt(OptInJourney))
+      verify(mockITSAStatusService, times(1))
+        .getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any)
+
+      val savedJourneySessionArguments = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
+      verify(repository, times(2)).set(savedJourneySessionArguments.capture())
+
+      val savedSessions = savedJourneySessionArguments.getAllValues
+      val firstSavedSession = savedSessions.get(0)
+      val secondSavedSession = savedSessions.get(1)
+
+      firstSavedSession.optInSessionData shouldBe defined
+      firstSavedSession.optInSessionData.flatMap(_.optInContextData) shouldBe empty
+
+      secondSavedSession.optInSessionData.flatMap(_.optInContextData) shouldBe defined
+      val savedContext = secondSavedSession.optInSessionData.flatMap(_.optInContextData).value
+
+      savedContext.currentTaxYear shouldBe currentTaxYear.toString
+      savedContext.currentYearITSAStatus shouldBe Annual.toString
+      savedContext.nextYearITSAStatus shouldBe Voluntary.toString
     }
   }
 

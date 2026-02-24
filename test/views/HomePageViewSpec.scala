@@ -21,7 +21,8 @@ import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.PaymentHistoryRefunds
-import models.homePage._
+import models.creditsandrefunds.CreditsModel
+import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -30,10 +31,10 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants._
-import testConstants.FinancialDetailsTestConstants.financialDetailsModel
+import testConstants.ANewCreditAndRefundModel
+import testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 import views.html.HomeView
 
@@ -106,8 +107,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val nextPaymentsTileViewModel: NextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount)
 
-    val paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()),
-      creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
+    val credits: CreditsModel = ANewCreditAndRefundModel().withTotalCredit(200).model
+    val paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
+      credits,
+      creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined
+    )
 
     val yourBusinessesTileViewModel: YourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
@@ -191,13 +195,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "displays the correct content" in new Setup(user = testMtdItUser(hasSAUtr = false)) {
         val langSwitchScript: Option[Element] = getElementById("language-switch")
         langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
-        langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith ir Gymraeg Cymraeg")
+        langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith i’r Gymraeg Cymraeg")
       }
     }
 
     "have an updates tile" which {
       "has a heading" in new Setup {
-        getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Next updates due")
+        getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Your submission deadlines")
       }
       "has the date of the next update due" in new Setup {
         getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
@@ -210,18 +214,18 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       }
       "has a link to view updates" in new Setup {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/next-updates")
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/submission-deadlines")
         link.map(_.text) shouldBe Some("View update deadlines")
       }
       "is empty except for the title" when {
         "user has no open obligations" in new Setup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-          getElementById("updates-tile").map(_.text()) shouldBe Some("Next updates due View update deadlines")
+          getElementById("updates-tile").map(_.text()) shouldBe Some("Your submission deadlines View update deadlines")
         }
       }
       "has a link to view and manage updates - Opt Out" in new Setup(nextUpdatesTileViewModel = viewModelOptOut) {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
-        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/next-updates")
-        link.map(_.text) shouldBe Some("View deadlines and manage how you report")
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/submission-deadlines")
+        link.map(_.text) shouldBe Some("View your deadlines")
       }
 
       "has next update and tax return dates when OptInOptOutContentUpdateR17 is enabled and ITSA status is Voluntary with no overdue updates" in {
@@ -246,8 +250,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           paragraphs.get(1).text shouldBe "Next tax return due: 31 January 2101"
 
           val link: Element = tile.select("a.govuk-link").first()
-          link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+          link.text shouldBe "View your deadlines"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
 
@@ -275,8 +279,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2101"
 
           val link: Element = tile.select("a.govuk-link").first()
-          link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+          link.text shouldBe "View your deadlines"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
 
@@ -308,8 +312,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2101"
 
           val link: Element = tile.select("a.govuk-link").first()
-          link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+          link.text shouldBe "View your deadlines"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
 
@@ -335,8 +339,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
           paragraphs.get(0).text shouldBe "Next tax return due: 31 January 2101"
 
           val link: Element = tile.select("a.govuk-link").first()
-          link.text shouldBe "View deadlines and manage how you report"
-          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+          link.text shouldBe "View your deadlines"
+          link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
         }
       }
 
@@ -359,8 +363,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         paragraphs.get(2).text shouldBe "Next tax return due: 31 January 2026"
 
         val link: Element = tile.select("a.govuk-link").first()
-        link.text shouldBe "View deadlines and manage how you report"
-        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/next-updates"
+        link.text shouldBe "View your deadlines"
+        link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
       }
 
       "has only title when OptInOptOutContentUpdateR17 is enabled and user has no obligations or tax return date" in new Setup(
@@ -374,7 +378,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       ) {
         val tile: Element = getElementById("updates-tile").get
 
-        tile.text().trim shouldBe "Your updates and deadlines View deadlines and manage how you report"
+        tile.text().trim shouldBe "Your submission deadlines View your deadlines"
         tile.select("span.govuk-tag--red") shouldBe empty
         tile.select("p.govuk-body") shouldBe empty
       }
@@ -578,8 +582,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     "show the 'Claim refund' link for migrated user" when {
       "the claim a refund feature switch is on" in new Setup(user = testMtdItUserMigrated(), creditAndRefundEnabled = true) {
         val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").last())
-        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/claim-refund")
-        link.map(_.text) shouldBe Some("Claim a refund")
+        link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/money-in-your-account")
+        link.map(_.text) shouldBe Some("Money in your account")
       }
     }
 

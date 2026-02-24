@@ -86,7 +86,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
     testNoClientDataFailure(path)
   }
 
-  s"POST ${controllers.agent.routes.ConfirmClientUTRController.submit.url}" when {
+  s"POST ${controllers.agent.routes.ConfirmClientUTRController.submit().url}" when {
     s"a user is a primary agent (session data isSupportingAgent = false)" that {
       val isSupportingAgent = false
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)

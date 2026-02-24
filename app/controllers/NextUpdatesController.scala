@@ -33,6 +33,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewUtils.NextUpdatesViewUtils
 import views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
+import play.api.Logger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -79,6 +80,7 @@ class NextUpdatesController @Inject()(
 
         result <- nextUpdates.obligations match {
           case Nil =>
+            Logger("application").warn(s"${if (isAgent) "[Agent]"} No open obligations found for user.")
             Future.successful(errorHandler.showInternalServerError())
           case _ =>
             auditNextUpdates(user, isAgent, origin)
@@ -116,7 +118,7 @@ class NextUpdatesController @Inject()(
   }
 
 
-  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual.async { implicit user =>
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     getNextUpdates(
       backUrl = controllers.routes.HomeController.show(origin),
       isAgent = false,
@@ -125,7 +127,7 @@ class NextUpdatesController @Inject()(
     )
   }
 
-  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient.async {
+  def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       getNextUpdates(
         backUrl = controllers.routes.HomeController.showAgent(),

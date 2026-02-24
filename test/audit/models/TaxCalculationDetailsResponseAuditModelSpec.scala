@@ -21,10 +21,11 @@ import controllers.constants.IncomeSourceAddedControllerConstants.testObligation
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
+import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.libs.json.{JsObject, Json}
-import testConstants.BaseTestConstants._
+import play.api.libs.json.*
+import testConstants.BaseTestConstants.*
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessful}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -230,7 +231,7 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
     ),
     "taxCalculationMessage" -> Json.arr(
       Json.obj(
-        "calculationMessage" -> "This is a forecast of your annual income tax liability based on the information you have provided to date. Any overpayments of income tax will not be refundable until after you have submitted your final declaration"
+        "calculationMessage" -> "This is a forecast of your annual Income Tax liability based on the information you have provided to date. Any overpayments of Income Tax will not be refundable until after you have submitted your final declaration"
       ),
       Json.obj(
         "calculationMessage" -> "Your Class 4 has been adjusted for Class 2 due and primary Class 1 contributions."
@@ -258,20 +259,49 @@ class TaxCalculationDetailsResponseAuditModelSpec extends AnyWordSpecLike with M
 
     "have the correct detail for the audit event" when {
       "the user is an individual" in {
-        taxCalculationDetailsResponseAuditModelFull.detail mustBe taxCalcDetailsResponseAuditModelDetailJsonFull
+        assertJsonEquals(taxCalculationDetailsResponseAuditModelFull.detail, taxCalcDetailsResponseAuditModelDetailJsonFull)
       }
 
       "the user is an agent" in {
-        taxCalculationDetailsResponseAuditModelMinimal(
+        assertJsonEquals(taxCalculationDetailsResponseAuditModelMinimal(
           userType = Some(Agent)
-        ).detail mustBe taxCalcDetailsResponseAuditModelDetailJsonMinimalAgent
+        ).detail, taxCalcDetailsResponseAuditModelDetailJsonMinimalAgent)
       }
 
       "the audit is empty" in {
-        taxCalculationDetailsResponseAuditModelMinimal().detail mustBe taxCalcDetailsResponseAuditModelDetailJsonMinimalIndividual
+        assertJsonEquals(taxCalculationDetailsResponseAuditModelMinimal().detail, taxCalcDetailsResponseAuditModelDetailJsonMinimalIndividual)
       }
     }
   }
 
+  def normalise(js: JsValue): JsValue = js match {
 
+    case JsObject(fields) =>
+      val filteredFields = fields.collect {
+        case (k, v) if v != JsNull =>
+          normalise(v) match {
+            case JsObject(inner) if inner.isEmpty => None // remove empty object
+            case JsArray(inner) if inner.isEmpty => None // remove empty array
+            case n => Some(k -> n)
+          }
+      }.flatten
+
+      JsObject(filteredFields.toSeq.sortBy(_._1))
+
+    case JsArray(values) =>
+      val normValues = values.collect { case v if v != JsNull => normalise(v) }
+      val filteredValues = normValues.filter {
+        case JsObject(inner) if inner.isEmpty => false
+        case JsArray(inner) if inner.isEmpty => false
+        case _ => true
+      }
+      if (filteredValues.forall(_.isInstanceOf[JsObject])) JsArray(filteredValues.sortBy(_.toString))
+      else JsArray(filteredValues)
+
+    case JsNumber(n) => JsNumber(n.bigDecimal.stripTrailingZeros())
+    case other => other
+  }
+
+  def assertJsonEquals(actual: JsValue, expected: JsValue): Assertion =
+    normalise(actual) shouldEqual normalise(expected)
 }

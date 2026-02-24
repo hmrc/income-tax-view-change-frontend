@@ -16,32 +16,34 @@
 
 package controllers.manageBusinesses.cease
 
+import enums.IncomeSourceJourney.*
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
+import mocks.services.{MockDateService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{CheckMode, Mode, NormalMode}
+import models.core.*
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.Mockito.{mock, when}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import play.api
 import play.api.http.Status
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
-import play.api.mvc._
+import play.api.http.Status.*
+import play.api.mvc.*
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, SessionService}
+import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService {
+class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService with MockDateService{
+
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app =
     applicationBuilderWithAuthBindings
@@ -49,7 +51,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
         api.inject.bind[SessionService].toInstance(mockSessionService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
       ).build()
 
   lazy val testController = app.injector.instanceOf[IncomeSourceEndDateController]
@@ -105,7 +107,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
         s"show($incomeSourceType, $isAgent, $mode)" when {
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-          val action = testController.show(optIncomeSourceIdHash, incomeSourceType, isAgent, mode)
+          val action = testController.show(optIncomeSourceIdHash, incomeSourceType, isAgent, mode, false)
           s"the user is authenticated as a $mtdRole" should {
             "render the end date page" when {
               "using the manage businesses journey" in {
@@ -171,7 +173,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                   setupMockCreateSession(true)
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
-                  val actionNoId = testController.show(None, incomeSourceType, isAgent, mode)
+                  val actionNoId = testController.show(None, incomeSourceType, isAgent, mode, false)
                   val result: Future[Result] = actionNoId(fakeRequest)
                   status(result) shouldBe INTERNAL_SERVER_ERROR
                 }
@@ -183,7 +185,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                   setupMockCreateSession(true)
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
-                  val actionIdNotRec = testController.show(Some("12345"), incomeSourceType, isAgent, mode)
+                  val actionIdNotRec = testController.show(Some("12345"), incomeSourceType, isAgent, mode, false)
                   val result: Future[Result] = actionIdNotRec(fakeRequest)
                   status(result) shouldBe INTERNAL_SERVER_ERROR
                 }
@@ -195,10 +197,11 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
         s"submit($incomeSourceType, $isAgent, $mode)" when {
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
-          val action = testController.submit(optIncomeSourceIdHash, incomeSourceType, isAgent, mode)
+          val action = testController.submit(optIncomeSourceIdHash, incomeSourceType, isAgent, mode, false)
           s"the user is authenticated as a $mtdRole" should {
             "redirect to CheckIncomeSourceDetails" when {
               "form is completed successfully" in {
+                when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
                 when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -269,7 +272,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                   .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
-                when(mockDateServiceInterface.getCurrentDate).thenReturn(LocalDate.of(2028, 1, 1))
+                when(mockDateServiceInjected.getCurrentDate).thenReturn(LocalDate.of(2028, 1, 1))
 
                 setupMockCreateSession(true)
                 if (incomeSourceType == SelfEmployment) {
@@ -279,7 +282,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 }
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
-                  "value.year" -> (mockDateServiceInterface.getCurrentDate.getYear + 1).toString))
+                  "value.year" -> (mockDateServiceInjected.getCurrentDate.getYear + 1).toString))
 
                 val expectedErrorMessage: (String, String) = incomeSourceType match {
                   case SelfEmployment => (
@@ -352,7 +355,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                     when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                       .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
-                    val actionMissingId = testController.submit(None, incomeSourceType, isAgent, mode)
+                    val actionMissingId = testController.submit(None, incomeSourceType, isAgent, mode, false)
                     val result: Future[Result] = actionMissingId(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
                       "value.year" -> "2022"))
 
@@ -364,7 +367,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                     when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
                       .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
-                    val actionInvalidId = testController.submit(Some("12345"), incomeSourceType, isAgent, mode)
+                    val actionInvalidId = testController.submit(Some("12345"), incomeSourceType, isAgent, mode, false)
 
                     val result: Future[Result] = actionInvalidId(fakeRequest.withFormUrlEncodedBody("value.day" -> "27", "value.month" -> "8",
                       "value.year" -> "2022"))

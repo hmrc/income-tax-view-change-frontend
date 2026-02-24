@@ -16,9 +16,8 @@
 
 package testConstants
 
-
-import models.liabilitycalculation._
-import models.liabilitycalculation.taxcalculation._
+import models.liabilitycalculation.*
+import models.liabilitycalculation.taxcalculation.*
 import models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDeductedAtSourceViewModel, TaxDueSummaryViewModel}
 
 import java.time.LocalDate
@@ -39,7 +38,9 @@ object NewCalcBreakdownUnitTestConstants {
       calculationType = "crystallisation",
       calculationReason = calculationReason,
       periodFrom = None,
-      periodTo = None)
+      periodTo = None
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessful: LiabilityCalculationResponse = LiabilityCalculationResponse(
@@ -68,7 +69,9 @@ object NewCalcBreakdownUnitTestConstants {
       chargeableEventGainsIncome = Some(ChargeableEventGainsIncome(
         totalOfAllGains = 12500
       )),
-      dividendsIncome = Some(DividendsIncome(chargeableForeignDividends = Some(12500))),
+      dividendsIncome = Some(DividendsIncome(
+        totalUkDividends = Some(12500),
+        chargeableForeignDividends = Some(12500))),
       employmentAndPensionsIncome = Some(EmploymentAndPensionsIncome(
         totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
         totalBenefitsInKind = Some(5000.99),
@@ -298,21 +301,24 @@ object NewCalcBreakdownUnitTestConstants {
       calculationReason = Some("customerRequest"),
       periodFrom = Some(LocalDate.of(2018, 1, 1)),
       periodTo = Some(LocalDate.of(2019, 1, 1))
-    )
+    ),
+    submissionChannel = None
   )
 
-  val metadataWithAmendment = Metadata(
-    calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-    calculationType = "CA",
-    calculationReason = Some("customerRequest"),
-    periodFrom = Some(LocalDate.of(2018, 1, 1)),
-    periodTo = Some(LocalDate.of(2019, 1, 1)))
+  val metadataWithAmendment =
+    Metadata(
+      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+      calculationType = "CA",
+      calculationReason = Some("customerRequest"),
+      periodFrom = Some(LocalDate.of(2018, 1, 1)),
+      periodTo = Some(LocalDate.of(2019, 1, 1))
+    )
 
   val liabilityCalculationModelErrorMessagesForIndividual = liabilityCalculationModelDeductionsMinimal().copy(messages = Some(Messages(
     errors = Some(List(
       Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
       Message("C15507", "you’ve claimed £2000 in Property Income Allowance but this is more than turnover for your UK property."),
-      Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+      Message("C15510", "the Rent-a-Room relief claimed for a jointly let property cannot be more than 10% of the Rent-a-Room limit."),
       Message("C55009", "updates cannot include gaps.")
     ))
   )))
@@ -321,20 +327,21 @@ object NewCalcBreakdownUnitTestConstants {
     errors = Some(List(
       Message("C55012", "the update must align to the accounting period end date of 05/01/2023."),
       Message("C15507", "your client claimed £2000 in Property Income Allowance but this is more than turnover for their UK property."),
-      Message("C15510", "the Rent a Room relief claimed for a jointly let property cannot be more than 10% of the Rent a Room limit."),
+      Message("C15510", "the Rent-a-Room relief claimed for a jointly let property cannot be more than 10% of the Rent-a-Room limit."),
       Message("C55009", "updates cannot include gaps.")
     ))
   )))
 
-  val liabilityCalculationModelSuccessfulNotCrystallised = liabilityCalculationModelSuccessful.copy(metadata =
-    Metadata(
-      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = "inYear",
-      periodFrom = Some(LocalDate.of(2018, 1, 1)),
-      periodTo = Some(LocalDate.of(2019, 1, 1))
+  val liabilityCalculationModelSuccessfulNotCrystallised =
+    liabilityCalculationModelSuccessful.copy(
+      metadata =
+        Metadata(
+          calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+          calculationType = "inYear",
+          periodFrom = Some(LocalDate.of(2018, 1, 1)),
+          periodTo = Some(LocalDate.of(2019, 1, 1))
+        )
     )
-
-  )
 
   val arrayTestFull = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -358,7 +365,9 @@ object NewCalcBreakdownUnitTestConstants {
       chargeableEventGainsIncome = Some(ChargeableEventGainsIncome(
         totalOfAllGains = 12500
       )),
-      dividendsIncome = Some(DividendsIncome(chargeableForeignDividends = Some(12500))),
+      dividendsIncome = Some(DividendsIncome(
+        totalUkDividends = Some(12500),
+        chargeableForeignDividends = Some(12500))),
       employmentAndPensionsIncome = Some(EmploymentAndPensionsIncome(
         totalPayeEmploymentAndLumpSumIncome = Some(5000.99),
         totalBenefitsInKind = Some(5000.99),
@@ -491,7 +500,9 @@ object NewCalcBreakdownUnitTestConstants {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest")
+    ),
+    submissionChannel = None
   )
 
   val taxDueSummaryViewModelStandard = TaxDueSummaryViewModel(
@@ -696,8 +707,7 @@ object NewCalcBreakdownUnitTestConstants {
     totalRoyaltyPaymentsTaxCharged = Some(240.35),
     reliefsClaimed = Some(Seq(ReliefsClaimed("deficiencyRelief", Some(1000)), ReliefsClaimed("vctSubscriptions", Some(2000)),
       ReliefsClaimed("eisSubscriptions", Some(3000)), ReliefsClaimed("seedEnterpriseInvestment", Some(4000)),
-      ReliefsClaimed("communityInvestment", Some(5000)), ReliefsClaimed("socialEnterpriseInvestment", Some(6000)),
-      ReliefsClaimed("maintenancePayments", Some(7000)),
+      ReliefsClaimed("communityInvestment", Some(5000)), ReliefsClaimed("maintenancePayments", Some(7000)),
       ReliefsClaimed("qualifyingDistributionRedemptionOfSharesAndSecurities", Some(8000)),
       ReliefsClaimed("nonDeductableLoanInterest", Some(9000))
     )),
@@ -883,7 +893,7 @@ object NewCalcBreakdownUnitTestConstants {
   )
   val taxDueSummaryViewModelVoluntaryNic2 = TaxDueSummaryViewModel(
     class2VoluntaryContributions = true,
-    class2NicsAmount = Some(10000)
+    class2NicsAmount = Some(BigDecimal(10000))
   )
 
   val taxDueSummaryViewModelGiftAid = TaxDueSummaryViewModel(

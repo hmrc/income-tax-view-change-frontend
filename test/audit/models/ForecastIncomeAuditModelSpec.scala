@@ -175,10 +175,10 @@ class ForecastIncomeAuditModelSpec extends TestSupport {
   )
 
   val testUserIndividual = defaultMTDITUser(Some(Individual),
-    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil))
+    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil, "1"))
 
   val testUserAgent = defaultMTDITUser(Some(Agent),
-    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil))
+    IncomeSourceDetailsModel(testNino ,testMtditid, None, Nil, Nil, "1"))
 
   def testForecastIncomeAuditModelIndividual( endOfYearEstimate: EndOfYearEstimate = endOfYearEstimate,
                                             ): ForecastIncomeAuditModel = ForecastIncomeAuditModel(
@@ -203,7 +203,7 @@ class ForecastIncomeAuditModelSpec extends TestSupport {
     }
 
     "Have the correct details for the audit event" in {
-      testForecastIncomeAuditModelIndividual().detail shouldBe commonAuditDetails(Individual) ++ Json.obj(
+      assertJsonEquals(testForecastIncomeAuditModelIndividual().detail, commonAuditDetails(Individual) ++ Json.obj(
         "profitFrom" -> Json.arr(
           Json.obj(
             "name" -> "Trading Inc",
@@ -247,7 +247,7 @@ class ForecastIncomeAuditModelSpec extends TestSupport {
         "interestFromBanks" -> 500,
         "profitFromPartnership" -> 32500,
         "stateBenefitIncome" -> 1200
-      )
+      ))
     }
 
     "Have the agent details for the audit event" in {

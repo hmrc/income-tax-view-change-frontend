@@ -62,7 +62,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val yourActiveBusinessesHeading = "Your active businesses"
     val soleTraderHeading = "Sole trader businesses"
     val addASoleTraderBusinessText = "Add a sole trader business"
-    val soleTraderGuidance = "You’re self-employed if you run your own business as an individual and work for yourself. This is also known as being a ’sole trader’. If you work through a limited company, you’re not a sole trader."
+    val soleTraderGuidance = "You’re a sole trader if you run your own business as an individual and work for yourself. This is also known as being self‑employed."
     val visuallyHiddenSoleTraderText = "business"
     val visuallyHiddenTextForeignProperty = "Foreign property"
     val visuallyHiddenTextUkProperty = "UK property"

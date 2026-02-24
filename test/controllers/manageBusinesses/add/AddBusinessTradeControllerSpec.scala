@@ -25,7 +25,6 @@ import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -33,6 +32,7 @@ import play.api.mvc.Result
 import play.api.test.Helpers._
 import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import org.scalatest.matchers.must.Matchers
 
 import scala.concurrent.Future
 
@@ -55,10 +55,10 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
   lazy val testAddBusinessTradeController = app.injector.instanceOf[AddBusinessTradeController]
 
   def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false) = mtdRole match {
-    case MTDIndividual if isPost => testAddBusinessTradeController.submit(mode)
-    case MTDIndividual => testAddBusinessTradeController.show(mode)
-    case _ if isPost => testAddBusinessTradeController.submitAgent(mode)
-    case _ => testAddBusinessTradeController.showAgent(mode)
+    case MTDIndividual if isPost => testAddBusinessTradeController.submit(mode, false)
+    case MTDIndividual => testAddBusinessTradeController.show(mode, false)
+    case _ if isPost => testAddBusinessTradeController.submitAgent(mode, false)
+    case _ => testAddBusinessTradeController.showAgent(mode, false)
   }
 
   Seq(CheckMode, NormalMode).foreach { mode =>
@@ -141,134 +141,136 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> validBusinessTrade))
 
-                status(result) mustBe SEE_OTHER
+                status(result) shouldBe SEE_OTHER
                 val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
-                  controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
-                } else {
-                  controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+                  status(result) shouldBe SEE_OTHER
+                  val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                    controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+                  } else {
+                    controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+                  }
+                  redirectLocation(result) shouldBe Some(expectedRedirectUrl)
                 }
-                redirectLocation(result) mustBe Some(expectedRedirectUrl)
+              }
+            }} else {
+              "redirect to the add business address page" when {
+                "the individual is authenticated and the business trade entered is valid" in {
+                  setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                  setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                  setupMockCreateSession(true)
+                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                    .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
+                  setupMockSetMongoData(true)
+
+                  val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                    BusinessTradeForm.businessTrade -> validBusinessTrade))
+                  status(result) shouldBe SEE_OTHER
+                  val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                    controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode).url
+                  } else {
+                    controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode).url
+                  }
+                  redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                }
               }
             }
-          } else {
-            "redirect to the add business address page" when {
-              "the individual is authenticated and the business trade entered is valid" in {
+
+            "return to add business trade page" when {
+              "trade name is same as business name" in {
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+                setupMockCreateSession(true)
+                val businessNameAsTrade: String = "Test Name"
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(businessNameAsTrade),
+                    businessTrade = Some(businessNameAsTrade)))))))
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> businessNameAsTrade))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("Trade and business name cannot be the same")
+              }
+
+              "trade name contains invalid characters" in {
+                val invalidBusinessTradeChar: String = "££"
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
-                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
-                setupMockSetMongoData(true)
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                    businessTrade = Some(invalidBusinessTradeChar)))))))
 
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
-                  BusinessTradeForm.businessTrade -> validBusinessTrade))
-                status(result) mustBe SEE_OTHER
-                val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
-                  controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode).url
-                } else {
-                  controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode).url
-                }
-                redirectLocation(result) mustBe Some(expectedRedirectUrl)
+                  BusinessTradeForm.businessTrade -> invalidBusinessTradeChar))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("Trade cannot include !, &quot;&quot;, * or ?")
+              }
+
+              "trade name is empty" in {
+                val invalidBusinessTradeEmpty: String = ""
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                    businessTrade = Some(invalidBusinessTradeEmpty)))))))
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("Enter the trade of your business")
+              }
+
+              "trade name is too short" in {
+                val invalidBusinessTradeShort: String = "A"
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                    businessTrade = Some(invalidBusinessTradeShort)))))))
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> invalidBusinessTradeShort))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("Trade must be 2 characters or more")
+              }
+
+              "trade name is too long" in {
+                val invalidBusinessTradeLong: String = "This trade name is far too long to be accepted"
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                    businessTrade = Some(invalidBusinessTradeLong)))))))
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> invalidBusinessTradeLong))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("Trade must be 35 characters or fewer")
               }
             }
           }
 
-          "return to add business trade page" when {
-            "trade name is same as business name" in {
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-              setupMockCreateSession(true)
-              val businessNameAsTrade: String = "Test Name"
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
-                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(businessNameAsTrade),
-                  businessTrade = Some(businessNameAsTrade)))))))
-
-              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
-                BusinessTradeForm.businessTrade -> businessNameAsTrade))
-
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Trade and business name cannot be the same")
-            }
-
-            "trade name contains invalid characters" in {
-              val invalidBusinessTradeChar: String = "££"
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
-                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
-                  businessTrade = Some(invalidBusinessTradeChar)))))))
-
-              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
-                BusinessTradeForm.businessTrade -> invalidBusinessTradeChar))
-
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Trade cannot include !, &quot;&quot;, * or ?")
-            }
-
-            "trade name is empty" in {
-              val invalidBusinessTradeEmpty: String = ""
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
-                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
-                  businessTrade = Some(invalidBusinessTradeEmpty)))))))
-
-              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
-                BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty))
-
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Enter the trade of your business")
-            }
-
-            "trade name is too short" in {
-              val invalidBusinessTradeShort: String = "A"
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
-                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
-                  businessTrade = Some(invalidBusinessTradeShort)))))))
-
-              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
-                BusinessTradeForm.businessTrade -> invalidBusinessTradeShort))
-
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Trade must be 2 characters or more")
-            }
-
-            "trade name is too long" in {
-              val invalidBusinessTradeLong: String = "This trade name is far too long to be accepted"
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              setupMockCreateSession(true)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
-                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
-                  businessTrade = Some(invalidBusinessTradeLong)))))))
-
-              val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
-                BusinessTradeForm.businessTrade -> invalidBusinessTradeLong))
-
-              status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Trade must be 35 characters or fewer")
-            }
+          if (mtdRole == MTDIndividual) {
+            testMTDIndividualAuthFailures(action)
+          } else {
+            testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
           }
-        }
-
-        if (mtdRole == MTDIndividual) {
-          testMTDIndividualAuthFailures(action)
-        } else {
-          testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
         }
       }
     }
   }
-}

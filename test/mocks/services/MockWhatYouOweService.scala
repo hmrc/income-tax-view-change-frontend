@@ -38,6 +38,7 @@ trait MockWhatYouOweService extends UnitSpec with MockDateService with BeforeAnd
       BalanceDetails(
         balanceDueWithin30Days = 0.0,
         overDueAmount = 0.0,
+        balanceNotDuein30Days = 0.0,
         totalBalance = 0.0,
         totalCreditAvailableForRepayment = None,
         allocatedCredit = None,

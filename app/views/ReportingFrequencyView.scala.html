@@ -298,6 +298,10 @@
             @messages("reporting.frequency.different.obligations.li2")
         </li>
 
+        <li id="different-obligations-li3">
+            @messages("reporting.frequency.different.obligations.li3")
+        </li>
+
     </ul>
     @p(id = Some("different-obligations-p2")) {
         @if(viewModel.hasExemptStatuses) {
@@ -455,7 +459,7 @@
                 @messages("reporting.frequency.compatibleSoftware.p3.R17")
             }
 
-            @linkComponent(appConfig.selfAssessmentTaxReturnLink, message = s"${messages("reporting.frequency.compatibleSoftware.link2.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("self-assessment-tax-return-link"), additionalOpenTabMessage = Some("."))
+            @linkComponent(appConfig.logInFileSelfAssessmentTaxReturnLink, message = s"${messages("reporting.frequency.compatibleSoftware.link2.text")} ", rel=Some("noreferrer noopener"), target = Some("_blank"), id = Some("self-assessment-tax-return-link"), additionalOpenTabMessage = Some("."))
         }
     }else{
         @h2(msg = "reporting.frequency.compatibleSoftware.heading", optId = Some("compatible-software-heading"))

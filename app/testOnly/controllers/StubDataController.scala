@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
+import play.api.mvc.*
 import testOnly.connectors.DynamicStubConnector
 import testOnly.forms.StubDataForm
 import testOnly.models.DataModel
@@ -34,8 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class StubDataController @Inject()(stubDataView: StubDataView)
                                   (implicit val appConfig: FrontendAppConfig,
-                                   implicit val mcc: MessagesControllerComponents,
-                                   implicit val executionContext: ExecutionContext,
+                                   val mcc: MessagesControllerComponents,
+                                   val executionContext: ExecutionContext,
                                    val dynamicStubConnector: DynamicStubConnector
                                   ) extends BaseController with I18nSupport {
 
@@ -48,12 +48,13 @@ class StubDataController @Inject()(stubDataView: StubDataView)
       StubDataForm.stubDataForm.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
         schema => {
-          dynamicStubConnector.addData(schema).map(
-            response => response.status match {
-              case OK => Ok(view(StubDataForm.stubDataForm, showSuccess = true))
-              case _ => InternalServerError(view(StubDataForm.stubDataForm.fill(schema), errorResponse = Some(response.body)))
-            }
-          )
+          dynamicStubConnector.addData(schema)
+            .map(
+              response => response.status match {
+                case OK => Ok(view(StubDataForm.stubDataForm, showSuccess = true))
+                case _ => InternalServerError(view(StubDataForm.stubDataForm.fill(schema), errorResponse = Some(response.body)))
+              }
+            )
         }
       )
   }

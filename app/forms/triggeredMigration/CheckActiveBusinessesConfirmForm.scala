@@ -23,7 +23,7 @@ object CheckActiveBusinessesConfirmForm {
 
   val responseYes: String = "Yes"
   val responseNo: String  = "No"
-  val response: String    = "check-active-businesses-confirm"
+  val response: String    = "check-active-businesses-confirm-form"
   val errorKey = "triggered-migration.check-active-businesses-confirm.error.required"
 
   def apply(): Form[CheckActiveBusinessesConfirmForm] = {
@@ -33,7 +33,9 @@ object CheckActiveBusinessesConfirmForm {
           .verifying(errorKey, value =>
             value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo))
           )
-      )(CheckActiveBusinessesConfirmForm.apply)(CheckActiveBusinessesConfirmForm.unapply)
+      )
+      (response => CheckActiveBusinessesConfirmForm(response))
+      (form => Some(form.response))
     )
   }
 }

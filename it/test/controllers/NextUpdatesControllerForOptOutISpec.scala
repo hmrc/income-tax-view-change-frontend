@@ -32,6 +32,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants._
 import testConstants.NextUpdatesIntegrationTestConstants._
+import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
@@ -40,7 +41,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
     optOutSessionDataRepository.repository.collection.deleteMany(BsonDocument()).toFuture().futureValue
   }
 
-  val path = "/next-updates"
+  val path = "/submission-deadlines"
 
   s"GET $path" when {
 

@@ -18,7 +18,6 @@ package services
 
 import connectors.RepaymentConnector
 import exceptions.{RepaymentStartJourneyAmountIsNoneException, RepaymentStartJourneyException, RepaymentViewJourneyException}
-import mocks.MockHttp
 import mocks.connectors.MockBusinessDetailsConnector
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import org.mockito.ArgumentMatchers.any
@@ -29,7 +28,7 @@ import testUtils.TestSupport
 import scala.concurrent.{ExecutionException, Future}
 
 class RepaymentServiceSpec extends TestSupport
-  with MockHttp with MockBusinessDetailsConnector {
+   with MockBusinessDetailsConnector {
 
   val nino = "AA010101Q"
   val fullAmount: BigDecimal = BigDecimal("303.00")

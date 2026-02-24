@@ -612,7 +612,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
             itsaStatusTable = Seq(
               ("2023 to 2024", Some("Required"), Some("Quarterly (mandatory)")),
               ("2024 to 2025", Some("Voluntarily signed up"), Some("Quarterly")),
-              ("2025 to 2026", Some("Opted out"), Some("Annual")),
+              ("2025 to 2026", Some("Not required"), Some("Annual")),
             ),
             isAnyOfBusinessLatent = false,
             displayCeasedBusinessWarning = false,

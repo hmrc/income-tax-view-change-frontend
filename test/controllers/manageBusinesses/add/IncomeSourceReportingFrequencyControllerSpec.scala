@@ -37,13 +37,13 @@ import services._
 import services.manageBusinesses.IncomeSourceRFService
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
-
+import models.itsaStatus.StatusDetail
+import org.mockito.ArgumentMatchers.{any => mAny}
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 
-  lazy val mockITSAStatusService: ITSAStatusService = mock(classOf[ITSAStatusService])
   lazy val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
   lazy val mockCalculationListService: CalculationListService = mock(classOf[CalculationListService])
   lazy val mockDateService: DateService = mock(classOf[DateService])
@@ -113,13 +113,16 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
 
   def setupMockITSAStatusCall(scenario: Scenario): OngoingStubbing[Future[Boolean]] = scenario match {
     case NON_ELIGIBLE_ITSA_STATUS =>
-      when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any)(any, any, any))
+      when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(
+        ArgumentMatchers.any[StatusDetail => Boolean]())(any(), any(), any()))
         .thenReturn(Future.successful(false))
     case ITSA_STATUS_ERROR =>
-      when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any)(any, any, any))
+      when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(
+        ArgumentMatchers.any[StatusDetail => Boolean]())(any(), any(), any()))
         .thenReturn(Future.failed(new Exception("Failed to retrieve ITSAStatus")))
     case _ =>
-      when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(any)(any, any, any))
+      when(mockITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(
+        ArgumentMatchers.any[StatusDetail => Boolean]())(any(), any(), any()))
         .thenReturn(Future.successful(true))
   }
 

@@ -94,16 +94,18 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
 
     for {
       financialDetailsModel       <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
-      financialDetails             = financialDetailsModel.flatMap { case FinancialDetailsModel(_, _, _, fd) => fd }
+      financialDetailsByTaxYear    = financialDetailsModel.flatMap(_.financialDetails).groupBy(_.taxYear)
       documentDetailsWithDueDate   = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
-      chargeItems                  = documentDetailsWithDueDate.flatMap(dd => getChargeItemOpt(financialDetails)(dd.documentDetail))
+      chargeItems                  = documentDetailsWithDueDate.flatMap { dd =>
+        val financialDetails = financialDetailsByTaxYear.getOrElse(dd.documentDetail.taxYear.toString, Nil)
+        getChargeItemOpt(financialDetails)(dd.documentDetail)
+      }
       codedOutBCAndPoas            = chargeItems.filter(x => x.isCodingOutAcceptedOrFullyCollected && (x.isBalancingCharge || x.isPoaDebit))
       updatedCharges              <- Future.traverse(codedOutBCAndPoas) { chargeItem =>
 
         chargeHistoryService.chargeHistoryResponse(isLatePaymentCharge = false, chargeItem.chargeReference, isEnabled(ChargeHistory)).map {
 
-          case Left(ChargesHistoryErrorModel(code, message)) =>
-            Logger("application").info(s"Failed to retrieve history for charge with id: ${chargeItem.transactionId}, code: $code, message: $message")
+          case Left(_: ChargesHistoryErrorModel) =>
             chargeItem
 
           case Right(chargeHistoryItems) =>

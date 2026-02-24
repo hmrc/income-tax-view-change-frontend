@@ -18,23 +18,23 @@ package controllers
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import mocks.auth.MockAuthActions
-import mocks.services.{MockNextUpdatesService, MockOptOutService}
+import mocks.services.{MockDateService, MockNextUpdatesService, MockOptOutService}
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.obligations._
+import models.obligations.*
 import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.*
 import org.mockito.stubbing.OngoingStubbing
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.optout.{OptOutProposition, OptOutService}
-import services.{DateServiceInterface, NextUpdatesService}
+import services.{DateService, DateServiceInterface, NextUpdatesService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
 import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 
@@ -42,9 +42,10 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class NextUpdatesControllerSpec extends MockAuthActions
-  with MockNextUpdatesService with MockOptOutService {
+  with MockNextUpdatesService with MockOptOutService with MockDateService{
 
   val nextTitle: String = NextUpdatesTestConstants.title
+  lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -52,7 +53,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
   lazy val testNextUpdatesController: NextUpdatesController = app.injector.instanceOf[NextUpdatesController]
@@ -228,7 +229,8 @@ class NextUpdatesControllerSpec extends MockAuthActions
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
-            mockErrorIncomeSourceWithDeadlines()
+            mockSingleBusinessIncomeSourceWithDeadlines()
+            mockGetNextUpdatesPageChecksAndProposition(Future.failed(new Exception("api failure")))
             val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
 
             status(result) shouldBe Status.INTERNAL_SERVER_ERROR
@@ -321,8 +323,8 @@ class NextUpdatesControllerSpec extends MockAuthActions
           disableAllSwitches()
           setupMockAgentWithClientAuth(isSupportingAgent)
           mockItsaStatusRetrievalAction()
-          mockSingleBusinessIncomeSourceWithDeadlines()
           mockSingleBusinessIncomeSource()
+          mockSingleBusinessIncomeSourceWithDeadlines()
           mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, Some(optOutViewModel), optOutProposition)))
           mockViewModel
           mockObligations

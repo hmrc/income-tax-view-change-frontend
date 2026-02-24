@@ -16,15 +16,17 @@
 
 package models.core
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json._
 
 case class Nino(value: String) extends AnyVal
 case class ViewHistory(nino: String) extends AnyVal
 
 object Nino {
-  implicit val format: Format[Nino] = Json.format[Nino]
-}
+  implicit val writes: Writes[Nino] = Writes(nino => JsString(nino.value))
+  implicit val reads: Reads[Nino]   = Reads(js => js.validate[String].map(Nino(_)))
+  implicit val format: Format[Nino] = Format(reads, writes)}
 
 object ViewHistory {
-  implicit val format: Format[ViewHistory] = Json.format[ViewHistory]
-}
+  implicit val writes: Writes[ViewHistory] = Writes(vh => Json.obj("nino" -> vh.nino))
+  implicit val reads: Reads[ViewHistory]   = Reads(js => js.validate[String].map(ViewHistory(_)))
+  implicit val format: Format[ViewHistory] = Format(reads, writes)}

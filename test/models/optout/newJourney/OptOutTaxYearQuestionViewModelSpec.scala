@@ -131,6 +131,39 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
       }
     }
 
+    ".showFollowedByMandatedInset" should {
+      "return true when optOutState is OneYearOptOutFollowedByMandated" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 0, Voluntary, Mandated)
+        model.showFollowedByMandatedInset shouldBe true
+      }
+
+      "return false when optOutState is not OneYearOptOutFollowedByMandated" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Annual)
+        model.showFollowedByMandatedInset shouldBe false
+      }
+
+      "return false when optOutState is None" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, None, 0, Voluntary, Annual)
+        model.showFollowedByMandatedInset shouldBe false
+      }
+    }
+
+    ".redirectToConfirmUpdatesPage" should {
+      "return true when optOutState is OneYearOptOutFollowedByMandated and there are 0 updates" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 0, Voluntary, Mandated)
+        model.redirectToConfirmUpdatesPage shouldBe true
+      }
+
+      "return true when optOutState is OneYearOptOutFollowedByMandated and there are updates" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 2, Voluntary, Mandated)
+        model.redirectToConfirmUpdatesPage shouldBe true
+      }
+
+      "return false when optOutState is not OneYearOptOutFollowedByMandated" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Annual)
+        model.redirectToConfirmUpdatesPage shouldBe false
+      }
+    }
 
     "messageSuffix" should {
       val cases = Seq(
@@ -165,6 +198,18 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
           val model = OptOutTaxYearQuestionViewModel(taxYear, optOutState, amountOfQuarterlyUpdates, cyItsaStatus, nyItsaStatus)
           model.messageSuffix shouldBe expectedSuffix
         }
+      }
+    }
+
+    ".mandatedInsetMessageSuffix" should {
+      "return currentYear.singleYearFollowedByMandated when there are no quarterly updates" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 0, Voluntary, Mandated)
+        model.mandatedInsetMessageSuffix shouldBe "currentYear.singleYearFollowedByMandated"
+      }
+
+      "return currentYear.singleYearFollowedByMandatedWithUpdates when there are quarterly updates" in {
+        val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 2, Voluntary, Mandated)
+        model.mandatedInsetMessageSuffix shouldBe "currentYear.singleYearFollowedByMandatedWithUpdates"
       }
     }
   }

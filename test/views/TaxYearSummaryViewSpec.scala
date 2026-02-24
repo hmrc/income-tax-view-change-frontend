@@ -19,17 +19,17 @@ package views
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.obligations.{ObligationWithIncomeType, ObligationsModel}
-import models.taxyearsummary.TaxYearSummaryChargeItem
+import models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
-import testConstants.NextUpdatesTestConstants._
+import testConstants.NextUpdatesTestConstants.*
 import testUtils.ViewSpec
 import views.html.TaxYearSummaryView
 
@@ -38,15 +38,16 @@ import java.time.LocalDate
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
   val testYear: Int = 2018
+  val explanationTestYear: Int = 2017
   val hrefForecastSelector: String = """a[href$="#forecast"]"""
 
   val implicitDateFormatter: ImplicitDateFormatterImpl = app.injector.instanceOf[ImplicitDateFormatterImpl]
   val taxYearSummaryView: TaxYearSummaryView = app.injector.instanceOf[TaxYearSummaryView]
 
-  import TaxYearSummaryMessages._
-  import implicitDateFormatter._
+  import TaxYearSummaryMessages.*
+  import implicitDateFormatter.*
 
-  def modelComplete(crystallised: Boolean, unattendedCalc: Boolean = false, isAmended: Boolean = false): CalculationSummary =
+  def modelComplete(crystallised: Boolean, unattendedCalc: Boolean = false, isAmended: Boolean = false, testPeriod: Int = testYear): CalculationSummary =
     CalculationSummary(
       timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
       income = 1,
@@ -59,8 +60,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       forecastIncomeTaxAndNics = Some(5000.99),
       forecastAllowancesAndDeductions = Some(4200.00),
       forecastTotalTaxableIncome = Some(8300),
-      periodFrom = Some(LocalDate.of(testYear - 1, 1, 1)),
-      periodTo = Some(LocalDate.of(testYear, 1, 1)),
+      periodFrom = Some(LocalDate.of(testPeriod - 1, 1, 1)),
+      periodTo = Some(LocalDate.of(testPeriod, 1, 1)),
       isAmended = isAmended
     )
 
@@ -236,120 +237,386 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
+  val testObligationsChronologicalModel: ObligationsModel = ObligationsModel(Seq(obligationsModelDataSucessful))
+
   val emptyCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = None)
 
   val testCTAModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2023, 2024)))
 
-  def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, chargeItems, obligations, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+  def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, chargeItems, obligations, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url")
 
-  def class2NicsView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, class2NicsChargesList
-      , testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+  def explanationView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel, isCrystallised: Boolean = false): Html =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(calculationSummary = Some(modelComplete(crystallised = isCrystallised, testPeriod = 2017)), previousCalculationSummary = None, charges = chargeItems, obligations = obligations, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = LegacyAndCesa,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = None,
+      selfAssessmentLink = "",
+      contactHmrcLink = ""
+    )
 
-  def estimateViewWithNoCalcData(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+  def class2NicsView(isAgent: Boolean = false): Html =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, class2NicsChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url"
+    )
+
+  def estimateViewWithNoCalcData(isAgent: Boolean = false): Html =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = true,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url"
+    )
 
   def unattendedCalcView(isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, unattendedCalc = unattendedCalc)), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackUrl", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, unattendedCalc = unattendedCalc)), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackUrl",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def multipleDunningLockView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testDunningLockChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testDunningLockChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def crystallisedView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def payeView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, payeChargeList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, payeChargeList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def testBalancingPaymentChargeWithZeroValueView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testBalancingPaymentChargeWithZeroValue, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testBalancingPaymentChargeWithZeroValue, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def testPaymentOnAccountChargesCodedOutAcceptedView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testPaymentsOnAccountCodedOut(Accepted), testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testPaymentsOnAccountCodedOut(Accepted), testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def testPaymentOnAccountChargesCodedOutFullyCollectedView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testPaymentsOnAccountCodedOut(FullyCollected), testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testPaymentsOnAccountCodedOut(FullyCollected), testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
 
   def testPaymentOnAccountChargesCodedOutCancelledView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testPaymentsOnAccountCodedOutCancelled, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testPaymentsOnAccountCodedOutCancelled, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def immediatelyRejectedByNpsView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, immediatelyRejectedByNps, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, immediatelyRejectedByNps, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def rejectedByNpsPartWayView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, rejectedByNpsPartWay, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, rejectedByNpsPartWay, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def codingOutPartiallyCollectedView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, codingOutPartiallyCollected, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, codingOutPartiallyCollected, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def forecastCalcView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def forecastCalcViewCrystallised(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def noForecastDataView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
-  def forecastWithNoCalcData(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+  def forecastWithNoCalcData(isAgent: Boolean = false): Html =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url")
 
   def mfaDebitsView(isAgent: Boolean): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, mfaCharges, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, mfaCharges, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def calculationMultipleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def calculationSingleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    backUrl = "testBackURL",
+    isAgent = isAgent,
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
 
   def poaView(isAgent: Boolean = false): Html = {
     val ctaLink = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start" else "/report-quarterly/income-and-expenses/view/adjust-poa/start"
     taxYearSummaryView(
-      testYear, TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel, ctaViewModel = testCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink)
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel, ctaViewModel = testCTAModel, LPP2Url = "", pfaEnabled = false),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url")
   }
 
   def calculationWithLatestAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true), "testBackURL", isAgent, ctaLink = ctaLink
-  )
-
-  def calculationWithLatestAndPreviousAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)), Some(modelComplete(crystallised = false, isAmended = true)), List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true), "testBackURL", isAgent, ctaLink = ctaLink
-  )
-
-  def calculationWithLatestAmendmentButPfaDisabledView(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false), "testBackURL", isAgent, ctaLink = ctaLink
-  )
-
-  def calculationWithNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
-    testYear, TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true), "testBackURL", isAgent, ctaLink = ctaLink
-  )
-
-  def crystallisedNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
-    testYear,
-    viewModel = TaxYearSummaryViewModel(
-      calculationSummary = Some(modelComplete(crystallised = true, isAmended = false)),
-      previousCalculationSummary = None,
-      charges = List.empty,
-      obligations = testObligationsModel,
-      ctaViewModel = emptyCTAModel,
-      LPP2Url = "",
-      pfaEnabled = true
-    ),
-    backUrl = "testBackUrl",
+    taxYear = testYear,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true),
+    backUrl = "testBackURL",
     isAgent = isAgent,
-    ctaLink = ctaLink
-  )
+    ctaLink = ctaLink,
+    taxYearViewScenarios = MtdSoftwareShowCalc,
+    showNoTaxCalc = false,
+    viewTaxCalcLink = Some("some fake url"),
+    selfAssessmentLink = "some fake url",
+    contactHmrcLink = "some fake url")
+
+
+  def calculationWithLatestAndPreviousAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)), Some(modelComplete(crystallised = false, isAmended = true)), List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url")
+
+  def calculationWithLatestAmendmentButPfaDisabledView(isAgent: Boolean): HtmlFormat.Appendable =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url")
+
+
+  def calculationWithNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true),
+      backUrl = "testBackURL",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url")
+
+  def crystallisedNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable =
+    taxYearSummaryView(
+      taxYear = testYear,
+      viewModel = TaxYearSummaryViewModel(
+        calculationSummary = Some(modelComplete(crystallised = true, isAmended = false)),
+        previousCalculationSummary = None,
+        charges = List.empty,
+        obligations = testObligationsModel,
+        ctaViewModel = emptyCTAModel,
+        LPP2Url = "",
+        pfaEnabled = true
+      ),
+      backUrl = "testBackUrl",
+      isAgent = isAgent,
+      ctaLink = ctaLink,
+      taxYearViewScenarios = MtdSoftwareShowCalc,
+      showNoTaxCalc = false,
+      viewTaxCalcLink = Some("some fake url"),
+      selfAssessmentLink = "some fake url",
+      contactHmrcLink = "some fake url"
+    )
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
   object TaxYearSummaryMessages {
+
     val heading: String = "Tax year summary"
     val title: String = "Tax year summary - Manage your Self Assessment - GOV.UK"
     val agentTitle: String = "Tax year summary - Manage your Self Assessment - GOV.UK"
     val secondaryHeading: String = "6 April {0} to 5 April {1}"
+
+    def explanatoryInsetText(date: String): String = s"This calculation is only based on figures we’ve already received to $date. It’s not your final tax bill."
+
     val calculationDate: String = "Calculation date"
     val calcDate: String = "1 January 2020"
     val estimate: String = s"6 April ${testYear - 1} to 1 January 2020 estimate"
@@ -423,6 +690,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val previousCalculationExample: String = "For example, for the 2025 to 2026 tax year, you’ll usually need to make the change online by 31 January 2028."
     val previousCalculationContactHmrc: String = "If that date has passed, or you cannot amend your return for another reason, you’ll need to contact HMRC (opens in new tab)."
     val previousCalculationBill: String = "Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund."
+    val quarterlyUpdate: String = "Quarterly update"
+    val businessIncome: String = "Business income"
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
@@ -441,6 +710,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         case "Crystallisation" => "Final declaration"
         case _ => updateType
       }
+    }
+
+    def updatePeriod(from: String, to: String): String = {
+      s"The update period from $from to $to"
     }
   }
 
@@ -525,6 +798,17 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.selectHead("""a[href$="#submissions"]""").text shouldBe submissions
       }
 
+      "show the indented explanation text when not crystallised and when there is an updated obligation with a date recieved" in new Setup(explanationView(obligations = testObligationsChronologicalModel)) {
+        val expectedDate: String = implicitDateFormatter.longDate(LocalDate.of(explanationTestYear - 1, 7, 30)).toLongDate
+        document.getElementById("calc-explanation-inset").text() shouldBe explanatoryInsetText(expectedDate)
+      }
+      "do not show the indented explanation text when crystallised" in new Setup(explanationView(obligations = testObligationsChronologicalModel, isCrystallised = true)) {
+        document.getOptionalSelector("#calc-explanation-inset") shouldBe None
+      }
+      "do not show the indented explanation text when there is no updated obligation with a date recieved" in new Setup(explanationView()) {
+        document.getOptionalSelector("#calc-explanation-inset") shouldBe None
+      }
+
       "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
         layoutContent.selectHead("#calculation-income-deductions-contributions-table caption").text shouldBe taxCalculationHeading
         layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe taxCalculation
@@ -589,9 +873,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         errorMessageList.child(2).text shouldBe "you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose."
         errorMessageList.child(3).text shouldBe "you are using cash basis accounting. This means that you cannot claim to set losses against other taxable income."
         errorMessageList.child(4).text shouldBe "the total amount of one-off Gift Aid payments is more than the total Gift Aid payments you’ve made."
-        errorMessageList.child(5).text shouldBe "gift Aid payments made this year treated as paid in the previous year are more than the total Gift Aid payments you’ve made."
+        errorMessageList.child(5).text shouldBe "Gift Aid payments made this year treated as paid in the previous year are more than the total Gift Aid payments you’ve made."
         errorMessageList.child(6).text shouldBe s"the value of qualifying investments you’ve gifted to non-UK charities are more than the value of these items you’ve gifted to charity: qualifying shares and securities qualifying land and buildings"
-        errorMessageList.child(7).text shouldBe "gift Aid payments to non-UK charities are more than the total Gift Aid payments you’ve made."
+        errorMessageList.child(7).text shouldBe "Gift Aid payments to non-UK charities are more than the total Gift Aid payments you’ve made."
         errorMessageList.child(8).text shouldBe s"the amount of Trading Income Allowance you’ve claimed is more than allowed. The amount you claim cannot be more than the total of: your turnover other business income not included in turnover balancing charge on the sale of assets or cessation of business and goods and services for your own use"
         errorMessageList.child(9).text shouldBe "the amount of Trading Income Allowance you’ve claimed is more than the limit."
         errorMessageList.child(10).text shouldBe "you’ve claimed consolidated expenses. This means that you cannot claim any further expenses."
@@ -599,8 +883,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         errorMessageList.child(12).text shouldBe "you’ve claimed consolidated expenses. This means that you cannot claim any further expenses."
         errorMessageList.child(13).text shouldBe "the amount of Property Income Allowance you’ve claimed is more than the limit."
         errorMessageList.child(14).text shouldBe "you’ve claimed 1000 in Property Income Allowance but this is more than turnover for your UK property."
-        errorMessageList.child(15).text shouldBe "the Rent a Room relief claimed for a jointly let property cannot be more than 50% of the Rent a Room limit."
-        errorMessageList.child(16).text shouldBe "the amount of Rent a Room relief you’ve claimed is more than the limit."
+        errorMessageList.child(15).text shouldBe "the Rent-a-Room relief claimed for a jointly let property cannot be more than 50% of the Rent-a-Room limit."
+        errorMessageList.child(16).text shouldBe "the amount of Rent-a-Room relief you’ve claimed is more than the limit."
         errorMessageList.child(17).text shouldBe "you are using cash basis accounting. This means that you cannot claim to set losses against general income."
         errorMessageList.child(18).text shouldBe "your non-allowable business entertainment costs must be the same as the allowable business entertainment costs."
         errorMessageList.child(19).text shouldBe "you’ve claimed Trading Income Allowance. This means that you cannot claim any further expenses."
@@ -621,8 +905,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         errorMessageList.child(34).text shouldBe s"the update must align to the accounting period end date of ${dateService.getCurrentDate.toLongDate}."
         errorMessageList.child(35).text shouldBe s"the update must align to the accounting period end date of ${dateService.getCurrentDate.toLongDate}."
         errorMessageList.child(36).text shouldBe "updates cannot include gaps."
-        errorMessageList.child(37).text shouldBe "the Rent a Room threshold has been limited to the amount of rents received."
-        errorMessageList.child(38).text shouldBe "the Rent a Room threshold has been limited to the amount of rents received."
+        errorMessageList.child(37).text shouldBe "the Rent-a-Room threshold has been limited to the amount of rents received."
+        errorMessageList.child(38).text shouldBe "the Rent-a-Room threshold has been limited to the amount of rents received."
         errorMessageList.child(39).text shouldBe "deducted tax cannot be applied against UK property income unless you are a non-resident landlord."
         errorMessageList.child(40).text shouldBe "deducted tax cannot be applied against UK property income unless you are a non-resident landlord."
         errorMessageList.child(41).text shouldBe "the amount of tax deducted is more than the total amount of rent you’ve received."
@@ -905,6 +1189,35 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
               row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
           }
         }
+      }
+
+      "display submissions by due-date should be in chronological order" in new Setup(estimateView(obligations = testObligationsChronologicalModel)) {
+        val submissions: Element = document.getElementById("submissions").selectHead(s"div:nth-of-type(3)")
+        document.getElementById("submissions-tab-description").text() shouldBe submissionsDescription
+
+        submissions.selectHead("thead").selectNth("th", 1).text shouldBe submission
+        submissions.selectHead("thead").selectNth("th", 2).text shouldBe updateIncomeSource
+        submissions.selectHead("thead").selectNth("th", 3).text shouldBe updateDateSubmitted
+
+        submissions.select(".govuk-table tbody tr").size() shouldBe 3
+
+        submissions.select(".govuk-table").first().selectHead("caption").text() shouldBe
+          updatePeriod("1 May 2016", "30 Jul 2016")
+        submissions.select(".govuk-table tbody td:nth-child(1)").first().text() shouldBe quarterlyUpdate
+        submissions.select(".govuk-table tbody td:nth-child(2)").first().text() shouldBe businessIncome
+        submissions.select(".govuk-table tbody td:nth-child(3)").first().text() shouldBe "30 Jul 2016"
+
+        submissions.select(".govuk-table").get(1).selectHead("caption").text() shouldBe
+          updatePeriod("1 Jan 2017", "30 Mar 2017")
+        submissions.select(".govuk-table tbody td:nth-child(1)").get(1).text() shouldBe quarterlyUpdate
+        submissions.select(".govuk-table tbody td:nth-child(2)").get(1).text() shouldBe businessIncome
+        submissions.select(".govuk-table tbody td:nth-child(3)").get(1).text() shouldBe "30 Mar 2017"
+
+        submissions.select(".govuk-table").last().selectHead("caption").text() shouldBe
+          updatePeriod("1 Apr 2017", "30 Jun 2017")
+        submissions.select(".govuk-table tbody td:nth-child(1)").last().text() shouldBe quarterlyUpdate
+        submissions.select(".govuk-table tbody td:nth-child(2)").last().text() shouldBe businessIncome
+        submissions.select(".govuk-table tbody td:nth-child(3)").last().text() shouldBe "30 Jun 2017"
       }
 
       "display the latest calculation tab when pfa is enabled and the user has an amended latest calculation" in new Setup(calculationWithLatestAmendmentsView(false)) {

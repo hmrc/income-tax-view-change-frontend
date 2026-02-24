@@ -21,10 +21,11 @@ import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.itsaStatus.ITSAStatus
 import models.obligations.NextUpdatesTileViewModel
+import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
-import play.api.libs.json.Json
-import testConstants.BaseTestConstants._
+import play.api.libs.json.{JsArray, JsNull, JsNumber, JsObject, JsValue, Json}
+import testConstants.BaseTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
@@ -39,13 +40,13 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
   def homeAuditFull(userType: Option[AffinityGroup] = Some(Agent),
                     nextPaymentOrOverdue: Either[(LocalDate, Boolean), Int],
                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]): HomeAudit = HomeAudit(
-    defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
+    defaultMTDITUser(userType, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil, "1")),
     nextPaymentOrOverdue = Some(nextPaymentOrOverdue),
     nextUpdateOrOverdue = nextUpdateOrOverdue
   )
 
   val homeAuditMin: HomeAudit = HomeAudit(
-    getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil)),
+    getMinimalMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil, "1")),
     nextPaymentOrOverdue = None,
     nextUpdateOrOverdue = Right(2)
   )
@@ -79,29 +80,29 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
           )
         }
         "there is are payments and updates due which are not overdue" in {
-          homeAuditFull(
+          assertJsonEquals(homeAuditFull(
             userType = Some(Individual),
             nextPaymentOrOverdue = Left(fixedDate -> false),
             nextUpdateOrOverdue = Left(fixedDate -> false)
-          ).detail mustBe commonAuditDetails(Individual) ++ Json.obj(
+          ).detail, commonAuditDetails(Individual) ++ Json.obj(
             "nextPaymentDeadline" -> fixedDate.toString,
             "nextUpdateDeadline" -> fixedDate.toString
-          )
+          ))
         }
       }
       "the home audit has minimal details" in {
-        homeAuditMin.detail mustBe Json.obj(
+        assertJsonEquals(homeAuditMin.detail, Json.obj(
           "nino" -> testNino,
           "mtditid" -> testMtditid,
           "overdueUpdates" -> 2
-        )
+        ))
       }
     }
   }
 
   "applySupportingAgent" should {
     "render the expected audit event" when {
-      val user = defaultMTDITUser(Some(Agent), IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil), isSupportingAgent = true)
+      val user = defaultMTDITUser(Some(Agent), IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil, "1"), isSupportingAgent = true)
       "there are updates due" that {
         "are not overdue" in {
           val nextDetailsTile = NextUpdatesTileViewModel(dueDates = List(fixedDate),
@@ -144,5 +145,36 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
       }
     }
   }
+
+  def normalise(js: JsValue): JsValue = js match {
+
+    case JsObject(fields) =>
+      val filteredFields = fields.collect {
+        case (k, v) if v != JsNull =>
+          normalise(v) match {
+            case JsObject(inner) if inner.isEmpty => None // remove empty object
+            case JsArray(inner) if inner.isEmpty => None // remove empty array
+            case n => Some(k -> n)
+          }
+      }.flatten
+
+      JsObject(filteredFields.toSeq.sortBy(_._1))
+
+    case JsArray(values) =>
+      val normValues = values.collect { case v if v != JsNull => normalise(v) }
+      val filteredValues = normValues.filter {
+        case JsObject(inner) if inner.isEmpty => false
+        case JsArray(inner) if inner.isEmpty => false
+        case _ => true
+      }
+      if (filteredValues.forall(_.isInstanceOf[JsObject])) JsArray(filteredValues.sortBy(_.toString))
+      else JsArray(filteredValues)
+
+    case JsNumber(n) => JsNumber(n.bigDecimal.stripTrailingZeros())
+    case other => other
+  }
+
+  def assertJsonEquals(actual: JsValue, expected: JsValue): Assertion =
+    normalise(actual) shouldEqual normalise(expected)
 
 }

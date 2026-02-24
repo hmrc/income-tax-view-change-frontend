@@ -18,8 +18,9 @@ package models.incomeSourceDetails
 
 import auth.MtdItUser
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import models.core.{AddressModel, IncomeSourceId, IncomeSourceIdHash}
 import play.api.libs.json.{Format, JsValue, Json}
 import play.api.{Logger, Logging}
 import services.DateServiceInterface
@@ -33,7 +34,8 @@ case class IncomeSourceDetailsModel(
                                      mtdbsa: String,
                                      yearOfMigration: Option[String],
                                      businesses: List[BusinessDetailsModel],
-                                     properties: List[PropertyDetailsModel]
+                                     properties: List[PropertyDetailsModel],
+                                     channel: String = "Customer-led"
                                    ) extends IncomeSourceDetailsResponse with Logging {
 
   val hasPropertyIncome: Boolean = properties.nonEmpty
@@ -59,11 +61,12 @@ case class IncomeSourceDetailsModel(
     allEndYears.sorted.headOption
   }
 
-  def startingTaxYear: Int = (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
-    .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
+  def startingTaxYear: Int =
+    (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
+      .map(_.getYear).sortWith(_ < _).headOption.getOrElse(throw new RuntimeException("User missing first accounting period information"))
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
-    val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(List.empty[Int])
+    val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(orderedTaxYearsByAccountingPeriods())
     Logger("application").debug(s"Tax years list = $taxYears")
     taxYears
   }
@@ -120,6 +123,26 @@ case class IncomeSourceDetailsModel(
   def isAnyOfActiveBusinessesLatent: Boolean = businesses.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty) ||
     properties.filterNot(_.isCeased).exists(_.latencyDetails.nonEmpty)
 
+  def isConfirmedUser: Boolean = {
+    Set(CustomerLed.getValue, HmrcConfirmed.getValue).contains(channel)
+  }
+
+  def getAllUniqueBusinessAddresses: List[String] = {
+    val allAddresses = businesses.flatMap { thisBusiness =>
+      thisBusiness.address.map { address =>
+        (address.addressLine1, address.postCode, address.countryCode) match {
+          case (Some(al1), Some(pc), Some("GB")) => Some(s"$al1, $pc")
+          case (Some(al1), _, _) => Some(s"$al1")
+          case _ => None
+        }
+      }
+    }
+    allAddresses.flatten.distinct
+  }
+  
+  def getAllUniqueBusinessAddressesWithIndex: Seq[(String, Int)] = {
+    getAllUniqueBusinessAddresses.zipWithIndex
+  }
 }
 
 case class IncomeSourceDetailsError(status: Int, reason: String) extends IncomeSourceDetailsResponse {

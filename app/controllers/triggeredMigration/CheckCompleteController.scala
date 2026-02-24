@@ -21,26 +21,57 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.triggeredMigration.CheckCompleteView
 import utils.TriggeredMigrationUtils
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckCompleteController @Inject()(view: CheckCompleteView,
-                                        val auth: AuthActions)
+                                        val auth: AuthActions,
+                                        sessionService: SessionService)
                                        (mcc: MessagesControllerComponents,
-                                        implicit val appConfig: FrontendAppConfig)
+                                        implicit val appConfig: FrontendAppConfig,
+                                        implicit val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  private def nextUpdatesLink(isAgent: Boolean): String =
+    if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
+    else controllers.routes.NextUpdatesController.show().url
+
+  def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
     withTriggeredMigrationFS {
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
-      val nextUpdatesLink: String =
-        if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
-        else controllers.routes.NextUpdatesController.show().url
-      Future.successful(Ok(view(isAgent, compatibleSoftwareLink, nextUpdatesLink)))
+
+      val sessionId = hc.sessionId.map(_.value) getOrElse {
+        throw new Exception("Missing sessionId in HeaderCarrier")
+      }
+
+      sessionService.clearSession(sessionId)
+
+      Future.successful(Ok(
+        view(
+          isAgent,
+          compatibleSoftwareLink,
+          nextUpdatesLink(isAgent),
+          postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
+        ))
+      )
     }
   }
+
+  def submit(isAgent: Boolean): Action[AnyContent] =
+    auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
+      withTriggeredMigrationFS {
+
+        if (isAgent) {
+          Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
+        } else {
+          Future.successful(Redirect(controllers.routes.HomeController.show()))
+        }
+      }
+    }
 }

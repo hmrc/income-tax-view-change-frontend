@@ -18,6 +18,7 @@ package views.triggeredMigration
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.triggeredMigration.CheckCompleteView
@@ -31,7 +32,9 @@ class CheckCompleteViewSpec extends TestSupport {
   val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
 
   class Setup(isAgent: Boolean) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent))))
+    val homeCall: Call = if(isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
+    val postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent), postAction)))
   }
 
   object CheckCompleteMessages {
@@ -51,7 +54,7 @@ class CheckCompleteViewSpec extends TestSupport {
     val submitUpdatesP1 = "In your account you can see which quarterly updates are due and what information you need to provide. Then you must use your compatible software to:"
     val submitUpdatesUlLi1 = "create a digital record of your property and sole trader income and expenses"
     val submitUpdatesUlLi2 = "send your quarterly update(s) to HMRC"
-    val submitUpdatesLinkText = "Check your latest updates and deadlines"
+    val submitUpdatesLinkText = "Check your latest submission deadlines"
 
   }
 

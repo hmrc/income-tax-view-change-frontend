@@ -27,7 +27,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class FrontendAuthConnector @Inject()(config: ServicesConfig,
                                       val WSHttp: HttpClientV2) extends PlayAuthConnector {
-  lazy val serviceUrl: String = config.baseUrl("auth")
+  val serviceUrl: String = config.baseUrl("auth")
   lazy val httpClientV2 = WSHttp
 }
 
