@@ -87,22 +87,24 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
         )),
         rows = yearPayments.sortBy(_.date).reverse.zipWithIndex.map{ case (payment, index) => Seq(
             TableRow(
-                content = HtmlContent(payment.date.toLongDateShort.toNonBreaking.toString)
+                content = HtmlContent(payment.date.toLongDateShort.toNonBreaking.toString),
+                attributes = Map("data-th" -> messages("paymentHistory.table.header.date"))
             ),
             TableRow(
                 content = HtmlContent(paymentDescription(payment, yearPayments, index)),
-                attributes = Map("id" -> s"payment-$index")
+                attributes = Map("id" -> s"payment-$index", "data-th" -> messages("paymentHistory.table.header.description"))
             ),
             TableRow(
                 content = HtmlContent(messages("paymentHistory.cell.taxYear", payment.getTaxYear.startYear.toString, payment.getTaxYear.endYear.toString).toNonBreaking),
-                attributes = Map("id" -> s"tax-year-cell-$index")
+                attributes = Map("id" -> s"tax-year-cell-$index", "data-th" -> messages("paymentHistory.tableHead.taxYear"))
             ),
             TableRow(
                 content = HtmlContent(payment.amount.map(_.abs.toCurrency).getOrElse(getMessage("unknown")).toString),
+                attributes = Map("data-th" -> messages("paymentHistory.table.header.amount")),
                 format = Some("numeric")
             )
         )},
-        classes = "govuk-!-margin-bottom-8",
+        classes = "govuk-!-margin-bottom-8 govuk-table--responsive",
         caption = Some(messages("paymentHistory.button", year.toString)),
         captionClasses = "govuk-table__caption--m",
     ))
