@@ -25,29 +25,29 @@ import java.time.temporal.ChronoUnit
 
 case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem])
                                (implicit val appConfig: FrontendAppConfig) {
-  val today: LocalDate = LocalDate.now()
+  private val today: LocalDate = LocalDate.now()
 
-  val oldestCharge: Option[ChargeItem] = outstandingChargesModel
+  private val oldestCharge: Option[ChargeItem] = outstandingChargesModel
     .collect { case item if item.dueDate.isDefined => item }
     .minByOption(_.dueDate)
 
-  val chargesSet: Set[TransactionType] = Set(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
+  private val chargesSet: Set[TransactionType] = Set(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,
     BalancingCharge, MfaDebitCharge, ITSAReturnAmendment)
-  val lppSet: Set[TransactionType] = Set(FirstLatePaymentPenalty, SecondLatePaymentPenalty)
-  val lspSet: Set[TransactionType] = Set(LateSubmissionPenalty)
+  private val lppSet: Set[TransactionType] = Set(FirstLatePaymentPenalty, SecondLatePaymentPenalty)
+  private val lspSet: Set[TransactionType] = Set(LateSubmissionPenalty)
 
 
-  val overdueCharges = overdueChargesByTypes(chargesSet)
-  val overdueLpps = overdueChargesByTypes(lppSet)
-  val overdueLsps = overdueChargesByTypes(lspSet)
+  private val overdueCharges = overdueChargesByTypes(chargesSet)
+  private val overdueLpps = overdueChargesByTypes(lppSet)
+  private val overdueLsps = overdueChargesByTypes(lspSet)
 
-  val outstandingAmountOverdueCharges = overdueCharges.map(_.outstandingAmount).sum
-  val outstandingAmountLpps = overdueLpps.map(_.outstandingAmount).sum
-  val outstandingAmountLsps = overdueLsps.map(_.outstandingAmount).sum
+  private val outstandingAmountOverdueCharges = overdueCharges.map(_.outstandingAmount).sum
+  val outstandingAmountLpps: BigDecimal = overdueLpps.map(_.outstandingAmount).sum
+  val outstandingAmountLsps: BigDecimal = overdueLsps.map(_.outstandingAmount).sum
 
-  val oldestChargeDate: Option[LocalDate] = oldestCharge.flatMap(_.dueDate)
+  private val oldestChargeDate: Option[LocalDate] = oldestCharge.flatMap(_.dueDate)
 
-  def overdueChargesByTypes(targetTypes: Set[TransactionType]): List[ChargeItem] = {
+  private def overdueChargesByTypes(targetTypes: Set[TransactionType]): List[ChargeItem] = {
     outstandingChargesModel.filter { charge =>
       targetTypes.contains(charge.transactionType) &&
         charge.dueDate.exists(_.isBefore(today))
@@ -118,20 +118,20 @@ case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem])
     case DueEarly extends MaturityLevel() // due <= 30 days
     case Upcoming  extends MaturityLevel() // due > 30 days
 
-object MaturityLevel{
-    def get(dueDate: Option[LocalDate]): Option[MaturityLevel] =
-      dueDate.map { date =>
-        val daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), date)
-        if (daysUntil < 0) Overdue
-        else if (daysUntil == 0) DueToday
-        else if (daysUntil <= 30) DueEarly
-        else Upcoming
-      }
-  }
+  object MaturityLevel{
+      def get(dueDate: Option[LocalDate]): Option[MaturityLevel] =
+        dueDate.map { date =>
+          val daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), date)
+          if (daysUntil < 0) Overdue
+          else if (daysUntil == 0) DueToday
+          else if (daysUntil <= 30) DueEarly
+          else Upcoming
+        }
+    }
 
-private case class ParametrisedTaskDescription(content: String, amount: Option[BigDecimal], count: Option[Int])
-
-private case class ParametrisedTaskDateLabel(content: String, date: Option[LocalDate])
+  private case class ParametrisedTaskDescription(content: String, amount: Option[BigDecimal], count: Option[Int])
+  
+  private case class ParametrisedTaskDateLabel(content: String, date: Option[LocalDate])
 
   def getParametrisedContent(user: auth.MtdItUser[_]): (String, String) = {
     val isSupportingAgent = user.usersRole == MTDSupportingAgent
@@ -149,29 +149,29 @@ private case class ParametrisedTaskDateLabel(content: String, date: Option[Local
     }).getOrElse("", LocalDate.now())
   }
 
- private def defineRedirectLink(isAgent: Boolean): Option[String] = {
-    oldestCharge.flatMap { charge =>
-      (charge.transactionType, isAgent) match {
-        case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, false) => Some("/report-quarterly/income-and-expenses/view/what-you-owe")
-        case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, true) => Some("/report-quarterly/income-and-expenses/view/agents/what-your-client-owes")
-
-        case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, false) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
-        else Some(s"/report-quarterly/income-and-expenses/view/tax-years/${overdueLpps.head.taxYear.endYear}/charge?id=${overdueLpps.head.transactionId}")
-        case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, true) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
-        else Some(s"/report-quarterly/income-and-expenses/view/agents/tax-years/${overdueLpps.head.taxYear.endYear}/charge?id=${overdueLpps.head.transactionId}")
-
-
-        case (LateSubmissionPenalty, false) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
-        else Some(s"/report-quarterly/income-and-expenses/view/tax-years/${overdueLsps.head.taxYear.endYear}/charge?id=${overdueLsps.head.transactionId}")
-        case (LateSubmissionPenalty, true) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
-        else Some(s"/report-quarterly/income-and-expenses/view/agents/tax-years/${overdueLsps.head.taxYear.endYear}/charge?id=${overdueLsps.head.transactionId})")
+   private def defineRedirectLink(isAgent: Boolean): Option[String] = {
+      oldestCharge.flatMap { charge =>
+        (charge.transactionType, isAgent) match {
+          case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, false) => Some("/report-quarterly/income-and-expenses/view/what-you-owe")
+          case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, true) => Some("/report-quarterly/income-and-expenses/view/agents/what-your-client-owes")
+  
+          case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, false) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
+          else Some(s"/report-quarterly/income-and-expenses/view/tax-years/${overdueLpps.head.taxYear.endYear}/charge?id=${overdueLpps.head.transactionId}")
+          case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, true) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
+          else Some(s"/report-quarterly/income-and-expenses/view/agents/tax-years/${overdueLpps.head.taxYear.endYear}/charge?id=${overdueLpps.head.transactionId}")
+  
+  
+          case (LateSubmissionPenalty, false) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
+          else Some(s"/report-quarterly/income-and-expenses/view/tax-years/${overdueLsps.head.taxYear.endYear}/charge?id=${overdueLsps.head.transactionId}")
+          case (LateSubmissionPenalty, true) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
+          else Some(s"/report-quarterly/income-and-expenses/view/agents/tax-years/${overdueLsps.head.taxYear.endYear}/charge?id=${overdueLsps.head.transactionId})")
+        }
       }
     }
-  }
 
-  val getRedirectLink = (isAgent: Boolean) => defineRedirectLink(isAgent)
+  val getRedirectLink: Boolean => Option[String] = (isAgent: Boolean) => defineRedirectLink(isAgent)
 
-  def getLPP1orLPP2link(chargeItem: ChargeItem, isAgent: Boolean): String = {
+  private def getLPP1orLPP2link(chargeItem: ChargeItem, isAgent: Boolean): String = {
     (chargeItem.transactionType, isAgent )match {
       case( FirstLatePaymentPenalty, false) => appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeItem.chargeReference.getOrElse(""))
       case( FirstLatePaymentPenalty, true) => appConfig.incomeTaxPenaltiesFrontendLPP1CalculationAgent(chargeItem.chargeReference.getOrElse(""))
