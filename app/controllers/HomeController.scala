@@ -323,7 +323,9 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
     } yield {
 
-      val homeViewModel = NewHomePageViewModel(chargeItemList)
+      val creditsRefundsRepayEnabled= isEnabled(CreditsRefundsRepay)
+      
+      val homeViewModel = NewHomePageViewModel(chargeItemList, unpaidCharges, creditsRefundsRepayEnabled)
       //          if (user.isAgent()) {
       //            Ok(primaryAgentHomeView(homeViewModel)).addingToSession(mandationStatus)
       //          } else {

@@ -44,19 +44,31 @@
   val taskDateLabel = viewModel.getParametrisedTaskDateLabel
   messages(taskDateLabel._1, taskDateLabel._2.toLongDateShort)
 }
+@moneyInYourAccount = @{viewModel.creditInAccount}
 
  <div id="yourTasksTile" class="hmrc-card">
   <div class="tile-body">
-    @if(user.usersRole != MTDSupportingAgent){
         <h3 class="hmrc-card__heading">
         @if(getTaskDateLabel.isBlank){
             <span>@messages("newHome.yourTasks.no-tasks.selfAssessment")</span>
         }else{
-            <a href=@viewModel.getRedirectLink(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+            <a href=@viewModel.getRedirectLinkPayments(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
         }
         </h3>
-    }
    <div class="govuk-body">@getTaskDescription</div>
    <div>@getNextPaymentsTag</div>
  </div>
  </div>
+
+@if(moneyInYourAccount.isDefined && moneyInYourAccount.get > BigDecimal(0) ){
+<div id="moenyInYourAccount" class="hmrc-card">
+    <div class="tile-body">
+            <h3 class="hmrc-card__heading">
+                <a href=@viewModel.getRedirectLinkMoneyInAccount(isAgent)>@messages("newHome.yourTasks.selfAssessment.money-in-account.h1") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+            </h3>
+        @if(moneyInYourAccount.isDefined){
+            <div class="govuk-body">@messages("newHome.yourTasks.selfAssessment.money-in-account", moneyInYourAccount.get)</div>
+        }
+    </div>
+</div>
+}

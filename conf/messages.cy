@@ -3481,3 +3481,5 @@ newHome.yourTasks.selfAssessment.lsp.multiple.label = Mae’r gosb hynaf yn ddyl
 newHome.yourTasks.selfAssessment.money.refund = Mae gennych £{0} yn eich cyfrif.
 newHome.yourTasks.selfAssessment.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd.
 newHome.yourTasks.selfAssessment.supporting.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd. Noder – efallai fod gan eich cwsmer dasgau nad oes modd i chi eu gweld fel asiant ategol.
+newHome.yourTasks.selfAssessment.money-in-account.h1 = Gwirio faint o arian sydd yn eich cyfrif a hawlio ad-daliad
+newHome.yourTasks.selfAssessment.money-in-account = Mae gennych £{0} yn eich cyfrif.

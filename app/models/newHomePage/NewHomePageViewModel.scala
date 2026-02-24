@@ -23,9 +23,18 @@ import models.financialDetails.*
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem])
+case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem],
+                                unpaidCharges: List[FinancialDetailsResponseModel],
+                                creditsRefundsRepayEnabled: Boolean)
                                (implicit val appConfig: FrontendAppConfig) {
   private val today: LocalDate = LocalDate.now()
+
+  val creditInAccount: Option[BigDecimal] =
+    if (creditsRefundsRepayEnabled) {
+      Some(unpaidCharges.collectFirst {
+        case fdm: FinancialDetailsModel => fdm.balanceDetails.getAbsoluteTotalCreditAmount.getOrElse(BigDecimal(0.00))
+      }.getOrElse(BigDecimal(0.00)))
+    } else None
 
   private val oldestCharge: Option[ChargeItem] = outstandingChargesModel
     .collect { case item if item.dueDate.isDefined => item }
@@ -130,7 +139,7 @@ case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem])
     }
 
   private case class ParametrisedTaskDescription(content: String, amount: Option[BigDecimal], count: Option[Int])
-  
+
   private case class ParametrisedTaskDateLabel(content: String, date: Option[LocalDate])
 
   def getParametrisedContent(user: auth.MtdItUser[_]): (String, String) = {
@@ -149,18 +158,18 @@ case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem])
     }).getOrElse("", LocalDate.now())
   }
 
-   private def defineRedirectLink(isAgent: Boolean): Option[String] = {
+   private def defineRedirectLinkPayments(isAgent: Boolean): Option[String] = {
       oldestCharge.flatMap { charge =>
         (charge.transactionType, isAgent) match {
           case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, false) => Some("/report-quarterly/income-and-expenses/view/what-you-owe")
           case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, true) => Some("/report-quarterly/income-and-expenses/view/agents/what-your-client-owes")
-  
+
           case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, false) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
           else Some(s"/report-quarterly/income-and-expenses/view/tax-years/${overdueLpps.head.taxYear.endYear}/charge?id=${overdueLpps.head.transactionId}")
           case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, true) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
           else Some(s"/report-quarterly/income-and-expenses/view/agents/tax-years/${overdueLpps.head.taxYear.endYear}/charge?id=${overdueLpps.head.transactionId}")
-  
-  
+
+
           case (LateSubmissionPenalty, false) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
           else Some(s"/report-quarterly/income-and-expenses/view/tax-years/${overdueLsps.head.taxYear.endYear}/charge?id=${overdueLsps.head.transactionId}")
           case (LateSubmissionPenalty, true) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
@@ -169,7 +178,16 @@ case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem])
       }
     }
 
-  val getRedirectLink: Boolean => Option[String] = (isAgent: Boolean) => defineRedirectLink(isAgent)
+   private def defineRedirectLinkMoneyInYourAccount(isAgent: Boolean) = {
+     if(isAgent){
+       "/report-quarterly/income-and-expenses/view/money-in-your-account"
+     }else {
+       "/report-quarterly/income-and-expenses/view/agents/money-in-your-account"
+     }
+   }
+
+  val getRedirectLinkPayments: Boolean => Option[String] = (isAgent: Boolean) => defineRedirectLinkPayments(isAgent)
+  val getRedirectLinkMoneyInAccount: Boolean => String = (isAgent: Boolean) => defineRedirectLinkMoneyInYourAccount(isAgent)
 
   private def getLPP1orLPP2link(chargeItem: ChargeItem, isAgent: Boolean): String = {
     (chargeItem.transactionType, isAgent )match {
