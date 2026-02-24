@@ -34,9 +34,10 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
-import services.NextUpdatesService
+import services.{CreditService, NextUpdatesService}
 import services.optIn.OptInService
 import services.optout.OptOutService
+import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
@@ -58,6 +59,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
   val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
 
+  given mockedCreditService: CreditService = mock(classOf[CreditService])
   given mockedOptInService: OptInService = mock(classOf[OptInService])
   given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
   given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
@@ -88,6 +90,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       mockWhatYouOweService,
       mockITSAStatusService,
       mockPenaltyDetailsService,
+      mockedCreditService,
       mockedOptInService,
       mockedOptOutService,
       auditingService
@@ -129,6 +132,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"), mainTransaction = Some("4920"),
                 transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))))
+            when(mockedCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(ANewCreditAndRefundModel().withTotalCredit(796).model))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(financialDetailsModels))
             when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
@@ -651,6 +655,11 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             enable(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
 
+            when(mockedCreditService.getAllCredits(any(), any()))
+              .thenReturn(Future.successful(
+                ANewCreditAndRefundModel()
+                  .model
+              ))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
