@@ -137,11 +137,10 @@ class ChooseSoleTraderAddressController @Inject()(
     if (isEnabled(OverseasBusinessAddress)) {
       val addressOptions: Seq[(String, Int)] = buildAddressOptions(user)
 
-      val radioButtonValues = {
-        // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
-        // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
+      // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
+      // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
+      val radioButtonValues =
         addressOptions.map { case (_, id) => id.toString } :+ "new-address"
-      }
 
       val form = ChooseSoleTraderAddressForm.form(radioButtonValues)
 
@@ -166,11 +165,11 @@ class ChooseSoleTraderAddressController @Inject()(
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       // TODO: we need to save the user address to the ui session data
       val addressOptions: Seq[(String, Int)] = buildAddressOptions(user)
-      val radioButtonValues = {
-        // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
-        // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
+
+      // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
+      // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
+      val radioButtonValues =
         addressOptions.map { case (_, id) => id.toString } :+ "new-address"
-      }
 
       ChooseSoleTraderAddressForm.form(radioButtonValues)
         .bindFromRequest()

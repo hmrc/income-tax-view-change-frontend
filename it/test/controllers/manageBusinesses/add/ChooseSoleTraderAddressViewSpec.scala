@@ -17,12 +17,10 @@
 package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import forms.manageBusinesses.add.{AddProprertyForm, ChooseSoleTraderAddressForm}
+import forms.manageBusinesses.add.AddProprertyForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{NavBarFs, OverseasBusinessAddress}
-import models.core.NormalMode
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
@@ -32,7 +30,7 @@ class ChooseSoleTraderAddressViewSpec extends ControllerISpecHelper {
   val continueButtonText: String = messagesAPI("base.continue")
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/manage-your-businesses/add-sole-trader/choose-address"
   }
 
@@ -40,7 +38,7 @@ class ChooseSoleTraderAddressViewSpec extends ControllerISpecHelper {
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
-      s"user is ${if(mtdUserRole != MTDSupportingAgent) "an" else "a"} $mtdUserRole" that {
+      s"user is ${if (mtdUserRole != MTDSupportingAgent) "an" else "a"} $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the ChooseSoleTraderAddress page" when {
             "OverseasBusinessAddress FS is enabled" in {
@@ -62,7 +60,7 @@ class ChooseSoleTraderAddressViewSpec extends ControllerISpecHelper {
       }
     }
     s"POST $path" when {
-      s"user is ${if(mtdUserRole != MTDSupportingAgent) "an" else "a"} $mtdUserRole" that {
+      s"user is ${if (mtdUserRole != MTDSupportingAgent) "an" else "a"} $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "reload the page" when {
             //TODO nav ticket should implement proper redirection test here
@@ -73,8 +71,11 @@ class ChooseSoleTraderAddressViewSpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies,
-                body = Map(ChooseSoleTraderAddressForm.response -> Seq(ChooseSoleTraderAddressForm.existingAddress))).futureValue
+              val result = buildPOSTMTDPostClient(
+                path,
+                additionalCookies,
+                body = Map("0" -> Seq("some fake address, some fake post code"))
+              ).futureValue
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -89,7 +90,7 @@ class ChooseSoleTraderAddressViewSpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(path, additionalCookies,
-                body = Map(ChooseSoleTraderAddressForm.response -> Seq(ChooseSoleTraderAddressForm.newAddress))).futureValue
+                body = Map("0" -> Seq("new-address"))).futureValue
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -105,7 +106,7 @@ class ChooseSoleTraderAddressViewSpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(path, additionalCookies,
-                body = Map(ChooseSoleTraderAddressForm.response -> Seq())).futureValue
+                body = Map("0" -> Seq())).futureValue
 
               result should have(
                 httpStatus(BAD_REQUEST)
@@ -117,8 +118,11 @@ class ChooseSoleTraderAddressViewSpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
-              val result = buildPOSTMTDPostClient(path, additionalCookies,
-                body = Map(ChooseSoleTraderAddressForm.response -> Seq("£"))).futureValue
+              val result = buildPOSTMTDPostClient(
+                path,
+                additionalCookies,
+                body = Map("0" -> Seq("£"))
+              ).futureValue
 
               result should have(
                 httpStatus(BAD_REQUEST)

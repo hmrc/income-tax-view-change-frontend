@@ -123,7 +123,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             mockNoIncomeSources()
 
             val result = action(fakeRequest.withFormUrlEncodedBody(
-              ChooseSoleTraderAddressForm.response -> ChooseSoleTraderAddressForm.existingAddress
+              "0" -> "some fake pre-existing business address, some post code"
             ))
 
             status(result) shouldBe SEE_OTHER
@@ -138,7 +138,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             mockNoIncomeSources()
 
             val result = action(fakeRequest.withFormUrlEncodedBody(
-              ChooseSoleTraderAddressForm.response -> ChooseSoleTraderAddressForm.newAddress
+              "new-address" -> "User wants to add a New address"
             ))
 
             status(result) shouldBe SEE_OTHER

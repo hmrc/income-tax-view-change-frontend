@@ -44,7 +44,7 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
           postAction = postAction,
           isAgent = isAgent,
           form = form,
-          businessAddresses = if(isInternational) businessAddressInternational else businessAddress,
+          chooseSoleTraderAddressRadioAnswersWithIndex = if(isInternational) businessAddressInternational else businessAddress,
           backUrl = controllers.routes.HomeController.show().url
         )
       )
@@ -57,34 +57,34 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
   users.foreach { user => {
     val isAgent: Boolean = if(user != MTDIndividual) true else false
     s"for $user | OverseasBusinessAddress FS is enabled" should {
-      s"$user | render the correct title" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct title" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         pageDocument.title() shouldBe "What is the address of your sole trader business? - Manage your Self Assessment - GOV.UK"
       }
-      s"$user | render the correct heading" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct heading" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         pageDocument.getElementById("choose-sole-trader-address-heading").text() shouldBe "What is the address of your sole trader business?"
       }
-      s"$user | render the correct sub-heading" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct sub-heading" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         pageDocument.getElementById("choose-sole-trader-address-subheading").text() shouldBe "Sole trader"
       }
-      s"$user | render the correct existing UK business addresses in the radio buttons" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct existing UK business addresses in the radio buttons" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(0).text() shouldBe "some address line 1, TTT6AB"
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(1).text() shouldBe "some other address line 1, RRR6AB"
         pageDocument.getElementsByClass("govuk-radios__divider").text() shouldBe "or"
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(2).text() shouldBe "None of these, I want to add a new address"
       }
-      s"$user | render the correct existing international business addresses in the radio buttons" in new Setup(isAgent, ChooseSoleTraderAddressForm(), isInternational = true) {
+      s"$user | render the correct existing international business addresses in the radio buttons" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0")), isInternational = true) {
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(0).text() shouldBe "some international address"
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(1).text() shouldBe "no postcode address"
         pageDocument.getElementsByClass("govuk-radios__divider").text() shouldBe "or"
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(2).text() shouldBe "None of these, I want to add a new address"
       }
-      s"$user | render the correct correct radio buttons when there are no results from getAllUniqueBusinessAddresses" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct correct radio buttons when there are no results from getAllUniqueBusinessAddresses" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         pageDocument.getElementsByClass("govuk-label govuk-radios__label").get(0).text()
       }
-      s"$user | render the continue button" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the continue button" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         pageDocument.getElementById("choose-sole-trader-address-continue-button").text() shouldBe "Continue"
       }
-      s"$user | render the correct back link with the correct URL" in new Setup(isAgent, ChooseSoleTraderAddressForm()) {
+      s"$user | render the correct back link with the correct URL" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         //TODO this will need to be changed with the nav ticket
         pageDocument.getElementById("back-fallback").text() shouldBe "Back"
         pageDocument.getElementById("back-fallback").attr("href") shouldBe controllers.routes.HomeController.show().url

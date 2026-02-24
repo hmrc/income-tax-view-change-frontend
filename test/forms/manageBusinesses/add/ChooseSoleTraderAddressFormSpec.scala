@@ -22,86 +22,85 @@ import testUtils.TestSupport
 
 class ChooseSoleTraderAddressFormSpec extends AnyWordSpec with Matchers with TestSupport {
 
-  private val form = ChooseSoleTraderAddressForm()
+  private val errorMessage = "Select an option to continue"
 
-  "ChooseSoleTraderAddressForm" should {
+  "ChooseSoleTraderAddressForm.form" should {
 
-    "bind successfully when new-address is selected" in {
+    "bind successfully when a valid existing address id is selected" in {
+      val allowedValues = Seq("0", "1", "2", "new-address")
+      val form = ChooseSoleTraderAddressForm.form(allowedValues)
 
-      val data = Map(ChooseSoleTraderAddressForm.response -> ChooseSoleTraderAddressForm.newAddress)
-
+      val data = Map(ChooseSoleTraderAddressForm.fieldName -> "1")
       val bound = form.bind(data)
 
       bound.hasErrors shouldBe false
-      bound.value shouldBe Some(ChooseSoleTraderAddressForm(Some(ChooseSoleTraderAddressForm.newAddress)))
+      bound.value shouldBe Some(ChooseSoleTraderAddressForm("1"))
     }
 
-    "bind successfully when existing-address is selected" in {
-      val data = Map(ChooseSoleTraderAddressForm.response -> ChooseSoleTraderAddressForm.existingAddress)
+    "bind successfully when new-address is selected" in {
+      val allowedValues = Seq("0", "1", "2", "new-address")
+      val form = ChooseSoleTraderAddressForm.form(allowedValues)
 
+      val data = Map(ChooseSoleTraderAddressForm.fieldName -> "new-address")
       val bound = form.bind(data)
 
       bound.hasErrors shouldBe false
-      bound.value shouldBe Some(ChooseSoleTraderAddressForm(Some(ChooseSoleTraderAddressForm.existingAddress)))
+      bound.value shouldBe Some(ChooseSoleTraderAddressForm("new-address"))
     }
 
     "fail to bind when the field is missing" in {
-      val data = Map.empty[String, String]
+      val allowedValues = Seq("0", "1", "2", "new-address")
+      val form = ChooseSoleTraderAddressForm.form(allowedValues)
 
+      val data = Map.empty[String, String]
       val bound = form.bind(data)
 
       bound.hasErrors shouldBe true
-      bound.error(ChooseSoleTraderAddressForm.response).map(_.message) shouldBe
-        Some("Select an option to continue")
+      bound.error(ChooseSoleTraderAddressForm.fieldName).map(_.message) shouldBe Some(errorMessage)
     }
 
     "fail to bind when the field is present but empty" in {
-      val data = Map(ChooseSoleTraderAddressForm.response -> "")
+      val allowedValues = Seq("0", "1", "2", "new-address")
+      val form = ChooseSoleTraderAddressForm.form(allowedValues)
 
+      val data = Map(ChooseSoleTraderAddressForm.fieldName -> "")
       val bound = form.bind(data)
 
       bound.hasErrors shouldBe true
-      bound.error(ChooseSoleTraderAddressForm.response).map(_.message) shouldBe
-        Some("Select an option to continue")
+      bound.error(ChooseSoleTraderAddressForm.fieldName).map(_.message) shouldBe Some(errorMessage)
     }
 
-    "fail to bind when the field has an invalid value" in {
-      val data = Map(ChooseSoleTraderAddressForm.response -> "something-else")
+    "fail to bind when the field contains an invalid (tampered) value" in {
+      val allowedValues = Seq("0", "1", "2", "new-address")
+      val form = ChooseSoleTraderAddressForm.form(allowedValues)
 
+      val data = Map(ChooseSoleTraderAddressForm.fieldName -> "banana")
       val bound = form.bind(data)
 
       bound.hasErrors shouldBe true
-      bound.error(ChooseSoleTraderAddressForm.response).map(_.message) shouldBe
-        Some("Select an option to continue")
+      bound.error(ChooseSoleTraderAddressForm.fieldName).map(_.message) shouldBe Some(errorMessage)
     }
 
-    "fail to bind when the field only contains a partial match" in {
-      val data = Map(ChooseSoleTraderAddressForm.response -> "xxx-new-address-yyy")
+    "fail to bind when allowedValues is empty (no selection should validate)" in {
+      val allowedValues = Seq.empty[String]
+      val form = ChooseSoleTraderAddressForm.form(allowedValues)
 
+      val data = Map(ChooseSoleTraderAddressForm.fieldName -> "0")
       val bound = form.bind(data)
 
       bound.hasErrors shouldBe true
-      bound.error(ChooseSoleTraderAddressForm.response).map(_.message) shouldBe
-        Some("Select an option to continue")
-    }
-  }
-
-  "ChooseSoleTraderAddressForm.toFormMap" should {
-
-    "return chosen-address mapped to the selected value when present" in {
-      val model = ChooseSoleTraderAddressForm(Some(ChooseSoleTraderAddressForm.newAddress))
-
-      model.toFormMap shouldBe Map(
-        ChooseSoleTraderAddressForm.response -> Seq(ChooseSoleTraderAddressForm.newAddress)
-      )
+      bound.error(ChooseSoleTraderAddressForm.fieldName).map(_.message) shouldBe Some(errorMessage)
     }
 
-    "return chosen-address mapped to N/A when response is None" in {
-      val model = ChooseSoleTraderAddressForm(None)
+    "fill correctly when a response is provided" in {
+      val allowedValues = Seq("0", "1", "2", "new-address")
+      val form = ChooseSoleTraderAddressForm.form(allowedValues)
 
-      model.toFormMap shouldBe Map(
-        ChooseSoleTraderAddressForm.response -> Seq("N/A")
-      )
+      val filled = form.fill(ChooseSoleTraderAddressForm("2"))
+
+      filled.value shouldBe Some(ChooseSoleTraderAddressForm("2"))
+      // Optional: verify the data that would be rendered back to the view
+      filled.data.get(ChooseSoleTraderAddressForm.fieldName) shouldBe Some("2")
     }
   }
 }
