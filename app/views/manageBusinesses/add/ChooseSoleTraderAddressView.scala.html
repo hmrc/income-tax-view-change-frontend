@@ -41,7 +41,7 @@
         postAction: Call,
         isAgent: Boolean,
         form: Form[ChooseSoleTraderAddressForm],
-        chooseSoleTraderAddressRadioAnswersWithIndex: Seq[(String, Int)],
+        chooseSoleTraderAddressRadioOptionsWithIndex: Seq[(String, Int)],
         backUrl: String,
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -82,7 +82,7 @@
                 ))
             )),
             items =
-                chooseSoleTraderAddressRadioAnswersWithIndex.map { case (displayText, id) =>
+                chooseSoleTraderAddressRadioOptionsWithIndex.map { case (displayText, id) =>
                     RadioItem(
                         id = Some(s"choose-sole-trader-address-$id"),
                         content = Text(displayText),

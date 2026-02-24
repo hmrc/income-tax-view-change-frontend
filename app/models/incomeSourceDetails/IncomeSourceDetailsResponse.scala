@@ -33,16 +33,16 @@ sealed trait IncomeSourceDetailsResponse {
 }
 
 
-case class ChooseSoleTraderAddressRadioAnswer(addressLine1: Option[String], postcode: Option[String], countryCode: Option[String], newAddress: Boolean)
+case class ChooseSoleTraderAddressUserAnswer(addressLine1: Option[String], postcode: Option[String], countryCode: Option[String], newAddress: Boolean)
 
-object ChooseSoleTraderAddressRadioAnswer {
-  implicit val format: OFormat[ChooseSoleTraderAddressRadioAnswer] = Json.format[ChooseSoleTraderAddressRadioAnswer]
+object ChooseSoleTraderAddressUserAnswer {
+  implicit val format: OFormat[ChooseSoleTraderAddressUserAnswer] = Json.format[ChooseSoleTraderAddressUserAnswer]
 }
 
 case class SensitiveChooseSoleTraderAddressRadioAnswer(addressLine1: Option[SensitiveString], postcode: Option[SensitiveString], countryCode: Option[SensitiveString], newAddress: Boolean) {
 
-  def decrypted: ChooseSoleTraderAddressRadioAnswer =
-    ChooseSoleTraderAddressRadioAnswer(
+  def decrypted: ChooseSoleTraderAddressUserAnswer =
+    ChooseSoleTraderAddressUserAnswer(
       addressLine1.map(_.decryptedValue),
       postcode.map(_.decryptedValue),
       countryCode.map(_.decryptedValue),
@@ -157,18 +157,18 @@ case class IncomeSourceDetailsModel(
     Set(CustomerLed.getValue, HmrcConfirmed.getValue).contains(channel)
   }
 
-  def getAllUniqueBusinessAddresses: List[ChooseSoleTraderAddressRadioAnswer] = {
+  def getAllUniqueBusinessAddresses: List[ChooseSoleTraderAddressUserAnswer] = {
     val allAddresses = businesses.flatMap { thisBusiness =>
       thisBusiness.address.map { address =>
         (address.addressLine1, address.postCode, address.countryCode) match {
           case (Some(addressLine1), postCode, Some("GB")) =>
-            Some(ChooseSoleTraderAddressRadioAnswer(Some(addressLine1), postCode, Some("GB"), false))
+            Some(ChooseSoleTraderAddressUserAnswer(Some(addressLine1), postCode, Some("GB"), false))
           case (Some(addressLine1), postCode, countryCode) =>
-            Some(ChooseSoleTraderAddressRadioAnswer(Some(addressLine1), postCode, countryCode, false))
+            Some(ChooseSoleTraderAddressUserAnswer(Some(addressLine1), postCode, countryCode, false))
           case (Some(addressLine1), None, countryCode) =>
-            Some(ChooseSoleTraderAddressRadioAnswer(Some(addressLine1), None, countryCode, false))
+            Some(ChooseSoleTraderAddressUserAnswer(Some(addressLine1), None, countryCode, false))
           case (Some(addressLine1), postCode, None) =>
-            Some(ChooseSoleTraderAddressRadioAnswer(Some(addressLine1), postCode, None, false))
+            Some(ChooseSoleTraderAddressUserAnswer(Some(addressLine1), postCode, None, false))
           case _ => None
         }
       }
@@ -177,7 +177,7 @@ case class IncomeSourceDetailsModel(
     allAddresses.flatten.distinct
   }
 
-  def getAllUniqueBusinessAddressesWithIndex: Seq[(ChooseSoleTraderAddressRadioAnswer, Int)] = {
+  def getAllUniqueBusinessAddressesWithIndex: Seq[(ChooseSoleTraderAddressUserAnswer, Int)] = {
     getAllUniqueBusinessAddresses.zipWithIndex
   }
 }

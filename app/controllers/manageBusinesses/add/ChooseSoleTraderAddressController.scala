@@ -26,7 +26,7 @@ import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import jakarta.inject.Singleton
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
-import models.incomeSourceDetails.{AddIncomeSourceData, ChooseSoleTraderAddressRadioAnswer}
+import models.incomeSourceDetails.{AddIncomeSourceData, ChooseSoleTraderAddressUserAnswer}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -75,7 +75,7 @@ class ChooseSoleTraderAddressController @Inject()(
                              )(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val formResponse = validForm.response
-    lazy val isNewAddress = ChooseSoleTraderAddressRadioAnswer(None, None, None, true)
+    lazy val isNewAddress = ChooseSoleTraderAddressUserAnswer(None, None, None, true)
     lazy val IsAddressInTheUk = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
     lazy val showGenericErrorPage = errorHandler(isAgent).showInternalServerError()
 
@@ -90,7 +90,7 @@ class ChooseSoleTraderAddressController @Inject()(
                 val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = Some(isNewAddress))))
                 sessionService.setMongoData(updatedData).map { data => IsAddressInTheUk }
               case previousBusinessAddressIndex =>
-                val previousBusinessAddressDetails: ChooseSoleTraderAddressRadioAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
+                val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
                 val redirect: Result = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Update with route
                 val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = Some(previousBusinessAddressDetails))))
                 sessionService.setMongoData(updatedData).map { data => redirect }
@@ -111,7 +111,7 @@ class ChooseSoleTraderAddressController @Inject()(
                 val redirect = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
                 Future(redirect)
               case previousBusinessAddressIndex =>
-                val previousBusinessAddressDetails: ChooseSoleTraderAddressRadioAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
+                val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
                 val uiSessionData =
                   UIJourneySessionData(
                     sessionId = hc.sessionId.get.value,
@@ -135,12 +135,12 @@ class ChooseSoleTraderAddressController @Inject()(
     */
 
     if (isEnabled(OverseasBusinessAddress)) {
-      val addressOptions: Seq[(String, Int)] = buildAddressOptions(user)
+      val chooseSoleTraderAddressRadioOptionsWithIndex: Seq[(String, Int)] = buildAddressOptions(user)
 
       // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
       // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
       val radioButtonValues =
-        addressOptions.map { case (_, id) => id.toString } :+ "new-address"
+        chooseSoleTraderAddressRadioOptionsWithIndex.map { case (_, id) => id.toString } :+ "new-address"
 
       val form = ChooseSoleTraderAddressForm.form(radioButtonValues)
 
@@ -150,7 +150,7 @@ class ChooseSoleTraderAddressController @Inject()(
             postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
             isAgent = isAgent,
             form = form,
-            chooseSoleTraderAddressRadioAnswersWithIndex = addressOptions,
+            chooseSoleTraderAddressRadioOptionsWithIndex = chooseSoleTraderAddressRadioOptionsWithIndex,
             backUrl = backUrl(isAgent)
           )
         )
