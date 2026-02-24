@@ -14,9 +14,40 @@
  * limitations under the License.
  *@
 
-@this()
+@import views.html.partials.newHome.yourTasks.YourTasksCard
+@import java.time.LocalDate
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import models.obligations.{NextUpdatesViewModel, NextUpdatesTileViewModel}
+@import views.html.components._
 
-@(title: String, link: String)(implicit messages: Messages)
+@this(p: p)
+
+@(title: String, nextUpdatesTileViewModel: NextUpdatesTileViewModel, link: String)(implicit messages: Messages)
+
+@nextTaxReturnDueDate = {
+@if(nextUpdatesTileViewModel.isAnnualUser) {
+    @nextUpdatesTileViewModel.nextTaxReturnDueDate.map { date =>
+        @* TODO this should be dynamic. And fix Styling https://design-system.service.gov.uk/styles/layout/#setting-up-page-wrappers *@
+        <p class="govuk-summary-card__content govuk-!-padding-0">@messages("new.home.yourTasks.annual-updates-and-deadlines-body")</p>
+        <p class="govuk-summary-card__content govuk-!-padding-0">
+            <span class="govuk-tag govuk-tag--red">@messages("new.home.yourTasks.annual-updates-and-deadlines-label", date)</span>
+        </p>
+        @* @p() {@messages("home.updates.R17.nextTaxReturnDue", date)} *@
+        @* @p() {@messages("home.updates.R17.nextTaxReturnDue", date.toLongDate)} *@
+    }
+} else  {
+    @nextUpdatesTileViewModel.nextTaxReturnDueDate.map { date =>
+        @* TODO this should be dynamic. And fix Styling https://design-system.service.gov.uk/styles/layout/#setting-up-page-wrappers *@
+        <p class="govuk-summary-card__content govuk-!-padding-0">@messages("new.home.yourTasks.quarterly-updates-and-deadlines-body")</p>
+        <p class="govuk-summary-card__content govuk-!-padding-0">
+            <span class="govuk-tag govuk-tag--red">@messages("new.home.yourTasks.quarterly-updates-and-deadlines-label", date)</span>
+        </p>
+        @* @p() {@messages("home.updates.R17.nextTaxReturnDue", date)} *@
+        @* @p() {@messages("home.updates.R17.nextTaxReturnDue", date.toLongDate)} *@
+    }
+    }
+
+}
 
 <div class="govuk-summary-card-no-border govuk-!-padding-top-1">
     <div class="govuk-summary-card__title-wrapper--l govuk-!-padding-bottom-2 govuk-!-padding-top-2 govuk-!-padding-left-1" style="background-color: #f3f2f1">
@@ -26,13 +57,8 @@
                 <span class="hmrc-card__chevron" aria-hidden="true"></span>
             </a>
         </h3>
-        @* TODO this should be dynamic. And fix Styling https://design-system.service.gov.uk/styles/layout/#setting-up-page-wrappers *@
-      @*  <p class="govuk-summary-card__content">@messages("new.home.yourTasks.updates-and-deadlines-body")</p> *@
-        <p class="govuk-summary-card__content govuk-!-padding-0">@messages("new.home.yourTasks.updates-and-deadlines-body")</p>
-        <p class="govuk-summary-card__content govuk-!-padding-0">
-            @* TODO this should be dynamic *@
-            <span class="govuk-tag govuk-tag--red">Due 31 Jan 2026</span>
-        </p>
+        @nextTaxReturnDueDate
+
     </div>
 
 </div>

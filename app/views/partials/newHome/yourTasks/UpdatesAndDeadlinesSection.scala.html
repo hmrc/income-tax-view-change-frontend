@@ -15,10 +15,16 @@
  *@
 
 @import views.html.partials.newHome.yourTasks.YourTasksCard
+@import java.time.LocalDate
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import models.obligations.{NextUpdatesViewModel, NextUpdatesTileViewModel}
 
-@this(yourTasksCard: YourTasksCard)
 
-@(isAgent: Boolean)(implicit messages: Messages)
+@this(
+        yourTasksCard: YourTasksCard
+)
+
+@(isAgent: Boolean, viewModel: NextUpdatesViewModel, nextUpdatesTileViewModel: NextUpdatesTileViewModel)(implicit messages: Messages)
 
 @updatesAndDeadlinesUrl: String = @{
     if(isAgent){
@@ -31,4 +37,4 @@
 <h2 class="govuk-heading-m">@messages("new.home.yourTasks.sub-heading")</h2>
 
 @*TODO add all the needed links here. And dynamically inject `your` or otherwise based user type (such as: Individual or Agent) *@
-@yourTasksCard(messages("new.home.yourTasks.updates-and-deadlines"), updatesAndDeadlinesUrl)
+@yourTasksCard(messages("new.home.yourTasks.updates-and-deadlines"), nextUpdatesTileViewModel,updatesAndDeadlinesUrl)

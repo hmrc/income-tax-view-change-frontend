@@ -20,6 +20,7 @@
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.yourTasks._
+@import models.obligations.{NextUpdatesViewModel, NextUpdatesTileViewModel}
 
 
 @this(
@@ -31,6 +32,8 @@
 )
 
 @(origin: Option[String] = None,
+        nextUpdatesTileViewModel: NextUpdatesTileViewModel,
+        viewModel: NextUpdatesViewModel,
         isAgent: Boolean,
         yourTasksUrl: String,
         recentActivityUrl: String,
@@ -107,6 +110,6 @@
 
     <div class="govuk-!-padding-bottom-6"></div>
 
-    @updatesAndDeadlinesSection(isAgent)
+    @updatesAndDeadlinesSection(isAgent, viewModel, nextUpdatesTileViewModel)
     @SectionBreak
 }
