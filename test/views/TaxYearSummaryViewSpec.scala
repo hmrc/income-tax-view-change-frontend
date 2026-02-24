@@ -158,7 +158,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       chargeItemModel(transactionType = PoaOneDebit, dueDate = Some(LocalDate.of(2019, 6, 15)), accruingInterestAmount = Some(100.0)),
       dueDate = Some(LocalDate.of(2019, 6, 15)), isLatePaymentInterest = true),
     TaxYearSummaryChargeItem.fromChargeItem(
-      chargeItemModel(transactionType = PoaTwoDebit, dueDate = Some(LocalDate.of(2019, 7, 15)), accruingInterestAmount = Some(80.0)),
+      chargeItemModel(transactionType = PoaTwoDebit, dueDate = Some(LocalDate.of(2019, 7, 15)), accruingInterestAmount = Some(80.0),
+        latePaymentInterestAmount = Some(80.00)),
       dueDate = Some(LocalDate.of(2019, 7, 15)), isLatePaymentInterest = true),
     TaxYearSummaryChargeItem.fromChargeItem(
       chargeItemModel(transactionType = BalancingCharge, dueDate = Some(LocalDate.of(2019, 8, 15)), interestOutstandingAmount = Some(0.0)),

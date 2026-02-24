@@ -117,7 +117,7 @@ case class ChargeSummaryViewModel(
     ChargeHistoryItem(
       date = chargeItem.interestEndDate.get,
       description = Html(messages(s"chargeSummary.lpi.chargeHistory.created.${chargeItem.getChargeTypeKey}")),
-      amount = chargeItem.accruingInterestAmount.get
+      amount = chargeItem.latePaymentInterestAmount.get
     )
   }
 

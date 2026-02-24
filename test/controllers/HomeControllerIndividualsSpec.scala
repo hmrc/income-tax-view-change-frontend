@@ -317,7 +317,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400))),
+                    documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400), accruingInterestAmount = Some(400))),
                   financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
                     items = Some(Seq(SubItem(dueDate = Some(futureDueDates.head))))))),
                 FinancialDetailsModel(

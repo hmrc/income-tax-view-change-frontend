@@ -445,7 +445,7 @@ class TaxYearSummaryController @Inject()(
 
         val chargeItemsLpi: List[TaxYearSummaryChargeItem] = {
           chargeItemsNoPayments
-            .filter(_.isAccruingInterest)
+            .filter(_.latePaymentInterestAmount.exists(_ > 0))
             .flatMap(dd => getChargeItem(dd)
               .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.interestEndDate, isLatePaymentInterest = true)))
         }
