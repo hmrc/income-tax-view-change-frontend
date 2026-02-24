@@ -23,6 +23,7 @@ import auth.authV2.AuthActions
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.sessionUtils.SessionKeys
+import controllers.routes.WhatYouOweController
 import enums.MTDSupportingAgent
 import models.admin._
 import models.financialDetails.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
@@ -309,8 +310,14 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   }
 
   def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      Future.successful(Ok(newHomeOverviewView(origin, isAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+    implicit user => {
+      for {
+        unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
+      }
+      yield {
+        Ok(newHomeOverviewView(origin, isAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty))
+      }
+    }
   }
 
   def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
@@ -322,5 +329,4 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
   def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
   def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
-
 }
