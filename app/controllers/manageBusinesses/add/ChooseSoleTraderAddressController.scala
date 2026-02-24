@@ -181,7 +181,7 @@ class ChooseSoleTraderAddressController @Inject()(
                   postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
                   isAgent = isAgent,
                   form = formWithErrors,
-                  chooseSoleTraderAddressRadioAnswersWithIndex = addressOptions,
+                  chooseSoleTraderAddressRadioOptionsWithIndex = addressOptions,
                   backUrl = backUrl(isAgent)
                 )
               )

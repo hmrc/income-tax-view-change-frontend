@@ -16,7 +16,6 @@
 
 package views.manageBusinesses.add
 
-import auth.MtdItUser
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import org.jsoup.Jsoup
@@ -44,7 +43,8 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
           postAction = postAction,
           isAgent = isAgent,
           form = form,
-          chooseSoleTraderAddressRadioAnswersWithIndex = if(isInternational) businessAddressInternational else businessAddress,
+          chooseSoleTraderAddressRadioOptionsWithIndex =
+            if (isInternational) businessAddressInternational else businessAddress,
           backUrl = controllers.routes.HomeController.show().url
         )
       )
@@ -55,7 +55,7 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
   val users: Seq[MTDUserRole] = Seq(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 
   users.foreach { user => {
-    val isAgent: Boolean = if(user != MTDIndividual) true else false
+    val isAgent: Boolean = if (user != MTDIndividual) true else false
     s"for $user | OverseasBusinessAddress FS is enabled" should {
       s"$user | render the correct title" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         pageDocument.title() shouldBe "What is the address of your sole trader business? - Manage your Self Assessment - GOV.UK"
@@ -90,6 +90,7 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
         pageDocument.getElementById("back-fallback").attr("href") shouldBe controllers.routes.HomeController.show().url
       }
     }
-  }}
+  }
+  }
 
 }

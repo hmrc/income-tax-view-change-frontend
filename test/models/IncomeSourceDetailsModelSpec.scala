@@ -24,7 +24,7 @@ import mocks.services.MockDateService
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, ChooseSoleTraderAddressUserAnswer, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.scalatest.matchers.should.Matchers
 import testConstants.BaseTestConstants.*
 import testConstants.BusinessDetailsTestConstants.{testLatencyDetails, *}
@@ -331,7 +331,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1International),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddresses shouldBe List("31 Some street")
+      model.getAllUniqueBusinessAddresses shouldBe List(ChooseSoleTraderAddressUserAnswer(Some("31 Some street"), None, Some("US"), false))
     }
     "getAllUniqueBusinessAddresses finds a UK address" in {
       val model = IncomeSourceDetailsModel(
@@ -341,7 +341,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddresses shouldBe List("8 Test, NE12 6CI")
+      model.getAllUniqueBusinessAddresses shouldBe List(ChooseSoleTraderAddressUserAnswer(Some("8 Test"), Some("NE12 6CI"), Some("GB"), false))
     }
 
     "getAllUniqueBusinessAddressesWithIndex finds two international address that are not distinct" in {
@@ -352,7 +352,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1International, business1International),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddressesWithIndex shouldBe List(("31 Some street", 0))
+      model.getAllUniqueBusinessAddressesWithIndex shouldBe List((ChooseSoleTraderAddressUserAnswer(Some("31 Some street"), None, Some("US"), false), 0))
     }
     "getAllUniqueBusinessAddressesWithIndex finds a UK address" in {
       val model = IncomeSourceDetailsModel(
@@ -362,7 +362,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddressesWithIndex shouldBe List(("8 Test, NE12 6CI", 0))
+      model.getAllUniqueBusinessAddressesWithIndex shouldBe List((ChooseSoleTraderAddressUserAnswer(Some("8 Test"), Some("NE12 6CI"), Some("GB"), false), 0))
     }
   }
 
