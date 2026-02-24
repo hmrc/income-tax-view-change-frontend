@@ -22,17 +22,20 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
 import models.obligations.*
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.NextUpdatesService
+import services.{DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewUtils.NextUpdatesViewUtils
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,18 +44,24 @@ class YourTasksController @Inject()(
                                        newHomeYourTasksView: views.html.NewHomeYourTasksView,
                                        auditingService: AuditingService,
                                        nextUpdatesService: NextUpdatesService,
-                                       itvcErrorHandler: ItvcErrorHandler,
+                                       val itvcErrorHandler: ItvcErrorHandler,
+                                       val agentItvcErrorHandler: AgentItvcErrorHandler,
                                        optOutService: OptOutService,
                                        nextUpdatesViewUtils: NextUpdatesViewUtils,
                                        val appConfig: FrontendAppConfig,
-                                       val authActions: AuthActions
+                                       val authActions: AuthActions,
+                                       val dateService: DateServiceInterface,
+                                       val ITSAStatusService: ITSAStatusService,
                                      )
                                    (
                                        implicit mcc: MessagesControllerComponents,
-                                       val agentItvcErrorHandler: AgentItvcErrorHandler,
                                        val ec: ExecutionContext
                                      )
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+
+  val getCurrentTaxYearEnd: Int = dateService.getCurrentTaxYearEnd
+  val getCurrentDate: LocalDate = dateService.getCurrentDate
+  val currentTaxYear = TaxYear(getCurrentTaxYearEnd - 1, getCurrentTaxYearEnd)
 
   private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
 
@@ -85,6 +94,9 @@ class YourTasksController @Inject()(
             val optOutSetup = {
               for {
                 (checks, optOutOneYearViewModel, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
+                currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+                (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
+                nextUpdatesDueDates <- getNextUpdatesDueDates()
                 viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
               } yield {
                 val whatTheUserCanDoContent = if (isOptOutEnabled) nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent) else None
@@ -103,8 +115,21 @@ class YourTasksController @Inject()(
                     taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status))
                 )*/
 
+                val nextUpdatesTileViewModel: NextUpdatesTileViewModel =
+                  NextUpdatesTileViewModel(
+                    dueDates = nextUpdatesDueDates,
+                    currentDate = dateService.getCurrentDate,
+                    isReportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
+                    showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
+                    currentYearITSAStatus = currentITSAStatus,
+                    nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
+                    nextTaxReturnDueDate = nextTaxReturnDueDate
+                  )
+
                 Ok(
                   newHomeYourTasksView(
+                    nextUpdatesTileViewModel = nextUpdatesTileViewModel,
+                    viewModel = viewModel,
                     isAgent = isAgent,
                     origin = origin,
                     yourTasksUrl = yourTasksUrl(origin, isAgent),
@@ -149,5 +174,31 @@ class YourTasksController @Inject()(
   def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
 
   def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
+
+  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
+      .toMap
+      .withDefaultValue(ITSAStatus.NoStatus)
+    ).map(detail => detail(taxYear))
+  }
+
+  private def getNextDueDatesIfEnabled()
+                                      (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[(Option[LocalDate], Option[LocalDate])] = {
+    if (isEnabled(OptInOptOutContentUpdateR17)) {
+      nextUpdatesService.getNextDueDates()
+    } else {
+      Future.successful((None, None))
+    }
+  }
+
+  private def getNextUpdatesDueDates()
+                                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[LocalDate]] = {
+    nextUpdatesService.getDueDates().flatMap {
+      case Right(nextUpdatesDueDates: Seq[LocalDate] )  => Future.successful(nextUpdatesDueDates)
+      case Left(ex) =>
+        Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+        Future.successful(Seq.empty[LocalDate])
+    }
+  }
 
 }
