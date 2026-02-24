@@ -1,0 +1,59 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import models.newHomePage.NewHomePageViewModel
+@import _root_.implicits.ImplicitDateFormatterImpl
+
+@this(implicitDateFormatter: ImplicitDateFormatterImpl,
+        link: link,
+        p: p)
+
+@(viewModel: NewHomePageViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+ @import implicitDateFormatter.longDate
+
+ @getNextPaymentsTag = @{
+   val taskDateLabel = getTaskDateLabel
+   if(!taskDateLabel.isBlank) {
+           <span class="govuk-tag govuk-tag--@viewModel.oldestChargeStatusColor(viewModel.oldestChargeDate)" id="date-tag">
+           getTaskDateLabel
+           </span>
+   }
+ }
+
+ @getTaskDescription = @{
+   val content = viewModel.getParametrisedContent(user)
+   messages(content._1, content._2)
+ }
+
+@getTaskDateLabel = @{
+  val taskDateLabel = viewModel.getParametrisedTaskDateLabel
+  messages(taskDateLabel._1, taskDateLabel._2.toLongDateShort)
+}
+
+ <div id="yourTasksTile" class="hmrc-card">
+  <div class="tile-body">
+    <h3 class="hmrc-card__heading">
+        @if(getTaskDateLabel.isBlank){
+          <span>@messages("newHome.yourTasks.no-tasks.selfAssessment")</span>
+        }else{
+        <a href=@viewModel.getRedirectLink(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+    }
+    </h3>
+   <div class="govuk-body">@getTaskDescription</div>
+   <div>@getNextPaymentsTag</div>
+ </div>
+ </div>

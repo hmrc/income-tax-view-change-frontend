@@ -20,21 +20,22 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.featureswitch._
+import config.featureswitch.*
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.sessionUtils.SessionKeys
 import enums.MTDSupportingAgent
-import models.admin._
+import models.admin.*
 import models.financialDetails.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
-import models.homePage._
+import models.homePage.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.newHomePage.*
 import models.obligations.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, _}
-import services._
+import play.api.mvc.{Action, *}
+import services.*
 import services.optIn.OptInService
 import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -75,14 +76,14 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       handleShowRequest(origin)
   }
 
-  def showAgent(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
+  def showAgent(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async {
     implicit mtdItUser =>
       handleShowRequest(origin)
   }
 
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    if (isEnabled(NewHomePage)){
+    if (isEnabled(NewHomePage)) {
       handleYourTasks(origin, user.isAgent())
     } else {
       handleOldHomePage(origin)
@@ -121,8 +122,8 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
 
-      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
-      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+      val yourBusinessesTileViewModel = models.homePage.YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
+      val yourReportingObligationsTileViewModel = models.homePage.YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
       auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel))
       Ok(
@@ -149,7 +150,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
-      accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, getCurrentDate)
+      accruingInterestPaymentsCount = models.homePage.NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, getCurrentDate)
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
       penaltiesCount <- penaltyDetailsService.getPenaltiesCount(isEnabled(PenaltiesBackendEnabled))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
@@ -170,24 +171,24 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
           nextTaxReturnDueDate = nextTaxReturnDueDate
         )
 
-      val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel =
-        PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
+      val penaltiesAndAppealsTileViewModel: models.homePage.PenaltiesAndAppealsTileViewModel =
+        models.homePage.PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
 
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
 
       val yourBusinessesTileViewModel =
-        YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
+        models.homePage.YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
 
       val returnsTileViewModel =
-        ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
+        models.homePage.ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
 
       val yourReportingObligationsTileViewModel =
-        YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+        models.homePage.YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
-      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount).verify match {
+      models.homePage.NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount).verify match {
 
-        case Right(viewModel: NextPaymentsTileViewModel) =>
+        case Right(viewModel: models.homePage.NextPaymentsTileViewModel) =>
           val homeViewModel = HomePageViewModel(
             utr = user.saUtr,
             nextPaymentsTileViewModel = viewModel,
@@ -234,19 +235,32 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       .sortBy(_.toEpochDay())
   }
 
-  private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
-                                      (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
-  whatYouOweService.getWhatYouOweChargesList(
-    unpaidCharges,
-    isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
-    isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-    mainChargeIsNotPaidFilter
-  ) map {
-    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
-      outstandingCharges.filter(_.isBalancingChargeDebit)
-        .filter(_.relevantDueDate.isDefined)
-    case _ => Nil
+  private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[ChargeItem] = {
+
+    val chargesList =
+      unpaidCharges.collect {
+        case fdm: FinancialDetailsModel => fdm
+      }
+    whatYouOweService.getFilteredChargesList(
+      financialDetailsList = chargesList,
+      isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
+      isPenaltiesEnabled = penaltiesEnabled,
+      remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter)
   }
+
+  private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
+                                        (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
+    whatYouOweService.getWhatYouOweChargesList(
+      unpaidCharges,
+      isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
+      isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+      mainChargeIsNotPaidFilter
+    ) map {
+      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
+        outstandingCharges.filter(_.isBalancingChargeDebit)
+          .filter(_.relevantDueDate.isDefined)
+      case _ => Nil
+    }
 
   private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
     val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
@@ -297,28 +311,50 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
   //These should probably each have their own controllers, as they're going to each be calling the APIs independently and will have different ViewModels
   private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
-                                      (implicit user: MtdItUser[_]): Future[Result] = {
-    Future.successful(Ok(newHomeYourTasksView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+                             (implicit user: MtdItUser[_]): Future[Result] = {
+    val getCurrentTaxYearEnd = dateService.getCurrentTaxYearEnd
+    val getCurrentDate = dateService.getCurrentDate
+    val currentTaxYear = TaxYear(getCurrentTaxYearEnd - 1, getCurrentTaxYearEnd)
+
+    for {
+      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
+      _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
+      _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
+      chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+    } yield {
+
+      val homeViewModel = NewHomePageViewModel(chargeItemList)
+      //          if (user.isAgent()) {
+      //            Ok(primaryAgentHomeView(homeViewModel)).addingToSession(mandationStatus)
+      //          } else {
+      Ok(newHomeYourTasksView(origin, isAgent,
+        yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
+        overviewUrl(origin, isAgent), helpUrl(origin, isAgent), homeViewModel))
+      //}
+    }
   }
 
-  def handleRecentActivity(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      Future.successful(Ok(newHomeRecentActivityView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
-  }
+    def handleRecentActivity(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        Future.successful(Ok(newHomeRecentActivityView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+    }
 
-  def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      Future.successful(Ok(newHomeOverviewView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
-  }
+    def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        Future.successful(Ok(newHomeOverviewView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+    }
 
-  def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
-  }
+    def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+    }
 
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
-  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
-  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
+    def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url
 
+    def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
+
+    def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
+
+    def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
+    
 }

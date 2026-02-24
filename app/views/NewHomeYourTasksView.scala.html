@@ -19,13 +19,17 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
-
+@import views.html.partials.newHomeView._
+@import views.html.components._
+@import models.newHomePage.NewHomePageViewModel
 
 @this(
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
-        govukServiceNavigation : GovukServiceNavigation
+        govukServiceNavigation : GovukServiceNavigation,
+        yourTasksTilePartial: YourTasksTilePartial,
+        h2: h2
 )
 
 @(origin: Option[String] = None,
@@ -33,7 +37,8 @@
         yourTasksUrl: String,
         recentActivityUrl: String,
         overViewUrl: String,
-        helpUrl: String)(
+        helpUrl: String,
+        viewModel: NewHomePageViewModel)(
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -79,7 +84,7 @@
     @govukServiceNavigation(ServiceNavigation(
         navigation = Seq(
             ServiceNavigationItem(
-                content = Text("Your tasks"),
+                content = Text(messages("newHome.navigation.yourTasks")),
                 href = yourTasksUrl,
                 active = true
             ),
@@ -98,4 +103,7 @@
         ),
         attributes = Map("style" -> "background-color: white;")
     ))
+
+  @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
+  @yourTasksTilePartial(viewModel)
 }
