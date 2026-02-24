@@ -25,7 +25,7 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
-class ChooseSoleTraderAddressViewSpec extends ControllerISpecHelper {
+class ChooseSoleTraderAddressControllerSpec extends ControllerISpecHelper {
 
   val continueButtonText: String = messagesAPI("base.continue")
 

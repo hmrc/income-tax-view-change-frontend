@@ -136,8 +136,6 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
 
-            //            mockNoIncomeSources()
-
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
               .thenReturn(Future.successful(businessIncome2018and2019AndProp))
 
