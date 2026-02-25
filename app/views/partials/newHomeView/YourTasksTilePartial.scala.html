@@ -23,7 +23,7 @@
         link: link,
         p: p)
 
-@(viewModel: NewHomePageViewModel, isAgent: Boolean = false)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: NewHomePageViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
  @import implicitDateFormatter.longDate
 
  @getNextPaymentsTag = @{

@@ -328,9 +328,9 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       val mandationStatus =
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
-        
+
       val homeViewModel = NewHomePageViewModel(chargeItemList, unpaidCharges, creditsRefundsRepayEnabled)
-      
+
       if (user.isAgent()) {
         Ok(newHomeYourTasksView(origin, isAgent,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
