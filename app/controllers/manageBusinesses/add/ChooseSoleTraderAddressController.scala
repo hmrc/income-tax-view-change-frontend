@@ -103,13 +103,14 @@ class ChooseSoleTraderAddressController @Inject()(
           case None =>
             formResponse match {
               case "new-address" =>
-                UIJourneySessionData(
-                  sessionId = hc.sessionId.get.value,
-                  journeyType = "ADD-SE",
-                  addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(isNewAddress)))
-                )
+                val newUiSessionData =
+                  UIJourneySessionData(
+                    sessionId = hc.sessionId.get.value,
+                    journeyType = "ADD-SE",
+                    addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(isNewAddress)))
+                  )
                 val redirect = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
-                Future(redirect)
+                sessionService.setMongoData(newUiSessionData).map { data => redirect }
               case previousBusinessAddressIndex =>
                 val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
                 val uiSessionData =
