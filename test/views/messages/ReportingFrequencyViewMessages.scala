@@ -69,7 +69,7 @@ object ReportingFrequencyViewMessages {
   val compatibleSoftwareHeading = "When compatible software is required"
 
   val compatibleSoftwareTextR17 = "Whether you are required or voluntarily signed up, you need software compatible with Making Tax Digital for Income Tax (opens in new tab). There are both paid and free options for you or your agent to choose from."
-  val compatibleSoftwareText = "If you are reporting quarterly, you will need to use software compatible with Making Tax Digital for Income Tax (opens in new tab) There are both paid and free options for you or your agent to choose from."
+  val compatibleSoftwareText = "If you are reporting quarterly, you will need to use software compatible with Making Tax Digital for Income Tax (opens in new tab). There are both paid and free options for you or your agent to choose from."
 
   val compatibleSoftwareTextTwo = "For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return."
 

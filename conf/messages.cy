@@ -2700,7 +2700,7 @@ optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = 
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
 optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
-optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = meini prawf i bobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = reporting.frequency.different.obligations.link.text
 
 optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
 optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = Rydych wedi optio allan o’r flwyddyn dreth nesaf ymlaen, ond gallai fod yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os yw’r canlynol yn wir:
@@ -3125,7 +3125,7 @@ reporting.frequency.different.obligations.li3                               = cy
 reporting.frequency.different.obligations.p2                                = Hyd yn oed os nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi gyflwyno Ffurflen Dreth o hyd.
 reporting.frequency.different.obligations.p2hasExempt                       = Ar gyfer blynyddoedd treth yr ydych wedi optio allan neu wedi’i esemptio, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
 reporting.frequency.different.obligations.p3                                = Dysgwch faint sy’n ddyledus ac erbyn pryd ar y dudalen
-reporting.frequency.different.obligations.link.text                         = eich dyddiadau cau ar gyfer cyflwyno.
+reporting.frequency.different.obligations.link.text                         = eich dyddiadau cau ar gyfer cyflwyno
 reporting.frequency.different.obligations.link.text.additional.english      =
 
 #your obligations (exempt)
@@ -3226,7 +3226,7 @@ reporting.obligations.changing.optOut.link.text                     = Optio alla
 
 # ceased business warning message
 reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
-reporting.frequency.ceasedBusiness.warning.link                     = Eich busnes.
+reporting.frequency.ceasedBusiness.warning.link                     = Eich busnes
 reporting.frequency.ceasedBusiness.warning.text.2                   =
 
 reporting.frequency.latency.details.section.header                            = Gall amlder eich adroddiadau ar gyfer eich busnes newydd fod ar sail amlder gwahanol
@@ -3252,7 +3252,7 @@ reporting.frequency.latency.details.section.text.para2.bullet2.updateR17      = 
 reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = hyd yn oed os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o {0}
 reporting.frequency.latency.details.section.text.para3.heading.updateR17      = Sut i newid eich rhwymedigaethau adrodd ar gyfer ffynhonnell incwm newydd
 reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = Gallwch wneud hyn ar unrhyw adeg o’r adran
-reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = eich busnesau.
+reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = eich busnesau
 reporting.frequency.latency.details.section.text.para3.text.2.updateR17       =
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} Blwyddyn dreth
