@@ -180,9 +180,9 @@ case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem],
 
    private def defineRedirectLinkMoneyInYourAccount(isAgent: Boolean) = {
      if(isAgent){
-       "/report-quarterly/income-and-expenses/view/money-in-your-account"
-     }else {
        "/report-quarterly/income-and-expenses/view/agents/money-in-your-account"
+     }else {
+       "/report-quarterly/income-and-expenses/view/money-in-your-account"
      }
    }
 

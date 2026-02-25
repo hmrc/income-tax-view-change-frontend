@@ -320,19 +320,26 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
+      mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
     } yield {
 
       val creditsRefundsRepayEnabled= isEnabled(CreditsRefundsRepay)
-      
+      val mandationStatus =
+        if (mandation) SessionKeys.mandationStatus -> "on"
+        else SessionKeys.mandationStatus -> "off"
+        
       val homeViewModel = NewHomePageViewModel(chargeItemList, unpaidCharges, creditsRefundsRepayEnabled)
-      //          if (user.isAgent()) {
-      //            Ok(primaryAgentHomeView(homeViewModel)).addingToSession(mandationStatus)
-      //          } else {
-      Ok(newHomeYourTasksView(origin, isAgent,
-        yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
-        overviewUrl(origin, isAgent), helpUrl(origin, isAgent), homeViewModel))
-      //}
+      
+      if (user.isAgent()) {
+        Ok(newHomeYourTasksView(origin, isAgent,
+          yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
+          overviewUrl(origin, isAgent), helpUrl(origin, isAgent), homeViewModel)).addingToSession(mandationStatus)
+      } else {
+        Ok(newHomeYourTasksView(origin, isAgent,
+          yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
+          overviewUrl(origin, isAgent), helpUrl(origin, isAgent), homeViewModel))
+      }
     }
   }
 
