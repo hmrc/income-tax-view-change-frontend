@@ -18,7 +18,7 @@ package testConstants
 
 import models.obligations.{GroupedObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 
 import java.time.LocalDate
 
@@ -50,52 +50,6 @@ object NextUpdatesIntegrationTestConstants {
   val deadlineEnd6 = LocalDate.of(2018, 2, 1)
 
   val testPropertyId = "1234"
-
-  def multipleNextUpdatesDataSuccessModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
-    SingleObligationModel(
-      start = deadlineStart1,
-      end = deadlineEnd1,
-      due = currentDate.minusDays(128),
-      obligationType = "Quarterly",
-      dateReceived = None,
-      periodKey = "periodKey", StatusFulfilled
-    ), SingleObligationModel(
-      start = deadlineStart2,
-      end = deadlineEnd2,
-      due = currentDate.minusDays(36),
-      obligationType = "Quarterly",
-      dateReceived = None,
-      periodKey = "periodKey", StatusFulfilled
-    ), SingleObligationModel(
-      start = deadlineStart3,
-      end = deadlineEnd3,
-      due = currentDate.minusDays(36),
-      obligationType = "EOPS",
-      dateReceived = None,
-      periodKey = "periodKey", StatusFulfilled
-    ), SingleObligationModel(
-      start = deadlineStart4,
-      end = deadlineEnd4,
-      due = currentDate.plusDays(30),
-      obligationType = "Quarterly",
-      dateReceived = None,
-      periodKey = "periodKey", StatusFulfilled
-    ), SingleObligationModel(
-      start = deadlineStart5,
-      end = deadlineEnd5,
-      due = currentDate.plusDays(146),
-      obligationType = "Quarterly",
-      dateReceived = None,
-      periodKey = "periodKey", StatusFulfilled
-    ), SingleObligationModel(
-      start = deadlineStart6,
-      end = deadlineEnd6,
-      due = currentDate.plusDays(174),
-      obligationType = "Quarterly",
-      dateReceived = None,
-      periodKey = "periodKey", StatusFulfilled
-    )
-  ))
 
   val singleObligationStart = LocalDate.of(2017, 4, 6)
   val singleObligationEndQuarter = LocalDate.of(2017, 5, 5)
@@ -137,32 +91,6 @@ object NextUpdatesIntegrationTestConstants {
       due = overdueDate,
       dateReceived = None,
       periodKey = "periodKey", status = StatusFulfilled
-    )
-  ))
-
-  val singleObligationStartEOPs = LocalDate.of(2017, 4, 6)
-  val singleObligationEndEOPs = LocalDate.of(2018, 7, 5)
-  val singleObligationDueEOPs = LocalDate.of(2018, 1, 1)
-
-  val singleObligationEOPSPropertyModel = GroupedObligationsModel(testPropertyId, List(
-    SingleObligationModel(
-      singleObligationStartEOPs,
-      singleObligationEndEOPs,
-      singleObligationDueEOPs,
-      "EOPS",
-      dateReceived = None,
-      "EOPS", status = StatusFulfilled
-    )
-  ))
-
-  val multipleObligationPropertyModel = GroupedObligationsModel(testPropertyId, List(
-    SingleObligationModel(
-      singleObligationStartEOPs,
-      singleObligationEndEOPs,
-      singleObligationDueEOPs,
-      "EOPS",
-      dateReceived = None,
-      "EOPS", status = StatusFulfilled
     )
   ))
 
@@ -211,38 +139,7 @@ object NextUpdatesIntegrationTestConstants {
     )
   ))
 
-
-  def SEIncomeSourceEOPSModel(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(incomeId, List(
-    SingleObligationModel(
-      start = LocalDate.of(2017, 4, 6),
-      end = LocalDate.of(2018, 4, 5),
-      due = LocalDate.of(2018, 1, 31),
-      "EOPS",
-      dateReceived = None,
-      periodKey = "#003", status = StatusFulfilled
-    )
-  ))
-
-  val crystallisedEOPSModel = GroupedObligationsModel(testMtditid, List(
-    SingleObligationModel(
-      start = LocalDate.of(2017, 4, 6),
-      end = LocalDate.of(2018, 4, 5),
-      due = LocalDate.of(2019, 1, 31),
-      "Crystallisation",
-      dateReceived = None,
-      periodKey = "#003", status = StatusFulfilled
-    )
-  ))
-
-  val CrystallisationEOPSModelMulti = GroupedObligationsModel(testMtditid, List(
-    SingleObligationModel(
-      start = LocalDate.of(2018, 4, 6),
-      end = LocalDate.of(2019, 4, 5),
-      due = LocalDate.of(2020, 1, 31),
-      "Crystallisation",
-      dateReceived = None,
-      periodKey = "#003", status = StatusFulfilled
-    ),
+  val crystallisedModel = GroupedObligationsModel(testMtditid, List(
     SingleObligationModel(
       start = LocalDate.of(2017, 4, 6),
       end = LocalDate.of(2018, 4, 5),
