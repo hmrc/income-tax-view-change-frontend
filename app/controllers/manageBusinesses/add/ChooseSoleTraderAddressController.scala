@@ -62,8 +62,15 @@ class ChooseSoleTraderAddressController @Inject()(
     user.incomeSources.getAllUniqueBusinessAddressesWithIndex.map {
       case (answer, index) =>
         val id = index
-        val display =
-          s"${answer.addressLine1.getOrElse("")}, ${answer.postcode.getOrElse("")}"
+        val display = {
+          (answer.addressLine1, answer.postcode) match {
+            case (Some(addressLine1), Some(postcode)) =>
+              s"$addressLine1, $postcode"
+            case (Some(addressLine1), None) =>
+              s"$addressLine1"
+            case _ => ""
+          }
+        }
         (display, id)
     }
   }
@@ -75,8 +82,8 @@ class ChooseSoleTraderAddressController @Inject()(
                              )(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val formResponse = validForm.response
-    lazy val isNewAddress = ChooseSoleTraderAddressUserAnswer(None, None, None, true)
-    lazy val IsAddressInTheUk = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
+    lazy val isNewAddress = ChooseSoleTraderAddressUserAnswer(None, None, None, None, None, None, true)
+    lazy val isAddressInTheUkPage = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
     lazy val showGenericErrorPage = errorHandler(isAgent).showInternalServerError()
 
     sessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment)).flatMap {
@@ -88,7 +95,7 @@ class ChooseSoleTraderAddressController @Inject()(
             formResponse match {
               case "new-address" =>
                 val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = Some(isNewAddress))))
-                sessionService.setMongoData(updatedData).map { data => IsAddressInTheUk }
+                sessionService.setMongoData(updatedData).map { data => isAddressInTheUkPage }
               case previousBusinessAddressIndex =>
                 val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
                 val redirect: Result = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Update with route

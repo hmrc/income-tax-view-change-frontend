@@ -20,7 +20,6 @@ import play.api.libs.json.*
 import uk.gov.hmrc.crypto.Sensitive.{SensitiveBoolean, SensitiveInstant, SensitiveString}
 import uk.gov.hmrc.crypto.json.JsonEncryption
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
-import models.incomeSourceDetails._
 
 import java.time.{LocalDate, ZoneOffset}
 
@@ -54,7 +53,26 @@ case class AddIncomeSourceData(
       accountingPeriodEndDate.map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
       incomeSourceId.map(SensitiveString),
       address.map { case Address(lines, postcode) => SensitiveAddress(lines.map(SensitiveString), postcode.map(SensitiveString)) },
-      chooseSoleTraderAddress.map { case ChooseSoleTraderAddressUserAnswer(lines, postcode, countryCode, newAddress) => SensitiveChooseSoleTraderAddressRadioAnswer(lines.map(SensitiveString), postcode.map(SensitiveString), countryCode.map(SensitiveString), newAddress) },
+      chooseSoleTraderAddress.map { case
+        ChooseSoleTraderAddressUserAnswer(
+          addressLine1: Option[String],
+          addressLine2: Option[String],
+          addressLine3: Option[String],
+          addressLine4: Option[String],
+          postcode,
+          countryCode,
+          newAddress
+        ) =>
+        SensitiveChooseSoleTraderAddressRadioAnswer(
+          addressLine1.map(SensitiveString),
+          addressLine2.map(SensitiveString),
+          addressLine3.map(SensitiveString),
+          addressLine4.map(SensitiveString),
+          postcode.map(SensitiveString),
+          countryCode.map(SensitiveString),
+          newAddress
+        )
+      },
       countryCode.map(SensitiveString),
       addressId.map(SensitiveString),
       addressLookupId.map(SensitiveString),

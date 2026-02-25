@@ -331,7 +331,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1International),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddresses shouldBe List(ChooseSoleTraderAddressUserAnswer(Some("31 Some street"), None, Some("US"), false))
+      model.getAllUniqueBusinessAddresses shouldBe List(ChooseSoleTraderAddressUserAnswer(Some("31 Some street"), None, None, None, None, Some("US"), false))
     }
     "getAllUniqueBusinessAddresses finds a UK address" in {
       val model = IncomeSourceDetailsModel(
@@ -341,7 +341,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddresses shouldBe List(ChooseSoleTraderAddressUserAnswer(Some("8 Test"), Some("NE12 6CI"), Some("GB"), false))
+      model.getAllUniqueBusinessAddresses shouldBe List(ChooseSoleTraderAddressUserAnswer(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("GB"), false))
     }
 
     "getAllUniqueBusinessAddressesWithIndex finds two international address that are not distinct" in {
@@ -352,7 +352,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1International, business1International),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddressesWithIndex shouldBe List((ChooseSoleTraderAddressUserAnswer(Some("31 Some street"), None, Some("US"), false), 0))
+      model.getAllUniqueBusinessAddressesWithIndex shouldBe List((ChooseSoleTraderAddressUserAnswer(Some("31 Some street"), None, None, None, None, Some("US"), false), 0))
     }
     "getAllUniqueBusinessAddressesWithIndex finds a UK address" in {
       val model = IncomeSourceDetailsModel(
@@ -362,7 +362,7 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businesses = List(business1),
         properties = Nil
       )
-      model.getAllUniqueBusinessAddressesWithIndex shouldBe List((ChooseSoleTraderAddressUserAnswer(Some("8 Test"), Some("NE12 6CI"), Some("GB"), false), 0))
+      model.getAllUniqueBusinessAddressesWithIndex shouldBe List((ChooseSoleTraderAddressUserAnswer(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("GB"), false), 0))
     }
   }
 
