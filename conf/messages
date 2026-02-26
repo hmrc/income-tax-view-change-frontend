@@ -1403,7 +1403,7 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustmen
 
 
 ##Tax Years Overview Submissions Tab##
-submissionsTab.desc                                                  = This is a record of what you have submitted for the tax year.
+submissionsTab.desc                                                  = A quarterly update is a running total of income and expenses for the tax year so far.
 submissionsTab.due                                                   = Due {0}
 submissionsTab.submission                                            = Submission
 submissionsTab.incomeSource                                          = Income source
