@@ -1404,7 +1404,8 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 
 
 ## Tax Years Overview Update Tab ##
-submissionsTab.desc                                                  = Dyma gofnod o’r hyn a gyflwynwyd ar gyfer y flwyddyn dreth.
+#TODO the below needs to change when we get the new Welsh content
+submissionsTab.desc                                                  = Mae diweddariad chwarterol yn gyfanswm o incwm a threuliau ar gyfer y flwyddyn dreth hyd yn hyn.
 submissionsTab.due                                                   = Yn ddyledus erbyn {0}
 submissionsTab.submission                                            = Cyflwyniad
 submissionsTab.incomeSource                                          = Ffynhonnell incwm
