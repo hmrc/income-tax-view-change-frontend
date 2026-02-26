@@ -20,33 +20,48 @@
 @import models.obligations.{NextUpdatesViewModel, NextUpdatesTileViewModel}
 @import views.html.components._
 
-@this(p: p)
+@this(p: p,
+        implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(title: String, nextUpdatesTileViewModel: NextUpdatesTileViewModel, link: String)(implicit messages: Messages)
 
-@nextTaxReturnDueDate = {
-@if(nextUpdatesTileViewModel.isAnnualUser) {
-    @nextUpdatesTileViewModel.nextTaxReturnDueDate.map { date =>
-        @* TODO this should be dynamic. And fix Styling https://design-system.service.gov.uk/styles/layout/#setting-up-page-wrappers *@
-        <p class="govuk-summary-card__content govuk-!-padding-0">@messages("new.home.yourTasks.annual-updates-and-deadlines-body")</p>
-        <p class="govuk-summary-card__content govuk-!-padding-0">
-            <span class="govuk-tag govuk-tag--red">@messages("new.home.yourTasks.annual-updates-and-deadlines-label", date)</span>
-        </p>
-        @* @p() {@messages("home.updates.R17.nextTaxReturnDue", date)} *@
-        @* @p() {@messages("home.updates.R17.nextTaxReturnDue", date.toLongDate)} *@
-    }
-} else  {
-    @nextUpdatesTileViewModel.nextTaxReturnDueDate.map { date =>
-        @* TODO this should be dynamic. And fix Styling https://design-system.service.gov.uk/styles/layout/#setting-up-page-wrappers *@
-        <p class="govuk-summary-card__content govuk-!-padding-0">@messages("new.home.yourTasks.quarterly-updates-and-deadlines-body")</p>
-        <p class="govuk-summary-card__content govuk-!-padding-0">
-            <span class="govuk-tag govuk-tag--red">@messages("new.home.yourTasks.quarterly-updates-and-deadlines-label", date)</span>
-        </p>
-        @* @p() {@messages("home.updates.R17.nextTaxReturnDue", date)} *@
-        @* @p() {@messages("home.updates.R17.nextTaxReturnDue", date.toLongDate)} *@
-    }
-    }
+@import implicitDateFormatter.longDate
 
+@getBodyMessagesByUserReportingType(annualUser: Boolean) = @{
+    if (annualUser) {
+        messages("new.home.yourTasks.annual-updates-and-deadlines-body")
+    } else {
+        messages("new.home.yourTasks.quarterly-updates-and-deadlines-body")
+    }
+}
+
+@getTaskDateLabelColor(dueDate: LocalDate) =  @{
+    val tagClassPrefix = "govuk-tag govuk-tag"
+    if (dueDate.isBefore(nextUpdatesTileViewModel.currentDate)) {
+        s"$tagClassPrefix--red"
+    } else if (dueDate.isEqual(nextUpdatesTileViewModel.currentDate)) {
+        s"$tagClassPrefix--pink"
+    } else if (dueDate.isBefore(nextUpdatesTileViewModel.currentDate.plusDays(30)) && dueDate.isBefore(nextUpdatesTileViewModel.currentDate)) {
+            s"$tagClassPrefix--yellow"
+        } else {
+            s"$tagClassPrefix--green"
+        }
+}
+
+@nextTaxReturnDueDate = {
+@if(nextUpdatesTileViewModel.isQuarterlyUser || nextUpdatesTileViewModel.isAnnualUser) {
+    @nextUpdatesTileViewModel.nextTaxReturnDueDate.map { date =>
+        @* TODO this should be dynamic. And fix Styling https://design-system.service.gov.uk/styles/layout/#setting-up-page-wrappers *@
+        <p class="govuk-summary-card__content govuk-!-padding-0"> @getBodyMessagesByUserReportingType(nextUpdatesTileViewModel.isAnnualUser)</p>
+        <p class="govuk-summary-card__content govuk-!-padding-0">
+            @* TODO check why after migrating to Scala 3 we can't use implisits ImplicitDateFormatterImpl *@
+            <span class="@getTaskDateLabelColor(date)">Due @date.toLongDateShort</span>
+        </p>
+
+        @*   @p() {@messages("home.updates.R17.nextTaxReturnDue", date)} *@
+        @*        @p() {@messages("home.updates.R17.nextTaxReturnDue", date.toLongDate)} *@
+    }
+}
 }
 
 <div class="govuk-summary-card-no-border govuk-!-padding-top-1">
