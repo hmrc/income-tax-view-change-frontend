@@ -670,7 +670,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val messageAction: String = "! Warning You need to amend and resubmit your return."
     val messageError1: String = "you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose."
     val messageError2: String = "you are using cash basis accounting. This means that you cannot claim to set losses against other taxable income."
-    val submissionsDescription: String = "This is a record of what you have submitted for the tax year."
+    val submissionsDescription: String = "A quarterly update is a running total of income and expenses for the tax year so far."
     val claimToAdjustPoaParagraph: String = "You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account."
     val claimToAdjustPoaLinkText: String = "Adjust payments on account"
     val claimToAdjustPoaLinkIndividual: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
