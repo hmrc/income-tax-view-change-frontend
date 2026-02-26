@@ -43,10 +43,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class YourTasksController @Inject()(
                                        newHomeYourTasksView: views.html.NewHomeYourTasksView,
                                        auditingService: AuditingService,
-                                       nextUpdatesService: NextUpdatesService,
-                                       val itvcErrorHandler: ItvcErrorHandler,
-                                       val agentItvcErrorHandler: AgentItvcErrorHandler,
-                                       optOutService: OptOutService,
+                                       val nextUpdatesService: NextUpdatesService,
+//                                       optOutService: OptOutService,
                                        nextUpdatesViewUtils: NextUpdatesViewUtils,
                                        val appConfig: FrontendAppConfig,
                                        val authActions: AuthActions,
@@ -55,6 +53,8 @@ class YourTasksController @Inject()(
                                      )
                                    (
                                        implicit mcc: MessagesControllerComponents,
+                                       val itvcErrorHandler: ItvcErrorHandler,
+                                       val agentItvcErrorHandler: AgentItvcErrorHandler,
                                        val ec: ExecutionContext
                                      )
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
@@ -93,13 +93,14 @@ class YourTasksController @Inject()(
 
             val optOutSetup = {
               for {
-                (checks, optOutOneYearViewModel, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
+//                (checks, optOutOneYearViewModel, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
                 currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
                 (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
+                _ = Logger("application").error(s"nextTaxReturnDueDate=$nextTaxReturnDueDate")
                 nextUpdatesDueDates <- getNextUpdatesDueDates()
                 viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
               } yield {
-                val whatTheUserCanDoContent = if (isOptOutEnabled) nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent) else None
+//                val whatTheUserCanDoContent = if (isOptOutEnabled) nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent) else None
               //TODO check what would we need from the nex Updates for Your tasks section
                /* Ok(
                   nextUpdatesOptOutView(
@@ -115,7 +116,7 @@ class YourTasksController @Inject()(
                     taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status))
                 )*/
 
-                val nextUpdatesTileViewModel: NextUpdatesTileViewModel =
+                val nextUpdatesTileViewModel: NextUpdatesTileViewModel = {
                   NextUpdatesTileViewModel(
                     dueDates = nextUpdatesDueDates,
                     currentDate = dateService.getCurrentDate,
@@ -125,13 +126,14 @@ class YourTasksController @Inject()(
                     nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
                     nextTaxReturnDueDate = nextTaxReturnDueDate
                   )
+                }
 
                 Ok(
                   newHomeYourTasksView(
+                    origin = origin,
                     nextUpdatesTileViewModel = nextUpdatesTileViewModel,
                     viewModel = viewModel,
                     isAgent = isAgent,
-                    origin = origin,
                     yourTasksUrl = yourTasksUrl(origin, isAgent),
                     recentActivityUrl = recentActivityUrl(origin, isAgent),
                     overViewUrl = overviewUrl(origin, isAgent),

@@ -38,6 +38,8 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.HandleYourTasksView
 import java.time.LocalDate
 
+import java.time.LocalDate
+
 class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
