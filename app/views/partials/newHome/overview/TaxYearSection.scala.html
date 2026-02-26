@@ -41,6 +41,9 @@
     }
 }
 
-<h2 class="govuk-heading-m">@messages("new.home.overview.tax-year.sub-heading")</h2>
-@overviewCard(messages("new.home.overview.tax-year.view-all-tax-years"), allTaxYearsUrl)
-@overviewCard(messages("new.home.overview.tax-year.view-tax-years", taxYear.startYear.toString, taxYear.endYear.toString), yearToYearTaxYearsUrl)
+
+<div id="tax-year-overview-section">
+    <h2 class="govuk-heading-m">@messages("new.home.overview.tax-year.sub-heading")</h2>
+    @overviewCard(messages("new.home.overview.tax-year.view-all-tax-years"), allTaxYearsUrl)
+    @overviewCard(messages("new.home.overview.tax-year.view-tax-years", taxYear.startYear.toString, taxYear.endYear.toString), yearToYearTaxYearsUrl)
+</div>
