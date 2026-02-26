@@ -21,7 +21,7 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
-import services.optIn.core.OptInProposition
+import services.reportingObligations.signUp.core.OptInProposition
 
 case class OptInAuditModel(
                             optInProposition: OptInProposition,

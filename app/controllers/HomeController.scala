@@ -36,8 +36,8 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.*
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.signUp.OptInService
+import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

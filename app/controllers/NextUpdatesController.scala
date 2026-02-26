@@ -28,12 +28,12 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.NextUpdatesService
-import services.optout.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewUtils.NextUpdatesViewUtils
 import views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
 import play.api.Logger
+import services.reportingObligations.optOut.OptOutService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

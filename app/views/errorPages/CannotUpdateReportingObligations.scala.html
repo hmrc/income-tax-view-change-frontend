@@ -28,7 +28,7 @@
 @(isAgent: Boolean)(implicit request : Request[_], messages: Messages)
 
 @reportingObligationsURL = @{
-    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 }
 
 @mainTemplate(messages("cannotUpdateReportingObligations.title"), showServiceName = false, isErrorPage = true) {

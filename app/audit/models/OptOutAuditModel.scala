@@ -21,7 +21,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateRes
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.libs.json._
-import services.optout.OptOutProposition
+import services.reportingObligations.optOut.OptOutProposition
 import uk.gov.hmrc.auth.core.AffinityGroup
 
 case class Outcome(

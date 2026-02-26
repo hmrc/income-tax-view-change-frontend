@@ -23,7 +23,7 @@ import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.obligations.*
-import models.optout.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
+import models.reportingObligations.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -33,7 +33,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import services.optout.{OptOutProposition, OptOutService}
+import services.reportingObligations.optOut.{OptOutProposition, OptOutService}
 import services.{DateService, DateServiceInterface, NextUpdatesService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
 import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
