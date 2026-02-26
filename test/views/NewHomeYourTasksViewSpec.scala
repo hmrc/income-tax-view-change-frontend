@@ -1,0 +1,112 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package views
+
+import auth.MtdItUser
+import authV2.AuthActionsTestData.defaultMTDITUser
+import config.FrontendAppConfig
+import config.featureswitch.FeatureSwitching
+import implicits.ImplicitDateFormatter
+import models.itsaStatus.ITSAStatus
+import models.obligations.{NextUpdatesTileViewModel, NextUpdatesViewModel}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.{Document, Element}
+import play.api.http.HeaderNames
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.FakeRequest
+import play.api.test.Helpers.*
+import play.twirl.api.HtmlFormat
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import testUtils.{TestSupport, ViewSpec}
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import views.html.NewHomeYourTasksView
+
+import java.time.LocalDate
+
+class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
+  lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val newHomeYourTasksView: NewHomeYourTasksView = app.injector.instanceOf[NewHomeYourTasksView]
+  val testMtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), businessAndPropertyAligned)
+
+  class TestSetup(
+                   origin: Option[String] = None,
+                   isAgent: Boolean = false,
+                   yourTasksUrl: String = "testYourTasksUrl",
+                   recentActivityUrl: String = "testRecentActivityUrl",
+                   overViewUrl: String = "testOverviewUrl",
+                   helpUrl: String = "testHelpUrl",
+                   welshLang: Boolean = false) {
+
+    val testMessages: Messages = if (welshLang) {
+      app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
+    } else {
+      messages
+    }
+
+    val testUrl = "testUrl"
+
+    lazy val page: HtmlFormat.Appendable =
+      newHomeYourTasksView(
+        origin = origin,
+        nextUpdatesTileViewModel = getNextUpdatesTileViewModel,
+        viewModel = getViewModel,
+        isAgent = isAgent,
+        yourTasksUrl = yourTasksUrl,
+        recentActivityUrl = recentActivityUrl,
+        overViewUrl = overViewUrl,
+        helpUrl = helpUrl)(testMessages, FakeRequest(), testMtdItUser)
+    lazy val document: Document = Jsoup.parse(contentAsString(page))
+    lazy val layoutContent: Element = document.selectHead("#main-content")
+  }
+
+  //TODO proceed with this test until done
+  "New Home Your Tasks page for individuals" should {
+    "display the correct content" in new TestSetup() {
+      document.select("h2.govuk-heading-m").get(0).text() shouldBe "Your tasks"
+      document.select(".govuk-summary-card__title").get(0).text() shouldBe "View updates and deadlines >"
+      document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/submission-deadlines")
+      document.select(".govuk-summary-card__content").get(0).text() shouldBe "You have an upcoming annual submission deadline."
+      document.select(".govuk-summary-card__content").get(1).text() shouldBe "Due 31 Jan 2027"
+    }
+  }
+
+  //TODO proceed with this test until done
+  "New Home Overview page for agents" should {
+    "display the the correct content" in new TestSetup(isAgent = true) {
+      document.select("h2.govuk-heading-m").get(0).text() shouldBe "Your tasks"
+      document.select(".govuk-summary-card__title").get(0).text() shouldBe "View updates and deadlines >"
+      document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
+      //TODO check if wording for Agents is matching
+      document.select(".govuk-summary-card__content").get(0).text() shouldBe "You have an upcoming annual submission deadline."
+      document.select(".govuk-summary-card__content").get(1).text() shouldBe "Due 31 Jan 2027"
+    }
+  }
+
+  private def getNextUpdatesTileViewModel: NextUpdatesTileViewModel =
+    NextUpdatesTileViewModel(
+      Seq.empty,
+      LocalDate.now(),
+      true,
+      true,
+      ITSAStatus.Annual,
+      None,
+      Some(LocalDate.of(2027, 1, 31))
+    )
+    
+  private def getViewModel: NextUpdatesViewModel =
+    NextUpdatesViewModel(Seq.empty, Seq.empty)
+}

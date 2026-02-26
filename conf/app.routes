@@ -22,6 +22,8 @@ GET         /help                                                         contro
 GET         /agents/recent-activity                                              controllers.HomeController.handleRecentActivity(origin: Option[String] ?= None, isAgent: Boolean = true)
 GET         /agents/overview                                                     controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
 GET         /agents/help                                                         controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
+GET         /your-tasks                                                   controllers.YourTasksController.show(origin: Option[String] ?= None, isAgent: Boolean = false)
+GET         /agents/your-tasks                                            controllers.YourTasksController.show(origin: Option[String] ?= None, isAgent: Boolean = true)
 
 #NextUpdates
 GET         /submission-deadlines                                         controllers.NextUpdatesController.show(origin: Option[String] ?= None)

@@ -1,0 +1,79 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.partials.newHome.yourTasks.YourTasksCard
+@import java.time.LocalDate
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import models.obligations.{NextUpdatesViewModel, NextUpdatesTileViewModel}
+@import views.html.components._
+
+@this(p: p,
+        implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@(title: String, nextUpdatesTileViewModel: NextUpdatesTileViewModel, link: String)(implicit messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@getBodyMessagesByUserReportingType(annualUser: Boolean) = @{
+    if (annualUser) {
+        messages("new.home.yourTasks.annual-updates-and-deadlines-body")
+    } else {
+        messages("new.home.yourTasks.quarterly-updates-and-deadlines-body")
+    }
+}
+
+@getTaskDateLabelColor(dueDate: LocalDate) =  @{
+    val tagClassPrefix = "govuk-tag govuk-tag"
+    if (dueDate.isBefore(nextUpdatesTileViewModel.currentDate)) {
+        s"$tagClassPrefix--red"
+    } else if (dueDate.isEqual(nextUpdatesTileViewModel.currentDate)) {
+        s"$tagClassPrefix--pink"
+    } else if (dueDate.isBefore(nextUpdatesTileViewModel.currentDate.plusDays(30)) && dueDate.isBefore(nextUpdatesTileViewModel.currentDate)) {
+            s"$tagClassPrefix--yellow"
+        } else {
+            s"$tagClassPrefix--green"
+        }
+}
+
+@nextTaxReturnDueDate = {
+@if(nextUpdatesTileViewModel.isQuarterlyUser || nextUpdatesTileViewModel.isAnnualUser) {
+    @nextUpdatesTileViewModel.nextTaxReturnDueDate.map { date =>
+        @* TODO this should be dynamic. And fix Styling https://design-system.service.gov.uk/styles/layout/#setting-up-page-wrappers *@
+        <p class="govuk-summary-card__content govuk-!-padding-0"> @getBodyMessagesByUserReportingType(nextUpdatesTileViewModel.isAnnualUser)</p>
+        <p class="govuk-summary-card__content govuk-!-padding-0">
+            @* TODO check why after migrating to Scala 3 we can't use implisits ImplicitDateFormatterImpl *@
+            <span class="@getTaskDateLabelColor(date)">Due @date.toLongDateShort</span>
+        </p>
+
+        @*   @p() {@messages("home.updates.R17.nextTaxReturnDue", date)} *@
+        @*        @p() {@messages("home.updates.R17.nextTaxReturnDue", date.toLongDate)} *@
+    }
+}
+}
+
+<div class="govuk-summary-card-no-border govuk-!-padding-top-1">
+    <div class="govuk-summary-card__title-wrapper--l govuk-!-padding-bottom-2 govuk-!-padding-top-2 govuk-!-padding-left-1" style="background-color: #f3f2f1">
+        <h3 class="govuk-summary-card__title">
+            <a class="govuk-link--no-visited-state govuk-link--no-underline" href="@link">
+                @title
+                <span class="hmrc-card__chevron" aria-hidden="true"></span>
+            </a>
+        </h3>
+        @nextTaxReturnDueDate
+
+    </div>
+
+</div>

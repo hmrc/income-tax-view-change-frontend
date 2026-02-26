@@ -300,8 +300,9 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
   //These should probably each have their own controllers, as they're going to each be calling the APIs independently and will have different ViewModels
   private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
-                                      (implicit user: MtdItUser[_]): Future[Result] = {
-    Future.successful(Ok(newHomeYourTasksView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+                                      (implicit user: MtdItUser[_]): Future[Result] =  {
+//    TODO check if we can do better than Redirect
+    Future.successful(Redirect(routes.YourTasksController.show(origin, isAgent)))
   }
 
   def handleRecentActivity(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {

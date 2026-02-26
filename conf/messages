@@ -197,6 +197,14 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty poin
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
 ## New Home Page ##
+new.home.navigation.tabs.yourTasks                              = Your tasks
+
+new.home.yourTasks.sub-heading                                  = Your tasks
+new.home.yourTasks.updates-and-deadlines                        = View updates and deadlines >
+new.home.yourTasks.annual-updates-and-deadlines-body            = You have an upcoming annual submission deadline.
+new.home.yourTasks.annual-updates-and-deadlines-label           = Due {date}
+new.home.yourTasks.quarterly-updates-and-deadlines-body         = You have an upcoming quarterly submission deadline.
+new.home.yourTasks.quarterly-updates-and-deadlines-label        = Due {date}
 
 new.home.navigation.tabs.overview                               = Overview
 
