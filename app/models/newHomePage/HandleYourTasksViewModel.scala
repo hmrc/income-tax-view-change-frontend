@@ -23,10 +23,10 @@ import models.financialDetails.*
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem],
-                                unpaidCharges: List[FinancialDetailsResponseModel],
-                                creditsRefundsRepayEnabled: Boolean)
-                               (implicit val appConfig: FrontendAppConfig) {
+case class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
+                                    unpaidCharges: List[FinancialDetailsResponseModel],
+                                    creditsRefundsRepayEnabled: Boolean)
+                                   (implicit val appConfig: FrontendAppConfig) {
   private val today: LocalDate = LocalDate.now()
 
   val creditInAccount: Option[BigDecimal] =
@@ -54,7 +54,7 @@ case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem],
   val outstandingAmountLpps: BigDecimal = overdueLpps.map(_.outstandingAmount).sum
   val outstandingAmountLsps: BigDecimal = overdueLsps.map(_.outstandingAmount).sum
 
-  private val oldestChargeDate: Option[LocalDate] = oldestCharge.flatMap(_.dueDate)
+   val oldestChargeDate: Option[LocalDate] = oldestCharge.flatMap(_.dueDate)
 
   private def overdueChargesByTypes(targetTypes: Set[TransactionType]): List[ChargeItem] = {
     outstandingChargesModel.filter { charge =>
@@ -152,10 +152,11 @@ case class NewHomePageViewModel(outstandingChargesModel: List[ChargeItem],
   }
 
   def getParametrisedTaskDateLabel: (String, LocalDate) = {
-    oldestChargeTransactionTypeTaskDateLabel().map( taskDateLabel => {
+    val test = oldestChargeTransactionTypeTaskDateLabel().map( taskDateLabel => {
       (taskDateLabel.content,
         if(taskDateLabel.date.isDefined) taskDateLabel.date.get else LocalDate.now())
     }).getOrElse("", LocalDate.now())
+    test
   }
 
    private def defineRedirectLinkPayments(isAgent: Boolean): Option[String] = {

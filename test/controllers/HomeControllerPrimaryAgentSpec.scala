@@ -38,7 +38,7 @@ import services.NextUpdatesService
 import services.optIn.OptInService
 import services.optout.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
+import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView}
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 
 import java.time.LocalDate
@@ -51,7 +51,6 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
   val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
   val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
   val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
-  val yourTasksView: NewHomeYourTasksView = application.injector.instanceOf(classOf[NewHomeYourTasksView])
   val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
   val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
   val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
@@ -74,7 +73,6 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
   trait Setup {
     val controller: HomeController = HomeController(
       homeView,
-      yourTasksView,
       recentActivityView,
       overviewView,
       helpView,

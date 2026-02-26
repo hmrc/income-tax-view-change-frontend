@@ -21,7 +21,7 @@
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.newHomeView._
 @import views.html.components._
-@import models.newHomePage.NewHomePageViewModel
+@import models.newHomePage.HandleYourTasksViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -38,7 +38,7 @@
         recentActivityUrl: String,
         overViewUrl: String,
         helpUrl: String,
-        viewModel: NewHomePageViewModel)(
+        viewModel: HandleYourTasksViewModel)(
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -104,6 +104,6 @@
         attributes = Map("style" -> "background-color: white;")
     ))
 
-  @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
-  @yourTasksTilePartial(viewModel, isAgent)
+    @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
+    @yourTasksTilePartial(viewModel, isAgent)
 }

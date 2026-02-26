@@ -32,6 +32,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
@@ -40,10 +41,9 @@ import services.NextUpdatesService
 import services.optIn.OptInService
 import services.optout.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
+import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView}
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.helpers.injected.home.YourReportingObligationsTile
-import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -58,7 +58,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
   val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
   val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
-  val yourTasksView: NewHomeYourTasksView = application.injector.instanceOf(classOf[NewHomeYourTasksView])
   val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
   val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
   val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
@@ -77,7 +76,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   trait Setup {
     val controller: HomeController = HomeController(
       homeView,
-      yourTasksView,
       recentActivityView,
       overviewView,
       helpView,
@@ -119,18 +117,16 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
   "show()" when {
     "NewHomePage feature switch is enabled" should {
-      "display new home page" in new Setup {
+      "redirect to handle your tasks page" in new Setup {
         enable(NewHomePage)
         setupMockUserAuth
         mockItsaStatusRetrievalAction()
         mockSingleBusinessIncomeSource()
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe Status.OK
+        status(result) shouldBe Status.SEE_OTHER
 
-        val document: Document = Jsoup.parse(contentAsString(result))
-        document.title shouldBe homePageTitle
-        document.getElementsByClass("govuk-service-navigation__container").isEmpty shouldBe false
+        await(result) shouldBe Redirect(controllers.routes.HandleYourTasksController.show().url)
       }
     }
     "an authenticated user" should {

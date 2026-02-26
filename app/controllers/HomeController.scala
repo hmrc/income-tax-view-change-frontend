@@ -21,20 +21,19 @@ import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.*
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.*
 import controllers.agent.sessionUtils.SessionKeys
 import enums.MTDSupportingAgent
 import models.admin.*
-import models.financialDetails.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
+import models.financialDetails.*
 import models.homePage.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.newHomePage.*
 import models.obligations.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, *}
+import play.api.mvc.*
 import services.*
 import services.optIn.OptInService
 import services.optout.OptOutService
@@ -47,7 +46,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.HomeView,
-                               val newHomeYourTasksView: views.html.NewHomeYourTasksView,
                                val newHomeRecentActivityView: views.html.NewHomeRecentActivityView,
                                val newHomeOverviewView: views.html.NewHomeOverviewView,
                                val newHomeHelpView: views.html.NewHomeHelpView,
@@ -122,8 +120,8 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
 
-      val yourBusinessesTileViewModel = models.homePage.YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
-      val yourReportingObligationsTileViewModel = models.homePage.YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
+      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
       auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel))
       Ok(
@@ -150,7 +148,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
-      accruingInterestPaymentsCount = models.homePage.NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, getCurrentDate)
+      accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, getCurrentDate)
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
       penaltiesCount <- penaltyDetailsService.getPenaltiesCount(isEnabled(PenaltiesBackendEnabled))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
@@ -171,24 +169,24 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
           nextTaxReturnDueDate = nextTaxReturnDueDate
         )
 
-      val penaltiesAndAppealsTileViewModel: models.homePage.PenaltiesAndAppealsTileViewModel =
-        models.homePage.PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
+      val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel =
+        PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
 
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
 
       val yourBusinessesTileViewModel =
-        models.homePage.YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
+        YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
 
       val returnsTileViewModel =
-        models.homePage.ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
+        ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
 
       val yourReportingObligationsTileViewModel =
-        models.homePage.YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+        YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
 
-      models.homePage.NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount).verify match {
+      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount).verify match {
 
-        case Right(viewModel: models.homePage.NextPaymentsTileViewModel) =>
+        case Right(viewModel: NextPaymentsTileViewModel) =>
           val homeViewModel = HomePageViewModel(
             utr = user.saUtr,
             nextPaymentsTileViewModel = viewModel,
@@ -233,19 +231,6 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter).flatMap(_.dueDate)
       .sortWith(_ isBefore _)
       .sortBy(_.toEpochDay())
-  }
-
-  private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[ChargeItem] = {
-
-    val chargesList =
-      unpaidCharges.collect {
-        case fdm: FinancialDetailsModel => fdm
-      }
-    whatYouOweService.getFilteredChargesList(
-      financialDetailsList = chargesList,
-      isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
-      isPenaltiesEnabled = penaltiesEnabled,
-      remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter)
   }
 
   private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
@@ -309,37 +294,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     }
   }
 
-  //These should probably each have their own controllers, as they're going to each be calling the APIs independently and will have different ViewModels
   private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
                              (implicit user: MtdItUser[_]): Future[Result] = {
-    val getCurrentTaxYearEnd = dateService.getCurrentTaxYearEnd
-    val getCurrentDate = dateService.getCurrentDate
-    val currentTaxYear = TaxYear(getCurrentTaxYearEnd - 1, getCurrentTaxYearEnd)
-
-    for {
-      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
-      _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
-      _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
-      mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
-      chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
-    } yield {
-
-      val creditsRefundsRepayEnabled= isEnabled(CreditsRefundsRepay)
-      val mandationStatus =
-        if (mandation) SessionKeys.mandationStatus -> "on"
-        else SessionKeys.mandationStatus -> "off"
-
-      val homeViewModel = NewHomePageViewModel(chargeItemList, unpaidCharges, creditsRefundsRepayEnabled)
-
-      if (user.isAgent()) {
-        Ok(newHomeYourTasksView(origin, isAgent,
-          yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
-          overviewUrl(origin, isAgent), helpUrl(origin, isAgent), homeViewModel)).addingToSession(mandationStatus)
-      } else {
-        Ok(newHomeYourTasksView(origin, isAgent,
-          yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
-          overviewUrl(origin, isAgent), helpUrl(origin, isAgent), homeViewModel))
-      }
+    if(isAgent){
+      Future.successful(Redirect(routes.HandleYourTasksController.showAgent()))
+    }else {
+     Future.successful(Redirect(routes.HandleYourTasksController.show()))
     }
   }
 

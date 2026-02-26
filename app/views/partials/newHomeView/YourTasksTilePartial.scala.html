@@ -15,23 +15,25 @@
  *@
 
 @import views.html.components._
-@import models.newHomePage.NewHomePageViewModel
+@import models.newHomePage.HandleYourTasksViewModel
 @import _root_.implicits.ImplicitDateFormatterImpl
+
 @import enums.MTDSupportingAgent
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl,
         link: link,
         p: p)
 
-@(viewModel: NewHomePageViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: HandleYourTasksViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
  @import implicitDateFormatter.longDate
 
- @getNextPaymentsTag = @{
-   val taskDateLabel = getTaskDateLabel
-   if(!taskDateLabel.isBlank) {
-           <span class="govuk-tag govuk-tag--@viewModel.oldestChargeStatusColor(viewModel.oldestChargeDate)" id="date-tag">
-           getTaskDateLabel
-           </span>
+@getColor = @{viewModel.oldestChargeStatusColor(viewModel.oldestChargeDate)}
+
+ @getNextPaymentsTag = {
+   @if(!getTaskDateLabel.isBlank) {
+       <span class="govuk-tag govuk-tag--@getColor" id="date-tag">
+       @getTaskDateLabel
+       </span>
    }
  }
 
@@ -67,7 +69,7 @@
                 <a href=@viewModel.getRedirectLinkMoneyInAccount(isAgent)>@messages("newHome.yourTasks.selfAssessment.money-in-account.h1") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
             </h3>
         @if(moneyInYourAccount.isDefined){
-            <div class="govuk-body">@messages("newHome.yourTasks.selfAssessment.money-in-account", moneyInYourAccount.get)</div>
+            <div class="govuk-body">@messages("newHome.yourTasks.selfAssessment.money-in-account", moneyInYourAccount.get.toString())</div>
         }
     </div>
 </div>
