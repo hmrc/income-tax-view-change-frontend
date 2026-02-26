@@ -70,7 +70,7 @@ class IncomeSourceAddedController @Inject()(
     }
 
   private[controllers] def getReportingFrequencyUrl(isAgent: Boolean) =
-    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
   private[controllers] def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
 

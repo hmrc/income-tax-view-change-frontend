@@ -15,15 +15,14 @@
  *@
 
 @import models.obligations.NextUpdatesViewModel
-@import models.optout.NextUpdatesQuarterlyReportingContentChecks
 @import views.html.components._
 @import views.html.helpers.injected.obligations._
 @import views.html.layouts.unifiedLayout
-@import services.optout.OptOutProposition
 @import config.FrontendAppConfig
 @import viewUtils.ExternalUrlHelper
 @import models.itsaStatus.ITSAStatus.ITSAStatus
-
+@import models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
+@import services.reportingObligations.optOut.OptOutProposition
 
 @this(
     mainTemplate: unifiedLayout,
@@ -37,6 +36,7 @@
     nextUpdatesHelperR17: NextUpdatesHelperR17,
     appConfig: config.FrontendAppConfig
 )
+
 @(
     viewModel: NextUpdatesViewModel,
     checks: NextUpdatesQuarterlyReportingContentChecks,
@@ -49,8 +49,6 @@
     optInOptOutContentR17Enabled: Boolean,
     taxYearStatusesCyNy: (ITSAStatus, ITSAStatus)
 )(implicit messages: Messages, user: auth.MtdItUser[_])
-
-
 
 @mainTemplate(
     pageTitle = messages("nextUpdates.heading"),
@@ -103,7 +101,6 @@
     }
 }
 
-@import models.itsaStatus.ITSAStatus
 @detailsContent = {
     <div id="details-content-0" class="govuk-!-margin-bottom-4">
         @h2(msg = "obligations.quarterlyUpdates", optId = Some("quarterlyReturns-heading"))

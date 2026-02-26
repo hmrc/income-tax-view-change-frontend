@@ -33,8 +33,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
 import services.manageBusinesses.IncomeSourceRFService
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.signUp.OptInService
+import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{JourneyCheckerManageBusinesses, MtdConstants}

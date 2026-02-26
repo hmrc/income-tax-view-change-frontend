@@ -23,7 +23,7 @@ import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Annual
 import play.api.http.Status.OK
 import play.api.libs.json.Json
-import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.reportingObligations.signUp.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
 import testUtils.TestSupport
 
 class SignUpAuditModelSpec extends TestSupport {

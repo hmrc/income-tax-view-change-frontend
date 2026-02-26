@@ -22,7 +22,7 @@ import enums.{JourneyCompleted, JourneyState}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.mvc.{Request, Result}
-import services.optIn.OptInService
+import services.reportingObligations.signUp.OptInService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}

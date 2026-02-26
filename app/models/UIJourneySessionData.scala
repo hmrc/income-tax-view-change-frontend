@@ -17,8 +17,8 @@
 package models
 
 import models.incomeSourceDetails.*
-import models.optin.OptInSessionData
-import models.optout.OptOutSessionData
+import models.reportingObligations.signUp.OptInSessionData
+import models.reportingObligations.optOut.OptOutSessionData
 import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.*

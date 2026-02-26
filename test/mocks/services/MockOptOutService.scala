@@ -18,13 +18,12 @@ package mocks.services
 
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse
 import models.incomeSourceDetails.TaxYear
-import models.optout._
-import models.optout.newJourney.OptOutTaxYearQuestionViewModel
+import models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutCheckpointViewModel, OptOutOneYearViewModel, OptOutTaxYearQuestionViewModel, OptOutViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.optout.{OptOutProposition, OptOutService}
-import services.reporting_frequency.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingObligations.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import services.reportingObligations.optOut.{OptOutProposition, OptOutService}
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

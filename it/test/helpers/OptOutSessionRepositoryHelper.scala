@@ -20,7 +20,7 @@ import enums.JourneyType.OptOutJourney
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.optout.OptOutSessionData
+import models.reportingObligations.optOut.OptOutSessionData
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import testConstants.BaseIntegrationTestConstants.testSessionId
 

@@ -33,10 +33,10 @@ import models.obligations.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, _}
+import play.api.mvc.*
 import services._
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.signUp.OptInService
+import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

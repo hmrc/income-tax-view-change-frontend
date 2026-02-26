@@ -36,9 +36,9 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
+import services.reportingObligations.signUp.OptInService
 import services.{CreditService, NextUpdatesService}
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.optOut.OptOutService
 import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}

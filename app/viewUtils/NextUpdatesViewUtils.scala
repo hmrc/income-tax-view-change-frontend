@@ -20,7 +20,7 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.ReportingFrequencyPage
-import models.optout.{OptOutMultiYearViewModel, OptOutOneYearViewModel, OptOutViewModel}
+import models.reportingObligations.optOut.{OptOutMultiYearViewModel, OptOutOneYearViewModel, OptOutViewModel}
 import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
 import views.html.components.link
@@ -30,10 +30,9 @@ import javax.inject.Inject
 class NextUpdatesViewUtils @Inject()(link: link)(
                                       implicit val appConfig: FrontendAppConfig
                                     ) extends FeatureSwitching {
-
-
   def whatTheUserCanDo(optOutViewModel: Option[OptOutViewModel], isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Option[Html] = {
-    val reportingFrequencyLink = controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+
+    val reportingFrequencyLink = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
     val reportingFrequencyHtml: Html =
       HtmlFormat.fill(
@@ -47,42 +46,6 @@ class NextUpdatesViewUtils @Inject()(link: link)(
           )
         )
       )
-
-    optOutViewModel.fold(Some(reportingFrequencyHtml)) {
-      case _ if isEnabled(ReportingFrequencyPage) => Some(reportingFrequencyHtml)
-      case m: OptOutOneYearViewModel if m.showWarning =>
-        Some(HtmlFormat.fill(
-          Seq(
-            Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
-            link(
-              link = controllers.optOut.oldJourney.routes.SingleYearOptOutWarningController.show(isAgent).url,
-              messageKey = "nextUpdates.optOutOneYear.p.link",
-              id = Some("single-year-opt-out-warning-link")
-            )
-          )
-        ))
-      case m: OptOutOneYearViewModel =>
-        Some(HtmlFormat.fill(
-          Seq(
-            Html(messages("nextUpdates.optOutOneYear.p.message", m.startYear, m.endYear)),
-            link(
-              link = controllers.optOut.oldJourney.routes.ConfirmOptOutController.show(isAgent).url,
-              messageKey = "nextUpdates.optOutOneYear.p.link",
-              id = Some("confirm-opt-out-link")
-            )
-          )
-        ))
-      case _: OptOutMultiYearViewModel =>
-        Some(HtmlFormat.fill(
-          Seq(
-            Html(messages("nextUpdates.optOutMultiYear.p.message")),
-            link(
-              link = controllers.optOut.oldJourney.routes.OptOutChooseTaxYearController.show(isAgent).url,
-              messageKey = "nextUpdates.optOutMultiYear.p.link",
-              id = Some("opt-out-link")
-            )
-          )
-        ))
-    }
+    if (isEnabled(ReportingFrequencyPage)) Some(reportingFrequencyHtml) else None
   }
 }

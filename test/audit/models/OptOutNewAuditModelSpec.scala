@@ -20,7 +20,7 @@ import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import play.api.libs.json.Json
-import services.optIn.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.reportingObligations.signUp.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
 import testUtils.TestSupport
 
 class OptOutNewAuditModelSpec extends TestSupport {

@@ -17,13 +17,13 @@
 package mocks.services
 
 import models.incomeSourceDetails.TaxYear
-import models.optin.newJourney.SignUpTaxYearQuestionViewModel
+import models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.optIn.OptInService
-import services.optIn.core.OptInProposition
+import services.reportingObligations.signUp.OptInService
+import services.reportingObligations.signUp.core.OptInProposition
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
