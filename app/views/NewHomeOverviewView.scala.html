@@ -41,7 +41,8 @@
         yourTasksUrl: String,
         recentActivityUrl: String,
         overViewUrl: String,
-        helpUrl: String)(
+        helpUrl: String,
+        noChargesToPay: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -115,7 +116,7 @@
 
     <div class="govuk-!-padding-bottom-6"></div>
 
-    @chargesSection(isAgent)
+    @chargesSection(isAgent, noChargesToPay)
     @SectionBreak
 
     @deadlinesSection(isAgent)

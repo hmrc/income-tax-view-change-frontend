@@ -202,6 +202,7 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 new.home.navigation.tabs.overview                               = Trosolwg
 
 new.home.overview.charges.sub-heading                           = Ffioedd, taliadau, credydau ac ad-daliadau
+new.home.overview.charges.check-what-you-owe                    = Gwirio’r hyn sydd arnoch
 new.home.overview.charges.make-payment                          = Gwirio’r hyn sydd arnoch a gwneud taliad
 new.home.overview.charges.payment-history                       = Gweld hanes taliadau, credydau ac ad-daliadau
 new.home.overview.charges.money-in-account                      = Gwirio faint o arian sydd yn eich cyfrif
