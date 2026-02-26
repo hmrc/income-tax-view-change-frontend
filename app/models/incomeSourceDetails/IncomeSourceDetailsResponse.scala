@@ -21,12 +21,61 @@ import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmploym
 import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId, IncomeSourceIdHash}
-import play.api.libs.json.{Format, JsValue, Json}
+import play.api.libs.json.{Format, JsValue, Json, OFormat}
 import play.api.{Logger, Logging}
 import services.DateServiceInterface
+import uk.gov.hmrc.crypto.Sensitive.SensitiveString
+import uk.gov.hmrc.crypto.json.JsonEncryption
+import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 
 sealed trait IncomeSourceDetailsResponse {
   def toJson: JsValue
+}
+
+
+case class ChooseSoleTraderAddressUserAnswer(
+                                              addressLine1: Option[String],
+                                              addressLine2: Option[String],
+                                              addressLine3: Option[String],
+                                              addressLine4: Option[String],
+                                              postcode: Option[String],
+                                              countryCode: Option[String],
+                                              newAddress: Boolean
+                                            )
+
+object ChooseSoleTraderAddressUserAnswer {
+  implicit val format: OFormat[ChooseSoleTraderAddressUserAnswer] = Json.format[ChooseSoleTraderAddressUserAnswer]
+}
+
+case class SensitiveChooseSoleTraderAddressRadioAnswer(
+                                                        addressLine1: Option[SensitiveString],
+                                                        addressLine2: Option[SensitiveString],
+                                                        addressLine3: Option[SensitiveString],
+                                                        addressLine4: Option[SensitiveString],
+                                                        postcode: Option[SensitiveString],
+                                                        countryCode: Option[SensitiveString],
+                                                        newAddress: Boolean
+                                                      ) {
+
+  def decrypted: ChooseSoleTraderAddressUserAnswer =
+    ChooseSoleTraderAddressUserAnswer(
+      addressLine1.map(_.decryptedValue),
+      addressLine2.map(_.decryptedValue),
+      addressLine3.map(_.decryptedValue),
+      addressLine4.map(_.decryptedValue),
+      postcode.map(_.decryptedValue),
+      countryCode.map(_.decryptedValue),
+      newAddress
+    )
+}
+
+object SensitiveChooseSoleTraderAddressRadioAnswer {
+
+  implicit def sensitiveStringFormat(implicit crypto: Encrypter with Decrypter): Format[SensitiveString] =
+    JsonEncryption.sensitiveEncrypterDecrypter(SensitiveString.apply)
+
+  implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveChooseSoleTraderAddressRadioAnswer] =
+    Json.format[SensitiveChooseSoleTraderAddressRadioAnswer]
 }
 
 case class IncomeSourceDetailsModel(
@@ -127,20 +176,59 @@ case class IncomeSourceDetailsModel(
     Set(CustomerLed.getValue, HmrcConfirmed.getValue).contains(channel)
   }
 
-  def getAllUniqueBusinessAddresses: List[String] = {
+  def getAllUniqueBusinessAddresses: List[ChooseSoleTraderAddressUserAnswer] = {
     val allAddresses = businesses.flatMap { thisBusiness =>
       thisBusiness.address.map { address =>
         (address.addressLine1, address.postCode, address.countryCode) match {
-          case (Some(al1), Some(pc), Some("GB")) => Some(s"$al1, $pc")
-          case (Some(al1), _, _) => Some(s"$al1")
+          case (Some(addressLine1), postCode, Some("GB")) =>
+            Some(ChooseSoleTraderAddressUserAnswer(
+              Some(addressLine1),
+              address.addressLine2,
+              address.addressLine3,
+              address.addressLine4,
+              postCode,
+              Some("GB"),
+              false
+            ))
+          case (Some(addressLine1), postCode, countryCode) =>
+            Some(ChooseSoleTraderAddressUserAnswer(
+              Some(addressLine1),
+              address.addressLine2,
+              address.addressLine3,
+              address.addressLine4,
+              postCode,
+              countryCode,
+              false
+            ))
+          case (Some(addressLine1), None, countryCode) =>
+            Some(ChooseSoleTraderAddressUserAnswer(
+              Some(addressLine1),
+              address.addressLine2,
+              address.addressLine3,
+              address.addressLine4,
+              None,
+              countryCode,
+              false
+            ))
+          case (Some(addressLine1), postCode, None) =>
+            Some(ChooseSoleTraderAddressUserAnswer(
+              Some(addressLine1),
+              address.addressLine2,
+              address.addressLine3,
+              address.addressLine4,
+              postCode,
+              None,
+              false
+            ))
           case _ => None
         }
       }
     }
+
     allAddresses.flatten.distinct
   }
-  
-  def getAllUniqueBusinessAddressesWithIndex: Seq[(String, Int)] = {
+
+  def getAllUniqueBusinessAddressesWithIndex: Seq[(ChooseSoleTraderAddressUserAnswer, Int)] = {
     getAllUniqueBusinessAddresses.zipWithIndex
   }
 }

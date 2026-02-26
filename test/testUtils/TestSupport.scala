@@ -36,7 +36,7 @@ import org.scalatest.*
 import org.scalatestplus.play.guice.*
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Injecting}
@@ -47,7 +47,7 @@ import testConstants.BaseTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 import testOnly.repository.FeatureSwitchRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name, ~}
+import uk.gov.hmrc.auth.core.retrieve.*
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole, Enrolments}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId, SessionKeys}
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -180,8 +180,8 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
   def getAgentUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeAgent), businessAndPropertyAligned, request)
 
-  def getIndividualUserIncomeSourcesConfigurable(request: FakeRequest[AnyContentAsEmpty.type], incomeSources: IncomeSourceDetailsModel)
-  : MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual), incomeSources, request)
+  def getIndividualUserIncomeSourcesConfigurable(request: FakeRequest[AnyContentAsEmpty.type], incomeSources: IncomeSourceDetailsModel): MtdItUser[_] =
+    defaultMTDITUser(Some(testUserTypeIndividual), incomeSources, request)
 
   def getIndividualUserWithTwoActiveForeignProperties(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] =
     defaultMTDITUser(Some(testUserTypeIndividual), twoActiveForeignPropertyIncomes, request)
