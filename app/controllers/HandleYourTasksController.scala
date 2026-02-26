@@ -106,7 +106,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
   }
 
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url
+  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HandleYourTasksController.showAgent().url else controllers.routes.HandleYourTasksController.show().url
 
   def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
 
