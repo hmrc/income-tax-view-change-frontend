@@ -54,6 +54,7 @@ object IncomeSourceDetailsTestConstants {
   val noIncomeDetails = IncomeSourceDetailsModel(testNino, testMtditid, None, List(), Nil)
   val errorResponse = IncomeSourceDetailsError(testErrorStatus, testErrorMessage)
   val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business2018, business2019), List(propertyDetails))
+  val businessInternational = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business1International), List(propertyDetails))
   val oldUserDetails = IncomeSourceDetailsModel(testNino, testMtditid, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(oldUseralignedBusiness), List(propertyDetails))
   val preSanitised = IncomeSourceDetailsModel(testNino, testMtditid, Some((fixedDate.getYear - 1).toString), List(business2018, alignedBusiness), List(propertyDetails))

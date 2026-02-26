@@ -121,7 +121,7 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
                   isAgent = isAgent,
                   showReportingFrequencyContent = showReportingFrequencyContent,
                   confirmedOptOutViewScenarios = viewScenario,
-                  selfAssessmentTaxReturnLink = appConfig.selfAssessmentTaxReturnLink,
+                  selfAssessmentTaxReturnLink = appConfig.logInFileSelfAssessmentTaxReturnLink,
                   compatibleSoftwareLink = appConfig.compatibleSoftwareLink
                 ))
             }

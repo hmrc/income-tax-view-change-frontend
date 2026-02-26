@@ -100,16 +100,19 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
     channel = channel,
     businesses = List(BusinessDetailsModel("testId", None, None, None, Some(LocalDate.now()), None, None, None)))
 
-  val testCalcResponse: LiabilityCalculationResponse = LiabilityCalculationResponse(
-    inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
-    messages = None,
-    calculation = None,
-    metadata = Metadata(
-      calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
-      calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"),
-      periodFrom = Some(LocalDate.of(2022, 1, 1)),
-      periodTo = Some(LocalDate.of(2023, 1, 1))))
+  val testCalcResponse: LiabilityCalculationResponse =
+    LiabilityCalculationResponse(
+      inputs = Inputs(personalInformation = PersonalInformation(taxRegime = "UK", class2VoluntaryContributions = None)),
+      messages = None,
+      calculation = None,
+      metadata = Metadata(
+        calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+        calculationType = "crystallisation",
+        calculationReason = Some("customerRequest"),
+        periodFrom = Some(LocalDate.of(2022, 1, 1)),
+        periodTo = Some(LocalDate.of(2023, 1, 1))),
+      submissionChannel = None
+    )
 
   def triggeredMigrationSessionData(recentlyConfirmed: Boolean) = UIJourneySessionData(
     sessionId = "testSessionId",

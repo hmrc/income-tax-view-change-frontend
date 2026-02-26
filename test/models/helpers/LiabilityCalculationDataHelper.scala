@@ -638,7 +638,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessfulConversionSB = LiabilityCalculationResponse(
@@ -654,7 +656,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
   val liabilityCalculationModelSuccessfulConversionDB = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -669,7 +673,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
   val liabilityCalculationModelSuccessfulConversionLS = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -684,7 +690,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
   val liabilityCalculationModelSuccessfulConversionGLP = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(
@@ -699,7 +707,9 @@ trait LiabilityCalculationDataHelper {
     metadata = Metadata(
       calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
       calculationType = "crystallisation",
-      calculationReason = Some("customerRequest"))
+      calculationReason = Some("customerRequest"),
+    ),
+    submissionChannel = None
   )
 
   val liabilityCalculationModelSuccessfulWithNoCalc = liabilityCalculationModelSuccessfulConversionPB.copy(

@@ -184,12 +184,24 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val isHipRepaymentApiEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-hip-repayment-api")
 
   //External-Urls
-  def selfAssessmentTaxReturnLink(implicit messages: Messages): String =
+  def logInFileSelfAssessmentTaxReturnLink(implicit messages: Messages): String =
     messages.lang.code match {
       case "en" => "https://www.gov.uk/log-in-file-self-assessment-tax-return"
       case "cy" => "https://www.gov.uk/cyflwyno-ch-ffurflen-dreth-hunanasesiad-ar-lein"
       case _ => "https://www.gov.uk/log-in-file-self-assessment-tax-return"
     }
+
+  def selfAssessmentTaxReturnLink(isAgent: Boolean)(implicit messages: Messages): String =
+    messages.lang.code match {
+      case _ if isAgent => "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
+      case "en" => "https://www.gov.uk/self-assessment-tax-returns"
+      case "cy" => "https://www.gov.uk/ffurflenni-treth-hunanasesiad/trosolwg"
+      case _ => "https://www.gov.uk/self-assessment-tax-returns"
+    }
+
+  def findHmrcContactsSALink(): String =
+    "https://www.gov.uk/find-hmrc-contacts/self-assessment-general-enquiries"
+
 
   def compatibleSoftwareLink(implicit messages: Messages): String =
     messages.lang.code match {
@@ -197,6 +209,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
       case "cy" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy"
       case _ => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
     }
+
   lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")
   lazy val threshold2027 = servicesConfig.getString("thresholds.threshold2027")
   lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")

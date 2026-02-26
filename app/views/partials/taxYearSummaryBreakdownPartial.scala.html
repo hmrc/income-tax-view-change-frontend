@@ -21,12 +21,24 @@
 @import views.html.components._
 @import play.twirl.api.HtmlFormat
 
-@this(govukWarningText : GovukWarningText,
-        h2: h2,
-        h3: h3,
-        implicitDateFormatter: ImplicitDateFormatterImpl,
-        p: p)
-@(overview: CalculationSummary, taxYear: Int, isFinalCalc: Boolean, isAgent: Boolean, caption: Option[String] = None, origin: Option[String] = None, isLatest: Boolean = false, isPrevious: Boolean = false)(implicit messages: Messages)
+@this(
+    govukWarningText : GovukWarningText,
+    h2: h2,
+    h3: h3,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    p: p
+)
+
+@(
+    overview: CalculationSummary,
+    taxYear: Int,
+    isFinalCalc: Boolean,
+    isAgent: Boolean,
+    caption: Option[String] = None,
+    origin: Option[String] = None,
+    isLatest: Boolean = false,
+    isPrevious: Boolean = false
+)(implicit messages: Messages)
 
 @import implicitDateFormatter._
 
@@ -71,7 +83,7 @@
 }
 
 @if(isFinalCalc){
-  @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l")
+  @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
     <table class="govuk-table" id="@tableId-income-deductions-contributions-table">
         <caption class="govuk-table__caption govuk-visually-hidden" style="margin-bottom: 0px;">@messages("tax-year-summary.tax-calculation")</caption>
         <thead class="govuk-table__head">
@@ -134,8 +146,6 @@
         </tbody>
     </table>
 
-
-
 } else {
     @if(overview.unattendedCalc){
         @govukWarningText(WarningText(
@@ -143,7 +153,7 @@
         ))
     }
 
-    @h2(msg = heading, classes = "govuk-heading-l")
+    @h2(msg = heading, classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
 
     @overviewDescription
 
@@ -207,9 +217,8 @@
                         }
                     </div>
                 </th>
-                <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold govuk-!-text-align-right">@{
-                    overview.taxDue.toCurrencyString
-                    }
+                <td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold govuk-!-text-align-right">
+                    @{ overview.taxDue.toCurrencyString }
                 </td>
             </tr>
         </tbody>

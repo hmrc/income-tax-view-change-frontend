@@ -35,17 +35,17 @@
 @(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], messages: Messages)
 
 @renderCreditRow(creditRow: CreditRow) = {
-@creditRow match {
-    case PaymentCreditRow(amount, date) => {
-        @paymentViewRow(amount, date)
+    @creditRow match {
+        case PaymentCreditRow(_, amount, date, _) => {
+            @paymentViewRow(amount, date)
+        }
+        case CreditViewRow(_, amount, creditType, taxYear, _) => {
+            @creditViewRow(amount, creditType, taxYear)
+        }
+        case RefundRow(amount, _) => {
+            @refundViewRow(amount)
+        }
     }
-    case CreditViewRow(amount, creditType, taxYear) => {
-        @creditViewRow(amount, creditType, taxYear)
-    }
-    case RefundRow(amount) => {
-        @refundViewRow(amount)
-    }
-}
 }
 
 @detailsContent = {

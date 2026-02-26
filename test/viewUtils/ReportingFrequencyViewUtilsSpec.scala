@@ -245,7 +245,7 @@ class ReportingFrequencyViewUtilsSpec extends UnitSpec with FeatureSwitching wit
             List(
               ("2023 to 2024", Some("Yes"), Some("Required")),
               ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
-              ("2025 to 2026", Some("No"), Some("Opted out"))
+              ("2025 to 2026", Some("No"), Some("Not required"))
             )
           actual shouldBe expected
         }

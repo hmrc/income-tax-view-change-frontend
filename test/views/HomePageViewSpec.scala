@@ -21,7 +21,8 @@ import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.PaymentHistoryRefunds
-import models.homePage._
+import models.creditsandrefunds.CreditsModel
+import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -30,10 +31,10 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants._
-import testConstants.FinancialDetailsTestConstants.financialDetailsModel
+import testConstants.ANewCreditAndRefundModel
+import testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 import views.html.HomeView
 
@@ -106,8 +107,11 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val nextPaymentsTileViewModel: NextPaymentsTileViewModel = NextPaymentsTileViewModel(Some(paymentDueDate), overDuePaymentsCount, paymentsAccruingInterestCount)
 
-    val paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(List(financialDetailsModel()),
-      creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined)
+    val credits: CreditsModel = ANewCreditAndRefundModel().withTotalCredit(200).model
+    val paymentCreditAndRefundHistoryTileViewModel: PaymentCreditAndRefundHistoryTileViewModel = PaymentCreditAndRefundHistoryTileViewModel(
+      credits,
+      creditAndRefundEnabled, paymentHistoryEnabled, isUserMigrated = user.incomeSources.yearOfMigration.isDefined
+    )
 
     val yourBusinessesTileViewModel: YourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 

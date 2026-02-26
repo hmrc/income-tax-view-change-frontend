@@ -94,6 +94,10 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     paymentAllocationViewModelWithCreditZeroOutstanding.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
   }
 
+  class PaymentAllocationSetupNoTaxPeriodEndDate(viewModel: PaymentAllocationViewModel = paymentAllocationViewModelWithNoTaxPeriodEndDate) extends Setup(
+    paymentAllocationView(viewModel, backUrl, saUtr = Some("1234567890"))) {
+    paymentAllocationViewModelWithNoTaxPeriodEndDate.originalPaymentAllocationWithClearingDate(0).allocationDetail.get.chargeType.get
+  }
 
   "Payment Allocation Page for non LPI" should {
     "check that the first section information is present" when {
@@ -215,6 +219,14 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "has a payment headers right aligned" in new PaymentAllocationSetup() {
         val allTableData: Element = document.selectHead("thead").selectHead("tr")
         allTableData.selectNth("th", 4).hasClass("govuk-table__header--numeric")
+      }
+
+      "Show no data when there is no TaxPeriod End date supplied" in new PaymentAllocationSetup(viewModel = paymentAllocationViewModelWithNoTaxPeriodEndDate) {
+        val allTableData: Element = document.selectHead("tbody").selectHead("tr")
+        allTableData.selectNth("td", 1).text() shouldBe "31 Jan 2021"
+        allTableData.selectNth("td", 2).text() shouldBe s"${messages("paymentAllocation.paymentAllocations.poa1.nic4")}"
+        allTableData.selectNth("td", 3).text() shouldBe s"${messages("paymentAllocation.noData")}"
+        allTableData.selectNth("td", 4).text() shouldBe "£10.10"
       }
 
     }

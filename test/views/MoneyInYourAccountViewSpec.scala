@@ -18,6 +18,7 @@ package views
 
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import java.time.LocalDate
 import implicits.ImplicitDateFormatter
 import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import org.jsoup.Jsoup
@@ -41,6 +42,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
   val individualTitle: String = messages("htmlTitle", moneyInYourAccountHeading)
   val agentTitle: String = messages("htmlTitle.agent", moneyInYourAccountHeading)
 
+  private def dateInYear(year: Int) = LocalDate.of(year, 1, 1)
 
   class TestSetup(
                    creditAndRefundModel: CreditsModel,
@@ -95,6 +97,57 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
         document.selectById("refunds-link").attribute("href").toString.contains("/report-quarterly/income-and-expenses/view/refund-status")
       }
 
+      "the user has credit which has not been allocated" in new TestSetup(
+        creditAndRefundModel = ANewCreditAndRefundModel()
+          .withTotalCredit(200)
+          .withAvailableCredit(100)
+          .withUnallocatedCredit(100)
+          .withPayment(dateInYear(2024), 50)
+          .withPayment(dateInYear(2024), 50)
+          .get()
+      ) {
+        document.title() shouldBe individualTitle
+        layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
+        document.selectById("credit-explanation").text() shouldBe "This amount has not been set aside for any charges yet."
+        document.hasTableWithCaption("Where the money came from")
+        document.hasTableWithCorrectSize(1, 4)
+        document.hasTableWithCorrectHeadings(List("Date", "Description", "Tax year", "Amount"))
+        document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
+      }
+      "the user has credit which has all been allocated" in new TestSetup(
+        creditAndRefundModel = ANewCreditAndRefundModel()
+          .withTotalCredit(200)
+          .withAvailableCredit(100)
+          .withAllocatedFutureCredit(100)
+          .withBalancingChargeCredit(dateInYear(2024), 50)
+          .withPoaOneReconciliationCredit(dateInYear(2023), 50)
+          .get()
+      ) {
+        document.title() shouldBe individualTitle
+        layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
+        document.selectById("credit-explanation").text() shouldBe "This amount has been set aside to pay for upcoming charges. You can still claim it back, but it may be easier to leave it in your account to avoid missing any payment deadlines."
+        document.hasTableWithCaption("Where the money came from")
+        document.hasTableWithCorrectSize(1, 4)
+        document.hasTableWithCorrectHeadings(List("Date", "Description", "Tax year", "Amount"))
+        document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
+      }
+      "the user has credit which has been partially allocated" in new TestSetup(
+        creditAndRefundModel = ANewCreditAndRefundModel()
+          .withTotalCredit(200)
+          .withAvailableCredit(100)
+          .withPayment(dateInYear(2024), 100)
+          .withUnallocatedCredit(100)
+          .withAllocatedFutureCredit(100).get()
+      ) {
+        document.title() shouldBe individualTitle
+        layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
+        document.selectById("credit-explanation-1").text() shouldBe "£100.00 has been set aside to pay for upcoming charges. You can claim this money back, but it may be easier to leave it in your account to avoid missing any payment deadlines."
+        document.selectById("credit-explanation-2").text() shouldBe "If you claim more than £100.00, you’ll need to make another payment to cover your upcoming charges before the deadline."
+        document.hasTableWithCaption("Where the money came from")
+        document.hasTableWithCorrectSize(1, 3)
+        document.hasTableWithCorrectHeadings(List("Date", "Description", "Tax year", "Amount"))
+        document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
+      }
     }
 
     "displaying agent credit and refund page" should {

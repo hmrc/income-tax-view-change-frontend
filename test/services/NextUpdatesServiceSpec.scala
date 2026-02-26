@@ -375,7 +375,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         result shouldBe Right(Seq.empty)
       }
 
-      "the ObligationsModel contains only empty obligations (EOPS filtered out)" in new Setup {
+      "the ObligationsModel contains only empty obligations" in new Setup {
         setupMockNextUpdates(obligationsSuccessModelFiltered)
         val result: Either[Exception, Seq[LocalDate]] = getDueDates().futureValue
         result.isRight shouldBe true
@@ -487,13 +487,13 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
       val day = LocalDate.of(2023, 1, 1)
       val nextModel: ObligationsModel = ObligationsModel(Seq(
         GroupedObligationsModel("123", List(
-          SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "C", StatusFulfilled)
+          SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "C", StatusFulfilled)
         ))
       ))
       when(mockObligationsConnector.getOpenObligations()(any(), any())).
         thenReturn(Future(nextModel))
 
-      val expectedResult = Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "EOPS"))
+      val expectedResult = Seq(DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = false, obligationType = "Quarterly"))
       val result = TestNextUpdatesService.getObligationDates("123")
       result.futureValue shouldBe expectedResult
     }
@@ -594,7 +594,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
   }
 
   ".getNextUpdatesViewModel" should {
-    "return a valid model with no EOPS Obligations" in {
+    "return a valid model with no obligations of unsupported types" in {
       val obligations = ObligationsModel(
         Seq(
           GroupedObligationsModel("XA00001234", List(

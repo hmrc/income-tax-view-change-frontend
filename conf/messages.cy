@@ -19,6 +19,7 @@ base.confirm-and-save                                           = Cadarnhau a ch
 base.confirm-this-change                                        = Cadarnhau’r newid hwn
 base.software.compatible.with.mtd.income.tax.link               = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol
 base.fullstop                                                   = .
+base.or                                                         = neu
 
 
 ## Accessibility ##
@@ -196,6 +197,30 @@ home.penaltiesAndAppeals.view                                   = Gwirio cosbau 
 home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
+## New Home Page ##
+
+new.home.navigation.tabs.overview                               = Trosolwg
+
+new.home.overview.charges.sub-heading                           = Ffioedd, taliadau, credydau ac ad-daliadau
+new.home.overview.charges.check-what-you-owe                    = Gwirio’r hyn sydd arnoch
+new.home.overview.charges.make-payment                          = Gwirio’r hyn sydd arnoch a gwneud taliad
+new.home.overview.charges.payment-history                       = Gweld hanes taliadau, credydau ac ad-daliadau
+new.home.overview.charges.money-in-account                      = Gwirio faint o arian sydd yn eich cyfrif
+new.home.overview.charges.adjust-payments                       = Addasu taliadau ar gyfrif
+new.home.overview.deadlines.sub-heading                         = Dyddiadau cau ac ymrwymiadau o ran adrodd
+new.home.overview.deadlines.view-updates                        = Gweld diweddariadau a dyddiadau cau
+new.home.overview.deadlines.check-obligations                   = Gwirio eich ymrwymiadau o ran adrodd
+new.home.overview.income.sub-heading                            = Ffynonellau incwm
+new.home.overview.income.manage-income                          = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
+new.home.overview.tax-year.sub-heading                          = Crynodebau o flynyddoedd treth
+new.home.overview.tax-year.view-all-tax-years                   = Bwrw golwg dros bob blwyddyn dreth
+new.home.overview.tax-year.view-tax-years                       = Gweld eich cyfrifiad treth a’ch rhagolwg ar gyfer {0} i {1}
+new.home.overview.penalties.sub-heading                         = Cosbau ac apeliadau
+new.home.overview.penalties.check-penalties                     = Gwirio cosbau ac apeliadau Hunanasesiad
+new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
+new.home.overview.penalties.check-lpp                           = Gweld eich cosbau am dalu’n hwyr
+
+
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
 error.custom.message                                           = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
@@ -229,6 +254,33 @@ tax-year-summary.explanatory-text                              = Mae’r cyfrifi
 tax-year-summary.calculation-date                              = Dyddiad y cyfrifiad
 tax-year-summary.calc-from-last-time                           = Nid dyma’ch bil treth terfynol – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
 tax-year-summary.agent.calc-from-last-time                     = Nid dyma fil treth terfynol eich cleient – mae’n seiliedig ar ffigurau rydym eisoes wedi’u cael yn unig.
+
+tax.year.summary.calc.cannot.be.displayed.heading                  = Ni ellir arddangos eich cyfrifiad treth
+
+tax.year.summary.calc.not.filed.compatible.software.p              = Mae hyn oherwydd na chafodd eich Ffurflen Dreth ei chyflwyno gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+tax.year.summary.calc.view.your.tax.calc.link                      = Bwrw golwg dros eich cyfrifiad treth os gwnaethoch gyflwyno’ch Ffurflen Dreth gan ddefnyddio gwasanaeth ar-lein CThEF
+tax.year.summary.calc.not.compatible.software.p                    = Os cyflwynwyd eich Ffurflen Dreth gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm, bydd eich cyfrifiad treth ar gael yn y feddalwedd hon.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.a               = Os gwnaethoch gyflwyno’ch Ffurflen Dreth drwy’r post, bydd rhaid i chi gysylltu â CThEF
+tax.year.summary.calc.filed.by.post.contact.hmrc.link              = cysylltwch â CThEF
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.b               = er mwyn bwrw golwg dros eich cyfrifiad treth.
+
+tax.year.summary.calc.find.out.more.sa.p                           = Os ydych wedi cyflwyno’ch Ffurflen Dreth gan ddefnyddio’ch cyfrif Hunanasesiad ar-lein blaenorol, gallwch ddod o hyd i’ch cyfrifiad treth yn y fan honno. Dysgwch ragor am
+tax.year.summary.calc.find.out.more.sa.link                        = Ffurflenni Treth Hunanasesiad
+
+tax.year.summary.calc.not.compatible.software.agent.p              = Os cyflwynwyd y Ffurflen Dreth gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm, bydd eich cyfrifiad treth ar gael yn y feddalwedd hon.
+
+tax.year.summary.calc.filed.sa.agent.p.a                           = Mae’n bosibl eich bod wedi cyflwyno’r Ffurflen Dreth gan ddefnyddio’ch cyfrif
+tax.year.summary.calc.filed.sa.agent.link                          = Hunanasesiad ar gyfer Asiantau blaenorol
+tax.year.summary.calc.filed.sa.agent.p.b                           = Os felly, bydd eich cyfrifiad ar gael yn y fan honno. Bydd y cyfrif hefyd yn defnyddio Dynodydd Defnyddiwr (ID) a chyfrinair Porth y Llywodraeth sy’n wahanol i’ch cyfrif gwasanaethau asiant.
+
+tax.year.summary.calc.not.filed.compatible.software.agent.p        = Mae hyn oherwydd na chafodd y Ffurflen Dreth ei chyflwyno gan ddefnyddio meddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.a         = Os gwnaethoch gyflwyno’ch Ffurflen Dreth drwy’r post, bydd rhaid i chi
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.link        = gysylltu â CThEF
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.b         = er mwyn bwrw golwg dros eich cyfrifiad treth.
+
+
 tax-year-summary.calc-estimate-info                            = Mae hyn yn amcangyfrif ar gyfer y flwyddyn hyd yn hyn sy’n seiliedig ar ffigurau sydd gennym eisoes.
 tax-year-summary.total-due                                     = Cyfanswm y bil treth
 tax-year-summary.tax-calculation.date                          = {0} i {1}
@@ -480,7 +532,7 @@ income_breakdown.guidance_software                              = Gwiriwch eich 
 income_breakdown.table.employment	                            = Cyflog o bob cyflogaeth
 income_breakdown.table.benefits_received                        = Buddiannau a threuliau a gafwyd
 income_breakdown.table.allowable_expenses                       = Treuliau caniataol
-income_breakdown.table.self_employment                          = Elw o bob hunangyflogaeth
+income_breakdown.table.self_employment                          = Elw o bob un hunangyflogaeth
 income_breakdown.table.property                                 = Elw o dir ac eiddo yn y DU
 income_breakdown.table.bbsi                                     = Llog o fanciau, cymdeithasau adeiladu a gwarantau yn y DU
 income_breakdown.table.dividends                                = Difidendau o gwmnïau yn y DU
@@ -498,6 +550,7 @@ income_breakdown.table.foreign_benefits_gifts                   = Buddiannau a r
 income_breakdown.table.gains_insurance                          = Enillion ar bolisïau yswiriant bywyd
 income_breakdown.table.share_schemes                            = Cynlluniau cyfranddaliadau
 income_breakdown.table.other_income                             = Incwm arall
+income_breakdown.table.income_from_partnerships                 = Incwm o bartneriaethau
 income_breakdown.total                                          = Cyfanswm yr incwm a gafwyd
 
 ## Forecast Income Summary Page ##
@@ -548,6 +601,7 @@ deduction_breakdown.table.annual_payments                              = Taliada
 deduction_breakdown.table.qualifying_loan_interest                     = Llog ar fenthyciad cymwys
 deduction_breakdown.table.post_cessation_trade_receipts                = Derbynebau ar ôl i fasnachu ddod i ben
 deduction_breakdown.table.trade_union_payments                         = Taliadau undeb llafur
+deduction_breakdown.table.partnership_losses                           = Colledion y bartneriaeth
 deduction_breakdown.total                                              = Cyfanswm lwfansau a didyniadau
 
 ## Tax Calculation Breakdown Page ##
@@ -888,9 +942,9 @@ nextUpdates.r17.tab.annual.label                                   = Hyd at flwy
 nextUpdates.r17.tab.annual.heading                                 = Hyd at flwyddyn dreth {0} i {1}
 nextUpdates.r17.tab.annual.text1                                   = Mae’r dudalen hon yn dangos y dyddiadau cau sydd ar y gweill ar eich cyfer ac unrhyw ddyddiadau cau a fethwyd.
 nextUpdates.r17.tab.annual.subHeading                              = Ffurflen Dreth i’w chyflwyno
-nextUpdates.r17.tab.annual.text2                                   = Gan eich bod yn optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch gael rhagor o wybodaeth yn y fan hon am sut rydych chi’n
+nextUpdates.r17.tab.annual.text2                                   = Gan nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddysgu yma sut i
 nextUpdates.r17.tab.annual.text2.exempt                            = Gan eich bod wedi’ch esemptio rhag y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddysgu yma sut i
-nextUpdates.r17.tab.annual.link                                    = cyflwyno’ch Ffurflen Dreth Hunanasesiad
+nextUpdates.r17.tab.annual.link                                    = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 nextUpdates.r17.tab.annual.text3                                   = Mae’n rhaid i chi gyflwyno’ch Ffurflen Dreth ar gyfer blwyddyn dreth {0} i {1} erbyn
 nextUpdates.r17.tab.annual.text4                                   = 31 Ionawr {0}.
 nextUpdates.r17.tab.annual.ny.label                                = Blwyddyn dreth {0} i {1}
@@ -1458,6 +1512,25 @@ money-in-your-account.no-money-one-refund-link-text                     = ad-dal
 money-in-your-account.no-money-two-refunds                              = Nid oes gennych unrhyw arian yn eich cyfrif ar hyn o bryd, ond mae gennych
 money-in-your-account.no-money-two-refunds-link-text                    = ad-daliadau ar y gweill
 
+
+money-in-your-account.credit-not-allocated                              = Nid yw’r swm hwn wedi’i neilltuo ar gyfer unrhyw daliadau ar hyn o bryd.
+money-in-your-account.all-credit-allocated                              = Mae’r swm hwn wedi’i neilltuo ar gyfer talu unrhyw daliadau sydd ar y gweill. Gallwch hawlio’r arian hwn yn ôl o hyd, ond efallai y bydd yn haws i’w adael yn eich cyfrif i osgoi methu unrhyw ddyddiadau cau ar gyfer talu.
+money-in-your-account.some-credit-allocated.p1                          = Mae {0} wedi’i neilltuo ar gyfer talu’r taliadau sydd ar y gweill. Gallwch hawlio’r arian hwn yn ôl, ond efallai y bydd yn haws i’w adael yn eich cyfrif i osgoi methu unrhyw ddyddiadau cau ar gyfer talu.
+money-in-your-account.some-credit-allocated.p2.1                        = Os ydych yn hawlio mwy na
+money-in-your-account.some-credit-allocated.p2.2                        = bydd angen i chi wneud taliad arall i dalu’r taliadau sydd ar y gweill cyn y dyddiad cau.
+money-in-your-account.where-from.table-caption                          = O ble y daeth yr arian
+money-in-your-account.where-from.table-header.amount                    = Swm
+money-in-your-account.where-from.table-header.tax-year                  = Blwyddyn dreth
+money-in-your-account.where-from.table-header.description               = Disgrifiad
+money-in-your-account.where-from.table-header.date                      = Dyddiad
+money-in-your-account.where-from.total-row                              = Cyfanswm y credyd:
+money-in-your-account.where-from.table-row.tax-year                     = {0} i {1}
+money-in-your-account.where-from.table-row.tax-year.hidden              = Blwyddyn dreth {0} i {1}
+money-in-your-account.where-from.payment-row.description                = Taliad a wnaethoch i CThEF ar {0}
+money-in-your-account.where-from.credit-row.description                 = Credyd o flwyddyn dreth gynharach
+money-in-your-account.where-from.refund-row.description                 = Ad-daliad ar y gweill
+money-in-your-account.claim-refund.button-text                          = Hawlio ad-daliad
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
@@ -1570,14 +1643,22 @@ add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes f
 add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
 add-business-trade.form.error.same-name     = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
+## Is the new address in the UK page
+add-business-is.the.new.address.in.the.uk.heading   = A yw’r cyfeiriad newydd yn y DU
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading   = A yw cyfeiriad eich busnes unig fasnachwr yn y DU?
+add-business-is.the.new.address.in.the.uk.error    = Dewiswch ‘Iawn’ os yw’r cyfeiriad newydd yn y DU
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.error    = Dewiswch ‘Iawn’ os yw’ch busnes unig fasnachwr yn y DU
+
 ## Add business address page
 add-business-address.select.heading         = Dewiswch gyfeiriad y busnes
 add-business-address.lookup.heading         = Beth yw cyfeiriad eich busnes?
 add-business-address.confirm.heading        = Cadarnhewch gyfeiriad y busnes
 add-business-address.edit.heading           = Nodwch gyfeiriad eich busnes
 
-
-
+## Add international business address page
+add-international-business-address.heading = Nodwch gyfeiriad rhyngwladol eich busnes
+add-international-business-address.postcode =  Cod post neu god ‘zip’
+add-international-business-address.countryPicker.heading = Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes
 
 shortMonth.1     = Ion
 shortMonth.2     = Chwe
@@ -2387,6 +2468,11 @@ manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                           = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched          = Dewiswch y blynyddoedd treth yr ydych am gofrestru ar eu cyfer
 
+# choose international sole trader address
+manageBusinesses.add.chooseSoleTraderAddress.heading                                                         = Beth yw cyfeiriad eich busnes unig fasnachwr?
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.newAddress                                         = Dim un o’r rhain, rwyf am ychwanegu cyfeiriad newydd
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.error                                              = Dewiswch opsiwn er mwyn parhau
+
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##
 #######################################################################################################################
@@ -2615,7 +2701,7 @@ optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = 
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
 optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
-optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = meini prawf i bobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = reporting.frequency.different.obligations.link.text
 
 optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
 optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = Rydych wedi optio allan o’r flwyddyn dreth nesaf ymlaen, ond gallai fod yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os yw’r canlynol yn wir:
@@ -3033,13 +3119,14 @@ reporting.frequency.manageReportingFrequency.b2.link = Optio allan o adrodd yn c
 
 #different obligations
 reporting.frequency.different.obligations.heading                           = Yr ymrwymiadau o ran rhoi gwybod i ni
-reporting.frequency.different.obligations.p1                                = Pan fyddwch yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi gyflwyno’r canlynol:
-reporting.frequency.different.obligations.li1                               = 4 diweddariad y flwyddyn ar gyfer pob ffynhonnell o incwm o hunangyflogaeth ac eiddo
-reporting.frequency.different.obligations.li2                               = Ffurflen Dreth
-reporting.frequency.different.obligations.p2                                = Ar gyfer blynyddoedd treth yr ydych wedi optio allan ohonynt, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
+reporting.frequency.different.obligations.p1                                = Pan fyddwch yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, bydd angen i chi wneud y canlynol:
+reporting.frequency.different.obligations.li1                               = creu, cadw, a chywiro cofnodion digidol o’ch incwm o hunangyflogaeth ac eiddo a’ch treuliau
+reporting.frequency.different.obligations.li2                               = cyflwyno’ch diweddariadau chwarterol
+reporting.frequency.different.obligations.li3                               = cyflwyno’ch Ffurflen Dreth
+reporting.frequency.different.obligations.p2                                = Hyd yn oed os nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi gyflwyno Ffurflen Dreth o hyd.
 reporting.frequency.different.obligations.p2hasExempt                       = Ar gyfer blynyddoedd treth yr ydych wedi optio allan neu wedi’i esemptio, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
-reporting.frequency.different.obligations.p3                                = Gallwch fwrw golwg dros yr hyn sy’n ddyledus ar y dudalen
-reporting.frequency.different.obligations.link.text                         = dyddiadau cau ar gyfer cyflwyno.
+reporting.frequency.different.obligations.p3                                = Dysgwch faint sy’n ddyledus ac erbyn pryd ar y dudalen
+reporting.frequency.different.obligations.link.text                         = eich dyddiadau cau ar gyfer cyflwyno
 reporting.frequency.different.obligations.link.text.additional.english      =
 
 #your obligations (exempt)
@@ -3080,7 +3167,7 @@ reporting.frequency.compatibleSoftware.heading.R17                      = Pan fy
 reporting.frequency.compatibleSoftware.p1.R17                           = P’un a oes angen i chi gofrestru neu wedi cofrestru’n wirfoddol, mae angen
 reporting.frequency.compatibleSoftware.link.text.R17                    = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm arnoch
 reporting.frequency.compatibleSoftware.p2.R17                           = Gallwch chi, neu’ch asiant, ddewis o blith amrywiaeth o becynnau meddalwedd, gan gynnwys rhai sy’n rhad ac am ddim a rhai y mae angen talu amdanynt.
-reporting.frequency.compatibleSoftware.p3.R17                           = Os ydych chi wedi optio allan, gallwch ddarganfod yma sut i
+reporting.frequency.compatibleSoftware.p3.R17                           = Os nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, gallwch ddysgu yma sut i
 reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = Os ydych chi wedi optio allan neu wedi’i esemptio, gallwch ddarganfod yma sut i
 reporting.frequency.compatibleSoftware.link2.text                       = gyflwyno’ch Ffurflen Dreth Hunanasesiad
 
@@ -3102,7 +3189,7 @@ reporting.frequency.table.MTD.isUsingMTD                            = Iawn
 reporting.frequency.table.MTD.isNotUsingMTD                         = Na
 reporting.frequency.table.mandated.r17                              = Yn ofynnol
 reporting.frequency.table.voluntary.r17                             = Wedi cofrestru’n wirfoddol
-reporting.frequency.table.annual.r17                                = Wedi optio allan
+reporting.frequency.table.annual.r17                                = Nid yw’n ofynnol
 reporting.frequency.table.exempt.r17                                = Esempt
 
 #changing reporting obligations section - R17
@@ -3140,7 +3227,7 @@ reporting.obligations.changing.optOut.link.text                     = Optio alla
 
 # ceased business warning message
 reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
-reporting.frequency.ceasedBusiness.warning.link                     = Eich busnes.
+reporting.frequency.ceasedBusiness.warning.link                     = Eich busnes
 reporting.frequency.ceasedBusiness.warning.text.2                   =
 
 reporting.frequency.latency.details.section.header                            = Gall amlder eich adroddiadau ar gyfer eich busnes newydd fod ar sail amlder gwahanol
@@ -3166,7 +3253,7 @@ reporting.frequency.latency.details.section.text.para2.bullet2.updateR17      = 
 reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = hyd yn oed os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o {0}
 reporting.frequency.latency.details.section.text.para3.heading.updateR17      = Sut i newid eich rhwymedigaethau adrodd ar gyfer ffynhonnell incwm newydd
 reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = Gallwch wneud hyn ar unrhyw adeg o’r adran
-reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = eich busnesau.
+reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = eich busnesau
 reporting.frequency.latency.details.section.text.para3.text.2.updateR17       =
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} Blwyddyn dreth

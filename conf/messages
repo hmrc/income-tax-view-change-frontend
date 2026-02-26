@@ -19,6 +19,7 @@ base.confirm-and-save                                           = Confirm and sa
 base.confirm-this-change                                        = Confirm this change
 base.software.compatible.with.mtd.income.tax.link               = software compatible with Making Tax Digital for Income Tax
 base.fullstop                                                   = .
+base.or                                                         = or
 
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
@@ -195,6 +196,30 @@ home.penaltiesAndAppeals.view                                   = Check Self Ass
 home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty points
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
+## New Home Page ##
+
+new.home.navigation.tabs.overview                               = Overview
+
+new.home.overview.charges.sub-heading                           = Charges, payments, credits and refunds
+new.home.overview.charges.check-what-you-owe                    = Check what you owe
+new.home.overview.charges.make-payment                          = Check what you owe and make a payment
+new.home.overview.charges.payment-history                       = View payment, credit and refund history
+new.home.overview.charges.money-in-account                      = Check for money in your account
+new.home.overview.charges.adjust-payments                       = Adjust payments on account
+new.home.overview.deadlines.sub-heading                         = Deadlines and reporting obligations
+new.home.overview.deadlines.view-updates                        = View updates and deadlines
+new.home.overview.deadlines.check-obligations                   = Check your reporting obligations
+new.home.overview.income.sub-heading                            = Income sources
+new.home.overview.income.manage-income                          = Add, manage or cease a business or income source
+new.home.overview.tax-year.sub-heading                          = Tax year summaries
+new.home.overview.tax-year.view-all-tax-years                   = View all tax years
+new.home.overview.tax-year.view-tax-years                       = View your {0}-{1} tax calculation and forecast
+new.home.overview.penalties.sub-heading                         = Penalties and appeals
+new.home.overview.penalties.check-penalties                     = Check Self Assessment penalties and appeals
+new.home.overview.penalties.check-lsp                           = View your late submission penalties
+new.home.overview.penalties.check-lpp                           = View your late payment penalties
+
+
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
 error.custom.message                                            = The page you’re trying to view has changed
@@ -229,6 +254,32 @@ tax-year-summary.calculation-date                                  = Calculation
 tax-year-summary.calc-from-last-time                               = This is not your final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.agent.calc-from-last-time                         = This is not your client’s final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
+
+tax.year.summary.calc.cannot.be.displayed.heading                  = Your tax calculation cannot be displayed
+
+tax.year.summary.calc.not.filed.compatible.software.p              = This is because your tax return was not filed using software compatible with Making Tax Digital for Income Tax.
+tax.year.summary.calc.view.your.tax.calc.link                      = View your tax calculation if you filed your tax return using the HMRC online service
+tax.year.summary.calc.not.compatible.software.p                    = If your return was submitted using software not compatible with Making Tax Digital for Income Tax, your tax calculation will be available in this software.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.a               = To view your tax calculation if you filed your return by post,
+tax.year.summary.calc.filed.by.post.contact.hmrc.link              = contact HMRC
+tax.year.summary.calc.filed.by.post.contact.hmrc.p.b               =
+
+tax.year.summary.calc.find.out.more.sa.p                           = If you filed your return using your previous Self Assessment online account, you can find your tax calculation there. Find out more about
+tax.year.summary.calc.find.out.more.sa.link                        = Self Assessment tax returns
+
+tax.year.summary.calc.not.filed.compatible.software.agent.p        = This is because the tax return was not filed using software compatible with Making Tax Digital for Income Tax.
+
+tax.year.summary.calc.filed.sa.agent.p.a                           = You may have filed the tax return using your previous
+tax.year.summary.calc.filed.sa.agent.link                          = Self Assessment for Agents account
+tax.year.summary.calc.filed.sa.agent.p.b                           = If so, the calculation will be available there. The account will also use a different Government Gateway ID and password to your agent services account.
+
+tax.year.summary.calc.not.compatible.software.agent.p              = If the return was submitted using software not compatible with Making Tax Digital for Income Tax, your tax calculation will be available in this software.
+
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.a         = To view your tax calculation if you filed the return by post,
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.link        = contact HMRC
+tax.year.summary.calc.filed.by.post.contact.hmrc.agent.p.b         =
+
 tax-year-summary.total-due                                         = Total tax bill
 tax-year-summary.tax-calculation.date                              = {0} to {1}
 tax-year-summary.tax-calculation                                   = Calculation
@@ -287,11 +338,11 @@ tax-year-summary.message.C55014                                    = a quarterly
 tax-year-summary.message.C15015                                    = you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose.
 tax-year-summary.message.C15016                                    = you are using cash basis accounting. This means that you cannot claim to set losses against other taxable income.
 tax-year-summary.message.C15102                                    = the total amount of one-off Gift Aid payments is more than the total Gift Aid payments you’ve made.
-tax-year-summary.message.C15103                                    = gift Aid payments made this year treated as paid in the previous year are more than the total Gift Aid payments you’ve made.
+tax-year-summary.message.C15103                                    = Gift Aid payments made this year treated as paid in the previous year are more than the total Gift Aid payments you’ve made.
 tax-year-summary.message.C15104.1                                  = the value of qualifying investments you’ve gifted to non-UK charities are more than the value of these items you’ve gifted to charity:
 tax-year-summary.message.C15104.2                                  = qualifying shares and securities
 tax-year-summary.message.C15104.3                                  = qualifying land and buildings
-tax-year-summary.message.C15105                                    = gift Aid payments to non-UK charities are more than the total Gift Aid payments you’ve made.
+tax-year-summary.message.C15105                                    = Gift Aid payments to non-UK charities are more than the total Gift Aid payments you’ve made.
 tax-year-summary.message.C15322.1                                  = the amount of Trading Income Allowance you’ve claimed is more than allowed. The amount you claim cannot be more than the total of:
 tax-year-summary.message.C15322.2                                  = your turnover
 tax-year-summary.message.C15322.3                                  = other business income not included in turnover
@@ -479,7 +530,7 @@ income_breakdown.guidance_software                              = Check your rec
 income_breakdown.table.employment	                            = Pay from all employments
 income_breakdown.table.benefits_received                        = Benefits & expenses received
 income_breakdown.table.allowable_expenses                       = Allowable expenses
-income_breakdown.table.self_employment                          = Profit from all self employments
+income_breakdown.table.self_employment                          = Profit from all self-employments
 income_breakdown.table.property                                 = Profit from UK land and property
 income_breakdown.table.bbsi                                     = Interest from UK banks, building societies and securities
 income_breakdown.table.dividends                                = Dividends from UK companies
@@ -497,6 +548,7 @@ income_breakdown.table.foreign_benefits_gifts                   = Foreign benefi
 income_breakdown.table.gains_insurance                          = Gains on life insurance polices
 income_breakdown.table.share_schemes                            = Share schemes
 income_breakdown.table.other_income                             = Other Income
+income_breakdown.table.income_from_partnerships                 = Income from partnerships
 income_breakdown.total                                          = Total income received
 
 ## Forecast Income Summary Page ##
@@ -547,6 +599,7 @@ deduction_breakdown.table.annual_payments                              = Annual 
 deduction_breakdown.table.qualifying_loan_interest                     = Qualifying loan interest
 deduction_breakdown.table.post_cessation_trade_receipts                = Post-cessation trade receipts
 deduction_breakdown.table.trade_union_payments                         = Trade union payments
+deduction_breakdown.table.partnership_losses                           = Partnership losses
 deduction_breakdown.total                                              = Total allowances and deductions
 
 ## Tax Calculation Breakdown Page ##
@@ -668,7 +721,7 @@ taxCal_breakdown.message.C22214                                 = Your Class 4 h
 taxCal_breakdown.message.C22215                                 = Due to the level of your current income, you may not be eligible for Marriage Allowance and therefore it has not been included in this calculation.
 taxCal_breakdown.message.C22216                                 = Due to the level of your income, you are no longer eligible for Marriage Allowance and your claim will be cancelled.
 taxCal_breakdown.message.C22217                                 = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
-taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the Final declaration calculation.
+taxCal_breakdown.message.C22218                                 = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
 taxCal_breakdown.message.C22220                                 = If your taxable profits are between £6,725 and £11,908 you will not need to pay Class 2 National Insurance. Your entitlements to the State Pension, and certain benefits, will still apply. Your contributions are treated as having been paid.
 taxCal_breakdown.message.C22223                                 = Class 2 National Insurance does not apply because you are under 16.
 taxCal_breakdown.message.C22224                                 = Class 2 National Insurance does not apply because you are over State Pension age.
@@ -679,7 +732,7 @@ taxCal_breakdown.message.C22226_Scottish                        = Your tax has i
 taxCal_breakdown.message.agent.static1                          = This calculation is only based on information HMRC have received about your client’s income and expenses to date. This may change as we receive further information about your client during the tax year.
 taxCal_breakdown.message.agent.C22220                           = If your client’s taxable profits are between £6,725 and £11,908 your client will not need to pay Class 2 National Insurance. Your client’s entitlements to the State Pension, and certain benefits, will still apply. Your client’s contributions are treated as having been paid.
 taxCal_breakdown.message.agent.C22201                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Gift Aid payments.
-taxCal_breakdown.message.agent.C22202                           = Tax due on gift aid payments exceeds your client’s income tax charged so your client is liable for gift aid tax
+taxCal_breakdown.message.agent.C22202                           = Tax due on Gift Aid payments exceeds your client’s Income Tax charged so your client is liable for Gift Aid tax
 taxCal_breakdown.message.agent.C22203                           = Class 2 National Insurance has not been charged because your client’s self-employed profits are under the small profit threshold.
 taxCal_breakdown.message.agent.C22205                           = Total loss from all income sources was capped at {0}.
 taxCal_breakdown.message.agent.C22206                           = One or more of your client’s annual adjustments have not been applied because your client has submitted additional income or expenses.
@@ -687,14 +740,14 @@ taxCal_breakdown.message.agent.C22207                           = Your client’
 taxCal_breakdown.message.agent.C22208                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Pension Contribution.
 taxCal_breakdown.message.agent.C22209                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Pension Contribution and Gift Aid payments.
 taxCal_breakdown.message.agent.C22210                           = Employment related expenses are capped at the total amount of employment income.
-taxCal_breakdown.message.agent.C22211                           = This is a forecast of your client’s annual income tax liability based on the information your client has provided to date. Any overpayments of income tax will not be refundable until after your client has submitted their final declaration.
+taxCal_breakdown.message.agent.C22211                           = This is a forecast of your client’s annual Income Tax liability based on the information your client has provided to date. Any overpayments of Income Tax will not be refundable until after your client has submitted their final declaration.
 taxCal_breakdown.message.agent.C22212                           = Employment and deduction related expenses have been limited to employment income.
 taxCal_breakdown.message.agent.C22213                           = Due to your client’s employed earnings, paying Class 2 Voluntary may not be beneficial.
 taxCal_breakdown.message.agent.C22214                           = Your client’s Class 4 has been adjusted for Class 2 due and primary Class 1 contributions.
 taxCal_breakdown.message.agent.C22215                           = Due to the level of your client’s current income, your client may not be eligible for Marriage Allowance and therefore it has not been included in this calculation.
 taxCal_breakdown.message.agent.C22216                           = Due to the level of your client’s income, your client is no longer eligible for Marriage Allowance and your client’s claim will be cancelled.
 taxCal_breakdown.message.agent.C22217                           = There are one or more underpayments, debts or adjustments that have not been included in the calculation as they do not relate to data that HMRC holds.
-taxCal_breakdown.message.agent.C22218                           = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the Final declaration calculation.
+taxCal_breakdown.message.agent.C22218                           = The Capital Gains Tax has been included in the estimated annual liability calculation only, the actual amount of Capital Gains Tax will be in the final declaration calculation.
 taxCal_breakdown.message.agent.C22223                           = Class 2 National Insurance does not apply because your client is under 16.
 taxCal_breakdown.message.agent.C22224                           = Class 2 National Insurance does not apply because your client is over State Pension age.
 taxCal_breakdown.message.agent.C22225                           = Your tax has been reduced because of Gift Aid charity donations - the Welsh Basic Rate of Income Tax is higher than the rate at which charities have obtained relief.
@@ -888,7 +941,7 @@ nextUpdates.r17.tab.annual.label                                   = Up to {0} t
 nextUpdates.r17.tab.annual.heading                                 = Up to {0} to {1} tax year
 nextUpdates.r17.tab.annual.text1                                   = This page shows your upcoming due dates and any missed deadlines.
 nextUpdates.r17.tab.annual.subHeading                              = Tax return due
-nextUpdates.r17.tab.annual.text2                                   = As you are opted out of Making Tax Digital for Income Tax, you can find out here how you
+nextUpdates.r17.tab.annual.text2                                   = As you are not using Making Tax Digital for Income Tax, you can find out here how you
 nextUpdates.r17.tab.annual.text2.exempt                            = As you are exempt from Making Tax Digital for Income Tax, you can find out here how you
 nextUpdates.r17.tab.annual.link                                    = file your Self Assessment tax return
 nextUpdates.r17.tab.annual.text3                                   = Your return for the {0} to {1} tax year is due by
@@ -1457,6 +1510,24 @@ money-in-your-account.no-money-one-refund-link-text                     = refund
 money-in-your-account.no-money-two-refunds                              = You do not have any money in your account at the moment, but you have
 money-in-your-account.no-money-two-refunds-link-text                    = refunds in progress
 
+money-in-your-account.credit-not-allocated                              = This amount has not been set aside for any charges yet.
+money-in-your-account.all-credit-allocated                              = This amount has been set aside to pay for upcoming charges. You can still claim it back, but it may be easier to leave it in your account to avoid missing any payment deadlines.
+money-in-your-account.some-credit-allocated.p1                          = {0} has been set aside to pay for upcoming charges. You can claim this money back, but it may be easier to leave it in your account to avoid missing any payment deadlines.
+money-in-your-account.some-credit-allocated.p2.1                        = If you claim more than
+money-in-your-account.some-credit-allocated.p2.2                        = you’ll need to make another payment to cover your upcoming charges before the deadline.
+money-in-your-account.where-from.table-caption                          = Where the money came from
+money-in-your-account.where-from.table-header.amount                    = Amount
+money-in-your-account.where-from.table-header.tax-year                  = Tax year
+money-in-your-account.where-from.table-header.description               = Description
+money-in-your-account.where-from.table-header.date                      = Date
+money-in-your-account.where-from.total-row                              = Total credit:
+money-in-your-account.where-from.table-row.tax-year                     = {0} to {1}
+money-in-your-account.where-from.table-row.tax-year.hidden              = Tax year {0} to {1}
+money-in-your-account.where-from.payment-row.description                = Payment you made to HMRC on {0}
+money-in-your-account.where-from.credit-row.description                 = Credit from an earlier tax year
+money-in-your-account.where-from.refund-row.description                 = Refund in progress
+money-in-your-account.claim-refund.button-text                          = Claim a refund
+
 #######################################################################################################################
 ## Income Sources - Add ##
 #######################################################################################################################
@@ -1569,12 +1640,22 @@ add-business-trade.form.error.long          = Business trade must be 35 characte
 add-business-trade.form.error.invalid       = Business trade cannot include !, "", * or ?
 add-business-trade.form.error.same-name     = Trade and business name cannot be the same
 
+## Is the new address in the UK page
+add-business-is.the.new.address.in.the.uk.heading   = Is the new address in the UK
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading  = Is the address of your sole trader business in the UK?
+add-business-is.the.new.address.in.the.uk.error    = Select yes if the new address is in the UK
+add-business-is.the.address.of.your.sole.trader.business.in.the.uk.error    = Select yes if your sole trader business is in the UK
+
 ## Add business address page
 add-business-address.select.heading         = Select business address
 add-business-address.lookup.heading         = What is your business address?
 add-business-address.confirm.heading        = Confirm business address
 add-business-address.edit.heading           = Enter your business address
 
+## Add international business address page
+add-international-business-address.heading = Enter your international business address
+add-international-business-address.postcode = Postcode or zipcode
+add-international-business-address.countryPicker.heading = Select the country or territory for your business address
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
@@ -2391,6 +2472,10 @@ manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                        = Select the tax years you want to report quarterly
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched       = Select the tax years you want to sign up for
 
+# choose international sole trader address
+manageBusinesses.add.chooseSoleTraderAddress.heading                                                         = What is the address of your sole trader business?
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.newAddress                                         = None of these, I want to add a new address
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.error                                              = Select an option to continue
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##
@@ -2616,7 +2701,7 @@ optout.confirmedOptOut.scenario1.reporting.obligations.p4                     = 
 optout.confirmedOptOut.scenario1.reporting.obligations.p4.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax
 
 optout.confirmedOptOut.scenario2.reporting.obligations.heading                = Your reporting obligations from the next tax year onwards
-optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = From 6 April {0}, you will be required to use Making Tax Digital for Income tax.
+optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = From 6 April {0}, you will be required to use Making Tax Digital for Income Tax.
 optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = This could be because:
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = HMRC lowered the income threshold for it
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = you reported an increase in your qualifying income in a tax return
@@ -3045,13 +3130,14 @@ reporting.frequency.manageReportingFrequency.b2.link                = Opt out of
 
 #different obligations
 reporting.frequency.different.obligations.heading                           = What the different reporting obligations are
-reporting.frequency.different.obligations.p1                                = When you are using Making Tax Digital for Income Tax you need to submit:
-reporting.frequency.different.obligations.li1                               = 4 updates a year for each source of self employment and property income
-reporting.frequency.different.obligations.li2                               = a tax return
-reporting.frequency.different.obligations.p2                                = For tax years you are opted out of, you only need to file a tax return.
+reporting.frequency.different.obligations.p1                                = When you are using Making Tax Digital for Income Tax you need to:
+reporting.frequency.different.obligations.li1                               = create, store and correct digital records of your self-employment and property income and expenses
+reporting.frequency.different.obligations.li2                               = submit your quarterly updates
+reporting.frequency.different.obligations.li3                               = file your tax return
+reporting.frequency.different.obligations.p2                                = Even if you are not using Making Tax Digital for Income Tax, you still need to file a tax return.
 reporting.frequency.different.obligations.p2hasExempt                       = For tax years you are opted out of or exempt, you only need to file a tax return.
-reporting.frequency.different.obligations.p3                                = You can see what is due on the
-reporting.frequency.different.obligations.link.text                         = submission deadlines
+reporting.frequency.different.obligations.p3                                = Find out what is due and when on the
+reporting.frequency.different.obligations.link.text                         = your submission deadlines
 reporting.frequency.different.obligations.link.text.additional.english      = page.
 
 #your obligations (exempt)
@@ -3092,7 +3178,7 @@ reporting.frequency.compatibleSoftware.heading.R17                      = When y
 reporting.frequency.compatibleSoftware.p1.R17                           = Whether you are required or voluntarily signed up, you need
 reporting.frequency.compatibleSoftware.link.text.R17                    = software compatible with Making Tax Digital for Income Tax
 reporting.frequency.compatibleSoftware.p2.R17                           = There are both paid and free options for you or your agent to choose from.
-reporting.frequency.compatibleSoftware.p3.R17                           = If you are opted out, you can find out here how to
+reporting.frequency.compatibleSoftware.p3.R17                           = If you are not using Making Tax Digital for Income Tax, you can find out here how to
 reporting.frequency.compatibleSoftware.p3hasExempt.R17                  = If you are opted out or exempt, you can find out here how to
 reporting.frequency.compatibleSoftware.link2.text                       = file your Self Assessment tax return
 
@@ -3115,7 +3201,7 @@ reporting.frequency.table.MTD.isUsingMTD                            = Yes
 reporting.frequency.table.MTD.isNotUsingMTD                         = No
 reporting.frequency.table.mandated.r17                              = Required
 reporting.frequency.table.voluntary.r17                             = Voluntarily signed up
-reporting.frequency.table.annual.r17                                = Opted out
+reporting.frequency.table.annual.r17                                = Not required
 reporting.frequency.table.exempt.r17                                = Exempt
 
 

@@ -21,29 +21,32 @@ import models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
 
 import java.time.LocalDate
 
-case class CalculationSummary(timestamp: Option[LocalDate],
-                              crystallised: Boolean,
-                              unattendedCalc: Boolean,
-                              taxDue: BigDecimal,
-                              income: Int,
-                              deductions: BigDecimal,
-                              totalTaxableIncome: Int,
-                              forecastIncome: Option[Int] = None,
-                              forecastIncomeTaxAndNics: Option[BigDecimal] = None,
-                              forecastAllowancesAndDeductions: Option[BigDecimal] = None,
-                              forecastTotalTaxableIncome: Option[Int] = None,
-                              periodFrom: Option[LocalDate] = None,
-                              periodTo: Option[LocalDate] = None,
-                              messages: Option[Messages] = None,
-                              isAmended: Boolean = false) {
+case class CalculationSummary(
+                               timestamp: Option[LocalDate],
+                               crystallised: Boolean,
+                               unattendedCalc: Boolean,
+                               taxDue: BigDecimal,
+                               income: Int,
+                               deductions: BigDecimal,
+                               totalTaxableIncome: Int,
+                               forecastIncome: Option[Int] = None,
+                               forecastIncomeTaxAndNics: Option[BigDecimal] = None,
+                               forecastAllowancesAndDeductions: Option[BigDecimal] = None,
+                               forecastTotalTaxableIncome: Option[Int] = None,
+                               periodFrom: Option[LocalDate] = None,
+                               periodTo: Option[LocalDate] = None,
+                               messages: Option[Messages] = None,
+                               isAmended: Boolean = false
+                             ) {
 
-  def errorPresent() = {
+  def errorPresent(): Boolean = {
     messages.exists(_.errorMessages.nonEmpty)
   }
 
 }
 
 object CalculationSummary extends ImplicitDateParser {
+  
   private def getEstimatedTotalTax(calc: LiabilityCalculationResponse): Option[BigDecimal] = {
     val incomeTaxNicAndCgtAmount: Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount))
     val incomeTaxNicAmount: Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAmount))

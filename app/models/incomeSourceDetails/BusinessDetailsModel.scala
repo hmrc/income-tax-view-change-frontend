@@ -21,17 +21,19 @@ import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
 
-case class BusinessDetailsModel(incomeSourceId: String,
-                                incomeSource: Option[String],
-                                accountingPeriod: Option[AccountingPeriodModel],
-                                tradingName: Option[String],
-                                firstAccountingPeriodEndDate: Option[LocalDate],
-                                tradingStartDate: Option[LocalDate],
-                                contextualTaxYear: Option[String],
-                                cessation: Option[CessationModel],
-                                address: Option[AddressModel] = None,
-                                latencyDetails: Option[LatencyDetails] = None,
-                                quarterTypeElection: Option[QuarterTypeElection] = None) {
+case class BusinessDetailsModel(
+                                 incomeSourceId: String,
+                                 incomeSource: Option[String],
+                                 accountingPeriod: Option[AccountingPeriodModel],
+                                 tradingName: Option[String],
+                                 firstAccountingPeriodEndDate: Option[LocalDate],
+                                 tradingStartDate: Option[LocalDate],
+                                 contextualTaxYear: Option[String],
+                                 cessation: Option[CessationModel],
+                                 address: Option[AddressModel] = None,
+                                 latencyDetails: Option[LatencyDetails] = None,
+                                 quarterTypeElection: Option[QuarterTypeElection] = None
+                               ) {
 
   def isCeased: Boolean = cessation.exists(_.date.nonEmpty)
 

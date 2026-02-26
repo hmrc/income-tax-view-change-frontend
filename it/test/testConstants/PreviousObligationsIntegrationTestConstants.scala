@@ -34,15 +34,6 @@ object PreviousObligationsIntegrationTestConstants {
     )
   )
 
-  def previousEOPSObligation(incomeId: String): GroupedObligationsModel = GroupedObligationsModel(
-    incomeId,
-    List(
-      SingleObligationModel(
-        date.plusMonths(2), date.plusMonths(3), date.plusMonths(4), "EOPS", Some(date.plusMonths(3)), "EOPS", status = StatusFulfilled
-      )
-    )
-  )
-
   val previousCrystallisationObligation: GroupedObligationsModel = GroupedObligationsModel(
     testMtditid,
     List(
@@ -51,11 +42,5 @@ object PreviousObligationsIntegrationTestConstants {
       )
     )
   )
-
-  val previousObligationsModel = ObligationsModel(Seq(
-    previousQuarterlyObligation(testSelfEmploymentId),
-    previousEOPSObligation(testPropertyIncomeId),
-    previousCrystallisationObligation
-  ))
 
 }

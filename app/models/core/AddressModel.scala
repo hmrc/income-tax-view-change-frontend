@@ -18,12 +18,14 @@ package models.core
 
 import play.api.libs.json.{Format, Json}
 
-case class AddressModel(addressLine1: Option[String],
-                        addressLine2: Option[String],
-                        addressLine3: Option[String],
-                        addressLine4: Option[String],
-                        postCode: Option[String],
-                        countryCode: Option[String]) {
+case class AddressModel(
+                         addressLine1: Option[String],
+                         addressLine2: Option[String],
+                         addressLine3: Option[String],
+                         addressLine4: Option[String],
+                         postCode: Option[String],
+                         countryCode: Option[String]
+                       ) {
 
   def countryName: String = "United Kingdom"
 

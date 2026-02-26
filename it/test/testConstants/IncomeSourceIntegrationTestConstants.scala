@@ -778,7 +778,8 @@ object IncomeSourceIntegrationTestConstants {
 
   def testValidFinancialDetailsModelJsonAccruingInterest(originalAmount: BigDecimal, outstandingAmount: BigDecimal,
                                                          taxYear: String = "2018", dueDate: String = "2018-04-14",
-                                                         accruingInterestAmount: Option[BigDecimal] = Some(0)): JsValue = Json.obj(
+                                                         accruingInterestAmount: Option[BigDecimal] = Some(0),
+                                                         latePaymentInterestAmount: Option[BigDecimal] = Some(0)): JsValue = Json.obj(
     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
     "codingDetails" -> Json.arr(),
     "documentDetails" -> Json.arr(
@@ -794,6 +795,7 @@ object IncomeSourceIntegrationTestConstants {
         "interestFromDate" -> "2018-04-14",
         "interestEndDate" -> "2019-01-01",
         "accruingInterestAmount" -> accruingInterestAmount,
+        "latePaymentInterestAmount" -> latePaymentInterestAmount,
         "effectiveDateOfPayment" -> dueDate,
         "documentDueDate" -> dueDate
       ),
@@ -809,6 +811,7 @@ object IncomeSourceIntegrationTestConstants {
         "interestFromDate" -> "2018-02-14",
         "interestEndDate" -> "2019-01-01",
         "accruingInterestAmount" -> accruingInterestAmount,
+        "latePaymentInterestAmount" -> latePaymentInterestAmount,
         "effectiveDateOfPayment" -> dueDate,
         "documentDueDate" -> dueDate
       ),
@@ -824,6 +827,7 @@ object IncomeSourceIntegrationTestConstants {
         "interestFromDate" -> "2018-02-14",
         "interestEndDate" -> "2019-01-01",
         "accruingInterestAmount" -> accruingInterestAmount,
+        "latePaymentInterestAmount" -> latePaymentInterestAmount,
         "effectiveDateOfPayment" -> dueDate,
         "documentDueDate" -> dueDate
       )

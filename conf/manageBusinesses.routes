@@ -23,6 +23,8 @@ POST         /agents/manage-your-businesses/add-sole-trader/business-name       
 
 GET          /manage-your-businesses/add-sole-trader/business-address                         controllers.manageBusinesses.add.AddBusinessAddressController.show(mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
 GET          /agents/manage-your-businesses/add-sole-trader/business-address                  controllers.manageBusinesses.add.AddBusinessAddressController.showAgent(mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
+GET          /manage-your-businesses/add-sole-trader/international-business-address           controllers.manageBusinesses.add.AddInternationalBusinessAddressController.show(isAgent: Boolean = false, mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
+GET          /agents/manage-your-businesses/add-sole-trader/international-business-address    controllers.manageBusinesses.add.AddInternationalBusinessAddressController.show(isAgent: Boolean = true, mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
 GET          /manage-your-businesses/add/business-address/id/                     controllers.manageBusinesses.add.AddBusinessAddressController.submit(id: Option[String], mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
 GET          /agents/manage-your-businesses/add/business-address/id/              controllers.manageBusinesses.add.AddBusinessAddressController.agentSubmit(id: Option[String], mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
 GET          /manage-your-businesses/add-sole-trader/change-business-address-lookup                 controllers.manageBusinesses.add.AddBusinessAddressController.show(mode: Mode = CheckMode, isTriggeredMigration: Boolean ?= false)
@@ -37,6 +39,10 @@ GET          /manage-your-businesses/add-sole-trader/change-business-trade      
 GET          /agents/manage-your-businesses/add-sole-trader/change-business-trade       controllers.manageBusinesses.add.AddBusinessTradeController.showAgent(mode: Mode = CheckMode, isTriggeredMigration: Boolean ?= false)
 POST         /manage-your-businesses/add-sole-trader/change-business-trade              controllers.manageBusinesses.add.AddBusinessTradeController.submit(mode: Mode = CheckMode, isTriggeredMigration: Boolean ?= false)
 POST         /agents/manage-your-businesses/add-sole-trader/change-business-trade       controllers.manageBusinesses.add.AddBusinessTradeController.submitAgent(mode: Mode = CheckMode, isTriggeredMigration: Boolean ?= false)
+GET          /manage-your-businesses/add-sole-trader/is-the-new-address-in-the-uk                   controllers.manageBusinesses.add.IsTheNewAddressInTheUKController.show(isAgent:   Boolean = false, mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
+GET          /agents/manage-your-businesses/add-sole-trader/is-the-new-address-in-the-uk            controllers.manageBusinesses.add.IsTheNewAddressInTheUKController.show(isAgent:   Boolean = true, mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
+POST         /manage-your-businesses/add-sole-trader/is-the-new-address-in-the-uk                   controllers.manageBusinesses.add.IsTheNewAddressInTheUKController.submit(isAgent:   Boolean = false, mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
+POST         /agents/manage-your-businesses/add-sole-trader/is-the-new-address-in-the-uk            controllers.manageBusinesses.add.IsTheNewAddressInTheUKController.submit(isAgent:   Boolean = true, mode: Mode = NormalMode, isTriggeredMigration: Boolean ?= false)
 
 GET          /manage-your-businesses/add-sole-trader/business-start-date                       controllers.manageBusinesses.add.AddIncomeSourceStartDateController.show(isAgent:   Boolean = false, mode: Mode = NormalMode, incomeSourceType: IncomeSourceType = SelfEmployment, isTriggeredMigration: Boolean ?= false)
 GET          /agents/manage-your-businesses/add-sole-trader/business-start-date                controllers.manageBusinesses.add.AddIncomeSourceStartDateController.show(isAgent:   Boolean = true,  mode: Mode = NormalMode, incomeSourceType: IncomeSourceType = SelfEmployment, isTriggeredMigration: Boolean ?= false)
@@ -96,6 +102,12 @@ GET          /agents/manage-your-businesses/add-foreign-property/foreign-propert
 
 GET          /manage-your-businesses/add-uk-property/uk-property-added                           controllers.manageBusinesses.add.IncomeSourceAddedController.show(incomeSourceType: IncomeSourceType = UkProperty)
 GET          /agents/manage-your-businesses/add-uk-property/uk-property-added                    controllers.manageBusinesses.add.IncomeSourceAddedController.showAgent(incomeSourceType: IncomeSourceType = UkProperty)
+
+GET          /manage-your-businesses/add-sole-trader/choose-address                                     controllers.manageBusinesses.add.ChooseSoleTraderAddressController.show(isAgent: Boolean = false)
+GET          /agents/manage-your-businesses/add-sole-trader/choose-address                              controllers.manageBusinesses.add.ChooseSoleTraderAddressController.show(isAgent: Boolean = true)
+
+POST         /manage-your-businesses/add-sole-trader/choose-address                                     controllers.manageBusinesses.add.ChooseSoleTraderAddressController.submit(isAgent: Boolean = false)
+POST         /agents/manage-your-businesses/add-sole-trader/choose-address                              controllers.manageBusinesses.add.ChooseSoleTraderAddressController.submit(isAgent: Boolean = true)
 
 ###### Check details / Change ######
 

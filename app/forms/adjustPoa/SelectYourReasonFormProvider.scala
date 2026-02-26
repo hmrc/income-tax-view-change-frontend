@@ -17,17 +17,21 @@
 package forms.adjustPoa
 
 import forms.mappings.{Enumerable, Mappings}
-import models.claimToAdjustPoa._
+import models.claimToAdjustPoa.*
 import play.api.data.Form
 
 class SelectYourReasonFormProvider extends Mappings {
   def apply(): Form[SelectYourReason] = {
 
     implicit val enumerableAddress: Enumerable[SelectYourReason] =
-      Enumerable(Seq(("MainIncomeLower" -> MainIncomeLower),
-        ("OtherIncomeLower" -> OtherIncomeLower),
-        ("AllowanceOrReliefHigher" -> AllowanceOrReliefHigher),
-        ("MoreTaxedAtSource" -> MoreTaxedAtSource)): _*)
+      Enumerable(
+        Seq(
+          ("MainIncomeLower" -> MainIncomeLower),
+          ("OtherIncomeLower" -> OtherIncomeLower),
+          ("AllowanceOrReliefHigher" -> AllowanceOrReliefHigher),
+          ("MoreTaxedAtSource" -> MoreTaxedAtSource)
+        ): _*
+      )
 
     Form(
       "value" -> enumerable[SelectYourReason](s"claimToAdjustPoa.selectYourReason.error.required")

@@ -53,8 +53,8 @@ class AuthActions @Inject()(
       incomeSourceRetrievalAction andThen
       retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
       itsaStatusRetrievalAction andThen
-      triggeredMigrationRetrievalAction(isTriggeredMigrationPage) andThen
-      retrieveNavBar
+      retrieveNavBar andThen
+      triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
   }
 
   def asMTDIndividualForNrs: ActionBuilder[MtdItUser, AnyContent] = {
