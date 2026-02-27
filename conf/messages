@@ -197,7 +197,7 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty poin
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
 ## New Home Page ##
-
+### Overview Tab
 new.home.navigation.tabs.overview                               = Overview
 
 new.home.overview.charges.sub-heading                           = Charges, payments, credits and refunds
@@ -219,6 +219,14 @@ new.home.overview.penalties.check-penalties                     = Check Self Ass
 new.home.overview.penalties.check-lsp                           = View your late submission penalties
 new.home.overview.penalties.check-lpp                           = View your late payment penalties
 
+### Help Tab
+new.home.help.heading                                           = Making Tax Digital
+new.home.help.openInNewTab                                      = All links open in new tab.
+
+home.help.link.makingTaxDigital.incomeTax                       = Find information about Making Tax Digital for Income Tax
+home.help.link.selfAssessment.payTaxBill                        = Find information about paying your Self Assessment tax bill
+home.help.link.makingTaxDigital.findSoftware                    = Find software that works with Making Tax Digital for Income Tax
+home.help.link.taxSupport.getHelp                               = Get help if you're struggling to pay your tax
 
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem

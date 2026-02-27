@@ -17,7 +17,8 @@
 @import enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components.h1WithCaption
+@import views.html.components._
+@import views.html.partials.newHome.overview.OverviewCard
 @import views.html.layouts.unifiedLayout
 
 
@@ -25,7 +26,11 @@
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
-        govukServiceNavigation : GovukServiceNavigation
+        govukServiceNavigation : GovukServiceNavigation,
+        h2: h2,
+        p: p,
+        overviewCard: OverviewCard,
+        appConfig: config.FrontendAppConfig
 )
 
 @(origin: Option[String] = None,
@@ -98,4 +103,42 @@
         ),
         attributes = Map("style" -> "background-color: white;")
     ))
+
+<div class="govuk-!-padding-top-4 govuk-!-padding-bottom-6" id="help" role="tabpanel" aria-labelledby="tab_help">
+
+    @h2(msg = messages("new.home.help.heading"))
+
+    @p(classes = "govuk-body") {
+        @messages("new.home.help.openInNewTab")
+    }
+
+    @overviewCard(
+        messages("home.help.link.makingTaxDigital.incomeTax"),
+        appConfig.mtdIncomeTaxLink,
+        openInNewTab = true
+    )
+
+    @if(!isAgent) {
+        @overviewCard(
+            messages("home.help.link.selfAssessment.payTaxBill"),
+            appConfig.paySelfAssessmentBillLink,
+            openInNewTab = true
+        )
+    }
+
+    @overviewCard(
+        messages("home.help.link.makingTaxDigital.findSoftware"),
+        appConfig.compatibleSoftwareLink,
+        openInNewTab = true
+    )
+
+    @if(!isAgent) {
+        @overviewCard(
+            messages("home.help.link.taxSupport.getHelp"),
+            appConfig.strugglingToPayTaxLink,
+            openInNewTab = true
+        )
+    }
+
+</div>
 }

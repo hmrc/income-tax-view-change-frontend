@@ -198,7 +198,7 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
 ## New Home Page ##
-
+### Overview Tab
 new.home.navigation.tabs.overview                               = Trosolwg
 
 new.home.overview.charges.sub-heading                           = Ffioedd, taliadau, credydau ac ad-daliadau
@@ -220,6 +220,14 @@ new.home.overview.penalties.check-penalties                     = Gwirio cosbau 
 new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
 new.home.overview.penalties.check-lpp                           = Gweld eich cosbau am dalu’n hwyr
 
+### Help Tab
+new.home.help.heading                                           = Troi Treth yn Ddigidol
+new.home.help.openInNewTab                                      = Mae pob cysylltiad yn agor mewn tab newydd.
+
+home.help.link.makingTaxDigital.incomeTax                       = Dod o hyd i ragor o wybodaeth am Droi Treth yn Ddigidol ar gyfer Treth Incwm
+home.help.link.selfAssessment.payTaxBill                        = Dod o hyd i ragor o wybodaeth am dalu’ch bil treth Hunanasesiad
+home.help.link.makingTaxDigital.findSoftware                    = Dod o hyd i feddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm
+home.help.link.taxSupport.getHelp                               = Cael help os ydych yn ei chael hi’n anodd talu’ch treth
 
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
