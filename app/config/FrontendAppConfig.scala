@@ -210,6 +210,24 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
       case _ => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
     }
 
+  def mtdIncomeTaxLink(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm"
+      case _ => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax"
+    }
+
+  def paySelfAssessmentBillLink(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "cy" => "https://www.gov.uk/taluch-bil-treth-hunanasesiad"
+      case _ => "https://www.gov.uk/pay-self-assessment-tax-bill"
+    }
+
+  def strugglingToPayTaxLink(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "cy" => "https://www.gov.uk/anawsterau-talu-cthem"
+      case _ => "https://www.gov.uk/difficulties-paying-hmrc"
+    }
+
   lazy val preThreshold2027 = servicesConfig.getString("thresholds.prethreshold2027")
   lazy val threshold2027 = servicesConfig.getString("thresholds.threshold2027")
   lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")
