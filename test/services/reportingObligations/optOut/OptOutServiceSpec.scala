@@ -31,12 +31,11 @@ import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
 import play.mvc.Http.Status.NO_CONTENT
 import repositories.OptOutSessionDataRepository
-import services.{DateService, NextUpdatesService}
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
-import OptOutTestSupport.*
 import services.reportingObligations.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
-import services.reportingObligations.optOut.{CurrentOptOutTaxYear, MultiYearOptOutDefault, NextOptOutTaxYear, NextYearOptOut, OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, OptOutProposition, OptOutService, OptOutState, OptOutTaxYear, PreviousOptOutTaxYear}
+import services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
+import services.reportingObligations.optOut.OptOutTestSupport.*
+import services.{DateService, NextUpdatesService}
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
 
