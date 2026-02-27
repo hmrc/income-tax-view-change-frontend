@@ -24,7 +24,7 @@ import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, ITSAStatus, Mandated, Voluntary}
 import play.api.i18n.Messages
 import services.DateServiceInterface
-import services.optout.OptOutProposition
+import services.reportingObligations.optOut.OptOutProposition
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext

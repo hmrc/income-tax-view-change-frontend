@@ -35,9 +35,9 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
+import services.reportingObligations.signUp.SignUpService
 import services.{CreditService, NextUpdatesService}
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.optOut.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
@@ -65,7 +65,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
 
   given mockedCreditService: CreditService = mock(classOf[CreditService])
-  given mockedOptInService: OptInService = mock(classOf[OptInService])
+  given mockedOptInService: SignUpService = mock(classOf[SignUpService])
   given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
   given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   given ItvcErrorHandler = mock(classOf[ItvcErrorHandler])

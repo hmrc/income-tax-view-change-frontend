@@ -1,0 +1,114 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.reportingObligations.signUp
+
+import auth.authV2.AuthActions
+import com.google.inject.Inject
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
+import play.api.Logger
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.reportingObligations.JourneyCheckerSignUp
+import views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
+
+import scala.concurrent.{ExecutionContext, Future}
+
+class SignUpTaxYearQuestionController @Inject()(
+                                                 authActions: AuthActions,
+                                                 view: SignUpTaxYearQuestionView,
+                                                 signUpSubmissionService: SignUpSubmissionService,
+                                                 val signUpService: SignUpService,
+                                                 val itvcErrorHandler: ItvcErrorHandler,
+                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler
+                                               )(implicit val appConfig: FrontendAppConfig,
+                                                 val mcc: MessagesControllerComponents,
+                                                 val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp {
+
+  private def errorHandler(isAgent: Boolean): ShowInternalServerError =
+    if (isAgent) itvcErrorHandlerAgent
+    else itvcErrorHandler
+
+  def show(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      withSignUpRFChecks {
+        signUpService.isSignUpTaxYearValid(taxYear).flatMap {
+          case Some(viewModel) =>
+            retrieveIsJourneyComplete.flatMap { journeyIsComplete =>
+              if (!journeyIsComplete) {
+                withSessionData(isStart = false, viewModel.signUpTaxYear.taxYear, None) {
+                  Future(Ok(
+                    view(
+                      isAgent,
+                      viewModel,
+                      SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY),
+                      routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
+                    )
+                  ))
+                }
+              } else {
+                Future.successful(Redirect(controllers.reportingObligations.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(true))))
+              }
+            }
+          case None =>
+            Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url))
+        }
+      }
+  }
+
+  def submit(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      withSignUpRFChecks {
+        signUpService.isSignUpTaxYearValid(taxYear).flatMap {
+          case Some(viewModel) =>
+            SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY).bindFromRequest().fold(
+              formWithErrors => Future(BadRequest(
+                view(
+                  isAgent = isAgent,
+                  viewModel = viewModel,
+                  form = formWithErrors,
+                  postAction = routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
+                )
+              )),
+              form => {
+                val formResponse = form.toFormMap(SignUpTaxYearQuestionForm.response).headOption
+                formResponse match {
+                  case Some(SignUpTaxYearQuestionForm.responseYes) =>
+                    signUpSubmissionService.triggerSignUpRequest().map {
+                      case response if response.isInstanceOf[ITSAStatusUpdateResponseFailure] =>
+                        Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
+                      case _ =>
+                        Redirect(controllers.reportingObligations.signUp.routes.SignUpCompletedController.show(isAgent))
+                    }
+                  case Some(SignUpTaxYearQuestionForm.responseNo) =>
+                    Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url))
+                  case _ =>
+                    Logger("application").error("[SignUpTaxYearQuestionController.submit] Invalid form response")
+                    Future(errorHandler(isAgent).showInternalServerError())
+                }
+              }
+            )
+          case None =>
+            Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url))
+        }
+      }
+  }
+}

@@ -1,0 +1,323 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.reportingObligations.optOut
+
+import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import controllers.reportingObligations.optOut.OptOutTaxYearQuestionController
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import mocks.services.MockOptOutService
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
+import models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
+import play.api
+import play.api.Application
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import services.DateServiceInterface
+import services.reportingObligations.optOut.*
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+
+import scala.concurrent.Future
+
+class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOutService {
+
+  lazy val mockOptOutSubmissionService: OptOutSubmissionService = mock(classOf[OptOutSubmissionService])
+
+  override lazy val app: Application = applicationBuilderWithAuthBindings
+    .overrides(
+      api.inject.bind[OptOutService].toInstance(mockOptOutService),
+      api.inject.bind[OptOutSubmissionService].toInstance(mockOptOutSubmissionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+    ).build()
+
+  lazy val testController: OptOutTaxYearQuestionController = app.injector.instanceOf[OptOutTaxYearQuestionController]
+
+  val currentYear: Option[String] = Some("2025")
+  val nextYear: Option[String] = Some("2026")
+
+
+  val optOutProposition: OptOutProposition = OptOutTestSupport.buildThreeYearOptOutProposition()
+  val yearEnd: Int = optOutProposition.availableTaxYearsForOptOut(1).endYear
+  val currentTaxYear: TaxYear = TaxYear.forYearEnd(yearEnd)
+  val optOutTaxYear: CurrentOptOutTaxYear = CurrentOptOutTaxYear(ITSAStatus.Voluntary, currentTaxYear)
+  val optOutState: Option[MultiYearOptOutDefault.type] = Some(MultiYearOptOutDefault)
+  val viewModel: OptOutTaxYearQuestionViewModel = OptOutTaxYearQuestionViewModel(
+    taxYear = optOutTaxYear,
+    optOutState = optOutState,
+    numberOfQuarterlyUpdates = 0,
+    currentYearStatus = ITSAStatus.Voluntary,
+    nextYearStatus = ITSAStatus.Voluntary
+  )
+
+  private def reportingObligationsLink(isAgent: Boolean): Option[String] = {
+    if (isAgent) {
+      Some("/report-quarterly/income-and-expenses/view/agents/reporting-frequency")
+    } else {
+      Some("/report-quarterly/income-and-expenses/view/reporting-frequency")
+    }
+  }
+
+  private def homeLink(isAgent: Boolean): Option[String] = {
+    if (isAgent) {
+      Some("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
+    } else {
+      Some("/report-quarterly/income-and-expenses/view")
+    }
+  }
+
+  mtdAllRoles.foreach { mtdRole =>
+    val isAgent = mtdRole != MTDIndividual
+
+    s"show(isAgent = $isAgent)" when {
+      s"the user is authenticated as a $mtdRole" should {
+        s"render the Opt Out Tax Year Question page when returning a valid view model" in {
+          val action = testController.show(isAgent, currentYear)
+          val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+          mockSaveIntent(Future.successful(true))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe OK
+        }
+
+        "redirect the user to the reporting obligations page when no view model is returned" in {
+          val action = testController.show(isAgent, currentYear)
+          val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockIsOptOutTaxYearValid(Future.successful(None))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe reportingObligationsLink(isAgent)
+        }
+        "redirect the user to the home page when all the feature switches are disabled" in {
+          disable(OptOutFs)
+          disable(ReportingFrequencyPage)
+          disable(OptInOptOutContentUpdateR17)
+
+          val action = testController.show(isAgent, currentYear)
+          val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe homeLink(isAgent)
+        }
+
+        "redirect the user to the reporting obligations page when only the OptOutOptInContentR17 feature switch is disabled" in {
+          enable(OptOutFs, ReportingFrequencyPage)
+          disable(OptInOptOutContentUpdateR17)
+
+          val action = testController.show(isAgent, currentYear)
+          val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
+          val result = action(fakeRequest)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe reportingObligationsLink(isAgent)
+        }
+      }
+    }
+    s"submit(isAgent = $isAgent)" when {
+      s"the user is authenticated as a $mtdRole" should {
+        "redirect the user when they select 'Yes' - to confirm page" in {
+          val action = testController.submit(isAgent, currentYear)
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+          mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
+          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(Future(List(ITSAStatusUpdateResponseSuccess())))
+
+          val formData = Map("opt-out-tax-year-question" -> "Yes")
+
+          val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.reportingObligations.optOut.routes.ConfirmedOptOutController.show(isAgent).url)
+        }
+
+        "redirect the user when they select 'Yes' - opt out single year followed by mandated with updates" in {
+          val action = testController.submit(isAgent, currentYear)
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(
+            numberOfQuarterlyUpdates = 2,
+            optOutState = Some(OneYearOptOutFollowedByMandated)
+          ))))
+          mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
+          val formData = Map(
+            "opt-out-tax-year-question" -> "Yes",
+          )
+
+          val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.show(isAgent, currentYear.getOrElse("")).url)
+        }
+
+        "redirect the user to the opt out error page when they select 'Yes' and no itsa status update requests were made " in {
+
+          val action = testController.submit(isAgent, currentYear)
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+
+          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(Future(List()))
+
+          val formData = Map("opt-out-tax-year-question" -> "Yes")
+
+          val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
+        }
+
+        "redirect the user to the opt out error page when they select 'Yes' and the submit fails " in {
+          val action = testController.submit(isAgent, currentYear)
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+
+          when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
+            .thenReturn(Future(List(ITSAStatusUpdateResponseFailure.defaultFailure())))
+          mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseFailure(List())))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
+          val formData = Map(
+            "opt-out-tax-year-question" -> "Yes",
+          )
+
+          val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent).url)
+        }
+
+        "redirect to the reporting obligations page when the user selects 'No'" in {
+          val action = testController.submit(isAgent, currentYear)
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
+          val formData = Map(
+            "opt-out-tax-year-question" -> "No"
+          )
+
+          val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe reportingObligationsLink(isAgent)
+        }
+
+        "return an error when an invalid form response is submitted" in {
+          val action = testController.submit(isAgent, currentYear)
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
+
+          enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+
+          setupMockSuccess(mtdRole)
+          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+          mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
+          mockUpdateOptOutJourneyStatusInSessionData()
+          mockFetchOptOutJourneyCompleteStatus()
+
+          val formData = Map(
+            "opt-out-tax-year-question" -> ""
+          )
+
+          val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
+
+          status(result) shouldBe BAD_REQUEST
+        }
+      }
+    }
+  }
+}

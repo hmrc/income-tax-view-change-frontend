@@ -21,10 +21,10 @@ import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
-import services.optIn.core.OptInProposition
+import services.reportingObligations.signUp.core.SignUpProposition
 
 case class OptInAuditModel(
-                            optInProposition: OptInProposition,
+                            optInProposition: SignUpProposition,
                             intentTaxYear: TaxYear,
                             resolvedOutcome: ITSAStatusUpdateResponse
                           )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {

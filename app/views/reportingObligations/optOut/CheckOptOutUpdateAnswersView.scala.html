@@ -1,0 +1,76 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import models.reportingObligations.optOut.CheckOptOutUpdateAnswersViewModel
+
+@this(
+mainTemplate: unifiedLayout,
+h1: h1,
+h2: h2,
+p: p,
+link: link,
+hr: hr,
+inset: GovukInsetText,
+govukSummaryList: GovukSummaryList,
+govukButton: GovukButton,
+formWithCSRF: FormWithCSRF
+)
+
+@(viewModel: CheckOptOutUpdateAnswersViewModel, isAgent: Boolean, reportingObligationsURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+
+@getPostAction = @{
+    controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.submit(isAgent, viewModel.startYear)
+}
+
+@mainTemplate(
+    pageTitle = messages("optout.checkAnswers.heading"),
+    backUrl = Some("#"),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    useFallbackBackLink = true
+) {
+
+    @formWithCSRF(action = getPostAction) {
+
+        @h1(id = Some("check-opt-out-update-heading"), msg = messages("optout.updates.checkAnswers.heading", viewModel.startYear, viewModel.endYear), size = "xl")
+
+        @p(id = Some("check-opt-out-update-p1")){
+            @messages("optout.updates.checkAnswers.p1")
+        }
+
+        @if(viewModel.quarterlyUpdatesCount > 0){
+            @inset(InsetText(
+                    id = Some("check-opt-out-update-inset"),
+                    content = HtmlContent(messages("optout.updates.checkAnswers.inset", viewModel.quarterlyUpdatesCount))
+                )
+            )
+        }
+
+        <div class="govuk-button-group">
+            @govukButton(Button(
+                id = Some("confirm-button"),
+                content = Text(messages("base.confirm-and-save")),
+                attributes = Map("id" -> "confirm-button"),
+                preventDoubleClick = Some(true)
+            ))
+            <a class="govuk-link" href=@reportingObligationsURL id="cancel-button">@messages("optout.checkAnswers.cancel")</a>
+        </div>
+    }
+
+}

@@ -23,17 +23,16 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
-import models.obligations._
+import models.obligations.*
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.NextUpdatesService
-import services.optout.OptOutService
+import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewUtils.NextUpdatesViewUtils
 import views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
-import play.api.Logger
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -87,10 +86,10 @@ class NextUpdatesController @Inject()(
 
             val optOutSetup = {
               for {
-                (checks, optOutOneYearViewModel, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
+                (checks, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
                 viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
               } yield {
-                val whatTheUserCanDoContent = if (isOptOutEnabled) nextUpdatesViewUtils.whatTheUserCanDo(optOutOneYearViewModel, isAgent) else None
+                val whatTheUserCanDoContent = nextUpdatesViewUtils.whatTheUserCanDo(isAgent)
 
                 Ok(
                   nextUpdatesOptOutView(
