@@ -226,7 +226,7 @@ new.home.help.openInNewTab                                      = All links open
 home.help.link.makingTaxDigital.incomeTax                       = Find information about Making Tax Digital for Income Tax
 home.help.link.selfAssessment.payTaxBill                        = Find information about paying your Self Assessment tax bill
 home.help.link.makingTaxDigital.findSoftware                    = Find software that works with Making Tax Digital for Income Tax
-home.help.link.taxSupport.getHelp                               = Get help if you're struggling to pay your tax
+home.help.link.taxSupport.getHelp                               = Get help if you’re struggling to pay your tax
 
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
