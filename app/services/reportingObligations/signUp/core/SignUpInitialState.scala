@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package models.reportingObligations.signUp
+package services.reportingObligations.signUp.core
 
-import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.ITSAStatus
 
-case class ChooseTaxYearViewModel( availableOptInTaxYear: Seq[TaxYear],
-                                   cancelURL: String,
-                                   isAgent: Boolean)
+case class SignUpInitialState(currentYearItsaStatus: ITSAStatus, nextYearItsaStatus: ITSAStatus)

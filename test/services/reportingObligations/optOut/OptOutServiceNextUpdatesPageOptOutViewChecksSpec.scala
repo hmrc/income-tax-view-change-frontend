@@ -23,7 +23,7 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResp
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
-import models.reportingObligations.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel, OptOutOneYearViewModel}
+import models.reportingObligations.optOut.{NextUpdatesQuarterlyReportingContentChecks}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
@@ -90,10 +90,9 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        val (nextUpdatesQuarterlyReportingContentChecks, optOutViewModel, optOutProp) = service.nextUpdatesPageChecksAndProposition().futureValue
+        val (nextUpdatesQuarterlyReportingContentChecks, optOutProp) = service.nextUpdatesPageChecksAndProposition().futureValue
 
         nextUpdatesQuarterlyReportingContentChecks shouldBe NextUpdatesQuarterlyReportingContentChecks(true, true, false)
-        optOutViewModel shouldBe Some(OptOutOneYearViewModel(TaxYear(2022, 2023), Some(OneYearOptOutFollowedByMandated)))
         optOutProp shouldBe OptOutProposition(
           PreviousOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2022, 2023), false),
           CurrentOptOutTaxYear(ITSAStatus.Mandated, TaxYear(2023, 2024)),
@@ -133,10 +132,9 @@ class OptOutServiceNextUpdatesPageOptOutViewChecksSpec extends UnitSpec
           ITSAStatusUpdateResponseSuccess()
         ))
 
-        val (nextUpdatesQuarterlyReportingContentChecks, optOutViewModel, optOutProp) = service.nextUpdatesPageChecksAndProposition().futureValue
+        val (nextUpdatesQuarterlyReportingContentChecks, optOutProp) = service.nextUpdatesPageChecksAndProposition().futureValue
 
         nextUpdatesQuarterlyReportingContentChecks shouldBe NextUpdatesQuarterlyReportingContentChecks(true, true, false)
-        optOutViewModel shouldBe Some(OptOutMultiYearViewModel())
         optOutProp shouldBe OptOutProposition(
           PreviousOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2022, 2023), false),
           CurrentOptOutTaxYear(ITSAStatus.Voluntary, TaxYear(2023, 2024)),

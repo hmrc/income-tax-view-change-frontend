@@ -20,7 +20,7 @@ import audit.models.SignUpAuditModel
 import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import controllers.constants.ConfirmOptOutControllerConstants.emptyBodyString
-import enums.JourneyType.{Opt, OptInJourney}
+import enums.JourneyType.{Opt, SignUpJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.ITSAStatusUpdateConnectorStub
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
@@ -28,7 +28,7 @@ import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.reportingObligations.signUp.{OptInContextData, OptInSessionData}
+import models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -115,16 +115,16 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             repository.set(
               UIJourneySessionData(
                 sessionId = testSessionId,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData =
-                  Some(OptInSessionData(
-                    optInContextData =
-                      Some(OptInContextData(
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData =
+                  Some(SignUpSessionData(
+                    signUpContextData =
+                      Some(SignUpContextData(
                         currentTaxYear = "2022-2023",
                         currentYearITSAStatus = "Annual",
                         nextYearITSAStatus = "Annual"
                       )),
-                    selectedOptInYear = Some("2022-2023")
+                    selectedSignUpYear = Some("2022-2023")
                   ))
               )
             )
@@ -162,16 +162,16 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             repository.set(
               UIJourneySessionData(
                 sessionId = testSessionId,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData =
-                  Some(OptInSessionData(
-                    optInContextData =
-                      Some(OptInContextData(
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData =
+                  Some(SignUpSessionData(
+                    signUpContextData =
+                      Some(SignUpContextData(
                         currentTaxYear = "2022-2023",
                         currentYearITSAStatus = "Annual",
                         nextYearITSAStatus = "MTD Voluntary"
                       )),
-                    selectedOptInYear = Some("2022-2023")
+                    selectedSignUpYear = Some("2022-2023")
                   ))
               )
             )
@@ -217,16 +217,16 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             repository.set(
               UIJourneySessionData(
                 sessionId = testSessionId,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData =
-                  Some(OptInSessionData(
-                    optInContextData =
-                      Some(OptInContextData(
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData =
+                  Some(SignUpSessionData(
+                    signUpContextData =
+                      Some(SignUpContextData(
                         currentTaxYear = "2022-2023",
                         currentYearITSAStatus = "Annual",
                         nextYearITSAStatus = "MTD Mandated"
                       )),
-                    selectedOptInYear = Some("2022-2023")
+                    selectedSignUpYear = Some("2022-2023")
                   ))
               )
             )
@@ -274,16 +274,16 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             repository.set(
               UIJourneySessionData(
                 sessionId = testSessionId,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData =
-                  Some(OptInSessionData(
-                    optInContextData =
-                      Some(OptInContextData(
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData =
+                  Some(SignUpSessionData(
+                    signUpContextData =
+                      Some(SignUpContextData(
                         currentTaxYear = "2022-2023",
                         currentYearITSAStatus = "Annual",
                         nextYearITSAStatus = "Annual"
                       )),
-                    selectedOptInYear = Some("2023-2024")
+                    selectedSignUpYear = Some("2023-2024")
                   ))
               )
             )
@@ -319,16 +319,16 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             repository.set(
               UIJourneySessionData(
                 sessionId = testSessionId,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData =
-                  Some(OptInSessionData(
-                    optInContextData =
-                      Some(OptInContextData(
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData =
+                  Some(SignUpSessionData(
+                    signUpContextData =
+                      Some(SignUpContextData(
                         currentTaxYear = "2022-2023",
                         currentYearITSAStatus = "MTD Mandated",
                         nextYearITSAStatus = "Annual"
                       )),
-                    selectedOptInYear = Some("2023-2024")
+                    selectedSignUpYear = Some("2023-2024")
                   ))
               )
             )
@@ -364,16 +364,16 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             repository.set(
               UIJourneySessionData(
                 sessionId = testSessionId,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData =
-                  Some(OptInSessionData(
-                    optInContextData =
-                      Some(OptInContextData(
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData =
+                  Some(SignUpSessionData(
+                    signUpContextData =
+                      Some(SignUpContextData(
                         currentTaxYear = "2022-2023",
                         currentYearITSAStatus = "MTD Voluntary",
                         nextYearITSAStatus = "Annual"
                       )),
-                    selectedOptInYear = Some("2023-2024")
+                    selectedSignUpYear = Some("2023-2024")
                   ))
               )
             )
@@ -409,16 +409,16 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             repository.set(
               UIJourneySessionData(
                 sessionId = testSessionId,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData =
-                  Some(OptInSessionData(
-                    optInContextData =
-                      Some(OptInContextData(
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData =
+                  Some(SignUpSessionData(
+                    signUpContextData =
+                      Some(SignUpContextData(
                         currentTaxYear = "2022-2023",
                         currentYearITSAStatus = "MTD Voluntary",
                         nextYearITSAStatus = "MTD Voluntary"
                       )),
-                    selectedOptInYear = Some("2022-2023")
+                    selectedSignUpYear = Some("2022-2023")
                   ))
               )
             )
@@ -474,16 +474,16 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           repository.set(
             UIJourneySessionData(
               sessionId = testSessionId,
-              journeyType = Opt(OptInJourney).toString,
-              optInSessionData =
-                Some(OptInSessionData(
-                  optInContextData =
-                    Some(OptInContextData(
+              journeyType = Opt(SignUpJourney).toString,
+              signUpSessionData =
+                Some(SignUpSessionData(
+                  signUpContextData =
+                    Some(SignUpContextData(
                       currentTaxYear = "2022-2023",
                       currentYearITSAStatus = "Annual",
                       nextYearITSAStatus = "MTD Voluntary"
                     )),
-                  selectedOptInYear = Some("2022-2023")
+                  selectedSignUpYear = Some("2022-2023")
                 ))
             )
           )
@@ -526,16 +526,16 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           repository.set(
             UIJourneySessionData(
               sessionId = testSessionId,
-              journeyType = Opt(OptInJourney).toString,
-              optInSessionData =
-                Some(OptInSessionData(
-                  optInContextData =
-                    Some(OptInContextData(
+              journeyType = Opt(SignUpJourney).toString,
+              signUpSessionData =
+                Some(SignUpSessionData(
+                  signUpContextData =
+                    Some(SignUpContextData(
                       currentTaxYear = "2022-2023",
                       currentYearITSAStatus = "Annual",
                       nextYearITSAStatus = "Annual"
                     )),
-                  selectedOptInYear = Some("2022-2023")
+                  selectedSignUpYear = Some("2022-2023")
                 ))
             )
           )
@@ -617,10 +617,10 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
                                     nextYearStatus: ITSAStatus.Value, intent: TaxYear, journeyComplete: Boolean = false): Future[Boolean] = {
     repository.set(
       UIJourneySessionData(testSessionId,
-        Opt(OptInJourney).toString,
-        optInSessionData =
-          Some(OptInSessionData(
-            Some(OptInContextData(
+        Opt(SignUpJourney).toString,
+        signUpSessionData =
+          Some(SignUpSessionData(
+            Some(SignUpContextData(
               currentTaxYear.toString,
               currentYearStatus.toString,
               nextYearStatus.toString)

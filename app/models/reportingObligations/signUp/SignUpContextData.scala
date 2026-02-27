@@ -17,8 +17,21 @@
 package models.reportingObligations.signUp
 
 import models.incomeSourceDetails.TaxYear
+import play.api.libs.json.{Json, OFormat}
 
-case class ConfirmTaxYearViewModel(availableOptInTaxYear: TaxYear,
-                                   cancelURL: String,
-                                   isNextTaxYear: Boolean,
-                                   isAgent: Boolean)
+case class SignUpContextData(
+                             currentTaxYear: String,
+                             currentYearITSAStatus: String,
+                             nextYearITSAStatus: String
+                           ) {
+
+  def currentYearAsTaxYear(): Option[TaxYear] = asTaxYear(currentTaxYear)
+
+  private def asTaxYear(taxYearValue: String): Option[TaxYear] = {
+    TaxYear.getTaxYearModel(taxYearValue)
+  }
+}
+
+object SignUpContextData {
+  implicit val format: OFormat[SignUpContextData] = Json.format[SignUpContextData]
+}

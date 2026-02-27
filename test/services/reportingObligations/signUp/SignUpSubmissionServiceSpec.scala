@@ -19,19 +19,19 @@ package services.reportingObligations.signUp
 import audit.AuditingService
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
-import enums.JourneyType.{Opt, OptInJourney}
+import enums.JourneyType.{Opt, SignUpJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
-import models.reportingObligations.signUp.{OptInContextData, OptInSessionData}
+import models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import play.mvc.Http.Status.NO_CONTENT
 import repositories.UIJourneySessionDataRepository
 import services.DateService
-import services.reportingObligations.signUp.{OptInService, SignUpSubmissionService}
-import services.reportingObligations.signUp.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
+import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import testConstants.BaseTestConstants.testSessionId
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
@@ -48,7 +48,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
   val mockDateService: DateService = mock(classOf[DateService])
   val mockAuditingService: AuditingService = mock(classOf[AuditingService])
-  val mockOptInService: OptInService = mock(classOf[OptInService])
+  val mockOptInService: SignUpService = mock(classOf[SignUpService])
   val mockUiJourneySessionDataRepository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
   val mockItsaStatusUpdateConnector: ITSAStatusUpdateConnector = mock(classOf[ITSAStatusUpdateConnector])
 
@@ -70,23 +70,23 @@ class SignUpSubmissionServiceSpec extends UnitSpec
         "return the correct session data" in {
 
           val optInContextData =
-            OptInContextData(
+            SignUpContextData(
               currentTaxYear = "2025-2026",
               currentYearITSAStatus = "MTD Voluntary",
               nextYearITSAStatus = "MTD Voluntary"
             )
 
           val selectedOptInYear = Some("2025-2026")
-          val optInSessionData = OptInSessionData(Some(optInContextData), selectedOptInYear = selectedOptInYear)
+          val optInSessionData = SignUpSessionData(Some(optInContextData), selectedSignUpYear = selectedOptInYear)
 
           val retrievedUiSessionData =
             UIJourneySessionData(
               sessionId = hc.sessionId.get.value,
-              journeyType = Opt(OptInJourney).toString,
-              optInSessionData = Some(optInSessionData)
+              journeyType = Opt(SignUpJourney).toString,
+              signUpSessionData = Some(optInSessionData)
             )
 
-          when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney)))
+          when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(SignUpJourney)))
             .thenReturn(Future(Some(retrievedUiSessionData)))
 
           val request = service.getOptInSessionData()
@@ -98,7 +98,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
         "return None" in {
 
-          when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney)))
+          when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(SignUpJourney)))
             .thenReturn(Future(None))
 
           val request = service.getOptInSessionData()
@@ -163,7 +163,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
           "successfully make a Sign Up request" in {
 
             val optInContextData =
-              OptInContextData(
+              SignUpContextData(
                 currentTaxYear = "2025-2026",
                 currentYearITSAStatus = "Annual",
                 nextYearITSAStatus = "MTD Voluntary"
@@ -172,34 +172,34 @@ class SignUpSubmissionServiceSpec extends UnitSpec
             val currentTaxYear = TaxYear(2025, 2026)
 
             val selectedOptInYear = Some("2025-2026")
-            val optInSessionData = OptInSessionData(Some(optInContextData), selectedOptInYear = selectedOptInYear)
+            val optInSessionData = SignUpSessionData(Some(optInContextData), selectedSignUpYear = selectedOptInYear)
 
             val retrievedUiSessionData =
               UIJourneySessionData(
                 sessionId = hc.sessionId.get.value,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData = Some(optInSessionData)
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData = Some(optInSessionData)
               )
 
             val currentOptInTaxYear =
-              CurrentOptInTaxYear(Annual, TaxYear(2025, 2026))
+              CurrentSignUpTaxYear(Annual, TaxYear(2025, 2026))
 
             val nextOptInTaxYear =
-              NextOptInTaxYear(Voluntary, TaxYear(2026, 2027), currentOptInTaxYear)
+              NextSignUpTaxYear(Voluntary, TaxYear(2026, 2027), currentOptInTaxYear)
 
             val optInProposition =
-              OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+              SignUpProposition(currentOptInTaxYear, nextOptInTaxYear)
 
             when(mockDateService.getCurrentTaxYear)
               .thenReturn(currentTaxYear)
 
-            when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney)))
+            when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(SignUpJourney)))
               .thenReturn(Future(Some(retrievedUiSessionData)))
 
-            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+            when(mockOptInService.fetchSignUpProposition()(any(), any(), any()))
               .thenReturn(Future(optInProposition))
 
-            when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
+            when(mockItsaStatusUpdateConnector.signUp(any(), any())(any()))
               .thenReturn(Future(ITSAStatusUpdateResponseSuccess(NO_CONTENT)))
 
             when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
@@ -219,7 +219,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
           "successfully make a Sign up request" in {
 
             val optInContextData =
-              OptInContextData(
+              SignUpContextData(
                 currentTaxYear = "2025-2026",
                 currentYearITSAStatus = "MTD Voluntary",
                 nextYearITSAStatus = "Annual"
@@ -228,34 +228,34 @@ class SignUpSubmissionServiceSpec extends UnitSpec
             val currentTaxYear = TaxYear(2025, 2026)
 
             val selectedOptInYear = Some("2026-2027")
-            val optInSessionData = OptInSessionData(Some(optInContextData), selectedOptInYear = selectedOptInYear)
+            val optInSessionData = SignUpSessionData(Some(optInContextData), selectedSignUpYear = selectedOptInYear)
 
             val retrievedUiSessionData =
               UIJourneySessionData(
                 sessionId = hc.sessionId.get.value,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData = Some(optInSessionData)
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData = Some(optInSessionData)
               )
 
             val currentOptInTaxYear =
-              CurrentOptInTaxYear(Voluntary, TaxYear(2025, 2026))
+              CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))
 
             val nextOptInTaxYear =
-              NextOptInTaxYear(Annual, TaxYear(2026, 2027), currentOptInTaxYear)
+              NextSignUpTaxYear(Annual, TaxYear(2026, 2027), currentOptInTaxYear)
 
             val optInProposition =
-              OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+              SignUpProposition(currentOptInTaxYear, nextOptInTaxYear)
 
             when(mockDateService.getCurrentTaxYear)
               .thenReturn(currentTaxYear)
 
-            when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney)))
+            when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(SignUpJourney)))
               .thenReturn(Future(Some(retrievedUiSessionData)))
 
-            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+            when(mockOptInService.fetchSignUpProposition()(any(), any(), any()))
               .thenReturn(Future(optInProposition))
 
-            when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
+            when(mockItsaStatusUpdateConnector.signUp(any(), any())(any()))
               .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
             when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
@@ -276,7 +276,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
           "return a success response - 204" in {
 
             val optInContextData =
-              OptInContextData(
+              SignUpContextData(
                 currentTaxYear = "2025-2026",
                 currentYearITSAStatus = "Annual",
                 nextYearITSAStatus = "Annual"
@@ -285,34 +285,34 @@ class SignUpSubmissionServiceSpec extends UnitSpec
             val currentTaxYear = TaxYear(2025, 2026)
 
             val selectedOptInYear = Some("2025-2026")
-            val optInSessionData = OptInSessionData(Some(optInContextData), selectedOptInYear = selectedOptInYear)
+            val optInSessionData = SignUpSessionData(Some(optInContextData), selectedSignUpYear = selectedOptInYear)
 
             val retrievedUiSessionData =
               UIJourneySessionData(
                 sessionId = hc.sessionId.get.value,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData = Some(optInSessionData)
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData = Some(optInSessionData)
               )
 
             val currentOptInTaxYear =
-              CurrentOptInTaxYear(Annual, TaxYear(2025, 2026))
+              CurrentSignUpTaxYear(Annual, TaxYear(2025, 2026))
 
             val nextOptInTaxYear =
-              NextOptInTaxYear(Annual, TaxYear(2026, 2027), currentOptInTaxYear)
+              NextSignUpTaxYear(Annual, TaxYear(2026, 2027), currentOptInTaxYear)
 
             val optInProposition =
-              OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+              SignUpProposition(currentOptInTaxYear, nextOptInTaxYear)
 
             when(mockDateService.getCurrentTaxYear)
               .thenReturn(currentTaxYear)
 
-            when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney)))
+            when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(SignUpJourney)))
               .thenReturn(Future(Some(retrievedUiSessionData)))
 
-            when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
+            when(mockItsaStatusUpdateConnector.signUp(any(), any())(any()))
               .thenReturn(Future(ITSAStatusUpdateResponseSuccess()))
 
-            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+            when(mockOptInService.fetchSignUpProposition()(any(), any(), any()))
               .thenReturn(Future(optInProposition))
 
             when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))
@@ -329,7 +329,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
           "return a success response - 204" in {
 
             val optInContextData =
-              OptInContextData(
+              SignUpContextData(
                 currentTaxYear = "2025-2026",
                 currentYearITSAStatus = "Annual",
                 nextYearITSAStatus = "Annual"
@@ -338,34 +338,34 @@ class SignUpSubmissionServiceSpec extends UnitSpec
             val currentTaxYear = TaxYear(2025, 2026)
 
             val selectedOptInYear = Some("2026-2027") // user did not pick a tax year but should have
-            val optInSessionData = OptInSessionData(Some(optInContextData), selectedOptInYear = selectedOptInYear)
+            val optInSessionData = SignUpSessionData(Some(optInContextData), selectedSignUpYear = selectedOptInYear)
 
             val retrievedUiSessionData =
               UIJourneySessionData(
                 sessionId = hc.sessionId.get.value,
-                journeyType = Opt(OptInJourney).toString,
-                optInSessionData = Some(optInSessionData)
+                journeyType = Opt(SignUpJourney).toString,
+                signUpSessionData = Some(optInSessionData)
               )
 
             val currentOptInTaxYear =
-              CurrentOptInTaxYear(Annual, TaxYear(2025, 2026))
+              CurrentSignUpTaxYear(Annual, TaxYear(2025, 2026))
 
             val nextOptInTaxYear =
-              NextOptInTaxYear(Annual, TaxYear(2026, 2027), currentOptInTaxYear)
+              NextSignUpTaxYear(Annual, TaxYear(2026, 2027), currentOptInTaxYear)
 
             val optInProposition =
-              OptInProposition(currentOptInTaxYear, nextOptInTaxYear)
+              SignUpProposition(currentOptInTaxYear, nextOptInTaxYear)
 
             when(mockDateService.getCurrentTaxYear)
               .thenReturn(currentTaxYear)
 
-            when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney)))
+            when(mockUiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(SignUpJourney)))
               .thenReturn(Future(Some(retrievedUiSessionData)))
 
-            when(mockItsaStatusUpdateConnector.optIn(any(), any())(any()))
+            when(mockItsaStatusUpdateConnector.signUp(any(), any())(any()))
               .thenReturn(Future(ITSAStatusUpdateResponseFailure.defaultFailure()))
 
-            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+            when(mockOptInService.fetchSignUpProposition()(any(), any(), any()))
               .thenReturn(Future(optInProposition))
 
             when(mockAuditingService.extendedAudit(any(), any())(any(), any(), any()))

@@ -22,7 +22,6 @@ import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.reportingObligations.optOut.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -60,12 +59,10 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
             enable(ReportingFrequencyPage)
 
             val isAgent = false
-
-            val optOutSingleYear = OptOutOneYearViewModel(oneYearOptOutTaxYear = TaxYear(2025, 2026), state = Some(OneYearOptOutFollowedByAnnual))
-
+            
             val reportingFrequencyLink = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
-            val actual = nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutSingleYear), isAgent)
+            val actual = nextUpdatesViewUtils.whatTheUserCanDo(isAgent)
             val expected =
               HtmlFormat.fill(
                 Seq(

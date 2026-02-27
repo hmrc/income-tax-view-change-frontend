@@ -26,6 +26,4 @@ case class OptOutSessionData(
 
 object OptOutSessionData {
   implicit val format: OFormat[OptOutSessionData] = Json.format[OptOutSessionData]
-
-  def getJSONKeyPath(name: String): String = s"optOutSessionData.$name"
 }

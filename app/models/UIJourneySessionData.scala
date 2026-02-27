@@ -17,7 +17,7 @@
 package models
 
 import models.incomeSourceDetails.*
-import models.reportingObligations.signUp.OptInSessionData
+import models.reportingObligations.signUp.SignUpSessionData
 import models.reportingObligations.optOut.OptOutSessionData
 import models.triggeredMigration.TriggeredMigrationSessionData
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
@@ -34,7 +34,7 @@ case class UIJourneySessionData(
                                  manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
                                  ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
                                  optOutSessionData: Option[OptOutSessionData] = None,
-                                 optInSessionData: Option[OptInSessionData] = None,
+                                 signUpSessionData: Option[SignUpSessionData] = None,
                                  incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
                                  triggeredMigrationData: Option[TriggeredMigrationSessionData] = None,
                                  lastUpdated: Instant = Instant.now,
@@ -49,7 +49,7 @@ case class UIJourneySessionData(
       manageIncomeSourceData,
       ceaseIncomeSourceData,
       optOutSessionData,
-      optInSessionData,
+      signUpSessionData,
       incomeSourceReportingFrequencyData,
       triggeredMigrationData,
       lastUpdated,
@@ -68,7 +68,7 @@ object UIJourneySessionData {
         (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData] ~
         (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData] ~
         (__ \ "optOutSessionData").formatNullable[OptOutSessionData] ~
-        (__ \ "optInSessionData").formatNullable[OptInSessionData] ~
+        (__ \ "signUpSessionData").formatNullable[SignUpSessionData] ~
         (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData] ~
         (__ \ "triggeredMigrationData").formatNullable[TriggeredMigrationSessionData] ~
         (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat) ~
@@ -81,7 +81,7 @@ object UIJourneySessionData {
         manageIncomeSourceData,
         ceaseIncomeSourceData,
         optOutSessionData,
-        optInSessionData,
+        signUpSessionData,
         incomeSourceReportingFrequencyData,
         triggeredMigrationData,
         lastUpdated,
@@ -94,7 +94,7 @@ object UIJourneySessionData {
           manageIncomeSourceData,
           ceaseIncomeSourceData,
           optOutSessionData,
-          optInSessionData,
+          signUpSessionData,
           incomeSourceReportingFrequencyData,
           triggeredMigrationData,
           lastUpdated,
@@ -108,7 +108,7 @@ object UIJourneySessionData {
           u.manageIncomeSourceData,
           u.ceaseIncomeSourceData,
           u.optOutSessionData,
-          u.optInSessionData,
+          u.signUpSessionData,
           u.incomeSourceReportingFrequencyData,
           u.triggeredMigrationData,
           u.lastUpdated,
@@ -126,7 +126,7 @@ case class SensitiveUIJourneySessionData(
                                           manageIncomeSourceData: Option[ManageIncomeSourceData] = None,
                                           ceaseIncomeSourceData: Option[CeaseIncomeSourceData] = None,
                                           optOutSessionData: Option[OptOutSessionData] = None,
-                                          optInSessionData: Option[OptInSessionData] = None,
+                                          signUpSessionData: Option[SignUpSessionData] = None,
                                           incomeSourceReportingFrequencyData: Option[IncomeSourceReportingFrequencySourceData] = None,
                                           triggeredMigrationData: Option[TriggeredMigrationSessionData] = None,
                                           lastUpdated: Instant = Instant.now,
@@ -141,7 +141,7 @@ case class SensitiveUIJourneySessionData(
       manageIncomeSourceData,
       ceaseIncomeSourceData,
       optOutSessionData,
-      optInSessionData,
+      signUpSessionData,
       incomeSourceReportingFrequencyData,
       triggeredMigrationData,
       lastUpdated,
@@ -159,7 +159,7 @@ object SensitiveUIJourneySessionData {
         ~ (__ \ "manageIncomeSourceData").formatNullable[ManageIncomeSourceData]
         ~ (__ \ "ceaseIncomeSourceData").formatNullable[CeaseIncomeSourceData]
         ~ (__ \ "optOutSessionData").formatNullable[OptOutSessionData]
-        ~ (__ \ "optInSessionData").formatNullable[OptInSessionData]
+        ~ (__ \ "signUpSessionData").formatNullable[SignUpSessionData]
         ~ (__ \ "incomeSourceReportingFrequencyData").formatNullable[IncomeSourceReportingFrequencySourceData]
         ~ (__ \ "triggeredMigrationData").formatNullable[TriggeredMigrationSessionData]
         ~ (__ \ "lastUpdated").format(MongoJavatimeFormats.instantFormat)
@@ -172,7 +172,7 @@ object SensitiveUIJourneySessionData {
         manageIncomeSourceData,
         ceaseIncomeSourceData,
         optOutSessionData,
-        optInSessionData,
+        signUpSessionData,
         incomeSourceReportingFrequencyData,
         triggeredMigrationData,
         lastUpdated,
@@ -185,7 +185,7 @@ object SensitiveUIJourneySessionData {
           manageIncomeSourceData,
           ceaseIncomeSourceData,
           optOutSessionData,
-          optInSessionData,
+          signUpSessionData,
           incomeSourceReportingFrequencyData,
           triggeredMigrationData,
           lastUpdated,
@@ -199,7 +199,7 @@ object SensitiveUIJourneySessionData {
           s.manageIncomeSourceData,
           s.ceaseIncomeSourceData,
           s.optOutSessionData,
-          s.optInSessionData,
+          s.signUpSessionData,
           s.incomeSourceReportingFrequencyData,
           s.triggeredMigrationData,
           s.lastUpdated,

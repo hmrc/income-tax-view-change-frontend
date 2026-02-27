@@ -20,7 +20,7 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.reportingObligations.signUp.SignUpCompletedController
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.MockOptInService
+import mocks.services.MockSignUpService
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -32,17 +32,17 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateServiceInterface
-import services.reportingObligations.signUp.OptInService
-import services.reportingObligations.signUp.core.OptInProposition.createOptInProposition
+import services.reportingObligations.signUp.SignUpService
+import services.reportingObligations.signUp.core.SignUpProposition.createSignUpProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 
-class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInService {
+class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[OptInService].toInstance(mockOptInService),
+      api.inject.bind[SignUpService].toInstance(mockSignUpService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
@@ -67,11 +67,11 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-            val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
-            mockFetchOptInProposition(Some(proposition))
+            val proposition = createSignUpProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
+            mockFetchSignUpProposition(Some(proposition))
             mockFetchSavedChosenTaxYear(Some(taxYear2023))
 
-            when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+            when(mockSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
               .thenReturn(Future.successful(true))
 
             val result = action(fakeRequest)
@@ -84,11 +84,11 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-            val proposition = createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
-            mockFetchOptInProposition(Some(proposition))
+            val proposition = createSignUpProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)
+            mockFetchSignUpProposition(Some(proposition))
             mockFetchSavedChosenTaxYear(Some(taxYear2023.nextYear))
 
-            when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+            when(mockSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
               .thenReturn(Future.successful(true))
 
             val result = action(fakeRequest)
@@ -103,7 +103,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-            mockFetchOptInProposition(None)
+            mockFetchSignUpProposition(None)
             mockFetchSavedChosenTaxYear(Some(taxYear2023))
 
             val result = action(fakeRequest)
@@ -116,7 +116,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockOptInServic
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-            mockFetchOptInProposition(Some(createOptInProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)))
+            mockFetchSignUpProposition(Some(createSignUpProposition(taxYear2023, ITSAStatus.Annual, ITSAStatus.Annual)))
             mockFetchSavedChosenTaxYear(None)
 
             val result = action(fakeRequest)

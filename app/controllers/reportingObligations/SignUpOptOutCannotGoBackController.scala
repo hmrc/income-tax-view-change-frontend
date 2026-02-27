@@ -46,5 +46,4 @@ class SignUpOptOutCannotGoBackController @Inject()(
       case _ => Future.successful(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent)))
     }
   }
-
 }

@@ -21,7 +21,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import services.reportingObligations.signUp.core.{CurrentOptInTaxYear, NextOptInTaxYear}
+import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}
 import testUtils.TestSupport
 import views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
 
@@ -29,8 +29,8 @@ class SignUpTaxYearQuestionViewSpec extends TestSupport {
 
   val signUpTaxYearQuestion: SignUpTaxYearQuestionView = app.injector.instanceOf[SignUpTaxYearQuestionView]
 
-  val currentYearViewModel = SignUpTaxYearQuestionViewModel(CurrentOptInTaxYear(ITSAStatus.Annual, TaxYear(2025, 2026)))
-  val nextYearViewModel = SignUpTaxYearQuestionViewModel(NextOptInTaxYear(ITSAStatus.Annual, TaxYear(2026, 2027), CurrentOptInTaxYear(ITSAStatus.Annual, TaxYear(2025, 2026))))
+  val currentYearViewModel = SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(ITSAStatus.Annual, TaxYear(2025, 2026)))
+  val nextYearViewModel = SignUpTaxYearQuestionViewModel(NextSignUpTaxYear(ITSAStatus.Annual, TaxYear(2026, 2027), CurrentSignUpTaxYear(ITSAStatus.Annual, TaxYear(2025, 2026))))
 
   class Setup(viewModel: SignUpTaxYearQuestionViewModel, withError: Boolean = false) {
     val form = if (withError) {

@@ -21,6 +21,5 @@ import models.incomeSourceDetails.TaxYear
 case class CheckOptOutUpdateAnswersViewModel(optOutTaxYear: TaxYear, quarterlyUpdatesCount: Int) {
   val startYear: String = optOutTaxYear.startYear.toString
   val endYear: String = optOutTaxYear.endYear.toString
-  val nextYear: String = optOutTaxYear.nextYear.endYear.toString
 }
 

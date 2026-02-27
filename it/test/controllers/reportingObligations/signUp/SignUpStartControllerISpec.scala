@@ -17,15 +17,14 @@
 package controllers.reportingObligations.signUp
 
 import controllers.ControllerISpecHelper
-import controllers.reportingObligations.signUp.SignUpStartControllerISpec
-import enums.JourneyType.{Opt, OptInJourney}
+import enums.JourneyType.{Opt, SignUpJourney}
 import enums.MTDIndividual
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.reportingObligations.signUp.OptInSessionData
+import models.reportingObligations.signUp.SignUpSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
@@ -62,7 +61,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            setupOptInSessionData(currentTaxYear)
+            setupsignUpSessionData(currentTaxYear)
 
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
               taxYear = currentTaxYear,
@@ -92,7 +91,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            setupOptInSessionData(currentTaxYear)
+            setupsignUpSessionData(currentTaxYear)
 
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
               taxYear = currentTaxYear,
@@ -156,7 +155,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-            setupOptInSessionData(currentTaxYear, journeyComplete = true)
+            setupsignUpSessionData(currentTaxYear, journeyComplete = true)
 
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
               taxYear = currentTaxYear,
@@ -177,12 +176,12 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  private def setupOptInSessionData(currentTaxYear: TaxYear, journeyComplete: Boolean = false): Unit = {
+  private def setupsignUpSessionData(currentTaxYear: TaxYear, journeyComplete: Boolean = false): Unit = {
     await(repository.set(
       UIJourneySessionData(testSessionId,
-        Opt(OptInJourney).toString,
-        optInSessionData =
-          Some(OptInSessionData(None, Some(currentTaxYear.toString), journeyIsComplete = Some(journeyComplete))))))
+        Opt(SignUpJourney).toString,
+        signUpSessionData =
+          Some(SignUpSessionData(None, Some(currentTaxYear.toString), journeyIsComplete = Some(journeyComplete))))))
   }
 }
 

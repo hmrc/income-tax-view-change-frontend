@@ -20,7 +20,6 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.ReportingFrequencyPage
-import models.reportingObligations.optOut.{OptOutMultiYearViewModel, OptOutOneYearViewModel, OptOutViewModel}
 import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
 import views.html.components.link
@@ -30,7 +29,7 @@ import javax.inject.Inject
 class NextUpdatesViewUtils @Inject()(link: link)(
                                       implicit val appConfig: FrontendAppConfig
                                     ) extends FeatureSwitching {
-  def whatTheUserCanDo(optOutViewModel: Option[OptOutViewModel], isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Option[Html] = {
+  def whatTheUserCanDo(isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Option[Html] = {
 
     val reportingFrequencyLink = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 

@@ -22,58 +22,58 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.reportingObligations.signUp.OptInService
-import services.reportingObligations.signUp.core.OptInProposition
+import services.reportingObligations.signUp.SignUpService
+import services.reportingObligations.signUp.core.SignUpProposition
 import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockOptInService extends UnitSpec with BeforeAndAfterEach {
+trait MockSignUpService extends UnitSpec with BeforeAndAfterEach {
 
-  lazy val mockOptInService: OptInService = mock(classOf[OptInService])
+  lazy val mockSignUpService: SignUpService = mock(classOf[SignUpService])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockOptInService)
+    reset(mockSignUpService)
   }
 
   def mockSaveIntent(intent: TaxYear, isSuccessful: Boolean = true): Unit = {
-    when(mockOptInService.saveIntent(ArgumentMatchers.eq(intent))(any(), any(), any()))
+    when(mockSignUpService.saveIntent(ArgumentMatchers.eq(intent))(any(), any(), any()))
       .thenReturn(Future.successful(isSuccessful))
   }
 
   def mockAvailableOptInTaxYear(choices: List[TaxYear]): Unit = {
-    when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
+    when(mockSignUpService.availableSignUpTaxYear()(any(), any(), any()))
       .thenReturn(Future.successful(choices))
   }
 
   def mockFetchSavedChosenTaxYear(intentOpl: Option[TaxYear]): Unit = {
-    when(mockOptInService.fetchSavedChosenTaxYear()(any(), any(), any()))
+    when(mockSignUpService.fetchSavedChosenTaxYear()(any(), any(), any()))
       .thenReturn(Future.successful(intentOpl))
   }
 
-  def mockFetchOptInProposition(propositionOpl: Option[OptInProposition]): Unit = {
+  def mockFetchSignUpProposition(propositionOpl: Option[SignUpProposition]): Unit = {
     propositionOpl.map { proposition =>
-      when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+      when(mockSignUpService.fetchSignUpProposition()(any(), any(), any()))
         .thenReturn(Future.successful(proposition))
     } getOrElse {
-      when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+      when(mockSignUpService.fetchSignUpProposition()(any(), any(), any()))
         .thenReturn(Future.failed(new RuntimeException("Some error")))
     }
   }
 
   def mockIsSignUpTaxYearValid(out: Future[Option[SignUpTaxYearQuestionViewModel]]): Unit = {
-    when(mockOptInService.isSignUpTaxYearValid(any())(any(), any(), any()))
+    when(mockSignUpService.isSignUpTaxYearValid(any())(any(), any(), any()))
       .thenReturn(out)
   }
 
-  def mockFetchSavedOptInSessionData(): Unit = {
-    when(mockOptInService.fetchSavedOptInSessionData()(any(), any(), any()))
+  def mockFetchSavedSignUpSessionData(): Unit = {
+    when(mockSignUpService.fetchSavedSignUpSessionData()(any(), any(), any()))
       .thenReturn(Future.successful(None))
   }
 
   def mockUpdateOptInJourneyStatusInSessionData(journeyComplete: Boolean = false): Unit = {
-    when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+    when(mockSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
       .thenReturn(Future.successful(journeyComplete))
   }
 }

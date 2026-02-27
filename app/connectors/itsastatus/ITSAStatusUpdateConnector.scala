@@ -40,8 +40,8 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
     makeITSAStatusUpdate(taxYear, userNino, optOutUpdateReason)
   }
 
-  def optIn(taxYear: TaxYear, taxableEntityId: String)(implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
-    makeITSAStatusUpdate(taxYear, taxableEntityId, optInUpdateReason)
+  def signUp(taxYear: TaxYear, taxableEntityId: String)(implicit headerCarrier: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
+    makeITSAStatusUpdate(taxYear, taxableEntityId, signUpUpdateReason)
   }
 
   private def buildRequestUrlWith(userNino: String): String =

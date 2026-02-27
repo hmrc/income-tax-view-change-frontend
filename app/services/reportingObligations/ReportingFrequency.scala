@@ -29,7 +29,5 @@ object ReportingFrequency {
       .filter(taxYearCounts => taxYearCounts.taxYear == offeredTaxYear)
       .map(_.count).sum
 
-    val isQuarterlyUpdatesMade: Boolean = counts.map(_.count).sum > noQuarterlyUpdates
   }
-
 }

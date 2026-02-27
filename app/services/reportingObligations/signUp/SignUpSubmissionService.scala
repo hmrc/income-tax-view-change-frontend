@@ -21,14 +21,14 @@ import audit.models.SignUpAuditModel
 import auth.MtdItUser
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
-import enums.JourneyType.{Opt, OptInJourney}
+import enums.JourneyType.{Opt, SignUpJourney}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
-import models.reportingObligations.signUp.{OptInContextData, OptInSessionData}
+import models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import play.api.Logging
 import repositories.UIJourneySessionDataRepository
 import services.DateServiceInterface
-import services.reportingObligations.signUp.core.OptInProposition
+import services.reportingObligations.signUp.core.SignUpProposition
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -38,14 +38,14 @@ class SignUpSubmissionService @Inject()(
                                          auditingService: AuditingService,
                                          dateService: DateServiceInterface,
                                          itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
-                                         optInService: OptInService,
+                                         optInService: SignUpService,
                                          uiJourneySessionDataRepository: UIJourneySessionDataRepository
                                        ) extends Logging {
 
-  private[services] def getOptInSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[OptInSessionData]] = {
+  private[services] def getOptInSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpSessionData]] = {
     for {
-      uiSessionData <- uiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(OptInJourney))
-      optInSessionData: Option[OptInSessionData] = uiSessionData.flatMap(_.optInSessionData)
+      uiSessionData <- uiJourneySessionDataRepository.get(hc.sessionId.get.value, Opt(SignUpJourney))
+      optInSessionData: Option[SignUpSessionData] = uiSessionData.flatMap(_.signUpSessionData)
     } yield {
       optInSessionData
     }
@@ -70,7 +70,7 @@ class SignUpSubmissionService @Inject()(
                                         (implicit hc: HeaderCarrier): Future[ITSAStatusUpdateResponse] = {
     signUpTaxYears.headOption match {
       case Some(taxYear) =>
-        itsaStatusUpdateConnector.optIn(taxYear, nino)
+        itsaStatusUpdateConnector.signUp(taxYear, nino)
       case None =>
         logger.error(s"[SignUpSubmissionService][sendSignUpRequest] No tax years to sign up for.")
         Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
@@ -79,11 +79,11 @@ class SignUpSubmissionService @Inject()(
 
   def triggerSignUpRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
     for {
-      optInSessionData: Option[OptInSessionData] <- getOptInSessionData()
-      selectedSignUpYear: Option[TaxYear] = optInSessionData.flatMap(_.selectedOptInYear).flatMap(TaxYear.`fromStringYYYY-YYYY`)
-      optInContextData: Option[OptInContextData] = optInSessionData.flatMap(_.optInContextData)
+      optInSessionData: Option[SignUpSessionData] <- getOptInSessionData()
+      selectedSignUpYear: Option[TaxYear] = optInSessionData.flatMap(_.selectedSignUpYear).flatMap(TaxYear.`fromStringYYYY-YYYY`)
+      optInContextData: Option[SignUpContextData] = optInSessionData.flatMap(_.signUpContextData)
       currentTaxYear: TaxYear = optInContextData.map(data => data.currentTaxYear).flatMap(TaxYear.`fromStringYYYY-YYYY`).getOrElse(dateService.getCurrentTaxYear)
-      optInProposition: OptInProposition <- optInService.fetchOptInProposition()
+      optInProposition: SignUpProposition <- optInService.fetchSignUpProposition()
       currentYearItsaStatus = optInProposition.currentTaxYear.status
       nextYearItsaStatus = optInProposition.nextTaxYear.status
       _ = logger.info(

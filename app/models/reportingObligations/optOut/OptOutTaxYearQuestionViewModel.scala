@@ -17,7 +17,6 @@
 package models.reportingObligations.optOut
 
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
-import models.reportingObligations.optOut.OneYearOptOutCheckpointViewModel
 import services.reportingObligations.optOut.*
 
 case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
@@ -26,7 +25,7 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
                                           currentYearStatus: ITSAStatus,
                                           nextYearStatus: ITSAStatus) {
 
-  private val hasNoQuarterlyUpdatesSubmitted: Boolean = numberOfQuarterlyUpdates == OneYearOptOutCheckpointViewModel.noQuarterlyUpdates
+  private val hasNoQuarterlyUpdatesSubmitted: Boolean = numberOfQuarterlyUpdates == 0
 
   private val taxYearMessageSuffix = taxYear match {
     case _: PreviousOptOutTaxYear => "previousYear"

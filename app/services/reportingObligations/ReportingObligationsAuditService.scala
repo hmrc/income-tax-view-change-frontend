@@ -30,8 +30,6 @@ import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
 import services.DateServiceInterface
 import services.reportingObligations.optOut.*
-import services.reportingObligations.signUp.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
-import services.reportingObligations.optOut.OptOutProposition
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -102,7 +100,7 @@ class ReportingObligationsAuditService @Inject()(
     }
   }
 
-  def tableContentToItsaStatus(content: Option[String])(implicit messages: Messages, user: MtdItUser[_]): ITSAStatus = {
+  private def tableContentToItsaStatus(content: Option[String])(implicit messages: Messages, user: MtdItUser[_]): ITSAStatus = {
     if (isEnabled(OptInOptOutContentUpdateR17)) {
       content match {
         case Some(tableContent) if tableContent == messages("reporting.frequency.table.mandated.r17") => Mandated
@@ -199,6 +197,4 @@ class ReportingObligationsAuditService @Inject()(
 
     auditConnector.sendExtendedEvent(extendedDataEvent)
   }
-
-
 }

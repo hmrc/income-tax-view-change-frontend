@@ -19,38 +19,38 @@ package services.reportingObligations.signUp.core
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, NoStatus, Voluntary}
 
-trait OptInTaxYear {
+trait SignUpTaxYear {
   val taxYear: TaxYear
 
-  def canOptIn: Boolean
+  def canSignUp: Boolean
 }
 
-case class CurrentOptInTaxYear(status: ITSAStatus, taxYear: TaxYear) extends OptInTaxYear {
+case class CurrentSignUpTaxYear(status: ITSAStatus, taxYear: TaxYear) extends SignUpTaxYear {
 
-  def canOptIn: Boolean = status == Annual
+  def canSignUp: Boolean = status == Annual
 
   def expectedItsaStatusAfter(customerIntent: TaxYear): ITSAStatus =
-    if (customerIntent == taxYear && canOptIn)
+    if (customerIntent == taxYear && canSignUp)
       Voluntary
     else
       status
 }
 
-case class NextOptInTaxYear(
-                             status: ITSAStatus,
-                             taxYear: TaxYear,
-                             currentOptInTaxYear: CurrentOptInTaxYear
-                           ) extends OptInTaxYear {
+case class NextSignUpTaxYear(
+                              status: ITSAStatus,
+                              taxYear: TaxYear,
+                              currentSignUpTaxYear: CurrentSignUpTaxYear
+                           ) extends SignUpTaxYear {
 
-  def canOptIn: Boolean = canOptInDirectly || canOptInDueToRollover
+  def canSignUp: Boolean = canSignUpDirectly || canSignUpDueToRollover
 
-  private def canOptInDirectly: Boolean = status == Annual
+  private def canSignUpDirectly: Boolean = status == Annual
 
-  private def canOptInDueToRollover: Boolean = status == NoStatus && currentOptInTaxYear.status == Annual
+  private def canSignUpDueToRollover: Boolean = status == NoStatus && currentSignUpTaxYear.status == Annual
 
   def expectedItsaStatusAfter(customerIntent: TaxYear): ITSAStatus =
-    if (canOptInDirectly ||
-      (isNextYear(customerIntent) && canOptInDueToRollover))
+    if (canSignUpDirectly ||
+      (isNextYear(customerIntent) && canSignUpDueToRollover))
       Voluntary
     else
       status

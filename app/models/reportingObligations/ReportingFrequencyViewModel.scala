@@ -24,7 +24,7 @@ import services.reportingObligations.optOut.OptOutProposition
 
 case class ReportingFrequencyViewModel(
                                         isAgent: Boolean,
-                                        optInTaxYears: Seq[TaxYear],
+                                        signUpTaxYears: Seq[TaxYear],
                                         itsaStatusTable: Seq[(String, Option[String], Option[String])],
                                         displayCeasedBusinessWarning: Boolean,
                                         isAnyOfBusinessLatent: Boolean,
@@ -41,23 +41,13 @@ case class ReportingFrequencyViewModel(
 
   val optOutTaxYears: Seq[TaxYear] = proposition.availableTaxYearsForOptOut
 
-  val isOptInLinkOnward: Boolean =
-    optInTaxYears.size == 1 && optInTaxYears.head == currentTaxYear.nextYear
-
-  val isOptOutLinkOnward: Boolean =
-    optOutTaxYears.size == 1 && optOutTaxYears.head == currentTaxYear.nextYear
-
-  val isOptInLinkFirst: Boolean =
-    optOutTaxYears.isEmpty ||
-      (optInTaxYears.nonEmpty && (optInTaxYears.minBy(_.startYear).startYear < optOutTaxYears.minBy(_.startYear).startYear))
-
   val optOutExistsWhileEnabled: Boolean = isOptOutEnabled && optOutTaxYears.nonEmpty
-  val signUpExistsWhileEnabled: Boolean = isSignUpEnabled && optInTaxYears.nonEmpty
+  val signUpExistsWhileEnabled: Boolean = isSignUpEnabled && signUpTaxYears.nonEmpty
 
   private def selectYearSuffix(year: TaxYear, optOutSingle: String, optOutOnwards: String, signUpLabel: String): Option[String] = {
     if (optOutTaxYears.contains(year)) {
       if (optOutTaxYears.size == 1) Some(optOutSingle) else Some(optOutOnwards)
-    } else if (optInTaxYears.contains(year)) {
+    } else if (signUpTaxYears.contains(year)) {
       Some(signUpLabel)
     } else None
   }
@@ -75,7 +65,7 @@ case class ReportingFrequencyViewModel(
       if (suffix.contains("optOut")) {
         if (optOutTaxYears.size > 1) base + ".withDate" else base
       } else {
-        if (optInTaxYears.size > 1) base + ".withDate" else base
+        if (signUpTaxYears.size > 1) base + ".withDate" else base
       }
     } else {
       base

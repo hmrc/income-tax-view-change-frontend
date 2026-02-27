@@ -18,15 +18,13 @@ package controllers.reportingObligations
 
 import config.FrontendAppConfig
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import controllers.reportingObligations.ReportingFrequencyPageController
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockDateService, MockOptInService, MockOptOutService}
+import mocks.services.{MockDateService, MockOptOutService, MockSignUpService}
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.reportingObligations.ReportingFrequencyViewModel
-import models.reportingObligations.optOut.OptOutMultiYearViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{when, mock as mMock}
 import org.scalatestplus.mockito.MockitoSugar
@@ -36,8 +34,8 @@ import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import services.reportingObligations.optOut.{OptOutProposition, OptOutService}
-import services.reportingObligations.signUp.OptInService
-import services.reportingObligations.signUp.core.OptInProposition
+import services.reportingObligations.signUp.SignUpService
+import services.reportingObligations.signUp.core.SignUpProposition
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1
@@ -48,7 +46,7 @@ import scala.concurrent.Future
 
 
 class ReportingFrequencyPageControllerSpec extends MockAuthActions
-  with MockOptOutService with MockOptInService with MockDateService with MockitoSugar {
+  with MockOptOutService with MockSignUpService with MockDateService with MockitoSugar {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
   lazy val mockDateServiceInjected: DateService = mMock(classOfDateService)
@@ -56,7 +54,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
-      api.inject.bind[OptInService].toInstance(mockOptInService),
+      api.inject.bind[SignUpService].toInstance(mockSignUpService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
@@ -91,7 +89,6 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
             mockFetchOptOutJourneyCompleteStatus()
-            mockFetchSavedOptInSessionData()
             mockUpdateOptInJourneyStatusInSessionData()
 
             val optOutProposition: OptOutProposition =
@@ -103,21 +100,21 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                 nextYearItsaStatus = Mandated
               )
 
-            val optInProposition: OptInProposition =
-              OptInProposition.createOptInProposition(
+            val optInProposition: SignUpProposition =
+              SignUpProposition.createSignUpProposition(
                 currentYear = TaxYear(2024, 2025),
                 currentYearItsaStatus = Voluntary,
                 nextYearItsaStatus = Mandated
               )
 
-            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+            when(mockSignUpService.fetchSignUpProposition()(any(), any(), any()))
               .thenReturn(Future(optInProposition))
 
-            when(mockOptInService.availableOptInTaxYear()(any(), any(), any()))
+            when(mockSignUpService.availableSignUpTaxYear()(any(), any(), any()))
               .thenReturn(Future(Seq(TaxYear(2024, 2025))))
 
-            when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any()))
-              .thenReturn(Future((optOutProposition, Some(OptOutMultiYearViewModel()))))
+            when(mockOptOutService.initialiseJourneyWithProposition()(any(), any(), any()))
+              .thenReturn(Future((optOutProposition)))
 
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
               .thenReturn(Future(singleBusinessIncome))
@@ -130,7 +127,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               reportingFrequencyView(
                 ReportingFrequencyViewModel(
                   isAgent = isAgent,
-                  optInTaxYears = Seq(TaxYear(2024, 2025)),
+                  signUpTaxYears = Seq(TaxYear(2024, 2025)),
                   itsaStatusTable =
                     Seq(
                       ("2023 to 2024", None, Some("Quarterly (mandatory)")),
@@ -157,7 +154,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
             mockFetchOptOutJourneyCompleteStatus()
-            mockFetchSavedOptInSessionData()
+            mockFetchSavedSignUpSessionData()
             mockUpdateOptInJourneyStatusInSessionData()
 
             val optOutProposition: OptOutProposition =
@@ -169,21 +166,21 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                 nextYearItsaStatus = Mandated
               )
 
-            val optInProposition: OptInProposition =
-              OptInProposition.createOptInProposition(
+            val optInProposition: SignUpProposition =
+              SignUpProposition.createSignUpProposition(
                 currentYear = TaxYear(2024, 2025),
                 currentYearItsaStatus = Voluntary,
                 nextYearItsaStatus = Mandated
               )
 
-            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+            when(mockSignUpService.fetchSignUpProposition()(any(), any(), any()))
               .thenReturn(Future(optInProposition))
 
-            when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
+            when(mockSignUpService.availableSignUpTaxYear()(any(), any(), any())).thenReturn(
               Future(Seq(TaxYear(2024, 2025)))
             )
-            when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
-              Future((optOutProposition, Some(OptOutMultiYearViewModel())))
+            when(mockOptOutService.initialiseJourneyWithProposition()(any(), any(), any())).thenReturn(
+              Future((optOutProposition))
             )
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())
@@ -196,7 +193,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               reportingFrequencyView(
                 ReportingFrequencyViewModel(
                   isAgent = isAgent,
-                  optInTaxYears = Seq(TaxYear(2024, 2025)),
+                  signUpTaxYears = Seq(TaxYear(2024, 2025)),
                   itsaStatusTable =
                     Seq(
                       ("2023 to 2024", Some("Yes"), Some("Required")),
@@ -226,7 +223,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
             mockFetchOptOutJourneyCompleteStatus()
-            mockFetchSavedOptInSessionData()
+            mockFetchSavedSignUpSessionData()
             mockUpdateOptInJourneyStatusInSessionData()
 
             val optOutProposition: OptOutProposition =
@@ -238,21 +235,21 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                 nextYearItsaStatus = Mandated
               )
 
-            val optInProposition: OptInProposition =
-              OptInProposition.createOptInProposition(
+            val optInProposition: SignUpProposition =
+              SignUpProposition.createSignUpProposition(
                 currentYear = TaxYear(2024, 2025),
                 currentYearItsaStatus = Voluntary,
                 nextYearItsaStatus = Mandated
               )
 
-            when(mockOptInService.fetchOptInProposition()(any(), any(), any()))
+            when(mockSignUpService.fetchSignUpProposition()(any(), any(), any()))
               .thenReturn(Future(optInProposition))
 
-            when(mockOptInService.availableOptInTaxYear()(any(), any(), any())).thenReturn(
+            when(mockSignUpService.availableSignUpTaxYear()(any(), any(), any())).thenReturn(
               Future(Seq(TaxYear(2024, 2025)))
             )
-            when(mockOptOutService.reportingFrequencyViewModels()(any(), any(), any())).thenReturn(
-              Future((optOutProposition, Some(OptOutMultiYearViewModel())))
+            when(mockOptOutService.initialiseJourneyWithProposition()(any(), any(), any())).thenReturn(
+              Future((optOutProposition))
             )
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())

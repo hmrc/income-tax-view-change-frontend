@@ -36,7 +36,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.reportingObligations.signUp.OptInService
+import services.reportingObligations.signUp.SignUpService
 import services.{CreditService, NextUpdatesService}
 import services.reportingObligations.optOut.OptOutService
 import testConstants.ANewCreditAndRefundModel
@@ -71,7 +71,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
   given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
 
-  given mockedOptInService: OptInService = mock(classOf[OptInService])
+  given mockedOptInService: SignUpService = mock(classOf[SignUpService])
 
   given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
 

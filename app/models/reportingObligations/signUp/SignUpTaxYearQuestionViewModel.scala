@@ -16,13 +16,13 @@
 
 package models.reportingObligations.signUp
 
-import services.reportingObligations.signUp.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInTaxYear}
+import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpTaxYear}
 
-case class SignUpTaxYearQuestionViewModel(signUpTaxYear: OptInTaxYear) {
+case class SignUpTaxYearQuestionViewModel(signUpTaxYear: SignUpTaxYear) {
 
   def signingUpForCY: Boolean = signUpTaxYear match {
-    case _: CurrentOptInTaxYear => true
-    case _: NextOptInTaxYear    => false
+    case _: CurrentSignUpTaxYear => true
+    case _: NextSignUpTaxYear    => false
   }
 
 }

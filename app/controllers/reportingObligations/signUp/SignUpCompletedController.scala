@@ -26,7 +26,7 @@ import models.reportingObligations.signUp.SignUpCompletedViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.reportingObligations.signUp.OptInService
+import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.{JourneyCheckerSignUp, ReportingObligationsUtils}
 import views.html.reportingObligations.signUp.SignUpCompletedView
@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SignUpCompletedController @Inject()(val view: SignUpCompletedView,
-                                          val optInService: OptInService,
+                                          val signUpService: SignUpService,
                                           val authActions: AuthActions,
                                           val itvcErrorHandler: ItvcErrorHandler,
                                           val itvcErrorHandlerAgent: AgentItvcErrorHandler)
@@ -60,15 +60,15 @@ class SignUpCompletedController @Inject()(val view: SignUpCompletedView,
       withSignUpRFChecks {
         withRecover(isAgent) {
           for {
-            proposition <- optInService.fetchOptInProposition()
-            intent <- optInService.fetchSavedChosenTaxYear()
+            proposition <- signUpService.fetchSignUpProposition()
+            intent <- signUpService.fetchSavedChosenTaxYear()
             _ <- setJourneyComplete
           } yield {
-            intent.map { optInTaxYear =>
+            intent.map { signUpTaxYear =>
               val model = SignUpCompletedViewModel(
                 isAgent = isAgent,
-                signUpTaxYear = optInTaxYear,
-                isCurrentYear = proposition.isCurrentTaxYear(optInTaxYear),
+                signUpTaxYear = signUpTaxYear,
+                isCurrentYear = proposition.isCurrentTaxYear(signUpTaxYear),
                 isCurrentYearAnnual = proposition.currentTaxYear.status == ITSAStatus.Annual,
                 isNextYearMandated = proposition.nextTaxYear.status == ITSAStatus.Mandated
               )

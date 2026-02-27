@@ -28,7 +28,7 @@ object ITSAStatusUpdateRequest {
 object ITSAStatusUpdateConnectorModel {
 
   val optOutUpdateReason: String = "10"
-  val optInUpdateReason: String = "11"
+  val signUpUpdateReason: String = "11"
 
   sealed trait ITSAStatusUpdateResponse
 

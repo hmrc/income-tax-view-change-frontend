@@ -18,7 +18,7 @@ package mocks.services
 
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse
 import models.incomeSourceDetails.TaxYear
-import models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutCheckpointViewModel, OptOutOneYearViewModel, OptOutTaxYearQuestionViewModel, OptOutViewModel}
+import models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutTaxYearQuestionViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
@@ -37,25 +37,15 @@ trait MockOptOutService extends UnitSpec with BeforeAndAfterEach {
     reset(mockOptOutService)
   }
 
-  def mockGetNextUpdatesPageChecksAndProposition(out: Future[(NextUpdatesQuarterlyReportingContentChecks, Option[OptOutViewModel], OptOutProposition)]): Unit = {
+  def mockGetNextUpdatesPageChecksAndProposition(out: Future[(NextUpdatesQuarterlyReportingContentChecks, OptOutProposition)]): Unit = {
     when(mockOptOutService.nextUpdatesPageChecksAndProposition()(any(), any(), any()))
-      .thenReturn(out)
-  }
-
-  def mockRecallNextUpdatesPageOneYearOptOutViewModel(out: Future[Option[OptOutOneYearViewModel]]): Unit = {
-    when(mockOptOutService.recallNextUpdatesPageOptOutViewModel()(any(), any()))
       .thenReturn(out)
   }
 
   def mockGetSubmissionCountForTaxYear(out: Future[QuarterlyUpdatesCountForTaxYearModel]): Unit = {
     when(mockOptOutService.getQuarterlyUpdatesCountForOfferedYears(any[OptOutProposition])(any(), any(), any())).thenReturn(out)
   }
-
-  def mockOptOutCheckPointPageViewModel(out: Future[Option[OptOutCheckpointViewModel]]): Unit = {
-    when(mockOptOutService.optOutCheckPointPageViewModel()(any(), any(), any()))
-      .thenReturn(out)
-  }
-
+  
   def mockOptOutConfirmedPageViewModel(out: Future[Option[ConfirmedOptOutViewModel]]): Unit = {
     when(mockOptOutService.optOutConfirmedPageViewModel()(any(), any()))
       .thenReturn(out)

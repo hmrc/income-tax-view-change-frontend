@@ -40,7 +40,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
   val nextStartYear = dateService.getCurrentTaxYear.nextYear.startYear.toString
   val nextEndYear = dateService.getCurrentTaxYear.nextYear.endYear.toString
 
-  def optInOptOutLinks(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
+  def signUpOptOutLinks(i: Int): String = s"#main-content > div > div > div > ul > li:nth-child($i) > a"
 
   def latencyDetailsHeader: String = s"#main-content > div > div > div > details > summary > span"
 

@@ -24,7 +24,6 @@ import enums.*
 import models.admin.ReportingFrequencyPage
 import models.itsaStatus.ITSAStatus
 import models.reportingObligations.optOut.*
-import models.reportingObligations.optOut.{ConfirmedOptOutViewModel, ConfirmedOptOutViewScenarios, CurrentYearNYMandatedScenario, CurrentYearNYQuarterlyOrAnnualScenario, DefaultValidScenario, NextYearCYAnnualScenario, NextYearCYMandatedOrQuarterlyScenario, PreviousAndNoStatusValidScenario}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

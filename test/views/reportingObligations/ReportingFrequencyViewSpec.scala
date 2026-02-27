@@ -215,7 +215,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
-              optInTaxYears = Seq(TaxYear(2023, 2024)),
+              signUpTaxYears = Seq(TaxYear(2023, 2024)),
               itsaStatusTable = Seq(
                 ("2023 to 2024", Some("Yes"), Some("Quarterly (mandatory)")),
                 ("2024 to 2025", Some("Yes"), Some("Quarterly")),
@@ -286,7 +286,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
-              optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = true,
@@ -321,7 +321,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
-              optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
@@ -365,7 +365,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
-              optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
@@ -408,7 +408,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
-              optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               isAnyOfBusinessLatent = false,
               displayCeasedBusinessWarning = false,
@@ -445,7 +445,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
-              optInTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
+              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
               itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = true,
@@ -548,7 +548,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
             ReportingFrequencyViewModel(
               isAgent = isAgentFlag,
-              optInTaxYears = Seq(TaxYear(2023, 2024)),
+              signUpTaxYears = Seq(TaxYear(2023, 2024)),
               itsaStatusTable = Seq(
                 ("2023 to 2024", Some("Yes"), Some("Quarterly (mandatory)")),
                 ("2024 to 2025", Some("Yes"), Some("Quarterly")),
@@ -591,7 +591,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
         val reportingFrequencyViewModel: ReportingFrequencyViewModel =
           ReportingFrequencyViewModel(
             isAgent = isAgentFlag,
-            optInTaxYears = Seq(TaxYear(2023, 2024)),
+            signUpTaxYears = Seq(TaxYear(2023, 2024)),
             itsaStatusTable = Seq(
               ("2023 to 2024", Some("Required"), Some("Quarterly (mandatory)")),
               ("2024 to 2025", Some("Voluntarily signed up"), Some("Quarterly")),

@@ -18,13 +18,13 @@ package models.reportingObligations.signUp
 
 import play.api.libs.json.{Json, OFormat}
 
-case class OptInSessionData(optInContextData: Option[OptInContextData],
-                            selectedOptInYear: Option[String],
-                            journeyIsComplete: Option[Boolean] = Some(false)
+case class SignUpSessionData(signUpContextData: Option[SignUpContextData],
+                             selectedSignUpYear: Option[String],
+                             journeyIsComplete: Option[Boolean] = Some(false)
                            ) {
 }
 
-object OptInSessionData {
+object SignUpSessionData {
 
-  implicit val format: OFormat[OptInSessionData] = Json.format[OptInSessionData]
+  implicit val format: OFormat[SignUpSessionData] = Json.format[SignUpSessionData]
 }

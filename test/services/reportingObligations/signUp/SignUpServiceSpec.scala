@@ -21,13 +21,13 @@ import audit.models.OptInAuditModel
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import controllers.routes
-import enums.JourneyType.{Opt, OptInJourney}
+import enums.JourneyType.{Opt, SignUpJourney}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import models.itsaStatus.{StatusDetail, StatusReason}
-import models.reportingObligations.signUp.{MultiYearCheckYourAnswersViewModel, OptInContextData, OptInSessionData, SignUpTaxYearQuestionViewModel}
+import models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData, SignUpTaxYearQuestionViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.mockito.{ArgumentCaptor, ArgumentMatchers}
@@ -37,14 +37,14 @@ import play.api.http.Status.OK
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.reportingObligations.signUp.OptInService
-import services.reportingObligations.signUp.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.reportingObligations.signUp.SignUpService
+import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class OptInServiceSpec extends UnitSpec
+class SignUpServiceSpec extends UnitSpec
   with BeforeAndAfter
   with MockITSAStatusService
   with MockCalculationListService
@@ -60,7 +60,7 @@ class OptInServiceSpec extends UnitSpec
   val nextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
   val repository: UIJourneySessionDataRepository = mock(classOf[UIJourneySessionDataRepository])
 
-  val service: OptInService = new OptInService(optOutConnector, mockITSAStatusService, mockDateService, repository, mockAuditingService)
+  val service: SignUpService = new SignUpService(optOutConnector, mockITSAStatusService, mockDateService, repository, mockAuditingService)
 
   val forYearEnd = 2023
   val currentTaxYear = TaxYear.forYearEnd(forYearEnd)
@@ -86,13 +86,13 @@ class OptInServiceSpec extends UnitSpec
 
       val data = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
-        journeyType = Opt(OptInJourney).toString,
-        optInSessionData = Some(OptInSessionData(None, selectedOptInYear = None))
+        journeyType = Opt(SignUpJourney).toString,
+        signUpSessionData = Some(SignUpSessionData(None, selectedSignUpYear = None))
       )
 
-      when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(data)))
+      when(repository.get(hc.sessionId.get.value, Opt(SignUpJourney))).thenReturn(Future.successful(Some(data)))
 
-      val dataAfter = data.copy(optInSessionData = Some(data.optInSessionData.get.copy(selectedOptInYear = Some(currentTaxYear.toString))))
+      val dataAfter = data.copy(signUpSessionData = Some(data.signUpSessionData.get.copy(selectedSignUpYear = Some(currentTaxYear.toString))))
       when(repository.set(dataAfter)).thenReturn(Future.successful(true))
 
       val result = service.saveIntent(currentTaxYear)
@@ -105,9 +105,9 @@ class OptInServiceSpec extends UnitSpec
   ".saveIntent() and no session data" should {
     "save selectedOptInYear in session data" in {
 
-      val jsd = UIJourneySessionData(hc.sessionId.get.value, Opt(OptInJourney).toString)
+      val jsd = UIJourneySessionData(hc.sessionId.get.value, Opt(SignUpJourney).toString)
 
-      when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(jsd)))
+      when(repository.get(hc.sessionId.get.value, Opt(SignUpJourney))).thenReturn(Future.successful(Some(jsd)))
 
       val result = service.saveIntent(currentTaxYear)
       result.futureValue shouldBe true
@@ -122,27 +122,27 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax years ending 2023, 2024" in {
 
-        when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(None))
+        when(repository.get(hc.sessionId.get.value, Opt(SignUpJourney))).thenReturn(Future.successful(None))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
         when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
           .thenReturn(Future.successful(
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
           ))
 
-        val result = service.availableOptInTaxYear()
+        val result = service.availableSignUpTaxYear()
         result.futureValue shouldBe Seq(currentTaxYear, nextTaxYear)
       }
 
       "return tax year ending 2023" in {
 
-        when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(None))
+        when(repository.get(hc.sessionId.get.value, Opt(SignUpJourney))).thenReturn(Future.successful(None))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
         when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
           .thenReturn(Future.successful(
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Voluntary))
           ))
 
-        val result = service.availableOptInTaxYear()
+        val result = service.availableSignUpTaxYear()
         result.futureValue shouldBe Seq(currentTaxYear)
       }
 
@@ -152,10 +152,10 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax years ending 2023, 2024" in {
 
-        mockRepository(Some(OptInContextData(currentTaxYear.toString, Annual.toString, Annual.toString)))
+        mockRepository(Some(SignUpContextData(currentTaxYear.toString, Annual.toString, Annual.toString)))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-        val result = service.availableOptInTaxYear()
+        val result = service.availableSignUpTaxYear()
         result.futureValue shouldBe Seq(currentTaxYear, nextTaxYear)
 
         verify(mockITSAStatusService, times(0)).getStatusTillAvailableFutureYears(any())(any(), any(), any())
@@ -163,10 +163,10 @@ class OptInServiceSpec extends UnitSpec
 
       "return tax year ending 2023" in {
 
-        mockRepository(Some(OptInContextData(currentTaxYear.toString, Annual.toString, Voluntary.toString)))
+        mockRepository(Some(SignUpContextData(currentTaxYear.toString, Annual.toString, Voluntary.toString)))
         when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
-        val result = service.availableOptInTaxYear()
+        val result = service.availableSignUpTaxYear()
         result.futureValue shouldBe Seq(currentTaxYear)
 
         verify(mockITSAStatusService, times(0)).getStatusTillAvailableFutureYears(any())(any(), any(), any())
@@ -198,22 +198,22 @@ class OptInServiceSpec extends UnitSpec
   ".makeOptInCall()" should {
 
     "success response case" in {
-      val optInContext = Some(OptInContextData(currentTaxYear.toString, Annual.toString, Voluntary.toString))
+      val optInContext = Some(SignUpContextData(currentTaxYear.toString, Annual.toString, Voluntary.toString))
       mockRepository(optInContext, Some(currentTaxYear.toString))
 
-      when(optOutConnector.optIn(any(), any())(any()))
+      when(optOutConnector.signUp(any(), any())(any()))
         .thenReturn(Future.successful(ITSAStatusUpdateResponseSuccess(OK)))
 
       whenReady(service.makeOptInCall()) { result =>
 
-        val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+        val currentTaxYearOptIn: CurrentSignUpTaxYear = CurrentSignUpTaxYear(Annual, currentTaxYear)
 
         eventually {
           verifyExtendedAudit(
             OptInAuditModel(
-              OptInProposition(
+              SignUpProposition(
                 currentTaxYearOptIn,
-                NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+                NextSignUpTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
               ),
               currentTaxYear,
               ITSAStatusUpdateResponseSuccess(OK)
@@ -227,21 +227,21 @@ class OptInServiceSpec extends UnitSpec
 
     "fail response case" in {
 
-      val optInContext = Some(OptInContextData(currentTaxYear.toString, Annual.toString, Voluntary.toString))
+      val optInContext = Some(SignUpContextData(currentTaxYear.toString, Annual.toString, Voluntary.toString))
       mockRepository(optInContext, Some(currentTaxYear.toString))
 
-      when(optOutConnector.optIn(any(), any())(any()))
+      when(optOutConnector.signUp(any(), any())(any()))
         .thenReturn(Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure()))
 
       whenReady(service.makeOptInCall()) { result =>
-        val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentTaxYear)
+        val currentTaxYearOptIn: CurrentSignUpTaxYear = CurrentSignUpTaxYear(Annual, currentTaxYear)
 
         eventually {
           verifyExtendedAudit(
             OptInAuditModel(
-              OptInProposition(
+              SignUpProposition(
                 currentTaxYearOptIn,
-                NextOptInTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
+                NextSignUpTaxYear(Voluntary, nextTaxYear, currentTaxYearOptIn)
               ),
               currentTaxYear,
               ITSAStatusUpdateResponseFailure.defaultFailure()
@@ -267,48 +267,6 @@ class OptInServiceSpec extends UnitSpec
 
   }
 
-  ".getMultiYearCheckYourAnswersViewModel()" should {
-
-    "return model when intent is current tax-year" in {
-
-      val isAgent = false
-      val optInContext = Some(OptInContextData(currentTaxYear.toString, Annual.toString, Annual.toString))
-      mockRepository(optInContextData = optInContext, selectedOptInYear = Some(currentTaxYear.toString))
-      when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
-
-      when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any())).thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
-
-      val result = service.getMultiYearCheckYourAnswersViewModel(isAgent)
-
-      result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
-        intentTaxYear = currentTaxYear,
-        isAgent = isAgent,
-        cancelURL = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url,
-        intentIsNextYear = false
-      )
-    }
-
-    "return model when intent is next tax-year" in {
-
-      val isAgent = false
-      val optInContext = Some(OptInContextData(currentTaxYear.toString, Annual.toString, Annual.toString))
-      mockRepository(optInContextData = optInContext, selectedOptInYear = Some(currentTaxYear.nextYear.toString))
-      when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
-
-      when(nextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(currentTaxYear))(any(), any())).thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(currentTaxYear, 1)))
-
-      val result = service.getMultiYearCheckYourAnswersViewModel(isAgent)
-
-      result.futureValue.get shouldBe MultiYearCheckYourAnswersViewModel(
-        intentTaxYear = currentTaxYear.nextYear,
-        isAgent = isAgent,
-        cancelURL = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url,
-        intentIsNextYear = true
-      )
-    }
-
-  }
-
   "isSignUpTaxYearValid" should {
     "return a SignUpTaxQuestionViewModel" when {
       "the current tax year is submitted" in {
@@ -321,11 +279,11 @@ class OptInServiceSpec extends UnitSpec
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
           ))
 
-        mockRepository(Some(OptInContextData(queryTaxYear, Annual.toString, Annual.toString)), Some(queryTaxYear))
+        mockRepository(Some(SignUpContextData(queryTaxYear, Annual.toString, Annual.toString)), Some(queryTaxYear))
 
         val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(SignUpTaxYearQuestionViewModel(CurrentOptInTaxYear(Annual, TaxYear(2022, 2023))))
+        result.futureValue shouldBe Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Annual, TaxYear(2022, 2023))))
       }
       "the next tax year is submitted" in {
         val queryTaxYear = "2023"
@@ -337,11 +295,11 @@ class OptInServiceSpec extends UnitSpec
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
           ))
 
-        mockRepository(Some(OptInContextData(queryTaxYear, Annual.toString, Annual.toString)), Some(queryTaxYear))
+        mockRepository(Some(SignUpContextData(queryTaxYear, Annual.toString, Annual.toString)), Some(queryTaxYear))
 
         val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
 
-        result.futureValue shouldBe Some(SignUpTaxYearQuestionViewModel(NextOptInTaxYear(Annual, TaxYear(2023, 2024), CurrentOptInTaxYear(Annual, TaxYear(2022, 2023)))))
+        result.futureValue shouldBe Some(SignUpTaxYearQuestionViewModel(NextSignUpTaxYear(Annual, TaxYear(2023, 2024), CurrentSignUpTaxYear(Annual, TaxYear(2022, 2023)))))
       }
     }
 
@@ -362,7 +320,7 @@ class OptInServiceSpec extends UnitSpec
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Annual))
           ))
 
-        mockRepository(Some(OptInContextData(queryTaxYear, Annual.toString, Annual.toString)), Some(queryTaxYear))
+        mockRepository(Some(SignUpContextData(queryTaxYear, Annual.toString, Annual.toString)), Some(queryTaxYear))
 
         val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
 
@@ -378,7 +336,7 @@ class OptInServiceSpec extends UnitSpec
             Map(currentTaxYear -> statusDetailWith(Voluntary), nextTaxYear -> statusDetailWith(Annual))
           ))
 
-        mockRepository(Some(OptInContextData(queryTaxYear, Voluntary.toString, Annual.toString)), Some(queryTaxYear))
+        mockRepository(Some(SignUpContextData(queryTaxYear, Voluntary.toString, Annual.toString)), Some(queryTaxYear))
 
         val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
 
@@ -395,7 +353,7 @@ class OptInServiceSpec extends UnitSpec
             Map(currentTaxYear -> statusDetailWith(Annual), nextTaxYear -> statusDetailWith(Voluntary))
           ))
 
-        mockRepository(Some(OptInContextData(queryTaxYear, Annual.toString, Voluntary.toString)), Some(queryTaxYear))
+        mockRepository(Some(SignUpContextData(queryTaxYear, Annual.toString, Voluntary.toString)), Some(queryTaxYear))
 
         val result = service.isSignUpTaxYearValid(Some(queryTaxYear))
 
@@ -407,15 +365,15 @@ class OptInServiceSpec extends UnitSpec
   ".initialiseOptInContextData()" should {
 
     "return true and not call ITSA when optInContextData is already present" in {
-      val existingContext = OptInContextData(currentTaxYear.toString, Annual.toString, Voluntary.toString)
+      val existingContext = SignUpContextData(currentTaxYear.toString, Annual.toString, Voluntary.toString)
 
       val sessionData = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
-        journeyType = Opt(OptInJourney).toString,
-        optInSessionData = Some(OptInSessionData(optInContextData = Some(existingContext), selectedOptInYear = None))
+        journeyType = Opt(SignUpJourney).toString,
+        signUpSessionData = Some(SignUpSessionData(signUpContextData = Some(existingContext), selectedSignUpYear = None))
       )
 
-      when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(sessionData)))
+      when(repository.get(hc.sessionId.get.value, Opt(SignUpJourney))).thenReturn(Future.successful(Some(sessionData)))
 
       val result = service.initialiseOptInContextData()
 
@@ -427,11 +385,11 @@ class OptInServiceSpec extends UnitSpec
     "fetch ITSA statuses and store OptInContextData in session when missing" in {
       val sessionData = UIJourneySessionData(
         sessionId = hc.sessionId.get.value,
-        journeyType = Opt(OptInJourney).toString,
-        optInSessionData = Some(OptInSessionData(optInContextData = None, selectedOptInYear = None))
+        journeyType = Opt(SignUpJourney).toString,
+        signUpSessionData = Some(SignUpSessionData(signUpContextData = None, selectedSignUpYear = None))
       )
 
-      when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(sessionData)))
+      when(repository.get(hc.sessionId.get.value, Opt(SignUpJourney))).thenReturn(Future.successful(Some(sessionData)))
       when(mockDateService.getCurrentTaxYear).thenReturn(currentTaxYear)
 
       when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
@@ -442,14 +400,14 @@ class OptInServiceSpec extends UnitSpec
           )
         ))
 
-      val expectedContext = OptInContextData(
+      val expectedContext = SignUpContextData(
         currentTaxYear = currentTaxYear.toString,
         currentYearITSAStatus = Annual.toString,
         nextYearITSAStatus = Voluntary.toString
       )
 
       val expectedUpdatedSession = sessionData.copy(
-        optInSessionData = Some(sessionData.optInSessionData.get.copy(optInContextData = Some(expectedContext)))
+        signUpSessionData = Some(sessionData.signUpSessionData.get.copy(signUpContextData = Some(expectedContext)))
       )
 
       when(repository.set(expectedUpdatedSession)).thenReturn(Future.successful(true))
@@ -467,17 +425,17 @@ class OptInServiceSpec extends UnitSpec
 
       val sessionWithoutOptInData = UIJourneySessionData(
         sessionId = sessionId,
-        journeyType = Opt(OptInJourney).toString,
-        optInSessionData = None
+        journeyType = Opt(SignUpJourney).toString,
+        signUpSessionData = None
       )
 
       val sessionAfterSetup = UIJourneySessionData(
         sessionId = sessionId,
-        journeyType = Opt(OptInJourney).toString,
-        optInSessionData = Some(OptInSessionData(None, None, Some(false)))
+        journeyType = Opt(SignUpJourney).toString,
+        signUpSessionData = Some(SignUpSessionData(None, None, Some(false)))
       )
 
-      when(repository.get(sessionId, Opt(OptInJourney)))
+      when(repository.get(sessionId, Opt(SignUpJourney)))
         .thenReturn(Future.successful(Some(sessionWithoutOptInData)))
         .thenReturn(Future.successful(Some(sessionAfterSetup)))
 
@@ -491,7 +449,7 @@ class OptInServiceSpec extends UnitSpec
       val result = service.initialiseOptInContextData()
       result.futureValue shouldBe true
 
-      verify(repository, times(2)).get(sessionId, Opt(OptInJourney))
+      verify(repository, times(2)).get(sessionId, Opt(SignUpJourney))
       verify(mockITSAStatusService, times(1))
         .getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any)
 
@@ -502,11 +460,11 @@ class OptInServiceSpec extends UnitSpec
       val firstSavedSession = savedSessions.get(0)
       val secondSavedSession = savedSessions.get(1)
 
-      firstSavedSession.optInSessionData shouldBe defined
-      firstSavedSession.optInSessionData.flatMap(_.optInContextData) shouldBe empty
+      firstSavedSession.signUpSessionData shouldBe defined
+      firstSavedSession.signUpSessionData.flatMap(_.signUpContextData) shouldBe empty
 
-      secondSavedSession.optInSessionData.flatMap(_.optInContextData) shouldBe defined
-      val savedContext = secondSavedSession.optInSessionData.flatMap(_.optInContextData).value
+      secondSavedSession.signUpSessionData.flatMap(_.signUpContextData) shouldBe defined
+      val savedContext = secondSavedSession.signUpSessionData.flatMap(_.signUpContextData).value
 
       savedContext.currentTaxYear shouldBe currentTaxYear.toString
       savedContext.currentYearITSAStatus shouldBe Annual.toString
@@ -516,11 +474,11 @@ class OptInServiceSpec extends UnitSpec
 
   def executionContext()(implicit executionContext: ExecutionContext): ExecutionContext = executionContext
 
-  def mockRepository(optInContextData: Option[OptInContextData] = None, selectedOptInYear: Option[String] = None): Unit = {
+  def mockRepository(optInContextData: Option[SignUpContextData] = None, selectedOptInYear: Option[String] = None): Unit = {
 
-    val sessionData = UIJourneySessionData(hc.sessionId.get.value, Opt(OptInJourney).toString,
-      optInSessionData = Some(OptInSessionData(optInContextData, selectedOptInYear)))
+    val sessionData = UIJourneySessionData(hc.sessionId.get.value, Opt(SignUpJourney).toString,
+      signUpSessionData = Some(SignUpSessionData(optInContextData, selectedOptInYear)))
 
-    when(repository.get(hc.sessionId.get.value, Opt(OptInJourney))).thenReturn(Future.successful(Some(sessionData)))
+    when(repository.get(hc.sessionId.get.value, Opt(SignUpJourney))).thenReturn(Future.successful(Some(sessionData)))
   }
 }

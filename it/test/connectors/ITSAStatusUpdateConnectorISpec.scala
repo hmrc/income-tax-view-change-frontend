@@ -91,17 +91,17 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           )
         }
 
-        "be built correctly for OptInReason" in {
+        "be built correctly for signUpReason" in {
 
-          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, correctOptIntRequestBody, "{}")
+          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, correctsignUptRequestBody, "{}")
 
-          val result = connector.makeITSAStatusUpdate(taxYear2024, taxableEntityId, optInUpdateReason).futureValue
+          val result = connector.makeITSAStatusUpdate(taxYear2024, taxableEntityId, signUpUpdateReason).futureValue
 
           result shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
 
           WiremockHelper.verifyPut(
             uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
-            optRequestBody = Some(Json.stringify(Json.parse(correctOptIntRequestBody)))
+            optRequestBody = Some(Json.stringify(Json.parse(correctsignUptRequestBody)))
           )
         }
 
@@ -115,7 +115,7 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, requestBody2023, "{}")
 
-          val result = connector.makeITSAStatusUpdate(taxYear2023, taxableEntityId, optInUpdateReason).futureValue
+          val result = connector.makeITSAStatusUpdate(taxYear2023, taxableEntityId, signUpUpdateReason).futureValue
 
           result shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
 
@@ -211,21 +211,21 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
       }
     }
 
-    ".optIn()" when {
+    ".signUp()" when {
 
       "request body" should {
 
-        "be built correctly for OptInReason" in {
+        "be built correctly for signUpReason" in {
 
-          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, correctOptIntRequestBody, "{}")
+          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, correctsignUptRequestBody, "{}")
 
-          val result = connector.optIn(taxYear2024, taxableEntityId).futureValue
+          val result = connector.signUp(taxYear2024, taxableEntityId).futureValue
 
           result shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
 
           WiremockHelper.verifyPut(
             uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
-            optRequestBody = Some(Json.stringify(Json.parse(correctOptIntRequestBody)))
+            optRequestBody = Some(Json.stringify(Json.parse(correctsignUptRequestBody)))
           )
         }
 
@@ -239,7 +239,7 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, requestBody2023, "{}")
 
-          val result = connector.optIn(taxYear2023, taxableEntityId).futureValue
+          val result = connector.signUp(taxYear2023, taxableEntityId).futureValue
 
           result shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
 
@@ -254,15 +254,15 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
         "return a successful response" in {
 
-          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, correctOptIntRequestBody, "{}")
+          WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", NO_CONTENT, correctsignUptRequestBody, "{}")
 
-          val result = connector.optIn(taxYear2024, taxableEntityId).futureValue
+          val result = connector.signUp(taxYear2024, taxableEntityId).futureValue
 
           result shouldBe ITSAStatusUpdateResponseSuccess(NO_CONTENT)
 
           WiremockHelper.verifyPut(
             uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
-            optRequestBody = Some(Json.stringify(Json.parse(correctOptIntRequestBody)))
+            optRequestBody = Some(Json.stringify(Json.parse(correctsignUptRequestBody)))
           )
         }
       }
@@ -273,16 +273,16 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           "return a error response with status INTERNAL_SERVER_ERROR" in {
 
-            WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", OK, correctOptIntRequestBody, "{}")
+            WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", OK, correctsignUptRequestBody, "{}")
 
-            val result = connector.optIn(taxYear2024, taxableEntityId).futureValue
+            val result = connector.signUp(taxYear2024, taxableEntityId).futureValue
 
             result shouldBe
               ITSAStatusUpdateResponseFailure(List(ErrorItem("INTERNAL_SERVER_ERROR", "Request failed due to json response: List((/failures,List(JsonValidationError(List(error.path.missing),ArraySeq()))))")))
 
             WiremockHelper.verifyPut(
               uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
-              optRequestBody = Some(Json.stringify(Json.parse(correctOptIntRequestBody)))
+              optRequestBody = Some(Json.stringify(Json.parse(correctsignUptRequestBody)))
             )
           }
         }
@@ -291,16 +291,16 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           "with INVALID_PAYLOAD" in {
 
-            WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", BAD_REQUEST, correctOptIntRequestBody, invalidPayLoadFailureResponseBody)
+            WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", BAD_REQUEST, correctsignUptRequestBody, invalidPayLoadFailureResponseBody)
 
-            val result = connector.optIn(taxYear2024, taxableEntityId).futureValue
+            val result = connector.signUp(taxYear2024, taxableEntityId).futureValue
 
             result shouldBe
               ITSAStatusUpdateResponseFailure(List(ErrorItem("INVALID_PAYLOAD", "Submission has not passed validation. Invalid payload.")))
 
             WiremockHelper.verifyPut(
               uri = s"/income-tax-view-change/itsa-status/update/$taxableEntityId",
-              optRequestBody = Some(Json.stringify(Json.parse(correctOptIntRequestBody)))
+              optRequestBody = Some(Json.stringify(Json.parse(correctsignUptRequestBody)))
             )
           }
         }

@@ -23,7 +23,7 @@ import mocks.services.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import models.itsaStatus.{StatusDetail, StatusReason}
-import models.reportingObligations.optOut.{ConfirmedOptOutViewModel, MultiYearOptOutCheckpointViewModel, NextUpdatesQuarterlyReportingContentChecks, OneYearOptOutCheckpointViewModel, OptOutOneYearViewModel, OptOutTaxYearQuestionViewModel}
+import models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutTaxYearQuestionViewModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito.*
@@ -317,14 +317,7 @@ class OptOutServiceSpec
               previousYearCrystallisedStatus = false
             )
 
-            response.futureValue._2 shouldBe Some(
-              OptOutOneYearViewModel(
-                oneYearOptOutTaxYear = taxYear2023_2024,
-                state = Some(OneYearOptOutFollowedByMandated)
-              )
-            )
-
-            val model = response.futureValue._3
+            val model = response.futureValue._2
             model match {
               case m: OptOutProposition =>
                 m.previousTaxYear shouldBe PreviousOptOutTaxYear(Annual, taxYear2023_2024.previousYear, crystallised = false)
@@ -462,25 +455,6 @@ class OptOutServiceSpec
         if (taxYear == CY) "CY" else if (taxYear == PY) "PY" else if (taxYear == NY) "NY" else ""
       }
 
-      s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
-        s"offer ${getTaxYearText(optOutTaxYear.taxYear)} with state $state" in {
-
-          stubCurrentTaxYear(CY)
-
-          when(mockNextUpdatesService.getQuarterlyUpdatesCounts(ArgumentMatchers.eq(optOutTaxYear.taxYear))(any(), any()))
-            .thenReturn(Future.successful(QuarterlyUpdatesCountForTaxYear(optOutTaxYear.taxYear, 0)))
-
-          when(mockRepository.recallOptOutPropositionWithIntent()).thenReturn(
-            Future.successful(Some(
-              createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY), Some(optOutTaxYear.taxYear))))
-
-          val response = service.optOutCheckPointPageViewModel()
-
-          response.futureValue shouldBe Some(OneYearOptOutCheckpointViewModel(optOutTaxYear.taxYear, Some(state)))
-
-        }
-      }
-
     }
 
     val testCases = List(
@@ -506,22 +480,6 @@ class OptOutServiceSpec
 
       def getTaxYearText(taxYear: TaxYear): String = {
         if (taxYear == CY) "CY" else if (taxYear == PY) "PY" else if (taxYear == NY) "NY" else ""
-      }
-
-      s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
-        s"offer ${getTaxYearText(intent)}" in {
-
-          stubCurrentTaxYear(CY)
-
-          when(mockRepository.recallOptOutPropositionWithIntent()).thenReturn(Future.successful(Some(
-            createOptOutProposition(CY, crystallisedPY, statusPY, statusCY, statusNY), Some(intent)
-          )))
-
-          val response = service.optOutCheckPointPageViewModel()
-
-          response.futureValue shouldBe Some(MultiYearOptOutCheckpointViewModel(intent))
-
-        }
       }
 
     }

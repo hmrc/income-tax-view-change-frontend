@@ -33,7 +33,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
 import services.manageBusinesses.IncomeSourceRFService
-import services.reportingObligations.signUp.OptInService
+import services.reportingObligations.signUp.SignUpService
 import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -52,7 +52,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                          val incomeSourceReportingFrequencyService: IncomeSourceRFService,
                                                          val errorTemplate: ErrorTemplate,
                                                          val optOutService: OptOutService,
-                                                         val optInService: OptInService,
+                                                         val optInService: SignUpService,
                                                          val reportingFrequencyViewUtils: ReportingFrequencyViewUtils)
                                                         (implicit val appConfig: FrontendAppConfig,
                                                          val dateService: DateService,
