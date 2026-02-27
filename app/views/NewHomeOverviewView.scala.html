@@ -118,8 +118,8 @@
     <div class="govuk-!-padding-bottom-6"></div>
 
     @{(isAgent, isSupportingAgent) match {
-        case (true, true) => SupportingAgentSections()
-        case (true, _) =>   AgentSections(noChargesToPay)
+        case (true, false) => AgentSections(noChargesToPay)
+        case (_, true) => SupportingAgentSections()
         case _ => IndividualSections(noChargesToPay)
     }}
 }
