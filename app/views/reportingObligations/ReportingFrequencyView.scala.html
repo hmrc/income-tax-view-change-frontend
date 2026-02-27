@@ -165,39 +165,6 @@
     }
 }
 
-@latentBusinessText = {
-    @p(id = Some("latency-para1")) {
-        @messages("reporting.frequency.latency.details.section.text.para1")
-    }
-    <ul class="govuk-list govuk-list--bullet">
-        <li id="latency-para1-bullet1">@messages("reporting.frequency.latency.details.section.text.para1.bullet1")</li>
-        <li id="latency-para1-bullet2">@messages("reporting.frequency.latency.details.section.text.para1.bullet2")</li>
-    </ul>
-    @p(id = Some("latency-para2")) {
-        @messages("reporting.frequency.latency.details.section.text.para2")
-    }
-    <ul class="govuk-list govuk-list--bullet">
-        <li id="latency-para2-bullet1">@messages("reporting.frequency.latency.details.section.text.para2.bullet1")</li>
-        <li id="latency-para2-bullet2">@messages("reporting.frequency.latency.details.section.text.para2.bullet2")</li>
-        <li id="latency-para2-bullet3">@messages("reporting.frequency.latency.details.section.text.para2.bullet3")</li>
-    </ul>
-
-    @h3(
-        msg = messages("reporting.frequency.latency.details.section.text.para3.heading"),
-        optId = Some("latency-small-heading")
-    )
-
-    @p(id = Some("latency-para3-text")) {
-        @messages("reporting.frequency.latency.details.section.text.para3.text.1")
-        @linkComponent(
-            id = Some("latency-para3-link"),
-            url = if(viewModel.isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
-            message = messages("reporting.frequency.latency.details.section.text.para3.link.text")
-        )
-        @messages("reporting.frequency.latency.details.section.text.para3.text.2")
-    }
-}
-
 @latentBusinessDropdownContent = {
     @p(id = Some("separately-choose-to-opt-out")) {
         @messages("reporting.frequency.latency.details.section.text.para1")

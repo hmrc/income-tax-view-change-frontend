@@ -79,11 +79,7 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
           NextYearCYAnnualScenario
         case (NextTaxYear, _) if isCurrentQuarterly || isNextQuarterly || (isMandatedCurrent && isNextQuarterly) =>
           NextYearCYMandatedOrQuarterlyScenario
-        case (NoChosenTaxYear | PreviousTaxYear, _) if
-          (isCurrentAnnual && isNextAnnual) ||
-            (isCurrentQuarterly && isNextAnnual) ||
-            (isCurrentAnnual && isNextQuarterly) ||
-            (isCurrentQuarterly && isNextQuarterly) =>
+        case (NoChosenTaxYear | PreviousTaxYear, _) if(isCurrentAnnual && isNextAnnual) || (isCurrentQuarterly && isNextAnnual) || (isCurrentAnnual && isNextQuarterly) || (isCurrentQuarterly && isNextQuarterly) =>
           PreviousAndNoStatusValidScenario
         case _ =>
           DefaultValidScenario
