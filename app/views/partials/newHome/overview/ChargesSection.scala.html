@@ -50,10 +50,12 @@
     AmendablePoaController.show(isAgent).url
 }
 
-<h2 class="govuk-heading-m">@messages("new.home.overview.charges.sub-heading")</h2>
-@overviewCard(messages(if(noChargesToPay) "new.home.overview.charges.check-what-you-owe" else "new.home.overview.charges.make-payment"), whatYouOweUrl)
-@overviewCard(messages("new.home.overview.charges.payment-history"), paymentHistoryUrl)
-@overviewCard(messages("new.home.overview.charges.money-in-account"), moneyInAccountUrl)
-@overviewCard(messages("new.home.overview.charges.adjust-payments"), amendablePoaUrl)
 
+<div id="charges-overview-section">
+    <h2 class="govuk-heading-m">@messages("new.home.overview.charges.sub-heading")</h2>
+    @overviewCard(messages(if(noChargesToPay) "new.home.overview.charges.check-what-you-owe" else "new.home.overview.charges.make-payment"), whatYouOweUrl)
+    @overviewCard(messages("new.home.overview.charges.payment-history"), paymentHistoryUrl)
+    @overviewCard(messages("new.home.overview.charges.money-in-account"), moneyInAccountUrl)
+    @overviewCard(messages("new.home.overview.charges.adjust-payments"), amendablePoaUrl)
+</div>
 

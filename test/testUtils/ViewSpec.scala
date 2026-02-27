@@ -195,6 +195,14 @@ trait ViewSpec extends TestSupport {
       element.table(table).selectHead("caption").text() shouldBe caption
     }
 
+    def hasCorrectOverviewCardLink(cardIndex: Int = 0, linkText: String, linkHref: String, exactHrefMatch: Boolean = true): Assertion = {
+      element.select(".govuk-summary-card-no-border").get(cardIndex).text() shouldBe linkText
+      if (exactHrefMatch)
+        element.select(".govuk-summary-card-no-border").get(cardIndex).hasCorrectHref(linkHref)
+      else
+        element.select(".govuk-summary-card-no-border").get(cardIndex).link.attr("href") should include(linkHref)
+    }
+
     def hasErrorSummary(fieldErrors: (String, String)*): Assertion = {
       val errorSummary: Element = element.selectHead("#error-summary-display")
       errorSummary.attr("role") shouldBe "alert"

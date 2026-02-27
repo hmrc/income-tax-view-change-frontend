@@ -28,7 +28,10 @@
     }
 
 }
-<h2 class="govuk-heading-m">@messages("new.home.overview.penalties.sub-heading")</h2>
-@overviewCard(messages("new.home.overview.penalties.check-penalties"), penaltiesHomeUrl)
-@overviewCard(messages("new.home.overview.penalties.check-lpp"), s"${penaltiesHomeUrl}#lppTab")
-@overviewCard(messages("new.home.overview.penalties.check-lsp"), s"${penaltiesHomeUrl}#lspTab")
+
+<div id="penalties-overview-section">
+    <h2 class="govuk-heading-m">@messages("new.home.overview.penalties.sub-heading")</h2>
+    @overviewCard(messages("new.home.overview.penalties.check-penalties"), penaltiesHomeUrl)
+    @overviewCard(messages("new.home.overview.penalties.check-lpp"), s"${penaltiesHomeUrl}#lppTab")
+    @overviewCard(messages("new.home.overview.penalties.check-lsp"), s"${penaltiesHomeUrl}#lspTab")
+</div>
