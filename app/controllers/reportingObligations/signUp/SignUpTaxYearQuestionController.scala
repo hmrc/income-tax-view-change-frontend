@@ -20,12 +20,11 @@ import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
-import controllers.reportingObligations.signUp.routes
 import forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.reportingObligations.signUp.{OptInService, SignUpSubmissionService}
+import services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerSignUp
 import views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
@@ -36,7 +35,7 @@ class SignUpTaxYearQuestionController @Inject()(
                                                  authActions: AuthActions,
                                                  view: SignUpTaxYearQuestionView,
                                                  signUpSubmissionService: SignUpSubmissionService,
-                                                 val optInService: OptInService,
+                                                 val signUpService: SignUpService,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler
                                                )(implicit val appConfig: FrontendAppConfig,
@@ -51,7 +50,7 @@ class SignUpTaxYearQuestionController @Inject()(
   def show(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withSignUpRFChecks {
-        optInService.isSignUpTaxYearValid(taxYear).flatMap {
+        signUpService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
             retrieveIsJourneyComplete.flatMap { journeyIsComplete =>
               if (!journeyIsComplete) {
@@ -78,7 +77,7 @@ class SignUpTaxYearQuestionController @Inject()(
   def submit(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       withSignUpRFChecks {
-        optInService.isSignUpTaxYearValid(taxYear).flatMap {
+        signUpService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
             SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY).bindFromRequest().fold(
               formWithErrors => Future(BadRequest(

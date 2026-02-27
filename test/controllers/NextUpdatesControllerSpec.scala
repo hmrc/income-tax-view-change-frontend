@@ -23,7 +23,7 @@ import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.obligations.*
-import models.reportingObligations.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
+import models.reportingObligations.optOut.{NextUpdatesQuarterlyReportingContentChecks}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -76,8 +76,6 @@ class NextUpdatesControllerSpec extends MockAuthActions
     previousYearCrystallisedStatus = false
   )
 
-  val optOutViewModel = OptOutMultiYearViewModel()
-
   val optOutProposition: OptOutProposition =
     OptOutProposition.createOptOutProposition(
       currentYear = TaxYear(2024, 2025),
@@ -117,7 +115,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
           mockSingleBusinessIncomeSourceWithDeadlines()
-          mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, Some(optOutViewModel), optOutProposition)))
+          mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, optOutProposition)))
           mockObligations
           mockViewModel
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
@@ -321,7 +319,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
           mockSingleBusinessIncomeSourceWithDeadlines()
-          mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, Some(optOutViewModel), optOutProposition)))
+          mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, optOutProposition)))
           mockViewModel
           mockObligations
 
@@ -339,7 +337,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
           mockNoObligations
-          mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, Some(optOutViewModel), optOutProposition)))
+          mockGetNextUpdatesPageChecksAndProposition(Future.successful((contentChecks, optOutProposition)))
           mockNoIncomeSourcesWithDeadlines()
 
           val result: Future[Result] = testNextUpdatesController.showAgent()(

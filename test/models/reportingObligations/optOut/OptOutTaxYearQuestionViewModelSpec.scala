@@ -20,7 +20,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
 import models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
-import services.reportingObligations.optOut.{CurrentOptOutTaxYear, MultiYearOptOutDefault, NextOptOutTaxYear, NextYearOptOut, OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, PreviousOptOutTaxYear}
+import services.reportingObligations.optOut.*
 import testUtils.UnitSpec
 
 class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {

@@ -21,12 +21,11 @@ import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.reportingObligations.signUp.routes
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DateServiceInterface
-import services.reportingObligations.signUp.OptInService
+import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerSignUp
 import views.html.reportingObligations.signUp.SignUpStartView
@@ -37,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class SignUpStartController @Inject()(authActions: AuthActions,
                                       signUpStart: SignUpStartView,
-                                      val optInService: OptInService,
+                                      val signUpService: SignUpService,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       implicit val dateService: DateServiceInterface)
@@ -53,7 +52,7 @@ class SignUpStartController @Inject()(authActions: AuthActions,
   def show(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     withSignUpRFChecks {
       withRecover(isAgent) {
-        optInService.isSignUpTaxYearValid(taxYear).flatMap {
+        signUpService.isSignUpTaxYearValid(taxYear).flatMap {
           case Some(viewModel) =>
             retrieveIsJourneyComplete.flatMap { journeyIsComplete =>
               if (!journeyIsComplete) {

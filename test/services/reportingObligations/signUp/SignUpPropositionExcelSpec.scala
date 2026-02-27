@@ -19,13 +19,13 @@ package services.reportingObligations.signUp
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus._
 import org.scalatest.prop.TableDrivenPropertyChecks._
-import services.reportingObligations.signUp.core.OptInProposition.createOptInProposition
-import services.reportingObligations.signUp.core.OptInProposition
+import services.reportingObligations.signUp.core.SignUpProposition.createSignUpProposition
+import services.reportingObligations.signUp.core.SignUpProposition
 import testUtils.UnitSpec
 
 import scala.io.Source
 
-class OptInPropositionExcelSpec extends UnitSpec {
+class SignUpPropositionExcelSpec extends UnitSpec {
 
   "Parse opt out scenarios from tsv file" ignore {
     /*  The programme has specified all required Opt Out scenarios in a large spreadsheet.
@@ -163,11 +163,11 @@ class OptInPropositionExcelSpec extends UnitSpec {
                           expectedNY: String
                         ) =>
 
-      val optInProposition = createOptInProposition(currentTaxYear,
+      val signUpProposition = createSignUpProposition(currentTaxYear,
         toITSAStatus(cyStatus),
         toITSAStatus(nyStatus))
 
-      testOptIntScenario(optInProposition,
+      testSignUpScenario(signUpProposition,
         valid,
         intent,
         presented,
@@ -177,7 +177,7 @@ class OptInPropositionExcelSpec extends UnitSpec {
     }
   }
 
-  private def testOptIntScenario(optInProposition: OptInProposition,
+  private def testSignUpScenario(signUpProposition: SignUpProposition,
                                  valid: Boolean,
                                  intent: String,
                                  presented: List[String],
@@ -185,14 +185,11 @@ class OptInPropositionExcelSpec extends UnitSpec {
                                  expectedNY: String) = {
 
 
-    assert(optInProposition.availableTaxYearsForOptIn === presented.map(v => toTaxYear(v)))
-
     if (valid) {
 
       val intentTaxYear = toTaxYear(intent)
-      assert(optInProposition.availableTaxYearsForOptIn.contains(intentTaxYear))
 
-      assert(optInProposition.expectedItsaStatusesAfter(intentTaxYear) ===
+      assert(signUpProposition.expectedItsaStatusesAfter(intentTaxYear) ===
         Seq(
           toITSAStatus(expectedCY),
           toITSAStatus(expectedNY))

@@ -61,7 +61,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(),
+            signUpTaxYears = Seq(),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -81,7 +81,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(),
+            signUpTaxYears = Seq(),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -103,7 +103,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(),
+            signUpTaxYears = Seq(),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -121,7 +121,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(),
+            signUpTaxYears = Seq(),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -140,7 +140,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(),
+            signUpTaxYears = Seq(),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -160,7 +160,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(),
+            signUpTaxYears = Seq(),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -177,7 +177,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(TaxYear(2025, 2026), TaxYear(2026, 2027)),
+            signUpTaxYears = Seq(TaxYear(2025, 2026), TaxYear(2026, 2027)),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -196,7 +196,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(TaxYear(2025, 2026)),
+            signUpTaxYears = Seq(TaxYear(2025, 2026)),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -217,7 +217,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(),
+            signUpTaxYears = Seq(),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -235,7 +235,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(),
+            signUpTaxYears = Seq(),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -255,7 +255,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(),
+            signUpTaxYears = Seq(),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -278,7 +278,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
             val model = ReportingFrequencyViewModel(
               isAgent = false,
-              optInTaxYears = Seq(),
+              signUpTaxYears = Seq(),
               itsaStatusTable = Seq(),
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = false,
@@ -298,7 +298,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
             val model = ReportingFrequencyViewModel(
               isAgent = false,
-              optInTaxYears = Seq(),
+              signUpTaxYears = Seq(),
               itsaStatusTable = Seq(),
               displayCeasedBusinessWarning = false,
               isAnyOfBusinessLatent = false,
@@ -336,7 +336,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(TaxYear(2025, 2026)),
+            signUpTaxYears = Seq(TaxYear(2025, 2026)),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -364,7 +364,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(TaxYear(2025, 2026)),
+            signUpTaxYears = Seq(TaxYear(2025, 2026)),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -392,7 +392,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq.empty,
+            signUpTaxYears = Seq.empty,
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -420,7 +420,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq.empty,
+            signUpTaxYears = Seq.empty,
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -450,7 +450,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq(TaxYear(2025, 2026)),
+            signUpTaxYears = Seq(TaxYear(2025, 2026)),
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -480,7 +480,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
           val model = ReportingFrequencyViewModel(
             isAgent = false,
-            optInTaxYears = Seq.empty,
+            signUpTaxYears = Seq.empty,
             itsaStatusTable = Seq(),
             displayCeasedBusinessWarning = false,
             isAnyOfBusinessLatent = false,
@@ -511,7 +511,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
         val model = ReportingFrequencyViewModel(
           isAgent = false,
-          optInTaxYears = Seq(TaxYear(2025, 2026)),
+          signUpTaxYears = Seq(TaxYear(2025, 2026)),
           itsaStatusTable = Seq(),
           displayCeasedBusinessWarning = false,
           isAnyOfBusinessLatent = false,
@@ -537,7 +537,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
         val model = ReportingFrequencyViewModel(
           isAgent = false,
-          optInTaxYears = Seq(TaxYear(2025, 2026)),
+          signUpTaxYears = Seq(TaxYear(2025, 2026)),
           itsaStatusTable = Seq(),
           displayCeasedBusinessWarning = false,
           isAnyOfBusinessLatent = false,
@@ -563,7 +563,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
         val model = ReportingFrequencyViewModel(
           isAgent = false,
-          optInTaxYears = Seq(TaxYear(2025, 2026)),
+          signUpTaxYears = Seq(TaxYear(2025, 2026)),
           itsaStatusTable = Seq(),
           displayCeasedBusinessWarning = false,
           isAnyOfBusinessLatent = false,
@@ -589,7 +589,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
         val model = ReportingFrequencyViewModel(
           isAgent = false,
-          optInTaxYears = Seq(TaxYear(2025, 2026)),
+          signUpTaxYears = Seq(TaxYear(2025, 2026)),
           itsaStatusTable = Seq(),
           displayCeasedBusinessWarning = false,
           isAnyOfBusinessLatent = false,
@@ -626,7 +626,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
 
     val model = ReportingFrequencyViewModel(
       isAgent = false,
-      optInTaxYears = optInYears,
+      signUpTaxYears = optInYears,
       itsaStatusTable = Seq(),
       displayCeasedBusinessWarning = false,
       isAnyOfBusinessLatent = false,

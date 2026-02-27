@@ -20,7 +20,7 @@ import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import play.api.libs.json.Json
-import services.reportingObligations.signUp.core.{CurrentOptInTaxYear, NextOptInTaxYear, OptInProposition}
+import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import testUtils.TestSupport
 
 class OptOutNewAuditModelSpec extends TestSupport {
@@ -28,10 +28,10 @@ class OptOutNewAuditModelSpec extends TestSupport {
   val currentYear: TaxYear = TaxYear.forYearEnd(2024)
   val nextYear: TaxYear = currentYear.nextYear
 
-  val currentTaxYearOptIn: CurrentOptInTaxYear = CurrentOptInTaxYear(Annual, currentYear)
-  val nextTaxYearOptIn: NextOptInTaxYear = NextOptInTaxYear(Annual, nextYear, currentTaxYearOptIn)
+  val currentTaxYearOptIn: CurrentSignUpTaxYear = CurrentSignUpTaxYear(Annual, currentYear)
+  val nextTaxYearOptIn: NextSignUpTaxYear = NextSignUpTaxYear(Annual, nextYear, currentTaxYearOptIn)
 
-  val optInProposition: OptInProposition = OptInProposition(
+  val optInProposition: SignUpProposition = SignUpProposition(
     currentTaxYearOptIn,
     nextTaxYearOptIn
   )

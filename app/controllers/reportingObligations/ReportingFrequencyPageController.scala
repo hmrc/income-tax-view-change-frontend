@@ -21,13 +21,12 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
 import models.reportingObligations.ReportingFrequencyViewModel
-import models.reportingObligations.optOut.{OptOutMultiYearViewModel, OptOutOneYearViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.DateServiceInterface
 import services.reportingObligations.ReportingObligationsAuditService
-import services.reportingObligations.signUp.OptInService
 import services.reportingObligations.optOut.OptOutService
+import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.MtdConstants
 import viewUtils.ReportingFrequencyViewUtils
@@ -39,7 +38,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ReportingFrequencyPageController @Inject()(
                                                   optOutService: OptOutService,
-                                                  optInService: OptInService,
+                                                  signUpService: SignUpService,
                                                   val auth: AuthActions,
                                                   errorTemplate: ErrorTemplate,
                                                   reportingObligationsAuditService: ReportingObligationsAuditService,
@@ -56,15 +55,15 @@ class ReportingFrequencyPageController @Inject()(
   def show(isAgent: Boolean): Action[AnyContent] =
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
       for {
-        (optOutProposition, optOutJourneyType) <- optOutService.reportingFrequencyViewModels()
-        optInProposition <- optInService.fetchOptInProposition()
-        optInTaxYears <- optInService.availableOptInTaxYear()
+        optOutProposition <- optOutService.initialiseJourneyWithProposition()
+        signUpProposition <- signUpService.fetchSignUpProposition()
+        signUpTaxYears <- signUpService.availableSignUpTaxYear()
         _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
-        _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
+        _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
         viewModel =
           ReportingFrequencyViewModel(
             isAgent = user.isAgent(),
-            optInTaxYears = optInTaxYears,
+            signUpTaxYears = signUpTaxYears,
             itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
             displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
             isAnyOfBusinessLatent = user.incomeSources.isAnyOfActiveBusinessesLatent,
@@ -105,5 +104,4 @@ class ReportingFrequencyPageController @Inject()(
           }
       } yield result
     }
-
 }

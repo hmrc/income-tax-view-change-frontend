@@ -22,7 +22,7 @@ import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import models.obligations.*
-import models.reportingObligations.optOut.{NextUpdatesQuarterlyReportingContentChecks, OptOutMultiYearViewModel}
+import models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
@@ -82,10 +82,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
     def nextUpdatesViewUtils: NextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
 
-    val optOutMultiYearViewModel: OptOutMultiYearViewModel = OptOutMultiYearViewModel()
-
     def whatTheUserCanDoContentMulti: Option[Html] =
-      nextUpdatesViewUtils.whatTheUserCanDo(Some(optOutMultiYearViewModel), isSupportingAgent)(user, implicitly)
+      nextUpdatesViewUtils.whatTheUserCanDo(isSupportingAgent)(user, implicitly)
 
     lazy val obligationsModel: NextUpdatesViewModel =
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(

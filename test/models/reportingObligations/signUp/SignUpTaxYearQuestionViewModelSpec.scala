@@ -19,13 +19,13 @@ package models.reportingObligations.signUp
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
-import services.reportingObligations.signUp.core.{CurrentOptInTaxYear, NextOptInTaxYear}
+import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}
 import testUtils.UnitSpec
 
 class SignUpTaxYearQuestionViewModelSpec extends UnitSpec {
 
-  val currentOptInTaxYear = CurrentOptInTaxYear(ITSAStatus.Annual, TaxYear(2025, 2026))
-  val nextOptInTaxYear = NextOptInTaxYear(ITSAStatus.Annual, TaxYear(2026, 2027), currentOptInTaxYear)
+  val currentOptInTaxYear = CurrentSignUpTaxYear(ITSAStatus.Annual, TaxYear(2025, 2026))
+  val nextOptInTaxYear = NextSignUpTaxYear(ITSAStatus.Annual, TaxYear(2026, 2027), currentOptInTaxYear)
   "SignUpTaxYearQuestionViewModel" should {
     "indicate signing up for the current tax year" when {
       "the signUpTaxYear is an instance of CurrentOptInTaxYear" in {

@@ -17,7 +17,7 @@
 package controllers.reportingObligations.signUp
 
 import controllers.ControllerISpecHelper
-import enums.JourneyType.{Opt, OptInJourney}
+import enums.JourneyType.{Opt, SignUpJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
@@ -25,7 +25,7 @@ import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, ReportingFrequencyPa
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated}
-import models.reportingObligations.signUp.{OptInContextData, OptInSessionData}
+import models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
@@ -119,7 +119,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
 
 
               val intent = currentTaxYear
-              await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent))
+              await(setupSignUpSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -152,7 +152,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
 
 
               val intent = currentTaxYear
-              await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Mandated, intent))
+              await(setupSignUpSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Mandated, intent))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -187,7 +187,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
               val intent = currentTaxYear.nextYear
-              await(setupOptInSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent))
+              await(setupSignUpSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -219,7 +219,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
               val intent = currentTaxYear.nextYear
-              await(setupOptInSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, intent))
+              await(setupSignUpSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, intent))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -254,14 +254,14 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
     }
   }
 
-  private def setupOptInSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
+  private def setupSignUpSessionData(currentTaxYear: TaxYear, currentYearStatus: ITSAStatus.Value,
                                     nextYearStatus: ITSAStatus.Value, intent: TaxYear): Future[Boolean] = {
     repository.set(
       UIJourneySessionData(testSessionId,
-        Opt(OptInJourney).toString,
-        optInSessionData =
-          Some(OptInSessionData(
-            Some(OptInContextData(
+        Opt(SignUpJourney).toString,
+        signUpSessionData =
+          Some(SignUpSessionData(
+            Some(SignUpContextData(
               currentTaxYear.toString,
               currentYearStatus.toString,
               nextYearStatus.toString)), Some(intent.toString)))))

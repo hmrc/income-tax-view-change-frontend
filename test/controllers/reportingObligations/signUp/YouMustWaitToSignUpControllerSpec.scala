@@ -20,7 +20,7 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.reportingObligations.signUp.YouMustWaitToSignUpController
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.MockOptInService
+import mocks.services.MockSignUpService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
@@ -28,17 +28,17 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.DateServiceInterface
-import services.reportingObligations.signUp.OptInService
+import services.reportingObligations.signUp.SignUpService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 
-class YouMustWaitToSignUpControllerSpec extends MockAuthActions with MockOptInService {
+class YouMustWaitToSignUpControllerSpec extends MockAuthActions with MockSignUpService {
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
-        api.inject.bind[OptInService].toInstance(mockOptInService),
+        api.inject.bind[SignUpService].toInstance(mockSignUpService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
@@ -62,7 +62,7 @@ class YouMustWaitToSignUpControllerSpec extends MockAuthActions with MockOptInSe
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
-          when(mockOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+          when(mockSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
             .thenReturn(Future(true))
 
           val result = action(fakeRequest)
