@@ -37,6 +37,7 @@
 
 @(origin: Option[String] = None,
         isAgent: Boolean,
+        isSupportingAgent: Boolean,
         currentTaxYear: TaxYear,
         yourTasksUrl: String,
         recentActivityUrl: String,
@@ -116,20 +117,57 @@
 
     <div class="govuk-!-padding-bottom-6"></div>
 
-    @chargesSection(isAgent, noChargesToPay)
-    @SectionBreak
-
-    @deadlinesSection(isAgent)
-    @SectionBreak
-
-    @incomeSection(isAgent)
-    @SectionBreak
-
-    @taxYearSection(isAgent, currentTaxYear)
-    @SectionBreak
-
-    @penaltiesSection(isAgent)
+    @{(isAgent, isSupportingAgent) match {
+        case (true, false) => AgentSections(noChargesToPay)
+        case (_, true) => SupportingAgentSections()
+        case _ => IndividualSections(noChargesToPay)
+    }}
 }
+
+
+
+@IndividualSections(noChargesToPay: Boolean) = {
+    @chargesSection(isAgent = false, noChargesToPay)
+    @SectionBreak
+
+    @deadlinesSection(isAgent = false)
+    @SectionBreak
+
+    @incomeSection(isAgent = false)
+    @SectionBreak
+
+    @taxYearSection(isAgent = false, taxYear = currentTaxYear)
+    @SectionBreak
+
+    @penaltiesSection(isAgent = false)
+}
+
+
+@AgentSections(noChargesToPay: Boolean) = {
+    @chargesSection(isAgent = true, noChargesToPay)
+    @SectionBreak
+
+    @deadlinesSection(isAgent = true)
+    @SectionBreak
+
+    @incomeSection(isAgent = true)
+    @SectionBreak
+
+    @taxYearSection(isAgent = true, taxYear = currentTaxYear)
+    @SectionBreak
+
+    @penaltiesSection(isAgent = true)
+}
+
+
+@SupportingAgentSections() = {
+
+    @deadlinesSection(isAgent = true)
+    @SectionBreak
+
+    @incomeSection(isAgent = true)
+}
+
 
 
 
