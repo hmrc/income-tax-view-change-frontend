@@ -162,28 +162,27 @@ case class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
    private def defineRedirectLinkPayments(isAgent: Boolean): Option[String] = {
       oldestCharge.flatMap { charge =>
         (charge.transactionType, isAgent) match {
-          case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, false) => Some("/report-quarterly/income-and-expenses/view/what-you-owe")
-          case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, true) => Some("/report-quarterly/income-and-expenses/view/agents/what-your-client-owes")
+          case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, false) => Some(controllers.routes.WhatYouOweController.show().url)
+          case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, true) => Some(controllers.routes.WhatYouOweController.showAgent().url)
 
           case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, false) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
-          else Some(s"/report-quarterly/income-and-expenses/view/tax-years/${overdueLpps.head.taxYear.endYear}/charge?id=${overdueLpps.head.transactionId}")
+          else Some(controllers.routes.ChargeSummaryController.show(overdueLpps.head.taxYear.endYear, overdueLpps.head.transactionId).url)
           case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, true) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
-          else Some(s"/report-quarterly/income-and-expenses/view/agents/tax-years/${overdueLpps.head.taxYear.endYear}/charge?id=${overdueLpps.head.transactionId}")
-
+          else Some(controllers.routes.ChargeSummaryController.showAgent(overdueLpps.head.taxYear.endYear, overdueLpps.head.transactionId).url)
 
           case (LateSubmissionPenalty, false) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
-          else Some(s"/report-quarterly/income-and-expenses/view/tax-years/${overdueLsps.head.taxYear.endYear}/charge?id=${overdueLsps.head.transactionId}")
+          else Some(controllers.routes.ChargeSummaryController.show(overdueLsps.head.taxYear.endYear, overdueLsps.head.transactionId).url)
           case (LateSubmissionPenalty, true) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
-          else Some(s"/report-quarterly/income-and-expenses/view/agents/tax-years/${overdueLsps.head.taxYear.endYear}/charge?id=${overdueLsps.head.transactionId})")
+          else Some(controllers.routes.ChargeSummaryController.showAgent(overdueLsps.head.taxYear.endYear, overdueLsps.head.transactionId).url)
         }
       }
     }
 
    private def defineRedirectLinkMoneyInYourAccount(isAgent: Boolean) = {
      if(isAgent){
-       "/report-quarterly/income-and-expenses/view/agents/money-in-your-account"
+       controllers.routes.MoneyInYourAccountController.showAgent().url
      }else {
-       "/report-quarterly/income-and-expenses/view/money-in-your-account"
+       controllers.routes.MoneyInYourAccountController.show().url
      }
    }
 
