@@ -21,23 +21,41 @@ import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.*
+<<<<<<< HEAD
 import config.*
+=======
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+>>>>>>> 8032fac92 (MISUV-10867 - Added logic to view and tests)
 import controllers.agent.sessionUtils.SessionKeys
 import controllers.routes.WhatYouOweController
 import enums.MTDSupportingAgent
 import models.admin.*
+<<<<<<< HEAD
 import models.financialDetails.*
+=======
+import models.core.Nino
+import models.financialDetails.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
+>>>>>>> 8032fac92 (MISUV-10867 - Added logic to view and tests)
 import models.homePage.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.obligations.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
+<<<<<<< HEAD
 import play.api.mvc.*
 import services.*
 import services.reportingObligations.signUp.SignUpService
 import services.reportingObligations.optOut.OptOutService
+=======
+import play.api.mvc.{Action, *}
+import services.*
+import services.optIn.OptInService
+import services.optout.OptOutService
+import services.WhatYouOweService
+>>>>>>> 8032fac92 (MISUV-10867 - Added logic to view and tests)
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -314,11 +332,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
       for {
+        ctaViewModel <- whatYouOweService.claimToAdjustViewModel(Nino(user.nino))
         credits <- creditService.getAllCredits()
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       }
       yield {
-        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount))
+        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel))
       }
     }
   }
