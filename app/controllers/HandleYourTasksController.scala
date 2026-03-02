@@ -43,6 +43,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                 val optOutService: OptOutService,
                                 val ITSAStatusService: ITSAStatusService,
                                 val whatYouOweService: WhatYouOweService,
+                                val creditService: CreditService,
                                 val dateService: DateServiceInterface,
                                 val financialDetailsService: FinancialDetailsService)
                                (implicit val ec: ExecutionContext,
@@ -68,6 +69,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
   private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
                              (implicit user: MtdItUser[_]): Future[Result] = {
     for {
+      credits <- creditService.getAllCredits()
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
@@ -80,7 +82,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
 
-      val homeViewModel = HandleYourTasksViewModel(chargeItemList, unpaidCharges, creditsRefundsRepayEnabled)
+      val homeViewModel = HandleYourTasksViewModel(chargeItemList, unpaidCharges, credits, creditsRefundsRepayEnabled)
 
       Ok(handleYourTasksView(origin, isAgent,
         yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),

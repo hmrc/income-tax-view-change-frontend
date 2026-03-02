@@ -18,6 +18,7 @@ package models.newHomePage
 
 import config.FrontendAppConfig
 import enums.MTDSupportingAgent
+import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 
 import java.time.LocalDate
@@ -25,16 +26,13 @@ import java.time.temporal.ChronoUnit
 
 case class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
                                     unpaidCharges: List[FinancialDetailsResponseModel],
+                                    credits: CreditsModel,
                                     creditsRefundsRepayEnabled: Boolean)
                                    (implicit val appConfig: FrontendAppConfig) {
   private val today: LocalDate = LocalDate.now()
 
   val creditInAccount: Option[BigDecimal] =
-    if (creditsRefundsRepayEnabled) {
-      Some(unpaidCharges.collectFirst {
-        case fdm: FinancialDetailsModel => fdm.balanceDetails.getAbsoluteTotalCreditAmount.getOrElse(BigDecimal(0.00))
-      }.getOrElse(BigDecimal(0.00)))
-    } else None
+    if (creditsRefundsRepayEnabled) Some(credits.totalCredit) else None
 
   private val oldestCharge: Option[ChargeItem] = outstandingChargesModel
     .collect { case item if item.dueDate.isDefined => item }

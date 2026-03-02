@@ -33,9 +33,10 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, status}
-import services.{DateService, DateServiceInterface, FinancialDetailsService, ITSAStatusService, WhatYouOweService}
+import services.{CreditService, DateService, DateServiceInterface, FinancialDetailsService, ITSAStatusService, WhatYouOweService}
 import services.optIn.OptInService
 import services.optout.OptOutService
+import testConstants.ANewCreditAndRefundModel
 import views.html.HandleYourTasksView
 
 import java.time.{LocalDate, Month}
@@ -60,6 +61,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
 
   given mockedOptInService: OptInService = mock(classOf[OptInService])
   given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
+  given mockedCreditService: CreditService = mock(classOf[CreditService])
   given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
 
   val authActions: AuthActions = app.injector.instanceOf(classOf[AuthActions])
@@ -72,7 +74,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
 
   val expectedYourTasksTitle = s"${messages("newHome.navigation.yourTasks")}"
   val expectedOverdueAmount = s"${messages("newHome.yourTasks.selfAssessment.overdueCharge.single", "1000.0 ")}Was due 31 Jan 2019"
-  val expectedCredit = s"${messages("newHome.yourTasks.selfAssessment.money-in-account", "1000.0")}"
+  val expectedCredit = s"${messages("newHome.yourTasks.selfAssessment.money-in-account", "1000")}"
 
   trait Setup {
     val controller: HandleYourTasksController = HandleYourTasksController(
@@ -82,6 +84,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
       mockedOptOutService,
       mockITSAStatusService,
       mockWhatYouOweService,
+      mockedCreditService,
       mockDateServiceInjected,
       mockFinancialDetailsService)
 
@@ -122,6 +125,11 @@ class HandleYourTasksControllerSpec extends MockAuthActions
           .thenReturn(Future.successful(true))
         when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
           .thenReturn(Future.successful(true))
+        when(mockedCreditService.getAllCredits(any(), any()))
+          .thenReturn(Future.successful(
+            ANewCreditAndRefundModel()
+              .model
+          ))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -154,6 +162,11 @@ class HandleYourTasksControllerSpec extends MockAuthActions
           .thenReturn(Future.successful(true))
         when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
           .thenReturn(Future.successful(true))
+        when(mockedCreditService.getAllCredits(any(), any()))
+          .thenReturn(Future.successful(
+            ANewCreditAndRefundModel().withTotalCredit(BigDecimal(1000))
+              .model
+          ))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
