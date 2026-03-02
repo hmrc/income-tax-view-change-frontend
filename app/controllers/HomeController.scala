@@ -316,7 +316,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       }
       yield {
-        Ok(newHomeOverviewView(origin, isAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.creditInAccount))
+        Ok(newHomeOverviewView(origin, isAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount))
       }
     }
   }

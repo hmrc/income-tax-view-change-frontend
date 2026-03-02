@@ -32,7 +32,7 @@ case class CreditsModel(availableCreditForRepayment: BigDecimal,
                         secondPendingAmountRequested: Option[BigDecimal],
                         transactions: List[Transaction] ) extends SuccessModel {
   
-  val creditInAccount: Boolean = if(totalCredit > 0) true else false
+  val availableCreditInAccount: Boolean = if(totalCredit > 0) true else false
 }
 
 object CreditsModel {
