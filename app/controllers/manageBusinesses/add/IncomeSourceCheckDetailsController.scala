@@ -55,6 +55,7 @@ class IncomeSourceCheckDetailsController @Inject()(
                                                     val appConfig: FrontendAppConfig
                                                   ) extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport {
 
+  private def agentPrefix(isAgent: Boolean) = if (isAgent) "[Agent]" else ""
 
   private def errorRedirectUrl(
                                 isAgent: Boolean,
@@ -65,41 +66,21 @@ class IncomeSourceCheckDetailsController @Inject()(
     else routes.IncomeSourceNotAddedController.show(incomeSourceType, isTriggeredMigration).url
   }
 
-  def show(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividual(isTriggeredMigration).async {
-      implicit user =>
-        handleRequest(
-          sources = user.incomeSources,
-          isAgent = false,
-          incomeSourceType,
-          isTriggeredMigration
-        )(implicitly, itvcErrorHandler)
-    }
-
-  def showAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] =
-    authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
-      implicit mtdItUser =>
-        handleRequest(
-          sources = mtdItUser.incomeSources,
-          isAgent = true,
-          incomeSourceType,
-          isTriggeredMigration
-        )(implicitly, itvcErrorHandlerAgent)
-    }
-
   private def handleRequest(sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType,
                             isTriggeredMigration: Boolean)
                            (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] =
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = BeforeSubmissionPage) { sessionData =>
+
       val backUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, NormalMode, incomeSourceType, isTriggeredMigration).url
-      val postAction: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType, isTriggeredMigration) else {
-        controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType, isTriggeredMigration)
-      }
+      val postAction: Call =
+        if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submitAgent(incomeSourceType, isTriggeredMigration)
+        else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType, isTriggeredMigration)
+
       getViewModel(incomeSourceType, sessionData)(user) match {
         case Some(viewModel) =>
-          Future.successful {
+          Future {
             Ok(
               incomeSourceCheckDetailsView(
                 viewModel,
@@ -111,18 +92,14 @@ class IncomeSourceCheckDetailsController @Inject()(
             )
           }
         case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"Unable to construct view model for $incomeSourceType")
-          Future.successful {
+          Logger("application").error(agentPrefix(isAgent) + s"Unable to construct view model for $incomeSourceType")
+          Future {
             errorHandler.showInternalServerError()
           }
       }
     }.recover {
       case ex: Throwable =>
-        val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix +
-          s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
+        Logger("application").error(agentPrefix(isAgent) + s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
 
@@ -169,17 +146,6 @@ class IncomeSourceCheckDetailsController @Inject()(
     }
   }
 
-
-  def submit(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
-    implicit user =>
-      handleSubmit(isAgent = false, incomeSourceType, isTriggeredMigration)
-  }
-
-  def submitAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
-    implicit mtdItUser =>
-      handleSubmit(isAgent = true, incomeSourceType, isTriggeredMigration)
-  }
-
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), BeforeSubmissionPage) { sessionData =>
       val redirectUrl: (Boolean, IncomeSourceType, Boolean) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean) => {
@@ -197,9 +163,10 @@ class IncomeSourceCheckDetailsController @Inject()(
           businessDetailsService.createRequest(viewModel) flatMap {
             case Right(CreateIncomeSourceResponse(id)) =>
 
-              auditingService.extendedAudit(
-                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
-              )
+              auditingService
+                .extendedAudit(
+                  CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
+                )
 
               val saveAddIncomeSourceDataToMongo =
                 for {
@@ -214,7 +181,7 @@ class IncomeSourceCheckDetailsController @Inject()(
                 }
 
               saveAddIncomeSourceDataToMongo.flatMap {
-                case true => Future.successful(Redirect(redirectUrl(isAgent, incomeSourceType, isTriggeredMigration)))
+                case true => Future(Redirect(redirectUrl(isAgent, incomeSourceType, isTriggeredMigration)))
                 case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
               }
             case Left(ex) =>
@@ -224,10 +191,8 @@ class IncomeSourceCheckDetailsController @Inject()(
               Future.failed(ex)
           }
         case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"Unable to construct view model for $incomeSourceType")
-          Future.successful {
+          Logger("application").error(agentPrefix(isAgent) + s"Unable to construct view model for $incomeSourceType")
+          Future {
             Redirect(errorRedirectUrl(isAgent, incomeSourceType, isTriggeredMigration))
           }
       }
@@ -237,4 +202,38 @@ class IncomeSourceCheckDetailsController @Inject()(
       Logger("application").error(s"${ex.getMessage}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType, !user.incomeSources.isConfirmedUser))
   }
+
+  def show(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] =
+    authActions.asMTDIndividual(isTriggeredMigration).async {
+      implicit user =>
+        handleRequest(
+          sources = user.incomeSources,
+          isAgent = false,
+          incomeSourceType,
+          isTriggeredMigration
+        )(implicitly, itvcErrorHandler)
+    }
+
+  def showAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] =
+    authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
+      implicit mtdItUser =>
+        handleRequest(
+          sources = mtdItUser.incomeSources,
+          isAgent = true,
+          incomeSourceType,
+          isTriggeredMigration
+        )(implicitly, itvcErrorHandlerAgent)
+    }
+
+
+  def submit(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
+    implicit user =>
+      handleSubmit(isAgent = false, incomeSourceType, isTriggeredMigration)
+  }
+
+  def submitAgent(incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
+    implicit mtdItUser =>
+      handleSubmit(isAgent = true, incomeSourceType, isTriggeredMigration)
+  }
+
 }

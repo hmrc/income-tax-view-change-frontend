@@ -35,21 +35,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AmendablePoaController @Inject()(val authActions: AuthActions,
-                                       val claimToAdjustService: ClaimToAdjustService,
-                                       val poaSessionService: PaymentOnAccountSessionService,
-                                       view: AmendablePoaView)
-                                      (implicit val appConfig: FrontendAppConfig,
-                                       val individualErrorHandler: ItvcErrorHandler,
-                                       val agentErrorHandler: AgentItvcErrorHandler,
-                                       val mcc: MessagesControllerComponents,
-                                       val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport
-    with ImplicitCurrencyFormatter
-    with WithSessionAndPoa with ErrorRecovery {
+class AmendablePoaController @Inject()(
+                                        val authActions: AuthActions,
+                                        val claimToAdjustService: ClaimToAdjustService,
+                                        val poaSessionService: PaymentOnAccountSessionService,
+                                        amendablePoaView: AmendablePoaView
+                                      )(
+                                        implicit val appConfig: FrontendAppConfig,
+                                        val individualErrorHandler: ItvcErrorHandler,
+                                        val agentErrorHandler: AgentItvcErrorHandler,
+                                        val mcc: MessagesControllerComponents,
+                                        val ec: ExecutionContext
+                                      ) extends FrontendController(mcc) with I18nSupport with ImplicitCurrencyFormatter with WithSessionAndPoa with ErrorRecovery {
 
   def show(isAgent: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
+    authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent).async {
       implicit user =>
         withSessionData(journeyState = InitialPage) { _ => {
           for {
@@ -57,13 +57,11 @@ class AmendablePoaController @Inject()(val authActions: AuthActions,
           } yield poaMaybe
         }.value.flatMap {
           case Right(viewModel) =>
-            Future.successful(
-              Ok(view(user.isAgent(), viewModel))
-            )
+            Future(Ok(amendablePoaView(user.isAgent(), viewModel)))
           case Left(ex) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")
-            Future.failed(ex)
+            Future.failed(ex) // sus
         }
-      } recover logAndRedirect
+        }.recover(logAndRedirect)  // masks errors kinda
     }
 }

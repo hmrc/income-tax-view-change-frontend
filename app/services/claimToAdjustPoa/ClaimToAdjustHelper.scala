@@ -23,7 +23,7 @@ import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
@@ -52,8 +52,10 @@ trait ClaimToAdjustHelper {
   protected case class FinancialDetailsAndPoaModel(financialDetails: Option[FinancialDetailsModel],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
-  protected case class FinancialDetailAndChargeRefMaybe(documentDetails: List[DocumentDetail],
-                                                        chargeReference: Option[String])
+  protected case class FinancialDetailAndChargeRefMaybe(
+                                                         documentDetails: List[DocumentDetail],
+                                                         chargeReference: Option[String]
+                                                       )
 
   def getPaymentOnAccountModel(charges: List[ChargeItem],
                                poaPreviouslyAdjusted: Option[Boolean] = None): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
@@ -128,13 +130,18 @@ trait ClaimToAdjustHelper {
     }
   }
 
-  protected def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])
-                                    (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
-                                     calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Option[TaxYear]] = {
-    taxYearList.foldLeft(Future.successful(Option.empty[TaxYear])) { (acc, item) =>
+  protected def checkCrystallisation(
+                                      nino: Nino,
+                                      taxYearList: List[TaxYear]
+                                    )(implicit hc: HeaderCarrier,
+                                      dateService: DateServiceInterface,
+                                      calculationListConnector: CalculationListConnector,
+                                      ec: ExecutionContext
+                                    ): Future[Option[TaxYear]] = {
+    taxYearList.foldLeft[Future[Option[TaxYear]]](Future(None)) { (acc, item) =>
       acc.flatMap {
         case Some(_) => acc
-        case None => isTaxYearNonCrystallised(item, nino)(hc, dateService, calculationListConnector, ec) map {
+        case None => isTaxYearNonCrystallised(item, nino)(hc, dateService, calculationListConnector, ec).map {
           case true => Some(item)
           case false => None
         }
@@ -157,7 +164,7 @@ trait ClaimToAdjustHelper {
 
   def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
                                poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = {
-    val res  = for {
+    val res = for {
       poaOneDocDetail <- documentDetails.find(isPoaOne)
       poaTwoDocDetail <- documentDetails.find(isPoaTwo)
       latestDocumentDetail = poaTwoDocDetail
@@ -165,7 +172,7 @@ trait ClaimToAdjustHelper {
       taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
       poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
       if poasAreBeforeDeadline
-  } yield {
+    } yield {
       if (poaOneDocDetail.poaRelevantAmount.isDefined && poaTwoDocDetail.poaRelevantAmount.isDefined) {
         Right(
           PaymentOnAccountViewModel(
@@ -197,9 +204,12 @@ trait ClaimToAdjustHelper {
 
   protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
-    chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {
-      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) => Right(true)
-      case ChargesHistoryModel(_, _, _, _) => Right(false)
+
+    chargeHistoryConnector.getChargeHistory(user.nino, chargeReference).map {
+      case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) =>
+        Right(true)
+      case ChargesHistoryModel(_, _, _, _) =>
+        Right(false)
       case ChargesHistoryErrorModel(code, message) =>
         Logger("application").error("getChargeHistory returned a non-valid response")
         Left(new Exception(s"Error retrieving charge history code: $code message: $message"))

@@ -16,8 +16,8 @@
 
 package models.financialDetails
 
-import enums.CodingOutType._
-import enums._
+import enums.*
+import enums.CodingOutType.*
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
@@ -48,11 +48,12 @@ case class DocumentDetail(taxYear: Int,
                           poaRelevantAmount: Option[BigDecimal] = None
                          ) {
 
-  def credit: Option[BigDecimal] = originalAmount match {
-    case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
-    case _ if (originalAmount >= 0) => None
-    case credit => Some(credit * -1)
-  }
+  def credit: Option[BigDecimal] =
+    originalAmount match {
+      case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
+      case _ if (originalAmount >= 0) => None
+      case credit => Some(credit * -1)
+    }
 
   def outstandingAmountZero: Boolean =
     outstandingAmount == 0

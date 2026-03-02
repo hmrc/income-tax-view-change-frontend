@@ -21,7 +21,7 @@ import cats.data.EitherT
 import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.NOT_FOUND
 import services.claimToAdjustPoa.ClaimToAdjustHelper
@@ -69,8 +69,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
               val charges = sortByTaxYearC(financialDetails.toChargeItem)
               getPaymentOnAccountModel(charges)
             } match {
-              case Some(x) => x
-              case None => Left(new Exception("Unable to extract getPaymentOnAccountModel"))
+            case Some(x) => x
+            case None => Left(new Exception("Unable to extract getPaymentOnAccountModel"))
           }
           ))
       } yield paymentOnAccountViewModelMaybe
@@ -94,16 +94,15 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     }
   }
 
-  def getAmendablePoaViewModel(nino: Nino)
-                              (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, PaymentOnAccountViewModel]] = {
+  // TODO: maybe rewrite?
+  def getAmendablePoaViewModel(nino: Nino)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, PaymentOnAccountViewModel]] = {
     {
       for {
-        financialDetailsMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
-        fdAndChargeMaybe <- EitherT(Future.successful(getFinancialDetailAndChargeRefModel(financialDetailsMaybe)))
-        haveBeenAdjusted <- EitherT(isSubsequentAdjustment(chargeHistoryConnector, fdAndChargeMaybe.chargeReference))
-        documentDetailsWithNoCredits = fdAndChargeMaybe.documentDetails.filterNot(_.originalAmount < 0)
-        paymentOnAccountViewModel <- EitherT(
-          Future.successful(getAmendablePoaViewModel(sortByTaxYear(documentDetailsWithNoCredits), haveBeenAdjusted)))
+        financialDetailsMaybe: Option[FinancialDetailsModel] <- EitherT(getNonCrystallisedFinancialDetails(nino))
+        fdAndChargeMaybe: Either[Throwable, FinancialDetailAndChargeRefMaybe] <- EitherT(Future(getFinancialDetailAndChargeRefModel(financialDetailsMaybe)))
+        haveBeenAdjusted: Boolean <- EitherT(isSubsequentAdjustment(chargeHistoryConnector, fdAndChargeMaybe.chargeReference))
+        documentDetailsWithNoCredits: List[DocumentDetail] = fdAndChargeMaybe.documentDetails.filterNot(_.originalAmount < 0) // any
+        paymentOnAccountViewModel <- EitherT(Future(getAmendablePoaViewModel(sortByTaxYear(documentDetailsWithNoCredits), haveBeenAdjusted))) // any
       } yield paymentOnAccountViewModel
     }.value
   }
@@ -124,12 +123,15 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   private def getNonCrystallisedFinancialDetails(nino: Nino)
                                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
-      case None => Future.successful(Right(None))
-      case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
-        case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
-        case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Left(new Exception("There was an error whilst fetching financial details data"))
-        case _ => Right(None)
-      }
+      case None => Future(Right(None))
+      case Some(taxYear: TaxYear) =>
+        financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
+          case financialDetails: FinancialDetailsModel =>
+            Right(Some(financialDetails))
+          case error: FinancialDetailsErrorModel if error.code != NOT_FOUND =>
+            Left(new Exception("There was an error whilst fetching financial details data"))
+          case _ => Right(None)
+        }
     }
   }
 

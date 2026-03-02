@@ -27,11 +27,11 @@ import enums.{AfterSubmissionPage, ReportingFrequencyPages}
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.{IncomeSourceId, NormalMode}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.viewmodels.*
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.manageBusinesses.IncomeSourceRFService
 import services.{CreateBusinessDetailsService, DateServiceInterface, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -64,16 +64,6 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
     if (isAgent) routes.IncomeSourceAddedController.showAgent(incomeSourceType).url
     else routes.IncomeSourceAddedController.show(incomeSourceType).url
 
-
-  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      handleRequest(
-        sources = user.incomeSources,
-        isAgent = isAgent,
-        incomeSourceType
-      )(implicitly)
-  }
-
   private def sendAuditEvent(isSuccessful: Boolean, newReportingMethod: TaxYearSpecific, incomeSourceType: IncomeSourceType, id: String)
                             (implicit user: MtdItUser[_]): Unit = {
     val businessName: String = user.incomeSources.getIncomeSourceBusinessName(incomeSourceType, Some(id)).getOrElse("Unknown")
@@ -95,6 +85,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_]): Future[Result] = {
+
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), AfterSubmissionPage) { sessionData =>
 
       val backUrl: String = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, NormalMode, incomeSourceType).url
@@ -118,11 +109,6 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
     }
   }
 
-
-  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      handleSubmit(isAgent = isAgent, incomeSourceType)
-  }
 
   private def handleSubmit(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), ReportingFrequencyPages) { sessionData =>
@@ -182,4 +168,24 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
       }
     }
   }
+
+
+  def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        handleRequest(
+          sources = user.incomeSources,
+          isAgent = isAgent,
+          incomeSourceType
+        )(implicitly)
+    }
+
+
+  def submit(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
+    authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        handleSubmit(isAgent = isAgent, incomeSourceType)
+    }
+
+
 }
