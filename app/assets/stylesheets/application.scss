@@ -5,6 +5,9 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
 @import "lib/govuk-frontend/dist/govuk/index";
 @import "lib/hmrc-frontend/hmrc/all";
 
+$hmrc-card-background: #f8f8f8;
+$govuk-tag--default: #f8f8f8;
+
 .app-reference-number {
   display: block;
   font-weight: bold;
@@ -85,4 +88,72 @@ $hmrc-assets-path: "/report-quarterly/income-and-expenses/view/assets/lib/hmrc-f
 
 .govuk-tag {
     max-width: none;
+}
+
+.hmrc-card {
+  background: $hmrc-card-background;
+  font-family: "GDS Transport", arial, sans-serif;
+  box-sizing: border-box;
+  margin: 0 0 .25rem 0;
+  padding: 1rem;
+  text-decoration: none;
+  list-style-type: none;
+
+  * {
+    margin-bottom: .5rem;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .govuk-tag {
+    margin-top: .25rem;
+  }
+
+  *:last-child {
+    margin-bottom: 0;
+  }
+
+  // Card container
+  &__container {
+    margin: 0;
+    padding: 0;
+  }
+
+  // Card heading
+  &__heading {
+    font-size: 1.25rem;
+    margin-top: 0;
+    font-weight: bold;
+    a {
+      color: #1d70b8;
+      text-decoration: none;
+      display: block;
+      &:hover {
+        color: #1d70b8;
+        text-decoration: underline;
+        text-decoration-thickness: Max(3px, .1875rem, .12em);
+      }
+    }
+  }
+
+  // Card chevron
+  &__chevron {
+    position: relative;
+    margin-left: 1rem;
+    &:before {
+      content: '';
+      border-right: 3px solid #1d70b8;
+      border-top: 3px solid #1d70b8;
+      display: block;
+      height: 10px;
+      width: 10px;
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto 0;
+      transform: translateY(0) rotate(45deg) scale(1);
+    }
+  }
 }
