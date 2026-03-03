@@ -91,7 +91,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val responseBody = Json.arr(successITSAStatusResponseJson)
-        val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+        val url = s"/income-tax-obligations/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
 
         val currentTaxYear: TaxYear = TaxYear(2020, 2021)
 
@@ -125,7 +125,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val responseBody = Json.arr(successITSAStatusResponseJson)
-        val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+        val url = s"/income-tax-obligations/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
 
         WiremockHelper.stubGet(url, OK, responseBody.toString())
 
@@ -154,7 +154,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val responseBody = Json.arr(successITSAStatusResponseJson)
-        val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+        val url = s"/income-tax-obligations/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
 
         WiremockHelper.stubGet(url, OK, responseBody.toString())
 
@@ -183,7 +183,7 @@ class SingleTaxYearOptInWarningControllerISpec extends ControllerISpecHelper {
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val responseBody = Json.arr(successITSAStatusResponseJson)
-        val url = s"/income-tax-view-change/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
+        val url = s"/income-tax-obligations/itsa-status/status/AA123456A/21-22?futureYears=true&history=false"
 
         WiremockHelper.stubGet(url, OK, responseBody.toString())
 
