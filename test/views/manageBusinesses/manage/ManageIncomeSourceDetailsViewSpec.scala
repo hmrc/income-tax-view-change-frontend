@@ -33,7 +33,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   val manageIncomeSourceDetailsView: ManageIncomeSourceDetailsView = app.injector.instanceOf[ManageIncomeSourceDetailsView]
 
   def reportingFrequencyLink(isAgent: Boolean): String =
-    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
   def backUrl(isAgent: Boolean): String = if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
 

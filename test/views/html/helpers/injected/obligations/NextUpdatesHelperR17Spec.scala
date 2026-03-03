@@ -24,7 +24,7 @@ import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import services.optout.OptOutProposition
+import services.reportingObligations.optOut.OptOutProposition
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.NextUpdatesTestConstants.{quarterlyBusinessObligation, twoObligationsSuccessModel}
 import testUtils.TestSupport

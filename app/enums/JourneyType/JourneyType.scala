@@ -46,8 +46,8 @@ case class Opt(optJourney: OptJourney) extends JourneyType {
 
 sealed trait OptJourney extends JourneyType
 
-case object OptInJourney extends OptJourney {
-  override val toString = "OPTIN"
+case object SignUpJourney extends OptJourney {
+  override val toString = "SIGNUP"
 }
 
 case object OptOutJourney extends OptJourney {

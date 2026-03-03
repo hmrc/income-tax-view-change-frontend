@@ -29,7 +29,7 @@
 @(yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel, isAgent: Boolean)(implicit messages: Messages)
 
 @reportingObligationsURL = @{
-    controllers.routes.ReportingFrequencyPageController.show(isAgent).url
+    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 }
 
 @reportingObligationsLink = @{

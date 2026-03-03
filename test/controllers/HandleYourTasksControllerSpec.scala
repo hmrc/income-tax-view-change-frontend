@@ -34,8 +34,8 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, status}
 import services.{CreditService, DateService, DateServiceInterface, FinancialDetailsService, ITSAStatusService, WhatYouOweService}
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.signUp.SignUpService
+import services.reportingObligations.optOut.OptOutService
 import testConstants.ANewCreditAndRefundModel
 import views.html.HandleYourTasksView
 
@@ -59,7 +59,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
-  given mockedOptInService: OptInService = mock(classOf[OptInService])
+  given mockedSignUpService: SignUpService = mock(classOf[SignUpService])
   given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
   given mockedCreditService: CreditService = mock(classOf[CreditService])
   given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
@@ -80,7 +80,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
     val controller: HandleYourTasksController = HandleYourTasksController(
       authActions,
       view,
-      mockedOptInService,
+      mockedSignUpService,
       mockedOptOutService,
       mockITSAStatusService,
       mockWhatYouOweService,
@@ -121,7 +121,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
         setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems))
         setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
         setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
-        when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+        when(mockedSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
           .thenReturn(Future.successful(true))
         when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
           .thenReturn(Future.successful(true))
@@ -158,7 +158,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
         setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems))
         setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
         setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
-        when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+        when(mockedSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
           .thenReturn(Future.successful(true))
         when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
           .thenReturn(Future.successful(true))

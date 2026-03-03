@@ -33,8 +33,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services._
 import services.manageBusinesses.IncomeSourceRFService
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.signUp.SignUpService
+import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{JourneyCheckerManageBusinesses, MtdConstants}
@@ -52,7 +52,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                          val incomeSourceReportingFrequencyService: IncomeSourceRFService,
                                                          val errorTemplate: ErrorTemplate,
                                                          val optOutService: OptOutService,
-                                                         val optInService: OptInService,
+                                                         val optInService: SignUpService,
                                                          val reportingFrequencyViewUtils: ReportingFrequencyViewUtils)
                                                         (implicit val appConfig: FrontendAppConfig,
                                                          val dateService: DateService,

@@ -21,10 +21,10 @@ import enums.JourneyType.{Opt, OptOutJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.optout.OptOutSessionData
+import models.reportingObligations.optOut.OptOutSessionData
 import play.api.libs.json.{Json, OFormat}
-import services.optout.OptOutProposition
-import services.optout.OptOutProposition.createOptOutProposition
+import services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
+import services.reportingObligations.optOut.OptOutProposition
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

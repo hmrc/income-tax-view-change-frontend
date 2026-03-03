@@ -26,8 +26,8 @@ import models.financialDetails.*
 import models.newHomePage.HandleYourTasksViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.optOut.OptOutService
+import services.reportingObligations.signUp.SignUpService
 import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                 val handleYourTasksView: HandleYourTasksView,
-                                val optInService: OptInService,
+                                val signUpService: SignUpService,
                                 val optOutService: OptOutService,
                                 val ITSAStatusService: ITSAStatusService,
                                 val whatYouOweService: WhatYouOweService,
@@ -71,7 +71,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     for {
       credits <- creditService.getAllCredits()
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
-      _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
+      _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))

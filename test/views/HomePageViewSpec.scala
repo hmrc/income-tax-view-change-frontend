@@ -544,7 +544,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
         "has a link to the reporting obligations page" in new Setup(user = testMtdItUserMigrated(), reportingFrequencyEnabled = true) {
           getElementById("reporting-obligations-link").map(_.text()) shouldBe Some("View and manage your reporting obligations")
-          getElementById("reporting-obligations-link").map(_.attr("href")) shouldBe Some(controllers.routes.ReportingFrequencyPageController.show(false).url)
+          getElementById("reporting-obligations-link").map(_.attr("href")) shouldBe Some(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url)
         }
       }
 

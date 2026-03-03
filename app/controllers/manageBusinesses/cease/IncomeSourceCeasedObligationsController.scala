@@ -74,7 +74,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
   }
 
   private def viewReportingObligationsLink(isAgent: Boolean): String =
-    routes.ReportingFrequencyPageController.show(isAgent).url
+    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {

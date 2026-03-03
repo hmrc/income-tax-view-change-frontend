@@ -24,7 +24,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.optout.OptOutTestSupport
+import services.reportingObligations.optOut.OptOutTestSupport
 import testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel => _}
 import testConstants.NextUpdatesTestConstants._
 import testUtils.TestSupport

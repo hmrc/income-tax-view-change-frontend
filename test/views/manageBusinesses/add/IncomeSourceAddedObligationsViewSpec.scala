@@ -54,7 +54,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
     val finalDeclaration = "final-declaration"
   }
 
-  val getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url
+  val getReportingFrequencyUrl = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
   val getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url
   val getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val softwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
@@ -414,7 +414,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                   isBusinessHistoric = false,
                   reportingMethod = ChosenReportingMethod.Quarterly,
                   getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                  getReportingFrequencyUrl = controllers.routes.ReportingFrequencyPageController.show(false).url,
+                  getReportingFrequencyUrl = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url,
                   getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url,
                   getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
                   scenario = SignUpNextYearOnly,

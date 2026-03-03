@@ -22,7 +22,7 @@ import enums.{JourneyCompleted, JourneyState}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.mvc.{Request, Result}
-import services.optIn.OptInService
+import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,7 +33,7 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
   val itvcErrorHandler: ItvcErrorHandler
   val itvcErrorHandlerAgent: AgentItvcErrorHandler
 
-  val optInService: OptInService
+  val signUpService: SignUpService
 
   def withSessionData(isStart: Boolean, taxYear: TaxYear, journeyState: Option[JourneyState])
                      (codeBlock: => Future[Result])
@@ -41,9 +41,9 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
 
     (isStart, journeyState) match {
       case (true, None) =>
-        optInService.initialiseOptInContextData().flatMap {
+        signUpService.initialiseOptInContextData().flatMap {
           case true =>
-            optInService.saveIntent(taxYear).flatMap {
+            signUpService.saveIntent(taxYear).flatMap {
               case true => codeBlock
               case false =>
                 Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session")
@@ -54,7 +54,7 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
             showInternalServerError(user.isAgent())
         }
       case (false, None) =>
-        optInService.fetchSavedChosenTaxYear().flatMap {
+        signUpService.fetchSavedChosenTaxYear().flatMap {
           case Some(savedTaxYear) if savedTaxYear == taxYear => codeBlock
           case _ => redirectReportingFrequency(user.userType)
         }
@@ -67,14 +67,14 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
   }
 
   def retrieveIsJourneyComplete(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    optInService.fetchSavedOptInSessionData().map {
+    signUpService.fetchSavedSignUpSessionData().map {
       case Some(data) => data.journeyIsComplete.contains(true)
       case _ => false
     }
   }
 
   def setJourneyComplete(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
-    optInService.updateJourneyStatusInSessionData(journeyComplete = true)
+    signUpService.updateJourneyStatusInSessionData(journeyComplete = true)
   }
 
   private def showInternalServerError(isAgent: Boolean)(implicit request: Request[_]): Future[Result] = {
