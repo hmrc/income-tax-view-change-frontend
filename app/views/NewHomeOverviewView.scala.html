@@ -43,7 +43,8 @@
         recentActivityUrl: String,
         overViewUrl: String,
         helpUrl: String,
-        noChargesToPay: Boolean)(
+        noChargesToPay: Boolean,
+        moneyInYourAccount: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -127,7 +128,7 @@
 
 
 @IndividualSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = false, noChargesToPay)
+    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount)
     @SectionBreak
 
     @deadlinesSection(isAgent = false)
@@ -144,7 +145,7 @@
 
 
 @AgentSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = true, noChargesToPay)
+    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount)
     @SectionBreak
 
     @deadlinesSection(isAgent = true)

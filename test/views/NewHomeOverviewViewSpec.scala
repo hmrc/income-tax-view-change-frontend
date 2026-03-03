@@ -47,6 +47,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
                    overViewUrl: String = "testOverviewUrl",
                    helpUrl: String = "testHelpUrl",
                    noChargesToPay: Boolean = false,
+                   moneyInYourAccount: Boolean = false,
                    welshLang: Boolean = false) {
 
     val testMessages: Messages = if (welshLang) {
@@ -67,7 +68,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         recentActivityUrl,
         overViewUrl,
         helpUrl,
-        noChargesToPay)(testMessages, appConfig, FakeRequest())
+        noChargesToPay,
+        moneyInYourAccount)(testMessages, appConfig, FakeRequest())
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
@@ -187,6 +189,16 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         exactHrefMatch = false
       )
     }
+
+    "display the correct content for a user with money in their account" in new TestSetup(moneyInYourAccount = true) {
+      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account and claim a refund"
+      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/money-in-your-account")
+    }
+
+    "display the correct content for a user with NO money in their account" in new TestSetup(moneyInYourAccount = false) {
+      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
+      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/money-in-your-account")
+    }
   }
 
 
@@ -301,6 +313,16 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         linkHref = "/view-penalty/self-assessment/agent#lspTab",
         exactHrefMatch = false
       )
+    }
+
+    "display the correct content for a user with money in their account" in new TestSetup(isAgent = true, moneyInYourAccount = true) {
+      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account and claim a refund"
+      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/money-in-your-account")
+    }
+
+    "display the correct content for a user with NO money in their account" in new TestSetup(isAgent = true, moneyInYourAccount = false) {
+      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
+      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/money-in-your-account")
     }
   }
 
