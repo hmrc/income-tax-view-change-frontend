@@ -1405,7 +1405,7 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 
 
 ## Tax Years Overview Update Tab ##
-submissionsTab.desc                                                  = Dyma gofnod o’r hyn a gyflwynwyd ar gyfer y flwyddyn dreth.
+submissionsTab.desc                                                  = Dyma gofnod o’r hyn rydych wedi’i gyflwyno, a’r hyn sydd eto i’w gyflwyno, ar gyfer y flwyddyn dreth.
 submissionsTab.due                                                   = Yn ddyledus erbyn {0}
 submissionsTab.submission                                            = Cyflwyniad
 submissionsTab.incomeSource                                          = Ffynhonnell incwm
