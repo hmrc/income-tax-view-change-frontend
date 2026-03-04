@@ -118,7 +118,7 @@ feedback.thankYou                                               = Thank you
 feedback.received                                               = Your feedback has been received.
 
 ## Home Page ##
-home.heading                                                    = Self assessment
+home.heading                                                    = Self Assessment
 home.agent.primary.caption                                      = You are signed in as a main agent
 home.agent.supporting.caption                                   = You are signed in as a supporting agent
 home.agent.heading                                              = Your client’s Income Tax

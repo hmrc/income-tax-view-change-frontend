@@ -163,7 +163,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     s"have the title ${messages("htmlTitle", messages("home.heading"))}" in new Setup {
-      document.title() shouldBe "Self assessment - Manage your Self Assessment - GOV.UK"
+      document.title() shouldBe "Self Assessment - Manage your Self Assessment - GOV.UK"
     }
 
     s"have the users name as caption" in new Setup {
@@ -171,7 +171,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     s"have the page heading '${messages("home.heading")}'" in new Setup {
-      getTextOfElementById("income-tax-heading") shouldBe Some(s"Self assessment")
+      getTextOfElementById("income-tax-heading") shouldBe Some(s"Self Assessment")
     }
 
     "have the right keep-alive url in hmrc timeout dialog" in new Setup {
