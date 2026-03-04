@@ -28,16 +28,16 @@ class BetaBannerHelperSpec extends ViewSpec {
   "The beta banner" should {
 
     "have the BETA label" in new Test {
-      document.getElementsByClass("phase-tag").text shouldBe messages("betaBanner.beta")
+      document.getElementsByClass("phase-tag").text shouldBe "BETA"
     }
 
     "have the correct content" in new Test {
       document.getElementsByClass("beta-banner").addClass("span").text shouldBe
-      s"${messages("betaBanner.beta")} ${messages("betaBanner.newService")} ${messages("betaBanner.your")} ${messages("betaBanner.feedback")} ${messages("betaBanner.improve")}"
+        "BETA This is a new service. Help us improve it and give your feedback."
     }
 
     "have the correct link text" in new Test {
-      document.getElementById("feedback-link").text shouldBe messages("betaBanner.feedback")
+      document.getElementById("feedback-link").text shouldBe "give your feedback"
     }
 
     "have the correct link location" in new Test {

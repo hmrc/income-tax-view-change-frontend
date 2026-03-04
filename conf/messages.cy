@@ -119,7 +119,7 @@ feedback.thankYou                                               = Diolch
 feedback.received                                               = Mae eich adborth wedi dod i law.
 
 ## Home Page ##
-home.heading                                                    = Treth Incwm
+home.heading                                                    = Hunanasesiad
 home.agent.primary.caption                                      = Rydych wedi mewngofnodi fel asiant ategol
 home.agent.supporting.caption                                   = Rydych wedi mewngofnodi fel asiant ategol
 home.agent.heading                                              = Treth Incwm eich cleient
@@ -866,10 +866,8 @@ global.error.InternalServerError500.message                     = Rhowch gynnig 
 
 ## Beta Banner ##
 betaBanner.beta                                                 = BETA
-betaBanner.newService                                           = Mae hwn yn wasanaeth newydd
-betaBanner.your                                                 = – bydd eich
-betaBanner.feedback                                             = adborth
-betaBanner.improve                                              = yn ein helpu i’w wella.
+betaBanner.newService                                           = Gwasanaeth newydd yw hwn. Helpwch ni i’w wella a
+betaBanner.feedback.link                                        = rhoi eich adborth
 
 ## Obligations Page ##
 obligations.quarterlyUpdates                                    = Diweddariadau chwarterol
