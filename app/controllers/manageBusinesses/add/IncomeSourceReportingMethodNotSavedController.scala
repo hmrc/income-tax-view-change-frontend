@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
@@ -36,9 +36,8 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authActions: A
                                                               val itvcAgentErrorHandler: AgentItvcErrorHandler,
                                                               val itvcErrorHandler: ItvcErrorHandler)
                                                              (implicit val ec: ExecutionContext,
-                                                               val mcc: MessagesControllerComponents,
-                                                              val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with IncomeSourcesUtils {
+                                                              val mcc: MessagesControllerComponents,
+                                                              val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with IncomeSourcesUtils {
 
   def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
@@ -60,7 +59,7 @@ class IncomeSourceReportingMethodNotSavedController @Inject()(val authActions: A
       )
   }
 
-  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
+  def showAgent(incomeSourceType: IncomeSourceType): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async {
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,

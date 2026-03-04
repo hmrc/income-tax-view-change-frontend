@@ -22,7 +22,8 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, NoStatus, Voluntary}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
-import services.optout.{OptOutProposition, OptOutTestSupport}
+import services.reportingObligations.optOut.OptOutProposition
+import services.reportingObligations.optOut.OptOutTestSupport
 import testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

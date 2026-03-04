@@ -21,7 +21,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.mvc.{Request, Result}
-import services.optout.OptOutService
+import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -34,11 +34,12 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
-import services.NextUpdatesService
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.signUp.SignUpService
+import services.{CreditService, NextUpdatesService}
+import services.reportingObligations.optOut.OptOutService
+import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
+import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView}
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 
 import java.time.LocalDate
@@ -51,14 +52,14 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
   val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
   val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
   val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
-  val yourTasksView: NewHomeYourTasksView = application.injector.instanceOf(classOf[NewHomeYourTasksView])
   val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
   val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
   val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
   val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
 
-  given mockedOptInService: OptInService = mock(classOf[OptInService])
+  given mockedCreditService: CreditService = mock(classOf[CreditService])
+  given mockedOptInService: SignUpService = mock(classOf[SignUpService])
   given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
   given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
 
@@ -74,7 +75,6 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
   trait Setup {
     val controller: HomeController = HomeController(
       homeView,
-      yourTasksView,
       recentActivityView,
       overviewView,
       helpView,
@@ -88,6 +88,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       mockWhatYouOweService,
       mockITSAStatusService,
       mockPenaltyDetailsService,
+      mockedCreditService,
       mockedOptInService,
       mockedOptOutService,
       auditingService
@@ -129,6 +130,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"), mainTransaction = Some("4920"),
                 transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))))
+            when(mockedCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(ANewCreditAndRefundModel().withTotalCredit(796).model))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(financialDetailsModels))
             when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
@@ -277,13 +279,13 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400))),
+                    documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400), accruingInterestAmount = Some(400))),
                   financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
                     items = Some(Seq(SubItem(dueDate = Some(futureDueDates.head))))))),
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId3", Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400))),
+                    documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400), accruingInterestAmount = Some(400))),
                   financialDetails = List(FinancialDetail(nextPaymentYear, mainType = Some("SA POA 2 Reconciliation Debit"),
                     transactionId = Some("testId3"),
                     items = Some(Seq(SubItem(dueDate = Some(futureDueDates.head)))))))
@@ -651,6 +653,11 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             enable(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
 
+            when(mockedCreditService.getAllCredits(any(), any()))
+              .thenReturn(Future.successful(
+                ANewCreditAndRefundModel()
+                  .model
+              ))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),

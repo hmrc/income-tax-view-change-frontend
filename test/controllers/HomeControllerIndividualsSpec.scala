@@ -32,18 +32,19 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.NextUpdatesService
-import services.optIn.OptInService
-import services.optout.OptOutService
+import services.reportingObligations.signUp.SignUpService
+import services.{CreditService, NextUpdatesService}
+import services.reportingObligations.optOut.OptOutService
+import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView, NewHomeYourTasksView}
+import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView}
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.helpers.injected.home.YourReportingObligationsTile
-import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -58,7 +59,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
   val primaryAgentHomeView: PrimaryAgentHomeView = application.injector.instanceOf(classOf[PrimaryAgentHomeView])
   val supportingAgentHomeView: SupportingAgentHomeView = application.injector.instanceOf(classOf[SupportingAgentHomeView])
-  val yourTasksView: NewHomeYourTasksView = application.injector.instanceOf(classOf[NewHomeYourTasksView])
   val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
   val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
   val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
@@ -66,18 +66,23 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
   val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
 
+  given mockedCreditService: CreditService = mock(classOf[CreditService])
+
   given mockedNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
-  given mockedOptInService: OptInService = mock(classOf[OptInService])
+
+  given mockedOptInService: SignUpService = mock(classOf[SignUpService])
+
   given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
 
   given ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
+
   given AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
+
   given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
 
   trait Setup {
     val controller: HomeController = HomeController(
       homeView,
-      yourTasksView,
       recentActivityView,
       overviewView,
       helpView,
@@ -91,6 +96,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       mockWhatYouOweService,
       mockITSAStatusService,
       mockPenaltyDetailsService,
+      mockedCreditService,
       mockedOptInService,
       mockedOptOutService,
       auditingService
@@ -119,18 +125,16 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
   "show()" when {
     "NewHomePage feature switch is enabled" should {
-      "display new home page" in new Setup {
+      "redirect to handle your tasks page" in new Setup {
         enable(NewHomePage)
         setupMockUserAuth
         mockItsaStatusRetrievalAction()
         mockSingleBusinessIncomeSource()
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
-        status(result) shouldBe Status.OK
+        status(result) shouldBe Status.SEE_OTHER
 
-        val document: Document = Jsoup.parse(contentAsString(result))
-        document.title shouldBe homePageTitle
-        document.getElementsByClass("govuk-service-navigation__container").isEmpty shouldBe false
+        await(result) shouldBe Redirect(controllers.routes.HandleYourTasksController.show().url)
       }
     }
     "an authenticated user" should {
@@ -148,6 +152,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
               financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
                 mainTransaction = Some("4920"), transactionId = Some("testId"),
                 items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate.toString))))))))
+            when(mockedCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(ANewCreditAndRefundModel().withTotalCredit(796).model))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(financialDetails))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
@@ -156,7 +161,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
-
             when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
               .thenReturn(Future.successful(true))
             when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
@@ -309,7 +313,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
                 FinancialDetailsModel(
                   balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
                   documentDetails = List(DocumentDetail(nextPaymentYear2.toInt, "testId2", Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-                    documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400))),
+                    documentDueDate = Some(futureDueDates.head), interestOutstandingAmount = Some(400), accruingInterestAmount = Some(400))),
                   financialDetails = List(FinancialDetail(taxYear = nextPaymentYear2, mainType = Some("SA POA 1 Reconciliation Debit"), transactionId = Some("testId2"),
                     items = Some(Seq(SubItem(dueDate = Some(futureDueDates.head))))))),
                 FinancialDetailsModel(
@@ -724,6 +728,11 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
             enable(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
+            when(mockedCreditService.getAllCredits(any(), any()))
+              .thenReturn(Future.successful(
+                ANewCreditAndRefundModel()
+                  .model
+              ))
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
               .thenReturn(Future.successful(List(FinancialDetailsModel(
                 balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),

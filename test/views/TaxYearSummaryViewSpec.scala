@@ -158,7 +158,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       chargeItemModel(transactionType = PoaOneDebit, dueDate = Some(LocalDate.of(2019, 6, 15)), accruingInterestAmount = Some(100.0)),
       dueDate = Some(LocalDate.of(2019, 6, 15)), isLatePaymentInterest = true),
     TaxYearSummaryChargeItem.fromChargeItem(
-      chargeItemModel(transactionType = PoaTwoDebit, dueDate = Some(LocalDate.of(2019, 7, 15)), accruingInterestAmount = Some(80.0)),
+      chargeItemModel(transactionType = PoaTwoDebit, dueDate = Some(LocalDate.of(2019, 7, 15)), accruingInterestAmount = Some(80.0),
+        latePaymentInterestAmount = Some(80.00)),
       dueDate = Some(LocalDate.of(2019, 7, 15)), isLatePaymentInterest = true),
     TaxYearSummaryChargeItem.fromChargeItem(
       chargeItemModel(transactionType = BalancingCharge, dueDate = Some(LocalDate.of(2019, 8, 15)), interestOutstandingAmount = Some(0.0)),
@@ -669,7 +670,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val messageAction: String = "! Warning You need to amend and resubmit your return."
     val messageError1: String = "you’ve claimed to carry forward a loss to set against general income of the next year. You also need to make the claim in the same year the loss arose."
     val messageError2: String = "you are using cash basis accounting. This means that you cannot claim to set losses against other taxable income."
-    val submissionsDescription: String = "This is a record of what you have submitted for the tax year."
+    val submissionsDescription: String = "This is a record of your completed and upcoming submissions for the tax year."
     val claimToAdjustPoaParagraph: String = "You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account."
     val claimToAdjustPoaLinkText: String = "Adjust payments on account"
     val claimToAdjustPoaLinkIndividual: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"

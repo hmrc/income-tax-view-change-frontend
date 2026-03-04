@@ -24,7 +24,7 @@ import mocks.services.MockDateService
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, ChooseSoleTraderAddressUserAnswer, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.scalatest.matchers.should.Matchers
 import testConstants.BaseTestConstants.*
 import testConstants.BusinessDetailsTestConstants.{testLatencyDetails, *}
@@ -318,6 +318,51 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
 
         model.orderedTaxYearsByAccountingPeriods(mockDateService) shouldBe List(2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026)
       }
+    }
+  }
+
+  "return all active business addresses" when {
+
+    "getAllUniqueBusinessAddresses finds an international address" in {
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = None,
+        businesses = List(business1International),
+        properties = Nil
+      )
+      model.getAllUniqueBusinessAddresses shouldBe List(ChooseSoleTraderAddressUserAnswer(Some("31 Some street"), None, None, None, None, Some("US"), false))
+    }
+    "getAllUniqueBusinessAddresses finds a UK address" in {
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = None,
+        businesses = List(business1),
+        properties = Nil
+      )
+      model.getAllUniqueBusinessAddresses shouldBe List(ChooseSoleTraderAddressUserAnswer(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("GB"), false))
+    }
+
+    "getAllUniqueBusinessAddressesWithIndex finds two international address that are not distinct" in {
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = None,
+        businesses = List(business1International, business1International),
+        properties = Nil
+      )
+      model.getAllUniqueBusinessAddressesWithIndex shouldBe List((ChooseSoleTraderAddressUserAnswer(Some("31 Some street"), None, None, None, None, Some("US"), false), 0))
+    }
+    "getAllUniqueBusinessAddressesWithIndex finds a UK address" in {
+      val model = IncomeSourceDetailsModel(
+        nino = testNino,
+        mtdbsa = testMtditid,
+        yearOfMigration = None,
+        businesses = List(business1),
+        properties = Nil
+      )
+      model.getAllUniqueBusinessAddressesWithIndex shouldBe List((ChooseSoleTraderAddressUserAnswer(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("GB"), false), 0))
     }
   }
 

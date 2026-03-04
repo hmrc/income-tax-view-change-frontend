@@ -40,7 +40,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
   val prefix: String = "business.added"
   val viewBusinessesLinkText: String = "View your businesses"
   val day: LocalDate = LocalDate.of(2023, 1, 1)
-  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "EOPS", None, "EOPS", StatusFulfilled)))))
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(GroupedObligationsModel("123", List(SingleObligationModel(day, day.plusDays(1), day.plusDays(2), "Quarterly", None, "#001", StatusFulfilled)))))
 
 
   val pageTitle: String = messagesAPI("htmlTitle.agent", {

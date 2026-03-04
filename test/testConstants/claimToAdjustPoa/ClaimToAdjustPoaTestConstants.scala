@@ -91,6 +91,40 @@ object ClaimToAdjustPoaTestConstants {
     latePaymentInterestId = None
   )
 
+  def POA1MarkedAsCredit(taxYearEnd: Int, outstandingAmount: BigDecimal = 150.00) = DocumentDetail(
+    taxYear = taxYearEnd,
+    transactionId = "DOCID01",
+    documentDescription = Some("ITSA- POA 1"),
+    documentText = None,
+    outstandingAmount = outstandingAmount,
+    originalAmount = -150.00,
+    documentDueDate = Some(LocalDate.of(taxYearEnd, 1, 31)),
+    documentDate = LocalDate.of(taxYearEnd, 3, 29),
+    interestOutstandingAmount = Some(150),
+    interestRate = None,
+    interestFromDate = None,
+    interestEndDate = None,
+    accruingInterestAmount = Some(150),
+    latePaymentInterestId = None
+  )
+
+  def POA2MarkedAsCredit(taxYearEnd: Int, outstandingAmount: BigDecimal = 150.00) = DocumentDetail(
+    taxYear = taxYearEnd,
+    transactionId = "DOCID01",
+    documentDescription = Some("ITSA- POA 2"),
+    documentText = None,
+    outstandingAmount = outstandingAmount,
+    originalAmount = -150.00,
+    documentDueDate = Some(LocalDate.of(taxYearEnd, 1, 31)),
+    documentDate = LocalDate.of(taxYearEnd, 3, 29),
+    interestOutstandingAmount = Some(150),
+    interestRate = None,
+    interestFromDate = None,
+    interestEndDate = None,
+    accruingInterestAmount = Some(150),
+    latePaymentInterestId = None
+  )
+
   val userPOADetails2024: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(2024), genericDocumentDetailPOA2(2024)),
@@ -125,6 +159,12 @@ object ClaimToAdjustPoaTestConstants {
   def genericUserPoaDetailsPOA2Only(taxYearEnd: Int): FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(genericDocumentDetailPOA1(taxYearEnd)),
+    financialDetails = List.empty,
+  )
+
+  def genericUserPoaDetailsWithPoaCredits(taxYearEnd: Int, outstandingAmount: BigDecimal): FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    documentDetails = List(genericDocumentDetailPOA1(taxYearEnd, outstandingAmount = outstandingAmount), genericDocumentDetailPOA2(taxYearEnd, outstandingAmount = outstandingAmount), POA1MarkedAsCredit(taxYearEnd, outstandingAmount), POA2MarkedAsCredit(taxYearEnd, outstandingAmount)),
     financialDetails = List.empty,
   )
 

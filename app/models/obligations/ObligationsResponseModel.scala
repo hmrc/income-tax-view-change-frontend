@@ -61,10 +61,7 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
       }
     }.flatten
 
-    val nonEOPSDeadlines = deadlines.filter(_.obligation.obligationType != "EOPS")
-
-
-    if (previous) nonEOPSDeadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
+    if (previous) deadlines.sortBy(_.obligation.dateReceived.map(_.toEpochDay)).reverse else deadlines.sortBy(_.obligation.due.toEpochDay)
   }
 
   def allQuarterly(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] =

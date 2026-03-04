@@ -42,21 +42,21 @@
 
 @tableHead = @{
     Some(Seq(
-        HeadCell(content = HtmlContent(messages("submissionsTab.submission")), classes = "govuk-table__header", attributes = Map("scope" -> "col")),
-        HeadCell(content = HtmlContent(messages("submissionsTab.incomeSource")), classes = "govuk-table__header", attributes = Map("scope" -> "col")),
-        HeadCell(content = HtmlContent(messages("submissionsTab.dateSubmitted")), classes = "govuk-table__header", attributes = Map("scope" -> "col"))
+        HeadCell(content = HtmlContent(messages("submissionsTab.submission")), classes = "govuk-table__header govuk-!-width-one-third", attributes = Map("scope" -> "col")),
+        HeadCell(content = HtmlContent(messages("submissionsTab.incomeSource")), classes = "govuk-table__header govuk-!-width-one-third", attributes = Map("scope" -> "col")),
+        HeadCell(content = HtmlContent(messages("submissionsTab.dateSubmitted")), classes = "govuk-table__header govuk-!-width-one-third", attributes = Map("scope" -> "col"))
     ))
 }
 @tableRows(input: Seq[ObligationWithIncomeType]) = @{
     input.map(nextUpdateWithIncomeType => {
         Seq(
-            TableRow(classes = "govuk-table__header govuk-!-font-weight-regular",
+            TableRow(classes = "govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third",
                 content = HtmlContent(updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType))),
-            TableRow(classes = "govuk-table__cell",
+            TableRow(classes = "govuk-table__cell govuk-!-width-one-third",
                 content = HtmlContent(obligationsTypeHelper {
                     messages(nextUpdateWithIncomeType.incomeType)
                 })),
-            TableRow(classes = "govuk-table__cell",
+            TableRow(classes = "govuk-table__cell govuk-!-width-one-third",
                 content = nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort).fold(HtmlContent(""))(value => HtmlContent(value)))
         )
     })

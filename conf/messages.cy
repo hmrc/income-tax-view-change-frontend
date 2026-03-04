@@ -19,6 +19,7 @@ base.confirm-and-save                                           = Cadarnhau a ch
 base.confirm-this-change                                        = Cadarnhau’r newid hwn
 base.software.compatible.with.mtd.income.tax.link               = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol
 base.fullstop                                                   = .
+base.or                                                         = neu
 
 
 ## Accessibility ##
@@ -197,6 +198,7 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
 ## New Home Page ##
+### Your New Tasks Tab
 
 new.home.navigation.tabs.yourTasks                              = Eich tasgau
 
@@ -207,12 +209,15 @@ new.home.yourTasks.annual-updates-and-deadlines-label           = Dyledus erbyn 
 new.home.yourTasks.quarterly-updates-and-deadlines-body         = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad chwarterol.
 new.home.yourTasks.quarterly-updates-and-deadlines-label        = Dyledus erbyn {date}
 
+### Overview Tab
 new.home.navigation.tabs.overview                               = Trosolwg
 
 new.home.overview.charges.sub-heading                           = Ffioedd, taliadau, credydau ac ad-daliadau
+new.home.overview.charges.check-what-you-owe                    = Gwirio’r hyn sydd arnoch
 new.home.overview.charges.make-payment                          = Gwirio’r hyn sydd arnoch a gwneud taliad
 new.home.overview.charges.payment-history                       = Gweld hanes taliadau, credydau ac ad-daliadau
-new.home.overview.charges.money-in-account                      = Gwirio faint o arian sydd yn eich cyfrif
+new.home.overview.charges.money-in-account                      = Gwirio faint o arian sydd yn eich cyfrif a hawlio ad-daliad
+new.home.overview.charges.no-money-in-account                   = Gwirio faint o arian sydd yn eich cyfrif
 new.home.overview.charges.adjust-payments                       = Addasu taliadau ar gyfrif
 new.home.overview.deadlines.sub-heading                         = Dyddiadau cau ac ymrwymiadau o ran adrodd
 new.home.overview.deadlines.view-updates                        = Gweld diweddariadau a dyddiadau cau
@@ -227,6 +232,14 @@ new.home.overview.penalties.check-penalties                     = Gwirio cosbau 
 new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
 new.home.overview.penalties.check-lpp                           = Gweld eich cosbau am dalu’n hwyr
 
+### Help Tab
+new.home.help.heading                                           = Troi Treth yn Ddigidol
+new.home.help.openInNewTab                                      = Mae pob cysylltiad yn agor mewn tab newydd.
+
+home.help.link.makingTaxDigital.incomeTax                       = Dod o hyd i ragor o wybodaeth am Droi Treth yn Ddigidol ar gyfer Treth Incwm
+home.help.link.selfAssessment.payTaxBill                        = Dod o hyd i ragor o wybodaeth am dalu’ch bil treth Hunanasesiad
+home.help.link.makingTaxDigital.findSoftware                    = Dod o hyd i feddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm
+home.help.link.taxSupport.getHelp                               = Cael help os ydych yn ei chael hi’n anodd talu’ch treth
 
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
@@ -1411,7 +1424,7 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
 
 
 ## Tax Years Overview Update Tab ##
-submissionsTab.desc                                                  = Dyma gofnod o’r hyn a gyflwynwyd ar gyfer y flwyddyn dreth.
+submissionsTab.desc                                                  = Dyma gofnod o’r hyn rydych wedi’i gyflwyno, a’r hyn sydd eto i’w gyflwyno, ar gyfer y flwyddyn dreth.
 submissionsTab.due                                                   = Yn ddyledus erbyn {0}
 submissionsTab.submission                                            = Cyflwyniad
 submissionsTab.incomeSource                                          = Ffynhonnell incwm
@@ -2475,6 +2488,11 @@ manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                           = Dewiswch y blynyddoedd treth yr hoffech gyflwyno’n chwarterol ar eu cyfer
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched          = Dewiswch y blynyddoedd treth yr ydych am gofrestru ar eu cyfer
 
+# choose international sole trader address
+manageBusinesses.add.chooseSoleTraderAddress.heading                                                         = Beth yw cyfeiriad eich busnes unig fasnachwr?
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.newAddress                                         = Dim un o’r rhain, rwyf am ychwanegu cyfeiriad newydd
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.error                                              = Dewiswch opsiwn er mwyn parhau
+
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##
 #######################################################################################################################
@@ -2703,7 +2721,7 @@ optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = 
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
 optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
-optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = meini prawf i bobl y bydd angen iddynt gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
+optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = reporting.frequency.different.obligations.link.text
 
 optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
 optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = Rydych wedi optio allan o’r flwyddyn dreth nesaf ymlaen, ond gallai fod yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os yw’r canlynol yn wir:
@@ -3128,7 +3146,7 @@ reporting.frequency.different.obligations.li3                               = cy
 reporting.frequency.different.obligations.p2                                = Hyd yn oed os nad ydych yn defnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi gyflwyno Ffurflen Dreth o hyd.
 reporting.frequency.different.obligations.p2hasExempt                       = Ar gyfer blynyddoedd treth yr ydych wedi optio allan neu wedi’i esemptio, bydd dim ond angen i chi gyflwyno Ffurflen Dreth.
 reporting.frequency.different.obligations.p3                                = Dysgwch faint sy’n ddyledus ac erbyn pryd ar y dudalen
-reporting.frequency.different.obligations.link.text                         = eich dyddiadau cau ar gyfer cyflwyno.
+reporting.frequency.different.obligations.link.text                         = eich dyddiadau cau ar gyfer cyflwyno
 reporting.frequency.different.obligations.link.text.additional.english      =
 
 #your obligations (exempt)
@@ -3229,7 +3247,7 @@ reporting.obligations.changing.optOut.link.text                     = Optio alla
 
 # ceased business warning message
 reporting.frequency.ceasedBusiness.warning.text.1                   = Nid oes unrhyw fusnesau ar y cyfrif hwn ar hyn o bryd. Gallwch ychwanegu unig fasnachwr neu fusnes eiddo ar y dudalen
-reporting.frequency.ceasedBusiness.warning.link                     = Eich busnes.
+reporting.frequency.ceasedBusiness.warning.link                     = Eich busnes
 reporting.frequency.ceasedBusiness.warning.text.2                   =
 
 reporting.frequency.latency.details.section.header                            = Gall amlder eich adroddiadau ar gyfer eich busnes newydd fod ar sail amlder gwahanol
@@ -3255,7 +3273,7 @@ reporting.frequency.latency.details.section.text.para2.bullet2.updateR17      = 
 reporting.frequency.latency.details.section.text.para2.bullet3.updateR17      = hyd yn oed os yw cyfanswm eich incwm gros o hunangyflogaeth neu eiddo, neu’r ddau, yn fwy na’r trothwy o {0}
 reporting.frequency.latency.details.section.text.para3.heading.updateR17      = Sut i newid eich rhwymedigaethau adrodd ar gyfer ffynhonnell incwm newydd
 reporting.frequency.latency.details.section.text.para3.text.1.updateR17       = Gallwch wneud hyn ar unrhyw adeg o’r adran
-reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = eich busnesau.
+reporting.frequency.latency.details.section.text.para3.link.text.updateR17    = eich busnesau
 reporting.frequency.latency.details.section.text.para3.text.2.updateR17       =
 
 yourSelfAssessmentChargeSummary.tax-year                            = {0} i {1} Blwyddyn dreth
@@ -3548,3 +3566,27 @@ youMustWait.agent.title        = Gallwch fwrw golwg dros y cleient hwn o 6 Ebril
 youMustWait.agent.heading      = Gallwch fwrw golwg dros y cleient hwn o 6 Ebrill {0} ymlaen
 youMustWait.agent.text         = Mae hyn oherwydd bod eich cleient wedi’i gofrestru i ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm o’r flwyddyn dreth nesaf, sy’n dechrau ar 6 Ebrill {0}.
 youMustWait.agent.button.text  = Nodwch UTR arall
+
+newHome.yourTasks.h1                             = Eich tasgau
+newHome.navigation.yourTasks                     = Eich tasgau
+newHome.yourTasks.selfAssessment                 = Gwirio’r hyn sydd arnoch a gwneud taliad
+newHome.yourTasks.no-tasks.selfAssessment        = Dim tasgau
+newHome.yourTasks.selfAssessment.upcomingCharge = Mae gennych daliad i’w wneud cyn bo hir.
+newHome.yourTasks.selfAssessment.upcomingCharge.label = Dyledus erbyn {0}
+newHome.yourTasks.selfAssessment.overdueCharge.single = Mae gennych swm gorddyledus o £{0}
+newHome.yourTasks.selfAssessment.overdueCharge.single.label = Roedd hyn yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.overdueCharge.multiple = Mae gennych swm gorddyledus o £{0}
+newHome.yourTasks.selfAssessment.overdueCharge.multiple.label = Mae’r ffi hynaf yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.lpp.single = Mae gennych gosb am dalu’n hwyr.
+newHome.yourTasks.selfAssessment.lpp.single.label = Roedd hyn yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.lpp.multiple = Mae gennych {0} o gosbau am dalu’n hwyr.
+newHome.yourTasks.selfAssessment.lpp.multiple.label = Mae’r gosb hynaf yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.lsp.single = Mae gennych gosb am gyflwyno’n hwyr.
+newHome.yourTasks.selfAssessment.lsp.single.label = Roedd hyn yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.lsp.multiple = Mae gennych {0} o gosbau am gyflwyno’n hwyr.
+newHome.yourTasks.selfAssessment.lsp.multiple.label = Mae’r gosb hynaf yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.money.refund = Mae gennych £{0} yn eich cyfrif.
+newHome.yourTasks.selfAssessment.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd.
+newHome.yourTasks.selfAssessment.supporting.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd. Noder – efallai fod gan eich cwsmer dasgau nad oes modd i chi eu gweld fel asiant ategol.
+newHome.yourTasks.selfAssessment.money-in-account.h1 = Gwirio faint o arian sydd yn eich cyfrif a hawlio ad-daliad
+newHome.yourTasks.selfAssessment.money-in-account = Mae gennych £{0} yn eich cyfrif.

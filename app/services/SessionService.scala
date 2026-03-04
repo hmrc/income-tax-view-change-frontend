@@ -17,7 +17,7 @@
 package services
 
 import config.FrontendAppConfig
-import enums.JourneyType._
+import enums.JourneyType.*
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
@@ -36,10 +36,13 @@ class SessionService @Inject()(
   def getMongo(journeyType: JourneyType)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Either[Throwable, Option[UIJourneySessionData]]] = {
     hc.sessionId.map(_.value) match {
       case Some(sessionId) if config.encryptionIsEnabled =>
-        sensitiveUIJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
+        sensitiveUIJourneySessionDataRepository.get(sessionId, journeyType)
+          .map(data => Right(data))
       case Some(sessionId) =>
-        uiJourneySessionDataRepository.get(sessionId, journeyType).map(data => Right(data))
-      case _ => Future.successful(Left(new Exception("Missing sessionId in HeaderCarrier")))
+        uiJourneySessionDataRepository.get(sessionId, journeyType)
+          .map(data => Right(data))
+      case _ =>
+        Future(Left(new Exception("Missing sessionId in HeaderCarrier")))
     }
   }
 

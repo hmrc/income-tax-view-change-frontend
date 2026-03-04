@@ -101,8 +101,9 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         financialDetailsMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
         fdAndChargeMaybe <- EitherT(Future.successful(getFinancialDetailAndChargeRefModel(financialDetailsMaybe)))
         haveBeenAdjusted <- EitherT(isSubsequentAdjustment(chargeHistoryConnector, fdAndChargeMaybe.chargeReference))
+        documentDetailsWithNoCredits = fdAndChargeMaybe.documentDetails.filterNot(_.originalAmount < 0)
         paymentOnAccountViewModel <- EitherT(
-          Future.successful(getAmendablePoaViewModel(sortByTaxYear(fdAndChargeMaybe.documentDetails), haveBeenAdjusted)))
+          Future.successful(getAmendablePoaViewModel(sortByTaxYear(documentDetailsWithNoCredits), haveBeenAdjusted)))
       } yield paymentOnAccountViewModel
     }.value
   }

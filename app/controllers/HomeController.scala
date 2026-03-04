@@ -20,23 +20,24 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.featureswitch._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import config.featureswitch.*
+import config.*
 import controllers.agent.sessionUtils.SessionKeys
+import controllers.routes.WhatYouOweController
 import enums.MTDSupportingAgent
-import models.admin._
-import models.financialDetails.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
-import models.homePage._
+import models.admin.*
+import models.financialDetails.*
+import models.homePage.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, _}
-import services._
-import services.optIn.OptInService
-import services.optout.OptOutService
+import play.api.mvc.*
+import services.*
+import services.reportingObligations.signUp.SignUpService
+import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -46,7 +47,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.HomeView,
-                               val newHomeYourTasksView: views.html.NewHomeYourTasksView,
                                val newHomeRecentActivityView: views.html.NewHomeRecentActivityView,
                                val newHomeOverviewView: views.html.NewHomeOverviewView,
                                val newHomeHelpView: views.html.NewHomeHelpView,
@@ -60,7 +60,8 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
                                val whatYouOweService: WhatYouOweService,
                                val ITSAStatusService: ITSAStatusService,
                                val penaltyDetailsService: PenaltyDetailsService,
-                               val optInService: OptInService,
+                               val creditService: CreditService,
+                               val signUpService: SignUpService,
                                val optOutService: OptOutService,
                                auditingService: AuditingService)
                               (implicit
@@ -75,14 +76,14 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       handleShowRequest(origin)
   }
 
-  def showAgent(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
+  def showAgent(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async {
     implicit mtdItUser =>
       handleShowRequest(origin)
   }
 
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    if (isEnabled(NewHomePage)){
+    if (isEnabled(NewHomePage)) {
       handleYourTasks(origin, user.isAgent())
     } else {
       handleOldHomePage(origin)
@@ -110,7 +111,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     for {
       currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
       (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
-      _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
+      _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
     } yield {
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
@@ -143,6 +144,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     val currentTaxYear = TaxYear(getCurrentTaxYearEnd - 1, getCurrentTaxYearEnd)
 
     for {
+      credits <- creditService.getAllCredits()
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       paymentsDue = getDueDates(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       dunningLockExists = hasDunningLock(unpaidCharges)
@@ -155,7 +157,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
       (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
-      _ <- optInService.updateJourneyStatusInSessionData(journeyComplete = false)
+      _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
     } yield {
 
@@ -174,7 +176,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
 
       val paymentCreditAndRefundHistoryTileViewModel =
-        PaymentCreditAndRefundHistoryTileViewModel(unpaidCharges, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
+        PaymentCreditAndRefundHistoryTileViewModel(credits, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
 
       val yourBusinessesTileViewModel =
         YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
@@ -235,18 +237,18 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   }
 
   private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
-                                      (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
-  whatYouOweService.getWhatYouOweChargesList(
-    unpaidCharges,
-    isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
-    isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-    mainChargeIsNotPaidFilter
-  ) map {
-    case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
-      outstandingCharges.filter(_.isBalancingChargeDebit)
-        .filter(_.relevantDueDate.isDefined)
-    case _ => Nil
-  }
+                                        (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
+    whatYouOweService.getWhatYouOweChargesList(
+      unpaidCharges,
+      isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
+      isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+      mainChargeIsNotPaidFilter
+    ) map {
+      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
+        outstandingCharges.filter(_.isBalancingChargeDebit)
+          .filter(_.relevantDueDate.isDefined)
+      case _ => Nil
+    }
 
   private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
     val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
@@ -295,27 +297,36 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     }
   }
 
-  //These should probably each have their own controllers, as they're going to each be calling the APIs independently and will have different ViewModels
   private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
-                                      (implicit user: MtdItUser[_]): Future[Result] =  {
-//    TODO check if we can do better than Redirect
-    Future.successful(Redirect(routes.YourTasksController.show(origin, isAgent)))
+                             (implicit user: MtdItUser[_]): Future[Result] = {
+    if(isAgent){
+      Future.successful(Redirect(routes.HandleYourTasksController.showAgent()))
+    }else {
+     Future.successful(Redirect(routes.HandleYourTasksController.show()))
+    }
   }
 
-  def handleRecentActivity(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      Future.successful(Ok(newHomeRecentActivityView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
-  }
+    def handleRecentActivity(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        Future.successful(Ok(newHomeRecentActivityView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+    }
 
   def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      Future.successful(Ok(newHomeOverviewView(origin, isAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+    implicit user => {
+      for {
+        credits <- creditService.getAllCredits()
+        unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
+      }
+      yield {
+        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount))
+      }
+    }
   }
 
-  def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-    implicit user =>
-      Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
-  }
+    def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+      implicit user =>
+        Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent))))
+    }
 
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url
   def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url

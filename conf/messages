@@ -19,6 +19,7 @@ base.confirm-and-save                                           = Confirm and sa
 base.confirm-this-change                                        = Confirm this change
 base.software.compatible.with.mtd.income.tax.link               = software compatible with Making Tax Digital for Income Tax
 base.fullstop                                                   = .
+base.or                                                         = or
 
 ## Accessibility ##
 accessibility.this-section-is                                   = This section is:
@@ -196,6 +197,7 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty poin
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
 ## New Home Page ##
+### Your Tasks Tab
 new.home.navigation.tabs.yourTasks                              = Your tasks
 
 new.home.yourTasks.sub-heading                                  = Your tasks
@@ -205,12 +207,15 @@ new.home.yourTasks.annual-updates-and-deadlines-label           = Due {date}
 new.home.yourTasks.quarterly-updates-and-deadlines-body         = You have an upcoming quarterly submission deadline.
 new.home.yourTasks.quarterly-updates-and-deadlines-label        = Due {date}
 
+### Overview Tab
 new.home.navigation.tabs.overview                               = Overview
 
 new.home.overview.charges.sub-heading                           = Charges, payments, credits and refunds
+new.home.overview.charges.check-what-you-owe                    = Check what you owe
 new.home.overview.charges.make-payment                          = Check what you owe and make a payment
 new.home.overview.charges.payment-history                       = View payment, credit and refund history
-new.home.overview.charges.money-in-account                      = Check for money in your account
+new.home.overview.charges.money-in-account                      = Check for money in your account and claim a refund
+new.home.overview.charges.no-money-in-account                   = Check for money in your account
 new.home.overview.charges.adjust-payments                       = Adjust payments on account
 new.home.overview.deadlines.sub-heading                         = Deadlines and reporting obligations
 new.home.overview.deadlines.view-updates                        = View updates and deadlines
@@ -225,6 +230,14 @@ new.home.overview.penalties.check-penalties                     = Check Self Ass
 new.home.overview.penalties.check-lsp                           = View your late submission penalties
 new.home.overview.penalties.check-lpp                           = View your late payment penalties
 
+### Help Tab
+new.home.help.heading                                           = Making Tax Digital
+new.home.help.openInNewTab                                      = All links open in new tab.
+
+home.help.link.makingTaxDigital.incomeTax                       = Find information about Making Tax Digital for Income Tax
+home.help.link.selfAssessment.payTaxBill                        = Find information about paying your Self Assessment tax bill
+home.help.link.makingTaxDigital.findSoftware                    = Find software that works with Making Tax Digital for Income Tax
+home.help.link.taxSupport.getHelp                               = Get help if you’re struggling to pay your tax
 
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
@@ -1410,7 +1423,7 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustmen
 
 
 ##Tax Years Overview Submissions Tab##
-submissionsTab.desc                                                  = This is a record of what you have submitted for the tax year.
+submissionsTab.desc                                                  = This is a record of your completed and upcoming submissions for the tax year.
 submissionsTab.due                                                   = Due {0}
 submissionsTab.submission                                            = Submission
 submissionsTab.incomeSource                                          = Income source
@@ -2477,6 +2490,11 @@ manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.button      
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.header                             = There is a problem
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description                        = Select the tax years you want to report quarterly
 manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched       = Select the tax years you want to sign up for
+
+# choose international sole trader address
+manageBusinesses.add.chooseSoleTraderAddress.heading                                                         = What is the address of your sole trader business?
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.newAddress                                         = None of these, I want to add a new address
+manageBusinesses.add.chooseSoleTraderAddress.radio.option.error                                              = Select an option to continue
 
 #######################################################################################################################
 ## Claim to Adjust POA - Add ##
@@ -3560,3 +3578,27 @@ youMustWait.agent.title        = You can view this client from 6 April {0}
 youMustWait.agent.heading      = You can view this client from 6 April {0}
 youMustWait.agent.text         = This is because your client is signed up to use Making Tax digital for Income Tax from the next tax year, which starts 6 April {0}.
 youMustWait.agent.button.text  = Enter another UTR
+
+newHome.yourTasks.h1                             = Your tasks
+newHome.navigation.yourTasks                     = Your tasks
+newHome.yourTasks.selfAssessment                 = Check what you owe and make a payment
+newHome.yourTasks.no-tasks.selfAssessment        = No tasks
+newHome.yourTasks.selfAssessment.upcomingCharge = You have an upcoming payment.
+newHome.yourTasks.selfAssessment.upcomingCharge.label = Due {0}
+newHome.yourTasks.selfAssessment.overdueCharge.single = You have an overdue amount of £{0}
+newHome.yourTasks.selfAssessment.overdueCharge.single.label = Was due {0}
+newHome.yourTasks.selfAssessment.overdueCharge.multiple = You have an overdue amount of £{0}
+newHome.yourTasks.selfAssessment.overdueCharge.multiple.label = Oldest charge due {0}
+newHome.yourTasks.selfAssessment.lpp.single = You have a late payment penalty.
+newHome.yourTasks.selfAssessment.lpp.single.label = Was due {0}
+newHome.yourTasks.selfAssessment.lpp.multiple = You have {0} late payment penalties.
+newHome.yourTasks.selfAssessment.lpp.multiple.label = Oldest penalty due {0}
+newHome.yourTasks.selfAssessment.lsp.single = You have a late submission penalty.
+newHome.yourTasks.selfAssessment.lsp.single.label = Was due {0}
+newHome.yourTasks.selfAssessment.lsp.multiple = You have {0} late submission penalties.
+newHome.yourTasks.selfAssessment.lsp.multiple.label = Oldest penalty due {0}
+newHome.yourTasks.selfAssessment.money.refund = You have £{0} in your account.
+newHome.yourTasks.selfAssessment.no-tasks = You have no tasks to complete at the moment.
+newHome.yourTasks.selfAssessment.supporting.no-tasks = You have no tasks to complete at the moment. Note that your customer may have tasks that you are unable to see as a support agent.
+newHome.yourTasks.selfAssessment.money-in-account.h1 = Check for money in your account and claim a refund
+newHome.yourTasks.selfAssessment.money-in-account = You have £{0} in your account.

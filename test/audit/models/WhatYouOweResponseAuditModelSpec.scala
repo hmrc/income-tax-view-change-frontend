@@ -81,6 +81,10 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
             "chargeType" -> lpiPaymentOnAccount1,
             "dueDate" -> Some(LocalDate.parse("2019-06-25")),
             "outstandingAmount" -> 42.5,
+            "accruingInterest" -> 42.5,
+            "interestRate" -> "2.6%",
+            "interestFromDate" -> "2019-05-25",
+            "interestEndDate" -> "2019-05-25",
             "chargeUnderReview" -> true,
             "endTaxYear" -> 2023,
             "overDue" -> true
@@ -89,6 +93,10 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
             "chargeType" -> lpiPaymentOnAccount2,
             "dueDate" -> dueDateOverdue(1).get,
             "outstandingAmount" -> 24.05,
+            "accruingInterest" -> 24.05,
+            "interestRate" -> "6.2%",
+            "interestFromDate" -> "2019-05-25",
+            "interestEndDate" -> "2019-06-25",
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
             "overDue" -> true
@@ -97,10 +105,6 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
             "chargeType" -> paymentOnAccount2,
             "dueDate" -> dueDateIsSoon,
             "outstandingAmount" -> 100,
-            "accruingInterest" -> 100,
-            "interestRate" -> "100.0%",
-            "interestFromDate" -> "2018-03-29",
-            "interestEndDate" -> "2018-03-29",
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
             "overDue" -> false
@@ -108,11 +112,7 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
           Json.obj(
             "chargeType" -> paymentOnAccount1,
             "dueDate" -> dueDateInFuture,
-            "outstandingAmount" -> 125,
-            "accruingInterest" -> 100,
-            "interestRate" -> "100.0%",
-            "interestFromDate" -> "2018-03-29",
-            "interestEndDate" -> "2018-03-29",
+            "outstandingAmount" -> 100,
             "chargeUnderReview" -> false,
             "endTaxYear" -> 2023,
             "overDue" -> false
@@ -185,6 +185,10 @@ class WhatYouOweResponseAuditModelSpec extends TestSupport with ChargeConstants 
         (auditJson.detail \ "charges")(0) shouldBe Json.obj(
           "chargeUnderReview" -> true,
           "outstandingAmount" -> 42.5,
+          "accruingInterest" -> 42.5,
+          "interestRate" -> "2.6%",
+          "interestFromDate" -> "2018-03-29",
+          "interestEndDate" -> "2018-06-15",
           "chargeType" -> lpiPaymentOnAccount1,
           "dueDate" -> "2023-12-05",
           "endTaxYear" -> fixedDate.getYear,
