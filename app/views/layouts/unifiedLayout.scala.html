@@ -26,6 +26,8 @@
 @import views.html.helpers.injected.BackLinkWithFallback
 @import enums.GatewayPage._
 @import viewUtils.ExternalUrlHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderUrls
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderNames
 
 @this(
     appConfig: FrontendAppConfig,
@@ -38,7 +40,6 @@
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     backLink: components.back_link,
     backLinkFallback: BackLinkWithFallback,
-    languageSwitch: HmrcLanguageSelect,
     mainContentLayout: mainContentLayout,
     scripts: Scripts,
     a: link
@@ -71,34 +72,46 @@
 
 @feedbackBanner = {
     @messages("betaBanner.newService")
-    @messages("betaBanner.your")
-    @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("agent-feedback-url")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("individuals-feedback-url")) }
-    @messages("betaBanner.improve")
+    @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link", id=Some("agent-feedback-url")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link", target=Some("_blank"), id=Some("individuals-feedback-url"), outerMessage=messages("base.fullstop")) }
 }
 
 @siteHeader = @{
 
-    val serviceName = if (isAgent) Some(messages("agent.header.serviceName"))
-        else Some(messages("header.serviceName"))
+    val serviceName = {
+        (showServiceName, isAgent) match {
+            case (true, false) => Some(messages("header.serviceName"))
+            case (true, true)  => Some(messages("agent.header.serviceName"))
+            case (false, _)    => None
+        }
+    }
 
     val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
         else controllers.routes.HomeController.show().url
 
-    hmrcHeader(Header(
-        homepageUrl = ExternalUrlHelper.homepageLink,
-        serviceName = if(showServiceName) serviceName else None,
-        serviceUrl = serviceUrl,
-        language = CurrentLanguage(),
-        signOutHref = Some(controllers.routes.SignOutController.signOut().url),
-        userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
-        displayHmrcBanner = false,
-        phaseBanner = Some(
-            PhaseBanner(
-                tag = Some(Tag(content = Text("Beta"))),
-                content = HtmlContent(feedbackBanner)
-            )
+    hmrcHeader(HeaderParams(
+        headerUrls = HeaderUrls(
+            homepageUrl = ExternalUrlHelper.homepageLink,
+            serviceUrl = serviceUrl,
+            signOutHref = Some(controllers.routes.SignOutController.signOut().url)
         ),
-        additionalBannersBlock = None
+        banners = Banners(
+            userResearchBanner = Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
+            displayHmrcBanner = false,
+            phaseBanner = Some(
+                PhaseBanner(
+                    tag = Some(Tag(content = Text("Beta"))),
+                    content = HtmlContent(feedbackBanner)
+                )
+            ),
+            additionalBannersBlock = None
+        ),
+        language = CurrentLanguage(),
+        serviceNavigation = Some(
+            ServiceNavigation(
+                serviceName = serviceName,
+                serviceUrl = Some(serviceUrl))
+            .withLanguageToggle()
+        )
     ))
 }
 
@@ -122,14 +135,6 @@
 
 @beforeContentBlock = {
     @{btaNavPartial.getOrElse(())}
-
-        <div id="language-switch">
-            @languageSwitch(LanguageSelect(
-                if (messages.lang.code == "cy") Cy else En,
-                (En, controllers.routes.LocalLanguageController.switchToLanguage("english").url),
-                (Cy, controllers.routes.LocalLanguageController.switchToLanguage("cymraeg").url)
-            ))
-        </div>
 
         @if(useFallbackBackLink) {
             @backUrl.map(backLinkFallback(_, gatewayPage))

@@ -131,6 +131,8 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
 
+    def getElementByClass(elementClass: String) = Option(document.getElementsByClass(elementClass))
+
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
 
     def getHintNth(index: Int = 0): Option[String] = {
@@ -336,9 +338,9 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       "have a language selection switch" which {
 
         "displays the correct content" in new TestSetup {
-          val langSwitchScript: Option[Element] = getElementById("language-switch")
-          langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
-          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith i’r Gymraeg Cymraeg")
+          val langSwitchScript = getElementByClass("hmrc-service-navigation-language-select__list")
+          langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("ENG")
+          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("CYM – Newid yr iaith i’r Gymraeg")
         }
       }
 
