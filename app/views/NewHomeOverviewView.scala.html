@@ -22,6 +22,7 @@
 @import views.html.partials.newHome.overview._
 @import config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
+@import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 
 @this(
         mainTemplate: unifiedLayout,
@@ -44,7 +45,8 @@
         overViewUrl: String,
         helpUrl: String,
         noChargesToPay: Boolean,
-        moneyInYourAccount: Boolean)(
+        moneyInYourAccount: Boolean,
+        ctaViewModel: WYOClaimToAdjustViewModel)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -128,7 +130,7 @@
 
 
 @IndividualSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount)
+    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel)
     @SectionBreak
 
     @deadlinesSection(isAgent = false)
@@ -145,7 +147,7 @@
 
 
 @AgentSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount)
+    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel)
     @SectionBreak
 
     @deadlinesSection(isAgent = true)

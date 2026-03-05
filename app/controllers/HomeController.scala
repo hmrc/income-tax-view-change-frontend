@@ -26,10 +26,13 @@ import controllers.agent.sessionUtils.SessionKeys
 import controllers.routes.WhatYouOweController
 import enums.MTDSupportingAgent
 import models.admin.*
+
 import models.financialDetails.*
+import models.core.Nino
 import models.homePage.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.obligations.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
@@ -314,11 +317,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
       for {
+        ctaViewModel <- whatYouOweService.claimToAdjustViewModel(Nino(user.nino))
         credits <- creditService.getAllCredits()
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       }
       yield {
-        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount))
+        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel))
       }
     }
   }
