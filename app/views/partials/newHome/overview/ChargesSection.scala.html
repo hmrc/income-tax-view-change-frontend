@@ -17,9 +17,10 @@
 @import views.html.partials.newHome.overview.OverviewCard
 @import controllers.routes.{WhatYouOweController, PaymentHistoryController, MoneyInYourAccountController}
 @import controllers.claimToAdjustPoa.routes.AmendablePoaController
+@import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean, noChargesToPay: Boolean, moneyInYourAccount: Boolean)(implicit messages: Messages)
+@(isAgent: Boolean, noChargesToPay: Boolean, moneyInYourAccount: Boolean, ctaViewModel: WYOClaimToAdjustViewModel)(implicit messages: Messages)
 
 
 @whatYouOweUrl: String = @{
@@ -56,6 +57,8 @@
     @overviewCard(messages(if(noChargesToPay) "new.home.overview.charges.check-what-you-owe" else "new.home.overview.charges.make-payment"), whatYouOweUrl)
     @overviewCard(messages("new.home.overview.charges.payment-history"), paymentHistoryUrl)
     @overviewCard(messages(if(moneyInYourAccount) "new.home.overview.charges.money-in-account" else "new.home.overview.charges.no-money-in-account"), moneyInAccountUrl)
+    @ctaViewModel.claimToAdjustTaxYear.map {taxYear =>
     @overviewCard(messages("new.home.overview.charges.adjust-payments"), amendablePoaUrl)
+    }
 </div>
 

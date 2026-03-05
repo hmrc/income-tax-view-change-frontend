@@ -22,7 +22,7 @@
 @import views.html.partials.newHome.overview._
 @import config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
-@import models.financialDetails.ChargeItem
+@import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 @import models.financialDetails.*
 
 @this(
@@ -47,6 +47,7 @@
         helpUrl: String,
         noChargesToPay: Boolean,
         moneyInYourAccount: Boolean,
+        ctaViewModel: WYOClaimToAdjustViewModel)(
         chargeItems: List[ChargeItem])(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
@@ -131,7 +132,7 @@
 
 
 @IndividualSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount)
+    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel)
     @SectionBreak
 
     @deadlinesSection(isAgent = false)
@@ -152,7 +153,7 @@
 }
 
 @AgentSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount)
+    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel)
     @SectionBreak
 
     @deadlinesSection(isAgent = true)
