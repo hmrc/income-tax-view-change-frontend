@@ -219,6 +219,7 @@ new.home.overview.penalties.sub-heading                         = Penalties and 
 new.home.overview.penalties.check-penalties                     = Check Self Assessment penalties and appeals
 new.home.overview.penalties.check-lsp                           = View your late submission penalties
 new.home.overview.penalties.check-lpp                           = View your late payment penalties
+new.home.overview.penalties.check-lpp-lsp                       = View your late payment penalties or View your late submission penalties
 
 ### Help Tab
 new.home.help.heading                                           = Making Tax Digital

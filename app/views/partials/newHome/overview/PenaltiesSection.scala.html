@@ -33,6 +33,7 @@
         case (false, true) => overviewCard(messages("new.home.overview.penalties.check-lpp"), s"${penaltiesHomeUrl}#lppTab")
         case (true, false) => overviewCard(messages("new.home.overview.penalties.check-lsp"), s"${penaltiesHomeUrl}#lspTab")
         case (false, false) => overviewCard(messages("new.home.overview.penalties.check-penalties"), penaltiesHomeUrl)
+        case (true, true) => overviewCard(messages("new.home.overview.penalties.check-lpp-lsp"), penaltiesHomeUrl)
     }
 }
 
