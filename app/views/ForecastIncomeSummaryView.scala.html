@@ -18,14 +18,15 @@
 @import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(mainTemplate: unifiedLayout,
     h1WithCaption: h1WithCaption,
-    p: p
+    p: p,
+    govukTable : GovukTable
 )
 
 @(endOfYearEstimateModel: EndOfYearEstimate, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
-
 
 @getIncomeSources(incomeSourceOpt: Option[List[IncomeSource]]) = @{
     incomeSourceOpt.map(incomeSources => {
@@ -37,12 +38,18 @@
                     incomeSource.incomeSourceName.getOrElse(messages("forecast_income.employment")))
                 case _ => messages(s"forecast_income.source_types.${incomeSource.incomeSourceType}")
             }
-            (<tr class="govuk-table__row">
-                <td class="govuk-table__cell">{incomeText}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric no-wrap">{BigDecimal(incomeSource.taxableIncome).toCurrencyString}</td>
-            </tr>)
+            Seq(
+                TableRow(
+                    content = Text(incomeText),
+                    classes = "govuk-table__cell"
+                ),
+                TableRow(
+                    content = Text(BigDecimal(incomeSource.taxableIncome).toCurrencyString),
+                    classes = "govuk-table__cell govuk-table__cell--numeric no-wrap"
+                )
+            )
         })
-    })
+    }).getOrElse(throw new Exception("[ForecastIncomeSummaryView] missing income source data for table"))
 }
 
 @mainTemplate(pageTitle = messages("forecast_income.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl),
@@ -53,28 +60,36 @@
         captionMsg = messages("forecast_income.dates", s"${taxYear - 1}", s"$taxYear")
     )
 
-    <div>
+    @govukTable(Table(
+        rows =
+            getIncomeSources(endOfYearEstimateModel.incomeSource)
+            ++
+            List(
+                Seq(
+                    TableRow(
+                        content = Text(messages("forecast_income.total")),
+                        classes = "govuk-table__header total-section"
+                    ),
+                    TableRow(
+                        content = Text(BigDecimal(endOfYearEstimateModel.totalEstimatedIncome.getOrElse(0)).toCurrencyString),
+                        classes = "govuk-table__header govuk-table__header--numeric total-section"
+                    )
+                )
+            ),
+        head = Some(Seq(
+            HeadCell(
+                content = Text(messages("forecast_income.table.header")),
+                classes = "govuk-table__header"
+            ),
+            HeadCell(
+                content = Text(messages("forecast_income.table.header.amount")),
+                classes = "govuk-table__header govuk-!-width-one-quarter govuk-table__header--numeric"
+            )
+        )),
+        caption = Some(messages("forecast_income.dates", s"${taxYear - 1}", s"$taxYear") + " " + messages("forecast_income.heading")),
+        captionClasses = "govuk-table__caption heading-large govuk-table__caption--m govuk-visually-hidden",
+        firstCellIsHeader = false
+    ))
 
-        <table class="govuk-table govuk-!-margin-bottom-8">
-            <caption id="forecast_income" class="govuk-table__caption heading-large govuk-table__caption--m govuk-visually-hidden">
-                <span class="heading-secondary">@messages("forecast_income.dates", s"${taxYear - 1}", s"$taxYear")</span>
-                @messages("forecast_income.heading")
-            </caption>
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">@messages("forecast_income.table.header")</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter govuk-table__header--numeric">@messages("forecast_income.table.header.amount")</th>
-                </tr>
-            </thead>
-            <tbody class = "govuk-table__body">
-                @getIncomeSources(endOfYearEstimateModel.incomeSource)
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__header total-section">@messages("forecast_income.total")</td>
-                    <td class="govuk-table__header govuk-table__header--numeric total-section">@BigDecimal(endOfYearEstimateModel.totalEstimatedIncome.getOrElse(0)).toCurrency</td>
-                </tr>
-            </tbody>
-        </table>
-
-        @p(){@messages("income_breakdown.guidance_software")}
-    </div>
+    @p(){@messages("income_breakdown.guidance_software")}
 }
