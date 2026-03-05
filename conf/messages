@@ -118,7 +118,7 @@ feedback.thankYou                                               = Thank you
 feedback.received                                               = Your feedback has been received.
 
 ## Home Page ##
-home.heading                                                    = Income Tax
+home.heading                                                    = Self Assessment
 home.agent.primary.caption                                      = You are signed in as a main agent
 home.agent.supporting.caption                                   = You are signed in as a supporting agent
 home.agent.heading                                              = Your client’s Income Tax
@@ -864,10 +864,8 @@ global.error.InternalServerError500.message                     = Try again late
 
 ## Beta Banner ##
 betaBanner.beta                                                 = BETA
-betaBanner.newService                                           = This is a new service
-betaBanner.your                                                 = – your
-betaBanner.feedback                                             = feedback
-betaBanner.improve                                              = will help us to improve it.
+betaBanner.newService                                           = This is a new service. Help us improve it and
+betaBanner.feedback.link                                        = give your feedback
 
 ## Obligations Page ##
 obligations.quarterlyUpdates                                       = Quarterly updates
