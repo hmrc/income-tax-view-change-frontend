@@ -47,7 +47,7 @@
         helpUrl: String,
         noChargesToPay: Boolean,
         moneyInYourAccount: Boolean,
-        ctaViewModel: WYOClaimToAdjustViewModel)(
+        ctaViewModel: WYOClaimToAdjustViewModel,
         chargeItems: List[ChargeItem])(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )

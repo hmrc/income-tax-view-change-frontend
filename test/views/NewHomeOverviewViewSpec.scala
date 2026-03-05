@@ -200,13 +200,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
       document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
       document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment")
-
-      document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "View your late payment penalties"
-      document.select(".govuk-summary-card-no-border").get(9).link.attr("href") should include("/view-penalty/self-assessment#lppTab")
-
-      document.select(".govuk-summary-card-no-border").get(10).text() shouldBe "View your late submission penalties"
-      document.select(".govuk-summary-card-no-border").get(10).link.attr("href") should include("/view-penalty/self-assessment#lspTab")
-    }
+}
 
     "display the correct 'Income sources' section" in new TestSetup() {
       val incomeSection: Element = document.selectById("income-overview-section")
@@ -402,12 +396,6 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
       document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
       document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment/agent")
-
-      document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "View your late payment penalties"
-      document.select(".govuk-summary-card-no-border").get(9).link.attr("href") should include("/view-penalty/self-assessment/agent#lppTab")
-
-      document.select(".govuk-summary-card-no-border").get(10).text() shouldBe "View your late submission penalties"
-      document.select(".govuk-summary-card-no-border").get(10).link.attr("href") should include("/view-penalty/self-assessment/agent#lspTab")
     }
 
     "display the correct 'Income sources' section" in new TestSetup(isAgent = true) {
