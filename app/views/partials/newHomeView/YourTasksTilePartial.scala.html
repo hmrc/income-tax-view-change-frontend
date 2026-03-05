@@ -25,52 +25,71 @@
         p: p)
 
 @(viewModel: HandleYourTasksViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
- @import implicitDateFormatter.longDate
+@import implicitDateFormatter.longDate
 
-@getColor = @{viewModel.oldestChargeStatusColor(viewModel.oldestChargeDate)}
+@getColor = @{
+    viewModel.oldestChargeStatusColor(viewModel.oldestChargeDate)
+}
 
- @getNextPaymentsTag = {
-   @if(!getTaskDateLabel.isBlank) {
-       <span class="govuk-tag govuk-tag--@getColor" id="date-tag">
-       @getTaskDateLabel
-       </span>
-   }
- }
+@getNextPaymentsTag = {
+@if(!getTaskDateLabel.isBlank) {
+    <span class="govuk-tag govuk-tag--@getColor" id="date-tag">
+    @getTaskDateLabel
+    </span>
+}
+}
 
- @getTaskDescription = @{
-   val content = viewModel.getParametrisedContent(user)
-   messages(content._1, content._2)
- }
+@getTaskDescription = @{
+    val content = viewModel.getParametrisedContent(user)
+    messages(content._1, content._2)
+}
 
 @getTaskDateLabel = @{
-  val taskDateLabel = viewModel.getParametrisedTaskDateLabel
-  messages(taskDateLabel._1, taskDateLabel._2.toLongDateShort)
+    val taskDateLabel = viewModel.getParametrisedTaskDateLabel
+    messages(taskDateLabel._1, taskDateLabel._2.toLongDateShort)
 }
-@moneyInYourAccount = @{viewModel.creditInAccount}
-
- <div id="yourTasksTile" class="hmrc-card">
-  <div class="tile-body">
-        <h3 class="hmrc-card__heading">
-        @if(getTaskDateLabel.isBlank){
-            <span>@messages("newHome.yourTasks.no-tasks.selfAssessment")</span>
-        }else{
-            <a href=@viewModel.getRedirectLinkPayments(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
-        }
-        </h3>
-   <div class="govuk-body">@getTaskDescription</div>
-   <div>@getNextPaymentsTag</div>
- </div>
- </div>
-
-@if(moneyInYourAccount.isDefined && moneyInYourAccount.get > BigDecimal(0) ){
-<div id="moenyInYourAccount" class="hmrc-card">
-    <div class="tile-body">
-            <h3 class="hmrc-card__heading">
-                <a href=@viewModel.getRedirectLinkMoneyInAccount(isAgent)>@messages("newHome.yourTasks.selfAssessment.money-in-account.h1") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
-            </h3>
-        @if(moneyInYourAccount.isDefined){
-            <div class="govuk-body">@messages("newHome.yourTasks.selfAssessment.money-in-account", moneyInYourAccount.get.toString())</div>
-        }
-    </div>
-</div>
+@moneyInYourAccount = @{
+    viewModel.creditInAccount
 }
+
+@showContent() = @{
+        (getTaskDateLabel.isBlank, moneyInYourAccount.fold(true)(_ <= 0)) match {
+            case (true, false) => showSelfAssesmentTasks()
+            case (false, true) => showMoneyInYourAccount()
+            case (true, true) => showNoTasks()
+            case (false, false) => showBoth()
+        }
+    }
+@showMoneyInYourAccount() = {
+        <div id="moenyInYourAccount" class="hmrc-card">
+            <div class="tile-body">
+                <h3 class="hmrc-card__heading">
+                    <a href=@viewModel.getRedirectLinkMoneyInAccount(isAgent)>@messages("newHome.yourTasks.selfAssessment.money-in-account.h1") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                </h3>
+                @if(moneyInYourAccount.isDefined) {
+                    <div class="govuk-body">@messages("newHome.yourTasks.selfAssessment.money-in-account", moneyInYourAccount.get.toString())</div>
+                }
+            </div>
+        </div>
+    }
+@showSelfAssesmentTasks() = {
+        <div id="yourTasksTile" class="hmrc-card">
+            <div class="tile-body">
+                <h3 class="hmrc-card__heading">
+                    <a href=@viewModel.getRedirectLinkPayments(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                </h3>
+                <div class="govuk-body">@getTaskDescription</div>
+                <div>@getNextPaymentsTag</div>
+            </div>
+        </div>
+    }
+
+
+@showBoth() = {
+  @showSelfAssesmentTasks()
+  @showMoneyInYourAccount()
+}
+@showNoTasks() = {
+    <p class="govuk-body">@messages("newHome.yourTasks.selfAssessment.no-tasks")</p>
+}
+@showContent()
