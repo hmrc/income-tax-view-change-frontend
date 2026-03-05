@@ -18,7 +18,7 @@
 @import config.FrontendAppConfig
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, isLSPPresent: Boolean, isLPPPresent: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_])
 
 @penaltiesHomeUrl: String = @{
     if(isAgent){
@@ -28,10 +28,15 @@
     }
 
 }
+@displayContent() = @{
+    (isLSPPresent, isLPPPresent) match {
+        case (false, true) => overviewCard(messages("new.home.overview.penalties.check-lpp"), s"${penaltiesHomeUrl}#lppTab")
+        case (true, false) => overviewCard(messages("new.home.overview.penalties.check-lsp"), s"${penaltiesHomeUrl}#lspTab")
+        case (false, false) => overviewCard(messages("new.home.overview.penalties.check-penalties"), penaltiesHomeUrl)
+    }
+}
 
 <div id="penalties-overview-section">
     <h2 class="govuk-heading-m">@messages("new.home.overview.penalties.sub-heading")</h2>
-    @overviewCard(messages("new.home.overview.penalties.check-penalties"), penaltiesHomeUrl)
-    @overviewCard(messages("new.home.overview.penalties.check-lpp"), s"${penaltiesHomeUrl}#lppTab")
-    @overviewCard(messages("new.home.overview.penalties.check-lsp"), s"${penaltiesHomeUrl}#lspTab")
+    @displayContent()
 </div>

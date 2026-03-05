@@ -316,9 +316,13 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       for {
         credits <- creditService.getAllCredits()
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
+        chargeItem = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       }
       yield {
-        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount))
+        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent,
+          dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
+          overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty,
+          credits.availableCreditInAccount, chargeItem))
       }
     }
   }
@@ -333,4 +337,17 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
   def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
 
+
+  private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[ChargeItem] = {
+
+    val chargesList =
+      unpaidCharges.collect {
+        case fdm: FinancialDetailsModel => fdm
+      }
+    whatYouOweService.getFilteredChargesList(
+      financialDetailsList = chargesList,
+      isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
+      isPenaltiesEnabled = penaltiesEnabled,
+      remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter)
+  }
 }

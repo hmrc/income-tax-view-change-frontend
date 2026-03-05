@@ -22,6 +22,8 @@
 @import views.html.partials.newHome.overview._
 @import config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
+@import models.financialDetails.ChargeItem
+@import models.financialDetails.*
 
 @this(
         mainTemplate: unifiedLayout,
@@ -44,7 +46,8 @@
         overViewUrl: String,
         helpUrl: String,
         noChargesToPay: Boolean,
-        moneyInYourAccount: Boolean)(
+        moneyInYourAccount: Boolean,
+        chargeItems: List[ChargeItem])(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -140,9 +143,13 @@
     @taxYearSection(isAgent = false, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = false)
+    @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty)))
 }
 
+
+@isPenaltyPresent(targetTypes: TransactionType*) = @{
+    chargeItems.exists(item => targetTypes.contains(item.transactionType))
+}
 
 @AgentSections(noChargesToPay: Boolean) = {
     @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount)
@@ -157,7 +164,7 @@
     @taxYearSection(isAgent = true, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = true)
+    @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
 }
 
 
