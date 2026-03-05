@@ -33,10 +33,14 @@
         case (false, true) => overviewCard(messages("new.home.overview.penalties.check-lpp"), s"${penaltiesHomeUrl}#lppTab")
         case (true, false) => overviewCard(messages("new.home.overview.penalties.check-lsp"), s"${penaltiesHomeUrl}#lspTab")
         case (false, false) => overviewCard(messages("new.home.overview.penalties.check-penalties"), penaltiesHomeUrl)
-        case (true, true) => overviewCard(messages("new.home.overview.penalties.check-lpp-lsp"), penaltiesHomeUrl)
+        case (true, true) => displayBoth
     }
 }
 
+@displayBoth ={
+    @overviewCard(messages("new.home.overview.penalties.check-lpp"), s"${penaltiesHomeUrl}#lppTab")
+    @overviewCard(messages("new.home.overview.penalties.check-lsp"), s"${penaltiesHomeUrl}#lspTab")
+}
 <div id="penalties-overview-section">
     <h2 class="govuk-heading-m">@messages("new.home.overview.penalties.sub-heading")</h2>
     @displayContent()
