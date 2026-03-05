@@ -72,7 +72,7 @@
 
 @feedbackBanner = {
     @messages("betaBanner.newService")
-    @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link", id=Some("agent-feedback-url")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link", target=Some("_blank"), id=Some("individuals-feedback-url"), outerMessage=messages("base.fullstop")) }
+    @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link", id=Some("agent-feedback-url"), target=Some("_blank"), outerMessage=messages("base.fullstop")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link", target=Some("_blank"), id=Some("individuals-feedback-url"), outerMessage=messages("base.fullstop")) }
 }
 
 @siteHeader = @{
