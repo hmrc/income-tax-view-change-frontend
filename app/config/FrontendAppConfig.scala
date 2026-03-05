@@ -126,9 +126,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   // Disagree with a tax decision
   lazy val taxAppealsUrl: String = servicesConfig.getString("tax-appeals.url")
 
-  //Tax account router url
-  lazy val taxAccountRouterUrl: String = servicesConfig.getString("tax-account-router.url")
-
   // income-tax-session-data url
   lazy val incomeTaxSessionDataUrl: String = servicesConfig.baseUrl("income-tax-session-data")
 
