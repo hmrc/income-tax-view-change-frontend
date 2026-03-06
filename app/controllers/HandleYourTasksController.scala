@@ -31,7 +31,6 @@ import play.api.mvc.*
 import services.*
 import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
-import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.HandleYourTasksView
@@ -93,7 +92,6 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       Ok(handleYourTasksView(origin, isAgent,
         yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
         overviewUrl(origin, isAgent), helpUrl(origin, isAgent), homeViewModel, appConfig.itvcRebrand)).addingToSession(mandationStatus)
-
     }
   }
 

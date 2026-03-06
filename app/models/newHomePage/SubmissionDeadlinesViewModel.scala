@@ -17,7 +17,6 @@
 package models.newHomePage
 
 import models.obligations.SingleObligationModel
-
 import java.time.LocalDate
 
 final case class SubmissionDeadlinesViewModel(

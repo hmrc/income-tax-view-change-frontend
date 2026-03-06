@@ -28,7 +28,6 @@ case class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
                                creditsRefundsRepayEnabled: Boolean,
                                obligations: SubmissionDeadlinesViewModel)
                               (implicit val appConfig: FrontendAppConfig) {
-
   private val today: LocalDate = LocalDate.now()
 
    val chargesSet: Set[TransactionType] = Set(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit,

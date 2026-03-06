@@ -104,7 +104,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
-    
+
   "New Home Your Tasks page for individuals" when {
     "upcoming annual submission due more than 30 days" should {
       "display the correct content" in new TestSetup(nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(31))) {
