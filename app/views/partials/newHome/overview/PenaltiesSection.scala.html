@@ -16,9 +16,10 @@
 
 @import views.html.partials.newHome.overview.OverviewCard
 @import config.FrontendAppConfig
+@import models.penalties.ActivePenaltyCount
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, activePenalties: ActivePenaltyCount)(implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_])
 
 @penaltiesHomeUrl: String = @{
     if(isAgent){
@@ -32,6 +33,13 @@
 <div id="penalties-overview-section">
     <h2 class="govuk-heading-m">@messages("new.home.overview.penalties.sub-heading")</h2>
     @overviewCard(messages("new.home.overview.penalties.check-penalties"), penaltiesHomeUrl)
-    @overviewCard(messages("new.home.overview.penalties.check-lpp"), s"${penaltiesHomeUrl}#lppTab")
-    @overviewCard(messages("new.home.overview.penalties.check-lsp"), s"${penaltiesHomeUrl}#lspTab")
+
+    @if(activePenalties.hasLPPs){
+        @overviewCard(messages("new.home.overview.penalties.check-lpp"), s"${penaltiesHomeUrl}#lppTab")
+    }
+
+    @if(activePenalties.hasLSPs){
+        @overviewCard(messages("new.home.overview.penalties.check-lsp"), s"${penaltiesHomeUrl}#lspTab")
+    }
+
 </div>

@@ -23,6 +23,7 @@
 @import config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
 @import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+@import models.penalties.ActivePenaltyCount
 
 @this(
         mainTemplate: unifiedLayout,
@@ -46,7 +47,8 @@
         helpUrl: String,
         noChargesToPay: Boolean,
         moneyInYourAccount: Boolean,
-        ctaViewModel: WYOClaimToAdjustViewModel)(
+        ctaViewModel: WYOClaimToAdjustViewModel,
+        activePenalties: ActivePenaltyCount)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -142,7 +144,7 @@
     @taxYearSection(isAgent = false, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = false)
+    @penaltiesSection(isAgent = false, activePenalties)
 }
 
 
@@ -159,7 +161,7 @@
     @taxYearSection(isAgent = true, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = true)
+    @penaltiesSection(isAgent = true, activePenalties)
 }
 
 

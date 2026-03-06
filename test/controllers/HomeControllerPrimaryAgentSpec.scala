@@ -24,6 +24,7 @@ import models.admin.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import models.penalties.ActivePenaltyCount
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -142,7 +143,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -164,7 +165,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetFilteredChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList.chargesList)
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -208,7 +209,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -256,7 +257,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -295,7 +296,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -332,7 +333,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -357,7 +358,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -379,7 +380,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -406,7 +407,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -424,7 +425,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -439,7 +440,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -454,7 +455,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
@@ -482,7 +483,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
         setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-        setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+        setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
         setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -519,7 +520,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
         setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-        setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+        setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
         setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -553,7 +554,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
         setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-        setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+        setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
         setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
@@ -582,7 +583,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
 
@@ -609,7 +610,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+          setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
@@ -640,7 +641,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -672,7 +673,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -701,7 +702,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
-            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+            setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(ActivePenaltyCount.default))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
