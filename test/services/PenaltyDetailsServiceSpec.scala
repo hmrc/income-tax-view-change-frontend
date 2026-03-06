@@ -18,7 +18,7 @@ package services
 
 import mocks.connectors.MockPenaltyDetailsConnector
 import models.itsaStatus.ITSAStatus
-import models.penalties.{GetPenaltyDetails, Totalisations}
+import models.penalties.{ActivePenaltyCount, GetPenaltyDetails, Totalisations}
 import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsSuccessResponse}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import testConstants.BaseTestConstants
@@ -96,14 +96,14 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
           setupMockGetPenaltyDetailsConnector(BaseTestConstants.testNino)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
 
           val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = false).futureValue
-          result shouldBe 0
+          result shouldBe ActivePenaltyCount.default
         }
 
         "the response is successful but with no totalisations object" in {
           setupMockGetPenaltyDetailsConnector(BaseTestConstants.testNino)(Right(GetPenaltyDetailsSuccessResponse(GetPenaltyDetails(None, None, None, None))))
 
           val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = false).futureValue
-          result shouldBe 0
+          result shouldBe ActivePenaltyCount.default
         }
 
         "the response is successful with a zero points total returned" in {
@@ -111,7 +111,7 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
             GetPenaltyDetails(Some(Totalisations(Some(0), None, None, None)), None, None, None))))
 
           val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = false).futureValue
-          result shouldBe 0
+          result shouldBe ActivePenaltyCount.default
         }
       }
 
@@ -121,7 +121,7 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
           setupMockGetPenaltyDetailsConnector(BaseTestConstants.testNino)(Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails)))
 
           val result = TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = true).futureValue
-          result shouldBe 2
+          result shouldBe ActivePenaltyCount(1, 1)
         }
       }
 
@@ -133,6 +133,7 @@ class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConne
           val exception = intercept[Exception] {
             TestPenaltyDetailsService.getPenaltiesCount(penaltiesCallEnabled = true).futureValue
           }
+
           exception.getMessage shouldBe "The future returned an exception of type: java.lang.Exception, with message: Get penalty details call failed with status of : 500."
         }
 

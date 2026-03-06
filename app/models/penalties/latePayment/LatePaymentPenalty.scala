@@ -16,9 +16,13 @@
 
 package models.penalties.latePayment
 
+import models.penalties.appealInformation.UpheldStatus
 import play.api.libs.json.{Format, Json}
 
-case class LatePaymentPenalty(details: Option[Seq[LPPDetails]], manualLPPIndicator: Option[Boolean])
+case class LatePaymentPenalty(details: Option[Seq[LPPDetails]], manualLPPIndicator: Option[Boolean]) {
+  val lppDetails: Seq[LPPDetails] = details.getOrElse(Seq.empty[LPPDetails])
+  val withoutAppealedPenalties: Seq[LPPDetails] = lppDetails.filterNot(_.appealInformation.exists(_.exists(_.appealStatus.contains(UpheldStatus))))
+}
 
 object LatePaymentPenalty {
   implicit val format: Format[LatePaymentPenalty] = Json.format[LatePaymentPenalty]

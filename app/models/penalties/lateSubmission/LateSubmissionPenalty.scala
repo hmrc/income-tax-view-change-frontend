@@ -16,11 +16,15 @@
 
 package models.penalties.lateSubmission
 
+import models.penalties.appealInformation.UpheldStatus
 import play.api.libs.json.{Json, OFormat}
 
 case class LateSubmissionPenalty(summary: LSPSummary,
                                  details: Seq[LSPDetails]
-                                )
+                                ){
+  val withoutAppealedPenalties: Seq[LSPDetails] =
+    details.filterNot(details => details.appealInformation.exists(_.exists(_.appealStatus.contains(UpheldStatus))))
+}
 
 object LateSubmissionPenalty {
   implicit val format: OFormat[LateSubmissionPenalty] = Json.format[LateSubmissionPenalty]

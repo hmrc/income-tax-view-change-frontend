@@ -26,11 +26,11 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.ANewCreditAndRefundModel
 import testUtils.{TestSupport, ViewSpec}
 import views.html.NewHomeOverviewView
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+import models.penalties.ActivePenaltyCount
 
 
 class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
@@ -50,6 +50,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
                    noChargesToPay: Boolean = false,
                    moneyInYourAccount: Boolean = false,
                    ctaViewModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2025,2026))),
+                   activePenalties: ActivePenaltyCount = ActivePenaltyCount.default,
                    welshLang: Boolean = false) {
 
     val testMessages: Messages = if (welshLang) {
@@ -72,7 +73,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         helpUrl,
         noChargesToPay,
         moneyInYourAccount,
-        ctaViewModel)(testMessages, appConfig, FakeRequest())
+        ctaViewModel,
+        activePenalties)(testMessages, appConfig, FakeRequest())
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
@@ -106,7 +108,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           linkHref = "/report-quarterly/income-and-expenses/view/adjust-poa/start",
         )
       }
-      "the user has charges to pay" in new TestSetup() {
+      "the user has charges to pay and has POA to adjust" in new TestSetup() {
         val chargesSection: Element = document.selectById("charges-overview-section")
         chargesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
 
@@ -131,6 +133,35 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           linkHref = "/report-quarterly/income-and-expenses/view/adjust-poa/start",
         )
       }
+      "the user has charges to pay and has NO POA to adjust" in new TestSetup() {
+        val chargesSection: Element = document.selectById("charges-overview-section")
+        chargesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
+
+        chargesSection.hasCorrectOverviewCardLink(
+          linkText = "Check what you owe and make a payment",
+          linkHref = "/report-quarterly/income-and-expenses/view/what-you-owe"
+        )
+
+        chargesSection.hasCorrectOverviewCardLink(
+          cardIndex = 1,
+          linkText = "View payment, credit and refund history",
+          linkHref = "/report-quarterly/income-and-expenses/view/payment-refund-history"
+        )
+        chargesSection.hasCorrectOverviewCardLink(
+          cardIndex = 2,
+          linkText = "Check for money in your account",
+          linkHref = "/report-quarterly/income-and-expenses/view/money-in-your-account",
+        )
+      }
+
+      "the user with money in their account" in new TestSetup(moneyInYourAccount = true) {
+        document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account and claim a refund"
+        document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/money-in-your-account")
+      }
+      "the user with NO money in their account" in new TestSetup(moneyInYourAccount = false) {
+        document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
+        document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/money-in-your-account")
+      }
     }
 
     "display the correct 'Deadlines and reporting' section" in new TestSetup() {
@@ -145,46 +176,6 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         linkText = "Check your reporting obligations",
         linkHref = "/report-quarterly/income-and-expenses/view/reporting-frequency"
       )
-    }
-
-    "display the the correct content for a user with charges to pay and no POA to adjust" in new TestSetup(ctaViewModel=WYOClaimToAdjustViewModel(None)) {
-      document.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
-      document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "Check what you owe and make a payment"
-      document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/what-you-owe")
-
-      document.select(".govuk-summary-card-no-border").get(1).text() shouldBe "View payment, credit and refund history"
-      document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/report-quarterly/income-and-expenses/view/payment-refund-history")
-
-      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
-      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/money-in-your-account")
-
-      document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
-      document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "View updates and deadlines"
-      document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/report-quarterly/income-and-expenses/view/submission-deadlines")
-
-      document.select(".govuk-summary-card-no-border").get(4).text() shouldBe "Check your reporting obligations"
-      document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/report-quarterly/income-and-expenses/view/reporting-frequency")
-
-      document.select("h2.govuk-heading-m").get(2).text() shouldBe "Income sources"
-      document.select(".govuk-summary-card-no-border").get(5).text() shouldBe "Add, manage or cease a business or income source"
-      document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/report-quarterly/income-and-expenses/view/manage-your-businesses")
-
-      document.select("h2.govuk-heading-m").get(3).text() shouldBe "Tax year summaries"
-      document.select(".govuk-summary-card-no-border").get(6).text() shouldBe "View all tax years"
-      document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref("/report-quarterly/income-and-expenses/view/tax-years")
-
-      document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
-      document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/tax-year-summary/${testTaxYear.endYear}")
-
-      document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
-      document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
-      document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment")
-
-      document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "View your late payment penalties"
-      document.select(".govuk-summary-card-no-border").get(9).link.attr("href") should include("/view-penalty/self-assessment#lppTab")
-
-      document.select(".govuk-summary-card-no-border").get(10).text() shouldBe "View your late submission penalties"
-      document.select(".govuk-summary-card-no-border").get(10).link.attr("href") should include("/view-penalty/self-assessment#lspTab")
     }
 
     "display the correct 'Income sources' section" in new TestSetup() {
@@ -210,44 +201,80 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       )
     }
 
-    "display the correct 'Penalties and appeals' section" in new TestSetup() {
-      val penaltiesSection: Element = document.selectById("penalties-overview-section")
-      penaltiesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Penalties and appeals"
+    "display the correct 'Penalties and appeals' section" which {
+      "has the correct heading" in new TestSetup() {
+        val penaltiesSection: Element = document.selectById("penalties-overview-section")
+        penaltiesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Penalties and appeals"
+      }
+      "displays the correct links" when {
+        "the user has NO penalties" in new TestSetup() {
+          val penaltiesSection: Element = document.selectById("penalties-overview-section")
+          penaltiesSection.hasCorrectOverviewCardLink(
+            linkText = "Check Self Assessment penalties and appeals",
+            linkHref = "/view-penalty/self-assessment",
+            exactHrefMatch = false
+          )
+        }
+        "the user has Late Payment Penalties" in new TestSetup(activePenalties = ActivePenaltyCount(activeLppCount = 1)) {
+          val penaltiesSection: Element = document.selectById("penalties-overview-section")
+          penaltiesSection.hasCorrectOverviewCardLink(
+            linkText = "Check Self Assessment penalties and appeals",
+            linkHref = "/view-penalty/self-assessment",
+            exactHrefMatch = false
+          )
 
-      penaltiesSection.hasCorrectOverviewCardLink(
-        linkText = "Check Self Assessment penalties and appeals",
-        linkHref = "/view-penalty/self-assessment",
-        exactHrefMatch = false
-      )
-      penaltiesSection.hasCorrectOverviewCardLink(
-        cardIndex = 1,
-        linkText = "View your late payment penalties",
-        linkHref = "/view-penalty/self-assessment#lppTab",
-        exactHrefMatch = false
-      )
-      penaltiesSection.hasCorrectOverviewCardLink(
-        cardIndex = 2,
-        linkText = "View your late submission penalties",
-        linkHref = "/view-penalty/self-assessment#lspTab",
-        exactHrefMatch = false
-      )
+          penaltiesSection.hasCorrectOverviewCardLink(
+            cardIndex = 1,
+            linkText = "View your late payment penalties",
+            linkHref = "/view-penalty/self-assessment#lppTab",
+            exactHrefMatch = false
+          )
+        }
+        "the user has Late Submission Penalties" in new TestSetup(activePenalties = ActivePenaltyCount(activeLspCount = 1)) {
+          val penaltiesSection: Element = document.selectById("penalties-overview-section")
+          penaltiesSection.hasCorrectOverviewCardLink(
+            linkText = "Check Self Assessment penalties and appeals",
+            linkHref = "/view-penalty/self-assessment",
+            exactHrefMatch = false
+          )
+          penaltiesSection.hasCorrectOverviewCardLink(
+            cardIndex = 1,
+            linkText = "View your late submission penalties",
+            linkHref = "/view-penalty/self-assessment#lspTab",
+            exactHrefMatch = false
+          )
+        }
+        "the user has BOTH Late Payment & Late Submission Penalties" in new TestSetup(activePenalties = ActivePenaltyCount(1, 1)) {
+          val penaltiesSection: Element = document.selectById("penalties-overview-section")
+          penaltiesSection.hasCorrectOverviewCardLink(
+            linkText = "Check Self Assessment penalties and appeals",
+            linkHref = "/view-penalty/self-assessment",
+            exactHrefMatch = false
+          )
+
+          penaltiesSection.hasCorrectOverviewCardLink(
+            cardIndex = 1,
+            linkText = "View your late payment penalties",
+            linkHref = "/view-penalty/self-assessment#lppTab",
+            exactHrefMatch = false
+          )
+
+          penaltiesSection.hasCorrectOverviewCardLink(
+            cardIndex = 2,
+            linkText = "View your late submission penalties",
+            linkHref = "/view-penalty/self-assessment#lspTab",
+            exactHrefMatch = false
+          )
+        }
+      }
     }
 
-    "display the correct content for a user with money in their account" in new TestSetup(moneyInYourAccount = true) {
-      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account and claim a refund"
-      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/money-in-your-account")
-    }
-
-    "display the correct content for a user with NO money in their account" in new TestSetup(moneyInYourAccount = false) {
-      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
-      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/money-in-your-account")
-    }
   }
 
 
   "New Home Overview page for Agents" should {
     "display the correct 'Charges, credits and payments' section" when {
-      "the user has charges to pay" in new TestSetup(isAgent = true) {
+      "the user has charges to pay and has POA to adjust" in new TestSetup(isAgent = true) {
         val chargesSection: Element = document.selectById("charges-overview-section")
         chargesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
 
@@ -271,7 +298,25 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           linkHref = "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start",
         )
       }
+      "the user has charges to pay and has NO POA to adjust" in new TestSetup(isAgent = true) {
+        val chargesSection: Element = document.selectById("charges-overview-section")
+        chargesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
 
+        chargesSection.hasCorrectOverviewCardLink(
+          linkText = "Check what you owe and make a payment",
+          linkHref = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes"
+        )
+        chargesSection.hasCorrectOverviewCardLink(
+          cardIndex = 1,
+          linkText = "View payment, credit and refund history",
+          linkHref = "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+        )
+        chargesSection.hasCorrectOverviewCardLink(
+          cardIndex = 2,
+          linkText = "Check for money in your account",
+          linkHref = "/report-quarterly/income-and-expenses/view/agents/money-in-your-account",
+        )
+      }
       "the user has NO charges to pay" in new TestSetup(isAgent = true, noChargesToPay = true) {
         val chargesSection: Element = document.selectById("charges-overview-section")
         chargesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
@@ -296,6 +341,14 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           linkHref = "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start",
         )
       }
+      "the user has money in their account" in new TestSetup(isAgent = true, moneyInYourAccount = true) {
+        document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account and claim a refund"
+        document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/money-in-your-account")
+      }
+      "the user has NO money in their account" in new TestSetup(isAgent = true, moneyInYourAccount = false) {
+        document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
+        document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/money-in-your-account")
+      }
     }
 
     "display the correct 'Deadlines and reporting' section" in new TestSetup(isAgent = true) {
@@ -310,46 +363,6 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         linkText = "Check your reporting obligations",
         linkHref = "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
       )
-    }
-
-    "display the the correct content for a user with charges to pay and no POA to adjust" in new TestSetup(isAgent = true,ctaViewModel=WYOClaimToAdjustViewModel(None)) {
-      document.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
-      document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "Check what you owe and make a payment"
-      document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/what-your-client-owes")
-
-      document.select(".govuk-summary-card-no-border").get(1).text() shouldBe "View payment, credit and refund history"
-      document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/payment-refund-history")
-
-      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
-      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/money-in-your-account")
-
-      document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
-      document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "View updates and deadlines"
-      document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
-
-      document.select(".govuk-summary-card-no-border").get(4).text() shouldBe "Check your reporting obligations"
-      document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/reporting-frequency")
-
-      document.select("h2.govuk-heading-m").get(2).text() shouldBe "Income sources"
-      document.select(".govuk-summary-card-no-border").get(5).text() shouldBe "Add, manage or cease a business or income source"
-      document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses")
-
-      document.select("h2.govuk-heading-m").get(3).text() shouldBe "Tax year summaries"
-      document.select(".govuk-summary-card-no-border").get(6).text() shouldBe "View all tax years"
-      document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/tax-years")
-
-      document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
-      document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/${testTaxYear.endYear}")
-
-      document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
-      document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
-      document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment/agent")
-
-      document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "View your late payment penalties"
-      document.select(".govuk-summary-card-no-border").get(9).link.attr("href") should include("/view-penalty/self-assessment/agent#lppTab")
-
-      document.select(".govuk-summary-card-no-border").get(10).text() shouldBe "View your late submission penalties"
-      document.select(".govuk-summary-card-no-border").get(10).link.attr("href") should include("/view-penalty/self-assessment/agent#lspTab")
     }
 
     "display the correct 'Income sources' section" in new TestSetup(isAgent = true) {
@@ -375,37 +388,72 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       )
     }
 
-    "display the correct 'Penalties and appeals' section" in new TestSetup(isAgent = true) {
-      val penaltiesSection: Element = document.selectById("penalties-overview-section")
-      penaltiesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Penalties and appeals"
+    "display the correct 'Penalties and appeals' section" which {
+      "has the correct heading" in new TestSetup(isAgent = true) {
+        val penaltiesSection: Element = document.selectById("penalties-overview-section")
+        penaltiesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Penalties and appeals"
+      }
+      "displays the correct links" when {
+        "the user has NO penalties" in new TestSetup(isAgent = true) {
+          val penaltiesSection: Element = document.selectById("penalties-overview-section")
+          penaltiesSection.hasCorrectOverviewCardLink(
+            linkText = "Check Self Assessment penalties and appeals",
+            linkHref = "/view-penalty/self-assessment/agent",
+            exactHrefMatch = false
+          )
+        }
+        "the user has Late Payment Penalties" in new TestSetup(isAgent = true, activePenalties = ActivePenaltyCount(activeLppCount = 1)) {
+          val penaltiesSection: Element = document.selectById("penalties-overview-section")
+          penaltiesSection.hasCorrectOverviewCardLink(
+            linkText = "Check Self Assessment penalties and appeals",
+            linkHref = "/view-penalty/self-assessment/agent",
+            exactHrefMatch = false
+          )
 
-      penaltiesSection.hasCorrectOverviewCardLink(
-        linkText = "Check Self Assessment penalties and appeals",
-        linkHref = "/view-penalty/self-assessment/agent",
-        exactHrefMatch = false
-      )
-      penaltiesSection.hasCorrectOverviewCardLink(
-        cardIndex = 1,
-        linkText = "View your late payment penalties",
-        linkHref = "/view-penalty/self-assessment/agent#lppTab",
-        exactHrefMatch = false
-      )
-      penaltiesSection.hasCorrectOverviewCardLink(
-        cardIndex = 2,
-        linkText = "View your late submission penalties",
-        linkHref = "/view-penalty/self-assessment/agent#lspTab",
-        exactHrefMatch = false
-      )
-    }
+          penaltiesSection.hasCorrectOverviewCardLink(
+            cardIndex = 1,
+            linkText = "View your late payment penalties",
+            linkHref = "/view-penalty/self-assessment/agent#lppTab",
+            exactHrefMatch = false
+          )
+        }
+        "the user has Late Submission Penalties" in new TestSetup(isAgent = true, activePenalties = ActivePenaltyCount(activeLspCount = 1)) {
+          val penaltiesSection: Element = document.selectById("penalties-overview-section")
+          penaltiesSection.hasCorrectOverviewCardLink(
+            linkText = "Check Self Assessment penalties and appeals",
+            linkHref = "/view-penalty/self-assessment/agent",
+            exactHrefMatch = false
+          )
+          penaltiesSection.hasCorrectOverviewCardLink(
+            cardIndex = 1,
+            linkText = "View your late submission penalties",
+            linkHref = "/view-penalty/self-assessment/agent#lspTab",
+            exactHrefMatch = false
+          )
+        }
+        "the user has BOTH Late Payment & Late Submission Penalties" in new TestSetup(isAgent = true, activePenalties = ActivePenaltyCount(1, 1)) {
+          val penaltiesSection: Element = document.selectById("penalties-overview-section")
+          penaltiesSection.hasCorrectOverviewCardLink(
+            linkText = "Check Self Assessment penalties and appeals",
+            linkHref = "/view-penalty/self-assessment/agent",
+            exactHrefMatch = false
+          )
 
-    "display the correct content for a user with money in their account" in new TestSetup(isAgent = true, moneyInYourAccount = true) {
-      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account and claim a refund"
-      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/money-in-your-account")
-    }
+          penaltiesSection.hasCorrectOverviewCardLink(
+            cardIndex = 1,
+            linkText = "View your late payment penalties",
+            linkHref = "/view-penalty/self-assessment/agent#lppTab",
+            exactHrefMatch = false
+          )
 
-    "display the correct content for a user with NO money in their account" in new TestSetup(isAgent = true, moneyInYourAccount = false) {
-      document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
-      document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/money-in-your-account")
+          penaltiesSection.hasCorrectOverviewCardLink(
+            cardIndex = 2,
+            linkText = "View your late submission penalties",
+            linkHref = "/view-penalty/self-assessment/agent#lspTab",
+            exactHrefMatch = false
+          )
+        }
+      }
     }
   }
 

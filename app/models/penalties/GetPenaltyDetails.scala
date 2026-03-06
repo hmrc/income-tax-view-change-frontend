@@ -27,7 +27,15 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 case class GetPenaltyDetails(totalisations: Option[Totalisations],
                              lateSubmissionPenalty: Option[LateSubmissionPenalty],
                              latePaymentPenalty: Option[LatePaymentPenalty],
-                             breathingSpace: Option[BreathingSpace])
+                             breathingSpace: Option[BreathingSpace]){
+
+  val countLPPNotPaidOrAppealed: Int = latePaymentPenalty.map(_.withoutAppealedPenalties.count(
+    details => details.penaltyAmountOutstanding.exists(_ > BigDecimal(0)) || details.penaltyAmountAccruing > BigDecimal(0)
+  )).getOrElse(0)
+
+  val countLSPNotPaidOrAppealed: Int =
+    lateSubmissionPenalty.map(_.withoutAppealedPenalties.count(_.chargeOutstandingAmount.exists(_ > BigDecimal(0)))).getOrElse(0)
+}
 
 object GetPenaltyDetails {
   implicit val format: Format[GetPenaltyDetails] = Json.format[GetPenaltyDetails]

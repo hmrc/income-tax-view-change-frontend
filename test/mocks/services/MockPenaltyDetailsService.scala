@@ -17,6 +17,7 @@
 package mocks.services
 
 import models.itsaStatus.ITSAStatus.ITSAStatus
+import models.penalties.ActivePenaltyCount
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -35,7 +36,7 @@ trait MockPenaltyDetailsService extends UnitSpec with BeforeAndAfterEach {
     reset(mockPenaltyDetailsService)
   }
 
-  def setupMockGetPenaltyDetailsCount(enabled: Boolean)(out: Future[Int]): Unit = {
+  def setupMockGetPenaltyDetailsCount(enabled: Boolean)(out: Future[ActivePenaltyCount]): Unit = {
     when(mockPenaltyDetailsService.getPenaltiesCount(any())(any, any, any))
       .thenReturn(out)
   }

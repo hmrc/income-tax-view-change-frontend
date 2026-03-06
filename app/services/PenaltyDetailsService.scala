@@ -21,7 +21,9 @@ import config.FrontendAppConfig
 import connectors.GetPenaltyDetailsConnector
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.penalties.GetPenaltyDetailsParser._
+import models.penalties.ActivePenaltyCount
+import models.penalties.GetPenaltyDetailsParser.*
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -30,6 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class PenaltyDetailsService @Inject()(getPenaltyDetailsConnector: GetPenaltyDetailsConnector,
                                       val appConfig: FrontendAppConfig) {
 
+  lazy val logger: Logger = Logger(getClass)
   def getPenaltySubmissionFrequency(status: ITSAStatus): String = {
     status match {
       case ITSAStatus.Mandated | ITSAStatus.Voluntary => "Quarterly"
@@ -42,9 +45,10 @@ class PenaltyDetailsService @Inject()(getPenaltyDetailsConnector: GetPenaltyDeta
     getPenaltyDetailsConnector.getPenaltyDetails(nino)
   }
 
+
   def getPenaltiesCount(penaltiesCallEnabled: Boolean)(implicit user: MtdItUser[_],
-                                                       hc: HeaderCarrier,
-                                                       ec: ExecutionContext): Future[Int] = {
+                                                        hc: HeaderCarrier,
+                                                        ec: ExecutionContext): Future[ActivePenaltyCount] = {
     if (penaltiesCallEnabled) {
       getPenaltyDetails(user.nino).map(_.fold(
         {
@@ -53,8 +57,12 @@ class PenaltyDetailsService @Inject()(getPenaltyDetailsConnector: GetPenaltyDeta
           case GetPenaltyDetailsMalformed =>
             throw new Exception("Get penalty details call failed with a malformed response body")
         },
-        success => success.penaltyDetails.lateSubmissionPenalty.map(_.summary.activePenaltyPoints).getOrElse(0))
-      )
-    } else Future.successful(0)
+        success =>
+          ActivePenaltyCount(
+            activeLspCount = success.penaltyDetails.countLSPNotPaidOrAppealed,
+            activeLppCount = success.penaltyDetails.countLPPNotPaidOrAppealed
+          )
+      ))
+    } else Future.successful(ActivePenaltyCount.default)
   }
 }

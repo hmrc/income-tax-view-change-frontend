@@ -176,7 +176,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         )
 
       val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel =
-        PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
+        PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount.total)
 
       val paymentCreditAndRefundHistoryTileViewModel =
         PaymentCreditAndRefundHistoryTileViewModel(credits, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
@@ -320,9 +320,10 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         ctaViewModel <- whatYouOweService.claimToAdjustViewModel(Nino(user.nino))
         credits <- creditService.getAllCredits()
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
+        penaltiesCount <- penaltyDetailsService.getPenaltiesCount(isEnabled(PenaltiesBackendEnabled))
       }
       yield {
-        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel))
+        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, penaltiesCount))
       }
     }
   }
