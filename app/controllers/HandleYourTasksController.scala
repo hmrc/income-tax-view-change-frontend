@@ -89,7 +89,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         else SessionKeys.mandationStatus -> "off"
 
       val homeViewModel = HandleYourTasksViewModel(chargeItemList, credits, creditsRefundsRepayEnabled, updatesAndDeadlinesViewModel, userMandatedOrVoluntary)
-
+      
       Ok(
         handleYourTasksView(
           origin = origin,
@@ -100,7 +100,6 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
           helpUrl = helpUrl(origin, isAgent),
           viewModel = homeViewModel, appConfig.itvcRebrand)
       ).addingToSession(mandationStatus)
-
     }
   }
 
