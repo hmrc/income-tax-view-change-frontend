@@ -198,6 +198,24 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
 ## New Home Page ##
+### Your New Tasks Tab
+
+new.home.navigation.tabs.yourTasks                              = Eich tasgau
+
+new.home.yourTasks.updates-and-deadlines                        = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
+new.home.yourTasks.upcoming-annual-updates-body            = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad blynyddol.
+new.home.yourTasks.upcoming-annual-updates-label           = Dyledus erbyn {0}
+new.home.yourTasks.upcoming-quarterly-updates-body         = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad chwarterol.
+new.home.yourTasks.upcoming-quarterly-updates-label        = Dyledus erbyn {0}
+new.home.yourTasks.overdue-annual-submission-single-body            = Mae gennych gyflwyniad blynyddol sy’n hwyr.
+new.home.yourTasks.overdue-annual-submission-single-label           = Roedd hyn yn ddyledus ar {0}
+new.home.yourTasks.overdue-annual-submission-multiple-body          = Mae gennych {0} o gyflwyniadau blynyddol sy’n hwyr.
+new.home.yourTasks.overdue-annual-submission-multiple-label         = Dyddiad cau’r cyflwyniad hynaf yw {0}
+new.home.yourTasks.overdue-quarterly-submission-single-body            = Mae gennych gyflwyniad chwarterol sy’n hwyr.
+new.home.yourTasks.overdue-quarterly-submission-single-label           = Roedd hyn yn ddyledus ar {0}
+new.home.yourTasks.overdue-quarterly-submission-multiple-body          = Mae gennych {0} o gyflwyniadau chwarterol sy’n hwyr.
+new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Dyddiad cau’r cyflwyniad hynaf yw {0}
+
 ### Overview Tab
 new.home.navigation.tabs.overview                               = Trosolwg
 

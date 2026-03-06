@@ -23,16 +23,20 @@ import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
 import models.financialDetails.*
-import models.newHomePage.HandleYourTasksViewModel
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
+import models.newHomePage.{HandleYourTasksViewModel, SubmissionDeadlinesViewModel}
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import services.*
 import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
-import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.HandleYourTasksView
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +49,8 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                 val whatYouOweService: WhatYouOweService,
                                 val creditService: CreditService,
                                 val dateService: DateServiceInterface,
-                                val financialDetailsService: FinancialDetailsService)
+                                val financialDetailsService: FinancialDetailsService,
+                                val nextUpdatesService: NextUpdatesService)
                                (implicit val ec: ExecutionContext,
                                 mcc: MessagesControllerComponents,
                                 val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
@@ -75,6 +80,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+      updatesAndDeadlinesViewModel <- getNextUpdates(isAgent = isAgent)
     } yield {
 
       val creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay)
@@ -82,12 +88,11 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
 
-      val homeViewModel = HandleYourTasksViewModel(chargeItemList, unpaidCharges, credits, creditsRefundsRepayEnabled)
+      val homeViewModel = HandleYourTasksViewModel(chargeItemList, unpaidCharges, credits, creditsRefundsRepayEnabled, updatesAndDeadlinesViewModel)
 
       Ok(handleYourTasksView(origin, isAgent,
         yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
         overviewUrl(origin, isAgent), helpUrl(origin, isAgent), homeViewModel)).addingToSession(mandationStatus)
-
     }
   }
 
@@ -106,6 +111,68 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
 
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
+  }
+
+//  TODO do we need it
+  /*private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
+
+    if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
+      action
+    } else {
+      Future.successful(Ok("TODO What should we render if there is no next updates"))
+    }
+  }*/
+
+  private def getNextUpdates( isAgent: Boolean)
+                             (implicit user: MtdItUser[_]): Future[SubmissionDeadlinesViewModel] = {
+
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+
+    val submissionDeadlinesViewModel = {
+      for {
+//        TODO  do we need it
+        //                (checks, optOutOneYearViewModel, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
+        currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+        (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- nextUpdatesService.getNextDueDates()
+        _ = Logger("application").error(s"nextTaxReturnDueDate=$nextTaxReturnDueDate")
+        nextUpdatesDueDates <- getNextUpdatesDueDates()
+      } yield {
+          SubmissionDeadlinesViewModel(
+            dueDates = nextUpdatesDueDates,
+            currentDate = dateService.getCurrentDate,
+            currentYearITSAStatus = currentITSAStatus,
+//            TODO TODO remove it just for local testing
+//                        nextQuarterlyUpdateDueDate = Some(LocalDate.of(2027, 1, 31))
+//            nextQuarterlyUpdateDueDate = Some(LocalDate.of(2027, 1, 31)),
+            nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
+            // TODO remove me just for local testing
+            //                    nextTaxReturnDueDate = stubData
+            nextTaxReturnDueDate = nextTaxReturnDueDate
+          )
+        }
+    }.recoverWith {
+      case ex =>
+        Logger("application").error(s"Failed to retrieve reporting content checks: ${ex.getMessage}")
+        Future.successful(SubmissionDeadlinesViewModel(Seq.empty, LocalDate.now(), ITSAStatus.UnknownStatus,  None, None))
+    }
+    submissionDeadlinesViewModel
+  }
+
+  private def getNextUpdatesDueDates()
+                                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[LocalDate]] = {
+    nextUpdatesService.getDueDates().flatMap {
+      case Right(nextUpdatesDueDates: Seq[LocalDate]) => Future.successful(nextUpdatesDueDates)
+      case Left(ex) =>
+        Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+        Future.successful(Seq.empty[LocalDate])
+    }
+  }
+
+  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
+      .toMap
+      .withDefaultValue(ITSAStatus.NoStatus)
+    ).map(detail => detail(taxYear))
   }
 
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HandleYourTasksController.showAgent().url else controllers.routes.HandleYourTasksController.show().url

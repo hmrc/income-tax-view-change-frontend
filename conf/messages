@@ -197,6 +197,24 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty poin
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
 ## New Home Page ##
+### Your Tasks Tab
+new.home.navigation.tabs.yourTasks                              = Your tasks
+
+new.home.yourTasks.updates-and-deadlines                        = View submission deadlines
+new.home.yourTasks.upcoming-annual-updates-body                  = You have an upcoming annual submission deadline.
+new.home.yourTasks.upcoming-annual-updates-label                 = Due {0}
+new.home.yourTasks.upcoming-quarterly-updates-body               = You have an upcoming quarterly submission deadline.
+new.home.yourTasks.upcoming-quarterly-updates-label              = Due {date}
+new.home.yourTasks.overdue-annual-submission-single-body            = You have an overdue annual submission.
+new.home.yourTasks.overdue-annual-submission-single-label           = Was due {0}
+new.home.yourTasks.overdue-annual-submission-multiple-body          = You have {0} overdue annual submissions.
+new.home.yourTasks.overdue-annual-submission-multiple-label         = Oldest submission due {0}
+new.home.yourTasks.overdue-quarterly-submission-single-body            = You have an overdue quarterly submission.
+new.home.yourTasks.overdue-quarterly-submission-single-label           = Was due {0}
+new.home.yourTasks.overdue-quarterly-submission-multiple-body          = You have {0} overdue quarterly submissions.
+new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Oldest submission due {0}
+
+
 ### Overview Tab
 new.home.navigation.tabs.overview                               = Overview
 

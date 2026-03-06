@@ -22,6 +22,8 @@
 @import views.html.partials.newHomeView._
 @import views.html.components._
 @import models.newHomePage.HandleYourTasksViewModel
+@import views.html.partials.newHome.yourTasks._
+@import views.html.partials.newHome.yourTasks.SubmissionDeadlinesTilePartial
 
 @this(
         mainTemplate: unifiedLayout,
@@ -29,6 +31,7 @@
         h1WithCaption: h1WithCaption,
         govukServiceNavigation : GovukServiceNavigation,
         yourTasksTilePartial: YourTasksTilePartial,
+        submissionDeadlinesTilePartial: SubmissionDeadlinesTilePartial,
         h2: h2
 )
 
@@ -106,4 +109,7 @@
 
     @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
     @yourTasksTilePartial(viewModel, isAgent)
+
+    @submissionDeadlinesTilePartial(isAgent, messages("new.home.yourTasks.updates-and-deadlines"), viewModel)
+  @*  @SectionBreak *@
 }
