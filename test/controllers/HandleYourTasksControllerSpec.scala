@@ -19,7 +19,7 @@ package controllers
 import auth.authV2.AuthActions
 import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockAuthActions
-import mocks.services.{MockDateService, MockFinancialDetailsService, MockITSAStatusService, MockWhatYouOweService}
+import mocks.services.{MockDateService, MockFinancialDetailsService, MockITSAStatusService, MockNextUpdatesService, MockWhatYouOweService}
 import models.admin.CreditsRefundsRepay
 import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.TaxYear
@@ -46,7 +46,8 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   with MockDateService
   with MockFinancialDetailsService
   with MockITSAStatusService
-  with MockWhatYouOweService {
+  with MockWhatYouOweService 
+  with MockNextUpdatesService {
 
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
@@ -86,7 +87,8 @@ class HandleYourTasksControllerSpec extends MockAuthActions
       mockWhatYouOweService,
       mockedCreditService,
       mockDateServiceInjected,
-      mockFinancialDetailsService)
+      mockFinancialDetailsService,
+      mockNextUpdatesService)
 
 
     setupMockUserAuth
