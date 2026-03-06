@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package views
 
 import auth.MtdItUser

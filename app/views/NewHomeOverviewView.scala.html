@@ -23,6 +23,7 @@
 @import config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
 @import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+@import models.financialDetails.*
 
 @this(
         mainTemplate: unifiedLayout,
@@ -46,7 +47,8 @@
         helpUrl: String,
         noChargesToPay: Boolean,
         moneyInYourAccount: Boolean,
-        ctaViewModel: WYOClaimToAdjustViewModel)(
+        ctaViewModel: WYOClaimToAdjustViewModel,
+        chargeItems: List[ChargeItem])(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -142,9 +144,13 @@
     @taxYearSection(isAgent = false, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = false)
+    @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
 }
 
+
+@isPenaltyPresent(targetTypes: TransactionType*) = @{
+    chargeItems.exists(item => targetTypes.contains(item.transactionType))
+}
 
 @AgentSections(noChargesToPay: Boolean) = {
     @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel)
@@ -159,7 +165,7 @@
     @taxYearSection(isAgent = true, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = true)
+    @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
 }
 
 
