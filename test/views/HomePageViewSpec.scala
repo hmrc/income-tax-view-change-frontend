@@ -20,7 +20,7 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.admin.PaymentHistoryRefunds
+import models.admin.{GovUkRebrand, PaymentHistoryRefunds}
 import models.creditsandrefunds.CreditsModel
 import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -101,7 +101,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               reportingFrequencyEnabled: Boolean = false, penaltiesAndAppealsIsEnabled: Boolean = true,
-              penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
+              penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary, useRebrand: Boolean = false) {
+
+    if (useRebrand) {
+      enable(GovUkRebrand)
+    } else {
+      disable(GovUkRebrand)
+    }
 
     val returnsTileViewModel: ReturnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
@@ -128,7 +134,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
       penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
-      dunningLockExists = dunningLockExists
+      dunningLockExists = dunningLockExists,
+      isGovUkRebrandEnabled = useRebrand
     )
 
     val home: HomeView = app.injector.instanceOf[HomeView]
@@ -163,6 +170,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     s"have the title ${messages("htmlTitle", messages("home.heading"))}" in new Setup {
+      document.title() shouldBe "Income Tax - Manage your Self Assessment - GOV.UK"
+    }
+
+    s"have the title ${messages("htmlTitle", messages("home.heading.new"))}" in new Setup(useRebrand = true) {
       document.title() shouldBe "Self Assessment - Manage your Self Assessment - GOV.UK"
     }
 
@@ -171,6 +182,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     s"have the page heading '${messages("home.heading")}'" in new Setup {
+      getTextOfElementById("income-tax-heading") shouldBe Some(s"Income Tax")
+    }
+
+    s"have the page heading '${messages("home.heading.new")}'" in new Setup(useRebrand = true) {
       getTextOfElementById("income-tax-heading") shouldBe Some(s"Self Assessment")
     }
 
@@ -194,10 +209,16 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     "have a language selection switch" which {
 
-      "displays the correct content" in new Setup(user = testMtdItUser(hasSAUtr = false)) {
+      "displays the correct content when rebrand is on" in new Setup(useRebrand = true) {
         val langSwitchScript = getElementByClass("hmrc-service-navigation-language-select__list")
         langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("ENG")
         langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("CYM – Newid yr iaith i’r Gymraeg")
+      }
+
+      "displays the correct content when rebrand is off" in new Setup {
+        val langSwitchScript: Option[Element] = getElementById("language-switch")
+        langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
+        langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith i’r Gymraeg Cymraeg")
       }
     }
 
