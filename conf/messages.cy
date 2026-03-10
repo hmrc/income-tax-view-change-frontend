@@ -1916,6 +1916,15 @@ check-details.address                                   = Cyfeiriad
 check-details.change                                    = Newid
 check-details.description                               = Unwaith y byddwch yn cadarnhau’r manylion hyn, ni fyddwch yn gallu eu diwygio yn y cam nesaf a bydd angen i chi gysylltu â CThEF i wneud hynny.
 
+check-details.sole-trader-business-address              = Cyfeiriad busnes unig fasnachwr
+check-details.add-a-new-one                             = Add a new one
+check-details.is-new-address-in-uk                      = A yw'r cyfeiriad newydd yn y DU?
+check-details.is-business-address-in-uk                 = A yw cyfeiriad eich busnes unig fasnachwr yn y DU?
+check-details.yes                                       = Iawn
+check-details.no                                        = Na
+check-details.added-address                             = Added address for this business
+check-details.added-international-address               = Cyfeiriad rhyngwladol ar gyfer y busnes hwn wedi'i ychwanegu
+
 check-details-uk.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-uk.heading                                = Eiddo yn y DU
 check-details-uk.start-date                             = Dyddiad dechrau

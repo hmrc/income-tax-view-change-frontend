@@ -1917,6 +1917,15 @@ check-details.address                                   = Address
 check-details.change                                    = Change
 check-details.description                               = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
+check-details.sole-trader-business-address              = Sole trader business address
+check-details.add-a-new-one                             = Add a new one
+check-details.is-new-address-in-uk                      = Is the new address in the UK?
+check-details.is-business-address-in-uk                 = Is the address of your sole trader business in the UK?
+check-details.yes                                       = Yes
+check-details.no                                        = No
+check-details.added-address                             = Added address for this business
+check-details.added-international-address               = Added international address for this business
+
 check-details-uk.title                                  = Confirm this information is correct
 check-details-uk.heading                                = UK property
 check-details-uk.start-date                             = Start date
