@@ -22,17 +22,18 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationAdded
 import models.UIJourneySessionData
+import models.admin.OverseasBusinessAddress
 import models.core.NormalMode
 import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{CreateBusinessDetailsService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
@@ -97,7 +98,8 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
                 postAction = postAction,
                 isAgent,
                 backUrl = backUrl,
-                isTriggeredMigration = isTriggeredMigration
+                isTriggeredMigration = isTriggeredMigration,
+                overseasBusinessAddressEnabled = isEnabled(OverseasBusinessAddress)
               )
             )
           }
@@ -144,19 +146,25 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
         accountingPeriodEndDate <- addIncomeSourceData.accountingPeriodEndDate
         businessTrade <- addIncomeSourceData.businessTrade
         businessAddressLine1 <- address.lines.headOption
-      } yield CheckBusinessDetailsViewModel(
-        businessName = addIncomeSourceData.businessName,
-        businessStartDate = addIncomeSourceData.dateStarted,
-        accountingPeriodEndDate = accountingPeriodEndDate,
-        businessTrade = businessTrade,
-        businessAddressLine1 = businessAddressLine1,
-        businessAddressLine2 = address.lines.lift(1),
-        businessAddressLine3 = address.lines.lift(2),
-        businessAddressLine4 = address.lines.lift(3),
-        businessPostalCode = address.postcode,
-        businessCountryCode = addIncomeSourceData.countryCode,
-        addressId = addIncomeSourceData.addressId
-      )
+      } yield {
+        val isAddingNewAddress = addIncomeSourceData.chooseSoleTraderAddress.exists(_.newAddress)
+        val isNoAddressOnFile = addIncomeSourceData.chooseSoleTraderAddress.isEmpty
+        CheckBusinessDetailsViewModel(
+          businessName = addIncomeSourceData.businessName,
+          businessStartDate = addIncomeSourceData.dateStarted,
+          accountingPeriodEndDate = accountingPeriodEndDate,
+          businessTrade = businessTrade,
+          businessAddressLine1 = businessAddressLine1,
+          businessAddressLine2 = address.lines.lift(1),
+          businessAddressLine3 = address.lines.lift(2),
+          businessAddressLine4 = address.lines.lift(3),
+          businessPostalCode = address.postcode,
+          businessCountryCode = addIncomeSourceData.countryCode,
+          addressId = addIncomeSourceData.addressId,
+          isAddingNewAddress = isAddingNewAddress,
+          isNoAddressOnFile = isNoAddressOnFile
+        )
+      }
     }
   }
 
