@@ -20,7 +20,6 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch.*
-import models.admin.GovUkRebrand
 import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
@@ -82,14 +81,8 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
                   displayCeaseAnIncome: Boolean = false,
                   reportingFrequencyEnabled: Boolean = false,
                   currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary,
-                  user: MtdItUser[_] = testMtdItUserNotMigrated,
-                  useRebrand: Boolean = false
+                  user: MtdItUser[_] = testMtdItUserNotMigrated
                  ) {
-    if(useRebrand) {
-      enable(GovUkRebrand)
-    } else {
-      disable(GovUkRebrand)
-    }
 
     val agentHome: SupportingAgentHomeView = app.injector.instanceOf[SupportingAgentHomeView]
 
@@ -264,16 +257,10 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
       "have a language selection switch" which {
 
-        "displays the correct content when rebrand is on" in new TestSetup(useRebrand = true) {
+        "displays the correct content" in new TestSetup() {
           val langSwitchScript = getElementByClass("hmrc-service-navigation-language-select__list")
           langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("ENG")
           langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("CYM – Newid yr iaith i’r Gymraeg")
-        }
-
-        "displays the correct content when rebrand is off" in new TestSetup {
-          val langSwitchScript: Option[Element] = getElementById("language-switch")
-          langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
-          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith i’r Gymraeg Cymraeg")
         }
       }
 

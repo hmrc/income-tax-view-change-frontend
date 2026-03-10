@@ -28,8 +28,6 @@
 @import viewUtils.ExternalUrlHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderUrls
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderNames
-@import config.featureswitch.FeatureSwitchingImpl
-@import models.admin.GovUkRebrand
 
 @this(
     appConfig: FrontendAppConfig,
@@ -45,8 +43,7 @@
     languageSwitch: HmrcLanguageSelect,
     mainContentLayout: mainContentLayout,
     scripts: Scripts,
-    a: link,
-    featureSwitching: FeatureSwitchingImpl
+    a: link
 )
 
 @(pageTitle: String,
@@ -86,7 +83,7 @@
     }
 }
 
-@useGovUkRebrand = @{ featureSwitching.isEnabledFromConfig(GovUkRebrand) }
+@useGovUkRebrand = @{ appConfig.itvcRebrand }
 
 @siteHeader = @{
 

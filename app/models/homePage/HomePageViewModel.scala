@@ -33,7 +33,7 @@ case class HomePageViewModel(utr: Option[String],
                              penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel,
                              dunningLockExists: Boolean = false,
                              origin: Option[String] = None,
-                             isGovUkRebrandEnabled: Boolean = false)
+                             useGovUkRebrand: Boolean = false)
 
 case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int,
                                      paymentsAccruingInterestCount: Int) {
