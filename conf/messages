@@ -996,7 +996,7 @@ whatYouOwe.sa-note-2-body                                          = To view you
 whatYouOwe.sa-note-2-body-agent-1                                  = To view your client’s payment history from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
 whatYouOwe.sa-note-2-heading-agent                                 = Your client may still have payments due for earlier Self Assessment tax years
 whatYouOwe.sa-note-2-agent-2                                       = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
-whatYouOwe.sa-note-2-body-agent-2                                  = This will be a different Government Gateway ID and password to your Agent Services account.
+whatYouOwe.sa-note-2-body-agent-2                                  = This will be a different Government Gateway ID and password to your agent services account.
 whatYouOwe.sa-link-2                                               = Self Assessment online account
 whatYouOwe.sa-link-2-agent                                         = Self Assessment for Agents account
 whatYouOwe.outstanding-charges-note                                = Any payments made will be used for outstanding charges in these tax years first and will not be displayed here.
@@ -1700,7 +1700,7 @@ pagehelp.opensInNewTabText                                      = (opens in new 
 notmigrated.user.heading                                        = How to claim a refund
 notmigrated.user.content                                        = To claim money that’s in your account from earlier tax years (before you signed up to Making Tax Digital for Income Tax), you need to visit your earlier
 notmigrated.agent.content                                       = To claim money from earlier tax years (before your client signed up to Making Tax Digital for Income Tax), you need to visit your
-notmigrated.agent.content_extra                                 = This will be a different Government Gateway ID and password to your Agent Services account.
+notmigrated.agent.content_extra                                 = This will be a different Government Gateway ID and password to your agent services account.
 notmigrated.user.link_title                                     = Self Assessment online account
 notmigrated.agent.link_title                                    = Self Assessment for Agents Account
 

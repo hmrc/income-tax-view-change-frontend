@@ -996,7 +996,7 @@ whatYouOwe.sa-note-2-body                                       = Er mwyn bwrw g
 whatYouOwe.sa-note-2-body-agent-1                               = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
 whatYouOwe.sa-note-2-heading-agent                              = Mae’n bosibl y bydd gan eich cleient daliadau sy’n ddyledus o hyd ar gyfer blynyddoedd treth Hunanasesiad blaenorol
 whatYouOwe.sa-note-2-agent-2                                    = Er mwyn bwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
-whatYouOwe.sa-note-2-body-agent-2                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+whatYouOwe.sa-note-2-body-agent-2                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 whatYouOwe.sa-link-2                                            = cyfrif Hunanasesiad ar-lein blaenorol
 whatYouOwe.sa-link-2-agent                                      = cyfrif Hunanasesiad ar gyfer Asiantau
 whatYouOwe.outstanding-charges-note                             = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
@@ -1701,7 +1701,7 @@ pagehelp.opensInNewTabText                                      = (yn agor tab n
 notmigrated.user.heading                                        = Sut i hawlio ad-daliad
 notmigrated.user.content                                        = Er mwyn bwrw golwg dros yr arian yn eich cyfrif o flynyddoedd treth blaenorol (cyn y gwnaethoch gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm) mae angen i chi fynd i’ch
 notmigrated.agent.content                                       = I hawlio arian o flynyddoedd treth blaenorol (cyn y gwnaeth eich cleient gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm), bydd angen i chi fewngofnodi i’ch
-notmigrated.agent.content_extra                                 = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+notmigrated.agent.content_extra                                 = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 
