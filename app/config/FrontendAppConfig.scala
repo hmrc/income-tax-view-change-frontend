@@ -171,6 +171,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
 
   lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
+  
+  lazy val itvcRebrand: Boolean = servicesConfig.getBoolean("itvc.useRebrand")
 
   lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-time-machine")
   lazy val timeMachineAddYears: Int = servicesConfig.getInt("time-machine.add-years")

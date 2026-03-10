@@ -79,7 +79,7 @@ viewModel: HomePageViewModel
 }
 
 @homeHeading = @{
-    if(viewModel.isGovUkRebrandEnabled) {
+    if(viewModel.useGovUkRebrand) {
         messages("home.heading.new")
     } else {
         messages("home.heading")
