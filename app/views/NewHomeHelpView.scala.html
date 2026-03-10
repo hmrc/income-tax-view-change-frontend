@@ -38,7 +38,8 @@
         yourTasksUrl: String,
         recentActivityUrl: String,
         overViewUrl: String,
-        helpUrl: String)(
+        helpUrl: String,
+        isGovUkRebrandEnabled: Boolean)(
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -47,7 +48,7 @@
         user.optClientNameAsString.fold(messages("home.agent.heading")) {
             clientName => messages("home.agent.headingWithClientName", clientName)
         }
-    } else messages("home.heading")
+    } else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading")
 }
 
 @caption = @{
@@ -61,7 +62,7 @@
 }
 
 @mainTemplate(
-    pageTitle = if (isAgent) messages("home.agent.heading") else messages("home.heading"),
+    pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
 ) {

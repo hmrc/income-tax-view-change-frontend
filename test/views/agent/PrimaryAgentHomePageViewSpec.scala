@@ -20,6 +20,7 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch.*
+import models.admin.GovUkRebrand
 import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
@@ -33,7 +34,6 @@ import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.*
-import testConstants.FinancialDetailsTestConstants.financialDetailsModel
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.agent.PrimaryAgentHomeView
@@ -94,8 +94,15 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
                   penaltiesAndAppealsIsEnabled: Boolean = true,
                   submissionFrequency: String = "Annual",
                   penaltyPoints: Int = 0,
-                  currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary
+                  currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary,
+                  useRebrand: Boolean = false
                  ) {
+
+    if(useRebrand) {
+      enable(GovUkRebrand)
+    } else {
+      disable(GovUkRebrand)
+    }
 
     val agentHome: PrimaryAgentHomeView = app.injector.instanceOf[PrimaryAgentHomeView]
 
@@ -130,6 +137,8 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
+
+    def getElementByClass(elementClass: String) = Option(document.getElementsByClass(elementClass))
 
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
 
@@ -335,7 +344,13 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
       "have a language selection switch" which {
 
-        "displays the correct content" in new TestSetup {
+        "displays the correct content when rebrand is on" in new TestSetup(useRebrand = true) {
+          val langSwitchScript = getElementByClass("hmrc-service-navigation-language-select__list")
+          langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("ENG")
+          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("CYM – Newid yr iaith i’r Gymraeg")
+        }
+
+        "displays the correct content when rebrand is off" in new TestSetup {
           val langSwitchScript: Option[Element] = getElementById("language-switch")
           langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
           langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith i’r Gymraeg Cymraeg")

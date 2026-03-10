@@ -1,5 +1,5 @@
-@*
- * Copyright 2023 HM Revenue & Customs
+/*
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,22 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
+package config.featureswitch
 
-@this(appConfig: FrontendAppConfig)
-@()(implicit messages: Messages)
+import config.FrontendAppConfig
+import javax.inject.{Inject, Singleton}
 
-<div class="beta-banner">
-    <p>
-        <strong class="phase-tag">@messages("betaBanner.beta")</strong>
-        <span>
-            @messages("betaBanner.newService")
-            @messages("betaBanner.your")
-            <a id="feedback-link" href="@appConfig.betaFeedbackUrl">
-                @messages("betaBanner.feedback")</a>
-                @messages("betaBanner.improve")
-        </span>
-    </p>
-</div>
+@Singleton
+class FeatureSwitchingImpl @Inject()(val appConfig: FrontendAppConfig) extends FeatureSwitching

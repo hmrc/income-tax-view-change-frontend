@@ -78,11 +78,19 @@ viewModel: HomePageViewModel
     </div>
 }
 
+@homeHeading = @{
+    if(viewModel.isGovUkRebrandEnabled) {
+        messages("home.heading.new")
+    } else {
+        messages("home.heading")
+    }
+}
+
 @customLayout = {
     <div class="grid-row">
         <div class="column-full">
             @h1WithCaption(
-                heading = messages("home.heading"),
+                heading = homeHeading,
                 captionMsg = user.userName.fold("")(_.name.getOrElse("")),
                 extraClasses = if(user.saUtr.isDefined) { "margin-bottom-zero" } else {""},
                 headingId = Some("income-tax-heading"),
@@ -119,7 +127,7 @@ viewModel: HomePageViewModel
 }
 
 @layout(
-    pageTitle = messages("home.heading"),
+    pageTitle = homeHeading,
     mainClass = Some("full-width"),
     isAgent = false,
     btaNavPartial = user.btaNavPartial

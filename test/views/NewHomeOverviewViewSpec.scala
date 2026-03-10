@@ -70,7 +70,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
                    moneyInYourAccount: Boolean = false,
                    ctaViewModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2025,2026))),
                    welshLang: Boolean = false,
-                   chargeItems: List[ChargeItem] = List.empty) {
+                   chargeItems: List[ChargeItem] = List.empty,
+                   useRebrand: Boolean = false) {
 
     val testMessages: Messages = if (welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
@@ -93,13 +94,23 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         noChargesToPay,
         moneyInYourAccount,
         ctaViewModel,
-        chargeItems)(testMessages, appConfig, FakeRequest())
+        chargeItems,
+        useRebrand)(testMessages, appConfig, FakeRequest())
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
 
 
   "New Home Overview page for Individuals" should {
+
+    "display the correct heading" when {
+      "useRebrand is false" in new TestSetup() {
+        document.getElementById("income-tax-heading").text() shouldBe "Income Tax"
+      }
+      "useRebrand is true" in new TestSetup(useRebrand = true) {
+        document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
+      }
+    }
 
     "display the correct 'Charges, credits and payments' section" when {
       "the user has NO charges to pay" in new TestSetup(noChargesToPay = true) {
