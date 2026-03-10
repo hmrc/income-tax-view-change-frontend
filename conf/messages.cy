@@ -253,7 +253,7 @@ taxYears.oldSa.content.text                                    = Er mwyn bwrw go
 taxYears.oldSa.content.link                                    = cyfrif Hunanasesiad ar-lein blaenorol
 taxYears.oldSa.agent.content.1								   = I weld crynodeb cleient o gyfnod cyn blwyddyn dreth {0} i {1}, bydd angen i chi fewngofnodi i’ch
 taxYears.oldSa.agent.content.2								   = cyfrif Hunanasesiad ar gyfer Asiantau
-taxYears.oldSa.agent.content.3								   = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair Porth y Llywodraeth gwahanol i’r rhai sydd gennych ar gyfer eich cyfrif Gwasanaethau Asiant.
+taxYears.oldSa.agent.content.3								   = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 taxYears.r18.amendment.text                                    = Gallwch fwrw golwg dros dudalennau yn crynhoi blwyddyn dreth i hefyd gael gweld beth yw eich opsiynau o ran diwygio’r ffurflen dreth rydych eisoes wedi’i chyflwyno’r flwyddyn honno.
 
 ## Tax Year Summary Page New ##
@@ -1331,7 +1331,7 @@ cannotUpdateReportingObligations.p3                             =
 ## Payment History Page ##
 paymentHistory.heading                                          = Hanes taliadau
 paymentHistory.info                                             = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
-paymentHistory.info.2                                           = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+paymentHistory.info.2                                           = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
 paymentHistory.button                                           = Taliadau, credydau ac ad-daliadau {0}
 
