@@ -34,67 +34,20 @@
     }
 }
 
-@getBodyMessagesByUserReportingType(isAnnualUser: Boolean, isQuarterlyUser: Boolean) = @{
-    (isAnnualUser, isQuarterlyUser) match {
-        case (true, false) => messages("new.home.yourTasks.upcoming-annual-updates-body")
-        case (false, true) => messages("new.home.yourTasks.upcoming-quarterly-updates-body")
-    }
-    /*if (isAnnualUser) {
-        messages("new.home.yourTasks.upcoming-annual-updates-body")
-    } else {
-        messages("new.home.yourTasks.upcoming-quarterly-updates-body")
-    }*/
-}
-
-@getTaskDateLabelColor(dueDate: LocalDate) =  @{
-    val tagClassPrefix = "govuk-tag govuk-tag"
-    if (dueDate.isBefore(viewModel.obligations.currentDate)) {
-        s"$tagClassPrefix--red"
-    } else if (dueDate.isEqual(viewModel.obligations.currentDate)) {
-        s"$tagClassPrefix--pink"
-    } else if (dueDate.isAfter(viewModel.obligations.currentDate.plusDays(30))) {
-            s"$tagClassPrefix--green"
-        } else {
-            s"$tagClassPrefix--yellow"
-        }
-}
-
-@upcomingUpdatesTagAnnual = {
-    @if(viewModel.obligations.isAnnualUser) {
-        @viewModel.obligations.nextTaxReturnDueDate.map { date =>
-            @p() {<span class="govuk-body">@getBodyMessagesByUserReportingType(viewModel.obligations.isAnnualUser, viewModel.obligations.isQuarterlyUser)</span>}
-            <span class="@getTaskDateLabelColor(date)" id="date-tag">
-                Due @date.toLongDateShort
-            </span>
-        }
-    }
-}
-
-@upcomingUpdatesTagQuarterly = {
-@if(viewModel.obligations.isQuarterlyUser) {
-    @viewModel.obligations.nextQuarterlyUpdateDueDate.map { date =>
-        @p() {<span class="govuk-body">@getBodyMessagesByUserReportingType(viewModel.obligations.isAnnualUser, viewModel.obligations.isQuarterlyUser)</span>}
-        <span class="@getTaskDateLabelColor(date)" id="date-tag">
-                Due @date.toLongDateShort
-    </span>
-    }
-}
-}
-
 @overdueUpdatesTagAnnual = {
     @if(viewModel.obligations.isAnnualUser) {
-        @viewModel.obligations.getNumberOfOverdueObligations match {
+        @viewModel.obligations.getNumberOfOverdueAnnualObligations match {
             case 0 => {}
             case 1 => {
                 @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-annual-submission-single-body")</span>}
-                @p() { @viewModel.obligations.dueDates.map { date =>
+                @p() { @viewModel.obligations.getOldestAnnualOverdueDate.map { date =>
                         <span class="govuk-tag govuk-tag--red"  id="date-tag">@messages("new.home.yourTasks.overdue-annual-submission-single-label", date.toLongDateShort)</span>
                     }
                 }
             }
             case _ => {
-                @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-annual-submission-multiple-body", viewModel.obligations.getNumberOfOverdueObligations)</span>}
-                @p() { @viewModel.obligations.getNextDeadline.map { date =>
+                @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-annual-submission-multiple-body", viewModel.obligations.getNumberOfOverdueAnnualObligations)</span>}
+                @p() { @viewModel.obligations.getOldestAnnualOverdueDate.map { date =>
                         <span class="govuk-tag govuk-tag--red"  id="date-tag">@messages("new.home.yourTasks.overdue-annual-submission-multiple-label", date.toLongDateShort)</span>
                     }
                 }
@@ -105,18 +58,18 @@
 
 @overdueUpdatesTagQuarterly = {
     @if(viewModel.obligations.isQuarterlyUser) {
-        @viewModel.obligations.getNumberOfOverdueObligations match {
+        @viewModel.obligations.getNumberOfOverdueQuarterlyObligations match {
             case 0 => {}
             case 1 => {
                 @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-quarterly-submission-single-body")</span>}
-                @p() { @viewModel.obligations.dueDates.map { date =>
+                @p() { @viewModel.obligations.getOldestQuarterlyOverdueDate.map { date =>
                         <span class="govuk-tag govuk-tag--red" id="date-tag">@messages("new.home.yourTasks.overdue-quarterly-submission-single-label", date.toLongDateShort)</span>
                     }
                 }
             }
             case _ => {
-                @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-quarterly-submission-multiple-body", viewModel.obligations.getNumberOfOverdueObligations)</span>}
-                @p() { @viewModel.obligations.getNextDeadline.map { date =>
+                @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-quarterly-submission-multiple-body", viewModel.obligations.getNumberOfOverdueQuarterlyObligations)</span>}
+                @p() { @viewModel.obligations.getOldestQuarterlyOverdueDate.map { date =>
                         <span class="govuk-tag govuk-tag--red" id="date-tag">@messages("new.home.yourTasks.overdue-quarterly-submission-multiple-label", date.toLongDateShort)</span>
                     }
                 }
@@ -125,24 +78,7 @@
     }
 }
 
-@nextQuarterlyUpdateDueDate = {
-    @if(viewModel.obligations.isQuarterlyUser) {
-        @viewModel.obligations.nextQuarterlyUpdateDueDate.map { date =>
-            @p() {@messages("home.updates.R17.nextUpdateDue", date.toLongDate)}
-        }
-    }
-}
-
-@mabyYourTaskTileContent = {
-    @if(viewModel.obligations.showNextUpdatesTileContent) {
-            @overdueUpdatesTagAnnual
-            @overdueUpdatesTagQuarterly
-@*            @nextQuarterlyUpdateDueDate *@
-@*            @nextTaxReturnDueDate  *@
-    }
-}
-
-@finalComponentOverdueSubmission = {
+@finalAnnualOverdueSubmissionSection = {
     <div id="yourTasksTile" class="hmrc-card">
         <div class="tile-body">
             <h3 class="hmrc-card__heading">
@@ -151,28 +87,88 @@
                     <span class="hmrc-card__chevron" aria-hidden="true"></span>
                 </a>
             </h3>
-            @mabyYourTaskTileContent
+            @overdueUpdatesTagAnnual
+        </div>
+    </div>
+}
+
+
+@finalQuarterlyOverdueSubmissionSection = {
+    <div id="yourTasksTile" class="hmrc-card">
+        <div class="tile-body">
+            <h3 class="hmrc-card__heading">
+                <a href="@submissionDeadlinesUrl">
+                    @title
+                    <span class="hmrc-card__chevron" aria-hidden="true"></span>
+                </a>
+            </h3>
+            @overdueUpdatesTagQuarterly
+        </div>
+    </div>
+}
+
+@getTaskDateLabelColor(dueDate: LocalDate) =  @{
+    val tagClassPrefix = "govuk-tag govuk-tag"
+    if (dueDate.isBefore(viewModel.obligations.currentDate)) {
+        s"$tagClassPrefix--red"
+    } else if (dueDate.isEqual(viewModel.obligations.currentDate)) {
+        s"$tagClassPrefix--pink"
+    } else if (dueDate.isAfter(viewModel.obligations.currentDate.plusDays(30))) {
+        s"$tagClassPrefix--green"
+    } else {
+        s"$tagClassPrefix--yellow"
+    }
+}
+
+@upcomingUpdatesTagAnnual = {
+@viewModel.obligations.nextTaxReturnDueDate.map { date =>
+    @p() {<span class="govuk-body">@messages("new.home.yourTasks.upcoming-annual-updates-body")</span>}
+    <span class="@getTaskDateLabelColor(date)" id="date-tag">
+            Due @date.toLongDateShort
+    </span>
+    }
+}
+
+@upcomingUpdatesTagQuarterly = {
+    @viewModel.obligations.nextQuarterlyUpdateDueDate.map { date =>
+        @p() {<span class="govuk-body">@messages("new.home.yourTasks.upcoming-quarterly-updates-body")</span>}
+        <span class="@getTaskDateLabelColor(date)" id="date-tag">
+                    Due @date.toLongDateShort
+        </span>
+    }
+}
+
+@upcommingSubmissions(upcomingUpdates: Html) = {
+    <div id="yourTasksTile" class="hmrc-card">
+        <div class="tile-body">
+            <h3 class="hmrc-card__heading">
+                <a href="@submissionDeadlinesUrl">
+                    @title
+                    <span class="hmrc-card__chevron" aria-hidden="true"></span>
+                </a>
+            </h3>
+            <div class="govuk-body">@upcomingUpdates</div>
         </div>
     </div>
 }
 
 @finalComponentUpcommingSubmission = {
-    <div id="yourTasksTile" class="hmrc-card">
-        <div class="tile-body">
-            <h3 class="hmrc-card__heading">
-                <a href="@submissionDeadlinesUrl">
-                    @title
-                    <span class="hmrc-card__chevron" aria-hidden="true"></span>
-                </a>
-            </h3>
-            <div class="govuk-body">@upcomingUpdatesTagAnnual</div>
-            <div class="govuk-body">@upcomingUpdatesTagQuarterly</div>
-@*            <div>@getNextPaymentsTag</div>*@
-            @* @nextTaxReturnDueDate *@
- @*           @nextQuarterlyUpdateDueDate *@
-        </div>
-    </div>
+    @if(viewModel.obligations.isAnnualUser && viewModel.obligations.nextTaxReturnDueDate.nonEmpty) {
+        @upcommingSubmissions(upcomingUpdatesTagAnnual)
+    } else if(viewModel.obligations.isQuarterlyUser && viewModel.obligations.nextQuarterlyUpdateDueDate.nonEmpty) {
+        @upcommingSubmissions(upcomingUpdatesTagQuarterly)
+    }
 }
 
-@finalComponentOverdueSubmission
+@if(viewModel.obligations.showNextUpdatesTileContent) {
+    @if(viewModel.obligations.isAnnualUser && viewModel.obligations.isQuarterlyUser) {
+        @finalAnnualOverdueSubmissionSection
+        @finalQuarterlyOverdueSubmissionSection
+    } else if(viewModel.obligations.isQuarterlyUser && !viewModel.obligations.isAnnualUser) {
+        @finalQuarterlyOverdueSubmissionSection
+    } else {
+       @finalAnnualOverdueSubmissionSection
+    }
+}
+
 @finalComponentUpcommingSubmission

@@ -16,31 +16,48 @@
 
 package models.newHomePage
 
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import models.obligations.SingleObligationModel
 
 import java.time.LocalDate
 
 final case class SubmissionDeadlinesViewModel(
-                                    dueDates: Seq[LocalDate],
-                                    currentDate: LocalDate,
-                                    currentYearITSAStatus: ITSAStatus,
-                                    nextQuarterlyUpdateDueDate: Option[LocalDate],
-                                    nextTaxReturnDueDate: Option[LocalDate]
-                                  ) {
-  
-  def getNumberOfOverdueObligations: Int = 
-    dueDates.count(_.isBefore(currentDate))
+                                               openObligations: Seq[SingleObligationModel],
+                                               currentDate: LocalDate,
+                                               nextQuarterlyUpdateDueDate: Option[LocalDate],
+                                               nextTaxReturnDueDate: Option[LocalDate]) {
+
+  private val obligationTypeAnnual: String = "Crystallisation"
+  private val obligationTypeQuarterly: String = "Quarterly"
+
+  def getNumberOfOverdueAnnualObligations: Int =
+    openObligations
+      .filter(_.obligationType == obligationTypeAnnual)
+      .count(_.due.isBefore(currentDate))
+
+  def getNumberOfOverdueQuarterlyObligations: Int =
+    openObligations
+      .filter(_.obligationType == obligationTypeQuarterly)
+      .count(_.due.isBefore(currentDate))
+
+  def getOldestAnnualOverdueDate: Option[LocalDate] =
+    openObligations
+      .filter(_.obligationType == obligationTypeAnnual)
+      .map(_.due)
+      .filter(_.isBefore(currentDate))
+      .sortWith(_ isBefore _).headOption
+
+  def getOldestQuarterlyOverdueDate: Option[LocalDate] =
+    openObligations
+      .filter(_.obligationType == obligationTypeQuarterly)
+      .map(_.due)
+      .filter(_.isBefore(currentDate))
+      .sortWith(_ isBefore _).headOption
 
   def isAnnualUser: Boolean =
-    currentYearITSAStatus == ITSAStatus.Annual
+    openObligations.exists(_.obligationType == obligationTypeAnnual)
 
   def isQuarterlyUser: Boolean =
-    currentYearITSAStatus == ITSAStatus.Voluntary || currentYearITSAStatus == ITSAStatus.Mandated
-  
-  def getNextDeadline: Option[LocalDate] =
-    dueDates.sortWith(_ isBefore _).headOption
+    openObligations.exists(_.obligationType == obligationTypeQuarterly)
 
-  def showNextUpdatesTileContent: Boolean = dueDates.nonEmpty
-
+  def showNextUpdatesTileContent: Boolean = openObligations.nonEmpty
 }

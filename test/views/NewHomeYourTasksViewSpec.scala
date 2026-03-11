@@ -22,9 +22,8 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.creditsandrefunds.CreditsModel
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.newHomePage.{HandleYourTasksViewModel, SubmissionDeadlinesViewModel}
+import models.obligations.{SingleObligationModel, StatusOpen}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames
@@ -47,6 +46,22 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
 
   val dateServiceCurrentDate: LocalDate = dateService.getCurrentDate
 
+  private val annualObligationType: String = "Crystallisation"
+  private val quarterlyObligationType: String = "Quarterly"
+
+  val multipleAnnualOverdueObligations: Seq[SingleObligationModel] = getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(90)) ++
+    getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(120)) ++
+    getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(20))
+
+  val multipleQuarterlyOverdueObligations: Seq[SingleObligationModel] = getSingleObligationModels(dateServiceCurrentDate.minusDays(90), quarterlyObligationType) ++
+    getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(120), quarterlyObligationType) ++
+    getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(20), quarterlyObligationType)
+
+  val multipleQuarterlyAndAnnualOverdueObligations: Seq[SingleObligationModel] = getSingleObligationModels(dateServiceCurrentDate.minusDays(85), annualObligationType) ++
+    getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(120), quarterlyObligationType) ++
+    getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(20), quarterlyObligationType) ++
+    getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(100), annualObligationType)
+
   class TestSetup(
                    origin: Option[String] = None,
                    isAgent: Boolean = false,
@@ -55,10 +70,9 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
                    overViewUrl: String = "testOverviewUrl",
                    helpUrl: String = "testHelpUrl",
                    welshLang: Boolean = false,
-                   dueDates: Seq[LocalDate] = Seq(dateServiceCurrentDate.plusDays(31)),
+                   obligations: Seq[SingleObligationModel] = getSingleObligationModels(),
                    nextTaxReturnDueDate: Option[LocalDate] = Some(dateServiceCurrentDate.plusDays(31)),
-                   nextQuarterlyUpdatesDueDate: Option[LocalDate] = None,
-                   currentYearITSAStatus: ITSAStatus = ITSAStatus.Annual) {
+                   nextQuarterlyUpdatesDueDate: Option[LocalDate] = None) {
 
     val testMessages: Messages = if (welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
@@ -76,7 +90,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     lazy val page: HtmlFormat.Appendable =
       newHomeYourTasksView(
         origin = origin,
-        viewModel = getNextUpdatesTileViewModel(dateServiceCurrentDate, dueDates, nextTaxReturnDueDate, currentYearITSAStatus, nextQuarterlyUpdatesDueDate),
+        viewModel = getNextUpdatesTileViewModel(dateServiceCurrentDate, obligations, nextTaxReturnDueDate, nextQuarterlyUpdatesDueDate),
         isAgent = isAgent,
         yourTasksUrl = yourTasksUrl,
         recentActivityUrl = recentActivityUrl,
@@ -86,7 +100,6 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
 
-  //TODO proceed with this test until done
   "New Home Your Tasks page for individuals" when {
     "upcoming annual submission due more than 30 days" should {
       "display the correct content" in new TestSetup() {
@@ -166,13 +179,11 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     }
   }
 
-  //TODO proceed with this test until done
   "New Home Overview page for agents" should {
     "display the the correct content" in new TestSetup(isAgent = true) {
       document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
       document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
       document.select(".hmrc-card__heading").get(1).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
-      //TODO check if wording for Agents is matching
       document.select(".govuk-body").get(2).text() shouldBe upcomingAnnualSubmissionDeadlineBody
       document.getElementById("date-tag").hasClass("govuk-tag govuk-tag--green") shouldBe true
       document.getElementById("date-tag").text() shouldBe "Due 15 Jan 2024"
@@ -181,7 +192,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
 
   "New Home Your Tasks page for individuals" when {
     "single overdue annual submission" should {
-      "display the correct content" in new TestSetup(dueDates = Seq(dateServiceCurrentDate.minusDays(30)), nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30))) {
+      "display the correct content" in new TestSetup(obligations = getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(30)), nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30))) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
@@ -192,7 +203,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     }
 
     "multiple overdue annual submissions" should {
-      "display the correct content" in new TestSetup(dueDates = Seq(dateServiceCurrentDate.minusDays(90), dateServiceCurrentDate.minusDays(120), dateServiceCurrentDate.minusDays(20)), nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30))) {
+      "display the correct content" in new TestSetup(obligations = multipleAnnualOverdueObligations, nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30))) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
@@ -203,7 +214,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     }
 
     "single overdue quarterly submission" should {
-      "display the correct content" in new TestSetup(dueDates = Seq(dateServiceCurrentDate.minusDays(30)), nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30)), currentYearITSAStatus = ITSAStatus.Voluntary) {
+      "display the correct content" in new TestSetup(obligations = getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(30), quarterlyObligationType), nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30))) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
@@ -214,7 +225,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     }
 
     "multiple overdue quarterly submissions" should {
-      "display the correct content" in new TestSetup(dueDates = Seq(dateServiceCurrentDate.minusDays(90), dateServiceCurrentDate.minusDays(120), dateServiceCurrentDate.minusDays(20)), nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30)), currentYearITSAStatus = ITSAStatus.Voluntary) {
+      "display the correct content" in new TestSetup(obligations = multipleQuarterlyOverdueObligations, nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30))) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
@@ -223,9 +234,28 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.getElementById("date-tag").text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(120).toLongDateShort}"
       }
     }
+
+    "multiple overdue quarterly and annual submissions" should {
+      "display the correct content" in new TestSetup(obligations = multipleQuarterlyAndAnnualOverdueObligations, nextTaxReturnDueDate = None/*Some(dateServiceCurrentDate.plusDays(30)*/) {
+        document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
+        document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
+        document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
+        document.select(".govuk-body").get(2).text() shouldBe "You have 2 overdue annual submissions."
+        document.select(".govuk-body").get(3).select("span").hasClass("govuk-tag govuk-tag--red")
+        document.select(".govuk-body").get(3).text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(100).toLongDateShort}"
+
+        document.select(".hmrc-card__heading").get(2).text() shouldBe viewUpdatesAndDeadlinesTitle
+        document.select(".govuk-body").get(4).text() shouldBe "You have 2 overdue quarterly submissions."
+        document.select(".govuk-body").get(6).select("span").hasClass("govuk-tag govuk-tag--red")
+        document.select(".govuk-body").get(6).text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(120).toLongDateShort}"
+      }
+    }
   }
 
-  private def getNextUpdatesTileViewModel(currentDate: LocalDate, dueDates: Seq[LocalDate], nextTaxReturnDueDate: Option[LocalDate], currentYearITSAStatus: ITSAStatus, nextQuarterlyUpdatesDueDate: Option[LocalDate]): HandleYourTasksViewModel = {
+  private def getSingleObligationModels(dueDate: LocalDate = dateServiceCurrentDate.plusDays(31), obligationType: String = annualObligationType): Seq[SingleObligationModel] =
+    Seq(SingleObligationModel(dateServiceCurrentDate.minusMonths(6), dateServiceCurrentDate.minusMonths(3), dueDate, obligationType, None, "#002", StatusOpen))
+
+  private def getNextUpdatesTileViewModel(currentDate: LocalDate, obligations: Seq[SingleObligationModel], nextTaxReturnDueDate: Option[LocalDate], nextQuarterlyUpdatesDueDate: Option[LocalDate]): HandleYourTasksViewModel = {
     val zeroCredits = CreditsModel(
       availableCreditForRepayment = BigDecimal(0.00),
       allocatedCreditForFutureCharges = BigDecimal(0.00),
@@ -237,9 +267,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     )
 
     val updatesAndDeadlinesViewModel = SubmissionDeadlinesViewModel(
-      dueDates,
+      obligations,
       currentDate,
-      currentYearITSAStatus,
       nextQuarterlyUpdatesDueDate,
       nextTaxReturnDueDate,
     )
