@@ -132,6 +132,8 @@ class HandleYourTasksControllerSpec extends MockAuthActions
             ANewCreditAndRefundModel()
               .model
           ))
+        when(mockNextUpdatesService.getNextDueDates()(any(), any()))
+          .thenReturn(Future.successful(None, None))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
@@ -169,6 +171,8 @@ class HandleYourTasksControllerSpec extends MockAuthActions
             ANewCreditAndRefundModel().withTotalCredit(BigDecimal(1000))
               .model
           ))
+        when(mockNextUpdatesService.getNextDueDates()(any(), any()))
+          .thenReturn(Future.successful(None, None))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 

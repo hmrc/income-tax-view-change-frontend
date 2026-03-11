@@ -121,11 +121,11 @@
 }
 
 @upcomingUpdatesTagAnnual = {
-@viewModel.obligations.nextTaxReturnDueDate.map { date =>
-    @p() {<span class="govuk-body">@messages("new.home.yourTasks.upcoming-annual-updates-body")</span>}
-    <span class="@getTaskDateLabelColor(date)">
-            Due @date.toLongDateShort
-    </span>
+    @viewModel.obligations.nextTaxReturnDueDate.map { date =>
+        @p() {<span class="govuk-body">@messages("new.home.yourTasks.upcoming-annual-updates-body")</span>}
+        <span class="@getTaskDateLabelColor(date)">
+            @messages("new.home.yourTasks.upcoming-annual-updates-label", date.toLongDateShort)
+        </span>
     }
 }
 
@@ -133,7 +133,7 @@
     @viewModel.obligations.nextQuarterlyUpdateDueDate.map { date =>
         @p() {<span class="govuk-body">@messages("new.home.yourTasks.upcoming-quarterly-updates-body")</span>}
         <span class="@getTaskDateLabelColor(date)">
-                    Due @date.toLongDateShort
+            @messages("new.home.yourTasks.upcoming-quarterly-updates-label", date.toLongDateShort)
         </span>
     }
 }
