@@ -78,10 +78,20 @@
 }
 
 @changeBusinessAddressURL = @{
-    if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = CheckMode, isTriggeredMigration).url
+    if (overseasBusinessAddressEnabled) {
+        val isNoAddressOnFile = businessDetailsViewModel.exists(_.isNoAddressOnFile)
+
+        if (isNoAddressOnFile) {
+            controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent, isTriggeredMigration).url
+        } else {
+            controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
+        }
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = CheckMode, isTriggeredMigration).url
+        if (isAgent) {
+            controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = CheckMode, isTriggeredMigration).url
+        } else {
+            controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = CheckMode, isTriggeredMigration).url
+        }
     }
 }
 

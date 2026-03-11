@@ -281,6 +281,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.body().text() should not include "Is the address of your sole trader business in the UK?"
             document.body().text() should not include "Added address for this business"
             document.body().text() should not include "Added international address for this business"
+
+            document.getElementById("change-business-address-link").attr("href") should include("/choose-address")
           }
 
           "renders the correct rows when user adds a new UK address via postcode lookup from their address on file and OverseasBusinessAddress is enabled" in new Setup(
@@ -306,6 +308,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.body().text() should not include "Is the address of your sole trader business in the UK?"
             document.body().text() should not include "Added international address for this business"
             document.body().text() should not include "Address"
+
+            document.getElementById("change-added-business-address-link").attr("href") should include("/choose-address")
           }
 
           "renders the correct rows when user adds a new UK address manually from their address on file and OverseasBusinessAddress is enabled" in new Setup(
@@ -331,6 +335,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.body().text() should not include "Is the address of your sole trader business in the UK?"
             document.body().text() should not include "Added international address for this business"
             document.body().text() should not include "Address"
+
+            document.getElementById("change-business-address-selection-link").attr("href") should include("/choose-address")
           }
 
 
@@ -360,6 +366,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.body().text() should not include "Address"
             document.body().text() should not include "Is the address of your sole trader business in the UK?"
             document.body().text() should not include "Added address for this business"
+
+            document.getElementById("change-added-business-address-link").attr("href") should include("/choose-address")
           }
 
           "renders the correct rows when user has no address on file and finds a UK address via postcode lookup and OverseasBusinessAddress is enabled" in new Setup(
@@ -386,6 +394,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.body().text() should not include "Sole trader business address"
             document.body().text() should not include "Is the new address in the UK?"
             document.body().text() should not include "Added international address for this business"
+
+            document.getElementById("change-added-business-address-link").attr("href") should include("/is-the-new-address-in-the-uk")
           }
 
           "renders the correct rows when user has no address on file and manually enters a UK address and OverseasBusinessAddress is enabled" in new Setup(
@@ -413,6 +423,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.body().text() should not include "Address"
             document.body().text() should not include "Sole trader business address"
             document.body().text() should not include "Added international address for this business"
+
+            document.getElementById("change-added-business-address-link").attr("href") should include("/is-the-new-address-in-the-uk")
           }
 
           "renders the correct rows when user has no address on file and manually enters an international address and OverseasBusinessAddress is enabled" in new Setup(
@@ -440,7 +452,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.body().text() should not include "Is the address of your sole trader business in the UK?"
             document.body().text() should not include "Added address for this business"
 
-
+            document.getElementById("change-added-business-address-link").attr("href") should include("/is-the-new-address-in-the-uk")
           }
 
           "renders only the Address row with no overseas rows when OverseasBusinessAddress switch is disabled" in new Setup(
@@ -453,6 +465,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.body().text() should not include "Sole trader business address"
             document.body().text() should not include "Is the new address in the UK?"
             document.body().text() should not include "Added international address for this business"
+
+            document.getElementById("change-business-address-link").attr("href") should include("/change-business-address-lookup")
           }
         }
         "Uk Property" when {
