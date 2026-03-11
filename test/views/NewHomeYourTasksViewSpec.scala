@@ -259,6 +259,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
 
   }
 
+
+
   private def getSingleObligationModels(dueDate: LocalDate = dateServiceCurrentDate.plusDays(31), obligationType: String = annualObligationType): Seq[SingleObligationModel] =
     Seq(SingleObligationModel(dateServiceCurrentDate.minusMonths(6), dateServiceCurrentDate.minusMonths(3), dueDate, obligationType, None, "#002", StatusOpen))
 
