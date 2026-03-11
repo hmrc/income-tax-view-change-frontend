@@ -63,7 +63,6 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(120), quarterlyObligationType) ++
     getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(20), quarterlyObligationType) ++
     getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(100), annualObligationType)
-  
   class TestSetup(
                    origin: Option[String] = None,
                    isAgent: Boolean = false,
@@ -259,8 +258,6 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     }
 
   }
-
-
 
   private def getSingleObligationModels(dueDate: LocalDate = dateServiceCurrentDate.plusDays(31), obligationType: String = annualObligationType): Seq[SingleObligationModel] =
     Seq(SingleObligationModel(dateServiceCurrentDate.minusMonths(6), dateServiceCurrentDate.minusMonths(3), dueDate, obligationType, None, "#002", StatusOpen))
