@@ -17,6 +17,7 @@
 @import views.html.components._
 @import models.newHomePage.HandleYourTasksViewModel
 @import _root_.implicits.ImplicitDateFormatterImpl
+@import java.time.LocalDate
 
 @import enums.MTDSupportingAgent
 
@@ -27,50 +28,112 @@
 @(viewModel: HandleYourTasksViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
  @import implicitDateFormatter.longDate
 
-@getColor = @{viewModel.oldestChargeStatusColor(viewModel.oldestChargeDate)}
-
- @getNextPaymentsTag = {
-   @if(!getTaskDateLabel.isBlank) {
-       <span class="govuk-tag govuk-tag--@getColor" id="date-tag">
-       @getTaskDateLabel
-       </span>
-   }
- }
-
- @getTaskDescription = @{
-   val content = viewModel.getParametrisedContent(user)
-   messages(content._1, content._2)
- }
-
-@getTaskDateLabel = @{
-  val taskDateLabel = viewModel.getParametrisedTaskDateLabel
-  messages(taskDateLabel._1, taskDateLabel._2.toLongDateShort)
-}
 @moneyInYourAccount = @{viewModel.creditInAccount}
 
- <div id="yourTasksTile" class="hmrc-card">
-  <div class="tile-body">
-        <h3 class="hmrc-card__heading">
-        @if(getTaskDateLabel.isBlank){
-            <span>@messages("newHome.yourTasks.no-tasks.selfAssessment")</span>
-        }else{
-            <a href=@viewModel.getRedirectLinkPayments(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
-        }
-        </h3>
-   <div class="govuk-body">@getTaskDescription</div>
-   <div>@getNextPaymentsTag</div>
- </div>
- </div>
+     @if(viewModel.areAnyTasksPresent){
+        <div id="yourTasksTile">
+            @if(viewModel.areChargesPresent){
+              @showCharges
+            }
 
-@if(moneyInYourAccount.isDefined && moneyInYourAccount.get > BigDecimal(0) ){
-<div id="moenyInYourAccount" class="hmrc-card">
+            @if(viewModel.areLPPPresent){
+              @showLpp
+            }
+
+            @if(viewModel.isLSPPresent){
+              @showLsp
+            }
+            @if(viewModel.isMoneyInYourAccountPresent){
+                @showMoneyInYourAccount
+            }
+        </div>
+     } else {
+        <div class="govuk-body">@messages(viewModel.getNoTasksLabel(user.usersRole == MTDSupportingAgent))</div>
+     }
+
+
+@showCharges = {
+<div id="chargesTile" class="hmrc-card">
     <div class="tile-body">
-            <h3 class="hmrc-card__heading">
-                <a href=@viewModel.getRedirectLinkMoneyInAccount(isAgent)>@messages("newHome.yourTasks.selfAssessment.money-in-account.h1") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
-            </h3>
-        @if(moneyInYourAccount.isDefined){
-            <div class="govuk-body">@messages("newHome.yourTasks.selfAssessment.money-in-account", moneyInYourAccount.get.toString())</div>
-        }
+        <h3 class="hmrc-card__heading">
+            <a href=@viewModel.getChargesPaymentsLink(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+        </h3>
+        <div class="govuk-body">@getChargesDescription</div>
+        <div class="govuk-tag govuk-tag--@viewModel.oldestChargeStatusColor(viewModel.chargesSet)" id="charges-date-tag">
+        @getChargesDate
+        </div>
     </div>
 </div>
+}
+
+@showLpp = {
+    <div id="lppTile" class="hmrc-card">
+        <div class="tile-body">
+            <h3 class="hmrc-card__heading">
+                <a href=@viewModel.getLpp1orLpp2Link(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+            </h3>
+            <div class="govuk-body">@getLppDescription</div>
+            <div class="govuk-tag govuk-tag--@viewModel.oldestChargeStatusColor(viewModel.lppSet)" id="lpp-date-tag">@getLppDate</div>
+        </div>
+    </div>
+}
+
+@showLsp = {
+    <div id="lspTile" class="hmrc-card">
+        <div class="tile-body">
+            <h3 class="hmrc-card__heading">
+                <a href=@viewModel.getLspLink(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+            </h3>
+            <div class="govuk-body">@getLspDescription</div>
+            <div class="govuk-tag govuk-tag--@viewModel.oldestChargeStatusColor(viewModel.lspSet)" id="lsp-date-tag">@getLspDate</div>
+        </div>
+    </div>
+}
+
+@showMoneyInYourAccount = {
+    <div id="momeyInYourAccountTile" class="hmrc-card">
+        <div class="tile-body">
+            <h3 class="hmrc-card__heading">
+                <a href=@viewModel.getMoneyInYourAccountLink(isAgent)>@messages("newHome.yourTasks.selfAssessment.money-in-account.h1") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+            </h3>
+            <div class="govuk-body">@getMoneyInYourAccountDescription</div>
+        </div>
+    </div>
+}
+
+@getChargesDescription = @{
+  viewModel.getChargesTaskDescription match {
+      case Some(value) => messages(value._1, value._2.getOrElse(BigDecimal(0)).toString())
+      case None => ""
+  }
+}
+@getChargesDate = @{
+    val dateLabel = viewModel.getChargeDateLabel
+    messages(dateLabel._1, dateLabel._2.getOrElse(LocalDate.now).toLongDateShort)
+}
+@getLppDescription = @{
+  val lppDescription = viewModel.getLPPTaskDescription
+  lppDescription._2 match {
+      case Some(numberOfOccurrences) => messages(lppDescription._1, numberOfOccurrences)
+      case None => messages(lppDescription._1)
+  }
+}
+@getLppDate = @{
+  val lppDate = viewModel.getLPPDateLabel
+  messages(lppDate._1, lppDate._2.getOrElse(LocalDate.now).toLongDateShort)
+}
+@getLspDescription = @{
+  val lspDescription = viewModel.getLSPTaskDescription
+    lspDescription._2 match {
+        case Some(numberOfOccurrences) => messages(lspDescription._1, numberOfOccurrences)
+        case None => messages(lspDescription._1)
+    }
+}
+@getLspDate = @{
+  val lspDate = viewModel.getLSPDateLabel
+  messages(lspDate._1, lspDate._2.getOrElse(LocalDate.now).toLongDateShort)
+}
+@getMoneyInYourAccountDescription = @{
+  val moneyInYourAccountDescription = viewModel.getMoneyInYourAccountTaskDescription
+  messages(moneyInYourAccountDescription._1, moneyInYourAccountDescription._2.getOrElse(BigDecimal(0)).toString)
 }

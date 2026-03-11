@@ -3587,7 +3587,6 @@ newHome.yourTasks.selfAssessment.lsp.single = You have a late submission penalty
 newHome.yourTasks.selfAssessment.lsp.single.label = Was due {0}
 newHome.yourTasks.selfAssessment.lsp.multiple = You have {0} late submission penalties.
 newHome.yourTasks.selfAssessment.lsp.multiple.label = Oldest penalty due {0}
-newHome.yourTasks.selfAssessment.money.refund = You have £{0} in your account.
 newHome.yourTasks.selfAssessment.no-tasks = You have no tasks to complete at the moment.
 newHome.yourTasks.selfAssessment.supporting.no-tasks = You have no tasks to complete at the moment. Note that your customer may have tasks that you are unable to see as a support agent.
 newHome.yourTasks.selfAssessment.money-in-account.h1 = Check for money in your account and claim a refund

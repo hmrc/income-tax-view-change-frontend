@@ -3574,7 +3574,6 @@ newHome.yourTasks.selfAssessment.lsp.single = Mae gennych gosb am gyflwyno’n h
 newHome.yourTasks.selfAssessment.lsp.single.label = Roedd hyn yn ddyledus ar {0}
 newHome.yourTasks.selfAssessment.lsp.multiple = Mae gennych {0} o gosbau am gyflwyno’n hwyr.
 newHome.yourTasks.selfAssessment.lsp.multiple.label = Mae’r gosb hynaf yn ddyledus ar {0}
-newHome.yourTasks.selfAssessment.money.refund = Mae gennych £{0} yn eich cyfrif.
 newHome.yourTasks.selfAssessment.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd.
 newHome.yourTasks.selfAssessment.supporting.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd. Noder – efallai fod gan eich cwsmer dasgau nad oes modd i chi eu gweld fel asiant ategol.
 newHome.yourTasks.selfAssessment.money-in-account.h1 = Gwirio faint o arian sydd yn eich cyfrif a hawlio ad-daliad
