@@ -79,7 +79,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
-      updatesAndDeadlinesViewModel <- getNextUpdates(isAgent = isAgent)
+      updatesAndDeadlinesViewModel <- getNextUpdates()
     } yield {
 
       val creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay)
@@ -111,14 +111,12 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
   }
-  
-  private def getNextUpdates( isAgent: Boolean)
-                             (implicit user: MtdItUser[_]): Future[SubmissionDeadlinesViewModel] = {
-    
+
+  private def getNextUpdates()(implicit user: MtdItUser[_]): Future[SubmissionDeadlinesViewModel] = {
+
     val submissionDeadlinesViewModel = {
       for {
         (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- nextUpdatesService.getNextDueDates()
-        _ = Logger("application").error(s"nextTaxReturnDueDate=$nextTaxReturnDueDate")
         nextUpdatesDueDates <- getNextUpdatesDueDates()
         openObligations <- getOpenObligations()
       } yield {
@@ -137,7 +135,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     }.recoverWith {
       case ex =>
         Logger("application").error(s"Failed to retrieve reporting content checks: ${ex.getMessage}")
-        Future.successful(SubmissionDeadlinesViewModel(Seq.empty, dateService.getCurrentDate, /*ITSAStatus.UnknownStatus,*/  None, None))
+        Future.successful(SubmissionDeadlinesViewModel(Seq.empty, dateService.getCurrentDate, None, None))
     }
     submissionDeadlinesViewModel
   }

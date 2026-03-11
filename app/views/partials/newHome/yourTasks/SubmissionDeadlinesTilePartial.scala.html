@@ -35,20 +35,20 @@
 }
 
 @overdueUpdatesTagAnnual = {
-    @if(viewModel.obligations.isAnnualUser) {
+    @if(viewModel.obligations.isAnnualObligations) {
         @viewModel.obligations.getNumberOfOverdueAnnualObligations match {
             case 0 => {}
             case 1 => {
                 @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-annual-submission-single-body")</span>}
                 @p() { @viewModel.obligations.getOldestAnnualOverdueDate.map { date =>
-                        <span class="govuk-tag govuk-tag--red"  id="date-tag">@messages("new.home.yourTasks.overdue-annual-submission-single-label", date.toLongDateShort)</span>
+                        <span class="govuk-tag govuk-tag--red">@messages("new.home.yourTasks.overdue-annual-submission-single-label", date.toLongDateShort)</span>
                     }
                 }
             }
             case _ => {
                 @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-annual-submission-multiple-body", viewModel.obligations.getNumberOfOverdueAnnualObligations)</span>}
                 @p() { @viewModel.obligations.getOldestAnnualOverdueDate.map { date =>
-                        <span class="govuk-tag govuk-tag--red"  id="date-tag">@messages("new.home.yourTasks.overdue-annual-submission-multiple-label", date.toLongDateShort)</span>
+                        <span class="govuk-tag govuk-tag--red">@messages("new.home.yourTasks.overdue-annual-submission-multiple-label", date.toLongDateShort)</span>
                     }
                 }
             }
@@ -57,20 +57,20 @@
 }
 
 @overdueUpdatesTagQuarterly = {
-    @if(viewModel.obligations.isQuarterlyUser) {
+    @if(viewModel.obligations.isQuarterlyObligations) {
         @viewModel.obligations.getNumberOfOverdueQuarterlyObligations match {
             case 0 => {}
             case 1 => {
                 @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-quarterly-submission-single-body")</span>}
                 @p() { @viewModel.obligations.getOldestQuarterlyOverdueDate.map { date =>
-                        <span class="govuk-tag govuk-tag--red" id="date-tag">@messages("new.home.yourTasks.overdue-quarterly-submission-single-label", date.toLongDateShort)</span>
+                        <span class="govuk-tag govuk-tag--red">@messages("new.home.yourTasks.overdue-quarterly-submission-single-label", date.toLongDateShort)</span>
                     }
                 }
             }
             case _ => {
                 @p() {<span class="govuk-body">@messages("new.home.yourTasks.overdue-quarterly-submission-multiple-body", viewModel.obligations.getNumberOfOverdueQuarterlyObligations)</span>}
                 @p() { @viewModel.obligations.getOldestQuarterlyOverdueDate.map { date =>
-                        <span class="govuk-tag govuk-tag--red" id="date-tag">@messages("new.home.yourTasks.overdue-quarterly-submission-multiple-label", date.toLongDateShort)</span>
+                        <span class="govuk-tag govuk-tag--red">@messages("new.home.yourTasks.overdue-quarterly-submission-multiple-label", date.toLongDateShort)</span>
                     }
                 }
             }
@@ -123,7 +123,7 @@
 @upcomingUpdatesTagAnnual = {
 @viewModel.obligations.nextTaxReturnDueDate.map { date =>
     @p() {<span class="govuk-body">@messages("new.home.yourTasks.upcoming-annual-updates-body")</span>}
-    <span class="@getTaskDateLabelColor(date)" id="date-tag">
+    <span class="@getTaskDateLabelColor(date)">
             Due @date.toLongDateShort
     </span>
     }
@@ -132,7 +132,7 @@
 @upcomingUpdatesTagQuarterly = {
     @viewModel.obligations.nextQuarterlyUpdateDueDate.map { date =>
         @p() {<span class="govuk-body">@messages("new.home.yourTasks.upcoming-quarterly-updates-body")</span>}
-        <span class="@getTaskDateLabelColor(date)" id="date-tag">
+        <span class="@getTaskDateLabelColor(date)">
                     Due @date.toLongDateShort
         </span>
     }
@@ -153,21 +153,23 @@
 }
 
 @finalComponentUpcommingSubmission = {
-    @if(viewModel.obligations.isAnnualUser && viewModel.obligations.nextTaxReturnDueDate.nonEmpty) {
+    @if(viewModel.obligations.isAnnualObligations && viewModel.obligations.nextTaxReturnDueDate.nonEmpty) {
         @upcommingSubmissions(upcomingUpdatesTagAnnual)
-    } else if(viewModel.obligations.isQuarterlyUser && viewModel.obligations.nextQuarterlyUpdateDueDate.nonEmpty) {
+    } else if(viewModel.obligations.isQuarterlyObligations && viewModel.obligations.nextQuarterlyUpdateDueDate.nonEmpty) {
         @upcommingSubmissions(upcomingUpdatesTagQuarterly)
     }
 }
 
 @if(viewModel.obligations.showNextUpdatesTileContent) {
-    @if(viewModel.obligations.isAnnualUser && viewModel.obligations.isQuarterlyUser) {
+    @if(viewModel.obligations.isAnnualObligations && viewModel.obligations.isQuarterlyObligations) {
         @finalAnnualOverdueSubmissionSection
         @finalQuarterlyOverdueSubmissionSection
-    } else if(viewModel.obligations.isQuarterlyUser && !viewModel.obligations.isAnnualUser) {
+    } else if(viewModel.obligations.isQuarterlyObligations && !viewModel.obligations.isAnnualObligations) {
         @finalQuarterlyOverdueSubmissionSection
+    } else if(viewModel.obligations.isAnnualObligations && !viewModel.obligations.isQuarterlyObligations) {
+        @finalAnnualOverdueSubmissionSection
     } else {
-       @finalAnnualOverdueSubmissionSection
+        {}
     }
 }
 

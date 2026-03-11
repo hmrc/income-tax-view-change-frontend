@@ -24,10 +24,18 @@ final case class SubmissionDeadlinesViewModel(
                                                openObligations: Seq[SingleObligationModel],
                                                currentDate: LocalDate,
                                                nextQuarterlyUpdateDueDate: Option[LocalDate],
-                                               nextTaxReturnDueDate: Option[LocalDate]) {
+                                               nextTaxReturnDueDate: Option[LocalDate]
+                                             ) {
 
   private val obligationTypeAnnual: String = "Crystallisation"
   private val obligationTypeQuarterly: String = "Quarterly"
+
+  private def getOldestOverdueDateByObligationType(obligationType: String) =
+    openObligations
+      .filter(_.obligationType == obligationType)
+      .map(_.due)
+      .filter(_.isBefore(currentDate))
+      .sortWith(_ isBefore _).headOption
 
   def getNumberOfOverdueAnnualObligations: Int =
     openObligations
@@ -40,23 +48,15 @@ final case class SubmissionDeadlinesViewModel(
       .count(_.due.isBefore(currentDate))
 
   def getOldestAnnualOverdueDate: Option[LocalDate] =
-    openObligations
-      .filter(_.obligationType == obligationTypeAnnual)
-      .map(_.due)
-      .filter(_.isBefore(currentDate))
-      .sortWith(_ isBefore _).headOption
+    getOldestOverdueDateByObligationType(obligationTypeAnnual)
 
   def getOldestQuarterlyOverdueDate: Option[LocalDate] =
-    openObligations
-      .filter(_.obligationType == obligationTypeQuarterly)
-      .map(_.due)
-      .filter(_.isBefore(currentDate))
-      .sortWith(_ isBefore _).headOption
+    getOldestOverdueDateByObligationType(obligationTypeQuarterly)
 
-  def isAnnualUser: Boolean =
+  def isAnnualObligations: Boolean =
     openObligations.exists(_.obligationType == obligationTypeAnnual)
 
-  def isQuarterlyUser: Boolean =
+  def isQuarterlyObligations: Boolean =
     openObligations.exists(_.obligationType == obligationTypeQuarterly)
 
   def showNextUpdatesTileContent: Boolean = openObligations.nonEmpty
