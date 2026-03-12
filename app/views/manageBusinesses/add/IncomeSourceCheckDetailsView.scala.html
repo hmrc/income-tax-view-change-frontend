@@ -249,7 +249,7 @@
 
 @showNewAddressInUkRow = @{
     overseasBusinessAddressEnabled && businessDetailsViewModel.exists(viewModel =>
-        viewModel.isAddingNewAddress || (viewModel.isNoAddressOnFile && viewModel.addressId.isEmpty)
+        viewModel.isAddingNewAddress || (viewModel.isNoAddressOnFile && viewModel.addressId.isEmpty && !viewModel.isAddressInUK)
     )
 }
 
@@ -264,15 +264,7 @@
         Seq(
             SummaryListRow(
                 key = Key(content = Text(getMessage("sole-trader-business-address"))),
-                value = Value(content = Text(getMessage("add-a-new-one"))),
-                actions = Some(Actions(items = Seq(
-                    ActionItem(
-                        href = changeBusinessAddressURL,
-                        content = Text(getMessage("change")),
-                        attributes = Map("id" -> "change-business-address-selection-link"),
-                        visuallyHiddenText = Some(getMessage("sole-trader-business-address"))
-                    )
-                )))
+                value = Value(content = Text(getMessage("add-a-new-one")))
             )
         )
     } else Seq.empty
@@ -284,14 +276,6 @@
             SummaryListRow(
                 key = Key(content = Text(getMessage("is-business-address-in-uk"))),
                 value = Value(content = Text(if(businessDetailsViewModel.exists(_.isAddressInUK)) getMessage("yes") else getMessage("no"))),
-                actions = Some(Actions(items = Seq(
-                    ActionItem(
-                        href = changeBusinessAddressURL,
-                        content = Text(getMessage("change")),
-                        attributes = Map("id" -> "change-is-business-address-in-uk-link"),
-                        visuallyHiddenText = Some(getMessage("is-business-address-in-uk"))
-                    )
-                )))
             )
         )
     } else Seq.empty
@@ -302,15 +286,7 @@
         Seq(
             SummaryListRow(
                 key = Key(content = Text(getMessage("is-new-address-in-uk"))),
-                value = Value(content = Text(if(businessDetailsViewModel.exists(_.isAddressInUK)) getMessage("yes") else getMessage("no"))),
-                actions = Some(Actions(items = Seq(
-                    ActionItem(
-                        href = changeBusinessAddressURL,
-                        content = Text(getMessage("change")),
-                        attributes = Map("id" -> "change-is-new-address-in-uk-link"),
-                        visuallyHiddenText = Some(getMessage("is-new-address-in-uk"))
-                    )
-                )))
+                value = Value(content = Text(if(businessDetailsViewModel.exists(_.isAddressInUK)) getMessage("yes") else getMessage("no")))
             )
         )
     } else Seq.empty

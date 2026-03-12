@@ -336,7 +336,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.body().text() should not include "Added international address for this business"
             document.body().text() should not include "Address"
 
-            document.getElementById("change-business-address-selection-link").attr("href") should include("/choose-address")
+            document.getElementById("change-added-business-address-link").attr("href") should include("/choose-address")
           }
 
 
@@ -413,12 +413,10 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe "Test Trade"
 
             document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Is the address of your sole trader business in the UK?"
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Is the new address in the UK?"
-            document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe "Added address for this business"
+            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Added address for this business"
 
             document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "Yes"
-            document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "Yes"
-            document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe "5 Test Road TE1 1ST United Kingdom"
+            document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "5 Test Road TE1 1ST United Kingdom"
 
             document.body().text() should not include "Address"
             document.body().text() should not include "Sole trader business address"
