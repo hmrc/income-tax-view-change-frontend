@@ -1264,7 +1264,7 @@ chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text = HMRC creat
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	    = Late payment interest on balancing payment created
 chargeSummary.lpi.chargeHistory.created.firstLatePaymentPenalty.text = HMRC created your late payment interest on first late payment penalty
 chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text  = HMRC created your late payment interest on late submission penalty
-chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text    = Late payment interest on balancing payment created
+chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text    = Late payment interest created on balancing payment extra amount
 
 chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
 chargeSummary.lpi.balancingCharge.textOne                          = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
@@ -3412,7 +3412,11 @@ yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                      
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
 yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Late payment interest on balancing payment: extra amount due to amended return
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = You owe HMRC interest because you paid your balancing payment late.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = The balancing payment extra amount was created because of a change you made to your return.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p2                       = HMRC applies interest to the extra amount – the difference between your balancing payment and what you actually owe.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3                       = Interest is charged from the day after your balancing payment was originally due until the day the extra amount is paid in full. It’s calculated at the
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3LinkText               = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3AfterLink              = plus 2.5%.
 
 yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                       = Late payment interest on late submission penalty
 yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                     = Late payment interest on first late payment penalty

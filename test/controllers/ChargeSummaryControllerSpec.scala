@@ -345,9 +345,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £100.00"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
-                document.getElementById("lpi-itsa1").text() shouldBe "You owe HMRC interest because you paid your balancing payment late."
-                document.getElementById("lpi-itsa2").text() shouldBe "Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the Bank of England base rate (opens in new tab) plus 2.5%."
-                document.getElementById("lpi-itsa3").text() shouldBe "See guidance on the interest rates set by HMRC (opens in new tab)."
+                document.getElementById("lpi-itsa1").text() shouldBe "The balancing payment extra amount was created because of a change you made to your return."
+                document.getElementById("lpi-itsa2").text() shouldBe "HMRC applies interest to the extra amount – the difference between your balancing payment and what you actually owe."
+                document.getElementById("lpi-itsa3").text() shouldBe "Interest is charged from the day after your balancing payment was originally due until the day the extra amount is paid in full. It’s calculated at the Bank of England base rate (opens in new tab) plus 2.5%."
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
               }
 
