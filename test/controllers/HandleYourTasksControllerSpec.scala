@@ -267,6 +267,84 @@ class HandleYourTasksControllerSpec extends MockAuthActions
         document.select(".govuk-tag").get(2).select("span").text() shouldBe expectedUpcomingAnnualSubmissionTag
         document.select(".govuk-tag").get(2).select("span").hasClass("govuk-tag govuk-tag--green") shouldBe true
       }
+
+      "render the Handle your tasks page with a Your tasks tab open and have view submission deadlines and overdue submissions and money in your account card present" in new Setup {
+        setupMockUserAuth
+        mockItsaStatusRetrievalAction()
+        enable(CreditsRefundsRepay)
+        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
+          .thenReturn(Future.successful(List.empty[FinancialDetailsModel]))
+        setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+        setupMockGetFilteredChargesListFromFinancialDetails(List.empty[FinancialDetailsModel].flatMap(_.asChargeItems))
+        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+        setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+        when(mockedSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
+          .thenReturn(Future.successful(true))
+        when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
+          .thenReturn(Future.successful(true))
+        when(mockedCreditService.getAllCredits(any(), any()))
+          .thenReturn(Future.successful(
+            ANewCreditAndRefundModel().withTotalCredit(BigDecimal(1000))
+              .model
+          ))
+        val nextTaxReturnDueDate: LocalDate = mockDateServiceInjected.getCurrentDate.plusMonths(3)
+        val quarterlyOverdueDueDate: LocalDate = mockDateServiceInjected.getCurrentDate.minusMonths(12)
+
+        val obligationsModel: ObligationsModel = ObligationsModel(
+          Seq(
+            GroupedObligationsModel(
+              BaseTestConstants.testSelfEmploymentId,
+              List(
+                SingleObligationModel(
+                  mockDateServiceInjected.getCurrentDate.minusMonths(6),
+                  nextTaxReturnDueDate,
+                  nextTaxReturnDueDate,
+                  "Crystallisation",
+                  None,
+                  "#001",
+                  StatusOpen
+                )
+              )
+            ),
+            GroupedObligationsModel(
+              BaseTestConstants.testPropertyIncomeId,
+              List(
+                SingleObligationModel(
+                  mockDateServiceInjected.getCurrentDate.minusMonths(16),
+                  quarterlyOverdueDueDate,
+                  quarterlyOverdueDueDate,
+                  "Quarterly",
+                  None,
+                  "#002",
+                  StatusOpen
+                )
+              )
+            )
+          )
+        )
+
+        when(mockNextUpdatesService.getOpenObligations()(any(), any())).thenReturn(Future.successful(obligationsModel))
+
+        when(mockNextUpdatesService.getNextDueDates()(any(), any()))
+          .thenReturn(Future.successful(None, Some(nextTaxReturnDueDate)))
+
+        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+        status(result) shouldBe Status.OK
+        session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
+        val document: Document = Jsoup.parse(contentAsString(result))
+        document.select("#main-content h2").text shouldBe expectedYourTasksTitle
+        document.select("#moenyInYourAccount .tile-body div").text shouldBe expectedCredit
+
+        document.select(".govuk-body").get(2).text() shouldBe expectedOverdueQuarterlySubmissionDeadlineBody
+        document.select(".govuk-tag").get(1).select("span").text() shouldBe expectedOverdueQuarterlySubmissionTag
+        document.select(".govuk-tag").get(1).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
+
+        document.select(".govuk-tag").get(2).select("span").prev().text() shouldBe expectedUpcomingAnnualSubmissionDeadlineBody
+        document.select(".govuk-tag").get(2).select("span").text() shouldBe expectedUpcomingAnnualSubmissionTag
+        document.select(".govuk-tag").get(2).select("span").hasClass("govuk-tag govuk-tag--green") shouldBe true
+      }
     }
   }
 }
