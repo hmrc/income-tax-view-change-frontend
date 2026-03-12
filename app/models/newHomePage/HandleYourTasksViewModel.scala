@@ -127,9 +127,9 @@ class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
 
   def getLPPDateLabel: (String, Option[LocalDate]) = {
     if (chargeItemByType(lppSet).size > 1) {
-      ("newHome.yourTasks.selfAssessment.lsp.multiple.label", oldestTransactionByType(lspSet).get.dueDate)
+      ("newHome.yourTasks.selfAssessment.lsp.multiple.label", oldestTransactionByType(lppSet).get.dueDate)
     } else {
-      ("newHome.yourTasks.selfAssessment.lpp.single.label", oldestTransactionByType(lspSet).get.dueDate)
+      ("newHome.yourTasks.selfAssessment.lpp.single.label", oldestTransactionByType(lppSet).get.dueDate)
     }
   }
 
