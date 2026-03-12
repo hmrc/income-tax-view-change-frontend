@@ -50,7 +50,7 @@ object EnterPoaAmountForm extends Mappings {
       if (form.get.amount == totalAmount) {
         form.withError(EnterPoaAmountForm.amount, messages(sameErrorMessageKey, totalAmount.toCurrencyString))
       }
-      else if (form.get.amount >= relevantAmount) {
+      else if (form.get.amount >= relevantAmount && relevantAmount != 0) {
         form.withError(EnterPoaAmountForm.amount, messages(higherErrorMessageKey, relevantAmount.toCurrencyString))
       } else form
     }
