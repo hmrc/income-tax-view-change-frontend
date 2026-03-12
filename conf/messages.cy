@@ -3582,3 +3582,7 @@ newHome.yourTasks.selfAssessment.no-tasks = Nid oes gennych dasgau i’w cwblhau
 newHome.yourTasks.selfAssessment.supporting.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd. Noder – efallai fod gan eich cwsmer dasgau nad oes modd i chi eu gweld fel asiant ategol.
 newHome.yourTasks.selfAssessment.money-in-account.h1 = Gwirio faint o arian sydd yn eich cyfrif a hawlio ad-daliad
 newHome.yourTasks.selfAssessment.money-in-account = Mae gennych £{0} yn eich cyfrif.
+newHome.yourTasks.selfAssessment.lpp.single.link = Gweld eich cosb am dalu’n hwyr
+newHome.yourTasks.selfAssessment.lpp.multiple.link = Gweld eich cosbau am dalu’n hwyr
+newHome.yourTasks.selfAssessment.lsp.single.link = Gweld eich cosb am gyflwyno’n hwyr
+newHome.yourTasks.selfAssessment.lsp.multiple.link = Gweld eich cosbau am gyflwyno’n hwyr
