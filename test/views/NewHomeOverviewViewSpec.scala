@@ -19,6 +19,7 @@ package views
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
+import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames
@@ -32,11 +33,29 @@ import views.html.NewHomeOverviewView
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 
+import java.time.{LocalDate, Month}
+
 
 class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val newHomeOverviewView: NewHomeOverviewView = app.injector.instanceOf[NewHomeOverviewView]
   val testTaxYear: TaxYear = fixedTaxYear
+  val nextPaymentYear: String = "2019"
+  val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
+
+  def financialDetails(transactionType: String*) = {
+    transactionType.map( transaction =>{
+      FinancialDetailsModel(
+        balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+        documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
+          documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
+        financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
+          mainTransaction = Some(transaction), transactionId = Some("testId"),
+          items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate)))))))
+      }
+    ).toList
+  }
+
 
   class TestSetup(
                    origin: Option[String] = None,
@@ -50,7 +69,9 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
                    noChargesToPay: Boolean = false,
                    moneyInYourAccount: Boolean = false,
                    ctaViewModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2025,2026))),
-                   welshLang: Boolean = false) {
+                   welshLang: Boolean = false,
+                   chargeItems: List[ChargeItem] = List.empty,
+                   useRebrand: Boolean = false) {
 
     val testMessages: Messages = if (welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
@@ -72,13 +93,24 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         helpUrl,
         noChargesToPay,
         moneyInYourAccount,
-        ctaViewModel)(testMessages, appConfig, FakeRequest())
+        ctaViewModel,
+        chargeItems,
+        useRebrand)(testMessages, appConfig, FakeRequest())
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
 
 
   "New Home Overview page for Individuals" should {
+
+    "display the correct heading" when {
+      "useRebrand is false" in new TestSetup() {
+        document.getElementById("income-tax-heading").text() shouldBe "Income Tax"
+      }
+      "useRebrand is true" in new TestSetup(useRebrand = true) {
+        document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
+      }
+    }
 
     "display the correct 'Charges, credits and payments' section" when {
       "the user has NO charges to pay" in new TestSetup(noChargesToPay = true) {
@@ -179,13 +211,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
       document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
       document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment")
-
-      document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "View your late payment penalties"
-      document.select(".govuk-summary-card-no-border").get(9).link.attr("href") should include("/view-penalty/self-assessment#lppTab")
-
-      document.select(".govuk-summary-card-no-border").get(10).text() shouldBe "View your late submission penalties"
-      document.select(".govuk-summary-card-no-border").get(10).link.attr("href") should include("/view-penalty/self-assessment#lspTab")
-    }
+}
 
     "display the correct 'Income sources' section" in new TestSetup() {
       val incomeSection: Element = document.selectById("income-overview-section")
@@ -210,7 +236,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       )
     }
 
-    "display the correct 'Penalties and appeals' section" in new TestSetup() {
+    "display the correct text when user does not have LSP or LPP" in new TestSetup() {
       val penaltiesSection: Element = document.selectById("penalties-overview-section")
       penaltiesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Penalties and appeals"
 
@@ -219,18 +245,55 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         linkHref = "/view-penalty/self-assessment",
         exactHrefMatch = false
       )
-      penaltiesSection.hasCorrectOverviewCardLink(
-        cardIndex = 1,
-        linkText = "View your late payment penalties",
-        linkHref = "/view-penalty/self-assessment#lppTab",
-        exactHrefMatch = false
-      )
-      penaltiesSection.hasCorrectOverviewCardLink(
-        cardIndex = 2,
-        linkText = "View your late submission penalties",
-        linkHref = "/view-penalty/self-assessment#lspTab",
-        exactHrefMatch = false
-      )
+    }
+
+    "display the correct text when user has a LSP" in {
+      val items = financialDetails("4027").flatMap(_.asChargeItems)
+      new TestSetup(chargeItems = items) {
+        val penaltiesSection: Element = document.selectById("penalties-overview-section")
+        penaltiesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Penalties and appeals"
+
+        penaltiesSection.hasCorrectOverviewCardLink(
+          linkText = "View your late submission penalties",
+          linkHref = "/view-penalty/self-assessment#lspTab",
+          exactHrefMatch = false
+        )
+      }
+    }
+
+    "display the correct text when user has a LPP" in {
+      val items = financialDetails("4028").flatMap(_.asChargeItems)
+      new TestSetup(chargeItems = items) {
+        val penaltiesSection: Element = document.selectById("penalties-overview-section")
+        penaltiesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Penalties and appeals"
+
+        penaltiesSection.hasCorrectOverviewCardLink(
+          linkText = "View your late payment penalties",
+          linkHref = "/view-penalty/self-assessment#lppTab",
+          exactHrefMatch = false
+        )
+      }
+    }
+
+    "display the correct text when user has a both LSP & LPP" in {
+      val items = financialDetails("4027", "4028").flatMap(_.asChargeItems)
+      new TestSetup(chargeItems = items) {
+        val penaltiesSection: Element = document.selectById("penalties-overview-section")
+        penaltiesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Penalties and appeals"
+
+        penaltiesSection.hasCorrectOverviewCardLink(
+          linkText = "View your late payment penalties",
+          linkHref = "/view-penalty/self-assessment#lppTab",
+          exactHrefMatch = false
+        )
+
+        penaltiesSection.hasCorrectOverviewCardLink(
+          cardIndex = 1,
+          linkText = "View your late submission penalties",
+          linkHref = "/view-penalty/self-assessment#lspTab",
+          exactHrefMatch = false
+        )
+      }
     }
 
     "display the correct content for a user with money in their account" in new TestSetup(moneyInYourAccount = true) {
@@ -344,12 +407,6 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
       document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
       document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment/agent")
-
-      document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "View your late payment penalties"
-      document.select(".govuk-summary-card-no-border").get(9).link.attr("href") should include("/view-penalty/self-assessment/agent#lppTab")
-
-      document.select(".govuk-summary-card-no-border").get(10).text() shouldBe "View your late submission penalties"
-      document.select(".govuk-summary-card-no-border").get(10).link.attr("href") should include("/view-penalty/self-assessment/agent#lspTab")
     }
 
     "display the correct 'Income sources' section" in new TestSetup(isAgent = true) {
@@ -382,18 +439,6 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       penaltiesSection.hasCorrectOverviewCardLink(
         linkText = "Check Self Assessment penalties and appeals",
         linkHref = "/view-penalty/self-assessment/agent",
-        exactHrefMatch = false
-      )
-      penaltiesSection.hasCorrectOverviewCardLink(
-        cardIndex = 1,
-        linkText = "View your late payment penalties",
-        linkHref = "/view-penalty/self-assessment/agent#lppTab",
-        exactHrefMatch = false
-      )
-      penaltiesSection.hasCorrectOverviewCardLink(
-        cardIndex = 2,
-        linkText = "View your late submission penalties",
-        linkHref = "/view-penalty/self-assessment/agent#lspTab",
         exactHrefMatch = false
       )
     }

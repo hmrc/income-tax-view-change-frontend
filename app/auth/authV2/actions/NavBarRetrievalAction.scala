@@ -60,7 +60,7 @@ class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarControll
       case Some(origin) if OriginEnum(origin).contains(BTA) =>
         handleBtaNavBar(request)
       case _ =>
-        Future.successful(Left(Redirect(appConfig.taxAccountRouterUrl)))
+        Future.successful(Right(request))
     }
   }
 

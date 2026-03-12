@@ -126,9 +126,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   // Disagree with a tax decision
   lazy val taxAppealsUrl: String = servicesConfig.getString("tax-appeals.url")
 
-  //Tax account router url
-  lazy val taxAccountRouterUrl: String = servicesConfig.getString("tax-account-router.url")
-
   // income-tax-session-data url
   lazy val incomeTaxSessionDataUrl: String = servicesConfig.baseUrl("income-tax-session-data")
 
@@ -174,6 +171,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
 
   lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
+  
+  lazy val itvcRebrand: Boolean = servicesConfig.getBoolean("itvc.useRebrand")
 
   lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-time-machine")
   lazy val timeMachineAddYears: Int = servicesConfig.getInt("time-machine.add-years")

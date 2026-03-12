@@ -94,7 +94,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
           }
         }
 
-        "return an request containing a pta partial navBar" when {
+        "return a request containing a pta partial navBar" when {
           val ptaNavBar = Html("<test>PTA</test>")
           "the request has no origin query parameter and a PTA origin in the request session" in {
             val fakeRequest = fakeRequestWithActiveSession.withSession(
@@ -113,7 +113,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
           }
         }
 
-        "return an request containing a bta partial navBar" when {
+        "return a request containing a bta partial navBar" when {
           val btaNavBar = Html("<test>BTA</test>")
           "the request has no origin query parameter and a BTA origin in the request session" in {
             val fakeRequest = fakeRequestWithActiveSession.withSession(
@@ -132,7 +132,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
           }
         }
 
-        "redirect to taxAccountRouterUrl" when {
+        "return a request with no navBar" when {
           "the request has no origin in the query parameters or session request" in {
 
             val mtdIdUserRequest = getMtdItUser(affinityGroup, featureSwitches = featureSwitchesIncludingNavBarEnabled)(fakeRequestWithActiveSession)
@@ -141,8 +141,8 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
               mtdIdUserRequest,
               defaultAsync)
 
-            status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some("http://localhost:9280/account")
+            status(result) shouldBe OK
+            contentAsString(result) shouldBe "Successful"
           }
         }
 

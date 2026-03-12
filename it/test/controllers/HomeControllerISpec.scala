@@ -136,7 +136,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(OK),
-              pageTitleInd("home.heading"),
+              pageTitleInd("home.heading.new"),
               elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
             )
@@ -209,7 +209,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(OK),
-              pageTitleInd("home.heading"),
+              pageTitleInd("home.heading.new"),
               elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
             )
@@ -284,7 +284,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(OK),
-              pageTitleInd("home.heading"),
+              pageTitleInd("home.heading.new"),
               elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
               elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}")
             )
@@ -357,7 +357,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(OK),
-              pageTitleInd("home.heading"),
+              pageTitleInd("home.heading.new"),
               elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
               elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
             )
@@ -452,7 +452,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(OK),
-              pageTitleInd("home.heading"),
+              pageTitleInd("home.heading.new"),
               elementTextBySelector("#updates-tile p:nth-child(2)")(overdueUpdates(numberOverdue = "2")),
               elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
             )
@@ -528,7 +528,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(OK),
-              pageTitleInd("home.heading"),
+              pageTitleInd("home.heading.new"),
               elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
@@ -601,7 +601,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(OK),
-              pageTitleInd("home.heading"),
+              pageTitleInd("home.heading.new"),
               elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
@@ -676,7 +676,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(OK),
-              pageTitleInd("home.heading"),
+              pageTitleInd("home.heading.new"),
               elementTextBySelector("#reporting-obligations-tile p:nth-child(2)")("For the 2022 to 2023 tax year you need to:"),
               elementTextBySelector("#reporting-obligations-tile h2:nth-child(1)")("Your reporting obligations")
             )
