@@ -226,4 +226,24 @@ class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
       "newHome.yourTasks.selfAssessment.no-tasks"
     }
   }
+
+ def getLspLinkLabel = {
+   val lspCharges = chargeItemByType(lspSet)
+
+   if(lspCharges.size > 1){
+     "newHome.yourTasks.selfAssessment.lsp.multiple.link"
+   }else {
+     "newHome.yourTasks.selfAssessment.lsp.single.link"
+   }
+ }
+
+  def getLppLinkLabel = {
+    val lppCharges = chargeItemByType(lppSet)
+
+    if (lppCharges.size > 1) {
+      "newHome.yourTasks.selfAssessment.lpp.multiple.link"
+    } else {
+      "newHome.yourTasks.selfAssessment.lpp.single.link"
+    }
+  }
 }

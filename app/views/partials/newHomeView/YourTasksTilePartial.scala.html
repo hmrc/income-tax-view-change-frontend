@@ -70,7 +70,7 @@
     <div id="lppTile" class="hmrc-card">
         <div class="tile-body">
             <h3 class="hmrc-card__heading">
-                <a href=@viewModel.getLpp1orLpp2Link(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                <a href=@viewModel.getLpp1orLpp2Link(isAgent)>@messages(viewModel.getLppLinkLabel) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
             </h3>
             <div class="govuk-body">@getLppDescription</div>
             <div class="govuk-tag govuk-tag--@viewModel.oldestChargeStatusColor(viewModel.lppSet)" id="lpp-date-tag">@getLppDate</div>
@@ -82,7 +82,7 @@
     <div id="lspTile" class="hmrc-card">
         <div class="tile-body">
             <h3 class="hmrc-card__heading">
-                <a href=@viewModel.getLspLink(isAgent)>@messages("newHome.yourTasks.selfAssessment") <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                <a href=@viewModel.getLspLink(isAgent)>@messages(viewModel.getLspLinkLabel) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
             </h3>
             <div class="govuk-body">@getLspDescription</div>
             <div class="govuk-tag govuk-tag--@viewModel.oldestChargeStatusColor(viewModel.lspSet)" id="lsp-date-tag">@getLspDate</div>
