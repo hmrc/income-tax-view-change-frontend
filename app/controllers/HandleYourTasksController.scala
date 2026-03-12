@@ -117,18 +117,12 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     val submissionDeadlinesViewModel = {
       for {
         (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- nextUpdatesService.getNextDueDates()
-        nextUpdatesDueDates <- getNextUpdatesDueDates()
         openObligations <- getOpenObligations()
       } yield {
           SubmissionDeadlinesViewModel(
             openObligations = openObligations,
             currentDate = dateService.getCurrentDate,
-//            TODO TODO remove it just for local testing
-//                        nextQuarterlyUpdateDueDate = Some(LocalDate.of(2027, 1, 31))
-//            nextQuarterlyUpdateDueDate = Some(LocalDate.of(2027, 1, 31)),
             nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
-            // TODO remove me just for local testing
-            //                    nextTaxReturnDueDate = stubData
             nextTaxReturnDueDate = nextTaxReturnDueDate
           )
         }
@@ -138,16 +132,6 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         Future.successful(SubmissionDeadlinesViewModel(Seq.empty, dateService.getCurrentDate, None, None))
     }
     submissionDeadlinesViewModel
-  }
-
-  private def getNextUpdatesDueDates()
-                                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[LocalDate]] = {
-    nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) => Future.successful(nextUpdatesDueDates)
-      case Left(ex) =>
-        Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-        Future.successful(Seq.empty[LocalDate])
-    }
   }
 
   private def getOpenObligations()
@@ -167,5 +151,4 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
   def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
 
   def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
-
 }
