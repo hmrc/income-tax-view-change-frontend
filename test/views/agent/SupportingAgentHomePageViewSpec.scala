@@ -19,8 +19,8 @@ package views.agent
 import auth.MtdItUser
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
-import config.featureswitch._
-import models.homePage._
+import config.featureswitch.*
+import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -29,9 +29,9 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.agent.SupportingAgentHomeView
@@ -99,6 +99,8 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
+
+    def getElementByClass(elementClass: String) = Option(document.getElementsByClass(elementClass))
 
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
 
@@ -255,10 +257,10 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
       "have a language selection switch" which {
 
-        "displays the correct content" in new TestSetup {
-          val langSwitchScript: Option[Element] = getElementById("language-switch")
-          langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
-          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith i’r Gymraeg Cymraeg")
+        "displays the correct content" in new TestSetup() {
+          val langSwitchScript = getElementByClass("hmrc-service-navigation-language-select__list")
+          langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("ENG")
+          langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("CYM – Newid yr iaith i’r Gymraeg")
         }
       }
 

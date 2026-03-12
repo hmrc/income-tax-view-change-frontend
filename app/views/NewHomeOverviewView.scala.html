@@ -22,6 +22,8 @@
 @import views.html.partials.newHome.overview._
 @import config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
+@import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+@import models.financialDetails.*
 
 @this(
         mainTemplate: unifiedLayout,
@@ -44,7 +46,10 @@
         overViewUrl: String,
         helpUrl: String,
         noChargesToPay: Boolean,
-        moneyInYourAccount: Boolean)(
+        moneyInYourAccount: Boolean,
+        ctaViewModel: WYOClaimToAdjustViewModel,
+        chargeItems: List[ChargeItem],
+        isGovUkRebrandEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -53,7 +58,7 @@
         user.optClientNameAsString.fold(messages("home.agent.heading")) {
             clientName => messages("home.agent.headingWithClientName", clientName)
         }
-    } else messages("home.heading")
+    } else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading")
 }
 
 @caption = @{
@@ -72,7 +77,7 @@
 }
 
 @mainTemplate(
-    pageTitle = if (isAgent) messages("home.agent.heading") else messages("home.heading"),
+    pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
 ) {
@@ -128,7 +133,7 @@
 
 
 @IndividualSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount)
+    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel)
     @SectionBreak
 
     @deadlinesSection(isAgent = false)
@@ -140,12 +145,16 @@
     @taxYearSection(isAgent = false, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = false)
+    @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
 }
 
 
+@isPenaltyPresent(targetTypes: TransactionType*) = @{
+    chargeItems.exists(item => targetTypes.contains(item.transactionType))
+}
+
 @AgentSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount)
+    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel)
     @SectionBreak
 
     @deadlinesSection(isAgent = true)
@@ -157,7 +166,7 @@
     @taxYearSection(isAgent = true, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = true)
+    @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
 }
 
 
