@@ -3303,7 +3303,7 @@ yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.text.heading     = First 
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.text.heading     = Second payment on account: extra amount from your tax return
 yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe      = (not including estimated interest)
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on this charge
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Interest is charged from the date your balancing payment was originally due.
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Interest is charged from the day after your balancing payment was originally due.
 yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Interest will be estimated until the charge it is related to is paid in full.
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest on this charge:
@@ -3317,6 +3317,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.caption.hmrcAdjustment.text.headin
 yourSelfAssessmentChargeSummary.definition.hmrcadjustment               = HMRC has added this charge after an adjustment to your tax return.
 
 yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading = This charge goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text = This balancing payment extra amount goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
 yourSelfAssessmentChargeSummary.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
@@ -3447,7 +3448,7 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading            
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p                           = You have received this penalty because you are late paying your Income Tax.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                        = View how your penalty was calculated.
 
-yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = You owe this extra tax because of a change you made to your return.
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = This balancing payment extra amount was created because of a change you made to your return.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Pay this charge to stop this interest from increasing daily.
 
 
