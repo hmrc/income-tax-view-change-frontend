@@ -323,8 +323,8 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £10.33 (not including estimated interest)"
                 document.getElementById("due-date-text").select("p").text() shouldBe "Due 29 March 2018"
-                document.getElementById("itsa-return-amendment-p1").text() shouldBe "You owe this extra tax because of a change you made to your return."
-                document.getElementById("interestOnCharge.p1").text() shouldBe "Interest is charged from the date your balancing payment was originally due."
+                document.getElementById("itsa-return-amendment-p1").text() shouldBe "This balancing payment extra amount was created because of a change you made to your return."
+                document.getElementById("interestOnCharge.p1").text() shouldBe "Interest is charged from the day after your balancing payment was originally due."
                 document.getElementById("interestOnCharge.p2").text() shouldBe "Interest will be estimated until the charge it is related to is paid in full."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
