@@ -60,21 +60,8 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   def getPoaForNonCrystallisedTaxYear(nino: Nino)
                                      (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[PaymentOnAccountViewModel]]] = {
-    {
-      for {
-        financialDetailsMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
-        paymentOnAccountViewModelMaybe <- EitherT(
-          Future.successful(financialDetailsMaybe
-            .map { financialDetails =>
-              val charges = sortByTaxYearC(financialDetails.toChargeItem)
-              getPaymentOnAccountModel(charges)
-            } match {
-              case Some(x) => x
-              case None => Left(new Exception("Unable to extract getPaymentOnAccountModel"))
-          }
-          ))
-      } yield paymentOnAccountViewModelMaybe
-    }.value
+    getPoaModelAndFinancialDetailsForNonCrystallised(nino).map(
+      _.map(_.poaModel))
   }
 
   def getPoaViewModelWithAdjustmentReason(nino: Nino)
@@ -96,16 +83,19 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   def getAmendablePoaViewModel(nino: Nino)
                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, PaymentOnAccountViewModel]] = {
-    {
-      for {
-        financialDetailsMaybe <- EitherT(getNonCrystallisedFinancialDetails(nino))
-        fdAndChargeMaybe <- EitherT(Future.successful(getFinancialDetailAndChargeRefModel(financialDetailsMaybe)))
-        haveBeenAdjusted <- EitherT(isSubsequentAdjustment(chargeHistoryConnector, fdAndChargeMaybe.chargeReference))
-        documentDetailsWithNoCredits = fdAndChargeMaybe.documentDetails.filterNot(_.originalAmount < 0)
-        paymentOnAccountViewModel <- EitherT(
-          Future.successful(getAmendablePoaViewModel(sortByTaxYear(documentDetailsWithNoCredits), haveBeenAdjusted)))
-      } yield paymentOnAccountViewModel
-    }.value
+    getPoaModelAndFinancialDetailsForNonCrystallised(nino).flatMap { detailsMaybe =>
+      if (detailsMaybe.exists(_.poaModel.exists(_.totalAmountOne == 0))) {
+        Future.successful(detailsMaybe.map(_.poaModel.get))
+      } else {
+        for {
+          financialDetailsMaybe <- EitherT(Future.successful(detailsMaybe))
+          fdAndChargeMaybe <-  EitherT(Future.successful(getFinancialDetailAndChargeRefModel(financialDetailsMaybe.financialDetails)))
+          haveBeenAdjusted <- EitherT(isSubsequentAdjustment(chargeHistoryConnector, fdAndChargeMaybe.chargeReference))
+        } yield {
+          financialDetailsMaybe.poaModel.get.copy(previouslyAdjusted = Some(haveBeenAdjusted))
+        }
+      }.value
+    }
   }
 
   // TODO: move private functions into Helper?
@@ -141,7 +131,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
         financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
           case financialDetails: FinancialDetailsModel =>
             val charges = sortByTaxYearC(financialDetails.toChargeItem)
-            getPaymentOnAccountModel(charges) match {
+            getPaymentOnAccountModel(charges, taxYear = taxYear) match {
               case Right(x) =>
                 Right(FinancialDetailsAndPoaModel(Some(financialDetails), x))
               case Left(ex) =>
