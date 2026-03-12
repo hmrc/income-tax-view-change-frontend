@@ -190,10 +190,18 @@ class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
       }
     }
 
+  private def defineLspLink(chargeItem: ChargeItem, transactionType: TransactionType, isAgent: Boolean): String = {
+    (transactionType, isAgent) match {
+      case (LateSubmissionPenalty, false) => s"${appConfig.incomeTaxPenaltiesFrontend}/#lspTab"
+      case (LateSubmissionPenalty, true) => s"${appConfig.incomeTaxPenaltiesFrontend}/agent/#lspTab"
+      case _ => ""
+    }
+  }
+
    def getLspLink(isAgent: Boolean): String = {
     val lspCharges = chargeItemByType(lspSet)
     if (lspCharges.size > 1) {
-      defineLppLink(lspCharges.head, lspCharges.head.transactionType, isAgent)
+      defineLspLink(lspCharges.head, lspCharges.head.transactionType, isAgent)
     } else {
       if (isAgent) {
         controllers.routes.ChargeSummaryController.showAgent(lspCharges.head.taxYear.endYear, lspCharges.head.transactionId).url
