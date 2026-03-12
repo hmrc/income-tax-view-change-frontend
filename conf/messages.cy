@@ -1918,12 +1918,12 @@ check-details.description                               = Unwaith y byddwch yn c
 
 check-details.sole-trader-business-address              = Cyfeiriad busnes unig fasnachwr
 check-details.add-a-new-one                             = Ychwanegu un newydd
-check-details.is-new-address-in-uk                      = A yw'r cyfeiriad newydd yn y DU?
+check-details.is-new-address-in-uk                      = A yw’r cyfeiriad newydd yn y DU?
 check-details.is-business-address-in-uk                 = A yw cyfeiriad eich busnes unig fasnachwr yn y DU?
 check-details.yes                                       = Iawn
 check-details.no                                        = Na
-check-details.added-address                             = Cyfeiriad wedi'i ychwanegu ar gyfer y busnes hwn
-check-details.added-international-address               = Cyfeiriad rhyngwladol ar gyfer y busnes hwn wedi'i ychwanegu
+check-details.added-address                             = Cyfeiriad wedi’i ychwanegu ar gyfer y busnes hwn
+check-details.added-international-address               = Cyfeiriad rhyngwladol ar gyfer y busnes hwn wedi’i ychwanegu
 
 check-details-uk.title                                  = Cadarnhewch fod yr wybodaeth hon yn gywir
 check-details-uk.heading                                = Eiddo yn y DU
