@@ -3324,8 +3324,8 @@ yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading	    		        =
 yourSelfAssessmentChargeSummary.lpi.interestPeriod								        = Cyfnod llog:
 yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates							    = {0} i {1}
 
-yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading                 = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
-yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading                 = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading               = Llog am daliad hwyr ar gyfer y taliad cyntaf ar gyfrif: swm ychwanegol
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading               = Llog am daliad hwyr ar gyfer yr ail daliad ar gyfrif: swm ychwanegol
 yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif, a gafodd ei addasu, yn rhy isel.
 yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
 yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich taliad cyntaf ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
@@ -3336,8 +3336,8 @@ yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                      
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich ail daliad ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
-yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
+yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                  = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                           = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
 
 yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                    = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
 yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                  = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
