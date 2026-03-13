@@ -97,7 +97,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
     705.2,
     "BACS",
     12345,
-    Vector(
+    Some(Vector(
       RepaymentItem(
         Vector(
           RepaymentSupplementItem(
@@ -122,7 +122,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
             Some(2.01))
         )
       )
-    ), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135",
+    )), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135",
     status = RepaymentHistoryStatus("A")
   )
 
