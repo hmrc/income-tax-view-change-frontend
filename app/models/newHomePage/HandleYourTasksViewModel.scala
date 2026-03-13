@@ -190,8 +190,8 @@ class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
 
   private def defineLspLink(chargeItem: ChargeItem, transactionType: TransactionType, isAgent: Boolean): String = {
     (transactionType, isAgent) match {
-      case (LateSubmissionPenalty, false) => s"${appConfig.incomeTaxPenaltiesFrontend}/#lspTab"
-      case (LateSubmissionPenalty, true) => s"${appConfig.incomeTaxPenaltiesFrontend}/agent/#lspTab"
+      case (LateSubmissionPenalty, false) => s"${appConfig.incomeTaxPenaltiesFrontend}#lspTab"
+      case (LateSubmissionPenalty, true) => s"${appConfig.incomeTaxPenaltiesFrontend}/agent#lspTab"
       case _ => ""
     }
   }
