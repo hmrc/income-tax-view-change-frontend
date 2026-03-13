@@ -199,6 +199,24 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
 ## New Home Page ##
+### Your New Tasks Tab
+
+new.home.navigation.tabs.yourTasks                              = Eich tasgau
+
+new.home.yourTasks.updates-and-deadlines                        = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
+new.home.yourTasks.upcoming-annual-updates-body            = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad blynyddol.
+new.home.yourTasks.upcoming-annual-updates-label           = Dyledus erbyn {0}
+new.home.yourTasks.upcoming-quarterly-updates-body         = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad chwarterol.
+new.home.yourTasks.upcoming-quarterly-updates-label        = Dyledus erbyn {0}
+new.home.yourTasks.overdue-annual-submission-single-body            = Mae gennych gyflwyniad blynyddol sy’n hwyr.
+new.home.yourTasks.overdue-annual-submission-single-label           = Roedd hyn yn ddyledus ar {0}
+new.home.yourTasks.overdue-annual-submission-multiple-body          = Mae gennych {0} o gyflwyniadau blynyddol sy’n hwyr.
+new.home.yourTasks.overdue-annual-submission-multiple-label         = Dyddiad cau’r cyflwyniad hynaf yw {0}
+new.home.yourTasks.overdue-quarterly-submission-single-body            = Mae gennych gyflwyniad chwarterol sy’n hwyr.
+new.home.yourTasks.overdue-quarterly-submission-single-label           = Roedd hyn yn ddyledus ar {0}
+new.home.yourTasks.overdue-quarterly-submission-multiple-body          = Mae gennych {0} o gyflwyniadau chwarterol sy’n hwyr.
+new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Dyddiad cau’r cyflwyniad hynaf yw {0}
+
 ### Overview Tab
 new.home.navigation.tabs.overview                               = Trosolwg
 
@@ -254,7 +272,7 @@ taxYears.oldSa.content.text                                    = Er mwyn bwrw go
 taxYears.oldSa.content.link                                    = cyfrif Hunanasesiad ar-lein blaenorol
 taxYears.oldSa.agent.content.1								   = I weld crynodeb cleient o gyfnod cyn blwyddyn dreth {0} i {1}, bydd angen i chi fewngofnodi i’ch
 taxYears.oldSa.agent.content.2								   = cyfrif Hunanasesiad ar gyfer Asiantau
-taxYears.oldSa.agent.content.3								   = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair Porth y Llywodraeth gwahanol i’r rhai sydd gennych ar gyfer eich cyfrif Gwasanaethau Asiant.
+taxYears.oldSa.agent.content.3								   = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 taxYears.r18.amendment.text                                    = Gallwch fwrw golwg dros dudalennau yn crynhoi blwyddyn dreth i hefyd gael gweld beth yw eich opsiynau o ran diwygio’r ffurflen dreth rydych eisoes wedi’i chyflwyno’r flwyddyn honno.
 
 ## Tax Year Summary Page New ##
@@ -1000,7 +1018,7 @@ whatYouOwe.sa-note-2-body                                       = Er mwyn bwrw g
 whatYouOwe.sa-note-2-body-agent-1                               = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
 whatYouOwe.sa-note-2-heading-agent                              = Mae’n bosibl y bydd gan eich cleient daliadau sy’n ddyledus o hyd ar gyfer blynyddoedd treth Hunanasesiad blaenorol
 whatYouOwe.sa-note-2-agent-2                                    = Er mwyn bwrw golwg dros flynyddoedd treth eich cleient cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
-whatYouOwe.sa-note-2-body-agent-2                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+whatYouOwe.sa-note-2-body-agent-2                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 whatYouOwe.sa-link-2                                            = cyfrif Hunanasesiad ar-lein blaenorol
 whatYouOwe.sa-link-2-agent                                      = cyfrif Hunanasesiad ar gyfer Asiantau
 whatYouOwe.outstanding-charges-note                             = Caiff unrhyw daliadau a wnaed eu defnyddio ar gyfer y costau sydd heb eu talu ar gyfer y blynyddoedd treth hyn yn gyntaf ac ni ddangosir hwy yn yma.
@@ -1335,7 +1353,7 @@ cannotUpdateReportingObligations.p3                             =
 ## Payment History Page ##
 paymentHistory.heading                                          = Hanes taliadau
 paymentHistory.info                                             = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
-paymentHistory.info.2                                           = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+paymentHistory.info.2                                           = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 paymentHistory.textLink1                                        = gwasanaeth Hunanasesiad arferol
 paymentHistory.button                                           = Taliadau, credydau ac ad-daliadau {0}
 
@@ -1705,7 +1723,7 @@ pagehelp.opensInNewTabText                                      = (yn agor tab n
 notmigrated.user.heading                                        = Sut i hawlio ad-daliad
 notmigrated.user.content                                        = Er mwyn bwrw golwg dros yr arian yn eich cyfrif o flynyddoedd treth blaenorol (cyn y gwnaethoch gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm) mae angen i chi fynd i’ch
 notmigrated.agent.content                                       = I hawlio arian o flynyddoedd treth blaenorol (cyn y gwnaeth eich cleient gofrestru am y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm), bydd angen i chi fewngofnodi i’ch
-notmigrated.agent.content_extra                                 = Bydd hyn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+notmigrated.agent.content_extra                                 = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 notmigrated.user.link_title                                     = cyfrif Hunanasesiad ar-lein
 notmigrated.agent.link_title                                    = cyfrif Hunanasesiad ar gyfer Asiantau
 

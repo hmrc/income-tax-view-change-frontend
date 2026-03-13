@@ -26,7 +26,8 @@ import java.time.temporal.ChronoUnit
 class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
                                unpaidCharges: List[FinancialDetailsResponseModel],
                                credits: CreditsModel,
-                               creditsRefundsRepayEnabled: Boolean)
+                               creditsRefundsRepayEnabled: Boolean,
+                               obligations: SubmissionDeadlinesViewModel)
                               (implicit val appConfig: FrontendAppConfig) {
 
   private val today: LocalDate = LocalDate.now()
