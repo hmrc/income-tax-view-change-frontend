@@ -24,7 +24,6 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
-                               unpaidCharges: List[FinancialDetailsResponseModel],
                                credits: CreditsModel,
                                creditsRefundsRepayEnabled: Boolean,
                                obligations: SubmissionDeadlinesViewModel)
@@ -40,7 +39,7 @@ class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
   val areChargesPresent: Boolean = chargeItemByType(chargesSet).nonEmpty
   val areLPPPresent: Boolean = chargeItemByType(lppSet).nonEmpty
   val isLSPPresent: Boolean = chargeItemByType(lspSet).nonEmpty
-  val isMoneyInYourAccountPresent = creditInAccount.isDefined && creditInAccount.get > BigDecimal(0)
+  val isMoneyInYourAccountPresent: Boolean = creditInAccount.isDefined && creditInAccount.get > BigDecimal(0)
 
   val areAnyTasksPresent: Boolean = areChargesPresent || areLPPPresent || isLSPPresent || isMoneyInYourAccountPresent
 
@@ -234,7 +233,7 @@ class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
     }
   }
 
- def getLspLinkLabel = {
+ def getLspLinkLabel: String = {
    val lspCharges = chargeItemByType(lspSet)
 
    if(lspCharges.size > 1){
@@ -244,7 +243,7 @@ class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
    }
  }
 
-  def getLppLinkLabel = {
+  def getLppLinkLabel: String = {
     val lppCharges = chargeItemByType(lppSet)
 
     if (lppCharges.size > 1) {
