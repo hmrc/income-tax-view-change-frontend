@@ -182,10 +182,8 @@ class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
   }
   private def defineLppLink(chargeItem: ChargeItem, transactionType: TransactionType, isAgent: Boolean): String = {
       (transactionType, isAgent) match {
-        case (FirstLatePaymentPenalty, false) => appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeItem.chargeReference.getOrElse(""))
-        case (FirstLatePaymentPenalty, true) => appConfig.incomeTaxPenaltiesFrontendLPP1CalculationAgent(chargeItem.chargeReference.getOrElse(""))
-        case (SecondLatePaymentPenalty, false) => appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(chargeItem.chargeReference.getOrElse(""))
-        case (SecondLatePaymentPenalty, true) => appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent(chargeItem.chargeReference.getOrElse(""))
+        case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, false) => s"${appConfig.incomeTaxPenaltiesFrontend}/#lppTab"
+        case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, true) => s"${appConfig.incomeTaxPenaltiesFrontend}/agent/#lppTab"
         case _ => ""
       }
     }
