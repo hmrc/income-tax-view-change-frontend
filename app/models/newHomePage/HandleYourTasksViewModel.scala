@@ -23,7 +23,7 @@ import models.financialDetails.*
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
+case class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
                                credits: CreditsModel,
                                creditsRefundsRepayEnabled: Boolean,
                                obligations: SubmissionDeadlinesViewModel)
