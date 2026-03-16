@@ -243,6 +243,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     val dueDatesFromUnpaidDocumentDetails =
       chargesList
         .flatMap(_.unpaidDocumentDetails())
+        .filter(_.originalAmount > 0)
         .flatMap(_.getDueDate())
 
     val dueDates =
