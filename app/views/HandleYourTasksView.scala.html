@@ -22,6 +22,8 @@
 @import views.html.partials.newHomeView._
 @import views.html.components._
 @import models.newHomePage.HandleYourTasksViewModel
+@import views.html.partials.newHome.yourTasks._
+@import views.html.partials.newHome.yourTasks.SubmissionDeadlinesTilePartial
 
 @this(
         mainTemplate: unifiedLayout,
@@ -29,6 +31,7 @@
         h1WithCaption: h1WithCaption,
         govukServiceNavigation : GovukServiceNavigation,
         yourTasksTilePartial: YourTasksTilePartial,
+        submissionDeadlinesTilePartial: SubmissionDeadlinesTilePartial,
         h2: h2
 )
 
@@ -38,7 +41,8 @@
         recentActivityUrl: String,
         overViewUrl: String,
         helpUrl: String,
-        viewModel: HandleYourTasksViewModel)(
+        viewModel: HandleYourTasksViewModel,
+        isGovUkRebrandEnabled: Boolean)(
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -47,7 +51,7 @@
         user.optClientNameAsString.fold(messages("home.agent.heading")) {
             clientName => messages("home.agent.headingWithClientName", clientName)
         }
-    } else messages("home.heading")
+    } else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading")
 }
 
 @caption = @{
@@ -61,7 +65,7 @@
 }
 
 @mainTemplate(
-    pageTitle = if (isAgent) messages("home.agent.heading") else messages("home.heading"),
+    pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
 ) {
@@ -106,4 +110,6 @@
 
     @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
     @yourTasksTilePartial(viewModel, isAgent)
+
+    @submissionDeadlinesTilePartial(isAgent, messages("new.home.yourTasks.updates-and-deadlines"), viewModel)
 }

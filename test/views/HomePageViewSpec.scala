@@ -128,7 +128,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
       penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
-      dunningLockExists = dunningLockExists
+      dunningLockExists = dunningLockExists,
+      useGovUkRebrand = true
     )
 
     val home: HomeView = app.injector.instanceOf[HomeView]
@@ -142,6 +143,8 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     lazy val document2: Document = Jsoup.parse(contentAsString(page2))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))
+
+    def getElementByClass(elementClass: String) = Option(document.getElementsByClass(elementClass))
 
     def getTextOfElementById(id: String): Option[String] = getElementById(id).map(_.text)
 
@@ -160,16 +163,16 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
     }
 
-    s"have the title ${messages("htmlTitle", messages("home.heading"))}" in new Setup {
-      document.title() shouldBe "Income Tax - Manage your Self Assessment - GOV.UK"
+    s"have the title ${messages("htmlTitle", messages("home.heading.new"))}" in new Setup() {
+      document.title() shouldBe "Self Assessment - Manage your Self Assessment - GOV.UK"
     }
 
     s"have the users name as caption" in new Setup {
       getTextOfElementById("sub-heading") shouldBe Some(testUserName)
     }
 
-    s"have the page heading '${messages("home.heading")}'" in new Setup {
-      getTextOfElementById("income-tax-heading") shouldBe Some(s"Income Tax")
+    s"have the page heading '${messages("home.heading.new")}'" in new Setup() {
+      getTextOfElementById("income-tax-heading") shouldBe Some(s"Self Assessment")
     }
 
     "have the right keep-alive url in hmrc timeout dialog" in new Setup {
@@ -192,10 +195,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     "have a language selection switch" which {
 
-      "displays the correct content" in new Setup(user = testMtdItUser(hasSAUtr = false)) {
-        val langSwitchScript: Option[Element] = getElementById("language-switch")
-        langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("English")
-        langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("Newid yr iaith i’r Gymraeg Cymraeg")
+      "displays the correct content" in new Setup() {
+        val langSwitchScript = getElementByClass("hmrc-service-navigation-language-select__list")
+        langSwitchScript.map(_.select("li:nth-child(1)").text) shouldBe Some("ENG")
+        langSwitchScript.map(_.select("li:nth-child(2)").text) shouldBe Some("CYM – Newid yr iaith i’r Gymraeg")
       }
     }
 

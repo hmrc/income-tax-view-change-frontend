@@ -38,10 +38,9 @@
 @import implicitDateFormatter.longDate
 
 @getRepaymentSupplementItemSize(repaymentHistoryItem: RefundToTaxPayerViewModel) = @{
-    repaymentHistoryItem.repaymentItems.headOption match {
-        case Some(value) => value.repaymentSupplementItem.size
-        case None => 0
-    }
+        repaymentHistoryItem.repaymentItems
+        .map(_.map(_.repaymentSupplementItem.size).sum)
+        .getOrElse(0)
 }
 
 @mainTemplate(

@@ -23,6 +23,7 @@
 @import config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
 @import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+@import models.financialDetails.*
 
 @this(
         mainTemplate: unifiedLayout,
@@ -46,7 +47,9 @@
         helpUrl: String,
         noChargesToPay: Boolean,
         moneyInYourAccount: Boolean,
-        ctaViewModel: WYOClaimToAdjustViewModel)(
+        ctaViewModel: WYOClaimToAdjustViewModel,
+        chargeItems: List[ChargeItem],
+        isGovUkRebrandEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -55,7 +58,7 @@
         user.optClientNameAsString.fold(messages("home.agent.heading")) {
             clientName => messages("home.agent.headingWithClientName", clientName)
         }
-    } else messages("home.heading")
+    } else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading")
 }
 
 @caption = @{
@@ -74,7 +77,7 @@
 }
 
 @mainTemplate(
-    pageTitle = if (isAgent) messages("home.agent.heading") else messages("home.heading"),
+    pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
 ) {
@@ -142,9 +145,13 @@
     @taxYearSection(isAgent = false, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = false)
+    @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
 }
 
+
+@isPenaltyPresent(targetTypes: TransactionType*) = @{
+    chargeItems.exists(item => targetTypes.contains(item.transactionType))
+}
 
 @AgentSections(noChargesToPay: Boolean) = {
     @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel)
@@ -159,7 +166,7 @@
     @taxYearSection(isAgent = true, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = true)
+    @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
 }
 
 

@@ -109,7 +109,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
     val testHomeController = app.injector.instanceOf[HomeController]
 
-    val homePageTitle = s"${messages("htmlTitle", messages("home.heading"))}"
+    val homePageTitle = "Self Assessment - Manage your Self Assessment - GOV.UK"
     val overdueWarningMessageDunningLockTrue: String = messages("home.overdue.message.dunningLock.true")
     val overdueWarningMessageDunningLockFalse: String = messages("home.overdue.message.dunningLock.false")
     val expectedOverDuePaymentsText = s"${messages("home.overdue.date")} 31 January 2019"

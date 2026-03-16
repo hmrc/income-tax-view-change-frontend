@@ -44,7 +44,8 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
                    recentActivityUrl: String = "testRecentActivityUrl",
                    overViewUrl: String = "testOverviewUrl",
                    helpUrl: String = "testHelpUrl",
-                   welshLang: Boolean = false
+                   welshLang: Boolean = false,
+                   useRebrand: Boolean = false
                  ) {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -69,7 +70,8 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
         yourTasksUrl,
         recentActivityUrl,
         overViewUrl,
-        helpUrl
+        helpUrl,
+        useRebrand
       )(testMessages, request, testUser)
 
     lazy val document: Document = Jsoup.parse(contentAsString(page))
@@ -77,6 +79,15 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
   }
 
   "New Home Help page" should {
+
+    "display the correct heading" when {
+      "useRebrand is false" in new TestSetup() {
+        document.getElementById("income-tax-heading").text() shouldBe "Income Tax"
+      }
+      "useRebrand is true" in new TestSetup(useRebrand = true) {
+        document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
+      }
+    }
 
     "display the section heading and open-in-new-tab message" in new TestSetup() {
       document.select("h2.govuk-heading-m").first().text() shouldBe messages("new.home.help.heading")
