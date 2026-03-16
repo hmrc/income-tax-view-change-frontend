@@ -97,7 +97,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
     705.2,
     RefundToTaxPayerMessages.tableValueMethodTypeBacs,
     12345,
-    Vector(
+    Some(Vector(
       RepaymentItem(
         Vector(
           RepaymentSupplementItem(
@@ -122,7 +122,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
             Some(2.01))
         )
       )
-    ), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135",
+    )), LocalDate.of(2021, 7, 23), LocalDate.of(2021, 7, 21), "000000003135",
     status = RepaymentHistoryStatus("A")
   )
 
@@ -131,7 +131,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       amountApprovedForRepayment = Some(800.12),
       amountRequested = 345.5,
       repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard,
-      repaymentItems = Vector(
+      repaymentItems = Some(Vector(
         RepaymentItem(
           Vector(
             RepaymentSupplementItem(
@@ -142,7 +142,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
               Some(2.01)
             )
           )
-        ))
+        )))
     )
 
   val testRefundViewModelTwoItems: RefundToTaxPayerViewModel =
@@ -150,7 +150,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
           amountApprovedForRepayment = Some(800.12),
           amountRequested = 345.5,
           repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard,
-          repaymentItems = Vector(
+          repaymentItems = Some(Vector(
             RepaymentItem(
               Vector(
                 RepaymentSupplementItem(
@@ -170,6 +170,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
               )
             )
           )
+          )
     )
 
   val testRefundViewModelWithoutRepaymentSupplementItems: RefundToTaxPayerViewModel =
@@ -177,7 +178,7 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       amountApprovedForRepayment = Some(800.12),
       amountRequested = 345.5,
       repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeCard,
-      repaymentItems = Vector.empty
+      repaymentItems = Some(Vector.empty)
     )
 
   val testRefundViewModelRequestedAmountDiffersToRefundAmount: RefundToTaxPayerViewModel =
