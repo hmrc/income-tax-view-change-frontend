@@ -3321,6 +3321,9 @@ yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p2                
 yourSelfAssessmentChargeSummary.interestOnThisCharge.heading                            = Llog ar y tâl hwn
 yourSelfAssessmentChargeSummary.interestOnThisCharge.p1                                 = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad cyntaf ar gyfrif.
 yourSelfAssessmentChargeSummary.interestOnThisCharge.p2                                 = Bydd llog yn cael ei amcangyfrif hyd nes caiff y tâl cysylltiedig ei dalu’n llawn.
+yourSelfAssessmentChargeSummary.crystallisedInterest.text-1                             = Roedd y taliad hwn yn orddyledus ac roedd llog yn cynyddu’n ddyddiol. Gan fod y taliad bellach wedi’i dalu, mae’r
+yourSelfAssessmentChargeSummary.crystallisedInterest.link-text                          = llog
+yourSelfAssessmentChargeSummary.crystallisedInterest.text-2                             = wedi’i derfynu ac wedi’i godi ar wahân.
 yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa1.text.heading              = Hanes y tâl hwn
 yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa1.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
 yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.heading               = Hanes y tâl hwn

@@ -204,6 +204,26 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
               }
+              "provided with an id associated to a POA1 Debit with crystallised interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithCrystallisedInterest(), docId = id1040000125) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000125)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "First payment on account"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on this charge"
+                document.getElementById("interestOnCharge.p1").text() shouldBe "This payment was overdue and interest was increasing daily. Now that payment has been made, the interest has been finalised and charged separately."
+                document.select("#interest-on-your-charge-table").size().equals(0) shouldBe true
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
+                document.select(".govuk-warning-text__text").size().equals(0) shouldBe true
+              }
               "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaTwoWithLpi(), docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -225,6 +245,26 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
+              }
+              "provided with an id associated to a POA2 Debit with crystallised interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithCrystallisedInterest(), docId = id1040000126) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000126)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Second payment on account"
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on this charge"
+                document.getElementById("interestOnCharge.p1").text() shouldBe "This payment was overdue and interest was increasing daily. Now that payment has been made, the interest has been finalised and charged separately."
+                document.select("#interest-on-your-charge-table").size().equals(0) shouldBe true
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
+                document.select(".govuk-warning-text__text").size().equals(0) shouldBe true
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge, docId = id1040000123) {
                 enable(ChargeHistory)
@@ -268,6 +308,26 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
+              }
+              "provided with an id associated to a Balancing payment with crystallised interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithCrystallisedInterest, docId = id1040000123) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment")
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is a balancing payment?"
+                document.getElementById("interest-on-your-charge-heading").text() shouldBe "Interest on this charge"
+                document.getElementById("interestOnCharge.p1").text() shouldBe "This payment was overdue and interest was increasing daily. Now that payment has been made, the interest has been finalised and charged separately."
+                document.select("#interest-on-your-charge-table").size().equals(0) shouldBe true
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2018 to 2019 tax bill."
               }
 
               "provided with an id associated to a charge for Class 2 National Insurance" in new Setup(testFinancialDetailsModelWithCodingOutNics2(), docId = codingout) {
@@ -396,6 +456,28 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
                 document.getElementsByClass("govuk-warning-text__text").text() shouldBe "Warning Pay this charge to stop this interest from increasing daily."
 
+              }
+
+              "provided with an id associated to a Late Submission Penalty with crystallised interest" in new Setup(testValidFinancialDetailsModelWithLspCrystallisedInterest, docId = id1040000123) {
+                enable(ChargeHistory, PenaltiesAndAppeals)
+                setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Late submission penalty"
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2018 to 2019 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "You owe: £0.00"
+                document.getElementById("LSP-content-1").text() shouldBe "You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return."
+                document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
+                document.getElementById("LSP-content-3").text() shouldBe "To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time."
+                document.getElementById("interestOnCharge.p1").text() shouldBe "This payment was overdue and interest was increasing daily. Now that payment has been made, the interest has been finalised and charged separately."
+                document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal."
+                document.getElementsByClass("govuk-heading-m").get(1).text() shouldBe "Interest on this charge"
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
               }
 
               "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty, docId = id1040000123) {

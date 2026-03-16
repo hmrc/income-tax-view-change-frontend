@@ -3353,6 +3353,9 @@ yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p2                
 yourSelfAssessmentChargeSummary.interestOnThisCharge.heading                            = Interest on this charge
 yourSelfAssessmentChargeSummary.interestOnThisCharge.p1                                 = Interest is charged from the date your first payment on account was originally due.
 yourSelfAssessmentChargeSummary.interestOnThisCharge.p2                                 = Interest will be estimated until the charge it is related to is paid in full.
+yourSelfAssessmentChargeSummary.crystallisedInterest.text-1                             = This payment was overdue and interest was increasing daily. Now that payment has been made, the
+yourSelfAssessmentChargeSummary.crystallisedInterest.link-text                          = interest
+yourSelfAssessmentChargeSummary.crystallisedInterest.text-2                             = has been finalised and charged separately.
 yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa1.text.heading               = History of this charge
 yourSelfAssessmentChargeSummary.chargeHistory.caption.reviewAndReconcilePoa1.text.heading       = This charge goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.reviewAndReconcilePoa2.text.heading               = History of this charge
