@@ -294,18 +294,13 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe "Business name"
             document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe "Trading start date"
             document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe "Type of trade"
-            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Sole trader business address"
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Is the new address in the UK?"
-            document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe "Added address for this business"
+            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Added address for this business"
 
             document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe "Test Business"
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "1 January 2022"
             document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe "Test Trade"
-            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "Add a new one"
-            document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "Yes"
-            document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe "10 Downing Street SW1A 2AA United Kingdom"
+            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "10 Downing Street SW1A 2AA United Kingdom"
 
-            document.body().text() should not include "Is the address of your sole trader business in the UK?"
             document.body().text() should not include "Added international address for this business"
             document.body().text() should not include "Address"
 
@@ -321,18 +316,13 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.getElementsByClass("govuk-summary-list__key").eq(0).text() shouldBe "Business name"
             document.getElementsByClass("govuk-summary-list__key").eq(1).text() shouldBe "Trading start date"
             document.getElementsByClass("govuk-summary-list__key").eq(2).text() shouldBe "Type of trade"
-            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Sole trader business address"
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Is the new address in the UK?"
-            document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe "Added address for this business"
+            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Added address for this business"
 
             document.getElementsByClass("govuk-summary-list__value").eq(0).text() shouldBe "Test Business"
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "1 January 2022"
             document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe "Test Trade"
-            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "Add a new one"
-            document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "Yes"
-            document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe "10 Downing Street SW1A 2AA United Kingdom"
+            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "10 Downing Street SW1A 2AA United Kingdom"
 
-            document.body().text() should not include "Is the address of your sole trader business in the UK?"
             document.body().text() should not include "Added international address for this business"
             document.body().text() should not include "Address"
 
@@ -355,16 +345,11 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "1 January 2022"
             document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe "Test Trade"
 
-            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Sole trader business address"
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Is the new address in the UK?"
-            document.getElementsByClass("govuk-summary-list__key").eq(5).text() shouldBe "Added international address for this business"
+            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Added international address for this business"
 
-            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "Add a new one"
-            document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "No"
-            document.getElementsByClass("govuk-summary-list__value").eq(5).text() shouldBe "1 Example Street Paris FR"
+            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "1 Example Street Paris FR"
 
             document.body().text() should not include "Address"
-            document.body().text() should not include "Is the address of your sole trader business in the UK?"
             document.body().text() should not include "Added address for this business"
 
             document.getElementById("change-added-business-address-link").attr("href") should include("/choose-address")
@@ -384,15 +369,11 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "1 January 2022"
             document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe "Test Trade"
 
-            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Is the address of your sole trader business in the UK?"
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Added address for this business"
+            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Added address for this business"
 
-            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "Yes"
-            document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "20 High Street London AB1 2CD United Kingdom"
+            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "20 High Street London AB1 2CD United Kingdom"
 
             document.body().text() should not include "Address"
-            document.body().text() should not include "Sole trader business address"
-            document.body().text() should not include "Is the new address in the UK?"
             document.body().text() should not include "Added international address for this business"
 
             document.getElementById("change-added-business-address-link").attr("href") should include("/is-the-new-address-in-the-uk")
@@ -412,14 +393,11 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "1 January 2022"
             document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe "Test Trade"
 
-            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Is the address of your sole trader business in the UK?"
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Added address for this business"
+            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Added address for this business"
 
-            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "Yes"
-            document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "5 Test Road TE1 1ST United Kingdom"
+            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "5 Test Road TE1 1ST United Kingdom"
 
             document.body().text() should not include "Address"
-            document.body().text() should not include "Sole trader business address"
             document.body().text() should not include "Added international address for this business"
 
             document.getElementById("change-added-business-address-link").attr("href") should include("/is-the-new-address-in-the-uk")
@@ -439,15 +417,11 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             document.getElementsByClass("govuk-summary-list__value").eq(1).text() shouldBe "1 January 2022"
             document.getElementsByClass("govuk-summary-list__value").eq(2).text() shouldBe "Test Trade"
 
-            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Is the new address in the UK?"
-            document.getElementsByClass("govuk-summary-list__key").eq(4).text() shouldBe "Added international address for this business"
+            document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Added international address for this business"
 
-            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "No"
-            document.getElementsByClass("govuk-summary-list__value").eq(4).text() shouldBe "1 Example Street Paris FR"
+            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "1 Example Street Paris FR"
 
             document.body().text() should not include "Address"
-            document.body().text() should not include "Sole trader business address"
-            document.body().text() should not include "Is the address of your sole trader business in the UK?"
             document.body().text() should not include "Added address for this business"
 
             document.getElementById("change-added-business-address-link").attr("href") should include("/is-the-new-address-in-the-uk")
@@ -460,8 +434,6 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
             overseasBusinessAddressEnabled = false
           ) {
             document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Address"
-            document.body().text() should not include "Sole trader business address"
-            document.body().text() should not include "Is the new address in the UK?"
             document.body().text() should not include "Added international address for this business"
 
             document.getElementById("change-business-address-link").attr("href") should include("/change-business-address-lookup")

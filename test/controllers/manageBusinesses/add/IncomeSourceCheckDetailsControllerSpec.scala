@@ -140,8 +140,11 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
 
               status(result) shouldBe OK
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.body().text() should include("Sole trader business address")
-
+              val bodyText = document.body().text()
+              bodyText should (
+                include("Added address for this business") or
+                  include("Added international address for this business")
+                )
               disable(OverseasBusinessAddress)
             }
 
@@ -173,7 +176,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
 
               status(result) shouldBe OK
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.body().text() should not include "Sole trader business address"
+              document.body().text() should not include "Added address for this business"
             }
           }
 

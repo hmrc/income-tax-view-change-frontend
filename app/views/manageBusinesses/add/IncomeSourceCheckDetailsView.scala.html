@@ -239,57 +239,10 @@
     }
 }
 
-@showSoleTraderAddressSelectionRow = @{
-    overseasBusinessAddressEnabled && businessDetailsViewModel.exists(_.isAddingNewAddress)
-}
-
-@showBusinessAddressInUkRow = @{
-    overseasBusinessAddressEnabled && businessDetailsViewModel.exists(viewModel => viewModel.isNoAddressOnFile && viewModel.isAddressInUK)
-}
-
-@showNewAddressInUkRow = @{
-    overseasBusinessAddressEnabled && businessDetailsViewModel.exists(viewModel =>
-        viewModel.isAddingNewAddress || (viewModel.isNoAddressOnFile && viewModel.addressId.isEmpty && !viewModel.isAddressInUK)
-    )
-}
-
 @showAddedAddressRow = @{
     overseasBusinessAddressEnabled && businessDetailsViewModel.exists(viewModel =>
         viewModel.isAddingNewAddress || viewModel.isNoAddressOnFile
     )
-}
-
-@soleTraderAddressSelectionRow = @{
-    if(viewModel.incomeSourceType == SelfEmployment && showSoleTraderAddressSelectionRow) {
-        Seq(
-            SummaryListRow(
-                key = Key(content = Text(getMessage("sole-trader-business-address"))),
-                value = Value(content = Text(getMessage("add-a-new-one")))
-            )
-        )
-    } else Seq.empty
-}
-
-@businessAddressInUkRow = @{
-    if(viewModel.incomeSourceType == SelfEmployment && showBusinessAddressInUkRow) {
-        Seq(
-            SummaryListRow(
-                key = Key(content = Text(getMessage("is-business-address-in-uk"))),
-                value = Value(content = Text(if(businessDetailsViewModel.exists(_.isAddressInUK)) getMessage("yes") else getMessage("no"))),
-            )
-        )
-    } else Seq.empty
-}
-
-@newAddressInUkRow = @{
-    if(viewModel.incomeSourceType == SelfEmployment && showNewAddressInUkRow) {
-        Seq(
-            SummaryListRow(
-                key = Key(content = Text(getMessage("is-new-address-in-uk"))),
-                value = Value(content = Text(if(businessDetailsViewModel.exists(_.isAddressInUK)) getMessage("yes") else getMessage("no")))
-            )
-        )
-    } else Seq.empty
 }
 
 @addedAddressRow = @{
@@ -313,7 +266,7 @@
 }
 
 @businessAddressRow = @{
-    if(viewModel.incomeSourceType == SelfEmployment && !showSoleTraderAddressSelectionRow && !showAddedAddressRow) {
+    if(viewModel.incomeSourceType == SelfEmployment && !showAddedAddressRow) {
         Seq(
             SummaryListRow(
                 key = Key(
@@ -358,9 +311,6 @@
                 businessNameRow ++
                 businessStartDateRow ++
                 businessTradeRow ++
-                soleTraderAddressSelectionRow ++
-                businessAddressInUkRow ++
-                newAddressInUkRow ++
                 addedAddressRow ++
                 businessAddressRow
             },

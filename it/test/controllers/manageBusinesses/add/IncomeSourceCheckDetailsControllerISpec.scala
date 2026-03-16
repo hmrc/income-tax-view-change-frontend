@@ -287,8 +287,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           )
           val body = result.body
           body should include("Address")
-          body should not include "Sole trader business address"
-          body should not include "Is the new address in the UK?"
           body should not include "Added address for this business"
 
           disable(OverseasBusinessAddress)
@@ -325,10 +323,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             pageTitle(mtdUserRole, "check-details.title")
           )
           val body = result.body
-          body should include("Sole trader business address")
-          body should include("Is the new address in the UK?")
           body should include("Added address for this business")
-          body should not include "Is the address of your sole trader business in the UK?"
           body should not include "Added international address for this business"
 
           disable(OverseasBusinessAddress)
@@ -365,10 +360,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             pageTitle(mtdUserRole, "check-details.title")
           )
           val body = result.body
-          body should include("Sole trader business address")
-          body should include("Is the new address in the UK?")
           body should include("Added international address for this business")
-          body should not include "Is the address of your sole trader business in the UK?"
           body should not include "Added address for this business"
 
           disable(OverseasBusinessAddress)
@@ -398,10 +390,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             pageTitle(mtdUserRole, "check-details.title")
           )
           val body = result.body
-          body should include("Is the address of your sole trader business in the UK?")
           body should include("Added address for this business")
-          body should not include "Sole trader business address"
-          body should not include "Is the new address in the UK?"
+          body should not include "Added international address for this business"
 
           disable(OverseasBusinessAddress)
         }
@@ -430,9 +420,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             pageTitle(mtdUserRole, "check-details.title")
           )
           val body = result.body
-          body should include("Is the address of your sole trader business in the UK?")
           body should include("Added address for this business")
-          body should not include "Sole trader business address"
           body should not include "Added international address for this business"
 
           disable(OverseasBusinessAddress)
@@ -468,8 +456,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             pageTitle(mtdUserRole, "check-details.title")
           )
           val body = result.body
-          body should not include "Sole trader business address"
-          body should not include "Is the new address in the UK?"
+          body should include("Address")
+          body should not include "Added address for this business"
           body should not include "Added international address for this business"
         }
       }
