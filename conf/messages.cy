@@ -85,6 +85,7 @@ agent-unauthorised.note                                         = Rydych yn asia
 agent-unauthorised.note.b1                                      = taliadau, credydau ac ad-daliadau
 agent-unauthorised.note.b2                                      = Ffurflenni Treth
 agent-unauthorised.note.b3                                      = y ffioedd sy’n ddyledus nesaf
+agent-unauthorised.note.b4                                      = cosbau ac apeliadau
 agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK.
 
 ## BTA Links ##
