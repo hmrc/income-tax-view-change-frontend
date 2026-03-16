@@ -282,7 +282,6 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
 
     HandleYourTasksViewModel(
       outstandingChargesModel = List.empty,
-      unpaidCharges = List.empty,
       credits = zeroCredits,
       creditsRefundsRepayEnabled = false,
       obligations = updatesAndDeadlinesViewModel
