@@ -916,7 +916,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
               documentDescription = Some("ITSA- POA 1"),
               documentText = Some("documentText"),
               outstandingAmount = 1000.00,
-              originalAmount = 0,
+              originalAmount = 1000.00,
               documentDate = LocalDate.of(2018, 3, 29),
               documentDueDate = Some(futureDueDates.head)
             )
