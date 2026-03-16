@@ -41,7 +41,7 @@ case class HandleYourTasksViewModel(outstandingChargesModel: List[ChargeItem],
   val isLSPPresent: Boolean = chargeItemByType(lspSet).nonEmpty
   val isMoneyInYourAccountPresent: Boolean = creditInAccount.isDefined && creditInAccount.get > BigDecimal(0)
 
-  val areAnyTasksPresent: Boolean = areChargesPresent || areLPPPresent || isLSPPresent || isMoneyInYourAccountPresent
+  val areAnyTasksPresent: Boolean = areChargesPresent || areLPPPresent || isLSPPresent || isMoneyInYourAccountPresent || obligations.obligationsAvailable
 
   enum MaturityLevel:
     case Overdue extends MaturityLevel()

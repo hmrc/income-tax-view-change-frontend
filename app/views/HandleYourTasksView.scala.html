@@ -109,7 +109,12 @@
     ))
 
     @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
+
+    @if(viewModel.areAnyTasksPresent){
     @yourTasksTilePartial(viewModel, isAgent)
 
     @submissionDeadlinesTilePartial(isAgent, messages("new.home.yourTasks.updates-and-deadlines"), viewModel)
+    } else {
+        <div class="govuk-body">@messages(viewModel.getNoTasksLabel(user.usersRole == MTDSupportingAgent))</div>
+    }
 }

@@ -26,6 +26,7 @@ import models.newHomePage.{HandleYourTasksViewModel, SubmissionDeadlinesViewMode
 import models.obligations.{SingleObligationModel, StatusOpen}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -109,8 +110,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
         document.select(".govuk-body").get(2).text() shouldBe upcomingAnnualSubmissionDeadlineBody
-        document.select(".govuk-body").get(1).select("span").get(1).hasClass("govuk-tag govuk-tag--green") shouldBe true
-        document.select(".govuk-body").get(1).select("span").get(1).text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(31).toLongDateShort}"
+        document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--green") shouldBe true
+        document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(31).toLongDateShort}"
       }
     }
 
@@ -120,8 +121,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
         document.select(".govuk-body").get(2).text() shouldBe upcomingAnnualSubmissionDeadlineBody
-        document.select(".govuk-body").get(1).select("span").get(1).hasClass("govuk-tag govuk-tag--yellow") shouldBe true
-        document.select(".govuk-body").get(1).select("span").get(1).text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(30).toLongDateShort}"
+        document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--yellow") shouldBe true
+        document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(30).toLongDateShort}"
       }
     }
 
@@ -131,8 +132,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
         document.select(".govuk-body").get(2).text() shouldBe upcomingAnnualSubmissionDeadlineBody
-        document.select(".govuk-body").get(1).select("span").get(1).hasClass("govuk-tag govuk-tag--yellow") shouldBe true
-        document.select(".govuk-body").get(1).select("span").get(1).text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(1).toLongDateShort}"
+        document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--yellow") shouldBe true
+        document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(1).toLongDateShort}"
       }
     }
 
@@ -142,8 +143,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
         document.select(".govuk-body").get(2).text() shouldBe upcomingAnnualSubmissionDeadlineBody
-        document.select(".govuk-body").get(1).select("span").get(1).hasClass("govuk-tag govuk-tag--yellow") shouldBe true
-        document.select(".govuk-body").get(1).select("span").get(1).text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(29).toLongDateShort}"
+        document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--yellow") shouldBe true
+        document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(29).toLongDateShort}"
       }
     }
 
@@ -153,8 +154,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
         document.select(".govuk-body").get(2).text() shouldBe upcomingAnnualSubmissionDeadlineBody
-        document.select(".govuk-body").get(1).select("span").get(1).hasClass("govuk-tag govuk-tag--pink") shouldBe true
-        document.select(".govuk-body").get(1).select("span").get(1).text() shouldBe s"Due ${dateServiceCurrentDate.toLongDateShort}"
+        document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--pink") shouldBe true
+        document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.toLongDateShort}"
       }
     }
 
@@ -164,8 +165,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
         document.select(".govuk-body").get(2).text() shouldBe upcomingAnnualSubmissionDeadlineBody
-        document.select(".govuk-body").get(1).select("span").get(1).hasClass("govuk-tag govuk-tag--yellow") shouldBe true
-        document.select(".govuk-body").get(1).select("span").get(1).text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(30).toLongDateShort}"
+        document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--yellow") shouldBe true
+        document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(30).toLongDateShort}"
       }
     }
   }
@@ -176,8 +177,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
       document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
       document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURLAgent)
       document.select(".govuk-body").get(2).text() shouldBe upcomingAnnualSubmissionDeadlineBody
-      document.select(".govuk-body").get(1).select("span").get(1).hasClass("govuk-tag govuk-tag--green") shouldBe true
-      document.select(".govuk-body").get(1).select("span").get(1).text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(31).toLongDateShort}"
+      document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--green") shouldBe true
+      document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(31).toLongDateShort}"
     }
   }
 
@@ -185,44 +186,44 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     "single overdue annual submission" should {
       "display the correct content" in new TestSetup(obligations = getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(30)), nextTaxReturnDueDate = None) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
-        document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
-        document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
-        document.select(".govuk-body").get(2).text() shouldBe "You have an overdue annual submission."
-        document.select(".govuk-body").get(3).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
-        document.select(".govuk-body").get(3).select("span").text() shouldBe s"Was due ${dateServiceCurrentDate.minusDays(30).toLongDateShort}"
+        document.select("#finalAnnualOverdueSubmissionTile div h3").text() shouldBe viewUpdatesAndDeadlinesTitle
+        document.select("#finalAnnualOverdueSubmissionTile div h3").get(0).hasCorrectHref(submissionDeadlinesURL)
+        document.select("#finalAnnualOverdueSubmissionTile div p").get(0).text() shouldBe "You have an overdue annual submission."
+        document.select("#finalAnnualOverdueSubmissionTile div p").get(1).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
+        document.select("#finalAnnualOverdueSubmissionTile div p").get(1).select("span").text() shouldBe s"Was due ${dateServiceCurrentDate.minusDays(30).toLongDateShort}"
       }
     }
 
     "multiple overdue annual submissions" should {
       "display the correct content" in new TestSetup(obligations = multipleAnnualOverdueObligations, nextTaxReturnDueDate = None) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
-        document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
-        document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
-        document.select(".govuk-body").get(2).text() shouldBe "You have 3 overdue annual submissions."
-        document.select(".govuk-body").get(3).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
-        document.select(".govuk-body").get(3).select("span").text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(120).toLongDateShort}"
+        document.select("#finalAnnualOverdueSubmissionTile div h3").text() shouldBe viewUpdatesAndDeadlinesTitle
+        document.select("#finalAnnualOverdueSubmissionTile div h3").get(0).hasCorrectHref(submissionDeadlinesURL)
+        document.select("#finalAnnualOverdueSubmissionTile div p").get(0).text() shouldBe "You have 3 overdue annual submissions."
+        document.select("#finalAnnualOverdueSubmissionTile div p").get(1).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
+        document.select("#finalAnnualOverdueSubmissionTile div p").get(1).select("span").text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(120).toLongDateShort}"
       }
     }
 
     "single overdue quarterly submission" should {
       "display the correct content" in new TestSetup(obligations = getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(30), quarterlyObligationType), nextTaxReturnDueDate = None) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
-        document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
-        document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
-        document.select(".govuk-body").get(2).text() shouldBe "You have an overdue quarterly submission."
-        document.select(".govuk-body").get(3).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
-        document.select(".govuk-body").get(3).select("span").text() shouldBe s"Was due ${dateServiceCurrentDate.minusDays(30).toLongDateShort}"
+        document.select("#finalQuarterlyOverdueSubmissionTile div h3").text() shouldBe viewUpdatesAndDeadlinesTitle
+        document.select("#finalQuarterlyOverdueSubmissionTile div h3").get(0).hasCorrectHref(submissionDeadlinesURL)
+        document.select("#finalQuarterlyOverdueSubmissionTile div p").get(0).text() shouldBe "You have an overdue quarterly submission."
+        document.select("#finalQuarterlyOverdueSubmissionTile div p").get(1).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
+        document.select("#finalQuarterlyOverdueSubmissionTile div p").get(1).select("span").text() shouldBe s"Was due ${dateServiceCurrentDate.minusDays(30).toLongDateShort}"
       }
     }
 
     "multiple overdue quarterly submissions" should {
       "display the correct content" in new TestSetup(obligations = multipleQuarterlyOverdueObligations, nextTaxReturnDueDate = None) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
-        document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
-        document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
-        document.select(".govuk-body").get(2).text() shouldBe "You have 3 overdue quarterly submissions."
-        document.select(".govuk-body").get(3).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
-        document.select(".govuk-body").get(3).select("span").text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(120).toLongDateShort}"
+        document.select("#finalQuarterlyOverdueSubmissionTile div h3").text() shouldBe viewUpdatesAndDeadlinesTitle
+        document.select("#finalQuarterlyOverdueSubmissionTile div h3").get(0).hasCorrectHref(submissionDeadlinesURL)
+        document.select("#finalQuarterlyOverdueSubmissionTile div p").get(0).text() shouldBe "You have 3 overdue quarterly submissions."
+        document.select("#finalQuarterlyOverdueSubmissionTile div p").get(1).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
+        document.select("#finalQuarterlyOverdueSubmissionTile div p").get(1).select("span").text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(120).toLongDateShort}"
       }
     }
 
@@ -231,14 +232,14 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
-        document.select(".govuk-body").get(2).text() shouldBe "You have 2 overdue annual submissions."
+        document.select("#finalAnnualOverdueSubmissionTile div p").get(0).text() shouldBe "You have 2 overdue annual submissions."
         document.select(".govuk-body").get(3).select("span").hasClass("govuk-tag govuk-tag--red")
-        document.select(".govuk-body").get(3).text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(100).toLongDateShort}"
+        document.select("#finalAnnualOverdueSubmissionTile div p").get(1).text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(100).toLongDateShort}"
 
-        document.select(".hmrc-card__heading").get(2).text() shouldBe viewUpdatesAndDeadlinesTitle
+        document.select("#finalQuarterlyOverdueSubmissionTile div h3").text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".govuk-body").get(4).text() shouldBe "You have 2 overdue quarterly submissions."
         document.select(".govuk-body").get(6).select("span").hasClass("govuk-tag govuk-tag--red")
-        document.select(".govuk-body").get(6).text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(120).toLongDateShort}"
+        document.select("#finalQuarterlyOverdueSubmissionTile div p").get(1).text() shouldBe s"Oldest submission due ${dateServiceCurrentDate.minusDays(120).toLongDateShort}"
       }
     }
 
@@ -246,11 +247,11 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
       "single overdue annual submission" should {
         "display the correct content" in new TestSetup(obligations = getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(30)), nextTaxReturnDueDate = None, isAgent = true) {
           document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
-          document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
-          document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURLAgent)
-          document.select(".govuk-body").get(2).text() shouldBe "You have an overdue annual submission."
-          document.select(".govuk-body").get(3).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
-          document.select(".govuk-body").get(3).select("span").text() shouldBe s"Was due ${dateServiceCurrentDate.minusDays(30).toLongDateShort}"
+          document.select("#finalAnnualOverdueSubmissionTile div h3").text() shouldBe viewUpdatesAndDeadlinesTitle
+          document.select("#finalAnnualOverdueSubmissionTile div h3").get(0).hasCorrectHref(submissionDeadlinesURLAgent)
+          document.select("#finalAnnualOverdueSubmissionTile div p").get(0).text() shouldBe "You have an overdue annual submission."
+          document.select("#finalAnnualOverdueSubmissionTile div p").get(1).select("span").hasClass("govuk-tag govuk-tag--red") shouldBe true
+          document.select("#finalAnnualOverdueSubmissionTile div p").get(1).select("span").text() shouldBe s"Was due ${dateServiceCurrentDate.minusDays(30).toLongDateShort}"
         }
       }
     }

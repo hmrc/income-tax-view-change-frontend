@@ -257,7 +257,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
 
         val document: Document = Jsoup.parse(contentAsString(result))
         document.select("#main-content h2").text shouldBe expectedYourTasksTitle
-        document.select("#moenyInYourAccount .tile-body div").text shouldBe expectedCredit
+        document.select("#momeyInYourAccountTile .tile-body div").text shouldBe expectedCredit
 
         document.select(".govuk-body").get(2).text() shouldBe expectedOverdueQuarterlySubmissionDeadlineBody
         document.select(".govuk-tag").get(1).select("span").text() shouldBe expectedOverdueQuarterlySubmissionTag

@@ -29,8 +29,6 @@
  @import implicitDateFormatter.longDate
 
 @moneyInYourAccount = @{viewModel.creditInAccount}
-
-     @if(viewModel.areAnyTasksPresent){
         <div id="yourTasksTile">
             @if(viewModel.areChargesPresent){
               @showCharges
@@ -47,9 +45,6 @@
                 @showMoneyInYourAccount
             }
         </div>
-     } else {
-        <div class="govuk-body">@messages(viewModel.getNoTasksLabel(user.usersRole == MTDSupportingAgent))</div>
-     }
 
 
 @showCharges = {

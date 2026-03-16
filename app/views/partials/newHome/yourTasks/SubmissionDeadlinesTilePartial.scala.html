@@ -79,7 +79,7 @@
 }
 
 @finalAnnualOverdueSubmissionSection = {
-    <div id="yourTasksTile" class="hmrc-card">
+    <div id="finalAnnualOverdueSubmissionTile" class="hmrc-card">
         <div class="tile-body">
             <h3 class="hmrc-card__heading">
                 <a href="@submissionDeadlinesUrl">
@@ -94,7 +94,7 @@
 
 
 @finalQuarterlyOverdueSubmissionSection = {
-    <div id="yourTasksTile" class="hmrc-card">
+    <div id="finalQuarterlyOverdueSubmissionTile" class="hmrc-card">
         <div class="tile-body">
             <h3 class="hmrc-card__heading">
                 <a href="@submissionDeadlinesUrl">
@@ -123,7 +123,7 @@
 @upcomingUpdatesTagAnnual = {
     @viewModel.obligations.nextTaxReturnDueDate.map { date =>
         @p() {<span class="govuk-body">@messages("new.home.yourTasks.upcoming-annual-updates-body")</span>}
-        <span class="@getTaskDateLabelColor(date)">
+        <span id="upcomingAnnualDate" class="@getTaskDateLabelColor(date)">
             @messages("new.home.yourTasks.upcoming-annual-updates-label", date.toLongDateShort)
         </span>
     }
@@ -139,7 +139,7 @@
 }
 
 @upcommingSubmissions(upcomingUpdates: Html) = {
-    <div id="yourTasksTile" class="hmrc-card">
+    <div id="upcomingSubmissionsTile" class="hmrc-card">
         <div class="tile-body">
             <h3 class="hmrc-card__heading">
                 <a href="@submissionDeadlinesUrl">

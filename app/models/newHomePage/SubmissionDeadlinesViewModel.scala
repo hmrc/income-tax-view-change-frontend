@@ -30,6 +30,8 @@ final case class SubmissionDeadlinesViewModel(
   private val obligationTypeAnnual: String = "Crystallisation"
   private val obligationTypeQuarterly: String = "Quarterly"
 
+  val obligationsAvailable = openObligations.nonEmpty || nextTaxReturnDueDate.isDefined
+
   private def getOldestOverdueDateByObligationType(obligationType: String): Option[LocalDate] =
     openObligations
       .filter(_.obligationType == obligationType)
