@@ -34,6 +34,7 @@ class UnauthorisedAgentViewSpec extends ViewSpec {
     val bullet1: String = messages("agent-unauthorised.note.b1")
     val bullet2: String = messages("agent-unauthorised.note.b2")
     val bullet3: String = messages("agent-unauthorised.note.b3")
+    val bullet4: String = messages("agent-unauthorised.note.b4")
     val link: String = messages("agent-unauthorised.link")
   }
 
@@ -63,10 +64,15 @@ class UnauthorisedAgentViewSpec extends ViewSpec {
       layoutContent.select("ul li:nth-child(3)").text shouldBe unauthorisedErrorMessages.bullet3
     }
 
+    s"have a fourth bullet point: ${unauthorisedErrorMessages.bullet4}" in new Setup(unauthorisedAgentPage) {
+      layoutContent.select("ul li:nth-child(4)").text shouldBe unauthorisedErrorMessages.bullet4
+    }
+
     s"have a link: ${unauthorisedErrorMessages.link}" in new Setup(unauthorisedAgentPage) {
       val link: Elements = layoutContent.select("div div div.govuk-\\!-margin-bottom-6 a")
       link.text shouldBe unauthorisedErrorMessages.link
-      link.attr("href") shouldBe "#"
+      link.attr("href") shouldBe "https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax"
+
     }
   }
 }
