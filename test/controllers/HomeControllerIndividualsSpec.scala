@@ -21,6 +21,7 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
+import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -876,5 +877,84 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
     testMTDIndividualAuthFailures(authSetupController.show())
     testMTDObligationsDueFailures(authSetupController.show())(fakeRequestWithActiveSession)
+  }
+  "has payments due" when {
+    "the filtered charges list is empty but unpaid document details contain a future due date" in new Setup {
+      setupMockUserAuth
+      mockItsaStatusRetrievalAction()
+      mockSingleBusinessIncomeSource()
+      mockGetDueDates(Right(futureDueDates))
+
+      when(mockedCreditService.getAllCredits(any(), any()))
+        .thenReturn(Future.successful(CreditsModel(0, 0, 0, 0, None, None, Nil)))
+
+      when(mockedOptInService.updateJourneyStatusInSessionData(org.mockito.ArgumentMatchers.eq(false))(any(), any(), any()))
+        .thenReturn(Future.successful(true))
+
+      when(mockedOptOutService.updateJourneyStatusInSessionData(org.mockito.ArgumentMatchers.eq(false))(any(), any()))
+        .thenReturn(Future.successful(true))
+
+      val financialDetails = List(
+        FinancialDetailsModel(
+          balanceDetails = BalanceDetails(
+            balanceDueWithin30Days = 1.00,
+            overDueAmount = 2.00,
+            balanceNotDuein30Days = 0.00,
+            totalBalance = 3.00,
+            totalCreditAvailableForRepayment = None,
+            allocatedCredit = None,
+            allocatedCreditForFutureCharges = None,
+            totalCredit = None,
+            firstPendingAmountRequested = None,
+            secondPendingAmountRequested = None,
+            unallocatedCredit = None
+          ),
+          documentDetails = List(
+            DocumentDetail(
+              taxYear = nextPaymentYear.toInt,
+              transactionId = "testId",
+              documentDescription = Some("ITSA- POA 1"),
+              documentText = Some("documentText"),
+              outstandingAmount = 1000.00,
+              originalAmount = 0,
+              documentDate = LocalDate.of(2018, 3, 29),
+              documentDueDate = Some(futureDueDates.head)
+            )
+          ),
+          financialDetails = List(
+            FinancialDetail(
+              taxYear = nextPaymentYear,
+              mainType = Some("SA Payment on Account 1"),
+              mainTransaction = Some("4920"),
+              transactionId = Some("testId"),
+              items = Some(Seq(
+                SubItem(dueDate = Some(futureDueDates.head.toString))
+              ))
+            )
+          )
+        )
+      )
+
+      when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
+        .thenReturn(Future.successful(financialDetails))
+
+      setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
+      setupMockGetFilteredChargesListFromFinancialDetails(Nil)
+
+      setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(
+        Future.successful(Map(staticTaxYear -> baseStatusDetail))
+      )
+      setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
+      setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
+      setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
+
+      val result = controller.show()(fakeRequestWithActiveSession)
+
+      status(result) shouldBe Status.OK
+      session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
+
+      val document = Jsoup.parse(contentAsString(result))
+      document.title shouldBe homePageTitle
+      document.select("#payments-tile p:nth-child(2)").text shouldBe "1 January 2100"    }
   }
 }

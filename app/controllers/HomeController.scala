@@ -231,11 +231,25 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       unpaidCharges.collect {
         case fdm: FinancialDetailsModel => fdm
       }
-    whatYouOweService.getFilteredChargesList(
+
+    val dueDatesFromChargeItems =
+      whatYouOweService.getFilteredChargesList(
         financialDetailsList = chargesList,
         isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
         isPenaltiesEnabled = penaltiesEnabled,
-        remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter).flatMap(_.dueDate)
+        remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter
+      ).flatMap(_.dueDate)
+
+    val dueDatesFromUnpaidDocumentDetails =
+      chargesList
+        .flatMap(_.unpaidDocumentDetails())
+        .flatMap(_.getDueDate())
+
+    val dueDates =
+      if (dueDatesFromChargeItems.nonEmpty) dueDatesFromChargeItems
+      else dueDatesFromUnpaidDocumentDetails
+
+    dueDates
       .sortWith(_ isBefore _)
       .sortBy(_.toEpochDay())
   }
