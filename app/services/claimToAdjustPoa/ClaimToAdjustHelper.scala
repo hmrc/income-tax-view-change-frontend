@@ -23,12 +23,12 @@ import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
 import models.core.Nino
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import services.DateServiceInterface
-import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoaOne, isPoaTwo}
+import services.claimToAdjustPoa.ClaimToAdjustHelper.{POA1, isPoaOne, isPoaTwo}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}
@@ -49,6 +49,21 @@ trait ClaimToAdjustHelper {
   val sortByTaxYearC: List[ChargeItem] => List[ChargeItem] =
     _.sortBy(_.taxYear.startYear).reverse
 
+  def generateZeroedPoas(taxYear: TaxYear): PaymentOnAccountViewModel = {
+    PaymentOnAccountViewModel(
+      poaOneTransactionId = "",
+      poaTwoTransactionId = "",
+      taxYear = taxYear,
+      totalAmountOne = 0,
+      totalAmountTwo = 0,
+      relevantAmountOne = 0,
+      relevantAmountTwo = 0,
+      previouslyAdjusted = Some(false),
+      partiallyPaid = false,
+      fullyPaid = false
+    )
+  }
+
   protected case class FinancialDetailsAndPoaModel(financialDetails: Option[FinancialDetailsModel],
                                                    poaModel: Option[PaymentOnAccountViewModel])
 
@@ -56,7 +71,8 @@ trait ClaimToAdjustHelper {
                                                         chargeReference: Option[String])
 
   def getPaymentOnAccountModel(charges: List[ChargeItem],
-                               poaPreviouslyAdjusted: Option[Boolean] = None): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
+                               poaPreviouslyAdjusted: Option[Boolean] = None,
+                               taxYear: TaxYear): Either[Throwable, Option[PaymentOnAccountViewModel]] = {
     {
       for {
         poaOneDocDetail <- charges.find(_.transactionType == PoaOneDebit)
@@ -84,16 +100,12 @@ trait ClaimToAdjustHelper {
             )
           )
         } else {
-          val errors: List[String] = List(
-            poaOneDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::One"),
-            poaTwoDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::Two")
-          ).filterNot(_.isEmpty)
-          Left(new Exception(errors.mkString("-")))
+          Right(Some(generateZeroedPoas(taxYear)))
         }
       }
     } match {
       case Some(res) => res
-      case None => Right(None)
+      case None => Right(Some(generateZeroedPoas(taxYear)))
     }
   }
 
@@ -155,8 +167,11 @@ trait ClaimToAdjustHelper {
     }
   }
 
+  //Replaced all usages with getPaymentOnAccountModel to reduce duplication
+  //Left in only as
   def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
-                               poasHaveBeenAdjustedPreviously: Boolean): Either[Throwable, PaymentOnAccountViewModel] = {
+                               poasHaveBeenAdjustedPreviously: Boolean,
+                               taxYear: Option[TaxYear]): Either[Throwable, PaymentOnAccountViewModel] = {
     val res  = for {
       poaOneDocDetail <- documentDetails.find(isPoaOne)
       poaTwoDocDetail <- documentDetails.find(isPoaTwo)
@@ -182,15 +197,20 @@ trait ClaimToAdjustHelper {
           )
         )
       } else {
-        val errors: List[String] = List(
-          poaOneDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::One"),
-          poaTwoDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::Two")
-        ).filterNot(_.isEmpty)
-        Left(new Exception(errors.mkString("-")))
+        taxYear match {
+          case Some(year) => Right(generateZeroedPoas(year))
+          case _ =>
+            val errors: List[String] = List(
+              poaOneDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::One"),
+              poaTwoDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::Two")
+            ).filterNot(_.isEmpty)
+            Left(new Exception(errors.mkString("-")))
+        }
       }
     }
     res match {
       case Some(e) => e
+      case None if taxYear.isDefined => Right(generateZeroedPoas(taxYear.get))
       case _ => Left(new Exception("Unable to construct PaymentOnAccountViewModel"))
     }
   }

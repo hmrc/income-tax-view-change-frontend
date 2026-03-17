@@ -23,9 +23,12 @@ import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
 import models.financialDetails.*
-import models.newHomePage.HandleYourTasksViewModel
+import models.newHomePage.{HandleYourTasksViewModel, SubmissionDeadlinesViewModel}
+import models.obligations.{ObligationsModel, SingleObligationModel}
+import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import services.*
 import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
 import services.*
@@ -33,6 +36,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.HandleYourTasksView
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -45,7 +49,8 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                 val whatYouOweService: WhatYouOweService,
                                 val creditService: CreditService,
                                 val dateService: DateServiceInterface,
-                                val financialDetailsService: FinancialDetailsService)
+                                val financialDetailsService: FinancialDetailsService,
+                                val nextUpdatesService: NextUpdatesService)
                                (implicit val ec: ExecutionContext,
                                 mcc: MessagesControllerComponents,
                                 val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
@@ -75,6 +80,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+      updatesAndDeadlinesViewModel <- getNextUpdates()
     } yield {
 
       val creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay)
@@ -82,7 +88,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
 
-      val homeViewModel = HandleYourTasksViewModel(chargeItemList, unpaidCharges, credits, creditsRefundsRepayEnabled)
+      val homeViewModel = HandleYourTasksViewModel(chargeItemList, credits, creditsRefundsRepayEnabled, updatesAndDeadlinesViewModel)
 
       Ok(handleYourTasksView(origin, isAgent,
         yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
@@ -108,6 +114,38 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
   }
 
+  private def getNextUpdates()(implicit user: MtdItUser[_]): Future[SubmissionDeadlinesViewModel] = {
+
+    val submissionDeadlinesViewModel = {
+      for {
+        (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- nextUpdatesService.getNextDueDates()
+        openObligations <- getOpenObligations()
+      } yield {
+          SubmissionDeadlinesViewModel(
+            openObligations = openObligations,
+            currentDate = dateService.getCurrentDate,
+            nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
+            nextTaxReturnDueDate = nextTaxReturnDueDate
+          )
+        }
+    }.recoverWith {
+      case ex =>
+        Logger("application").error(s"Failed to retrieve reporting content checks: ${ex.getMessage}")
+        Future.successful(SubmissionDeadlinesViewModel(Seq.empty, dateService.getCurrentDate, None, None))
+    }
+    submissionDeadlinesViewModel
+  }
+
+  private def getOpenObligations()
+                                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[SingleObligationModel]] = {
+    nextUpdatesService.getOpenObligations().flatMap {
+      case openObligations: ObligationsModel if openObligations.obligations.forall(_.obligations.nonEmpty) => Future.successful(openObligations.obligations.flatMap(_.obligations))
+      case _ =>
+        Logger("application").error("Unexpected Exception getting open obligations")
+        Future.successful(Seq.empty[SingleObligationModel])
+    }
+  }
+
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HandleYourTasksController.showAgent().url else controllers.routes.HandleYourTasksController.show().url
 
   def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
@@ -115,5 +153,4 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
   def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
 
   def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
-
 }

@@ -27,7 +27,7 @@ case class RefundToTaxPayerViewModel(
                                       amountRequested: BigDecimal,
                                       repaymentMethod: String,
                                       totalRepaymentAmount: BigDecimal,
-                                      repaymentItems: Seq[RepaymentItem],
+                                      repaymentItems: Option[Seq[RepaymentItem]],
                                       estimatedRepaymentDate: LocalDate,
                                       creationDate: LocalDate,
                                       repaymentRequestNumber: String,
@@ -44,7 +44,7 @@ case class RefundToTaxPayerViewModel(
   val aggregate: Option[TotalInterest] = RepaymentHistory(
     None,
     amountRequested = amountRequested,
-    None, None, repaymentItems = Some(repaymentItems),
+    None, None, repaymentItems = repaymentItems,
     None, None,
     repaymentRequestNumber = repaymentRequestNumber,
     status = status
@@ -59,7 +59,7 @@ object RefundToTaxPayerViewModel {
         amountRequested = item.amountRequested,
         repaymentMethod = item.repaymentMethod.get,
         totalRepaymentAmount = item.totalRepaymentAmount.get,
-        repaymentItems = item.repaymentItems.get,
+        repaymentItems = item.repaymentItems,
         estimatedRepaymentDate = item.estimatedRepaymentDate.get,
         creationDate = item.creationDate.get,
         repaymentRequestNumber = item.repaymentRequestNumber,

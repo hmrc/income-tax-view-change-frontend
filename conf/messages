@@ -84,6 +84,7 @@ agent-unauthorised.note                                         = You are a supp
 agent-unauthorised.note.b1                                      = payments, credits and refunds
 agent-unauthorised.note.b2                                      = returns
 agent-unauthorised.note.b3                                      = next charges due
+agent-unauthorised.note.b4                                      = penalties and appeals
 agent-unauthorised.link                                         = Read more about the difference between main and supporting agents on GOV.UK.
 
 ## BTA Links ##
@@ -190,6 +191,7 @@ home.agent.supporting.cannotAccess                              = Supporting age
 home.agent.supporting.cannotAccess.payments                     = payments, credits and refunds
 home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
+home.agent.supporting.cannotAccess.penaltiesAndAppeals          = penalties and appeals
 home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
 
 home.penaltiesAndAppeals.heading                                = Penalties and appeals
@@ -198,6 +200,24 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty poin
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
 ## New Home Page ##
+### Your Tasks Tab
+new.home.navigation.tabs.yourTasks                              = Your tasks
+
+new.home.yourTasks.updates-and-deadlines                        = View submission deadlines
+new.home.yourTasks.upcoming-annual-updates-body                  = You have an upcoming annual submission deadline.
+new.home.yourTasks.upcoming-annual-updates-label                 = Due {0}
+new.home.yourTasks.upcoming-quarterly-updates-body               = You have an upcoming quarterly submission deadline.
+new.home.yourTasks.upcoming-quarterly-updates-label              = Due {0}
+new.home.yourTasks.overdue-annual-submission-single-body            = You have an overdue annual submission.
+new.home.yourTasks.overdue-annual-submission-single-label           = Was due {0}
+new.home.yourTasks.overdue-annual-submission-multiple-body          = You have {0} overdue annual submissions.
+new.home.yourTasks.overdue-annual-submission-multiple-label         = Oldest submission due {0}
+new.home.yourTasks.overdue-quarterly-submission-single-body            = You have an overdue quarterly submission.
+new.home.yourTasks.overdue-quarterly-submission-single-label           = Was due {0}
+new.home.yourTasks.overdue-quarterly-submission-multiple-body          = You have {0} overdue quarterly submissions.
+new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Oldest submission due {0}
+
+
 ### Overview Tab
 new.home.navigation.tabs.overview                               = Overview
 
@@ -1235,7 +1255,7 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC c
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
-chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = HMRC created your balancing payment
+chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = HMRC created your balancing payment extra amount due to amended return
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = First payment on account reduced by taxpayer request
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = Second payment on account reduced by taxpayer request
@@ -1264,7 +1284,7 @@ chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text = HMRC creat
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text	    = Late payment interest on balancing payment created
 chargeSummary.lpi.chargeHistory.created.firstLatePaymentPenalty.text = HMRC created your late payment interest on first late payment penalty
 chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text  = HMRC created your late payment interest on late submission penalty
-chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text    = Late payment interest on balancing payment created
+chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text    = Late payment interest created on balancing payment extra amount
 
 chargeSummary.lpi.balancingCharge.p1                               = You owe HMRC interest because you paid your balancing payment late.
 chargeSummary.lpi.balancingCharge.textOne                          = Late payment interest is charged from the first day your payment is overdue until the day it’s paid in full. It’s calculated at the
@@ -3303,7 +3323,7 @@ yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.text.heading     = First 
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.text.heading     = Second payment on account: extra amount from your tax return
 yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe      = (not including estimated interest)
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Interest on this charge
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Interest is charged from the date your balancing payment was originally due.
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Interest is charged from the day after your balancing payment was originally due.
 yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Interest will be estimated until the charge it is related to is paid in full.
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} to {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Total interest on this charge:
@@ -3317,6 +3337,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.caption.hmrcAdjustment.text.headin
 yourSelfAssessmentChargeSummary.definition.hmrcadjustment               = HMRC has added this charge after an adjustment to your tax return.
 
 yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading = This charge goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text = This balancing payment extra amount goes towards your {0} to {1} tax bill.
 
 yourSelfAssessmentChargeSummary.overdue-inset-text-1                                    = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
 yourSelfAssessmentChargeSummary.overdue-inset-text-2                                    = Any payments you make will go toward overdue charges in the order they were due.
@@ -3410,7 +3431,11 @@ yourSelfAssessmentChargeSummary.extraAmountInterest.p2                          
 yourSelfAssessmentChargeSummary.extraAmountInterest.p2LinkText                       = Bank of England base rate (opens in new tab)
 yourSelfAssessmentChargeSummary.extraAmountInterest.p2AfterLink                      = plus 2.5%.
 yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Late payment interest on balancing payment: extra amount due to amended return
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = You owe HMRC interest because you paid your balancing payment late.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = The balancing payment extra amount was created because of a change you made to your return.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p2                       = HMRC applies interest to the extra amount – the difference between your balancing payment and what you actually owe.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3                       = Interest is charged from the day after your balancing payment was originally due until the day the extra amount is paid in full. It’s calculated at the
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3LinkText               = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3AfterLink              = plus 2.5%.
 
 yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                       = Late payment interest on late submission penalty
 yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                     = Late payment interest on first late payment penalty
@@ -3446,7 +3471,7 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading            
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p                           = You have received this penalty because you are late paying your Income Tax.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                        = View how your penalty was calculated.
 
-yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = You owe this extra tax because of a change you made to your return.
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = This balancing payment extra amount was created because of a change you made to your return.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Pay this charge to stop this interest from increasing daily.
 
 
@@ -3583,14 +3608,17 @@ newHome.yourTasks.selfAssessment.overdueCharge.single.label = Was due {0}
 newHome.yourTasks.selfAssessment.overdueCharge.multiple = You have an overdue amount of £{0}
 newHome.yourTasks.selfAssessment.overdueCharge.multiple.label = Oldest charge due {0}
 newHome.yourTasks.selfAssessment.lpp.single = You have a late payment penalty.
+newHome.yourTasks.selfAssessment.lpp.single.link = View your late payment penalty
 newHome.yourTasks.selfAssessment.lpp.single.label = Was due {0}
 newHome.yourTasks.selfAssessment.lpp.multiple = You have {0} late payment penalties.
+newHome.yourTasks.selfAssessment.lpp.multiple.link = View your late payment penalties
 newHome.yourTasks.selfAssessment.lpp.multiple.label = Oldest penalty due {0}
 newHome.yourTasks.selfAssessment.lsp.single = You have a late submission penalty.
+newHome.yourTasks.selfAssessment.lsp.single.link = View your late submission penalty
 newHome.yourTasks.selfAssessment.lsp.single.label = Was due {0}
 newHome.yourTasks.selfAssessment.lsp.multiple = You have {0} late submission penalties.
+newHome.yourTasks.selfAssessment.lsp.multiple.link = View your late submission penalties
 newHome.yourTasks.selfAssessment.lsp.multiple.label = Oldest penalty due {0}
-newHome.yourTasks.selfAssessment.money.refund = You have £{0} in your account.
 newHome.yourTasks.selfAssessment.no-tasks = You have no tasks to complete at the moment.
 newHome.yourTasks.selfAssessment.supporting.no-tasks = You have no tasks to complete at the moment. Note that your customer may have tasks that you are unable to see as a support agent.
 newHome.yourTasks.selfAssessment.money-in-account.h1 = Check for money in your account and claim a refund

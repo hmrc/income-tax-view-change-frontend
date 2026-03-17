@@ -23,11 +23,11 @@ import mocks.services.MockFinancialDetailsService
 import models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.PaymentOnAccountViewModel
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel}
+import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import services.{ClaimToAdjustService, DateService}
 import testConstants.BaseTestConstants.{testNino, testUserNino}
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants._
+import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
@@ -231,7 +231,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
         val (service, _) = newFixture(LocalDate.of(2023, 8, 27))
         val result = service.getPoaForNonCrystallisedTaxYear(testUserNino)
 
-        result.futureValue shouldBe Right(None)
+        result.futureValue shouldBe Right(Some(PaymentOnAccountViewModel("", "", TaxYear(2022, 2023), 0, 0, 0, 0, Some(false), false, false)))
 
       }
     }
@@ -338,8 +338,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
       val financialDetailsModelWithoutDocumentDetails = financialDetailsModelBothPoas
-
-      setupMockGetFinancialDetails(taxYear, testNino)(financialDetailsModelWithoutDocumentDetails)
+      setupMockGetFinancialDetails(taxYear, testNino)(FinancialDetailsErrorModel(500, "failed call"))
 
       setupGetChargeHistory(testNino, Some("ABCD1234"))(ChargesHistoryModel(
         idType = "NINO",
@@ -354,7 +353,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
       val result = futureResult.futureValue
 
       result.isLeft shouldBe true
-      result.left.exists(_.getMessage == "Failed to retrieve non-crystallised financial details") shouldBe true
+      result.left.exists(_.getMessage == "There was an error whilst fetching financial details data") shouldBe true
 
     }
   }

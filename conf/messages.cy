@@ -85,6 +85,7 @@ agent-unauthorised.note                                         = Rydych yn asia
 agent-unauthorised.note.b1                                      = taliadau, credydau ac ad-daliadau
 agent-unauthorised.note.b2                                      = Ffurflenni Treth
 agent-unauthorised.note.b3                                      = y ffioedd sy’n ddyledus nesaf
+agent-unauthorised.note.b4                                      = cosbau ac apeliadau
 agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK.
 
 ## BTA Links ##
@@ -191,6 +192,7 @@ home.agent.supporting.cannotAccess                              = Ni all asianta
 home.agent.supporting.cannotAccess.payments                     = taliadau, credydau ac ad-daliadau
 home.agent.supporting.cannotAccess.returns                      = Ffurflenni Treth
 home.agent.supporting.cannotAccess.nextChargesDue               = y ffioedd sy’n ddyledus nesaf
+home.agent.supporting.cannotAccess.penaltiesAndAppeals          = cosbau ac apeliadau
 home.agent.supporting.readMore                                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK (yn agor tab newydd).
 
 home.penaltiesAndAppeals.heading                                = Cosbau ac apeliadau
@@ -199,6 +201,24 @@ home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
 ## New Home Page ##
+### Your New Tasks Tab
+
+new.home.navigation.tabs.yourTasks                              = Eich tasgau
+
+new.home.yourTasks.updates-and-deadlines                        = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
+new.home.yourTasks.upcoming-annual-updates-body            = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad blynyddol.
+new.home.yourTasks.upcoming-annual-updates-label           = Dyledus erbyn {0}
+new.home.yourTasks.upcoming-quarterly-updates-body         = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad chwarterol.
+new.home.yourTasks.upcoming-quarterly-updates-label        = Dyledus erbyn {0}
+new.home.yourTasks.overdue-annual-submission-single-body            = Mae gennych gyflwyniad blynyddol sy’n hwyr.
+new.home.yourTasks.overdue-annual-submission-single-label           = Roedd hyn yn ddyledus ar {0}
+new.home.yourTasks.overdue-annual-submission-multiple-body          = Mae gennych {0} o gyflwyniadau blynyddol sy’n hwyr.
+new.home.yourTasks.overdue-annual-submission-multiple-label         = Dyddiad cau’r cyflwyniad hynaf yw {0}
+new.home.yourTasks.overdue-quarterly-submission-single-body            = Mae gennych gyflwyniad chwarterol sy’n hwyr.
+new.home.yourTasks.overdue-quarterly-submission-single-label           = Roedd hyn yn ddyledus ar {0}
+new.home.yourTasks.overdue-quarterly-submission-multiple-body          = Mae gennych {0} o gyflwyniadau chwarterol sy’n hwyr.
+new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Dyddiad cau’r cyflwyniad hynaf yw {0}
+
 ### Overview Tab
 new.home.navigation.tabs.overview                               = Trosolwg
 
@@ -1236,14 +1256,13 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = Gwnaeth CThEF greu eich cosb am gyflwyno’n hwyr
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = Gwnaeth CThEF greu eich cosb am dalu’n hwyr
-chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = Gwnaeth CThEF greu eich taliad mantoli
+chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = Creodd CThEF eich swm ychwanegol taliad mantoli o ganlyniad i Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = Addasiad CThEF wedi’i greu
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.paymentOnAccount2.text	   	        = 	Yr ail daliad ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.request.balancingCharge.text	   	        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.lpi.chargeHistory.created.firstLatePaymentPenalty.text    = Gwnaeth CThEF greu’ch llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
 chargeSummary.lpi.chargeHistory.created.lateSubmissionPenalty.text      = Gwnaeth CThEF greu’ch llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
-chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text        = Taliad Mantoli wedi’i ostwng oherwydd cais gan y trethdalwr
 chargeSummary.chargeHistory.amend.paymentOnAccount1.text 	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.paymentOnAccount2.text 	   	        = Yr ail daliad ar gyfrif wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.amend.balancingCharge.text 	   	   	        = Taliad Mantoli wedi’i ostwng oherwydd Ffurflen Dreth ddiwygiedig
@@ -1265,7 +1284,7 @@ chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog a
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text     = CThEF sydd wedi creu’r tâl hwn
 chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text     = CThEF sydd wedi creu’r tâl hwn
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
-chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text        = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
+chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text        = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol taliad mantoli
 
 chargeSummary.lpi.balancingCharge.p1                               = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
 chargeSummary.lpi.balancingCharge.textOne                          = Mae llog am dalu’n hwyr yn cael ei godi o’r diwrnod cyntaf y mae’ch taliad yn hwyr tan y diwrnod y mae’n cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
@@ -3315,7 +3334,7 @@ yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText            
 yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText                       = Gall llog ar dâl sydd arnoch fynd i fyny neu i lawr. Gweler yr arweiniad ar y gyfradd log a bennir gan CThEF
 yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText                   = y gyfradd llog a bennir gan CThEF
 yourSelfAssessmentChargeSummary.interestOnCharge.heading                = Llog ar y tâl hwn
-yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad mantoli.
+yourSelfAssessmentChargeSummary.interestOnCharge.p1                     = Caiff llog ei godi o’r diwrnod ar ôl dyddiad dyledus gwreiddiol eich taliad mantoli.
 yourSelfAssessmentChargeSummary.interestOnCharge.p2                     = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
 
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					    = Llog am dalu’n hwyr ar y taliad ar gyfrif cyntaf
@@ -3337,6 +3356,10 @@ yourSelfAssessmentChargeSummary.extraAmountInterest.p2LinkText                  
 yourSelfAssessmentChargeSummary.extraAmountInterest.p2AfterLink                       = yn ogystal â 2.5% ychwanegol.
 yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                  = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                           = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p2                       = Mae CThEF yn codi llog ar y swm ychwanegol – sef y gwahaniaeth rhwng eich taliad a’r hyn sydd arnoch mewn gwirionedd.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3                       = Caiff llog ei godi o’r diwrnod ar ôl dyddiad dyledus gwreiddiol eich taliad mantoli, hyd at y diwrnod bydd y swm ychwanegol yn cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3LinkText               = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3AfterLink              = yn ogystal â 2.5% ychwanegol.
 
 yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                    = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
 yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                  = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
@@ -3376,7 +3399,7 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Os byddwch
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i ddeall eich bil treth Hunanasesiad
 
 yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
-
+yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text       = Mae’r swm ychwanegol taliad mantoli hwn yn cyfrannu at eich bil treth ar gyfer {0} i {1}
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet1      = Treth Incwm
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet2      = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
@@ -3433,7 +3456,7 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading            
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y gosb hon oherwydd eich bod yn hwyr wrth dalu eich Treth Incwm.
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb.
 
-yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = Mae arnoch y dreth ychwanegol hon oherwydd y newid gwnaethoch i’ch Ffurflen Dreth.
+yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = Crëwyd y swm ychwanegol taliad mantoli hwn oherwydd newid a wnaethoch i’ch Ffurflen Dreth.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
@@ -3577,8 +3600,11 @@ newHome.yourTasks.selfAssessment.lsp.single = Mae gennych gosb am gyflwyno’n h
 newHome.yourTasks.selfAssessment.lsp.single.label = Roedd hyn yn ddyledus ar {0}
 newHome.yourTasks.selfAssessment.lsp.multiple = Mae gennych {0} o gosbau am gyflwyno’n hwyr.
 newHome.yourTasks.selfAssessment.lsp.multiple.label = Mae’r gosb hynaf yn ddyledus ar {0}
-newHome.yourTasks.selfAssessment.money.refund = Mae gennych £{0} yn eich cyfrif.
 newHome.yourTasks.selfAssessment.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd.
 newHome.yourTasks.selfAssessment.supporting.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd. Noder – efallai fod gan eich cwsmer dasgau nad oes modd i chi eu gweld fel asiant ategol.
 newHome.yourTasks.selfAssessment.money-in-account.h1 = Gwirio faint o arian sydd yn eich cyfrif a hawlio ad-daliad
 newHome.yourTasks.selfAssessment.money-in-account = Mae gennych £{0} yn eich cyfrif.
+newHome.yourTasks.selfAssessment.lpp.single.link = Gweld eich cosb am dalu’n hwyr
+newHome.yourTasks.selfAssessment.lpp.multiple.link = Gweld eich cosbau am dalu’n hwyr
+newHome.yourTasks.selfAssessment.lsp.single.link = Gweld eich cosb am gyflwyno’n hwyr
+newHome.yourTasks.selfAssessment.lsp.multiple.link = Gweld eich cosbau am gyflwyno’n hwyr
