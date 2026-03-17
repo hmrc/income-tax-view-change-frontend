@@ -1,18 +1,18 @@
 @*
- * Copyright 2026 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *@
+* Copyright 2026 HM Revenue & Customs
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*@
 
 @import enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
@@ -36,8 +36,6 @@
 )
 
 @(origin: Option[String] = None,
-        nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-        viewModel: NextUpdatesViewModel,
         isAgent: Boolean,
         yourTasksUrl: String,
         recentActivityUrl: String,
@@ -66,10 +64,6 @@
     } else {
         user.userName.fold("")(_.name.getOrElse(""))
     }
-}
-
-@SectionBreak = {
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 }
 
 @mainTemplate(
@@ -117,11 +111,75 @@
     ))
 
     @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
-    @if(viewModel.areAnyTasksPresent){
-    @yourTasksTilePartial(viewModel, isAgent)
 
-    @submissionDeadlinesTilePartial(isAgent, messages("new.home.yourTasks.updates-and-deadlines"), viewModel)
+    @if(viewModel.noTaskCard.isDefined) {
+        @viewModel.noTaskCard.map { noTask =>
+            <div id= "noTaskCard" class="hmrc-card">
+                <div class="tile-body">
+                    <h3 class="hmrc-card__heading">
+                        @messages(noTask.cardHeading)
+                    </h3>
+                    <div class="govuk-body">@messages(noTask.cardContent)</div>
+                </div>
+            </div>
+        }
     } else {
-        <div class="govuk-body">@messages(viewModel.getNoTasksLabel(user.usersRole == MTDSupportingAgent))</div>
+        @viewModel.overdueTasks.zipWithIndex.map { case (overdueTask, index) =>
+        <div id= "overdueTaskCard-@index" class="hmrc-card">
+            <div class="tile-body">
+                <h3 class="hmrc-card__heading">
+                    <a href=@overdueTask.cardLink>@messages(overdueTask.cardLinkText) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                </h3>
+                <div class="govuk-body">@getCardContent(overdueTask)</div>
+                <div>@getTagContent(overdueTask)</div>
+        </div>
+        </div>
+        }
+
+        @viewModel.datelessTasks.zipWithIndex.map { case (datelessTask, index) =>
+        <div id= "datelessTaskCard-@index" class="hmrc-card">
+            <div class="tile-body">
+                <h3 class="hmrc-card__heading">
+                    <a href=@datelessTask.cardLink>@messages(datelessTask.cardLinkText) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                </h3>
+                <div class="govuk-body">@getCardContent(datelessTask)</div>
+        </div>
+        </div>
+        }
+
+        @viewModel.upcomingTasks.zipWithIndex.map { case (upcomingTask, index) =>
+        <div id= "upcomingTaskCard-@index" class="hmrc-card">
+            <div class="tile-body">
+                <h3 class="hmrc-card__heading">
+                    <a href=@upcomingTask.cardLink>@messages(upcomingTask.cardLinkText) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                </h3>
+                <div class="govuk-body">@getCardContent(upcomingTask)</div>
+                <div>@getTagContentUpcoming(upcomingTask)</div>
+        </div>
+        </div>
+        }
     }
+}
+
+@getCardContent(taskCard: YourTasksCard) = @{
+    taskCard.amountOrCount match {
+        case Some(amount) => messages(taskCard.cardContent, amount)
+        case None         => messages(taskCard.cardContent)
+    }
+}
+
+@getTagContent(overdueTask: OverdueTaskCard) = {
+@overdueTask.dueDate.map { date =>
+    <span class="govuk-tag govuk-tag--red" id="date-tag">
+        @messages(overdueTask.tagContent, date.toLongDateShort)
+    </span>
+}
+}
+
+@getTagContentUpcoming(upcomingTask: UpcomingTaskCard) = {
+@upcomingTask.dueDate.map { date =>
+    <span class="govuk-tag govuk-tag--@upcomingTask.maturityLevel.tagColour" id="date-tag">
+    @messages(upcomingTask.tagContent, date.toLongDateShort)
+    </span>
+}
 }

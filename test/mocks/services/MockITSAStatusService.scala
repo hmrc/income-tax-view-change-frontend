@@ -41,7 +41,7 @@ trait MockITSAStatusService extends UnitSpec with BeforeAndAfterEach {
     when(mockITSAStatusService.getStatusTillAvailableFutureYears(any())(any, any, any))
       .thenReturn(out)
   }
-  
+
   def setupMockITSAStatusDetail(taxYear: TaxYear)(out: Future[List[ITSAStatusResponseModel]]): OngoingStubbing[Future[List[ITSAStatusResponseModel]]] = {
     when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(out)
   }
