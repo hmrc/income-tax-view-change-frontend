@@ -283,7 +283,6 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
               "CY-1 and CY are Voluntary and CY+1 is Annual but opt out is disabled" in {
                 enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
-                disable(OptOutFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
@@ -500,7 +499,6 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
               "CY-1 is Quarterly, CY and CY+1 are annual with Sign Up disabled" in {
                 enable(ReportingFrequencyPage, OptOutFs, OptInOptOutContentUpdateR17)
-                disable(SignUpFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
@@ -585,8 +583,6 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
               "Sign up and Opt Out are disabled" in {
                 enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
-                disable(OptOutFs)
-                disable(SignUpFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
@@ -715,7 +711,6 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
           "render the error page" when {
             "ReportingFrequencyPage feature switch is disabled" in {
-              disable(ReportingFrequencyPage)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
               stubCalculationListResponseBody("2022")

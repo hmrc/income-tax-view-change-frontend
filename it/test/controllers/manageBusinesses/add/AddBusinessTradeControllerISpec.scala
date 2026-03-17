@@ -64,7 +64,6 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the Add Business trade page for an Agent" when {
             "using the manage businesses journey" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
@@ -92,7 +91,6 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the Add Business trade page for an Agent" when {
             "using the manage businesses journey" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
@@ -118,7 +116,6 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           s"303 SEE_OTHER and redirect to add business address" when {
             "User is authorised and business trade is valid" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
@@ -147,7 +144,6 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
@@ -181,7 +177,6 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           s"303 SEE_OTHER and redirect to Check details" when {
             "User is authorised and business trade is valid" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
@@ -211,7 +206,6 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
             }
           }
           "show error when form is filled incorrectly" in {
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 

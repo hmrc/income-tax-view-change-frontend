@@ -94,7 +94,6 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
             "is authenticated, with a valid enrolment" should {
               "render the Business Added page" when {
                 "using the manage businesses journey" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
 
                   await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
@@ -128,7 +127,6 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
               if (incomeSourceType == UkProperty) {
                 "render error page" when {
                   "UK property income source is missing trading start date" in {
-                    disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
 

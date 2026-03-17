@@ -42,7 +42,6 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the ChooseSoleTraderAddress page" when {
             "OverseasBusinessAddress FS is enabled" in {
-              disable(NavBarFs)
               enable(OverseasBusinessAddress)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -71,7 +70,6 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
             "form response is Existing Address" in {
 
               val isAgent: Boolean = mtdUserRole != MTDIndividual
-              disable(NavBarFs)
               enable(OverseasBusinessAddress)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -89,7 +87,6 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
             }
             "form response is New Address" in {
               val isAgent: Boolean = mtdUserRole != MTDIndividual
-              disable(NavBarFs)
               enable(OverseasBusinessAddress)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -105,7 +102,6 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
           }
           "return a BAD_REQUEST" when {
             "form is empty" in {
-              disable(NavBarFs)
               enable(OverseasBusinessAddress)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
@@ -118,7 +114,6 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
               )
             }
             "form is invalid" in {
-              disable(NavBarFs)
               enable(OverseasBusinessAddress)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

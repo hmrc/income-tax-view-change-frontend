@@ -52,7 +52,6 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
           "render the manage your businesses page" when {
             "the user has multiple businesses and uk property with display business start date enabled" in {
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
 
@@ -76,7 +75,6 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
 
             "the user has foreign property and ceased business with display business start date enabled" in {
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
 
@@ -93,8 +91,6 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the user has multiple businesses and uk property with display business start date disabled" in {
-              disable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
 
@@ -117,8 +113,6 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the user has foreign property and ceased business with display business start date disabled" in {
-              disable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
 

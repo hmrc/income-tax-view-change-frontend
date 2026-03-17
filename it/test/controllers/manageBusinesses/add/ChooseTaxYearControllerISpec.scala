@@ -141,8 +141,6 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
             "OptInOptOutContentUpdateR17 is disabled" when {
 
               "using the manage businesses journey" in {
-
-                disable(OptInOptOutContentUpdateR17)
                 stubAuthorised(mtdUserRole)
 
                 val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
@@ -240,7 +238,6 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
               "submit the reporting frequency for the income source" in {
                 val isAgent = !(mtdUserRole == MTDIndividual)
 
-                disable(OptInOptOutContentUpdateR17)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
@@ -260,8 +257,6 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
               }
 
               "return an error if the form is invalid" in {
-
-                disable(OptInOptOutContentUpdateR17)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 

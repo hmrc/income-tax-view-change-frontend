@@ -94,7 +94,6 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
             "is authenticated, with a valid enrolment" should {
               "render the Date Business Ceased Page" in {
                 stubAuthorised(mtdUserRole)
-                disable(NavBarFs)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
@@ -121,7 +120,6 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
               "redirect to manageBusinesses" when {
                 "no session data" in {
                   stubAuthorised(mtdUserRole)
-                  disable(NavBarFs)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -152,7 +150,6 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                     Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
                   }
                   stubAuthorised(mtdUserRole)
-                  disable(NavBarFs)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   setupTestMongoData(incomeSourceType)
@@ -182,7 +179,6 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                     Map("value.day" -> Seq("aa"), "value.month" -> Seq("5"), "value.year" -> Seq("2022"))
                   }
                   stubAuthorised(mtdUserRole)
-                  disable(NavBarFs)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
