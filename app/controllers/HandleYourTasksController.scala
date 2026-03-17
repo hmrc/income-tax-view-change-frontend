@@ -44,19 +44,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HandleYourTasksController @Inject()(val authActions: AuthActions,
-                                val handleYourTasksView: HandleYourTasksView,
-                                val signUpService: SignUpService,
-                                val optOutService: OptOutService,
-                                val ITSAStatusService: ITSAStatusService,
-                                val whatYouOweService: WhatYouOweService,
-                                val creditService: CreditService,
-                                val dateService: DateServiceInterface,
-                                val financialDetailsService: FinancialDetailsService,
-                                val nextUpdatesService: NextUpdatesService,
-                                val handleYourTasksService: HandleYourTasksService)
-                               (implicit val ec: ExecutionContext,
-                                mcc: MessagesControllerComponents,
-                                val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                          val handleYourTasksView: HandleYourTasksView,
+                                          val signUpService: SignUpService,
+                                          val optOutService: OptOutService,
+                                          val ITSAStatusService: ITSAStatusService,
+                                          val whatYouOweService: WhatYouOweService,
+                                          val creditService: CreditService,
+                                          val dateService: DateServiceInterface,
+                                          val financialDetailsService: FinancialDetailsService,
+                                          val nextUpdatesService: NextUpdatesService,
+                                          val handleYourTasksService: HandleYourTasksService)
+                                         (implicit val ec: ExecutionContext,
+                                          mcc: MessagesControllerComponents,
+                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+
   
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
@@ -95,18 +96,11 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
 
-      val homeViewModel = HandleYourTasksViewModel(chargeItemList, credits, creditsRefundsRepayEnabled, updatesAndDeadlinesViewModel, userMandatedOrVoluntary)
-      
-      Ok(
-        handleYourTasksView(
-          origin = origin,
-          isAgent = isAgent,
-          yourTasksUrl = yourTasksUrl(origin, isAgent),
-          recentActivityUrl = recentActivityUrl(origin, isAgent),
-          overViewUrl = overviewUrl(origin, isAgent),
-          helpUrl = helpUrl(origin, isAgent),
-          viewModel = homeViewModel, appConfig.itvcRebrand)
-      ).addingToSession(mandationStatus)
+      val yourTaskCardViewModel = handleYourTasksService.getYourTasksCards(updatesAndDeadlinesViewModel, isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus)
+
+      Ok(handleYourTasksView(origin, isAgent,
+        yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
+        overviewUrl(origin, isAgent), helpUrl(origin, isAgent), yourTaskCardViewModel, appConfig.itvcRebrand)).addingToSession(mandationStatus)
     }
   }
 
@@ -134,13 +128,13 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- nextUpdatesService.getNextDueDates()
         openObligations <- getOpenObligations()
       } yield {
-          SubmissionDeadlinesViewModel(
-            openObligations = openObligations,
-            currentDate = dateService.getCurrentDate,
-            nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
-            nextTaxReturnDueDate = nextTaxReturnDueDate
-          )
-        }
+        SubmissionDeadlinesViewModel(
+          openObligations = openObligations,
+          currentDate = dateService.getCurrentDate,
+          nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
+          nextTaxReturnDueDate = nextTaxReturnDueDate
+        )
+      }
     }.recoverWith {
       case ex =>
         Logger("application").error(s"Failed to retrieve reporting content checks: ${ex.getMessage}")
@@ -150,7 +144,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
   }
 
   private def getOpenObligations()
-                                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[SingleObligationModel]] = {
+                                (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[SingleObligationModel]] = {
     nextUpdatesService.getOpenObligations().flatMap {
       case openObligations: ObligationsModel if openObligations.obligations.forall(_.obligations.nonEmpty) => Future.successful(openObligations.obligations.flatMap(_.obligations))
       case _ =>
@@ -159,6 +153,20 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     }
   }
 
+  private def getCurrentITSAStatus(currentTaxYear: TaxYear)(
+    implicit hc: HeaderCarrier,
+    user: MtdItUser[_]
+  ): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService
+      .getITSAStatusDetail(currentTaxYear, false, false)
+      .map { statusDetailList =>
+        statusDetailList
+          .flatMap(_.itsaStatusDetails)
+          .flatMap(_.map(_.status))
+          .headOption
+          .getOrElse(ITSAStatus.NoStatus)
+      }
+  }
 
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HandleYourTasksController.showAgent().url else controllers.routes.HandleYourTasksController.show().url
 
