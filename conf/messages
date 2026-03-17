@@ -1135,7 +1135,7 @@ chargeSummary.lpi.paymentsOnAccount.textTwo                        = plus 2.5%.
 chargeSummary.lpi.paymentsOnAccount.p3                             = See guidance on the
 chargeSummary.lpi.paymentsOnAccount.p3LinkText                     = interest rates set by HMRC (opens in new tab).
 
-chargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
+chargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low. - TEST
 chargeSummary.poa1ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
 chargeSummary.poa1ExtraAmountInterest.p3                           = Interest is charged from the date your first payment on account was due and calculated at the
 chargeSummary.poa1ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
@@ -3400,16 +3400,15 @@ yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates						    = {0} to {1}
 
 yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading              = Late payment interest for first payment on account: extra amount
 yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading              = Late payment interest for second payment on account: extra amount
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3                           = Interest is charged from the date your first payment on account was due and calculated at the
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted second payment on account was too low.
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount – the difference between your adjusted payment on account and what you actually owe.
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                           = Interest is charged from the date your second payment on account was due and calculated at the
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                   = Bank of England base rate (opens in new tab)
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                  = plus 2.5%.
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your first payment on account for the {0} to {1} tax year was too low.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your second payment on account for the {0} to {1} tax year was too low.
+yourSelfAssessmentChargeSummary.paragraphList.intro                                  = This could be because:
+yourSelfAssessmentChargeSummary.paragraphList.bullet1                                = you changed your previous year's tax return
+yourSelfAssessmentChargeSummary.paragraphList.bullet2                                = you reduced your payments on account to less than what your tax return shows you should have paid
+yourSelfAssessmentChargeSummary.extraAmountInterest.p1                               = HMRC applies interest to the extra amount – the difference between your payment on account and what you actually owe.
+yourSelfAssessmentChargeSummary.extraAmountInterest.p2                               = Interest is charged from the day after your payment on account was due until the day the extra amount is paid in full. It's calculated at the
+yourSelfAssessmentChargeSummary.extraAmountInterest.p2LinkText                       = Bank of England base rate (opens in new tab)
+yourSelfAssessmentChargeSummary.extraAmountInterest.p2AfterLink                      = plus 2.5%.g
 yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Late payment interest on balancing payment: extra amount due to amended return
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = You owe HMRC interest because you paid your balancing payment late.
 
