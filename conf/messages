@@ -3408,7 +3408,7 @@ yourSelfAssessmentChargeSummary.paragraphList.bullet2                           
 yourSelfAssessmentChargeSummary.extraAmountInterest.p1                               = HMRC applies interest to the extra amount – the difference between your payment on account and what you actually owe.
 yourSelfAssessmentChargeSummary.extraAmountInterest.p2                               = Interest is charged from the day after your payment on account was due until the day the extra amount is paid in full. It's calculated at the
 yourSelfAssessmentChargeSummary.extraAmountInterest.p2LinkText                       = Bank of England base rate (opens in new tab)
-yourSelfAssessmentChargeSummary.extraAmountInterest.p2AfterLink                      = plus 2.5%.g
+yourSelfAssessmentChargeSummary.extraAmountInterest.p2AfterLink                      = plus 2.5%.
 yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Late payment interest on balancing payment: extra amount due to amended return
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = You owe HMRC interest because you paid your balancing payment late.
 
