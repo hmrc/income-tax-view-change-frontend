@@ -23,7 +23,9 @@ import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
 import models.financialDetails.*
-import models.newHomePage.{HandleYourTasksViewModel, SubmissionDeadlinesViewModel}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
+import models.newHomePage.SubmissionDeadlinesViewModel
 import models.obligations.{ObligationsModel, SingleObligationModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -49,7 +51,8 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                 val creditService: CreditService,
                                 val dateService: DateServiceInterface,
                                 val financialDetailsService: FinancialDetailsService,
-                                val nextUpdatesService: NextUpdatesService)
+                                val nextUpdatesService: NextUpdatesService,
+                                val handleYourTasksService: HandleYourTasksService)
                                (implicit val ec: ExecutionContext,
                                 mcc: MessagesControllerComponents,
                                 val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
@@ -72,15 +75,19 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
 
   private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
                              (implicit user: MtdItUser[_]): Future[Result] = {
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+
     for {
       credits <- creditService.getAllCredits()
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
-      mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
+      currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       updatesAndDeadlinesViewModel <- getNextUpdates()
     } yield {
+
+      val mandation = currentItsaStatus == ITSAStatus.Mandated
 
       val creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay)
       val mandationStatus =

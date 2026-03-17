@@ -20,10 +20,13 @@ import auth.authV2.AuthActions
 import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockAuthActions
 import mocks.services.*
-import models.admin.CreditsRefundsRepay
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
+import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
+import models.newHomePage.HandleYourTasksViewModel
+import models.newHomePage.MaturityLevel.Upcoming
+import models.newHomePage.YourTaskCardType.FINANCIALS
+import models.newHomePage.YourTasksCard.UpcomingTaskCard
 import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusOpen}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -34,9 +37,9 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, status}
+import services.*
 import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
-import services.*
 import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
 import views.html.HandleYourTasksView
 
@@ -65,6 +68,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   given mockedSignUpService: SignUpService = mock(classOf[SignUpService])
   given mockedOptOutService: OptOutService = mock(classOf[OptOutService])
   given mockedCreditService: CreditService = mock(classOf[CreditService])
+  given mockedHandleYourTasksService: HandleYourTasksService = mock(classOf[HandleYourTasksService])
   given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
 
   val authActions: AuthActions = app.injector.instanceOf(classOf[AuthActions])
@@ -73,15 +77,9 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   val nextPaymentYear: String = "2019"
   val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
   val staticTaxYear: TaxYear = TaxYear(fixedDate.getYear - 1, fixedDate.getYear)
-  val baseStatusDetail: StatusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Annual, StatusReason.SignupReturnAvailable, Some(8000.25))
+  val baseStatusDetail: StatusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Mandated, StatusReason.SignupReturnAvailable, Some(8000.25))
 
-  val expectedYourTasksTitle = s"${messages("newHome.navigation.yourTasks")}"
-  val expectedOverdueAmount = s"${messages("newHome.yourTasks.selfAssessment.overdueCharge.single", "1000.0 ")}Was due 31 Jan 2019"
-  val expectedCredit = s"${messages("newHome.yourTasks.selfAssessment.money-in-account", "1000")}"
-  val expectedUpcomingAnnualSubmissionTag = s"${messages("new.home.yourTasks.upcoming-annual-updates-label", "15 Mar 2024")}"
-  val expectedUpcomingAnnualSubmissionDeadlineBody = "You have an upcoming annual submission deadline."
-  val expectedOverdueQuarterlySubmissionDeadlineBody = "You have an overdue quarterly submission."
-  val expectedOverdueQuarterlySubmissionTag = s"${messages("new.home.yourTasks.overdue-quarterly-submission-single-label", "15 Dec 2022")}"
+  val expectedYourTasksTitle = "Your tasks"
 
   trait Setup {
     val controller: HandleYourTasksController = HandleYourTasksController(
@@ -94,13 +92,51 @@ class HandleYourTasksControllerSpec extends MockAuthActions
       mockedCreditService,
       mockDateServiceInjected,
       mockFinancialDetailsService,
-      mockNextUpdatesService)
-
+      mockNextUpdatesService,
+      mockedHandleYourTasksService)
 
     setupMockUserAuth
     mockSingleBusinessIncomeSource()
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
+
+    val nextTaxReturnDueDate: LocalDate = mockDateServiceInjected.getCurrentDate.plusMonths(3)
+    val quarterlyOverdueDueDate: LocalDate = mockDateServiceInjected.getCurrentDate.minusMonths(12)
+
+    val obligationsModel: ObligationsModel = ObligationsModel(
+      Seq(
+        GroupedObligationsModel(
+          BaseTestConstants.testSelfEmploymentId,
+          List(
+            SingleObligationModel(
+              mockDateServiceInjected.getCurrentDate.minusMonths(6),
+              nextTaxReturnDueDate,
+              nextTaxReturnDueDate,
+              "Crystallisation",
+              None,
+              "#001",
+              StatusOpen
+            )
+          )
+        ),
+        GroupedObligationsModel(
+          BaseTestConstants.testPropertyIncomeId,
+          List(
+            SingleObligationModel(
+              mockDateServiceInjected.getCurrentDate.minusMonths(16),
+              quarterlyOverdueDueDate,
+              quarterlyOverdueDueDate,
+              "Quarterly",
+              None,
+              "#002",
+              StatusOpen
+            )
+          )
+        )
+      )
+    )
+    when(mockNextUpdatesService.getOpenObligations()(any(), any())).thenReturn(Future.successful(obligationsModel))
+
     val testHomeController = app.injector.instanceOf[HomeController]
   }
 
@@ -127,6 +163,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
           .thenReturn(Future.successful(financialDetails))
         setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
         setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems))
+        setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
         setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
         setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
         when(mockedSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
@@ -141,44 +178,8 @@ class HandleYourTasksControllerSpec extends MockAuthActions
         when(mockNextUpdatesService.getNextDueDates()(any(), any()))
           .thenReturn(Future.successful(None, None))
 
-        val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
-
-        status(result) shouldBe Status.OK
-        session(result).get(SessionKeys.mandationStatus) shouldBe Some("on")
-
-        val document: Document = Jsoup.parse(contentAsString(result))
-        document.select("#main-content h2").text shouldBe expectedYourTasksTitle
-        document.select("#yourTasksTile .tile-body div").text shouldBe expectedOverdueAmount
-      }
-
-      "render the Handle your tasks page with a Your tasks tab open and have money in your account card present" in new Setup {
-        setupMockUserAuth
-        mockItsaStatusRetrievalAction()
-        enable(CreditsRefundsRepay)
-        val financialDetails = List(FinancialDetailsModel(
-          balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, Some(BigDecimal(1000)), None, None, None),
-          documentDetails = List(DocumentDetail(nextPaymentYear.toInt, "testId", Some("ITSA- POA 1"), Some("documentText"), 1000.00, 0, LocalDate.of(2018, 3, 29),
-            documentDueDate = Some(LocalDate.of(2019, 1, 31)))),
-          financialDetails = List(FinancialDetail(taxYear = nextPaymentYear, mainType = Some("SA Payment on Account 1"),
-            mainTransaction = Some("4920"), transactionId = Some("testId"),
-            items = Some(Seq(SubItem(dueDate = Some(nextPaymentDate))))))))
-        when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-          .thenReturn(Future.successful(financialDetails))
-        setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
-        setupMockGetFilteredChargesListFromFinancialDetails(financialDetails.flatMap(_.asChargeItems))
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-        setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
-        when(mockedSignUpService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
-          .thenReturn(Future.successful(true))
-        when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
-          .thenReturn(Future.successful(true))
-        when(mockedCreditService.getAllCredits(any(), any()))
-          .thenReturn(Future.successful(
-            ANewCreditAndRefundModel().withTotalCredit(BigDecimal(1000))
-              .model
-          ))
-        when(mockNextUpdatesService.getNextDueDates()(any(), any()))
-          .thenReturn(Future.successful(None, None))
+        when(mockedHandleYourTasksService.getYourTasksCards(any(), any(), any(), any(), any(), any())(any()))
+          .thenReturn(HandleYourTasksViewModel(Seq.empty, Seq.empty, Seq(UpcomingTaskCard("", "", "", "", None, None, Upcoming, FINANCIALS)), None))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
