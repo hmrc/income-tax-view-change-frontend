@@ -16,6 +16,7 @@
 
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import viewUtils.ExternalUrlHelper
 
 @this(
         mainTemplate: unifiedLayout,
@@ -38,9 +39,9 @@
     @p(){@messages("agent-unauthorised.note")}
 
     @bulletList(
-        Seq("agent-unauthorised.note.b1", "agent-unauthorised.note.b2", "agent-unauthorised.note.b3")
+        Seq("agent-unauthorised.note.b1", "agent-unauthorised.note.b2", "agent-unauthorised.note.b3", "agent-unauthorised.note.b4")
     )
 
-    @link(link = "#", messageKey = "agent-unauthorised.link", target = None, rel=Some("noreferrer noopener"))
+    @link(link = {ExternalUrlHelper.agentUnauthorisedURL}, messageKey = "agent-unauthorised.link", target = None, rel=Some("noreferrer noopener"))
 
 }

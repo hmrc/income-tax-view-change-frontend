@@ -84,6 +84,7 @@ agent-unauthorised.note                                         = You are a supp
 agent-unauthorised.note.b1                                      = payments, credits and refunds
 agent-unauthorised.note.b2                                      = returns
 agent-unauthorised.note.b3                                      = next charges due
+agent-unauthorised.note.b4                                      = penalties and appeals
 agent-unauthorised.link                                         = Read more about the difference between main and supporting agents on GOV.UK.
 
 ## BTA Links ##
@@ -190,6 +191,7 @@ home.agent.supporting.cannotAccess                              = Supporting age
 home.agent.supporting.cannotAccess.payments                     = payments, credits and refunds
 home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
+home.agent.supporting.cannotAccess.penaltiesAndAppeals          = penalties and appeals
 home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
 
 home.penaltiesAndAppeals.heading                                = Penalties and appeals

@@ -85,6 +85,7 @@ agent-unauthorised.note                                         = Rydych yn asia
 agent-unauthorised.note.b1                                      = taliadau, credydau ac ad-daliadau
 agent-unauthorised.note.b2                                      = Ffurflenni Treth
 agent-unauthorised.note.b3                                      = y ffioedd sy’n ddyledus nesaf
+agent-unauthorised.note.b4                                      = cosbau ac apeliadau
 agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK.
 
 ## BTA Links ##
@@ -191,6 +192,7 @@ home.agent.supporting.cannotAccess                              = Ni all asianta
 home.agent.supporting.cannotAccess.payments                     = taliadau, credydau ac ad-daliadau
 home.agent.supporting.cannotAccess.returns                      = Ffurflenni Treth
 home.agent.supporting.cannotAccess.nextChargesDue               = y ffioedd sy’n ddyledus nesaf
+home.agent.supporting.cannotAccess.penaltiesAndAppeals          = cosbau ac apeliadau
 home.agent.supporting.readMore                                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK (yn agor tab newydd).
 
 home.penaltiesAndAppeals.heading                                = Cosbau ac apeliadau
