@@ -17,7 +17,7 @@
 package mocks.services
 
 import models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
-import models.itsaStatus.StatusDetail
+import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -40,6 +40,10 @@ trait MockITSAStatusService extends UnitSpec with BeforeAndAfterEach {
   def setupMockGetStatusTillAvailableFutureYears(taxYear: TaxYear)(out: Future[Map[TaxYear, StatusDetail]]): OngoingStubbing[Future[Map[TaxYear, StatusDetail]]] = {
     when(mockITSAStatusService.getStatusTillAvailableFutureYears(any())(any, any, any))
       .thenReturn(out)
+  }
+  
+  def setupMockITSAStatusDetail(taxYear: TaxYear)(out: Future[List[ITSAStatusResponseModel]]): OngoingStubbing[Future[List[ITSAStatusResponseModel]]] = {
+    when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(out)
   }
 
   def setupMockHasMandatedOrVoluntaryStatusCurrentYear(response: Boolean): Unit = {

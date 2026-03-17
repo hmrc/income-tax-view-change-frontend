@@ -21,9 +21,9 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.creditsandrefunds.CreditsModel
-import models.newHomePage.{HandleYourTasksViewModel, SubmissionDeadlinesViewModel}
-import models.obligations.{SingleObligationModel, StatusOpen}
+import models.newHomePage.YourTaskCardType.{FINANCIALS, SUBMISSIONS}
+import models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}
+import models.newHomePage.{HandleYourTasksViewModel, MaturityLevel, NoTaskCard}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -48,8 +48,11 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
 
   val dateServiceCurrentDate: LocalDate = dateService.getCurrentDate
 
-  private val annualObligationType: String = "Crystallisation"
-  private val quarterlyObligationType: String = "Quarterly"
+  class TestSetup(hasOverdueTasks: Boolean = false,
+                  hasDatelessTasks: Boolean = false,
+                  hasUpcomingTasks: Boolean = false,
+                  hasNoTasks: Boolean = false,
+                  multipleTasks: Boolean = false) {
 
   val multipleAnnualOverdueObligations: Seq[SingleObligationModel] = getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(90)) ++
     getSingleObligationModels(dueDate = dateServiceCurrentDate.minusDays(120)) ++
@@ -85,28 +88,23 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     val testUrl = "testUrl"
 
     val yourTasksHeading = "Your tasks"
-    val viewUpdatesAndDeadlinesTitle = "View submission deadlines"
-    val upcomingAnnualSubmissionDeadlineBody = "You have an upcoming annual submission deadline."
-    val submissionDeadlinesURL = "/report-quarterly/income-and-expenses/view/submission-deadlines"
-    val submissionDeadlinesURLAgent = "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
 
     lazy val page: HtmlFormat.Appendable =
       newHomeYourTasksView(
-        origin = origin,
-        viewModel = getNextUpdatesTileViewModel(dateServiceCurrentDate, obligations, nextTaxReturnDueDate, nextQuarterlyUpdatesDueDate),
-        isAgent = isAgent,
-        yourTasksUrl = yourTasksUrl,
-        recentActivityUrl = recentActivityUrl,
-        overViewUrl = overViewUrl,
-        helpUrl = helpUrl,
+        origin = None,
+        viewModel = getNextUpdatesTileViewModel(dateServiceCurrentDate, hasOverdueTasks, hasDatelessTasks, hasUpcomingTasks, hasNoTasks, multipleTasks),
+        isAgent = false,
+        yourTasksUrl = "testYourTasksUrl",
+        recentActivityUrl = "testRecentActivityUrl",
+        overViewUrl = "testOverviewUrl",
+        helpUrl = "testHelpUrl",
         isGovUkRebrandEnabled = true)(testMessages, FakeRequest(), testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
-    lazy val layoutContent: Element = document.selectHead("#main-content")
   }
 
-  "New Home Your Tasks page for individuals" when {
-    "upcoming annual submission due more than 30 days" should {
-      "display the correct content" in new TestSetup(nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(31))) {
+  "New Home Your Tasks page" when {
+    "accessing the Your Tasks page" should {
+      "render no tasks card when the view model has one" in new TestSetup(hasNoTasks = true) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
@@ -125,10 +123,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--yellow") shouldBe true
         document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(30).toLongDateShort}"
       }
-    }
-
-    "upcoming annual submission due in 1 day" should {
-      "display the correct content" in new TestSetup(nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(1))) {
+      "render multiple overdue task cards when present" in new TestSetup(hasOverdueTasks = true, multipleTasks = true) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
@@ -136,10 +131,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--yellow") shouldBe true
         document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(1).toLongDateShort}"
       }
-    }
-
-    "upcoming annual submission due less then 30 days" should {
-      "display the correct content" in new TestSetup(nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(29))) {
+      "render dateless task cards when present" in new TestSetup(hasDatelessTasks = true) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
@@ -147,10 +139,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--yellow") shouldBe true
         document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.plusDays(29).toLongDateShort}"
       }
-    }
-
-    "upcoming annual submission due today" should {
-      "display the correct content" in new TestSetup(nextTaxReturnDueDate = Some(dateServiceCurrentDate)) {
+      "render multiple dateless task cards when present" in new TestSetup(hasDatelessTasks = true, multipleTasks = true) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)
@@ -158,10 +147,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         document.select("#upcomingAnnualDate").hasClass("govuk-tag govuk-tag--pink") shouldBe true
         document.select("#upcomingAnnualDate").text() shouldBe s"Due ${dateServiceCurrentDate.toLongDateShort}"
       }
-    }
-
-    "upcoming annual submission coming due less or equal that 30 days" should {
-      "display the correct content" in new TestSetup(nextTaxReturnDueDate = Some(dateServiceCurrentDate.plusDays(30))) {
+      "render upcoming task cards when present" in new TestSetup(hasUpcomingTasks = true) {
         document.select("h2.govuk-heading-m").get(0).text() shouldBe yourTasksHeading
         document.select(".hmrc-card__heading").get(1).text() shouldBe viewUpdatesAndDeadlinesTitle
         document.select(".hmrc-card__heading").get(1).hasCorrectHref(submissionDeadlinesURL)

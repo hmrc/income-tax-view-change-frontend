@@ -19,20 +19,20 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
-@import views.html.partials.newHomeView._
+@import views.html.partials.newHome._
 @import views.html.components._
 @import models.newHomePage.HandleYourTasksViewModel
-@import views.html.partials.newHome.yourTasks._
-@import views.html.partials.newHome.yourTasks.SubmissionDeadlinesTilePartial
+@import models.newHomePage.YourTasksCard.{OverdueTaskCard, UpcomingTaskCard, DatelessTaskCard}
+@import models.newHomePage.YourTasksCard
+@import _root_.implicits.ImplicitDateFormatterImpl
 
 @this(
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
         govukServiceNavigation : GovukServiceNavigation,
-        yourTasksTilePartial: YourTasksTilePartial,
-        submissionDeadlinesTilePartial: SubmissionDeadlinesTilePartial,
-        h2: h2
+        h2: h2,
+        implicitDateFormatter: ImplicitDateFormatterImpl
 )
 
 @(origin: Option[String] = None,
@@ -47,6 +47,8 @@
         isGovUkRebrandEnabled: Boolean)(
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
+
+@import implicitDateFormatter.longDate
 
 @pageHeading = @{
     if (isAgent) {
@@ -115,7 +117,6 @@
     ))
 
     @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
-
     @if(viewModel.areAnyTasksPresent){
     @yourTasksTilePartial(viewModel, isAgent)
 
