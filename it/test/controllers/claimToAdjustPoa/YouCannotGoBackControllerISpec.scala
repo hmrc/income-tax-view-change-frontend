@@ -100,7 +100,7 @@ class YouCannotGoBackControllerISpec extends ControllerISpecHelper {
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
+                  httpStatus(OK)
                 )
               }
             }

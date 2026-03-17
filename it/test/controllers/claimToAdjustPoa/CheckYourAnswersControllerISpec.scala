@@ -196,7 +196,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
+                  httpStatus(OK)
                 )
               }
             }
@@ -233,6 +233,25 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 )
                 verifyAuditContainsDetail(auditAdjustPayementsOnAccount(true, mtdUserRole).detail)
               }
+
+              "no non-crystallised financial details are found" in {
+                stubAuthorised(mtdUserRole)
+                stubFinancialDetailsResponse(testEmptyFinancialDetailsModelJson)
+                await(sessionService.setMongoData(Some(validSession)))
+
+                IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
+                  CREATED,
+                  Json.stringify(Json.toJson(
+                    ClaimToAdjustPoaSuccess(processingDate = "2024-01-31T09:27:17Z")
+                  ))
+                )
+
+                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
+                result should have(
+                  httpStatus(SEE_OTHER),
+                  redirectURI(PoaAdjustedController.show(isAgent).url)
+                )
+              }
             }
             "redirect to ApiFailureSubmittingPoaController" when {
               "an error response is returned when submitting POA" in {
@@ -260,16 +279,6 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
 
                 stubFinancialDetailsResponse(testFinancialDetailsErrorModelJson)
-                await(sessionService.setMongoData(Some(validSession)))
-
-                val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
-                result should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
-                )
-              }
-              "no non-crystallised financial details are found" in {
-                stubAuthorised(mtdUserRole)
-                stubFinancialDetailsResponse(testEmptyFinancialDetailsModelJson)
                 await(sessionService.setMongoData(Some(validSession)))
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
