@@ -113,7 +113,6 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
           "render the completed page" that {
             "is for the current tax year (CY+1 not mandated)" in {
               enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
@@ -146,7 +145,6 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
             }
             "is for the current tax year (CY+1 mandated)" in {
               enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
@@ -182,7 +180,6 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
             }
             "is for the next tax year" in {
               enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
@@ -214,7 +211,6 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
             }
             "is for the next tax year (CY is not annual)" in {
               enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 

@@ -62,7 +62,6 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the reporting method error page" when {
               "using the manage businesses journey" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -81,7 +80,6 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
             "render the error page" when {
               if (incomeSourceType == SelfEmployment) {
                 "the Income Source Id does not exist" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                     manageIncomeSourceData = Some(ManageIncomeSourceData(None)))))
@@ -96,7 +94,6 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                 }
               } else {
                 "the user does not have a property Income Source" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 

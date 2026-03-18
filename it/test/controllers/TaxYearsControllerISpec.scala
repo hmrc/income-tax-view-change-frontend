@@ -73,8 +73,6 @@ class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitchin
                   elementTextByID("pfa-amendment-text")
                   ("You can view the tax year summary pages to also see your options for amending the filed return for that year.")
                 )
-
-                disable(PostFinalisationAmendmentsR18)
               }
             }
 

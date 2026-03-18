@@ -45,7 +45,6 @@ class IncomeSourceNotCeasedControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the not ceased page" in {
               stubAuthorised(mtdUserRole)
-              disable(NavBarFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue

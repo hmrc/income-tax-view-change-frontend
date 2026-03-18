@@ -34,7 +34,6 @@ trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching 
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(NavBarFs)
   }
 
   val calculationTaxYear: String = s"${getCurrentTaxYearEnd.getYear - 1}-${getCurrentTaxYearEnd.getYear.toString.drop(2)}"

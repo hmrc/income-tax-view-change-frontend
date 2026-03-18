@@ -109,7 +109,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the Manage Obligations Page" when {
               "valid url parameters provided and change to is annual" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -131,7 +130,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               }
 
               "valid url parameters provided and change to is quarterly" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -152,7 +150,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
               "valid url parameters provided and change to is annual when OptInOptOutContentUpdateR17 is enabled" in {
                 enable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -175,7 +172,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
               "valid url parameters provided and change to is quarterly when OptInOptOutContentUpdateR17 is enabled" in {
                 enable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -198,7 +194,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
             "render the error page" when {
               "there is no incomeSourceId in the session" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
@@ -223,7 +218,6 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "redirect to ManageIncomeSources" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
