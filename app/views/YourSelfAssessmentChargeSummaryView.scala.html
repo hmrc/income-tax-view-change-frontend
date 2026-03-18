@@ -123,7 +123,7 @@
                   else "charge"
               )
           }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}${
-              if(viewModel.chargeItem.interestOutstandingAmount)
+              if(viewModel.chargeItem.interestOutstandingAmount && viewModel.chargeItem.outstandingAmount > 0)
                   s"\t${
                       messages("yourSelfAssessmentChargeSummary.reviewAndReconcile.heading2.youOwe")
                   }" else ""
@@ -147,25 +147,41 @@
       }
 
       @if(viewModel.chargeItem.hasInterest) {
-          @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
-              @interestOnChargeRARPoaSection(viewModel)
-          } else {
-              @interestOnYourChargeSection(viewModel.chargeItem)
+        @if(viewModel.chargeItem.outstandingAmount == 0) {
+            @h2(
+                msg = getMessage("interestOnCharge.heading"),
+                classes = "govuk-heading-m",
+                optId = Some("interest-on-your-charge-heading")
+            )
+            @p(id=Some("interestOnCharge.p1")){
+                @messages("yourSelfAssessmentChargeSummary.crystallisedInterest.text-1")
+                @link(
+                    link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
+                    rel= Some("noreferrer noopener"),
+                    messageKey = messages("yourSelfAssessmentChargeSummary.crystallisedInterest.link-text"),
+                    outerMessage = s" ${messages("yourSelfAssessmentChargeSummary.crystallisedInterest.text-2")}"
+                )
+            }
 
-              @interestOnYourChargeTable(viewModel)
-
-              @p(id=Some("guidance.p1")){
-                  @messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText")
-                  @link(
-                      link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
-                      target = Some("_blank"),
-                      rel= Some("noreferrer noopener"),
-                      messageKey = messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText"),
-                      outerMessage = messages(".")
-                  )
-              }
-          }
-      }
+        } else {
+            @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit || viewModel.chargeItem.transactionType == PoaTwoReconciliationDebit) {
+                @interestOnChargeRARPoaSection(viewModel)
+            } else {
+                @interestOnYourChargeSection(viewModel.chargeItem)
+                @interestOnYourChargeTable(viewModel)
+                @p(id=Some("guidance.p1")){
+                    @messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceText")
+                    @link(
+                        link = ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl,
+                        target = Some("_blank"),
+                        rel= Some("noreferrer noopener"),
+                        messageKey = messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.guidanceLinkText"),
+                        outerMessage = messages(".")
+                    )
+                }
+            }
+        }
+    }
   }
     @if(viewModel.latePaymentInterestCharge) {
         <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
