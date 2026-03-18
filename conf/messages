@@ -3424,10 +3424,10 @@ yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading         
 yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your first payment on account for the {0} to {1} tax year was too low.
 yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your second payment on account for the {0} to {1} tax year was too low.
 yourSelfAssessmentChargeSummary.paragraphList.intro                                  = This could be because:
-yourSelfAssessmentChargeSummary.paragraphList.bullet1                                = you changed your previous year's tax return
+yourSelfAssessmentChargeSummary.paragraphList.bullet1                                = you changed your previous year’s tax return
 yourSelfAssessmentChargeSummary.paragraphList.bullet2                                = you reduced your payments on account to less than what your tax return shows you should have paid
 yourSelfAssessmentChargeSummary.extraAmountInterest.p1                               = HMRC applies interest to the extra amount – the difference between your payment on account and what you actually owe.
-yourSelfAssessmentChargeSummary.extraAmountInterest.p2                               = Interest is charged from the day after your payment on account was due until the day the extra amount is paid in full. It's calculated at the
+yourSelfAssessmentChargeSummary.extraAmountInterest.p2                               = Interest is charged from the day after your payment on account was due until the day the extra amount is paid in full. It’s calculated at the
 yourSelfAssessmentChargeSummary.extraAmountInterest.p2LinkText                       = Bank of England base rate (opens in new tab)
 yourSelfAssessmentChargeSummary.extraAmountInterest.p2AfterLink                      = plus 2.5%.
 yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Late payment interest on balancing payment: extra amount due to amended return

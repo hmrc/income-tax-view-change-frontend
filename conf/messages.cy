@@ -3356,10 +3356,10 @@ yourSelfAssessmentChargeSummary.extraAmountInterest.p2LinkText                  
 yourSelfAssessmentChargeSummary.extraAmountInterest.p2AfterLink                       = yn ogystal â 2.5% ychwanegol.
 yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                  = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                           = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p2                       = Mae CThEF yn codi llog ar y swm ychwanegol – sef y gwahaniaeth rhwng eich taliad a’r hyn sydd arnoch mewn gwirionedd.
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3                       = Caiff llog ei godi o’r diwrnod ar ôl dyddiad dyledus gwreiddiol eich taliad mantoli, hyd at y diwrnod bydd y swm ychwanegol yn cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3LinkText               = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3AfterLink              = yn ogystal â 2.5% ychwanegol.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p2                        = Mae CThEF yn codi llog ar y swm ychwanegol – sef y gwahaniaeth rhwng eich taliad a’r hyn sydd arnoch mewn gwirionedd.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3                        = Caiff llog ei godi o’r diwrnod ar ôl dyddiad dyledus gwreiddiol eich taliad mantoli, hyd at y diwrnod bydd y swm ychwanegol yn cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3LinkText                = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3AfterLink               = yn ogystal â 2.5% ychwanegol.
 
 yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                    = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
 yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                  = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
