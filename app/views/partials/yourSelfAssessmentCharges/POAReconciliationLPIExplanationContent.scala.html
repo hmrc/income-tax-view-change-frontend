@@ -44,19 +44,19 @@
                 @getMessage("poa2ExtraAmountInterest.p1", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
             }
         }
-        @p(id = Some("poa-extra-charge-p4")) {
+        @p(id = Some("poa-extra-charge-p2")) {
             @getMessage("paragraphList.intro")
         }
 
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@getMessage("paragraphList.bullet1")</li>
-            <li>@getMessage("paragraphList.bullet2")</li>
+        <ul class="govuk-list govuk-list--bullet" id="poa-extra-charge-p3">
+            <li id="poa-extra-charge-bullet1">@getMessage("paragraphList.bullet1")</li>
+            <li id="poa-extra-charge-bullet2">@getMessage("paragraphList.bullet2")</li>
         </ul>
 
-        @p(id = Some("poa-extra-charge-p2")) {
+        @p(id = Some("poa-extra-charge-p4")) {
             @getMessage("extraAmountInterest.p1")
         }
-        @p(id = Some("poa-extra-charge-p3")) {
+        @p(id = Some("poa-extra-charge-p5")) {
             @getMessage("extraAmountInterest.p2")
             <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{
                 ExternalUrlHelper.interestRateBankRateUrl
