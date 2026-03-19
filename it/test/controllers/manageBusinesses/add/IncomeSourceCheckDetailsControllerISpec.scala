@@ -82,7 +82,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             "render the Check Business details page" when {
 
               "the user has no existing businesses" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
@@ -137,7 +136,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "redirect to IncomeSourceReportingFrequencyController" when {
               "user selects 'confirm and continue'" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -169,8 +167,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             "redirect to check hmrc records page" when {
               "user selects 'confirm and continue' and they are in triggered migration" in {
                 val path = getPath(mtdUserRole, incomeSourceType, isTriggeredMigration = true)
-
-                disable(NavBarFs)
+                
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -201,7 +198,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
             "render the error page" when {
               "error in response from API" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -231,7 +227,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
               }
 
               "user session has no details" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 

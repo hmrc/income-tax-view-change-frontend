@@ -147,7 +147,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
               val taxYear1TYS: String = s"Reporting frequency $taxYear1 to $taxYear2"
               val taxYear2TYS: String = s"Reporting frequency $taxYear2 to ${taxYear2+1}"
               "user is within latency period (before 23/24) - tax year 1 not crystallised" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
@@ -166,7 +165,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (before 23/24) - tax year 1 crystallised" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
@@ -185,7 +183,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (after 23/24) - tax year 1 not crystallised" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
@@ -202,7 +199,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
               "user is within latency period (after 23/24) - tax year 1 crystallised" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))

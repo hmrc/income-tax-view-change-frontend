@@ -343,7 +343,6 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Opt Out Feature Switch Disabled" in {
-        disable(OptOutFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)

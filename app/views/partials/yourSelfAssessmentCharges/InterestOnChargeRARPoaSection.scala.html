@@ -69,47 +69,49 @@
       }
     }
 
-  @govukTable(Table(
-     rows = Seq(
-        Seq(
-         TableRow(
-           content = Text(messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.table.overdue", viewModel.chargeItem.getInterestFromDate.toLongDateShort, viewModel.chargeItem.getInterestEndDate.toLongDateShort))
+    @if(viewModel.chargeItem.outstandingAmount > 0){
+      @govukTable(Table(
+         rows = Seq(
+            Seq(
+             TableRow(
+               content = Text(messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.table.overdue", viewModel.chargeItem.getInterestFromDate.toLongDateShort, viewModel.chargeItem.getInterestEndDate.toLongDateShort))
+             ),
+             TableRow(
+               content = Text(viewModel.chargeItem.getInterestRate.toPercentage)
+             ),
+             TableRow(
+               content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString),
+               format = Some("numeric")
+             )
+            ),
+            Seq(
+             TableRow(
+               content = Text(messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText")),
+               attributes = Map("colspan" -> "2"),
+               classes = "govuk-table__header"
+              ),
+             TableRow(
+               content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString),
+               format = Some("numeric"),
+               attributes = Map("colspan" -> "2"),
+              classes = "govuk-table__header"
+              )
+            )
          ),
-         TableRow(
-           content = Text(viewModel.chargeItem.getInterestRate.toPercentage)
-         ),
-         TableRow(
-           content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString),
-           format = Some("numeric")
+         head = Some(Seq(
+           HeadCell(
+             content = Text(messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading"))
+           ),
+           HeadCell(
+             content = HtmlContent(currentInterestRateHeader)
+           ),
+           HeadCell(
+             content = HtmlContent(estimatedAmountHeader),
+             format = Some("numeric")
          )
-        ),
-        Seq(
-         TableRow(
-           content = Text(messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.totalText")),
-           attributes = Map("colspan" -> "2"),
-           classes = "govuk-table__header"
-          ),
-         TableRow(
-           content = Text(viewModel.chargeItem.getInterestOutstandingAmount.toCurrencyString),
-           format = Some("numeric"),
-           attributes = Map("colspan" -> "2"),
-          classes = "govuk-table__header"
-          )
-        )
-     ),
-     head = Some(Seq(
-       HeadCell(
-         content = Text(messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading"))
-       ),
-       HeadCell(
-         content = HtmlContent(currentInterestRateHeader)
-       ),
-       HeadCell(
-         content = HtmlContent(estimatedAmountHeader),
-         format = Some("numeric")
-     )
-    ))
-  ))
+        ))
+      ))
+  } else {}
 
   @currentInterestRateHeader ={
       <div>@messages("yourSelfAssessmentChargeSummary.interestOnThisCharge.Table.heading2")</div>

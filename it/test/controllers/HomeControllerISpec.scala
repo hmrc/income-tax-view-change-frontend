@@ -73,7 +73,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
       "render the home page" which {
         "displays the next upcoming payment and charge" when {
           "there are payments upcoming and nothing is overdue" in {
-            disable(NavBarFs)
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -148,7 +147,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
         "displays no upcoming payment" when {
           "there are no upcoming payments" in {
-            disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -221,7 +219,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
         "displays an overdue payment and an overdue obligation" when {
           "there is a single payment overdue and a single obligation overdue" in {
-            disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -294,7 +291,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
           }
 
           "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
-            disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -368,7 +364,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
         }
         "display a count of the overdue payments a count of overdue obligations" when {
           "there is more than one payment overdue and more than one obligation overdue" in {
-            disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -464,7 +459,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
         "display Income Sources tile" when {
           "using the manage businesses journey" in {
-            disable(NavBarFs)
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -537,7 +531,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
         }
         "display Your Businesses tile" when {
           "using the manage businesses journey" in {
-            disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
@@ -611,7 +604,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
         "display the Reporting Obligations tile" when {
           "Reporting Frequency feature switches are enabled" in {
-            disable(NavBarFs)
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             enable(ReportingFrequencyPage)
@@ -687,7 +679,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
       "render the error page" when {
 
         "retrieving the charges was unsuccessful" in {
-          disable(NavBarFs)
           MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -730,7 +721,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
         }
       }
       "retrieving the obligations was unsuccessful" in {
-        disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -748,7 +738,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
         )
       }
       "retrieving the income sources was unsuccessful" in {
-        disable(NavBarFs)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(

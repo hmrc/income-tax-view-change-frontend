@@ -56,7 +56,6 @@ class CannotGoBackErrorControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the cannot go back error page" when {
               "the journey is completed" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
                 await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))
@@ -71,7 +70,6 @@ class CannotGoBackErrorControllerISpec extends ControllerISpecHelper {
 
             "render the error page" when {
               "mongo is empty" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
                 await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))))

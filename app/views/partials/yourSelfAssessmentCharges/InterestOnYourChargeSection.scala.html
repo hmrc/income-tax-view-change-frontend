@@ -62,7 +62,7 @@ chargeItem: ChargeItem)(
      @getMessage("howIsInterestCalculated.p7")
     </p>
 }
-@if(!(chargeItem.transactionType == ITSAReturnAmendment)) {
+@if(!(chargeItem.transactionType == ITSAReturnAmendment) && chargeItem.outstandingAmount > 0) {
 @govukWarningText(WarningText(content = Text(getMessage("warningText"))))
 }
 

@@ -51,7 +51,6 @@ class CeaseIncomeSourcesControllerISpec extends ControllerISpecHelper {
           "render the Cease Income Source page" when {
             "UK property" in {
               stubAuthorised(mtdUserRole)
-              disable(NavBarFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)

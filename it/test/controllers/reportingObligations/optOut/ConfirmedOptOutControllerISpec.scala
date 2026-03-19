@@ -60,9 +60,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             s"render confirm single year opt out page" in {
-
               enable(OptOutFs)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetAllObligations(
@@ -125,7 +123,6 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
 
             s"redirect to cannot-go-back page when session data are invalid" in {
               enable(OptOutFs)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
 
               helper.stubOptOutInitialState(
