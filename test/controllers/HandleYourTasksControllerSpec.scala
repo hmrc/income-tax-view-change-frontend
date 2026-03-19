@@ -41,7 +41,7 @@ import services.*
 import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
 import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
-import views.html.HandleYourTasksView
+import views.html.newHomePage.NewHomeYourTasksView
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future
@@ -72,7 +72,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
 
   val authActions: AuthActions = app.injector.instanceOf(classOf[AuthActions])
-  val view: HandleYourTasksView = app.injector.instanceOf(classOf[HandleYourTasksView])
+  val view: NewHomeYourTasksView = app.injector.instanceOf(classOf[NewHomeYourTasksView])
 
   val nextPaymentYear: String = "2019"
   val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
