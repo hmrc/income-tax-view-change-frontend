@@ -79,6 +79,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
+      userMandatedOrVoluntary <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandatedOrVoluntary)
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       updatesAndDeadlinesViewModel <- getNextUpdates()
     } yield {
@@ -88,7 +89,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
 
-      val homeViewModel = HandleYourTasksViewModel(chargeItemList, credits, creditsRefundsRepayEnabled, updatesAndDeadlinesViewModel)
+      val homeViewModel = HandleYourTasksViewModel(chargeItemList, credits, creditsRefundsRepayEnabled, updatesAndDeadlinesViewModel, userMandatedOrVoluntary)
 
       Ok(handleYourTasksView(origin, isAgent,
         yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),

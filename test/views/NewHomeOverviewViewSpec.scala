@@ -95,7 +95,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         moneyInYourAccount,
         ctaViewModel,
         chargeItems,
-        useRebrand)(testMessages, appConfig, FakeRequest())
+        useRebrand,
+        false)(testMessages, appConfig, FakeRequest())
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
